@@ -64,7 +64,7 @@ var serveCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(serveCmd)
 	serveCmd.PersistentFlags().String("listen-address", ":8080", "listen address")
-	serveCmd.PersistentFlags().String("db-driver", "sqlite3", "database driver")
-	serveCmd.PersistentFlags().String("db-dsn", "./db.sqlite", "database dsn")
+	serveCmd.PersistentFlags().String("db-driver", "", "database driver")
+	serveCmd.PersistentFlags().String("db-dsn", "", "database dsn")
 	serveCmd.PersistentFlags().String("db-dsn-file", "", "database dsn file")
 }
