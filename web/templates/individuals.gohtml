@@ -1,0 +1,190 @@
+{{define "head"}}
+{{end}}
+{{define "body"}}
+    {{template "nav" .}}
+    <div class="container pt-3">
+        <div class="row">
+            <div class="col-12 mb-3 mt-3 col-md-4 mt-md-0 order-md-last">
+                <div class="card shadow mb-3">
+                    <form action="/bulk/individuals" enctype="multipart/form-data" method="post">
+                        <div class="card-header">
+                            Upload
+                        </div>
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item">
+                                <div class="form-group">
+                                    <label class="form-label">Select file</label>
+                                    <input accept="text/csv" name="file" type="file" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">Upload</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card shadow mb-3">
+                    <div class="card-header">
+                        Download
+                    </div>
+                    <div class="card-body">
+                        <a href="/download" target="_blank" class="btn btn-primary">Download</a>
+                    </div>
+                </div>
+                <div class="card shadow mb-3">
+                    <div class="card-header">
+                        Actions
+                    </div>
+                    <div class="card-body">
+                        <a href="/individuals/new" class="btn btn-primary">New Individual</a>
+                    </div>
+                </div>
+                <div class="card shadow mb-3">
+                    <form method="get" action="/individuals">
+                        <div class="card-header">
+                            Search
+                        </div>
+                        <input type="hidden" name="take" value="">
+                        <input type="hidden" name="skip" value="0">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item">
+                                <div class="form-group">
+                                    <label class="form-label" for="Name">Name</label>
+                                    <input id="Name" name="name" type="text" class="form-control"
+                                           value="{{.Options.FullName}}">
+                                </div>
+                            </div>
+                            <div class="list-group-item">
+                                <label class="form-label">Age</label>
+                                <div class="input-group">
+                                                <span class="input-group-text">
+                                                    From
+                                                </span>
+                                    <input id="AgeFrom" name="age_from" type="number"
+                                           class="form-control"
+                                           value="{{if not (eq .Options.AgeTo 0)}}{{.Options.AgeFrom}}{{end}}">
+                                    <span class="input-group-text">
+                                                    To
+                                                </span>
+                                    <input id="AgeTo" name="age_to" type="number"
+                                           class="form-control"
+                                           value="{{if not (eq .Options.AgeTo 0)}}{{.Options.AgeTo}}{{end}}">
+                                </div>
+                            </div>
+                            <div class="list-group-item">
+                                <label class="form-text">Gender</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="male" id="MaleGender"
+                                           name="gender"
+                                           {{if contains .Options.Genders "male"}}checked="checked"{{end}}>
+                                    <label class="form-check-label" for="MaleGender">
+                                        Male
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="female" id="FemaleGender"
+                                           name="gender"
+                                           {{if contains .Options.Genders "female"}}checked="checked"{{end}}>
+                                    <label class="form-check-label" for="FemaleGender">
+                                        Female
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="form-group">
+                                    <label class="form-label" for="Email">Email</label>
+                                    <input id="Email" name="email" type="text" class="form-control"
+                                           value="{{.Options.Email}}">
+                                </div>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="form-group">
+                                    <label class="form-label" for="PhoneNumber">Phone Number</label>
+                                    <input id="PhoneNumber" name="phone_number" type="text" class="form-control"
+                                           value="{{.Options.PhoneNumber}}">
+                                </div>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="form-group">
+                                    <label class="form-label" for="Address">Address</label>
+                                    <input id="Address" name="address" type="text" class="form-control"
+                                           value="{{.Options.Address}}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <button class="btn btn-primary" type="submit">Search</button>
+                            <a href="/individuals" class="btn btn-primary">Clear</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-12 col-md-8">
+                <div class="card shadow">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Gender</th>
+                            <th>Email</th>
+                            <th>Phone Number</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{ if .Individuals }}
+                            {{range .Individuals}}
+                                <tr>
+                                    <td><a href="/individuals/{{.ID}}">{{.FullName}}</a></td>
+                                    <td>
+                                        {{if .BirthDate}}
+                                            <span title="{{.BirthDate.Format "2006-01-02"}}">{{age .BirthDate}}</span>
+                                        {{end}}
+                                    </td>
+                                    <td>
+                                        {{if eq .Gender "male"}}
+                                            <i class="bi bi-gender-male"></i>
+                                        {{else if eq .Gender "female"}}
+                                            <i class="bi bi-gender-female"></i>
+                                        {{end}}
+                                    </td>
+                                    <td>
+                                        {{if .Email}}
+                                            <a href="mailto:{{.Email}}">{{.Email}}</a>
+                                        {{end}}
+                                    </td>
+                                    <td>
+                                        {{if .PhoneNumber}}
+                                            <a class="font-monospace" href="tel:{{.PhoneNumber}}">{{.PhoneNumber}}</a>
+                                        {{end}}
+                                    </td>
+                                </tr>
+                            {{end}}
+                        {{else}}
+                            <tr>
+                                <td>No individuals found</td>
+                            </tr>
+                        {{end}}
+                        </tbody>
+                    </table>
+                    <nav class="card-footer" aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link" href="{{.Options.FirstPage.QueryParams}}">First</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="{{.Options.PreviousPage.QueryParams}}">Previous</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="{{.Options.NextPage.QueryParams}}">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+{{end}}

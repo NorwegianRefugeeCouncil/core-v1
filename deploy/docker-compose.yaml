@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: ./build/package/app.Dockerfile
+      args:
+        - "--listen-address=:8080"
+  db:
+    image: postgres:9.6
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "core"
+    ports:
+      - "5432:5432"
