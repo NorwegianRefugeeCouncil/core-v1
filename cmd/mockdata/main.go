@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"math/rand"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/manveru/faker"
@@ -38,6 +39,7 @@ func Generate() error {
 		"sensory_impairment",
 		"mental_impairment",
 		"displacement_status",
+		"countries",
 	}); err != nil {
 		return err
 	}
@@ -117,6 +119,24 @@ func Generate() error {
 			displacementStatus = "host_community"
 		}
 
+		var countries = []string{}
+		if randBool(20) {
+			countries = append(countries, "kenya")
+		}
+		if randBool(20) {
+			countries = append(countries, "uganda")
+		}
+		if randBool(20) {
+			countries = append(countries, "colombia")
+		}
+		if randBool(20) {
+			countries = append(countries, "ukraine")
+		}
+		var countriesStr = ""
+		if len(countries) > 0 {
+			countriesStr = strings.Join(countries, ",")
+		}
+
 		if err := writer.Write([]string{
 			xid.New().String(),
 			name,
@@ -132,6 +152,7 @@ func Generate() error {
 			sensoryImpairment,
 			mentalImpairment,
 			displacementStatus,
+			countriesStr,
 		}); err != nil {
 			return err
 		}

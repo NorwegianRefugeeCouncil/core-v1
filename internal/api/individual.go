@@ -1,11 +1,14 @@
 package api
 
 import (
+	"database/sql/driver"
 	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/url"
 	"time"
+
+	"github.com/lib/pq"
 )
 
 type Individual struct {
@@ -24,6 +27,22 @@ type Individual struct {
 	PhysicalImpairment         string     `db:"physical_impairment"`
 	SensoryImpairment          string     `db:"sensory_impairment"`
 	MentalImpairment           string     `db:"mental_impairment"`
+	Countries                  Countries  `db:"countries"`
+}
+
+type Countries []string
+
+func (c *Countries) Scan(value interface{}) error {
+	var ret = make([]string, 0)
+	if err := pq.Array(&ret).Scan(value); err != nil {
+		return err
+	}
+	*c = ret
+	return nil
+}
+
+func (c Countries) Value() (driver.Value, error) {
+	return pq.Array([]string(c)).Value()
 }
 
 var AllndividualFields = []string{
@@ -42,6 +61,7 @@ var AllndividualFields = []string{
 	"physical_impairment",
 	"sensory_impairment",
 	"mental_impairment",
+	"countries",
 }
 
 func (i Individual) GetFieldValue(field string) (interface{}, error) {
@@ -76,6 +96,8 @@ func (i Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.SensoryImpairment, nil
 	case "mental_impairment":
 		return i.MentalImpairment, nil
+	case "countries":
+		return i.Countries, nil
 	default:
 		return nil, fmt.Errorf("unknown field: %s", field)
 	}
@@ -101,6 +123,7 @@ type GetAllOptions struct {
 	FullName                   string
 	IsMinor                    *bool
 	PresentsProtectionConcerns *bool
+	Countries                  []string
 }
 
 func (o GetAllOptions) IsMinorSelected() bool {

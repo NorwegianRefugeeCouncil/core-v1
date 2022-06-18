@@ -1,0 +1,45 @@
+{{define "head"}}
+{{end}}
+{{define "body"}}
+    {{template "nav" .}}
+    <div class="container pt-3">
+        <div class="row">
+            <div class="col-12 mb-3 mt-3 col-md-4 mt-md-0 order-md-last">
+                <div class="card shadow mb-3">
+                    <div class="card-header">
+                        Actions
+                    </div>
+                    <div class="card-body">
+                        <a href="/countries/new" class="btn btn-primary">New Country</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-8">
+                <div class="card shadow">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Name</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{ if .Countries }}
+                            {{range .Countries}}
+                                <tr>
+                                    <td class="font-monospace"><code>{{.Code}}</code></td>
+                                    <td><a href="/countries/{{.ID}}">{{.Name}}</a></td>
+                                </tr>
+                            {{end}}
+                        {{else}}
+                            <tr>
+                                <td>No countries found</td>
+                            </tr>
+                        {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{{end}}

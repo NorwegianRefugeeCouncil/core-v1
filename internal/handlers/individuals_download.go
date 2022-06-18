@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
@@ -40,6 +41,7 @@ func HandleDownload(repo db.IndividualRepo) http.Handler {
 			"physical_impairment",
 			"sensory_impairment",
 			"mental_impairment",
+			"countries",
 		}); err != nil {
 			http.Error(w, "failed to write header: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -65,6 +67,7 @@ func HandleDownload(repo db.IndividualRepo) http.Handler {
 				individual.PhysicalImpairment,
 				individual.SensoryImpairment,
 				individual.MentalImpairment,
+				strings.Join(individual.Countries, ","),
 			}); err != nil {
 				http.Error(w, "failed to write record: "+err.Error(), http.StatusInternalServerError)
 				return

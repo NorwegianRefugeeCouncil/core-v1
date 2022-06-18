@@ -1,4 +1,7 @@
 {{define "head"}}
+    <script type="application/javascript" src="/static/autocomplete.js"></script>
+    <script type="application/javascript" src="/static/rxjs.js"></script>
+    <script type="application/javascript" src="/static/country_selector.js"></script>
     <script type="application/javascript">
         function goToIndividual() {
             const id = document.getElementById("goToIndividualId").value;
@@ -6,6 +9,21 @@
                 window.location.href = "{{.BaseURL}}/individuals/" + id;
             }
         }
+        countrySelector = new CountrySelector(
+            "Countries",
+            "country-list",
+            "country-input",
+            [
+                {{range .Countries }}
+                {"value": {{.Code}}, "label": "{{.Name}}"},
+                {{end}}
+            ],
+            [
+                {{range .Options.Countries}}
+                "{{.}}",
+                {{end}}
+            ],
+        );
     </script>
 {{end}}
 {{define "body"}}
@@ -14,7 +32,7 @@
         <div class="row">
             <div class="col-12 mb-3 mt-3 col-md-4 mt-md-0 order-md-last">
                 <div class="card shadow mb-3">
-                    <form action="/bulk/individuals" enctype="multipart/form-data" method="post">
+                    <form action="/individuals/upload" enctype="multipart/form-data" method="post">
                         <div class="card-header">
                             Upload
                         </div>
@@ -37,8 +55,10 @@
                     </div>
                     <div class="card-body">
                         <div class="input-group">
-                            <input id="goToIndividualId" type="text" class="form-control font-monospace" placeholder="Individual ID" aria-label="Individual's ID">
-                            <button  onclick="goToIndividual()" class="btn btn-outline-secondary" type="button">Go</button>
+                            <input id="goToIndividualId" type="text" class="form-control font-monospace"
+                                   placeholder="Individual ID" aria-label="Individual's ID">
+                            <button onclick="goToIndividual()" class="btn btn-outline-secondary" type="button">Go
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -48,7 +68,7 @@
                     </div>
                     <div class="card-body">
                         <a href="/individuals/new" class="btn btn-primary">New Individual</a>
-                        <a href="/download" target="_blank" class="btn btn-primary">Download CSV</a>
+                        <a href="/individuals/download" target="_blank" class="btn btn-primary">Download CSV</a>
                     </div>
                 </div>
                 <div class="card shadow mb-3">
@@ -72,6 +92,29 @@
                             </div>
                             <!-- End Full Name -->
 
+                            <!-- Country -->
+
+                            <div class="card my-3">
+                                <div class="card-header">
+                                    Countries
+                                    <input type="hidden" id="Countries" name="countries"
+                                           value="{{ joinStrings .Options.Countries ","}}"/>
+                                </div>
+
+                                <div class="list-group  list-group-flush" id="country-list">
+
+                                </div>
+                                <div class="card-footer">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="country-input"
+                                               placeholder="Start typing..."
+                                               autocomplete="off"/>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- End Country -->
 
                             <!-- Age -->
                             <label class="form-label">Age</label>

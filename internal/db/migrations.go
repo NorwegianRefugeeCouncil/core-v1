@@ -22,6 +22,7 @@ type migration struct {
 var migrations = []migration{
 	migrationFromFile("001_initial"),
 	migrationFromFile("002_global_intake"),
+	migrationFromFile("003_countries"),
 }
 
 // Migrate runs the migrations on the database.

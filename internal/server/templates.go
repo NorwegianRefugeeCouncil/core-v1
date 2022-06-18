@@ -2,6 +2,7 @@ package server
 
 import (
 	"html/template"
+	"strings"
 	"time"
 
 	"github.com/nrc-no/notcore/web"
@@ -33,6 +34,9 @@ func parseTemplates() (templates, error) {
 			},
 			"age": func(dateOfBirth time.Time) int {
 				return int(time.Since(dateOfBirth).Hours() / 24 / 365)
+			},
+			"joinStrings": func(a []string, b string) string {
+				return strings.Join(a, b)
 			},
 			"contains": func(arr []string, str string) bool {
 				for _, v := range arr {

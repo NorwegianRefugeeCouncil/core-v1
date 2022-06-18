@@ -3,22 +3,30 @@ package handlers
 import (
 	"html/template"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
 )
 
-func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo) http.Handler {
+func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		var err error
 		var individuals []*api.Individual
 		var getAllOptions api.GetAllOptions
 
+		countries, err := countryRepo.GetAll(r.Context())
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		render := func() {
 			if err := templates["individuals.gohtml"].ExecuteTemplate(w, "base", map[string]interface{}{
 				"Individuals": individuals,
+				"Countries":   countries,
 				"Options":     getAllOptions,
 			}); err != nil {
 				println(err.Error())
@@ -102,6 +110,13 @@ func parseGetAllOptions(r *http.Request, out *api.GetAllOptions) error {
 		}
 		yearsAgo := time.Now().AddDate(0, 0, -(ageTo+1)*365)
 		out.BirthDateFrom = &yearsAgo
+	}
+
+	countries := r.FormValue("countries")
+	if len(countries) != 0 {
+		out.Countries = strings.Split(countries, ",")
+	} else {
+		out.Countries = make([]string, 0)
 	}
 
 	return nil

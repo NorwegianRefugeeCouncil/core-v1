@@ -124,6 +124,22 @@ func (i individualRepo) getAllInternal(ctx context.Context, tx *sqlx.Tx, options
 		}
 	}
 
+	if len(options.Countries) != 0 {
+		countryQueries := []string{}
+		if i.driverName() == "sqlite" {
+			for _, country := range options.Countries {
+				countryQueries = append(countryQueries, "countries LIKE "+nextArg("%\""+country+"\"%"))
+			}
+			whereClauses = append(whereClauses, "("+strings.Join(countryQueries, " OR ")+")")
+		} else if i.driverName() == "postgres" {
+			for _, country := range options.Countries {
+				countryQueries = append(countryQueries, nextArg(country)+" = ANY (countries)")
+			}
+			whereClauses = append(whereClauses, "("+strings.Join(countryQueries, " OR ")+")")
+		}
+
+	}
+
 	if len(whereClauses) != 0 {
 		query = query + " WHERE "
 		for i, whereClause := range whereClauses {

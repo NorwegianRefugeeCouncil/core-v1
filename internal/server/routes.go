@@ -9,13 +9,18 @@ import (
 	"github.com/nrc-no/notcore/web"
 )
 
-func buildRouter(individualRepo db.IndividualRepo, tpl templates) *mux.Router {
+func buildRouter(
+	individualRepo db.IndividualRepo,
+	countryRepo db.CountryRepo,
+	tpl templates) *mux.Router {
 	r := mux.NewRouter()
 	r.PathPrefix("/static").Handler(http.FileServer(http.FS(web.Static)))
 	r.Path("/").Handler(handlers.HandleIndex(tpl))
-	r.Path("/individuals").Handler(handlers.ListHandler(tpl, individualRepo))
-	r.Path("/bulk/individuals").Handler(handlers.UploadHandler(individualRepo))
-	r.Path("/individuals/{individual_id}").Handler(handlers.HandleIndividual(tpl, individualRepo))
-	r.Path("/download").Handler(handlers.HandleDownload(individualRepo))
+	r.Path("/individuals").Handler(handlers.ListHandler(tpl, individualRepo, countryRepo))
+	r.Path("/individuals/upload").Handler(handlers.UploadHandler(individualRepo))
+	r.Path("/individuals/download").Handler(handlers.HandleDownload(individualRepo))
+	r.Path("/individuals/{individual_id}").Handler(handlers.HandleIndividual(tpl, individualRepo, countryRepo))
+	r.Path("/countries").Handler(handlers.HandleCountries(tpl, countryRepo))
+	r.Path("/countries/{country_id}").Handler(handlers.HandleCountry(tpl, countryRepo))
 	return r
 }
