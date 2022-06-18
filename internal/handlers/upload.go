@@ -27,13 +27,13 @@ func UploadHandler(repo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		individuals, err := parseIndividualsCSV(formFile)
+		fields, individuals, err := parseIndividualsCSV(formFile)
 		if err != nil {
 			http.Error(w, "failed", http.StatusBadRequest)
 			return
 		}
 
-		_, err = repo.PutMany(r.Context(), individuals)
+		_, err = repo.PutMany(r.Context(), individuals, fields)
 		if err != nil {
 			http.Error(w, "failed to put records: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -44,29 +44,31 @@ func UploadHandler(repo db.IndividualRepo) http.Handler {
 	})
 }
 
-func parseIndividualsCSV(reader io.Reader) ([]*api.Individual, error) {
+func parseIndividualsCSV(reader io.Reader) ([]string, []*api.Individual, error) {
 	csvReader := csv.NewReader(reader)
 	csvReader.TrimLeadingSpace = true
 	records, err := csvReader.ReadAll()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
+	var fields []string
 	var individuals = make([]*api.Individual, len(records)-1)
 	colMapping := map[string]int{}
 	for i, cols := range records {
 		if i == 0 {
+			fields = cols
 			for j, col := range cols {
 				colMapping[strings.Trim(col, " \n\t\r")] = j
 			}
 		} else {
 			individual, err := parseIndividualCsvRow(colMapping, cols)
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 			individuals[i-1] = individual
 		}
 	}
-	return individuals, nil
+	return fields, individuals, nil
 }
 
 func parseQryParamInt(r *http.Request, key string) (int, error) {

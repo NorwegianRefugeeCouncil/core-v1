@@ -9,22 +9,76 @@ import (
 )
 
 type Individual struct {
-	ID                    string     `db:"id"`
-	FullName              string     `db:"full_name"`
-	PhoneNumber           string     `db:"phone_number"`
-	NormalizedPhoneNumber string     `db:"normalized_phone_number"`
-	Email                 string     `db:"email"`
-	Address               string     `db:"address"`
-	BirthDate             *time.Time `db:"birth_date"`
-	Gender                string     `db:"gender"`
+	ID                         string     `db:"id"`
+	FullName                   string     `db:"full_name"`
+	PhoneNumber                string     `db:"phone_number"`
+	NormalizedPhoneNumber      string     `db:"normalized_phone_number"`
+	Email                      string     `db:"email"`
+	Address                    string     `db:"address"`
+	BirthDate                  *time.Time `db:"birth_date"`
+	Gender                     string     `db:"gender"`
+	DisplacementStatus         string     `db:"displacement_status"`
+	PreferredName              string     `db:"preferred_name"`
+	IsMinor                    bool       `db:"is_minor"`
+	PresentsProtectionConcerns bool       `db:"presents_protection_concerns"`
+	PhysicalImpairment         string     `db:"physical_impairment"`
+	SensoryImpairment          string     `db:"sensory_impairment"`
+	MentalImpairment           string     `db:"mental_impairment"`
+}
 
-	DisplacementStatus         string `db:"displacement_status"`
-	PreferredName              string `db:"preferred_name"`
-	IsMinor                    bool   `db:"is_minor"`
-	PresentsProtectionConcerns bool   `db:"presents_protection_concerns"`
-	PhysicalImpairment         string `db:"physical_impairment"`
-	SensoryImpairment          string `db:"sensory_impairment"`
-	MentalImpairment           string `db:"mental_impairment"`
+var AllndividualFields = []string{
+	"id",
+	"full_name",
+	"phone_number",
+	"normalized_phone_number",
+	"email",
+	"address",
+	"birth_date",
+	"gender",
+	"displacement_status",
+	"preferred_name",
+	"is_minor",
+	"presents_protection_concerns",
+	"physical_impairment",
+	"sensory_impairment",
+	"mental_impairment",
+}
+
+func (i Individual) GetFieldValue(field string) (interface{}, error) {
+	switch field {
+	case "id":
+		return i.ID, nil
+	case "full_name":
+		return i.FullName, nil
+	case "phone_number":
+		return i.PhoneNumber, nil
+	case "normalized_phone_number":
+		return i.NormalizedPhoneNumber, nil
+	case "email":
+		return i.Email, nil
+	case "address":
+		return i.Address, nil
+	case "birth_date":
+		return i.BirthDate, nil
+	case "gender":
+		return i.Gender, nil
+	case "displacement_status":
+		return i.DisplacementStatus, nil
+	case "preferred_name":
+		return i.PreferredName, nil
+	case "is_minor":
+		return i.IsMinor, nil
+	case "presents_protection_concerns":
+		return i.PresentsProtectionConcerns, nil
+	case "physical_impairment":
+		return i.PhysicalImpairment, nil
+	case "sensory_impairment":
+		return i.SensoryImpairment, nil
+	case "mental_impairment":
+		return i.MentalImpairment, nil
+	default:
+		return nil, fmt.Errorf("unknown field: %s", field)
+	}
 }
 
 func (i Individual) String() string {
@@ -36,15 +90,33 @@ func (i Individual) String() string {
 }
 
 type GetAllOptions struct {
-	Genders       []string
-	BirthDateFrom *time.Time
-	BirthDateTo   *time.Time
-	PhoneNumber   string
-	Address       string
-	Take          int
-	Skip          int
-	Email         string
-	FullName      string
+	Genders                    []string
+	BirthDateFrom              *time.Time
+	BirthDateTo                *time.Time
+	PhoneNumber                string
+	Address                    string
+	Take                       int
+	Skip                       int
+	Email                      string
+	FullName                   string
+	IsMinor                    *bool
+	PresentsProtectionConcerns *bool
+}
+
+func (o GetAllOptions) IsMinorSelected() bool {
+	return o.IsMinor != nil && *o.IsMinor
+}
+
+func (o GetAllOptions) IsNotMinorSelected() bool {
+	return o.IsMinor != nil && !*o.IsMinor
+}
+
+func (o GetAllOptions) IsPresentsProtectionConcernsSelected() bool {
+	return o.PresentsProtectionConcerns != nil && *o.PresentsProtectionConcerns
+}
+
+func (o GetAllOptions) IsNotPresentsProtectionConcernsSelected() bool {
+	return o.PresentsProtectionConcerns != nil && !*o.PresentsProtectionConcerns
 }
 
 func (o GetAllOptions) AgeFrom() int {
@@ -114,6 +186,16 @@ func (o GetAllOptions) QueryParams() template.HTML {
 	}
 	if o.BirthDateTo != nil {
 		params.Add("age_to", fmt.Sprintf("%d", o.AgeFrom()))
+	}
+	if o.IsMinorSelected() {
+		params.Add("is_minor", "true")
+	} else if o.IsNotMinorSelected() {
+		params.Add("is_minor", "false")
+	}
+	if o.IsPresentsProtectionConcernsSelected() {
+		params.Add("presents_protection_concerns", "true")
+	} else if o.IsNotPresentsProtectionConcernsSelected() {
+		params.Add("presents_protection_concerns", "false")
 	}
 
 	u := url.URL{

@@ -56,7 +56,7 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			return
 		}
 
-		_, err = repo.Put(r.Context(), individual)
+		_, err = repo.Put(r.Context(), individual, api.AllndividualFields)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

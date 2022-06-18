@@ -70,6 +70,20 @@ func parseGetAllOptions(r *http.Request, out *api.GetAllOptions) error {
 	out.PhoneNumber = r.FormValue("phone_number")
 	out.Address = r.FormValue("address")
 	out.Genders = r.Form["gender"]
+	if r.FormValue("is_minor") == "true" {
+		isMinor := true
+		out.IsMinor = &isMinor
+	} else if r.FormValue("is_minor") == "false" {
+		isMinor := false
+		out.IsMinor = &isMinor
+	}
+	if r.FormValue("presents_protection_concerns") == "true" {
+		presentsProtectionConcerns := true
+		out.PresentsProtectionConcerns = &presentsProtectionConcerns
+	} else if r.FormValue("presents_protection_concerns") == "false" {
+		presentsProtectionConcerns := false
+		out.PresentsProtectionConcerns = &presentsProtectionConcerns
+	}
 
 	ageFromStr := r.FormValue("age_from")
 	if len(ageFromStr) != 0 {

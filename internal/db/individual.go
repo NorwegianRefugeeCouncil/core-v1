@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
@@ -16,8 +18,8 @@ import (
 type IndividualRepo interface {
 	GetAll(ctx context.Context, options api.GetAllOptions) ([]*api.Individual, error)
 	GetByID(ctx context.Context, id string) (*api.Individual, error)
-	Put(ctx context.Context, individual *api.Individual) (*api.Individual, error)
-	PutMany(ctx context.Context, individuals []*api.Individual) ([]*api.Individual, error)
+	Put(ctx context.Context, individual *api.Individual, fields []string) (*api.Individual, error)
+	PutMany(ctx context.Context, individuals []*api.Individual, fields []string) ([]*api.Individual, error)
 	Delete(ctx context.Context, id string) error
 }
 
@@ -60,17 +62,15 @@ func (i individualRepo) getAllInternal(ctx context.Context, tx *sqlx.Tx, options
 
 	if len(options.FullName) != 0 {
 		if i.driverName() == "sqlite" {
-			whereClause := fmt.Sprintf("rowid IN (SELECT rowid FROM individuals_fts WHERE full_name MATCH %s ORDER BY rank)", nextArg(options.FullName))
-			whereClauses = append(whereClauses, whereClause)
+			whereClauses = append(whereClauses, "full_name LIKE "+nextArg("%"+options.FullName+"%")+" OR preferred_name LIKE "+nextArg("%"+options.FullName+"%"))
 		} else if i.driverName() == "postgres" {
-			whereClause := "full_name ILIKE " + nextArg("%"+options.FullName+"%")
-			whereClauses = append(whereClauses, whereClause)
+			whereClauses = append(whereClauses, "full_name ILIKE "+nextArg("%"+options.FullName+"%")+" OR preferred_name ILIKE "+nextArg("%"+options.FullName+"%"))
 		}
 	}
 
 	if len(options.Address) != 0 {
 		if i.driverName() == "sqlite" {
-			whereClause := fmt.Sprintf("rowid IN (SELECT rowid FROM individuals_fts WHERE address MATCH %s ORDER BY rank)", nextArg(options.Address))
+			whereClause := "address LIKE " + nextArg("%"+options.Address+"%")
 			whereClauses = append(whereClauses, whereClause)
 		} else if i.driverName() == "postgres" {
 			whereClause := "address ILIKE " + nextArg("%"+options.Address+"%")
@@ -108,8 +108,30 @@ func (i individualRepo) getAllInternal(ctx context.Context, tx *sqlx.Tx, options
 		whereClauses = append(whereClauses, "email = "+nextArg(normalizedEmail))
 	}
 
+	if options.IsMinor != nil {
+		if options.IsMinorSelected() {
+			whereClauses = append(whereClauses, "is_minor = "+nextArg(true))
+		} else if options.IsNotMinorSelected() {
+			whereClauses = append(whereClauses, "is_minor = "+nextArg(false))
+		}
+	}
+
+	if options.PresentsProtectionConcerns != nil {
+		if options.IsPresentsProtectionConcernsSelected() {
+			whereClauses = append(whereClauses, "presents_protection_concerns = "+nextArg(true))
+		} else if options.IsNotPresentsProtectionConcernsSelected() {
+			whereClauses = append(whereClauses, "presents_protection_concerns = "+nextArg(false))
+		}
+	}
+
 	if len(whereClauses) != 0 {
-		query = query + " WHERE " + strings.Join(whereClauses, " AND ")
+		query = query + " WHERE "
+		for i, whereClause := range whereClauses {
+			if i != 0 {
+				query = query + " AND "
+			}
+			query = query + "( " + whereClause + " )"
+		}
 	}
 
 	query = query + " ORDER BY ID"
@@ -142,12 +164,12 @@ func (i individualRepo) getByIdInternal(ctx context.Context, tx *sqlx.Tx, id str
 	return &ret, nil
 }
 
-func (i individualRepo) PutMany(ctx context.Context, individuals []*api.Individual) ([]*api.Individual, error) {
+func (i individualRepo) PutMany(ctx context.Context, individuals []*api.Individual, fields []string) ([]*api.Individual, error) {
 
 	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		var ret = make([]*api.Individual, len(individuals))
 		for k, individual := range individuals {
-			ind, err := i.putInternal(ctx, tx, individual)
+			ind, err := i.putInternal(ctx, tx, individual, fields)
 			if err != nil {
 				return nil, err
 			}
@@ -161,9 +183,9 @@ func (i individualRepo) PutMany(ctx context.Context, individuals []*api.Individu
 	return ret.([]*api.Individual), nil
 }
 
-func (i individualRepo) Put(ctx context.Context, individual *api.Individual) (*api.Individual, error) {
+func (i individualRepo) Put(ctx context.Context, individual *api.Individual, fields []string) (*api.Individual, error) {
 	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		return i.putInternal(ctx, tx, individual)
+		return i.putInternal(ctx, tx, individual, fields)
 	})
 	if err != nil {
 		return nil, err
@@ -171,7 +193,20 @@ func (i individualRepo) Put(ctx context.Context, individual *api.Individual) (*a
 	return ret.(*api.Individual), nil
 }
 
-func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual *api.Individual) (*api.Individual, error) {
+func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual *api.Individual, fields []string) (*api.Individual, error) {
+
+	fieldMap := map[string]bool{"id": true}
+	for _, field := range fields {
+		if field == "phone_number" {
+			fieldMap["normalized_phone_number"] = true
+		}
+		fieldMap[field] = true
+	}
+	fields = make([]string, 0, len(fieldMap))
+	for field := range fieldMap {
+		fields = append(fields, field)
+	}
+	sort.Strings(fields)
 
 	isNew := true
 	if len(individual.ID) != 0 {
@@ -190,87 +225,54 @@ func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual
 	}
 
 	if isNew {
-		_, err := tx.ExecContext(ctx, `
-INSERT INTO individuals 
-(
-	id, 
-	full_name, 
-	email, 
-	phone_number, 
-	normalized_phone_number,
-	address, 
-	birth_date,
-	gender,
- 	preferred_name,
- 	is_minor,
- 	presents_protection_concerns,
- 	physical_impairment,
- 	sensory_impairment,
- 	mental_impairment,
- 	displacement_status
-) 
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);`,
-			individual.ID,
-			individual.FullName,
-			individual.Email,
-			individual.PhoneNumber,
-			individual.NormalizedPhoneNumber,
-			individual.Address,
-			individual.BirthDate,
-			individual.Gender,
-			individual.PreferredName,
-			individual.IsMinor,
-			individual.PresentsProtectionConcerns,
-			individual.PhysicalImpairment,
-			individual.SensoryImpairment,
-			individual.MentalImpairment,
-			individual.DisplacementStatus,
-		)
+
+		var args []interface{}
+		statement := "INSERT INTO individuals (" + strings.Join(fields, ",") + ") VALUES ("
+		for i, field := range fields {
+			if i != 0 {
+				statement += ","
+			}
+			fieldValue, err := individual.GetFieldValue(field)
+			if err != nil {
+				return nil, err
+			}
+			args = append(args, fieldValue)
+			statement += "$" + strconv.Itoa(len(args))
+		}
+		statement = statement + ")"
+		_, err := tx.ExecContext(ctx, statement, args...)
 		if err != nil {
 			return nil, err
 		}
 
 	} else {
-		_, err := tx.ExecContext(ctx, `
-UPDATE individuals SET 
-full_name = $1,
-email = $2, 
-phone_number = $3, 
-normalized_phone_number = $4,
-address = $5,
-birth_date = $6,
-gender = $7,
-preferred_name = $8,
-is_minor = $9,
-presents_protection_concerns = $10,
-physical_impairment = $11,
-sensory_impairment = $12,
-mental_impairment = $13,
-displacement_status = $14
-WHERE id = $15
-`,
-			individual.FullName,
-			individual.Email,
-			individual.PhoneNumber,
-			individual.NormalizedPhoneNumber,
-			individual.Address,
-			individual.BirthDate,
-			individual.Gender,
-			individual.PreferredName,
-			individual.IsMinor,
-			individual.PresentsProtectionConcerns,
-			individual.PhysicalImpairment,
-			individual.SensoryImpairment,
-			individual.MentalImpairment,
-			individual.DisplacementStatus,
-			individual.ID,
-		)
+
+		var args []interface{}
+		statement := "UPDATE individuals SET "
+		for i, field := range fields {
+			if field == "id" {
+				continue
+			}
+			if i != 0 {
+				statement = statement + ","
+			}
+			fieldValue, err := individual.GetFieldValue(field)
+			if err != nil {
+				return nil, err
+			}
+			args = append(args, fieldValue)
+			statement = statement + field + "=$" + strconv.Itoa(len(args))
+		}
+		args = append(args, individual.ID)
+		statement = statement + " WHERE id = $" + strconv.Itoa(len(args))
+		_, err := tx.ExecContext(ctx, statement, args...)
 		if err != nil {
 			return nil, err
 		}
+
 	}
 
-	return individual, nil
+	return i.getByIdInternal(ctx, tx, individual.ID)
 }
 
 func (i individualRepo) Delete(ctx context.Context, id string) error {

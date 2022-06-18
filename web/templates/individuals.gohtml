@@ -25,18 +25,11 @@
                 </div>
                 <div class="card shadow mb-3">
                     <div class="card-header">
-                        Download
-                    </div>
-                    <div class="card-body">
-                        <a href="/download" target="_blank" class="btn btn-primary">Download</a>
-                    </div>
-                </div>
-                <div class="card shadow mb-3">
-                    <div class="card-header">
                         Actions
                     </div>
                     <div class="card-body">
                         <a href="/individuals/new" class="btn btn-primary">New Individual</a>
+                        <a href="/download" target="_blank" class="btn btn-primary">Download CSV</a>
                     </div>
                 </div>
                 <div class="card shadow mb-3">
@@ -46,71 +39,132 @@
                         </div>
                         <input type="hidden" name="take" value="">
                         <input type="hidden" name="skip" value="0">
-                        <div class="list-group list-group-flush">
-                            <div class="list-group-item">
-                                <div class="form-group">
-                                    <label class="form-label" for="Name">Name</label>
-                                    <input id="Name" name="name" type="text" class="form-control"
-                                           value="{{.Options.FullName}}">
-                                </div>
+                        <div class="card-body">
+
+                            <!-- Full Name -->
+                            <div class="form-group mb-3">
+                                <label class="form-label" for="Name">Name</label>
+                                <input id="Name"
+                                       name="name"
+                                       type="text"
+                                       placeholder="Search by name"
+                                       class="form-control"
+                                       value="{{.Options.FullName}}">
                             </div>
-                            <div class="list-group-item">
-                                <label class="form-label">Age</label>
-                                <div class="input-group">
-                                                <span class="input-group-text">
-                                                    From
-                                                </span>
-                                    <input id="AgeFrom" name="age_from" type="number"
-                                           class="form-control"
-                                           value="{{if not (eq .Options.AgeTo 0)}}{{.Options.AgeFrom}}{{end}}">
-                                    <span class="input-group-text">
-                                                    To
-                                                </span>
-                                    <input id="AgeTo" name="age_to" type="number"
-                                           class="form-control"
-                                           value="{{if not (eq .Options.AgeTo 0)}}{{.Options.AgeTo}}{{end}}">
-                                </div>
+                            <!-- End Full Name -->
+
+
+                            <!-- Age -->
+                            <label class="form-label">Age</label>
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="AgeFrom">From</label>
+                                <input id="AgeFrom" name="age_from" type="number"
+                                       class="form-control"
+                                       placeholder="From Age"
+                                       value="{{if not (eq .Options.AgeTo 0)}}{{.Options.AgeFrom}}{{end}}">
+                                <label class="input-group-text" for="AgeTo">To</label>
+                                <input id="AgeTo" name="age_to" type="number"
+                                       placeholder="To Age"
+                                       class="form-control"
+                                       value="{{if not (eq .Options.AgeTo 0)}}{{.Options.AgeTo}}{{end}}">
                             </div>
-                            <div class="list-group-item">
-                                <label class="form-text">Gender</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="male" id="MaleGender"
-                                           name="gender"
-                                           {{if contains .Options.Genders "male"}}checked="checked"{{end}}>
-                                    <label class="form-check-label" for="MaleGender">
-                                        Male
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="female" id="FemaleGender"
-                                           name="gender"
-                                           {{if contains .Options.Genders "female"}}checked="checked"{{end}}>
-                                    <label class="form-check-label" for="FemaleGender">
-                                        Female
-                                    </label>
-                                </div>
+                            <!-- End Age -->
+
+                            <!-- Is Minor -->
+                            <div class="form-group mb-3">
+                                <label class="form-label" for="IsMinor">Is Minor</label>
+                                <select id="IsMinor" name="is_minor" class="form-control">
+                                    <option value="">All</option>
+                                    <option value="true" {{if .Options.IsMinorSelected }}selected{{end}}>
+                                        Yes
+                                    </option>
+                                    <option value="false" {{if .Options.IsNotMinorSelected}}selected{{end}}>
+                                        No
+                                    </option>
+                                </select>
                             </div>
-                            <div class="list-group-item">
-                                <div class="form-group">
-                                    <label class="form-label" for="Email">Email</label>
-                                    <input id="Email" name="email" type="text" class="form-control"
-                                           value="{{.Options.Email}}">
-                                </div>
+                            <!-- End Is Minor -->
+
+
+                            <!-- Protection Concerns -->
+                            <div class="form-group mb-3">
+                                <label class="form-label" for="PresentsProtectionConcerns">Presents Protection Concerns</label>
+                                <select id="PresentsProtectionConcerns" name="presents_protection_concerns" class="form-control">
+                                    <option value="">All</option>
+                                    <option value="true" {{if .Options.IsPresentsProtectionConcernsSelected }}selected{{end}}>
+                                        Yes
+                                    </option>
+                                    <option value="false" {{if .Options.IsNotPresentsProtectionConcernsSelected}}selected{{end}}>
+                                        No
+                                    </option>
+                                </select>
                             </div>
-                            <div class="list-group-item">
-                                <div class="form-group">
-                                    <label class="form-label" for="PhoneNumber">Phone Number</label>
-                                    <input id="PhoneNumber" name="phone_number" type="text" class="form-control"
-                                           value="{{.Options.PhoneNumber}}">
-                                </div>
+                            <!-- End Protection Concerns -->
+
+
+                            <!-- Gender -->
+
+                            <label class="form-text">Gender</label>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="male" id="MaleGender"
+                                       name="gender"
+                                       {{if contains .Options.Genders "male"}}checked="checked"{{end}}>
+                                <label class="form-check-label" for="MaleGender">
+                                    Male
+                                </label>
                             </div>
-                            <div class="list-group-item">
-                                <div class="form-group">
-                                    <label class="form-label" for="Address">Address</label>
-                                    <input id="Address" name="address" type="text" class="form-control"
-                                           value="{{.Options.Address}}">
-                                </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" value="female" id="FemaleGender"
+                                       name="gender"
+                                       {{if contains .Options.Genders "female"}}checked="checked"{{end}}>
+                                <label class="form-check-label" for="FemaleGender">
+                                    Female
+                                </label>
                             </div>
+
+                            <!-- End Gender -->
+
+
+                            <!-- Email -->
+                            <div class="form-group mb-3">
+                                <label class="form-label" for="Email">Email</label>
+                                <input id="Email"
+                                       name="email"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder="Search by email"
+                                       value="{{.Options.Email}}">
+                            </div>
+                            <!-- End Email -->
+
+
+                            <!-- Phone -->
+                            <div class="form-group mb-3">
+                                <label class="form-label" for="PhoneNumber">Phone Number</label>
+                                <input id="PhoneNumber"
+                                       name="phone_number"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder="Search by phone number"
+                                       value="{{.Options.PhoneNumber}}">
+                            </div>
+                            <!-- End Phone -->
+
+
+                            <!-- Address -->
+                            <div class="form-group mb-3">
+                                <label class="form-label" for="Address">Address</label>
+                                <input id="Address"
+                                       name="address"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder="Search by address"
+                                       value="{{.Options.Address}}">
+                            </div>
+                            <!-- End Address -->
+
                         </div>
 
                         <div class="card-footer">
