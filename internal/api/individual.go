@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/lib/pq"
@@ -143,7 +144,7 @@ func (o GetAllOptions) IsNotPresentsProtectionConcernsSelected() bool {
 }
 
 func (o GetAllOptions) AgeFrom() int {
-	if o.BirthDateFrom == nil {
+	if o.BirthDateTo == nil {
 		return 0
 	}
 	now := time.Now()
@@ -151,7 +152,7 @@ func (o GetAllOptions) AgeFrom() int {
 }
 
 func (o GetAllOptions) AgeTo() int {
-	if o.BirthDateTo == nil {
+	if o.BirthDateFrom == nil {
 		return 0
 	}
 	now := time.Now()
@@ -219,6 +220,9 @@ func (o GetAllOptions) QueryParams() template.HTML {
 		params.Add("presents_protection_concerns", "true")
 	} else if o.IsNotPresentsProtectionConcernsSelected() {
 		params.Add("presents_protection_concerns", "false")
+	}
+	if len(o.Countries) != 0 {
+		params.Add("countries", strings.Join(o.Countries, ","))
 	}
 
 	u := url.URL{
