@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
@@ -25,6 +26,9 @@ func (o Options) New() (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
+	sqlDb.SetMaxIdleConns(5)
+	sqlDb.SetMaxOpenConns(10)
+	sqlDb.SetConnMaxLifetime(time.Minute * 5)
 
 	if err := db.Migrate(context.Background(), sqlDb); err != nil {
 		return nil, err
