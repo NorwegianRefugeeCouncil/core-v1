@@ -2,13 +2,13 @@ create table if not exists individuals
 (
     id                      VARCHAR(32)
         primary key,
-    full_name               VARCHAR(255),
-    phone_number            VARCHAR(255),
-    normalized_phone_number VARCHAR(255),
-    email                   VARCHAR(255),
-    address                 VARCHAR(255),
-    birth_date              DATE,
-    gender                  VARCHAR(255) default ''
+    full_name               VARCHAR(255) not null,
+    phone_number            VARCHAR(255) not null,
+    normalized_phone_number VARCHAR(255) not null,
+    email                   VARCHAR(255) not null,
+    address                 VARCHAR(255) not null,
+    birth_date              DATE null,
+    gender                  VARCHAR(255) not null
 );
 
 create index if not exists individuals_email_index
@@ -35,7 +35,8 @@ CREATE TRIGGER if not exists individuals_fts_insert
     ON individuals
 BEGIN
     INSERT INTO individuals_fts(rowid, full_name, phone_number, normalized_phone_number, email, address, birth_date)
-    VALUES (new.rowid, new.full_name, new.phone_number, new.normalized_phone_number, new.email, new.address, new.birth_date);
+    VALUES (new.rowid, new.full_name, new.phone_number, new.normalized_phone_number, new.email, new.address,
+            new.birth_date);
 END;
 
 

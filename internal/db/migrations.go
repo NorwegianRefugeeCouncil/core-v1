@@ -15,17 +15,21 @@ type migration struct {
 	name string
 	// up is the SQL to run for the up migration.
 	up func(ctx context.Context, tx *sqlx.Tx) error
-	// down is the SQL to run for the down migration.
-	down func(ctx context.Context, tx *sqlx.Tx) error
 }
 
 // migrations contains the list of migrations to run.
 var migrations = []migration{
-	migrationFromFile("initial"),
+	migrationFromFile("001_initial"),
+	migrationFromFile("002_global_intake"),
 }
 
 // Migrate runs the migrations on the database.
 func Migrate(ctx context.Context, db *sqlx.DB) error {
+
+	_, err := db.ExecContext(ctx, initScript)
+	if err != nil {
+		return err
+	}
 
 	var driver = ""
 	if db.DriverName() == "sqlite3" {
@@ -54,7 +58,18 @@ func Migrate(ctx context.Context, db *sqlx.DB) error {
 
 	_, err = doInTransaction(ctx, db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		for _, m := range migrations {
+			var num int
+			err = tx.GetContext(ctx, &num, "SELECT COUNT() FROM migrations WHERE name = $1", m.name)
+			if err != nil {
+				return nil, err
+			}
+			if num > 0 {
+				continue
+			}
 			if err := m.up(ctx, tx); err != nil {
+				return nil, err
+			}
+			if _, err := tx.ExecContext(ctx, "INSERT INTO migrations (name) VALUES ($1)", m.name); err != nil {
 				return nil, err
 			}
 		}
@@ -70,19 +85,25 @@ var migrationFs embed.FS
 var migrationMap = map[string]string{}
 
 // migrationFromFile creates a migration from the migrationFs
-// name correspond to the migration file name <name>.up.sql or <name>.down.sql
+// name correspond to the migration file name <name>.up.sql
 func migrationFromFile(name string) migration {
 	upName := name + ".up.sql"
-	downName := name + ".down.sql"
 	return migration{
 		name: name,
 		up: func(ctx context.Context, tx *sqlx.Tx) error {
+			if migrationMap[upName] == "" {
+				return fmt.Errorf("migration %s not found", upName)
+			}
 			_, err := tx.ExecContext(ctx, migrationMap[upName])
-			return err
-		},
-		down: func(ctx context.Context, tx *sqlx.Tx) error {
-			_, err := tx.ExecContext(ctx, migrationMap[downName])
 			return err
 		},
 	}
 }
+
+var initScript = `
+CREATE TABLE IF NOT EXISTS migrations
+(
+	name VARCHAR(255) NOT NULL,
+	PRIMARY KEY (name)
+)
+`

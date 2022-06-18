@@ -3,6 +3,7 @@ package handlers
 import (
 	"html/template"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -50,21 +51,11 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			return
 		}
 
-		individual.FullName = r.FormValue("FullName")
-		individual.Email = utils.NormalizeEmail(r.FormValue("Email"))
-		individual.PhoneNumber = r.FormValue("PhoneNumber")
-		individual.Address = r.FormValue("Address")
-		individual.Gender = r.FormValue("Gender")
-		individual.NormalizedPhoneNumber = utils.NormalizePhoneNumber(individual.PhoneNumber)
-		birthDateStr := r.FormValue("BirthDate")
-		if birthDateStr != "" {
-			birthDate, err := time.Parse("2006-01-02", birthDateStr)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			individual.BirthDate = &birthDate
+		if err := parseIndividualForm(r, individual); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
+
 		_, err = repo.Put(r.Context(), individual)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -74,4 +65,98 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 		http.Redirect(w, r, "/individuals/"+individual.ID, http.StatusSeeOther)
 
 	})
+}
+
+func normalizeIndividual(individual *api.Individual) {
+	individual.FullName = trimString(individual.FullName)
+	individual.PreferredName = trimString(individual.PreferredName)
+	individual.DisplacementStatus = trimString(individual.DisplacementStatus)
+	individual.Email = trimString(utils.NormalizeEmail(individual.Email))
+	individual.PhoneNumber = trimString(individual.PhoneNumber)
+	individual.Address = trimString(individual.Address)
+	individual.Gender = trimString(individual.Gender)
+	individual.NormalizedPhoneNumber = utils.NormalizePhoneNumber(individual.PhoneNumber)
+	individual.PhysicalImpairment = trimString(individual.PhysicalImpairment)
+	individual.MentalImpairment = trimString(individual.MentalImpairment)
+	individual.SensoryImpairment = trimString(individual.SensoryImpairment)
+}
+
+func parseIndividualForm(r *http.Request, individual *api.Individual) error {
+	var err error
+	individual.FullName = r.FormValue("FullName")
+	individual.PreferredName = r.FormValue("PreferredName")
+	individual.DisplacementStatus = r.FormValue("DisplacementStatus")
+	individual.Email = r.FormValue("Email")
+	individual.PhoneNumber = r.FormValue("PhoneNumber")
+	individual.Address = r.FormValue("Address")
+	individual.Gender = r.FormValue("Gender")
+	individual.BirthDate, err = parseBirthDate(r.FormValue("BirthDate"))
+	if err != nil {
+		return err
+	}
+	individual.IsMinor = r.FormValue("IsMinor") == "true"
+	individual.PresentsProtectionConcerns = r.FormValue("PresentsProtectionConcerns") == "true"
+	individual.PhysicalImpairment = r.FormValue("PhysicalImpairment")
+	individual.MentalImpairment = r.FormValue("MentalImpairment")
+	individual.SensoryImpairment = r.FormValue("SensoryImpairment")
+	normalizeIndividual(individual)
+	return nil
+}
+
+func parseIndividualCsvRow(colMapping map[string]int, cols []string) (*api.Individual, error) {
+	var err error
+	var individual = &api.Individual{}
+	for field, idx := range colMapping {
+		switch field {
+		case "id":
+			individual.ID = cols[idx]
+		case "full_name":
+			individual.FullName = cols[idx]
+		case "preferred_name":
+			individual.PreferredName = cols[idx]
+		case "displacement_status":
+			individual.DisplacementStatus = cols[idx]
+		case "phone_number":
+			individual.PhoneNumber = cols[idx]
+		case "email":
+			individual.Email = cols[idx]
+		case "address":
+			individual.Address = cols[idx]
+		case "gender":
+			individual.Gender = cols[idx]
+		case "birth_date":
+			individual.BirthDate, err = parseBirthDate(cols[idx])
+			if err != nil {
+				return nil, err
+			}
+		case "is_minor":
+			individual.IsMinor = cols[idx] == "true"
+		case "presents_protection_concerns":
+			individual.PresentsProtectionConcerns = cols[idx] == "true"
+		case "physical_impairment":
+			individual.PhysicalImpairment = cols[idx]
+		case "sensory_impairment":
+			individual.SensoryImpairment = cols[idx]
+		case "mental_impairment":
+			individual.MentalImpairment = cols[idx]
+		}
+
+	}
+	normalizeIndividual(individual)
+	return individual, nil
+}
+
+func parseBirthDate(s string) (*time.Time, error) {
+	if s != "" {
+		birthDate, err := time.Parse("2006-01-02", s)
+		if err != nil {
+			return nil, err
+		}
+		return &birthDate, nil
+	}
+	return nil, nil
+}
+
+func trimString(s string) string {
+	return strings.Trim(s, " \t\n\r")
 }

@@ -17,6 +17,14 @@ type Individual struct {
 	Address               string     `db:"address"`
 	BirthDate             *time.Time `db:"birth_date"`
 	Gender                string     `db:"gender"`
+
+	DisplacementStatus         string `db:"displacement_status"`
+	PreferredName              string `db:"preferred_name"`
+	IsMinor                    bool   `db:"is_minor"`
+	PresentsProtectionConcerns bool   `db:"presents_protection_concerns"`
+	PhysicalImpairment         string `db:"physical_impairment"`
+	SensoryImpairment          string `db:"sensory_impairment"`
+	MentalImpairment           string `db:"mental_impairment"`
 }
 
 func (i Individual) String() string {

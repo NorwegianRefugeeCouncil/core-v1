@@ -23,15 +23,18 @@ func Generate() error {
 	}
 
 	writer := csv.NewWriter(file)
-	writer.Write([]string{
+	if err := writer.Write([]string{
 		"id",
 		"full_name",
 		"email",
 		"address",
 		"phone_number",
 		"birth_date",
-	})
-	for i := 0; i < 5000000; i++ {
+		"gender",
+	}); err != nil {
+		return err
+	}
+	for i := 0; i < 5000; i++ {
 
 		var email string
 		if randBool(80) {
@@ -52,14 +55,24 @@ func Generate() error {
 			birthDate = start.Add(time.Duration(rand.Int63n(end.Unix()-start.Unix())) * time.Second).Format("2006-01-02")
 		}
 
-		writer.Write([]string{
+		var gender string
+		if randBool(45) {
+			gender = "male"
+		} else if randBool(45) {
+			gender = "female"
+		}
+
+		if err := writer.Write([]string{
 			xid.New().String(),
 			f.Name(),
 			email,
 			address,
 			phoneNumber,
 			birthDate,
-		})
+			gender,
+		}); err != nil {
+			return err
+		}
 
 	}
 

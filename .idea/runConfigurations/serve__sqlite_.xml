@@ -3,7 +3,7 @@
     <module name="core2" />
     <working_directory value="$PROJECT_DIR$" />
     <go_parameters value="--tags fts5" />
-    <parameters value="serve --listen-address=:8080" />
+    <parameters value="serve --listen-address=:8080 --db-driver=sqlite3 --db-dsn=./db.sqlite" />
     <kind value="PACKAGE" />
     <package value="github.com/nrc-no/notcore" />
     <directory value="$PROJECT_DIR$" />

@@ -191,8 +191,25 @@ func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual
 
 	if isNew {
 		_, err := tx.ExecContext(ctx, `
-INSERT INTO individuals (id, full_name, email, phone_number, normalized_phone_number, address, birth_date, gender) 
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`,
+INSERT INTO individuals 
+(
+	id, 
+	full_name, 
+	email, 
+	phone_number, 
+	normalized_phone_number,
+	address, 
+	birth_date,
+	gender,
+ 	preferred_name,
+ 	is_minor,
+ 	presents_protection_concerns,
+ 	physical_impairment,
+ 	sensory_impairment,
+ 	mental_impairment,
+ 	displacement_status
+) 
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);`,
 			individual.ID,
 			individual.FullName,
 			individual.Email,
@@ -201,6 +218,13 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`,
 			individual.Address,
 			individual.BirthDate,
 			individual.Gender,
+			individual.PreferredName,
+			individual.IsMinor,
+			individual.PresentsProtectionConcerns,
+			individual.PhysicalImpairment,
+			individual.SensoryImpairment,
+			individual.MentalImpairment,
+			individual.DisplacementStatus,
 		)
 		if err != nil {
 			return nil, err
@@ -215,8 +239,16 @@ phone_number = $3,
 normalized_phone_number = $4,
 address = $5,
 birth_date = $6,
-gender = $7
-WHERE id = $8`,
+gender = $7,
+preferred_name = $8,
+is_minor = $9,
+presents_protection_concerns = $10,
+physical_impairment = $11,
+sensory_impairment = $12,
+mental_impairment = $13,
+displacement_status = $14
+WHERE id = $15
+`,
 			individual.FullName,
 			individual.Email,
 			individual.PhoneNumber,
@@ -224,6 +256,13 @@ WHERE id = $8`,
 			individual.Address,
 			individual.BirthDate,
 			individual.Gender,
+			individual.PreferredName,
+			individual.IsMinor,
+			individual.PresentsProtectionConcerns,
+			individual.PhysicalImpairment,
+			individual.SensoryImpairment,
+			individual.MentalImpairment,
+			individual.DisplacementStatus,
 			individual.ID,
 		)
 		if err != nil {
