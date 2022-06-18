@@ -59,7 +59,7 @@ func Migrate(ctx context.Context, db *sqlx.DB) error {
 	_, err = doInTransaction(ctx, db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		for _, m := range migrations {
 			var num int
-			err = tx.GetContext(ctx, &num, "SELECT COUNT() FROM migrations WHERE name = $1", m.name)
+			err = tx.GetContext(ctx, &num, "SELECT 1 FROM migrations WHERE name = $1", m.name)
 			if err != nil {
 				return nil, err
 			}
