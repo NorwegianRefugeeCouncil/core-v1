@@ -1,4 +1,12 @@
 {{define "head"}}
+    <script type="application/javascript">
+        function goToIndividual() {
+            const id = document.getElementById("goToIndividualId").value;
+            if (id !== "") {
+                window.location.href = "{{.BaseURL}}/individuals/" + id;
+            }
+        }
+    </script>
 {{end}}
 {{define "body"}}
     {{template "nav" .}}
@@ -22,6 +30,17 @@
                             <button type="submit" class="btn btn-primary">Upload</button>
                         </div>
                     </form>
+                </div>
+                <div class="card shadow mb-3">
+                    <div class="card-header">
+                        Go To Individual
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group">
+                            <input id="goToIndividualId" type="text" class="form-control font-monospace" placeholder="Individual ID" aria-label="Individual's ID">
+                            <button  onclick="goToIndividual()" class="btn btn-outline-secondary" type="button">Go</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="card shadow mb-3">
                     <div class="card-header">
@@ -88,13 +107,17 @@
 
                             <!-- Protection Concerns -->
                             <div class="form-group mb-3">
-                                <label class="form-label" for="PresentsProtectionConcerns">Presents Protection Concerns</label>
-                                <select id="PresentsProtectionConcerns" name="presents_protection_concerns" class="form-control">
+                                <label class="form-label" for="PresentsProtectionConcerns">Presents Protection
+                                    Concerns</label>
+                                <select id="PresentsProtectionConcerns" name="presents_protection_concerns"
+                                        class="form-control">
                                     <option value="">All</option>
-                                    <option value="true" {{if .Options.IsPresentsProtectionConcernsSelected }}selected{{end}}>
+                                    <option value="true"
+                                            {{if .Options.IsPresentsProtectionConcernsSelected }}selected{{end}}>
                                         Yes
                                     </option>
-                                    <option value="false" {{if .Options.IsNotPresentsProtectionConcernsSelected}}selected{{end}}>
+                                    <option value="false"
+                                            {{if .Options.IsNotPresentsProtectionConcernsSelected}}selected{{end}}>
                                         No
                                     </option>
                                 </select>

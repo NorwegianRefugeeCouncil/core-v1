@@ -1,4 +1,10 @@
 {{define "head"}}
+    <script type="application/javascript">
+        function copyIndividualIDToClipboard(){
+            const copyText = document.getElementById("ID").value;
+            navigator.clipboard.writeText(copyText);
+        }
+    </script>
 {{end}}
 {{define "body"}}
     {{template "nav" .}}
@@ -20,10 +26,11 @@
 
                                 <!-- ID -->
                                 {{if .Individual.ID}}
-                                    <div class="form-floating mb-3">
+                                    <div class="form-floating input-group mb-3">
                                         <input id="ID" disabled="disabled" name="ID" class="form-control font-monospace"
                                                value="{{.Individual.ID}}" readonly="readonly">
                                         <label for="ID" class="form-label">ID</label>
+                                        <button onclick="copyIndividualIDToClipboard()" class="btn btn-outline-secondary" type="button" id="button-addon2"><i title="Copy" class="bi bi-clipboard"></i> Copy</button>
                                     </div>
                                 {{end}}
                                 <!-- End of ID -->
