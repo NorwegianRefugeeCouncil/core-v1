@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"embed"
 	"fmt"
 	"path"
@@ -60,11 +61,11 @@ func Migrate(ctx context.Context, db *sqlx.DB) error {
 		for _, m := range migrations {
 			var num int
 			err = tx.GetContext(ctx, &num, "SELECT 1 FROM migrations WHERE name = $1", m.name)
-			if err != nil {
-				return nil, err
-			}
-			if num > 0 {
+			if err == nil {
 				continue
+			}
+			if err != sql.ErrNoRows {
+				return nil, err
 			}
 			if err := m.up(ctx, tx); err != nil {
 				return nil, err
