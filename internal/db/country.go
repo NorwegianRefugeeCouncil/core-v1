@@ -24,7 +24,7 @@ func NewCountryRepo(db *sqlx.DB) CountryRepo {
 
 func (c countryRepo) GetAll(ctx context.Context) ([]*api.Country, error) {
 	var countries []*api.Country
-	err := c.db.SelectContext(ctx, &countries, "SELECT * FROM countries")
+	err := c.db.SelectContext(ctx, &countries, "SELECT * FROM countries ORDER BY name")
 	if err != nil {
 		return nil, err
 	}
