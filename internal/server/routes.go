@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -20,7 +21,7 @@ func buildRouter(
 	staticRouter.HandleFunc("/{file:.*}", web.ServeStatic)
 
 	webRouter := r.PathPrefix("/").Subrouter()
-	webRouter.Use(noCache)
+	webRouter.Use(noCache, logHeaders)
 	webRouter.Path("/").Handler(handlers.HandleIndex(tpl))
 	webRouter.Path("/individuals").Handler(handlers.ListHandler(tpl, individualRepo, countryRepo))
 	webRouter.Path("/individuals/upload").Handler(handlers.UploadHandler(individualRepo))
@@ -29,6 +30,16 @@ func buildRouter(
 	webRouter.Path("/countries").Handler(handlers.HandleCountries(tpl, countryRepo))
 	webRouter.Path("/countries/{country_id}").Handler(handlers.HandleCountry(tpl, countryRepo))
 	return r
+}
+
+func logHeaders(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s %s %s", r.Method, r.URL.Path, r.Proto)
+		for k, v := range r.Header {
+			log.Printf("%s: %s", k, v)
+		}
+		h.ServeHTTP(w, r)
+	})
 }
 
 func noCache(h http.Handler) http.Handler {
