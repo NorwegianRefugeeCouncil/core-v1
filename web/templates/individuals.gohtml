@@ -9,6 +9,7 @@
                 window.location.href = "{{.BaseURL}}/individuals/" + id;
             }
         }
+
         countrySelector = new CountrySelector(
             "Countries",
             "country-list",
@@ -28,50 +29,46 @@
 {{end}}
 {{define "body"}}
     {{template "nav" .}}
-    <div class="container pt-3">
+    <div class="container-fluid container-xxl pt-3">
         <div class="row">
-            <div class="col-12 mb-3 mt-3 col-md-4 mt-md-0 order-md-last">
-                <div class="card shadow mb-3">
-                    <form action="/individuals/upload" enctype="multipart/form-data" method="post">
-                        <div class="card-header">
-                            Upload
-                        </div>
-                        <div class="list-group list-group-flush">
-                            <div class="list-group-item">
-                                <div class="form-group">
-                                    <label class="form-label">Select file</label>
-                                    <input accept="text/csv" name="file" type="file" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <button type="submit" class="btn btn-primary">Upload</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="card shadow mb-3">
-                    <div class="card-header">
-                        Go To Individual
-                    </div>
-                    <div class="card-body">
-                        <div class="input-group">
-                            <input id="goToIndividualId" type="text" class="form-control font-monospace"
-                                   placeholder="Individual ID" aria-label="Individual's ID">
-                            <button onclick="goToIndividual()" class="btn btn-outline-secondary" type="button">Go
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="card shadow mb-3">
+            <div class="col-12 mt-3 mt-md-0 col-md-4 order-md-last">
+                <div class="card shadow mb-5 mb-md-3">
                     <div class="card-header">
                         Actions
                     </div>
-                    <div class="card-body">
-                        <a href="/individuals/new" class="btn btn-primary">New Individual</a>
-                        <a href="/individuals/download" target="_blank" class="btn btn-primary">Download CSV</a>
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item">
+                            <a href="/individuals/new" class="btn btn-primary w-100">Create new Individual</a>
+                        </div>
+                        <div class="list-group-item">
+                            <a href="/individuals/download" target="_blank" class="btn btn-primary w-100">
+                                Download CSV
+                            </a>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="form-text">
+                                Go to Individual
+                            </div>
+                            <div class="input-group mb-3">
+                                <input id="goToIndividualId" type="text" class="form-control font-monospace"
+                                       placeholder="Individual ID" aria-label="Individual's ID">
+                                <button onclick="goToIndividual()" class="btn btn-outline-secondary" type="button">Go
+                                </button>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <form action="/individuals/upload" enctype="multipart/form-data" method="post">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Upload Individuals CSV file</label>
+                                    <input accept="text/csv" name="file" type="file" class="form-control">
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Upload</button>
+
+                            </form>
+                        </div>
                     </div>
                 </div>
-                <div class="card shadow mb-3">
+                <div class="card shadow mb-5 mb-md-3">
                     <form method="get" action="/individuals">
                         <div class="card-header">
                             Search
@@ -242,52 +239,55 @@
             </div>
             <div class="col-12 col-md-8">
                 <div class="card shadow">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Age</th>
-                            <th>Gender</th>
-                            <th>Email</th>
-                            <th>Phone Number</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {{ if .Individuals }}
-                            {{range .Individuals}}
+                    <div class="overflow-scroll">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th style="min-width:12rem">Name</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                                <th>Email</th>
+                                <th style="min-width:12rem">Phone Number</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{ if .Individuals }}
+                                {{range .Individuals}}
+                                    <tr>
+                                        <td><a href="/individuals/{{.ID}}">{{.FullName}}</a></td>
+                                        <td>
+                                            {{if .BirthDate}}
+                                                <span title="{{.BirthDate.Format "2006-01-02"}}">{{age .BirthDate}}</span>
+                                            {{end}}
+                                        </td>
+                                        <td>
+                                            {{if eq .Gender "male"}}
+                                                <i class="bi bi-gender-male" title="Male"></i>
+                                            {{else if eq .Gender "female"}}
+                                                <i class="bi bi-gender-female" title="Female"></i>
+                                            {{end}}
+                                        </td>
+                                        <td>
+                                            {{if .Email}}
+                                                <a href="mailto:{{.Email}}">{{.Email}}</a>
+                                            {{end}}
+                                        </td>
+                                        <td>
+                                            {{if .PhoneNumber}}
+                                                <a class="font-monospace"
+                                                   href="tel:{{.PhoneNumber}}">{{.PhoneNumber}}</a>
+                                            {{end}}
+                                        </td>
+                                    </tr>
+                                {{end}}
+                            {{else}}
                                 <tr>
-                                    <td><a href="/individuals/{{.ID}}">{{.FullName}}</a></td>
-                                    <td>
-                                        {{if .BirthDate}}
-                                            <span title="{{.BirthDate.Format "2006-01-02"}}">{{age .BirthDate}}</span>
-                                        {{end}}
-                                    </td>
-                                    <td>
-                                        {{if eq .Gender "male"}}
-                                            <i class="bi bi-gender-male"></i>
-                                        {{else if eq .Gender "female"}}
-                                            <i class="bi bi-gender-female"></i>
-                                        {{end}}
-                                    </td>
-                                    <td>
-                                        {{if .Email}}
-                                            <a href="mailto:{{.Email}}">{{.Email}}</a>
-                                        {{end}}
-                                    </td>
-                                    <td>
-                                        {{if .PhoneNumber}}
-                                            <a class="font-monospace" href="tel:{{.PhoneNumber}}">{{.PhoneNumber}}</a>
-                                        {{end}}
-                                    </td>
+                                    <td>No individuals found</td>
                                 </tr>
                             {{end}}
-                        {{else}}
-                            <tr>
-                                <td>No individuals found</td>
-                            </tr>
-                        {{end}}
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                     <nav class="card-footer" aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item">
