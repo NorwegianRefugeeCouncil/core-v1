@@ -13,14 +13,29 @@ func buildRouter(
 	individualRepo db.IndividualRepo,
 	countryRepo db.CountryRepo,
 	tpl templates) *mux.Router {
+
 	r := mux.NewRouter()
-	r.PathPrefix("/static").Handler(http.FileServer(http.FS(web.Static)))
-	r.Path("/").Handler(handlers.HandleIndex(tpl))
-	r.Path("/individuals").Handler(handlers.ListHandler(tpl, individualRepo, countryRepo))
-	r.Path("/individuals/upload").Handler(handlers.UploadHandler(individualRepo))
-	r.Path("/individuals/download").Handler(handlers.HandleDownload(individualRepo))
-	r.Path("/individuals/{individual_id}").Handler(handlers.HandleIndividual(tpl, individualRepo, countryRepo))
-	r.Path("/countries").Handler(handlers.HandleCountries(tpl, countryRepo))
-	r.Path("/countries/{country_id}").Handler(handlers.HandleCountry(tpl, countryRepo))
+
+	staticRouter := r.PathPrefix("/static").Subrouter()
+	staticRouter.HandleFunc("/{file:.*}", web.ServeStatic)
+
+	webRouter := r.PathPrefix("/").Subrouter()
+	webRouter.Use(noCache)
+	webRouter.Path("/").Handler(handlers.HandleIndex(tpl))
+	webRouter.Path("/individuals").Handler(handlers.ListHandler(tpl, individualRepo, countryRepo))
+	webRouter.Path("/individuals/upload").Handler(handlers.UploadHandler(individualRepo))
+	webRouter.Path("/individuals/download").Handler(handlers.HandleDownload(individualRepo))
+	webRouter.Path("/individuals/{individual_id}").Handler(handlers.HandleIndividual(tpl, individualRepo, countryRepo))
+	webRouter.Path("/countries").Handler(handlers.HandleCountries(tpl, countryRepo))
+	webRouter.Path("/countries/{country_id}").Handler(handlers.HandleCountry(tpl, countryRepo))
 	return r
+}
+
+func noCache(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "s-maxage=0 no-cache, no-store, must-revalidate")
+		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("Expires", "0")
+		h.ServeHTTP(w, r)
+	})
 }
