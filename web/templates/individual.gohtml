@@ -94,9 +94,16 @@
 
                                     <!-- Full Name -->
                                     <div class="form-floating mb-3">
-                                        <input id="FullName" name="FullName" class="form-control"
+                                        <input id="FullName"
+                                               name="FullName"
+                                               class="form-control {{if .Error "FullName"}}is-invalid{{end}}"
                                                value="{{.Individual.FullName}}">
                                         <label for="FullName" class="form-label">Full Name</label>
+                                        {{ if .Error "FullName"}}
+                                            <div class="invalid-feedback">
+                                                {{.Error "FullName"}}
+                                            </div>
+                                        {{end}}
                                     </div>
                                     <!-- End of Full Name -->
 
@@ -199,10 +206,18 @@
                                 </div>
                                 <div class="card-footer">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="country-input"
+                                        <input type="text"
+                                               class="form-control {{ if .Error "Countries"}}is-invalid{{end}}"
+                                               id="country-input"
                                                placeholder="Start typing..."
                                                autocomplete="off"/>
+                                        {{ if .Error "Countries"}}
+                                            <div class="invalid-feedback">
+                                                {{.Error "Countries"}}
+                                            </div>
+                                        {{end}}
                                     </div>
+
                                 </div>
                             </div>
                             <!-- End of Countries -->

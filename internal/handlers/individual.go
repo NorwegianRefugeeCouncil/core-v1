@@ -20,18 +20,18 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 		var err error
 		var individual = &api.Individual{}
 		var countries []*api.Country
+		var validationErrors ValidationErrors
 		ctx := r.Context()
 
 		render := func() {
 			if individual == nil {
 				individual = &api.Individual{}
 			}
-			if err := templates["individual.gohtml"].ExecuteTemplate(w, "base", map[string]interface{}{
+			renderView(templates, "individual.gohtml", w, map[string]interface{}{
 				"Individual": individual,
 				"Countries":  countries,
-			}); err != nil {
-				println(err.Error())
-			}
+				"Errors":     validationErrors,
+			})
 			return
 		}
 
@@ -47,13 +47,9 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			return nil
 		})
 		errGroup.Go(func() error {
-			// only need to fetch countries on GET
-			if r.Method == "GET" {
-				var err error
-				countries, err = countryRepo.GetAll(gCtx)
-				return err
-			}
-			return nil
+			var err error
+			countries, err = countryRepo.GetAll(gCtx)
+			return err
 		})
 		if err := errGroup.Wait(); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -75,6 +71,12 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			return
 		}
 
+		validationErrors = validateIndividual(individual)
+		if len(validationErrors) > 0 {
+			render()
+			return
+		}
+
 		_, err = repo.Put(ctx, individual, api.AllndividualFields)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -86,9 +88,25 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 	})
 }
 
+type ValidationErrors map[string]string
+
+func validateIndividual(individual *api.Individual) ValidationErrors {
+	ret := ValidationErrors{}
+	if individual.FullName == "" {
+		ret["FullName"] = "Full name is required"
+	}
+	if len(individual.Countries) == 0 {
+		ret["Countries"] = "At least one country is required"
+	}
+	return ret
+}
+
 func normalizeIndividual(individual *api.Individual) {
 	individual.FullName = trimString(individual.FullName)
 	individual.PreferredName = trimString(individual.PreferredName)
+	if individual.PreferredName == "" {
+		individual.PreferredName = individual.FullName
+	}
 	individual.DisplacementStatus = trimString(individual.DisplacementStatus)
 	individual.Email = trimString(utils.NormalizeEmail(individual.Email))
 	individual.PhoneNumber = trimString(individual.PhoneNumber)
@@ -122,7 +140,14 @@ func parseIndividualForm(r *http.Request, individual *api.Individual) error {
 	individual.PhysicalImpairment = r.FormValue("PhysicalImpairment")
 	individual.MentalImpairment = r.FormValue("MentalImpairment")
 	individual.SensoryImpairment = r.FormValue("SensoryImpairment")
-	individual.Countries = strings.Split(r.FormValue("Countries"), ",")
+	individual.Countries = make([]string, 0)
+	countries := strings.Split(r.FormValue("Countries"), ",")
+	for _, c := range countries {
+		c = trimString(c)
+		if c != "" {
+			individual.Countries = append(individual.Countries, c)
+		}
+	}
 	normalizeIndividual(individual)
 	return nil
 }
