@@ -3,10 +3,6 @@
         .card-body {
             background-color: var(--bs-card-cap-bg);
         }
-
-        .card-header {
-            border-bottom: none;
-        }
     </style>
     <script type="application/javascript" src="/static/autocomplete.js"></script>
     <script type="application/javascript" src="/static/rxjs.js"></script>
@@ -54,7 +50,7 @@
 {{end}}
 {{define "body"}}
 
-    <div class="vh-100 d-flex flex-column">
+    <div class="vh-100 d-flex flex-column bg-secondary">
         <div style="height: 3.5rem; z-index: 10">
             {{template "nav" .}}
         </div>
