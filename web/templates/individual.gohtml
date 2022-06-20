@@ -64,11 +64,11 @@
 {{end}}
 {{define "body"}}
 
-    <div class="vh-100 vw-100 d-flex flex-column bg-secondary" style="overflow: hidden">
-        <div style="height: 3.5rem; z-index: 10">
-            {{template "nav" .}}
-        </div>
-        <div class="flex-grow-1 py-3" style="overflow-y: scroll">
+    <header class="sticky-top">
+        {{template "nav" .}}
+    </header>
+    <main style="height: calc( 100vh - 3.5rem ); overflow: hidden; overflow-y: scroll">
+        <div class="mt-4">
             <form id="form" method="post"
                   action="/individuals/{{if eq "" .Individual.ID}}new{{else}}{{.Individual.ID}}{{end}}">
 
@@ -106,7 +106,8 @@
                                                     </button>
                                                 </div>
                                             </div>
-                                            <div class="ms-3 bg-white" id="qrcode" style="width:128px; height: 128px"></div>
+                                            <div class="ms-3 bg-white" id="qrcode"
+                                                 style="width:128px; height: 128px"></div>
                                         </div>
 
 
@@ -423,5 +424,5 @@
                 </div>
             </form>
         </div>
-    </div>
+    </main>
 {{end}}
