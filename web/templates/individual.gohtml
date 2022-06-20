@@ -23,299 +23,353 @@
                 {{end}}
             ],
         );
+        document.addEventListener("DOMContentLoaded", function () {
+            const navbarToggler = document.getElementById("navbar-toggler")
+            const saveButton = document.createElement("button");
+            saveButton.className = "btn btn-primary shadow px-5"
+            saveButton.innerHTML = "Save"
+
+            const navItem = document.createElement("div");
+            navItem.className = "nav-item order-lg-last"
+            navItem.appendChild(saveButton)
+
+            navbarToggler.parentElement.insertBefore(navItem, navbarToggler.previousSibling)
+
+            const formElement = document.getElementById("form")
+            saveButton.onclick = function () {
+                formElement.submit()
+            }
+
+        });
     </script>
 {{end}}
 {{define "body"}}
-    {{template "nav" .}}
-    <form method="post" action="/individuals/{{if eq "" .Individual.ID}}new{{else}}{{.Individual.ID}}{{end}}">
-        <div class="container-fluid container-xxl mt-3">
-            <div class="row">
-                <div class="col">
-                    <div class="card shadow">
-                        <div class="card-header">
-                            {{if .Individual.ID}}
-                                {{.Individual.FullName}}
-                            {{else}}
-                                New Individual
-                            {{end}}
-                        </div>
-                        <div class="list-group list-group-flush pt-2">
-                            <div class="list-group-item">
+
+    <div class="vh-100 d-flex flex-column">
+        <div style="height: 3.5rem; z-index: 10">
+            {{template "nav" .}}
+        </div>
+        <div class="flex-grow-1 py-3" style="overflow-y: scroll">
+            <form id="form" method="post"
+                  action="/individuals/{{if eq "" .Individual.ID}}new{{else}}{{.Individual.ID}}{{end}}">
+
+                <div class="container-fluid container-xxl">
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-md-10 col-lg-8 col-xl-6">
 
 
-                                <!-- ID -->
-                                {{if .Individual.ID}}
-                                    <div class="form-floating input-group mb-3">
-                                        <input id="ID" disabled="disabled" name="ID" class="form-control font-monospace"
-                                               value="{{.Individual.ID}}" readonly="readonly">
-                                        <label for="ID" class="form-label">ID</label>
-                                        <button onclick="copyIndividualIDToClipboard()"
-                                                class="btn btn-outline-secondary" type="button" id="button-addon2"><i
-                                                    title="Copy" class="bi bi-clipboard"></i> Copy
-                                        </button>
+                            <div class="card shadow-sm mb-3">
+                                <div class="card-header">
+                                    {{if .Individual.ID}}
+                                        {{.Individual.FullName}}
+                                    {{else}}
+                                        New Individual
+                                    {{end}}
+                                </div>
+                                <div class="card-body">
+
+
+                                    <!-- ID -->
+                                    {{if .Individual.ID}}
+                                        <div class="form-floating input-group mb-3">
+                                            <input id="ID" disabled="disabled" name="ID"
+                                                   class="form-control font-monospace"
+                                                   value="{{.Individual.ID}}" readonly="readonly">
+                                            <label for="ID" class="form-label">ID</label>
+                                            <button onclick="copyIndividualIDToClipboard()"
+                                                    class="btn btn-outline-secondary" type="button"
+                                                    id="button-addon2"><i
+                                                        title="Copy" class="bi bi-clipboard"></i> Copy
+                                            </button>
+                                        </div>
+                                    {{end}}
+                                    <!-- End of ID -->
+
+
+                                    <!-- Full Name -->
+                                    <div class="form-floating mb-3">
+                                        <input id="FullName" name="FullName" class="form-control"
+                                               value="{{.Individual.FullName}}">
+                                        <label for="FullName" class="form-label">Full Name</label>
                                     </div>
-                                {{end}}
-                                <!-- End of ID -->
+                                    <!-- End of Full Name -->
 
 
-                                <!-- Full Name -->
-                                <div class="form-floating mb-3">
-                                    <input id="FullName" name="FullName" class="form-control"
-                                           value="{{.Individual.FullName}}">
-                                    <label for="FullName" class="form-label">Full Name</label>
-                                </div>
-                                <!-- End of Full Name -->
-
-
-                                <!-- Preferred Name -->
-                                <div class="form-floating mb-3">
-                                    <input id="PreferredName" name="PreferredName" class="form-control"
-                                           value="{{.Individual.PreferredName}}">
-                                    <label for="PreferredName" class="form-label">Preferred Name</label>
-                                </div>
-                                <!-- End of Preferred Name -->
-
-
-                                <!-- Gender -->
-                                <div class="form-floating mb-3">
-                                    <select class="form-select" id="Gender" name="Gender">
-                                        <option value=""
-                                                {{if eq "" .Individual.Gender}}selected="selected"{{end}}></option>
-                                        <option value="male"
-                                                {{if eq "male" .Individual.Gender}}selected="selected"{{end}}>Male
-                                        </option>
-                                        <option value="female"
-                                                {{if eq "female" .Individual.Gender}}selected="selected"{{end}}>Female
-                                        </option>
-                                    </select>
-                                    <label for="Gender" class="form-label">Gender</label>
-                                </div>
-                                <!-- End of Gender -->
-
-
-                                <!-- Birth Date -->
-                                <div class="form-floating mb-3">
-                                    <input type="date" id="BirthDate" name="BirthDate" class="form-control"
-                                           value="{{if .Individual.BirthDate}}{{.Individual.BirthDate.Format "2006-01-02"}}{{end}}"/>
-                                    <label for="BirthDate" class="form-label">Birth Date</label>
-                                </div>
-                                <!-- End of Birth Date -->
-
-
-                                <!-- Is Minor -->
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" value="true" name="IsMinor"
-                                           id="IsMinor"
-                                           {{if .Individual.IsMinor}}checked="checked"{{end}}>
-                                    <label class="form-check-label" for="IsMinor">
-                                        Is the beneficiary a minor?
-                                    </label>
-                                </div>
-                                <!-- End of Is Minor -->
-
-
-                                <!-- Displacement Status -->
-                                <div class="form-floating mb-3">
-                                    <select
-                                            id="DisplacementStatus"
-                                            name="DisplacementStatus"
-                                            class="form-select"
-                                            aria-label="Displacement Status"
-                                            aria-describedby="PhysicalImpairmentHelp"
-                                    >
-                                        <option {{if eq .Individual.DisplacementStatus ""}}selected="selected"{{end}}></option>
-                                        <option value="refugee"
-                                                {{if eq .Individual.DisplacementStatus "refugee"}}selected="selected"{{end}}>
-                                            Refugee
-                                        </option>
-                                        <option value="idp"
-                                                {{if eq .Individual.DisplacementStatus "idp"}}selected="selected"{{end}}>
-                                            Internally Displaced Person (IDP)
-                                        </option>
-                                        <option value="host_community"
-                                                {{if eq .Individual.DisplacementStatus "host_community"}}selected="selected"{{end}}>
-                                            Host Community
-                                        </option>
-                                    </select>
-                                    <label for="DisplacementStatus" class="form-label">Displacement Status</label>
-                                </div>
-                                <!-- End of Displacement Status -->
-
-
-                                <!-- Countries -->
-
-                                <div class="card my-3">
-                                    <div class="card-header">
-                                        Countries
+                                    <!-- Preferred Name -->
+                                    <div class="form-floating mb-3">
+                                        <input id="PreferredName" name="PreferredName" class="form-control"
+                                               value="{{.Individual.PreferredName}}">
+                                        <label for="PreferredName" class="form-label">Preferred Name</label>
                                     </div>
+                                    <!-- End of Preferred Name -->
 
+
+                                    <!-- Gender -->
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="Gender" name="Gender">
+                                            <option value=""
+                                                    {{if eq "" .Individual.Gender}}selected="selected"{{end}}></option>
+                                            <option value="male"
+                                                    {{if eq "male" .Individual.Gender}}selected="selected"{{end}}>
+                                                Male
+                                            </option>
+                                            <option value="female"
+                                                    {{if eq "female" .Individual.Gender}}selected="selected"{{end}}>
+                                                Female
+                                            </option>
+                                        </select>
+                                        <label for="Gender" class="form-label">Gender</label>
+                                    </div>
+                                    <!-- End of Gender -->
+
+
+                                    <!-- Birth Date -->
+                                    <div class="form-floating mb-3">
+                                        <input type="date" id="BirthDate" name="BirthDate" class="form-control"
+                                               value="{{if .Individual.BirthDate}}{{.Individual.BirthDate.Format "2006-01-02"}}{{end}}"/>
+                                        <label for="BirthDate" class="form-label">Birth Date</label>
+                                    </div>
+                                    <!-- End of Birth Date -->
+
+
+                                    <!-- Is Minor -->
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" value="true" name="IsMinor"
+                                               id="IsMinor"
+                                               {{if .Individual.IsMinor}}checked="checked"{{end}}>
+                                        <label class="form-check-label" for="IsMinor">
+                                            Is the beneficiary a minor?
+                                        </label>
+                                    </div>
+                                    <!-- End of Is Minor -->
+
+
+                                    <!-- Displacement Status -->
+                                    <div class="form-floating mb-3">
+                                        <select
+                                                id="DisplacementStatus"
+                                                name="DisplacementStatus"
+                                                class="form-select"
+                                                aria-label="Displacement Status"
+                                                aria-describedby="PhysicalImpairmentHelp"
+                                        >
+                                            <option {{if eq .Individual.DisplacementStatus ""}}selected="selected"{{end}}></option>
+                                            <option value="refugee"
+                                                    {{if eq .Individual.DisplacementStatus "refugee"}}selected="selected"{{end}}>
+                                                Refugee
+                                            </option>
+                                            <option value="idp"
+                                                    {{if eq .Individual.DisplacementStatus "idp"}}selected="selected"{{end}}>
+                                                Internally Displaced Person (IDP)
+                                            </option>
+                                            <option value="host_community"
+                                                    {{if eq .Individual.DisplacementStatus "host_community"}}selected="selected"{{end}}>
+                                                Host Community
+                                            </option>
+                                        </select>
+                                        <label for="DisplacementStatus" class="form-label">Displacement
+                                            Status</label>
+                                    </div>
+                                    <!-- End of Displacement Status -->
+
+                                </div>
+                            </div>
+
+
+                            <!-- Countries -->
+                            <div class="card mb-3 shadow-sm">
+                                <div class="card-header">
+                                    Countries
                                     <input type="hidden" id="Countries" name="Countries"
                                            value="{{ joinStrings .Individual.Countries ","}}"/>
-                                    <div class="list-group-flush" id="country-list">
-
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="country-input"
-                                                   placeholder="Start typing..."
-                                                   autocomplete="off"/>
-                                        </div>
-                                    </div>
-
                                 </div>
 
-                                <!-- End of Countries -->
+                                <div class="list-group list-group-flush" id="country-list">
 
-
+                                </div>
+                                <div class="card-footer">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="country-input"
+                                               placeholder="Start typing..."
+                                               autocomplete="off"/>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="list-group-item">
-                                <h5>Contact Info</h5>
+                            <!-- End of Countries -->
 
-                                <!-- Phone Number -->
-                                <div class="form-floating mb-3">
-                                    <input id="PhoneNumber" name="PhoneNumber" class="form-control font-monospace"
-                                           value="{{.Individual.PhoneNumber}}">
-                                    <label for="PhoneNumber" class="form-label">Phone Number</label>
+
+                            <!-- Contact Information -->
+                            <div class="card shadow-sm mb-3">
+                                <div class="card-header">
+                                    Contact Information
                                 </div>
-                                <!-- End of Phone Number -->
+                                <div class="card-body">
+
+                                    <!-- Phone Number -->
+                                    <div class="form-floating mb-3">
+                                        <input id="PhoneNumber" name="PhoneNumber"
+                                               class="form-control font-monospace"
+                                               value="{{.Individual.PhoneNumber}}">
+                                        <label for="PhoneNumber" class="form-label">Phone Number</label>
+                                    </div>
+                                    <!-- End of Phone Number -->
 
 
-                                <!-- Email -->
-                                <div class="form-floating mb-3">
-                                    <input id="Email" name="Email" class="form-control font-monospace" value="{{.Individual.Email}}">
-                                    <label for="Email" class="form-label">Email</label>
-                                </div>
-                                <!-- End of Email -->
+                                    <!-- Email -->
+                                    <div class="form-floating mb-3">
+                                        <input id="Email" name="Email" class="form-control font-monospace"
+                                               value="{{.Individual.Email}}">
+                                        <label for="Email" class="form-label">Email</label>
+                                    </div>
+                                    <!-- End of Email -->
 
 
-                                <!-- Address -->
-                                <div class="form-floating mb-3">
+                                    <!-- Address -->
+                                    <div class="form-floating mb-3">
                                     <textarea style="height:auto" rows="4" id="Address" name="Address"
                                               class="form-control">{{.Individual.Address}}</textarea>
-                                    <label for="Address" class="form-label">Address</label>
-                                </div>
-                                <!-- End of Address -->
-
-                            </div>
-                            <div class="list-group-item">
-                                <h5>Protection Concerns</h5>
-
-
-                                <!-- Presents Protection Concerns -->
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="true"
-                                           name="PresentsProtectionConcerns"
-                                           {{if .Individual.PresentsProtectionConcerns}}checked="checked"{{end}}
-                                           id="PresentsProtectionConcerns">
-                                    <label class="form-check-label" for="PresentsProtectionConcerns">
-                                        Beneficiary presents protection concerns
-                                    </label>
-                                </div>
-                                <!-- End of Presents Protection Concerns -->
-
-
-                            </div>
-                            <div class="list-group-item">
-                                <h5>Disability</h5>
-
-                                <!-- Physical Impairment -->
-                                <div class="form-floating mb-3">
-                                    <select
-                                            id="PhysicalImpairment"
-                                            name="PhysicalImpairment"
-                                            class="form-select"
-                                            aria-label="Physical Impairment"
-                                            aria-describedby="PhysicalImpairmentHelp"
-                                    >
-                                        <option value=""
-                                                {{if eq .Individual.PhysicalImpairment ""}}selected="selected"{{end}}>
-                                            No physical impairment
-                                        </option>
-                                        <option value="moderate"
-                                                {{if eq .Individual.PhysicalImpairment "moderate"}}selected="selected"{{end}}>
-                                            Moderate physical impairment
-                                        </option>
-                                        <option value="severe"
-                                                {{if eq .Individual.PhysicalImpairment "severe"}}selected="selected"{{end}}>
-                                            Severe physical impairment
-                                        </option>
-                                    </select>
-                                    <label for="PhysicalImpairment" class="form-label">Physical Impairment</label>
-                                    <div class="form-text" id="PhysicalImpairmentHelp">
-                                        Would you say the beneficiary experiences some form of physical challenges?
+                                        <label for="Address" class="form-label">Address</label>
                                     </div>
+                                    <!-- End of Address -->
+
                                 </div>
-                                <!-- End of Physical Impairment -->
-
-
-                                <!-- Sensory Impairment -->
-                                <div class="form-floating mb-3">
-                                    <select
-                                            id="SensoryImpairment"
-                                            name="SensoryImpairment"
-                                            class="form-select"
-                                            aria-label="Sensory Impairment"
-                                            aria-describedby="SensoryImpairmentHelp"
-                                    >
-                                        <option value=""
-                                                {{if eq .Individual.SensoryImpairment ""}}selected="selected"{{end}}>
-                                            No sensory impairment
-                                        </option>
-                                        <option value="moderate"
-                                                {{if eq .Individual.SensoryImpairment "moderate"}}selected="selected"{{end}}>
-                                            Moderate sensory impairment
-                                        </option>
-                                        <option value="severe"
-                                                {{if eq .Individual.SensoryImpairment "severe"}}selected="selected"{{end}}>
-                                            Severe sensory impairment
-                                        </option>
-                                    </select>
-                                    <label for="SensoryImpairment" class="form-label">Sensory Impairment</label>
-                                    <div class="form-text" id="SensoryImpairmentHelp">
-                                        Would you say the beneficiary experiences some form of sensory challenges?
-                                    </div>
-                                </div>
-                                <!-- End of Sensory Impairment -->
-
-
-                                <!-- Mental Impairment -->
-                                <div class="form-floating mb-3">
-                                    <select
-                                            id="MentalImpairment"
-                                            name="MentalImpairment"
-                                            class="form-select"
-                                            aria-label="Mental Impairment"
-                                            aria-describedby="MentalImpairmentHelp"
-                                    >
-                                        <option value=""
-                                                {{if eq .Individual.MentalImpairment ""}}selected="selected"{{end}}>
-                                            No mental impairment
-                                        </option>
-                                        <option value="moderate"
-                                                {{if eq .Individual.MentalImpairment "moderate"}}selected="selected"{{end}}>
-                                            Moderate mental impairment
-                                        </option>
-                                        <option value="severe"
-                                                {{if eq .Individual.MentalImpairment "severe"}}selected="selected"{{end}}>
-                                            Severe mental impairment
-                                        </option>
-                                    </select>
-                                    <label for="MentalImpairment" class="form-label">Mental Impairment</label>
-                                    <div class="form-text" id="MentalImpairmentHelp">
-                                        Would you say the beneficiary experiences some form of mental challenges?
-                                    </div>
-                                </div>
-                                <!-- End of Mental Impairment -->
-
-
                             </div>
-                        </div>
-                        <div class="card-footer">
-                            <button class="btn btn-primary" type="submit">Save</button>
+                            <!-- End of Contact Information -->
+
+
+                            <!-- Protection Concerns -->
+                            <div class="card shadow-sm mb-3">
+                                <div class="card-header">
+                                    Protection Concerns
+                                </div>
+                                <div class="card-body">
+
+                                    <!-- Presents Protection Concerns -->
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="true"
+                                               name="PresentsProtectionConcerns"
+                                               {{if .Individual.PresentsProtectionConcerns}}checked="checked"{{end}}
+                                               id="PresentsProtectionConcerns">
+                                        <label class="form-check-label" for="PresentsProtectionConcerns">
+                                            Beneficiary presents protection concerns
+                                        </label>
+                                    </div>
+                                    <!-- End of Presents Protection Concerns -->
+
+                                </div>
+                            </div>
+                            <!-- End of Protection Concerns -->
+
+
+                            <!-- Disability -->
+                            <div class="card shadow-sm mb-3">
+                                <div class="card-header">
+                                    Disability
+                                </div>
+
+                                <div class="card-body">
+
+                                    <!-- Physical Impairment -->
+                                    <div class="form-floating mb-3">
+                                        <select
+                                                id="PhysicalImpairment"
+                                                name="PhysicalImpairment"
+                                                class="form-select"
+                                                aria-label="Physical Impairment"
+                                                aria-describedby="PhysicalImpairmentHelp"
+                                        >
+                                            <option value=""
+                                                    {{if eq .Individual.PhysicalImpairment ""}}selected="selected"{{end}}>
+                                                No physical impairment
+                                            </option>
+                                            <option value="moderate"
+                                                    {{if eq .Individual.PhysicalImpairment "moderate"}}selected="selected"{{end}}>
+                                                Moderate physical impairment
+                                            </option>
+                                            <option value="severe"
+                                                    {{if eq .Individual.PhysicalImpairment "severe"}}selected="selected"{{end}}>
+                                                Severe physical impairment
+                                            </option>
+                                        </select>
+                                        <label for="PhysicalImpairment" class="form-label">Physical
+                                            Impairment</label>
+                                        <div class="form-text" id="PhysicalImpairmentHelp">
+                                            Would you say the beneficiary experiences some form of physical
+                                            challenges?
+                                        </div>
+                                    </div>
+                                    <!-- End of Physical Impairment -->
+
+
+                                    <!-- Sensory Impairment -->
+                                    <div class="form-floating mb-3">
+                                        <select
+                                                id="SensoryImpairment"
+                                                name="SensoryImpairment"
+                                                class="form-select"
+                                                aria-label="Sensory Impairment"
+                                                aria-describedby="SensoryImpairmentHelp"
+                                        >
+                                            <option value=""
+                                                    {{if eq .Individual.SensoryImpairment ""}}selected="selected"{{end}}>
+                                                No sensory impairment
+                                            </option>
+                                            <option value="moderate"
+                                                    {{if eq .Individual.SensoryImpairment "moderate"}}selected="selected"{{end}}>
+                                                Moderate sensory impairment
+                                            </option>
+                                            <option value="severe"
+                                                    {{if eq .Individual.SensoryImpairment "severe"}}selected="selected"{{end}}>
+                                                Severe sensory impairment
+                                            </option>
+                                        </select>
+                                        <label for="SensoryImpairment" class="form-label">Sensory Impairment</label>
+                                        <div class="form-text" id="SensoryImpairmentHelp">
+                                            Would you say the beneficiary experiences some form of sensory
+                                            challenges?
+                                        </div>
+                                    </div>
+                                    <!-- End of Sensory Impairment -->
+
+
+                                    <!-- Mental Impairment -->
+                                    <div class="form-floating mb-3">
+                                        <select
+                                                id="MentalImpairment"
+                                                name="MentalImpairment"
+                                                class="form-select"
+                                                aria-label="Mental Impairment"
+                                                aria-describedby="MentalImpairmentHelp"
+                                        >
+                                            <option value=""
+                                                    {{if eq .Individual.MentalImpairment ""}}selected="selected"{{end}}>
+                                                No mental impairment
+                                            </option>
+                                            <option value="moderate"
+                                                    {{if eq .Individual.MentalImpairment "moderate"}}selected="selected"{{end}}>
+                                                Moderate mental impairment
+                                            </option>
+                                            <option value="severe"
+                                                    {{if eq .Individual.MentalImpairment "severe"}}selected="selected"{{end}}>
+                                                Severe mental impairment
+                                            </option>
+                                        </select>
+                                        <label for="MentalImpairment" class="form-label">Mental Impairment</label>
+                                        <div class="form-text" id="MentalImpairmentHelp">
+                                            Would you say the beneficiary experiences some form of mental
+                                            challenges?
+                                        </div>
+                                    </div>
+                                    <!-- End of Mental Impairment -->
+
+                                </div>
+                            </div>
+                            <!-- End of Disability -->
+
                         </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
-    </form>
+    </div>
 {{end}}

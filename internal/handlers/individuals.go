@@ -41,15 +41,15 @@ func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo
 			return
 		}
 
-		errGroup, ctx := errgroup.WithContext(r.Context())
+		errGroup, gCtx := errgroup.WithContext(r.Context())
 		errGroup.Go(func() error {
 			var err error
-			countries, err = countryRepo.GetAll(r.Context())
+			countries, err = countryRepo.GetAll(gCtx)
 			return err
 		})
 		errGroup.Go(func() error {
 			var err error
-			individuals, err = repo.GetAll(ctx, getAllOptions)
+			individuals, err = repo.GetAll(gCtx, getAllOptions)
 			return err
 		})
 		if err := errGroup.Wait(); err != nil {

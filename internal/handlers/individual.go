@@ -37,11 +37,11 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 
 		individualId := mux.Vars(r)["individual_id"]
 
-		errGroup, ctx := errgroup.WithContext(ctx)
+		errGroup, gCtx := errgroup.WithContext(ctx)
 		errGroup.Go(func() error {
 			var err error
 			if individualId != "new" {
-				individual, err = repo.GetByID(ctx, individualId)
+				individual, err = repo.GetByID(gCtx, individualId)
 				return err
 			}
 			return nil
@@ -50,7 +50,7 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			// only need to fetch countries on GET
 			if r.Method == "GET" {
 				var err error
-				countries, err = countryRepo.GetAll(ctx)
+				countries, err = countryRepo.GetAll(gCtx)
 				return err
 			}
 			return nil

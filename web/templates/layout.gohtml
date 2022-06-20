@@ -20,15 +20,21 @@
 {{end}}
 
 {{define "nav"}}
-    <nav class="navbar navbar-expand-lg bg-light shadow">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">Home</a>
+    <nav class="navbar navbar-expand-lg bg-light shadow" style="z-index: 1">
+        <div class="container-fluid" id="navbar-container">
+            <a class="navbar-brand" href="/">
+                <div class="d-flex flex-row align-items-center">
+                    <img src="/static/favicon-16x16.png" alt="" width="16" height="16" class="d-inline-block"/>
+                    <span class="ms-1">Core</span>
+                </div>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    id="navbar-toggler"
+                    data-bs-target="#navbarContent" aria-controls="navbarContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link" href="/individuals">Individuals</a>
