@@ -7,6 +7,7 @@
     <script type="application/javascript" src="/static/autocomplete.js"></script>
     <script type="application/javascript" src="/static/rxjs.js"></script>
     <script type="application/javascript" src="/static/country_selector.js"></script>
+    <script type="application/javascript" src="/static/qrcode.js"></script>
     <script type="application/javascript">
         function copyIndividualIDToClipboard() {
             const copyText = document.getElementById("ID").value;
@@ -45,6 +46,19 @@
                 formElement.submit()
             }
 
+            setTimeout(function () {
+                document.getElementById("FullName").focus()
+            }, 0)
+
+            new QRCode("qrcode", {
+                text: window.location.protocol + "//" + window.location.host + "/individuals/" + {{.Individual.ID}},
+                width: 128,
+                height: 128,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
         });
     </script>
 {{end}}
@@ -65,29 +79,37 @@
 
                             <div class="card shadow-sm mb-3">
 
-                                <div class="card-body">
-
-                                    <div class="card-title">
-                                        {{if .Individual.ID}}
-                                            {{.Individual.FullName}}
-                                        {{else}}
-                                            New Individual
-                                        {{end}}
-                                    </div>
+                                <div class="card-body position-relative">
 
                                     <!-- ID -->
-                                    {{if .Individual.ID}}
-                                        <div class="form-floating input-group mb-3">
-                                            <input id="ID" disabled="disabled" name="ID"
-                                                   class="form-control font-monospace"
-                                                   value="{{.Individual.ID}}" readonly="readonly">
-                                            <label for="ID" class="form-label">ID</label>
-                                            <button onclick="copyIndividualIDToClipboard()"
-                                                    class="btn btn-outline-secondary" type="button"
-                                                    id="button-addon2"><i
-                                                        title="Copy" class="bi bi-clipboard"></i> Copy
-                                            </button>
+                                    {{ if not .Individual.ID }}
+                                        <div class="card-title">
+                                            New Individual
                                         </div>
+                                    {{else}}
+
+                                        <div class="d-flex flex-row align-items-center mb-3">
+                                            <div class="d-flex flex-column flex-grow-1">
+                                                <div class="card-title">
+                                                    {{.Individual.FullName}}
+                                                </div>
+
+                                                <div class="form-floating input-group">
+                                                    <input id="ID" disabled="disabled" name="ID"
+                                                           class="form-control font-monospace"
+                                                           value="{{.Individual.ID}}" readonly="readonly">
+                                                    <label for="ID" class="form-label">ID</label>
+                                                    <button onclick="copyIndividualIDToClipboard()"
+                                                            class="btn btn-outline-secondary" type="button"
+                                                            id="button-addon2"><i
+                                                                title="Copy" class="bi bi-clipboard"></i> Copy
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="ms-3 bg-white" id="qrcode"></div>
+                                        </div>
+
+
                                     {{end}}
                                     <!-- End of ID -->
 
