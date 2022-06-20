@@ -11,6 +11,7 @@ import (
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/utils"
+	"golang.org/x/sync/errgroup"
 )
 
 func HandleIndividual(templates map[string]*template.Template, repo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
@@ -18,16 +19,8 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 
 		var err error
 		var individual = &api.Individual{}
-
-		individualId := mux.Vars(r)["individual_id"]
-
+		var countries []*api.Country
 		ctx := r.Context()
-
-		countries, err := countryRepo.GetAll(ctx)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
 
 		render := func() {
 			if individual == nil {
@@ -42,13 +35,29 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			return
 		}
 
-		individualId = mux.Vars(r)["individual_id"]
-		if individualId != "new" {
-			individual, err = repo.GetByID(ctx, individualId)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
+		individualId := mux.Vars(r)["individual_id"]
+
+		errGroup, ctx := errgroup.WithContext(ctx)
+		errGroup.Go(func() error {
+			var err error
+			if individualId != "new" {
+				individual, err = repo.GetByID(ctx, individualId)
+				return err
 			}
+			return nil
+		})
+		errGroup.Go(func() error {
+			// only need to fetch countries on GET
+			if r.Method == "GET" {
+				var err error
+				countries, err = countryRepo.GetAll(ctx)
+				return err
+			}
+			return nil
+		})
+		if err := errGroup.Wait(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		if r.Method == "GET" {

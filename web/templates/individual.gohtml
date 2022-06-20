@@ -76,6 +76,44 @@
                                 <!-- End of Preferred Name -->
 
 
+                                <!-- Gender -->
+                                <div class="form-floating mb-3">
+                                    <select class="form-select" id="Gender" name="Gender">
+                                        <option value=""
+                                                {{if eq "" .Individual.Gender}}selected="selected"{{end}}></option>
+                                        <option value="male"
+                                                {{if eq "male" .Individual.Gender}}selected="selected"{{end}}>Male
+                                        </option>
+                                        <option value="female"
+                                                {{if eq "female" .Individual.Gender}}selected="selected"{{end}}>Female
+                                        </option>
+                                    </select>
+                                    <label for="Gender" class="form-label">Gender</label>
+                                </div>
+                                <!-- End of Gender -->
+
+
+                                <!-- Birth Date -->
+                                <div class="form-floating mb-3">
+                                    <input type="date" id="BirthDate" name="BirthDate" class="form-control"
+                                           value="{{if .Individual.BirthDate}}{{.Individual.BirthDate.Format "2006-01-02"}}{{end}}"/>
+                                    <label for="BirthDate" class="form-label">Birth Date</label>
+                                </div>
+                                <!-- End of Birth Date -->
+
+
+                                <!-- Is Minor -->
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" value="true" name="IsMinor"
+                                           id="IsMinor"
+                                           {{if .Individual.IsMinor}}checked="checked"{{end}}>
+                                    <label class="form-check-label" for="IsMinor">
+                                        Is the beneficiary a minor?
+                                    </label>
+                                </div>
+                                <!-- End of Is Minor -->
+
+
                                 <!-- Displacement Status -->
                                 <div class="form-floating mb-3">
                                     <select
@@ -129,43 +167,9 @@
                                 <!-- End of Countries -->
 
 
-                                <!-- Birth Date -->
-                                <div class="form-floating mb-3">
-                                    <input type="date" id="BirthDate" name="BirthDate" class="form-control"
-                                           value="{{if .Individual.BirthDate}}{{.Individual.BirthDate.Format "2006-01-02"}}{{end}}"/>
-                                    <label for="BirthDate" class="form-label">Birth Date</label>
-                                </div>
-                                <!-- End of Birth Date -->
-
-
-                                <!-- Is Minor -->
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" value="true" name="IsMinor"
-                                           id="IsMinor"
-                                           {{if .Individual.IsMinor}}checked="checked"{{end}}>
-                                    <label class="form-check-label" for="IsMinor">
-                                        Is the beneficiary a minor?
-                                    </label>
-                                </div>
-                                <!-- End of Is Minor -->
-
-
-                                <!-- Gender -->
-                                <div class="form-floating mb-3">
-                                    <select class="form-select" id="Gender" name="Gender">
-                                        <option value=""
-                                                {{if eq "" .Individual.Gender}}selected="selected"{{end}}></option>
-                                        <option value="male"
-                                                {{if eq "male" .Individual.Gender}}selected="selected"{{end}}>Male
-                                        </option>
-                                        <option value="female"
-                                                {{if eq "female" .Individual.Gender}}selected="selected"{{end}}>Female
-                                        </option>
-                                    </select>
-                                    <label for="Gender" class="form-label">Gender</label>
-                                </div>
-                                <!-- End of Gender -->
-
+                            </div>
+                            <div class="list-group-item">
+                                <h5>Contact Info</h5>
 
                                 <!-- Phone Number -->
                                 <div class="form-floating mb-3">

@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/sync/errgroup"
+
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
 )
@@ -13,18 +15,13 @@ import (
 func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		var err error
+		const templateName = "individuals.gohtml"
 		var individuals []*api.Individual
 		var getAllOptions api.GetAllOptions
-
-		countries, err := countryRepo.GetAll(r.Context())
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+		var countries []*api.Country
 
 		render := func() {
-			if err := templates["individuals.gohtml"].ExecuteTemplate(w, "base", map[string]interface{}{
+			if err := templates[templateName].ExecuteTemplate(w, "base", map[string]interface{}{
 				"Individuals": individuals,
 				"Countries":   countries,
 				"Options":     getAllOptions,
@@ -44,8 +41,18 @@ func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo
 			return
 		}
 
-		individuals, err = repo.GetAll(r.Context(), getAllOptions)
-		if err != nil {
+		errGroup, ctx := errgroup.WithContext(r.Context())
+		errGroup.Go(func() error {
+			var err error
+			countries, err = countryRepo.GetAll(r.Context())
+			return err
+		})
+		errGroup.Go(func() error {
+			var err error
+			individuals, err = repo.GetAll(ctx, getAllOptions)
+			return err
+		})
+		if err := errGroup.Wait(); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

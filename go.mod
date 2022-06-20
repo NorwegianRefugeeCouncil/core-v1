@@ -10,6 +10,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.13
 	github.com/rs/xid v1.4.0
 	github.com/spf13/cobra v1.4.0
+	golang.org/x/sync v0.0.0-20220601150217-0de741cfad7f
 )
 
 require (
