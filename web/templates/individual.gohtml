@@ -67,7 +67,7 @@
     <header class="sticky-top">
         {{template "nav" .}}
     </header>
-    <main style="height: calc( 100vh - 3.5rem ); overflow: hidden; overflow-y: scroll">
+    <main class="bg-secondary" style="height: calc( 100vh - 3.5rem ); overflow: hidden; overflow-y: scroll">
         <div class="mt-4">
             <form id="form" method="post"
                   action="/individuals/{{if eq "" .Individual.ID}}new{{else}}{{.Individual.ID}}{{end}}">
