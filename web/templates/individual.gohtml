@@ -1,4 +1,13 @@
 {{define "head"}}
+    <style>
+        .card-body {
+            background-color: var(--bs-card-cap-bg);
+        }
+
+        .card-header {
+            border-bottom: none;
+        }
+    </style>
     <script type="application/javascript" src="/static/autocomplete.js"></script>
     <script type="application/javascript" src="/static/rxjs.js"></script>
     <script type="application/javascript" src="/static/country_selector.js"></script>
@@ -59,15 +68,16 @@
 
 
                             <div class="card shadow-sm mb-3">
-                                <div class="card-header">
-                                    {{if .Individual.ID}}
-                                        {{.Individual.FullName}}
-                                    {{else}}
-                                        New Individual
-                                    {{end}}
-                                </div>
+
                                 <div class="card-body">
 
+                                    <div class="card-title">
+                                        {{if .Individual.ID}}
+                                            {{.Individual.FullName}}
+                                        {{else}}
+                                            New Individual
+                                        {{end}}
+                                    </div>
 
                                     <!-- ID -->
                                     {{if .Individual.ID}}
@@ -178,10 +188,14 @@
 
                             <!-- Countries -->
                             <div class="card mb-3 shadow-sm">
-                                <div class="card-header">
-                                    Countries
-                                    <input type="hidden" id="Countries" name="Countries"
-                                           value="{{ joinStrings .Individual.Countries ","}}"/>
+
+
+                                <div class="card-body">
+                                    <div class="card-title mb-0">
+                                        Countries
+                                        <input type="hidden" id="Countries" name="Countries"
+                                               value="{{ joinStrings .Individual.Countries ","}}"/>
+                                    </div>
                                 </div>
 
                                 <div class="list-group list-group-flush" id="country-list">
@@ -200,10 +214,12 @@
 
                             <!-- Contact Information -->
                             <div class="card shadow-sm mb-3">
-                                <div class="card-header">
-                                    Contact Information
-                                </div>
+
                                 <div class="card-body">
+
+                                    <div class="card-title">
+                                        Contact Information
+                                    </div>
 
                                     <!-- Phone Number -->
                                     <div class="form-floating mb-3">
@@ -239,10 +255,12 @@
 
                             <!-- Protection Concerns -->
                             <div class="card shadow-sm mb-3">
-                                <div class="card-header">
-                                    Protection Concerns
-                                </div>
+
                                 <div class="card-body">
+
+                                    <div class="card-title">
+                                        Protection Concerns
+                                    </div>
 
                                     <!-- Presents Protection Concerns -->
                                     <div class="form-check">
@@ -263,11 +281,12 @@
 
                             <!-- Disability -->
                             <div class="card shadow-sm mb-3">
-                                <div class="card-header">
-                                    Disability
-                                </div>
 
                                 <div class="card-body">
+
+                                    <div class="card-title">
+                                        Disability
+                                    </div>
 
                                     <!-- Physical Impairment -->
                                     <div class="form-floating mb-3">
