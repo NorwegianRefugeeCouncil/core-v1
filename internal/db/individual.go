@@ -140,6 +140,17 @@ func (i individualRepo) getAllInternal(ctx context.Context, tx *sqlx.Tx, options
 
 	}
 
+	if len(options.DisplacementStatuses) != 0 {
+		qry := "displacement_status in ("
+		for _, ds := range options.DisplacementStatuses {
+			args = append(args, ds)
+			qry += fmt.Sprintf("$%d,", len(args))
+		}
+		qry = qry[:len(qry)-1]
+		qry += ")"
+		whereClauses = append(whereClauses, qry)
+	}
+
 	if len(whereClauses) != 0 {
 		query = query + " WHERE "
 		for i, whereClause := range whereClauses {

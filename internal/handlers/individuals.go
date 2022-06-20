@@ -126,5 +126,15 @@ func parseGetAllOptions(r *http.Request, out *api.GetAllOptions) error {
 		out.Countries = make([]string, 0)
 	}
 
+	displacementStatuses := r.Form["displacement_status"]
+	var displacementStatusMap = map[string]bool{}
+	for _, s := range displacementStatuses {
+		if displacementStatusMap[s] {
+			continue
+		}
+		displacementStatusMap[s] = true
+		out.DisplacementStatuses = append(out.DisplacementStatuses, s)
+	}
+
 	return nil
 }

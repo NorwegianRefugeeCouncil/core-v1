@@ -125,6 +125,7 @@ type GetAllOptions struct {
 	IsMinor                    *bool
 	PresentsProtectionConcerns *bool
 	Countries                  []string
+	DisplacementStatuses       []string
 }
 
 func (o GetAllOptions) IsMinorSelected() bool {
@@ -223,6 +224,9 @@ func (o GetAllOptions) QueryParams() template.HTML {
 	}
 	if len(o.Countries) != 0 {
 		params.Add("countries", strings.Join(o.Countries, ","))
+	}
+	if len(o.DisplacementStatuses) != 0 {
+		params.Add("displacement_status", strings.Join(o.DisplacementStatuses, ","))
 	}
 
 	u := url.URL{
