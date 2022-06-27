@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"net"
 	"os"
 	"os/signal"
 
@@ -55,8 +57,12 @@ var serveCmd = &cobra.Command{
 		}
 
 		if err := srv.Start(ctx); err != nil {
-			return err
+			if !errors.Is(err, net.ErrClosed) {
+				return err
+			}
+			return nil
 		}
+
 		return nil
 	},
 }

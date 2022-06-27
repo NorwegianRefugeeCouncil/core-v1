@@ -1,12 +1,9 @@
 package server
 
 import (
-	"encoding/base64"
-	"encoding/json"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/handlers"
 	"github.com/nrc-no/notcore/web"
@@ -20,6 +17,7 @@ func buildRouter(
 ) *mux.Router {
 
 	r := mux.NewRouter()
+	r.Use(requestIdMiddleware)
 
 	staticRouter := r.PathPrefix("/static").Subrouter()
 	staticRouter.HandleFunc("/{file:.*}", web.ServeStatic)
@@ -45,55 +43,4 @@ func noCache(h http.Handler) http.Handler {
 		w.Header().Set("Expires", "0")
 		h.ServeHTTP(w, r)
 	})
-}
-
-func logMiddleware(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// TODO
-		h.ServeHTTP(w, r)
-	})
-}
-
-func authMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handler {
-	return func(h http.Handler) http.Handler {
-
-		type authHeaderClaims struct {
-			Sub    string `json:"sub"`
-			Email  string `json:"email"`
-			Issuer string `json:"iss"`
-		}
-
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-			authHeaderBase64 := r.Header.Get("X-Jwt-Payload")
-			if len(authHeaderBase64) == 0 {
-				http.Error(w, "Invalid authorization header", http.StatusBadRequest)
-				return
-			}
-
-			authHeaderJsonBytes, err := base64.RawURLEncoding.DecodeString(authHeaderBase64)
-			if err != nil {
-				http.Error(w, "Invalid authorization header: "+err.Error(), http.StatusBadRequest)
-				return
-			}
-
-			var payload authHeaderClaims
-			if err := json.Unmarshal(authHeaderJsonBytes, &payload); err != nil {
-				http.Error(w, "Invalid authorization header: "+err.Error(), http.StatusBadRequest)
-				return
-			}
-
-			_, err = userRepo.Put(r.Context(), &api.User{
-				ID:      "",
-				Subject: payload.Sub,
-				Email:   payload.Email,
-			})
-			if err != nil {
-				http.Error(w, "couldn't save user: "+err.Error(), http.StatusInternalServerError)
-				return
-			}
-
-			h.ServeHTTP(w, r)
-		})
-	}
 }

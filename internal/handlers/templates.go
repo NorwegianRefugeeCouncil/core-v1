@@ -3,6 +3,9 @@ package handlers
 import (
 	"html/template"
 	"net/http"
+
+	"github.com/nrc-no/notcore/internal/logging"
+	"go.uber.org/zap"
 )
 
 type ViewData map[string]interface{}
@@ -47,7 +50,12 @@ func renderView(
 	templates map[string]*template.Template,
 	tmpl string,
 	w http.ResponseWriter,
+	r *http.Request,
 	data map[string]interface{}) {
+
+	ctx := r.Context()
+	l := logging.NewLogger(ctx)
+	l.Debug("rendering view", zap.String("template", tmpl))
 
 	if data == nil {
 		data = make(map[string]interface{})
@@ -59,6 +67,6 @@ func renderView(
 	}
 
 	if err := templates[tmpl].ExecuteTemplate(w, "base", vd); err != nil {
-		println(err.Error())
+		l.Error("failed to execute template", zap.Error(err))
 	}
 }

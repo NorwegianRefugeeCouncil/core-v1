@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/csv"
 	"io"
 	"net/http"
@@ -9,32 +10,43 @@ import (
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
+	"github.com/nrc-no/notcore/internal/logging"
+	"go.uber.org/zap"
 )
 
 func UploadHandler(repo db.IndividualRepo) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
+		var (
+			ctx = r.Context()
+			l   = logging.NewLogger(ctx)
+		)
+
 		// todo: find sensible max memory value
 		maxMemory := int64(1024 * 1024 * 1024)
 		if err := r.ParseMultipartForm(maxMemory); err != nil {
+			l.Error("failed to parse multipart form", zap.Error(err))
 			http.Error(w, "failed", http.StatusInternalServerError)
 			return
 		}
 
 		formFile, _, err := r.FormFile("file")
 		if err != nil {
+			l.Error("failed to get form file", zap.Error(err))
 			http.Error(w, "failed", http.StatusBadRequest)
 			return
 		}
 
-		fields, individuals, err := parseIndividualsCSV(formFile)
+		fields, individuals, err := parseIndividualsCSV(ctx, formFile)
 		if err != nil {
+			l.Error("failed to parse csv", zap.Error(err))
 			http.Error(w, "failed", http.StatusBadRequest)
 			return
 		}
 
 		_, err = repo.PutMany(r.Context(), individuals, fields)
 		if err != nil {
+			l.Error("failed to put individuals", zap.Error(err))
 			http.Error(w, "failed to put records: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -44,11 +56,15 @@ func UploadHandler(repo db.IndividualRepo) http.Handler {
 	})
 }
 
-func parseIndividualsCSV(reader io.Reader) ([]string, []*api.Individual, error) {
+func parseIndividualsCSV(ctx context.Context, reader io.Reader) ([]string, []*api.Individual, error) {
+
+	l := logging.NewLogger(ctx)
+
 	csvReader := csv.NewReader(reader)
 	csvReader.TrimLeadingSpace = true
 	records, err := csvReader.ReadAll()
 	if err != nil {
+		l.Error("failed to read csv", zap.Error(err))
 		return nil, nil, err
 	}
 	var fields []string
@@ -63,6 +79,7 @@ func parseIndividualsCSV(reader io.Reader) ([]string, []*api.Individual, error) 
 		} else {
 			individual, err := parseIndividualCsvRow(colMapping, cols)
 			if err != nil {
+				l.Error("failed to parse individual row", zap.Error(err))
 				return nil, nil, err
 			}
 			individuals[i-1] = individual

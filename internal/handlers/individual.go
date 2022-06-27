@@ -10,25 +10,32 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
+	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
+	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 )
 
 func HandleIndividual(templates map[string]*template.Template, repo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		var err error
-		var individual = &api.Individual{}
-		var countries []*api.Country
-		var validationErrors ValidationErrors
-		var wasValidated bool
-		ctx := r.Context()
+		const templateName = "individual.gohtml"
+
+		var (
+			err              error
+			individual       = &api.Individual{}
+			countries        []*api.Country
+			validationErrors ValidationErrors
+			wasValidated     bool
+			ctx              = r.Context()
+			l                = logging.NewLogger(ctx)
+		)
 
 		render := func() {
 			if individual == nil {
 				individual = &api.Individual{}
 			}
-			renderView(templates, "individual.gohtml", w, map[string]interface{}{
+			renderView(templates, templateName, w, r, map[string]interface{}{
 				"Individual":   individual,
 				"Countries":    countries,
 				"Errors":       validationErrors,
@@ -44,14 +51,21 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			var err error
 			if individualId != "new" {
 				individual, err = repo.GetByID(gCtx, individualId)
-				return err
+				if err != nil {
+					l.Error("failed to get individual", zap.Error(err))
+					return err
+				}
 			}
 			return nil
 		})
 		errGroup.Go(func() error {
 			var err error
 			countries, err = countryRepo.GetAll(gCtx)
-			return err
+			if err != nil {
+				l.Error("failed to get countries", zap.Error(err))
+				return err
+			}
+			return nil
 		})
 		if err := errGroup.Wait(); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -64,11 +78,13 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 		}
 
 		if err := r.ParseForm(); err != nil {
+			l.Error("failed to parse form", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		if err := parseIndividualForm(r, individual); err != nil {
+			l.Error("failed to parse individual form", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -81,6 +97,7 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 
 		individual, err = repo.Put(ctx, individual, api.AllndividualFields)
 		if err != nil {
+			l.Error("failed to put individual", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

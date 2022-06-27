@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	"github.com/nrc-no/notcore/internal/db"
+	"github.com/nrc-no/notcore/internal/logging"
 
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
@@ -21,7 +22,6 @@ type Options struct {
 }
 
 func (o Options) New() (*Server, error) {
-
 	sqlDb, err := sqlx.Connect(o.DatabaseDriver, o.DatabaseDSN)
 	if err != nil {
 		return nil, err
@@ -59,15 +59,26 @@ type Server struct {
 }
 
 func (s *Server) Start(ctx context.Context) error {
+	l := logging.NewLogger(ctx)
+	l.Info("starting server")
 	var err error
 
 	s.listener, err = net.Listen("tcp", s.address)
 	if err != nil {
 		return err
 	}
+
+	l.Info("listening on " + s.listener.Addr().String())
+
 	go func() {
 		<-ctx.Done()
+		l.Info("stopping server")
 		s.listener.Close()
 	}()
-	return http.Serve(s.listener, s.router)
+	err = http.Serve(s.listener, s.router)
+	l.Info("server stopped")
+	if err != nil {
+		return err
+	}
+	return nil
 }

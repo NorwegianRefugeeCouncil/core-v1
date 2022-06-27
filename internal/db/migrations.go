@@ -8,6 +8,8 @@ import (
 	"path"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/nrc-no/notcore/internal/logging"
+	"go.uber.org/zap"
 )
 
 // migration is a single migration.
@@ -29,8 +31,12 @@ var migrations = []migration{
 // Migrate runs the migrations on the database.
 func Migrate(ctx context.Context, db *sqlx.DB) error {
 
+	l := logging.NewLogger(ctx)
+	l.Info("migrating database")
+
 	_, err := db.ExecContext(ctx, initScript)
 	if err != nil {
+		l.Error("failed to initialize database", zap.Error(err))
 		return err
 	}
 
@@ -46,6 +52,7 @@ func Migrate(ctx context.Context, db *sqlx.DB) error {
 	dir := fmt.Sprintf("migrations/%s", driver)
 	entries, err := migrationFs.ReadDir(dir)
 	if err != nil {
+		l.Error("failed to read migrations directory", zap.Error(err))
 		panic(err)
 	}
 	for _, entry := range entries {
@@ -54,6 +61,7 @@ func Migrate(ctx context.Context, db *sqlx.DB) error {
 		}
 		migrationContent, err := migrationFs.ReadFile(path.Join(dir, entry.Name()))
 		if err != nil {
+			l.Error("failed to read migration file", zap.Error(err))
 			panic(err)
 		}
 		migrationMap[entry.Name()] = string(migrationContent)
@@ -67,12 +75,15 @@ func Migrate(ctx context.Context, db *sqlx.DB) error {
 				continue
 			}
 			if err != sql.ErrNoRows {
+				l.Error("failed to check migration", zap.Error(err))
 				return nil, err
 			}
 			if err := m.up(ctx, tx); err != nil {
+				l.Error("failed to run migration", zap.Error(err))
 				return nil, err
 			}
 			if _, err := tx.ExecContext(ctx, "INSERT INTO migrations (name) VALUES ($1)", m.name); err != nil {
+				l.Error("failed to insert migration", zap.Error(err))
 				return nil, err
 			}
 		}

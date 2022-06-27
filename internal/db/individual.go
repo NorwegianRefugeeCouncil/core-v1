@@ -11,8 +11,10 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"github.com/rs/xid"
+	"go.uber.org/zap"
 )
 
 type IndividualRepo interface {
@@ -43,12 +45,16 @@ func (i individualRepo) GetAll(ctx context.Context, options api.GetAllOptions) (
 		return i.getAllInternal(ctx, tx, options)
 	})
 	if err != nil {
+
 		return nil, err
 	}
 	return ret.([]*api.Individual), nil
 }
 
 func (i individualRepo) getAllInternal(ctx context.Context, tx *sqlx.Tx, options api.GetAllOptions) ([]*api.Individual, error) {
+	l := logging.NewLogger(ctx)
+	l.Debug("getting all individuals", zap.Any("options", options))
+
 	var ret []*api.Individual
 	args := []interface{}{}
 	query := "SELECT * FROM individuals"
@@ -169,6 +175,10 @@ func (i individualRepo) getAllInternal(ctx context.Context, tx *sqlx.Tx, options
 		query += fmt.Sprintf(fmt.Sprintf(" OFFSET %d", options.Skip))
 	}
 	err := tx.SelectContext(ctx, &ret, query, args...)
+	if err != nil {
+		l.Error("failed to get all individuals", zap.Error(err))
+		return nil, err
+	}
 	return ret, err
 }
 
@@ -183,16 +193,18 @@ func (i individualRepo) GetByID(ctx context.Context, id string) (*api.Individual
 }
 
 func (i individualRepo) getByIdInternal(ctx context.Context, tx *sqlx.Tx, id string) (*api.Individual, error) {
+	l := logging.NewLogger(ctx).With(zap.String("individual_id", id))
+	l.Debug("getting individual by id")
 	var ret = api.Individual{}
 	err := tx.GetContext(ctx, &ret, "SELECT * FROM individuals WHERE id = $1", id)
 	if err != nil {
+		l.Error("failed to get individual", zap.Error(err))
 		return nil, err
 	}
 	return &ret, nil
 }
 
 func (i individualRepo) PutMany(ctx context.Context, individuals []*api.Individual, fields []string) ([]*api.Individual, error) {
-
 	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		var ret = make([]*api.Individual, len(individuals))
 		for k, individual := range individuals {
@@ -221,7 +233,8 @@ func (i individualRepo) Put(ctx context.Context, individual *api.Individual, fie
 }
 
 func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual *api.Individual, fields []string) (*api.Individual, error) {
-
+	l := logging.NewLogger(ctx)
+	l.Debug("putting individual")
 	fieldMap := map[string]bool{"id": true}
 	for _, field := range fields {
 		if field == "phone_number" {
@@ -240,6 +253,7 @@ func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual
 		_, err := i.getByIdInternal(ctx, tx, individual.ID)
 		if err != nil {
 			if !errors.Is(err, sql.ErrNoRows) {
+				l.Error("failed to get individual", zap.Error(err))
 				return nil, err
 			}
 			individual.ID = xid.New().String()
@@ -261,6 +275,7 @@ func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual
 			}
 			fieldValue, err := individual.GetFieldValue(field)
 			if err != nil {
+				l.Error("failed to get field value", zap.String("field", field), zap.Error(err))
 				return nil, err
 			}
 			args = append(args, fieldValue)
@@ -269,6 +284,7 @@ func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual
 		statement = statement + ")"
 		_, err := tx.ExecContext(ctx, statement, args...)
 		if err != nil {
+			l.Error("failed to insert individual", zap.Error(err))
 			return nil, err
 		}
 
@@ -285,6 +301,7 @@ func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual
 			}
 			fieldValue, err := individual.GetFieldValue(field)
 			if err != nil {
+				l.Error("failed to get field value", zap.String("field", field), zap.Error(err))
 				return nil, err
 			}
 			args = append(args, fieldValue)
@@ -294,6 +311,7 @@ func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual
 		statement = statement + " WHERE id = $" + strconv.Itoa(len(args))
 		_, err := tx.ExecContext(ctx, statement, args...)
 		if err != nil {
+			l.Error("failed to update individual", zap.Error(err))
 			return nil, err
 		}
 
@@ -311,8 +329,11 @@ func (i individualRepo) Delete(ctx context.Context, id string) error {
 }
 
 func (i individualRepo) deleteInternal(ctx context.Context, tx *sqlx.Tx, id string) error {
+	l := logging.NewLogger(ctx).With(zap.String("individual_id", id))
+	l.Debug("deleting individual")
 	_, err := tx.ExecContext(ctx, "DELETE FROM individuals WHERE id = ?", id)
 	if err != nil {
+		l.Error("failed to delete individual", zap.Error(err))
 		return err
 	}
 	return nil

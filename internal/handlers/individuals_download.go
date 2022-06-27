@@ -9,13 +9,21 @@ import (
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
+	"github.com/nrc-no/notcore/internal/logging"
+	"go.uber.org/zap"
 )
 
 func HandleDownload(repo db.IndividualRepo) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		ret, err := repo.GetAll(r.Context(), api.GetAllOptions{})
+		var (
+			context = r.Context()
+			l       = logging.NewLogger(context)
+		)
+
+		ret, err := repo.GetAll(context, api.GetAllOptions{})
 		if err != nil {
+			l.Error("failed to get individuals", zap.Error(err))
 			http.Error(w, "failed to get records: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -43,6 +51,7 @@ func HandleDownload(repo db.IndividualRepo) http.Handler {
 			"mental_impairment",
 			"countries",
 		}); err != nil {
+			l.Error("failed to write header", zap.Error(err))
 			http.Error(w, "failed to write header: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -69,6 +78,7 @@ func HandleDownload(repo db.IndividualRepo) http.Handler {
 				individual.MentalImpairment,
 				strings.Join(individual.Countries, ","),
 			}); err != nil {
+				l.Error("failed to write record", zap.Error(err))
 				http.Error(w, "failed to write record: "+err.Error(), http.StatusInternalServerError)
 				return
 			}

@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/nrc-no/notcore/internal/logging"
+	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/nrc-no/notcore/internal/api"
@@ -15,28 +17,35 @@ import (
 func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		const templateName = "individuals.gohtml"
-		var individuals []*api.Individual
-		var getAllOptions api.GetAllOptions
-		var countries []*api.Country
+		const (
+			templateName = "individuals.gohtml"
+		)
+
+		var (
+			individuals   []*api.Individual
+			getAllOptions api.GetAllOptions
+			countries     []*api.Country
+			ctx           = r.Context()
+			l             = logging.NewLogger(ctx)
+		)
 
 		render := func() {
-			if err := templates[templateName].ExecuteTemplate(w, "base", map[string]interface{}{
+			renderView(templates, templateName, w, r, map[string]interface{}{
 				"Individuals": individuals,
 				"Countries":   countries,
 				"Options":     getAllOptions,
-			}); err != nil {
-				println(err.Error())
-			}
+			})
 			return
 		}
 
 		if err := r.ParseForm(); err != nil {
+			logging.NewLogger(ctx).Error("failed to parse form", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		if err := parseGetAllOptions(r, &getAllOptions); err != nil {
+			logging.NewLogger(ctx).Error("failed to parse options", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -45,12 +54,20 @@ func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo
 		errGroup.Go(func() error {
 			var err error
 			countries, err = countryRepo.GetAll(gCtx)
-			return err
+			if err != nil {
+				l.Error("failed to get countries", zap.Error(err))
+				return err
+			}
+			return nil
 		})
 		errGroup.Go(func() error {
 			var err error
 			individuals, err = repo.GetAll(gCtx, getAllOptions)
-			return err
+			if err != nil {
+				l.Error("failed to get individuals", zap.Error(err))
+				return err
+			}
+			return nil
 		})
 		if err := errGroup.Wait(); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

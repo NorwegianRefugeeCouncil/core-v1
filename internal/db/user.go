@@ -5,10 +5,13 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strconv"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/rs/xid"
-	"strconv"
+	"go.uber.org/zap"
 )
 
 type UserRepo interface {
@@ -26,9 +29,12 @@ type userRepo struct {
 }
 
 func (r userRepo) GetByID(ctx context.Context, userID string) (*api.User, error) {
+	l := logging.NewLogger(ctx).With(zap.String("user_id", userID))
+	l.Debug("getting user by id")
 	ret := api.User{}
 	err := r.db.GetContext(ctx, &ret, "select * from users where id = $1", userID)
 	if err != nil {
+		l.Error("failed to get user by id", zap.Error(err))
 		return nil, err
 	}
 	return &ret, nil
@@ -45,9 +51,12 @@ func (r userRepo) Put(ctx context.Context, user *api.User) (*api.User, error) {
 }
 
 func (r userRepo) put(ctx context.Context, tx *sqlx.Tx, user *api.User) (*api.User, error) {
+	l := logging.NewLogger(ctx)
+	l.Debug("putting user")
 	found, err := r.findSubject(ctx, tx, user.Subject)
 	if err != nil {
 		if !errors.Is(err, sql.ErrNoRows) {
+			l.Error("failed to find user", zap.Error(err))
 			return nil, err
 		}
 		user.ID = xid.New().String()
@@ -56,6 +65,7 @@ func (r userRepo) put(ctx context.Context, tx *sqlx.Tx, user *api.User) (*api.Us
 			user.Subject,
 			user.Email)
 		if err != nil {
+			l.Error("failed to insert user", zap.Error(err))
 			return nil, err
 		}
 		return user, nil
@@ -64,9 +74,12 @@ func (r userRepo) put(ctx context.Context, tx *sqlx.Tx, user *api.User) (*api.Us
 }
 
 func (r userRepo) findSubject(ctx context.Context, tx *sqlx.Tx, subject string) (*api.User, error) {
+	l := logging.NewLogger(ctx).With(zap.String("subject", subject))
+	l.Debug("finding user by subject")
 	var ret api.User
 	err := tx.GetContext(ctx, &ret, `SELECT * FROM users WHERE subject = $1`, subject)
 	if err != nil {
+		l.Error("failed to find user", zap.Error(err))
 		return nil, err
 	}
 	return &ret, nil
@@ -83,6 +96,9 @@ func (r userRepo) GetAll(ctx context.Context, options api.GetAllUsersOptions) ([
 }
 
 func (r userRepo) getAll(ctx context.Context, tx *sqlx.Tx, options api.GetAllUsersOptions) ([]*api.User, error) {
+
+	l := logging.NewLogger(ctx)
+	l.Debug("getting all users", zap.Any("options", options))
 
 	qry := "select * from users"
 	var whereClauses []string
@@ -130,6 +146,7 @@ func (r userRepo) getAll(ctx context.Context, tx *sqlx.Tx, options api.GetAllUse
 	var ret []*api.User
 	err := tx.SelectContext(ctx, &ret, qry, args...)
 	if err != nil {
+		l.Error("failed to get all users", zap.Error(err))
 		return nil, err
 	}
 	return ret, nil
