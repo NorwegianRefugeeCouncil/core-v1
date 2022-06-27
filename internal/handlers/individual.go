@@ -21,6 +21,7 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 		var individual = &api.Individual{}
 		var countries []*api.Country
 		var validationErrors ValidationErrors
+		var wasValidated bool
 		ctx := r.Context()
 
 		render := func() {
@@ -28,9 +29,10 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 				individual = &api.Individual{}
 			}
 			renderView(templates, "individual.gohtml", w, map[string]interface{}{
-				"Individual": individual,
-				"Countries":  countries,
-				"Errors":     validationErrors,
+				"Individual":   individual,
+				"Countries":    countries,
+				"Errors":       validationErrors,
+				"WasValidated": wasValidated,
 			})
 			return
 		}
@@ -77,13 +79,20 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			return
 		}
 
-		_, err = repo.Put(ctx, individual, api.AllndividualFields)
+		individual, err = repo.Put(ctx, individual, api.AllndividualFields)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		http.Redirect(w, r, "/individuals/"+individual.ID, http.StatusSeeOther)
+		wasValidated = true
+		if individualId == "new" {
+			http.Redirect(w, r, "/individuals/"+individual.ID, http.StatusFound)
+			return
+		} else {
+			render()
+			return
+		}
 
 	})
 }

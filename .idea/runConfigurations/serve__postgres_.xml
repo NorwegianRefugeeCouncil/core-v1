@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="serve (postgres)" type="GoApplicationRunConfiguration" factoryName="Go Application">
-    <module name="core2" />
+    <module name="notcore" />
     <working_directory value="$PROJECT_DIR$" />
     <go_parameters value="--tags fts5" />
     <parameters value="serve --listen-address=:8080 --db-driver=postgres --db-dsn=postgres://postgres:postgres@localhost:5432/core?sslmode=disable" />

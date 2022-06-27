@@ -23,6 +23,7 @@ var migrations = []migration{
 	migrationFromFile("001_initial"),
 	migrationFromFile("002_global_intake"),
 	migrationFromFile("003_countries"),
+	migrationFromFile("004_users"),
 }
 
 // Migrate runs the migrations on the database.

@@ -1,0 +1,25 @@
+{{define "head"}}
+{{end}}
+{{define "body"}}
+    <header class="sticky-top">
+        {{template "nav" .}}
+    </header>
+    <main class="bg-secondary" style="height: calc( 100vh - 3.5rem ); overflow: hidden; overflow-y: scroll">
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <div class="form-floating mb-3">
+                                <input id="Email" disabled="disabled" name="Email"
+                                       class="form-control font-monospace"
+                                       value="{{.User.Email}}" readonly="readonly">
+                                <label for="Email" class="form-label">Email</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{{end}}

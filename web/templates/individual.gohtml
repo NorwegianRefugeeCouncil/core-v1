@@ -76,9 +76,30 @@
                     <div class="row justify-content-center">
                         <div class="col-12 col-md-10 col-lg-8 col-xl-6">
 
+                            {{ if .HasErrors }}
+                                <div class="alert alert-dismissible alert-danger mb-3"
+                                     role="alert"
+                                     style="cursor:pointer"
+                                     data-bs-dismiss="alert">
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    <i class="bi bi-exclamation-circle-fill"></i>
+                                    <strong>Whoops!</strong> there were validation errors while processing the form.
+                                </div>
+                            {{else if .WasValidated}}
+                                <div class="alert alert-dismissible alert-success mb-3"
+                                     role="alert"
+                                     style="cursor:pointer"
+                                     data-bs-dismiss="alert">
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <strong>Success!</strong> the form was successfully processed.
+                                </div>
+                            {{end}}
+
 
                             <div class="card shadow-sm mb-3">
-
                                 <div class="card-body position-relative">
 
                                     <!-- ID -->
