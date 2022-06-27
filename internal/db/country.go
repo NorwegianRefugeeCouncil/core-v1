@@ -24,12 +24,18 @@ func NewCountryRepo(db *sqlx.DB) CountryRepo {
 	return &countryRepo{db: db}
 }
 
+func (c countryRepo) logger(ctx context.Context) *zap.Logger {
+	return logging.NewLogger(ctx)
+}
+
 func (c countryRepo) GetAll(ctx context.Context) ([]*api.Country, error) {
-	l := logging.NewLogger(ctx)
+	l := c.logger(ctx)
 	l.Debug("getting all countries")
+
+	const query = "SELECT * FROM countries ORDER BY name"
+
 	var countries []*api.Country
-	err := c.db.SelectContext(ctx, &countries, "SELECT * FROM countries ORDER BY name")
-	if err != nil {
+	if err := c.db.SelectContext(ctx, &countries, query); err != nil {
 		l.Error("failed to get countries", zap.Error(err))
 		return nil, err
 	}
@@ -37,10 +43,11 @@ func (c countryRepo) GetAll(ctx context.Context) ([]*api.Country, error) {
 }
 
 func (c countryRepo) GetByID(ctx context.Context, id string) (*api.Country, error) {
-	l := logging.NewLogger(ctx).With(zap.String("country_id", id))
+	l := c.logger(ctx).With(zap.String("country_id", id))
 	l.Debug("getting country by id", zap.String("id", id))
 	var country api.Country
-	err := c.db.GetContext(ctx, &country, "SELECT * FROM countries WHERE id = $1", id)
+	const query = "SELECT * FROM countries WHERE id = $1"
+	err := c.db.GetContext(ctx, &country, query, id)
 	if err != nil {
 		l.Error("failed to get country by id", zap.Error(err))
 		return nil, err
@@ -49,22 +56,49 @@ func (c countryRepo) GetByID(ctx context.Context, id string) (*api.Country, erro
 }
 
 func (c countryRepo) Put(ctx context.Context, country *api.Country) (*api.Country, error) {
-	l := logging.NewLogger(ctx)
 	if country.ID == "" {
-		l.Debug("creating new country")
-		country.ID = xid.New().String()
-		_, err := c.db.ExecContext(ctx, "INSERT INTO countries (id, code, name) VALUES ($1, $2, $3)", country.ID, country.Code, country.Name)
-		if err != nil {
-			l.Error("failed to create country", zap.Error(err))
-			return nil, err
-		}
+		return c.createCountry(ctx, country)
 	} else {
-		l.Debug("updating country")
-		_, err := c.db.ExecContext(ctx, "UPDATE countries SET code = $2, name = $3 WHERE id = $1", country.ID, country.Code, country.Name)
-		if err != nil {
-			l.Error("failed to update country", zap.Error(err))
-			return nil, err
-		}
+		return c.updateCountry(ctx, country)
 	}
+}
+
+func (c countryRepo) updateCountry(ctx context.Context, country *api.Country) (*api.Country, error) {
+	l := c.logger(ctx)
+	l.Debug("updating country")
+
+	const query = "UPDATE countries SET code = $2, name = $3 WHERE id = $1"
+	var args = []interface{}{
+		country.ID,
+		country.Code,
+		country.Name,
+	}
+
+	if _, err := c.db.ExecContext(ctx, query, args...); err != nil {
+		l.Error("failed to update country", zap.Error(err))
+		return nil, err
+	}
+
+	return country, nil
+}
+
+func (c countryRepo) createCountry(ctx context.Context, country *api.Country) (*api.Country, error) {
+	l := c.logger(ctx)
+	l.Debug("creating new country")
+	country.ID = xid.New().String()
+
+	const query = `INSERT INTO countries (id, code, name) VALUES ($1, $2, $3)`
+
+	var args = []interface{}{
+		country.ID,
+		country.Code,
+		country.Name,
+	}
+
+	if _, err := c.db.ExecContext(ctx, query, args...); err != nil {
+		l.Error("failed to create country", zap.Error(err))
+		return nil, err
+	}
+
 	return country, nil
 }

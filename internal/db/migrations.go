@@ -72,6 +72,7 @@ func Migrate(ctx context.Context, db *sqlx.DB) error {
 			var num int
 			err = tx.GetContext(ctx, &num, "SELECT 1 FROM migrations WHERE name = $1", m.name)
 			if err == nil {
+				l.Info("migration already applied", zap.String("name", m.name))
 				continue
 			}
 			if err != sql.ErrNoRows {
@@ -89,7 +90,15 @@ func Migrate(ctx context.Context, db *sqlx.DB) error {
 		}
 		return nil, nil
 	})
-	return err
+
+	if err != nil {
+		l.Error("failed to migrate database", zap.Error(err))
+		return err
+	}
+
+	l.Info("migrated database")
+
+	return nil
 }
 
 //go:embed migrations/**/*.sql

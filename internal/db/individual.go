@@ -52,6 +52,7 @@ func (i individualRepo) GetAll(ctx context.Context, options api.GetAllOptions) (
 }
 
 func (i individualRepo) getAllInternal(ctx context.Context, tx *sqlx.Tx, options api.GetAllOptions) ([]*api.Individual, error) {
+
 	l := logging.NewLogger(ctx)
 	l.Debug("getting all individuals", zap.Any("options", options))
 
