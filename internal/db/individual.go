@@ -332,8 +332,11 @@ func (i individualRepo) Delete(ctx context.Context, id string) error {
 func (i individualRepo) deleteInternal(ctx context.Context, tx *sqlx.Tx, id string) error {
 	l := logging.NewLogger(ctx).With(zap.String("individual_id", id))
 	l.Debug("deleting individual")
-	_, err := tx.ExecContext(ctx, "DELETE FROM individuals WHERE id = ?", id)
-	if err != nil {
+
+	const query = "DELETE FROM individuals WHERE id = ?"
+	var args = []interface{}{id}
+
+	if _, err := tx.ExecContext(ctx, query, args...); err != nil {
 		l.Error("failed to delete individual", zap.Error(err))
 		return err
 	}

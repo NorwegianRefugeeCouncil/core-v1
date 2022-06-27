@@ -45,14 +45,16 @@ func (c countryRepo) GetAll(ctx context.Context) ([]*api.Country, error) {
 func (c countryRepo) GetByID(ctx context.Context, id string) (*api.Country, error) {
 	l := c.logger(ctx).With(zap.String("country_id", id))
 	l.Debug("getting country by id", zap.String("id", id))
-	var country api.Country
+
 	const query = "SELECT * FROM countries WHERE id = $1"
-	err := c.db.GetContext(ctx, &country, query, id)
-	if err != nil {
+	var args = []interface{}{id}
+
+	var ret api.Country
+	if err := c.db.GetContext(ctx, &ret, query, args...); err != nil {
 		l.Error("failed to get country by id", zap.Error(err))
 		return nil, err
 	}
-	return &country, nil
+	return &ret, nil
 }
 
 func (c countryRepo) Put(ctx context.Context, country *api.Country) (*api.Country, error) {

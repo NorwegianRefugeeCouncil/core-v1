@@ -17,6 +17,10 @@ import (
 func UploadHandler(repo db.IndividualRepo) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
+		const (
+			formParamFile = "file"
+		)
+
 		var (
 			ctx = r.Context()
 			l   = logging.NewLogger(ctx)
@@ -26,21 +30,21 @@ func UploadHandler(repo db.IndividualRepo) http.Handler {
 		maxMemory := int64(1024 * 1024 * 1024)
 		if err := r.ParseMultipartForm(maxMemory); err != nil {
 			l.Error("failed to parse multipart form", zap.Error(err))
-			http.Error(w, "failed", http.StatusInternalServerError)
+			http.Error(w, "failed to parse form: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		formFile, _, err := r.FormFile("file")
+		formFile, _, err := r.FormFile(formParamFile)
 		if err != nil {
 			l.Error("failed to get form file", zap.Error(err))
-			http.Error(w, "failed", http.StatusBadRequest)
+			http.Error(w, "failed to parse input file: "+err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		fields, individuals, err := parseIndividualsCSV(ctx, formFile)
 		if err != nil {
 			l.Error("failed to parse csv", zap.Error(err))
-			http.Error(w, "failed", http.StatusBadRequest)
+			http.Error(w, "failed to parse csv: "+err.Error(), http.StatusBadRequest)
 			return
 		}
 

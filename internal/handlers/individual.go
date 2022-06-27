@@ -19,16 +19,26 @@ import (
 func HandleIndividual(templates map[string]*template.Template, repo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		const templateName = "individual.gohtml"
+		const (
+			templateName          = "individual.gohtml"
+			pathParamIndividualID = "individual_id"
+			newID                 = "new"
+			viewParamIndividual   = "Individual"
+			viewParamCountries    = "Countries"
+			viewParamErrors       = "Errors"
+			viewParamWasValidated = "WasValidated"
+		)
 
 		var (
 			err              error
+			ctx              = r.Context()
+			l                = logging.NewLogger(ctx)
 			individual       = &api.Individual{}
 			countries        []*api.Country
 			validationErrors ValidationErrors
 			wasValidated     bool
-			ctx              = r.Context()
-			l                = logging.NewLogger(ctx)
+			individualId     = mux.Vars(r)[pathParamIndividualID]
+			isNew            = individualId == newID
 		)
 
 		render := func() {
@@ -36,20 +46,18 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 				individual = &api.Individual{}
 			}
 			renderView(templates, templateName, w, r, map[string]interface{}{
-				"Individual":   individual,
-				"Countries":    countries,
-				"Errors":       validationErrors,
-				"WasValidated": wasValidated,
+				viewParamIndividual:   individual,
+				viewParamCountries:    countries,
+				viewParamErrors:       validationErrors,
+				viewParamWasValidated: wasValidated,
 			})
 			return
 		}
 
-		individualId := mux.Vars(r)["individual_id"]
-
 		errGroup, gCtx := errgroup.WithContext(ctx)
 		errGroup.Go(func() error {
 			var err error
-			if individualId != "new" {
+			if !isNew {
 				individual, err = repo.GetByID(gCtx, individualId)
 				if err != nil {
 					l.Error("failed to get individual", zap.Error(err))
@@ -72,7 +80,7 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			return
 		}
 
-		if r.Method == "GET" {
+		if r.Method == http.MethodGet {
 			render()
 			return
 		}

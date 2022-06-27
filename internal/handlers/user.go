@@ -15,15 +15,25 @@ import (
 func HandleUser(templates map[string]*template.Template, repo db.UserRepo) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		const templateName = "user.gohtml"
+		const (
+			templateName    = "user.gohtml"
+			userIdPathParam = "user_id"
+			userViewParam   = "User"
+		)
 
 		var (
 			ctx    = r.Context()
 			err    error
-			userID = mux.Vars(r)["user_id"]
+			userID = mux.Vars(r)[userIdPathParam]
 			user   *api.User
 			l      = logging.NewLogger(ctx)
 		)
+
+		render := func() {
+			renderView(templates, templateName, w, r, map[string]interface{}{
+				userViewParam: user,
+			})
+		}
 
 		user, err = repo.GetByID(ctx, userID)
 		if err != nil {
@@ -32,8 +42,7 @@ func HandleUser(templates map[string]*template.Template, repo db.UserRepo) http.
 			return
 		}
 
-		renderView(templates, templateName, w, r, map[string]interface{}{
-			"User": user,
-		})
+		render()
+
 	})
 }

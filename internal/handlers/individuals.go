@@ -18,7 +18,10 @@ func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		const (
-			templateName = "individuals.gohtml"
+			templateName         = "individuals.gohtml"
+			viewParamIndividuals = "Individuals"
+			viewParamCountries   = "Countries"
+			viewParamOptions     = "Options"
 		)
 
 		var (
@@ -31,9 +34,9 @@ func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo
 
 		render := func() {
 			renderView(templates, templateName, w, r, map[string]interface{}{
-				"Individuals": individuals,
-				"Countries":   countries,
-				"Options":     getAllOptions,
+				viewParamIndividuals: individuals,
+				viewParamCountries:   countries,
+				viewParamOptions:     getAllOptions,
 			})
 			return
 		}

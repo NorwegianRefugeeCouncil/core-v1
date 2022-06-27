@@ -82,7 +82,9 @@ make proxy
 ### Start the server
 
 ```
-go run . serve --listen-address=:8080 --db-driver=postgres --db-dsn=postgres://postgres:postgres@localhost:5432/core?sslmode=disable
+go run . serve --listen-address=:8080 --db-driver=postgres --db-dsn=postgres://postgres:postgres@localhost:5432/core?sslmode=disable --log-level=debug
+# or
+make serve
 ```
 
 Go to [https://localhost:10000](https://localhost:10000)

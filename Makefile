@@ -15,3 +15,7 @@ down:
 .PHONY: proxy
 proxy:
 	@envoy -c deploy/envoy.yaml
+
+.PHONY: serve
+serve:
+	@go run . serve --listen-address=:8080 --db-driver=postgres --db-dsn=postgres://postgres:postgres@localhost:5432/core?sslmode=disable --log-level=debug
