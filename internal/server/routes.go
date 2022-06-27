@@ -3,9 +3,7 @@ package server
 import (
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"sort"
 
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/notcore/internal/api"
@@ -51,16 +49,7 @@ func noCache(h http.Handler) http.Handler {
 
 func logMiddleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		keys := make([]string, len(r.Header))
-		for key, _ := range r.Header {
-			keys = append(keys, key)
-		}
-		sort.Strings(keys)
-		for _, k := range keys {
-			if len(r.Header[k]) > 0 {
-				fmt.Println(k, r.Header[k])
-			}
-		}
+		// TODO
 		h.ServeHTTP(w, r)
 	})
 }
