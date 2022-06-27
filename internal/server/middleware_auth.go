@@ -7,7 +7,7 @@ import (
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
-	"github.com/nrc-no/notcore/internal/logging"
+	"github.com/nrc-no/notcore/internal/utils"
 )
 
 func authMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handler {
@@ -39,11 +39,7 @@ func authMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handle
 				return
 			}
 
-			ctx := r.Context()
-			ctx = logging.WithRequestUser(ctx, payload.Sub, payload.Email)
-			r = r.WithContext(ctx)
-
-			_, err = userRepo.Put(r.Context(), &api.User{
+			user, err := userRepo.Put(r.Context(), &api.User{
 				ID:      "",
 				Subject: payload.Sub,
 				Email:   payload.Email,
@@ -52,6 +48,10 @@ func authMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handle
 				http.Error(w, "couldn't save user: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
+
+			ctx := r.Context()
+			ctx = utils.WithUser(ctx, *user)
+			r = r.WithContext(ctx)
 
 			h.ServeHTTP(w, r)
 		})

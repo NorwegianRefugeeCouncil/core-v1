@@ -3,13 +3,8 @@ package logging
 import (
 	"context"
 
+	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
-)
-
-const (
-	keyRequestID          = "__request_id"
-	keyRequestUserSubject = "__request_user_subject"
-	keyRequestUserEmail   = "__request_user_email"
 )
 
 func NewLogger(ctx context.Context) *zap.Logger {
@@ -18,36 +13,21 @@ func NewLogger(ctx context.Context) *zap.Logger {
 	if ctx != nil {
 
 		// request id
-		if rid := ctx.Value(keyRequestID); rid != nil {
-			fields = append(fields, zap.String("request_id", rid.(string)))
+		rid := utils.GetRequestID(ctx)
+		if rid != "" {
+			fields = append(fields, zap.String("request_id", rid))
 		}
 
-		// request user subject
-		if subject := ctx.Value(keyRequestUserSubject); subject != nil {
-			fields = append(fields, zap.String("request_user_subject", subject.(string)))
-		}
-
-		// request user email
-		if email := ctx.Value(keyRequestUserEmail); email != nil {
-			fields = append(fields, zap.String("request_user_email", email.(string)))
+		user := utils.GetRequestUser(ctx)
+		if user != nil {
+			if user.Subject != "" {
+				fields = append(fields, zap.String("user_subject", user.Subject))
+			}
+			if user.Email != "" {
+				fields = append(fields, zap.String("user_email", user.Email))
+			}
 		}
 
 	}
 	return l.With(fields...)
-}
-
-func WithRequestID(ctx context.Context, id string) context.Context {
-	return context.WithValue(ctx, keyRequestID, id)
-}
-
-func WithRequestUserSubject(ctx context.Context, subject string) context.Context {
-	return context.WithValue(ctx, keyRequestUserSubject, subject)
-}
-
-func WithRequestUserEmail(ctx context.Context, email string) context.Context {
-	return context.WithValue(ctx, keyRequestUserEmail, email)
-}
-
-func WithRequestUser(ctx context.Context, subject string, email string) context.Context {
-	return WithRequestUserSubject(WithRequestUserEmail(ctx, email), subject)
 }

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
-	"github.com/nrc-no/notcore/internal/logging"
+	"github.com/nrc-no/notcore/internal/utils"
 )
 
 func requestIdMiddleware(h http.Handler) http.Handler {
@@ -14,7 +14,7 @@ func requestIdMiddleware(h http.Handler) http.Handler {
 			requestID = uuid.New().String()
 		}
 		ctx := r.Context()
-		ctx = logging.WithRequestID(ctx, requestID)
+		ctx = utils.WithRequestID(ctx, requestID)
 		r = r.WithContext(ctx)
 		h.ServeHTTP(w, r)
 	})
