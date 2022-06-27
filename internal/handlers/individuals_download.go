@@ -35,21 +35,21 @@ func HandleDownload(repo db.IndividualRepo) http.Handler {
 		w.Header().Set("Content-Type", "text/csv")
 
 		if err := csvEncoder.Write([]string{
-			"id",
-			"full_name",
-			"preferred_name",
-			"displacement_status",
-			"email",
-			"address",
-			"phone_number",
-			"birth_date",
-			"is_minor",
-			"gender",
-			"presents_protection_concerns",
-			"physical_impairment",
-			"sensory_impairment",
-			"mental_impairment",
-			"countries",
+			csvHeaderIndividualID,
+			csvHeaderIndividualFullName,
+			csvHeaderIndividualPreferredName,
+			csvHeaderIndividualDisplacementStatus,
+			csvHeaderIndividualEmail,
+			csvHeaderIndividualAddress,
+			csvHeaderIndividualPhoneNumber,
+			csvHeaderIndividualBirthDate,
+			csvHeaderIndividualIsMinor,
+			csvHeaderIndividualGender,
+			csvHeaderIndividualPresentsProtectionConcerns,
+			csvHeaderIndividualPhysicalImpairment,
+			csvHeaderIndividualSensoryImpairment,
+			csvHeaderIndividualMentalImpairment,
+			csvHeaderIndividualCountries,
 		}); err != nil {
 			l.Error("failed to write header", zap.Error(err))
 			http.Error(w, "failed to write header: "+err.Error(), http.StatusInternalServerError)

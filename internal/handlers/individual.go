@@ -127,10 +127,10 @@ type ValidationErrors map[string]string
 func validateIndividual(individual *api.Individual) ValidationErrors {
 	ret := ValidationErrors{}
 	if individual.FullName == "" {
-		ret["FullName"] = "Full name is required"
+		ret[formParamIndividualFullName] = "Full name is required"
 	}
 	if len(individual.Countries) == 0 {
-		ret["Countries"] = "At least one country is required"
+		ret[formParamIndividualCountries] = "At least one country is required"
 	}
 	return ret
 }
@@ -157,25 +157,26 @@ func normalizeIndividual(individual *api.Individual) {
 }
 
 func parseIndividualForm(r *http.Request, individual *api.Individual) error {
+
 	var err error
-	individual.FullName = r.FormValue("FullName")
-	individual.PreferredName = r.FormValue("PreferredName")
-	individual.DisplacementStatus = r.FormValue("DisplacementStatus")
-	individual.Email = r.FormValue("Email")
-	individual.PhoneNumber = r.FormValue("PhoneNumber")
-	individual.Address = r.FormValue("Address")
-	individual.Gender = r.FormValue("Gender")
-	individual.BirthDate, err = parseBirthDate(r.FormValue("BirthDate"))
+	individual.FullName = r.FormValue(formParamIndividualFullName)
+	individual.PreferredName = r.FormValue(formParamIndividualPreferredName)
+	individual.DisplacementStatus = r.FormValue(formParamIndividualDisplacementStatus)
+	individual.Email = r.FormValue(formParamIndividualEmail)
+	individual.PhoneNumber = r.FormValue(formParamIndividualPhoneNumber)
+	individual.Address = r.FormValue(formParamIndividualAddress)
+	individual.Gender = r.FormValue(formParamIndividualGender)
+	individual.BirthDate, err = parseBirthDate(r.FormValue(formParamIndividualBirthDate))
 	if err != nil {
 		return err
 	}
-	individual.IsMinor = r.FormValue("IsMinor") == "true"
-	individual.PresentsProtectionConcerns = r.FormValue("PresentsProtectionConcerns") == "true"
-	individual.PhysicalImpairment = r.FormValue("PhysicalImpairment")
-	individual.MentalImpairment = r.FormValue("MentalImpairment")
-	individual.SensoryImpairment = r.FormValue("SensoryImpairment")
+	individual.IsMinor = r.FormValue(formParamIndividualIsMinor) == "true"
+	individual.PresentsProtectionConcerns = r.FormValue(formParamIndividualPresentsProtectionConcerns) == "true"
+	individual.PhysicalImpairment = r.FormValue(formParamIndividualPhysicalImpairment)
+	individual.MentalImpairment = r.FormValue(formParamIndividualMentalImpairment)
+	individual.SensoryImpairment = r.FormValue(formParamIndividualSensoryImpairment)
 	individual.Countries = make([]string, 0)
-	countries := strings.Split(r.FormValue("Countries"), ",")
+	countries := strings.Split(r.FormValue(formParamIndividualCountries), ",")
 	for _, c := range countries {
 		c = trimString(c)
 		if c != "" {
@@ -191,38 +192,38 @@ func parseIndividualCsvRow(colMapping map[string]int, cols []string) (*api.Indiv
 	var individual = &api.Individual{}
 	for field, idx := range colMapping {
 		switch field {
-		case "id":
+		case csvHeaderIndividualID:
 			individual.ID = cols[idx]
-		case "full_name":
+		case csvHeaderIndividualFullName:
 			individual.FullName = cols[idx]
-		case "preferred_name":
+		case csvHeaderIndividualPreferredName:
 			individual.PreferredName = cols[idx]
-		case "displacement_status":
+		case csvHeaderIndividualDisplacementStatus:
 			individual.DisplacementStatus = cols[idx]
-		case "phone_number":
+		case csvHeaderIndividualPhoneNumber:
 			individual.PhoneNumber = cols[idx]
-		case "email":
+		case csvHeaderIndividualEmail:
 			individual.Email = cols[idx]
-		case "address":
+		case csvHeaderIndividualAddress:
 			individual.Address = cols[idx]
-		case "gender":
+		case csvHeaderIndividualGender:
 			individual.Gender = cols[idx]
-		case "birth_date":
+		case csvHeaderIndividualBirthDate:
 			individual.BirthDate, err = parseBirthDate(cols[idx])
 			if err != nil {
 				return nil, err
 			}
-		case "is_minor":
+		case csvHeaderIndividualIsMinor:
 			individual.IsMinor = cols[idx] == "true"
-		case "presents_protection_concerns":
+		case csvHeaderIndividualPresentsProtectionConcerns:
 			individual.PresentsProtectionConcerns = cols[idx] == "true"
-		case "physical_impairment":
+		case csvHeaderIndividualPhysicalImpairment:
 			individual.PhysicalImpairment = cols[idx]
-		case "sensory_impairment":
+		case csvHeaderIndividualSensoryImpairment:
 			individual.SensoryImpairment = cols[idx]
-		case "mental_impairment":
+		case csvHeaderIndividualMentalImpairment:
 			individual.MentalImpairment = cols[idx]
-		case "countries":
+		case csvHeaderIndividualCountries:
 			individual.Countries = strings.Split(cols[idx], ",")
 		}
 

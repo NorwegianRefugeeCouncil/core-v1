@@ -17,21 +17,21 @@ func HandleUser(templates map[string]*template.Template, repo db.UserRepo) http.
 
 		const (
 			templateName    = "user.gohtml"
-			userIdPathParam = "user_id"
-			userViewParam   = "User"
+			pathParamUserId = "user_id"
+			viewParamUser   = "User"
 		)
 
 		var (
 			ctx    = r.Context()
 			err    error
-			userID = mux.Vars(r)[userIdPathParam]
+			userID = mux.Vars(r)[pathParamUserId]
 			user   *api.User
 			l      = logging.NewLogger(ctx)
 		)
 
 		render := func() {
 			renderView(templates, templateName, w, r, map[string]interface{}{
-				userViewParam: user,
+				viewParamUser: user,
 			})
 		}
 
