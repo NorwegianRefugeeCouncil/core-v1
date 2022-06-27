@@ -26,6 +26,7 @@ var migrations = []migration{
 	migrationFromFile("002_global_intake"),
 	migrationFromFile("003_countries"),
 	migrationFromFile("004_users"),
+	migrationFromFile("005_user_defaults"),
 }
 
 // Migrate runs the migrations on the database.
@@ -69,6 +70,7 @@ func Migrate(ctx context.Context, db *sqlx.DB) error {
 
 	_, err = doInTransaction(ctx, db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		for _, m := range migrations {
+			l.Info("running migration", zap.String("name", m.name))
 			var num int
 			err = tx.GetContext(ctx, &num, "SELECT 1 FROM migrations WHERE name = $1", m.name)
 			if err == nil {

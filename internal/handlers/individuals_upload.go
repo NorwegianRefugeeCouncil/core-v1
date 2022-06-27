@@ -76,8 +76,12 @@ func parseIndividualsCSV(ctx context.Context, reader io.Reader) ([]string, []*ap
 	colMapping := map[string]int{}
 	for i, cols := range records {
 		if i == 0 {
-			fields = cols
+			var fields = make([]string, len(cols))
+			for i, col := range cols {
+				fields[i] = trimString(col)
+			}
 			for j, col := range cols {
+				col = trimString(col)
 				colMapping[strings.Trim(col, " \n\t\r")] = j
 			}
 		} else {
