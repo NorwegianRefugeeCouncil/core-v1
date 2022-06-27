@@ -13,6 +13,7 @@ func buildRouter(
 	individualRepo db.IndividualRepo,
 	countryRepo db.CountryRepo,
 	userRepo db.UserRepo,
+	permissionRepo db.PermissionRepo,
 	tpl templates,
 ) *mux.Router {
 
@@ -23,7 +24,7 @@ func buildRouter(
 	staticRouter.HandleFunc("/{file:.*}", web.ServeStatic)
 
 	webRouter := r.PathPrefix("/").Subrouter()
-	webRouter.Use(noCache, logMiddleware, authMiddleware(userRepo))
+	webRouter.Use(noCache, logMiddleware, authMiddleware(userRepo), permissionMiddleware(permissionRepo))
 	webRouter.Path("/").Handler(handlers.HandleIndex(tpl))
 	webRouter.Path("/individuals").Handler(handlers.ListHandler(tpl, individualRepo, countryRepo))
 	webRouter.Path("/individuals/upload").Handler(handlers.UploadHandler(individualRepo))
@@ -32,7 +33,7 @@ func buildRouter(
 	webRouter.Path("/countries").Handler(handlers.HandleCountries(tpl, countryRepo))
 	webRouter.Path("/countries/{country_id}").Handler(handlers.HandleCountry(tpl, countryRepo))
 	webRouter.Path("/users").Handler(handlers.HandleUsers(tpl, userRepo))
-	webRouter.Path("/users/{user_id}").Handler(handlers.HandleUser(tpl, userRepo))
+	webRouter.Path("/users/{user_id}").Handler(handlers.HandleUser(tpl, countryRepo, userRepo, permissionRepo))
 	return r
 }
 

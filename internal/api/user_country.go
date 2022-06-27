@@ -2,36 +2,35 @@ package api
 
 type Permission string
 
-const (
-	ReadPermission  Permission = "read"
-	WritePermission Permission = "write"
-	AdminPermission Permission = "admin"
-)
-
-type UserCountry struct {
-	UserID     string     `db:"user_id"`
-	CountryID  string     `db:"country_id"`
-	Permission Permission `db:"permission"`
+type CountryPermission struct {
+	CountryID string
+	Read      bool
+	Write     bool
+	Admin     bool
 }
 
-type CountryPermission struct {
-	CountryID  string
-	Permission Permission
+type CountryPermissions map[string]CountryPermission
+
+func (c CountryPermissions) HasPermission(countryID string, permission string) bool {
+	if c == nil {
+		return false
+	}
+	if _, ok := c[countryID]; !ok {
+		return false
+	}
+	switch permission {
+	case "read":
+		return c[countryID].Read
+	case "write":
+		return c[countryID].Write
+	case "admin":
+		return c[countryID].Admin
+	default:
+		return false
+	}
 }
 
 type UserPermissions struct {
 	UserID             string
-	CountryPermissions []CountryPermission
-}
-
-func (u UserPermissions) ToUserCountryList() []UserCountry {
-	var ret []UserCountry
-	for _, c := range u.CountryPermissions {
-		ret = append(ret, UserCountry{
-			UserID:     u.UserID,
-			CountryID:  c.CountryID,
-			Permission: c.Permission,
-		})
-	}
-	return ret
+	CountryPermissions CountryPermissions
 }

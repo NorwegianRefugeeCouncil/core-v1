@@ -37,6 +37,7 @@ func (o Options) New() (*Server, error) {
 	individualRepo := db.NewIndividualRepo(sqlDb)
 	countryRepo := db.NewCountryRepo(sqlDb)
 	userRepo := db.NewUserRepo(sqlDb)
+	permissionRepo := db.NewPermissionRepo(sqlDb)
 
 	s := &Server{
 		address: o.Address,
@@ -47,7 +48,7 @@ func (o Options) New() (*Server, error) {
 		return nil, err
 	}
 
-	s.router = buildRouter(individualRepo, countryRepo, userRepo, tpl)
+	s.router = buildRouter(individualRepo, countryRepo, userRepo, permissionRepo, tpl)
 
 	return s, nil
 }
