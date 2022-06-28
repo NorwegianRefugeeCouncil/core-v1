@@ -41,102 +41,36 @@ func NewPermissionRepo(db *sqlx.DB) PermissionRepo {
 	return &permissionRepo{db: db}
 }
 
-func (u permissionRepo) HasAnyGlobalAdmin(ctx context.Context) (bool, error) {
+func (r permissionRepo) HasAnyGlobalAdmin(ctx context.Context) (bool, error) {
 	l := logging.NewLogger(ctx)
 	l.Debug("checking if system has any global admin")
 
 	var count int
-	if err := u.db.GetContext(ctx, &count, "select count(*) from user_permissions where is_global_admin = true"); err != nil {
+	if err := r.db.GetContext(ctx, &count, "select count(*) from user_permissions where is_global_admin = true"); err != nil {
 		l.Error("failed to check if user has any global admin", zap.Error(err))
 		return false, err
 	}
 	return count > 0, nil
 }
 
-func (u permissionRepo) SavePermissionsForUser(ctx context.Context, userPermissions *api.UserPermissions) error {
+func (r permissionRepo) SavePermissionsForUser(ctx context.Context, userPermissions *api.UserPermissions) error {
 	l := logging.NewLogger(ctx).With(zap.String("user_id", userPermissions.UserID))
 	l.Debug("saving user permissions")
-	_, err := doInTransaction(ctx, u.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
+	_, err := doInTransaction(ctx, r.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 
-		// delete all country permissions for user
-		const deleteQry = "delete from user_countries where user_id = $1"
-		deleteArgs := []interface{}{userPermissions.UserID}
-
-		if _, err := tx.ExecContext(ctx, deleteQry, deleteArgs...); err != nil {
-			l.Error("failed to delete user countries", zap.Error(err))
+		if err := r.deleteCountryPermissionsForUser(ctx, tx, userPermissions.UserID); err != nil {
+			l.Error("failed to delete country permissions for user", zap.Error(err))
 			return nil, err
 		}
 
-		// create new country permissions
-		var userCountries = make([]*UserCountry, len(userPermissions.CountryPermissions))
-		var i = 0
-		for _, countryPermission := range userPermissions.CountryPermissions {
-			userCountries[i] = &UserCountry{
-				UserID:    userPermissions.UserID,
-				CountryID: countryPermission.CountryID,
-				Read:      countryPermission.Read,
-				Write:     countryPermission.Write,
-				Admin:     countryPermission.Admin,
-			}
-			i++
+		if err := r.createCountryPermissions(ctx, tx, userPermissions); err != nil {
+			l.Error("failed to create country permissions for user", zap.Error(err))
+			return nil, err
 		}
 
-		// if there are no country permissions, return early
-		if len(userCountries) != 0 {
-			// build insertion query
-			var insertArgs []interface{}
-			var valueLists []string
-			for _, userCountry := range userCountries {
-				if !userCountry.Read && !userCountry.Write && !userCountry.Admin {
-					continue
-				}
-				valueLists = append(valueLists, fmt.Sprintf("($%d, $%d, $%d, $%d, $%d)",
-					len(insertArgs)+1,
-					len(insertArgs)+2,
-					len(insertArgs)+3,
-					len(insertArgs)+4,
-					len(insertArgs)+5,
-				))
-				insertArgs = append(insertArgs, userCountry.UserID, userCountry.CountryID, userCountry.Read, userCountry.Write, userCountry.Admin)
-			}
-
-			// if there are no permissions, return early
-			if len(valueLists) != 0 {
-				insertQuery := "insert into user_countries (user_id, country_id, read, write, admin) values " + strings.Join(valueLists, ",")
-				if _, err := tx.ExecContext(ctx, insertQuery, insertArgs...); err != nil {
-					l.Error("failed to insert user countries", zap.Error(err))
-					return nil, err
-				}
-			}
-		}
-
-		findUserPermissionsQry := "select * from user_permissions where user_id = $1"
-		findUserPermissionsArgs := []interface{}{userPermissions.UserID}
-		var userPermissionsResult UserPermissions
-
-		err := tx.GetContext(ctx, &userPermissionsResult, findUserPermissionsQry, findUserPermissionsArgs...)
-
-		if err == nil {
-			// user permissions already exist, update them
-			const updateQry = "update user_permissions set is_global_admin = $1 where user_id = $2"
-			updateArgs := []interface{}{userPermissions.IsGlobalAdmin, userPermissions.UserID}
-			if _, err := tx.ExecContext(ctx, updateQry, updateArgs...); err != nil {
-				l.Error("failed to update user permissions", zap.Error(err))
-				return nil, err
-			}
-		} else {
-			if errors.Is(err, sql.ErrNoRows) {
-				// user permissions does not exist, create it
-				insertUserPermissionsQry := "insert into user_permissions (user_id, is_global_admin) values ($1, $2)"
-				insertUserPermissionsArgs := []interface{}{userPermissions.UserID, userPermissions.IsGlobalAdmin}
-				if _, err := tx.ExecContext(ctx, insertUserPermissionsQry, insertUserPermissionsArgs...); err != nil {
-					l.Error("failed to insert user permissions", zap.Error(err))
-					return nil, err
-				}
-			} else {
-				l.Error("failed to find user permissions", zap.Error(err))
-				return nil, err
-			}
+		if err := r.putUserPermissions(ctx, tx, userPermissions); err != nil {
+			l.Error("failed to put user permissions", zap.Error(err))
+			return nil, err
 		}
 
 		return nil, nil
@@ -151,7 +85,7 @@ func (u permissionRepo) SavePermissionsForUser(ctx context.Context, userPermissi
 	return nil
 }
 
-func (u permissionRepo) GetPermissionsForUser(ctx context.Context, userID string) (*api.UserPermissions, error) {
+func (r permissionRepo) GetPermissionsForUser(ctx context.Context, userID string) (*api.UserPermissions, error) {
 	l := logging.NewLogger(ctx).With(zap.String("user_id", userID))
 	l.Debug("getting user countries")
 
@@ -162,7 +96,7 @@ func (u permissionRepo) GetPermissionsForUser(ctx context.Context, userID string
 	errGrp.Go(func() error {
 		const userCountriesQry = "select * from user_countries where user_id = $1"
 		var userCountriesArgs = []interface{}{userID}
-		if err := u.db.SelectContext(gCtx, &userCountries, userCountriesQry, userCountriesArgs...); err != nil {
+		if err := r.db.SelectContext(gCtx, &userCountries, userCountriesQry, userCountriesArgs...); err != nil {
 			l.Error("failed to get countries for user", zap.Error(err))
 			return err
 		}
@@ -171,14 +105,14 @@ func (u permissionRepo) GetPermissionsForUser(ctx context.Context, userID string
 	errGrp.Go(func() error {
 		const userPermissionsQry = "select * from user_permissions where user_id = $1"
 		var userPermissionsArgs = []interface{}{userID}
-		if err := u.db.GetContext(gCtx, &userPermissions, userPermissionsQry, userPermissionsArgs...); err != nil {
+		if err := r.db.GetContext(gCtx, &userPermissions, userPermissionsQry, userPermissionsArgs...); err != nil {
 			if !errors.Is(err, sql.ErrNoRows) {
 				l.Error("failed to get permissions for user", zap.Error(err))
 				return err
 			}
 			insertQry := "insert into user_permissions (user_id, is_global_admin) values ($1, $2)"
 			insertArgs := []interface{}{userID, false}
-			if _, err := u.db.ExecContext(gCtx, insertQry, insertArgs...); err != nil {
+			if _, err := r.db.ExecContext(gCtx, insertQry, insertArgs...); err != nil {
 				l.Error("failed to insert permissions for user", zap.Error(err))
 				return err
 			}
@@ -205,4 +139,104 @@ func (u permissionRepo) GetPermissionsForUser(ctx context.Context, userID string
 	}
 
 	return &ret, nil
+}
+
+func (r permissionRepo) deleteCountryPermissionsForUser(ctx context.Context, tx *sqlx.Tx, userID string) error {
+	l := logging.NewLogger(ctx).With(zap.String("user_id", userID))
+	// delete all country permissions for user
+	const deleteQry = "delete from user_countries where user_id = $1"
+	deleteArgs := []interface{}{userID}
+	if _, err := tx.ExecContext(ctx, deleteQry, deleteArgs...); err != nil {
+		l.Error("failed to delete user countries", zap.Error(err))
+		return err
+	}
+	return nil
+}
+
+func (r permissionRepo) createCountryPermissions(ctx context.Context, tx *sqlx.Tx, permissions *api.UserPermissions) error {
+	l := logging.NewLogger(ctx).With(zap.String("user_id", permissions.UserID))
+
+	// create new country permissions
+	var userCountries = make([]*UserCountry, len(permissions.CountryPermissions))
+	var i = 0
+	for _, countryPermission := range permissions.CountryPermissions {
+		userCountries[i] = &UserCountry{
+			UserID:    permissions.UserID,
+			CountryID: countryPermission.CountryID,
+			Read:      countryPermission.Read,
+			Write:     countryPermission.Write,
+			Admin:     countryPermission.Admin,
+		}
+		i++
+	}
+
+	// if there are no country permissions, return early
+	if len(userCountries) == 0 {
+		return nil
+	}
+
+	// build insertion query
+	var insertArgs []interface{}
+	var valueLists []string
+	for _, userCountry := range userCountries {
+		if !userCountry.Read && !userCountry.Write && !userCountry.Admin {
+			continue
+		}
+		valueLists = append(valueLists, fmt.Sprintf("($%d, $%d, $%d, $%d, $%d)",
+			len(insertArgs)+1,
+			len(insertArgs)+2,
+			len(insertArgs)+3,
+			len(insertArgs)+4,
+			len(insertArgs)+5,
+		))
+		insertArgs = append(insertArgs, userCountry.UserID, userCountry.CountryID, userCountry.Read, userCountry.Write, userCountry.Admin)
+	}
+
+	// if there are no permissions, return early
+	if len(valueLists) != 0 {
+		return nil
+	}
+
+	insertQuery := "insert into user_countries (user_id, country_id, read, write, admin) values " + strings.Join(valueLists, ",")
+	if _, err := tx.ExecContext(ctx, insertQuery, insertArgs...); err != nil {
+		l.Error("failed to insert user countries", zap.Error(err))
+		return err
+	}
+
+	return nil
+}
+
+func (r permissionRepo) putUserPermissions(ctx context.Context, tx *sqlx.Tx, permissions *api.UserPermissions) error {
+	l := logging.NewLogger(ctx).With(zap.String("user_id", permissions.UserID))
+
+	findUserPermissionsQry := "select * from user_permissions where user_id = $1"
+	findUserPermissionsArgs := []interface{}{permissions.UserID}
+	var userPermissionsResult UserPermissions
+
+	err := tx.GetContext(ctx, &userPermissionsResult, findUserPermissionsQry, findUserPermissionsArgs...)
+
+	if err == nil {
+		// user permissions already exist, update them
+		const updateQry = "update user_permissions set is_global_admin = $1 where user_id = $2"
+		updateArgs := []interface{}{permissions.IsGlobalAdmin, permissions.UserID}
+		if _, err := tx.ExecContext(ctx, updateQry, updateArgs...); err != nil {
+			l.Error("failed to update user permissions", zap.Error(err))
+			return err
+		}
+	} else {
+		if errors.Is(err, sql.ErrNoRows) {
+			// user permissions does not exist, create it
+			insertUserPermissionsQry := "insert into user_permissions (user_id, is_global_admin) values ($1, $2)"
+			insertUserPermissionsArgs := []interface{}{permissions.UserID, permissions.IsGlobalAdmin}
+			if _, err := tx.ExecContext(ctx, insertUserPermissionsQry, insertUserPermissionsArgs...); err != nil {
+				l.Error("failed to insert user permissions", zap.Error(err))
+				return err
+			}
+		} else {
+			l.Error("failed to find user permissions", zap.Error(err))
+			return err
+		}
+	}
+
+	return nil
 }
