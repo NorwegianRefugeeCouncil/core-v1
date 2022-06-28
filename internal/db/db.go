@@ -20,13 +20,13 @@ func doInTransaction(ctx context.Context, db *sqlx.DB, f func(ctx context.Contex
 	rollback := true
 	defer func() {
 		if rollback {
-			l.Info("rolling back transaction")
+			l.Warn("rolling back transaction")
 			if err := tx.Rollback(); err != nil {
 				l.Error("failed to rollback transaction", zap.Error(err))
 				retError = &err
 			}
 		} else {
-			l.Info("committing transaction")
+			l.Debug("committing transaction")
 			if err := tx.Commit(); err != nil {
 				l.Error("failed to commit transaction", zap.Error(err))
 				*retError = err
