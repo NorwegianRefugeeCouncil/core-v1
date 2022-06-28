@@ -38,18 +38,26 @@ func authMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handle
 				return
 			}
 
-			var payload AuthHeaderClaims
+			var payload = map[string]interface{}{}
 			if err := json.Unmarshal(authHeaderJsonBytes, &payload); err != nil {
 				http.Error(w, "Invalid authorization header: "+err.Error(), http.StatusBadRequest)
 				return
 			}
-
 			l.Debug("auth header claims", zap.Any("payload", payload))
+
+			sub, done := getAuthPayloadStr(w, payload, "sub")
+			if done {
+				return
+			}
+			email, done := getAuthPayloadStr(w, payload, "email")
+			if done {
+				return
+			}
 
 			user, err := userRepo.Put(r.Context(), &api.User{
 				ID:      "",
-				Subject: payload.Sub,
-				Email:   payload.Email,
+				Subject: sub,
+				Email:   email,
 			})
 			if err != nil {
 				http.Error(w, "couldn't save user: "+err.Error(), http.StatusInternalServerError)
@@ -62,4 +70,18 @@ func authMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handle
 			h.ServeHTTP(w, r)
 		})
 	}
+}
+
+func getAuthPayloadStr(w http.ResponseWriter, payload map[string]interface{}, key string) (string, bool) {
+	valIntf := payload[key]
+	if valIntf == nil {
+		http.Error(w, "Invalid authorization header: missing "+key, http.StatusBadRequest)
+		return "", true
+	}
+	val, ok := valIntf.(string)
+	if !ok {
+		http.Error(w, "Invalid authorization header: "+key+" is not a string", http.StatusBadRequest)
+		return "", true
+	}
+	return val, false
 }
