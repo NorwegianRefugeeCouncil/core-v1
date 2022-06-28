@@ -7,19 +7,24 @@ import (
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
+	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
+	"go.uber.org/zap"
 )
 
 func authMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 
-		type authHeaderClaims struct {
+		type AuthHeaderClaims struct {
 			Sub    string `json:"sub"`
 			Email  string `json:"email"`
 			Issuer string `json:"iss"`
 		}
 
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+			ctx := r.Context()
+			l := logging.NewLogger(ctx)
 
 			authHeaderBase64 := r.Header.Get("X-Jwt-Payload")
 			if len(authHeaderBase64) == 0 {
@@ -33,11 +38,13 @@ func authMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handle
 				return
 			}
 
-			var payload authHeaderClaims
+			var payload AuthHeaderClaims
 			if err := json.Unmarshal(authHeaderJsonBytes, &payload); err != nil {
 				http.Error(w, "Invalid authorization header: "+err.Error(), http.StatusBadRequest)
 				return
 			}
+
+			l.Debug("auth header claims", zap.Any("payload", payload))
 
 			user, err := userRepo.Put(r.Context(), &api.User{
 				ID:      "",
@@ -49,7 +56,6 @@ func authMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handle
 				return
 			}
 
-			ctx := r.Context()
 			ctx = utils.WithUser(ctx, *user)
 			r = r.WithContext(ctx)
 
