@@ -6,18 +6,20 @@ import (
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/logging"
+	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
 
 	"github.com/nrc-no/notcore/internal/db"
 )
 
-func HandleUsers(templates map[string]*template.Template, repo db.UserRepo) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func HandleUsers(templates map[string]*template.Template, userRepo db.UserRepo) http.Handler {
 
-		const (
-			templateName   = "users.gohtml"
-			viewParamUsers = "Users"
-		)
+	const (
+		templateName   = "users.gohtml"
+		viewParamUsers = "Users"
+	)
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		var (
 			ctx   = r.Context()
@@ -28,9 +30,15 @@ func HandleUsers(templates map[string]*template.Template, repo db.UserRepo) http
 		)
 
 		render := func() {
-			renderView(templates, templateName, w, r, map[string]interface{}{
+			renderView(templates, templateName, w, r, viewParams{
 				viewParamUsers: users,
 			})
+		}
+
+		if !utils.IsGlobalAdmin(ctx) {
+			l.Warn("cannot access country page without global admin role")
+			http.Error(w, "user is not global admin", http.StatusForbidden)
+			return
 		}
 
 		if err := r.ParseForm(); err != nil {
@@ -46,7 +54,7 @@ func HandleUsers(templates map[string]*template.Template, repo db.UserRepo) http
 			return
 		}
 
-		users, err = repo.GetAll(ctx, opts)
+		users, err = userRepo.GetAll(ctx, opts)
 		if err != nil {
 			l.Error("failed to get users", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -19,6 +19,7 @@ type Options struct {
 	Address        string
 	DatabaseDriver string
 	DatabaseDSN    string
+	LogoutURL      string
 }
 
 func (o Options) New() (*Server, error) {
@@ -43,7 +44,7 @@ func (o Options) New() (*Server, error) {
 		address: o.Address,
 	}
 
-	tpl, err := parseTemplates()
+	tpl, err := parseTemplates(o.LogoutURL)
 	if err != nil {
 		return nil, err
 	}

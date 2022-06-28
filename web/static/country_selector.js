@@ -25,6 +25,14 @@ class CountrySelector {
                 return countries.filter(c => !codes.includes(c.value))
             })
         )
+
+        this.availableCountries$ = this.unselectedCountries$.pipe(
+            rxjs.map(countries => {
+                return countries.filter(c => !c.readOnly)
+            })
+        )
+
+
         this.setupEvents()
     }
 
@@ -51,8 +59,8 @@ class CountrySelector {
         const init = this.init.bind(this)
         document.addEventListener("DOMContentLoaded", init)
     }
-    
-    init(){
+
+    init() {
         const $this = this
         $this.selectedCountries$.subscribe(countries => {
 
@@ -71,23 +79,28 @@ class CountrySelector {
                 return
             }
 
-            countries.forEach(function ({value, label}) {
+            countries.forEach(function ({value, label, readOnly}) {
                 const countryItem = document.createElement("div")
                 countryItem.className = "list-group-item"
 
                 const labelSpan = document.createElement("span")
                 labelSpan.innerHTML = label
-
-                const buttonSpan = document.createElement("span")
-                buttonSpan.className = "badge text-dark bg-light float-end"
-                buttonSpan.style.cursor = "pointer"
-
-                const removeCountry = $this.removeCountry.bind($this, value)
-                buttonSpan.onclick = () => removeCountry()
-                buttonSpan.innerHTML = "&times;"
-
                 countryItem.appendChild(labelSpan)
-                countryItem.appendChild(buttonSpan)
+
+                console.log("readonly", readOnly)
+                if (!readOnly) {
+                    const buttonSpan = document.createElement("span")
+                    buttonSpan.className = "badge text-dark bg-light float-end"
+                    buttonSpan.style.cursor = "pointer"
+
+                    const removeCountry = $this.removeCountry.bind($this, value)
+                    buttonSpan.onclick = () => removeCountry()
+                    buttonSpan.innerHTML = "&times;"
+
+                    countryItem.appendChild(buttonSpan)
+                } else {
+                    countryItem.className += " text-secondary"
+                }
 
                 countryList.appendChild(countryItem)
             })
@@ -107,11 +120,12 @@ class CountrySelector {
             }
         })
 
-        this.unselectedCountries$.pipe(
+        this.availableCountries$.pipe(
             rxjs.distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
         ).subscribe(countries => {
             ac.setData(countries)
             ac.dropdown.hide()
+            countryInput.disabled = countries.length === 0;
         })
     }
 }

@@ -8,20 +8,22 @@ import (
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
+	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
 )
 
 func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		const (
-			templateName       = "country.gohtml"
-			newId              = "new"
-			pathParamCountryID = "country_id"
-			viewParamCountry   = "Country"
-			formParamName      = "Name"
-			formParamCode      = "Code"
-		)
+	const (
+		templateName       = "country.gohtml"
+		newId              = "new"
+		pathParamCountryID = "country_id"
+		viewParamCountry   = "Country"
+		formParamName      = "Name"
+		formParamCode      = "Code"
+	)
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		var (
 			ctx       = r.Context()
@@ -32,8 +34,14 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 			isNew     = countryID == newId
 		)
 
+		if !utils.IsGlobalAdmin(ctx) {
+			l.Warn("cannot access country page without global admin role")
+			http.Error(w, "user is not global admin", http.StatusForbidden)
+			return
+		}
+
 		render := func() {
-			renderView(templates, templateName, w, r, map[string]interface{}{
+			renderView(templates, templateName, w, r, viewParams{
 				viewParamCountry: country,
 			})
 		}

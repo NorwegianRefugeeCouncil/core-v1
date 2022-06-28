@@ -55,3 +55,35 @@ func GetRequestUserPermissions(ctx context.Context) api.UserPermissions {
 	}
 	return api.UserPermissions{}
 }
+
+func HasCountryPermission(ctx context.Context, countryID string, permission string) bool {
+	userPermissions := GetRequestUserPermissions(ctx)
+	return userPermissions.HasCountryPermission(countryID, permission)
+}
+
+func HasReadPermission(ctx context.Context, countryID string) bool {
+	return HasCountryPermission(ctx, countryID, "read")
+}
+
+func HasWritePermission(ctx context.Context, countryID string) bool {
+	return HasCountryPermission(ctx, countryID, "write")
+}
+
+func HasAdminPermission(ctx context.Context, countryID string) bool {
+	return HasCountryPermission(ctx, countryID, "admin")
+}
+
+func GetCountryIDsWithPermission(ctx context.Context, permission string) []string {
+	userPermissions := GetRequestUserPermissions(ctx)
+	return userPermissions.GetCountryIDsWithPermission(permission)
+}
+
+func GetCountryIDsWithAnyPermission(ctx context.Context, permissions ...string) []string {
+	userPermissions := GetRequestUserPermissions(ctx)
+	return userPermissions.GetCountryIDsWithAnyPermission(permissions...)
+}
+
+func IsGlobalAdmin(ctx context.Context) bool {
+	userPermissions := GetRequestUserPermissions(ctx)
+	return userPermissions.IsGlobalAdmin
+}

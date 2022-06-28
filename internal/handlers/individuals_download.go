@@ -13,15 +13,28 @@ import (
 	"go.uber.org/zap"
 )
 
-func HandleDownload(repo db.IndividualRepo) http.Handler {
+func HandleDownload(
+	userRepo db.IndividualRepo,
+	countryRepo db.CountryRepo,
+) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		var (
-			context = r.Context()
-			l       = logging.NewLogger(context)
+			ctx = r.Context()
+			l   = logging.NewLogger(ctx)
 		)
 
-		ret, err := repo.GetAll(context, api.GetAllOptions{})
+		countries, err := countryRepo.GetAll(ctx)
+		if err != nil {
+			l.Error("failed to get countries", zap.Error(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		permsHelper := newPermissionHelper(ctx, countries)
+		getAllOptions := applyPermissionsToIndividualsQuery(permsHelper, api.GetAllOptions{})
+
+		ret, err := userRepo.GetAll(ctx, getAllOptions)
 		if err != nil {
 			l.Error("failed to get individuals", zap.Error(err))
 			http.Error(w, "failed to get records: "+err.Error(), http.StatusInternalServerError)

@@ -131,7 +131,10 @@ func (i individualRepo) getAllInternal(ctx context.Context, tx *sqlx.Tx, options
 		}
 	}
 
-	if len(options.Countries) != 0 {
+	if options.Countries != nil {
+		if len(options.Countries) == 0 {
+			return ret, nil
+		}
 		countryQueries := []string{}
 		if i.driverName() == "sqlite" {
 			for _, country := range options.Countries {
@@ -144,7 +147,6 @@ func (i individualRepo) getAllInternal(ctx context.Context, tx *sqlx.Tx, options
 			}
 			whereClauses = append(whereClauses, "("+strings.Join(countryQueries, " OR ")+")")
 		}
-
 	}
 
 	if len(options.DisplacementStatuses) != 0 {

@@ -24,11 +24,17 @@ func buildRouter(
 	staticRouter.HandleFunc("/{file:.*}", web.ServeStatic)
 
 	webRouter := r.PathPrefix("/").Subrouter()
-	webRouter.Use(noCache, logMiddleware, authMiddleware(userRepo), permissionMiddleware(permissionRepo))
+	webRouter.Use(
+		noCache,
+		logMiddleware,
+		authMiddleware(userRepo),
+		permissionMiddleware(permissionRepo),
+		firstUserGlobalAdmin(permissionRepo),
+	)
 	webRouter.Path("/").Handler(handlers.HandleIndex(tpl))
 	webRouter.Path("/individuals").Handler(handlers.ListHandler(tpl, individualRepo, countryRepo))
-	webRouter.Path("/individuals/upload").Handler(handlers.UploadHandler(individualRepo))
-	webRouter.Path("/individuals/download").Handler(handlers.HandleDownload(individualRepo))
+	webRouter.Path("/individuals/upload").Handler(handlers.UploadHandler(individualRepo, countryRepo))
+	webRouter.Path("/individuals/download").Handler(handlers.HandleDownload(individualRepo, countryRepo))
 	webRouter.Path("/individuals/{individual_id}").Handler(handlers.HandleIndividual(tpl, individualRepo, countryRepo))
 	webRouter.Path("/countries").Handler(handlers.HandleCountries(tpl, countryRepo))
 	webRouter.Path("/countries/{country_id}").Handler(handlers.HandleCountry(tpl, countryRepo))

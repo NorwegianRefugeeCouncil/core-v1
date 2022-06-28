@@ -10,7 +10,7 @@ import (
 
 type templates map[string]*template.Template
 
-func parseTemplates() (templates, error) {
+func parseTemplates(logoutURL string) (templates, error) {
 	t := make(templates)
 	entries, err := web.Content.ReadDir("templates")
 	if err != nil {
@@ -45,6 +45,9 @@ func parseTemplates() (templates, error) {
 					}
 				}
 				return false
+			},
+			"logoutURL": func() string {
+				return logoutURL
 			},
 		})
 		t[name], err = tpl.ParseFS(web.Content, "templates/layout.gohtml", "templates/"+name)

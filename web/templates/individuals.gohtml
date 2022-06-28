@@ -16,7 +16,10 @@
             "country-input",
             [
                 {{range .Countries }}
-                {"value": {{.Code}}, "label": "{{.Name}}"},
+                {
+                    "value": {{.Code}},
+                    "label": "{{.Name}}",
+                    "readOnly": {{not ($.PermissionsHelper.CanReadFromCountryCode .Code)}}},
                 {{end}}
             ],
             [
@@ -41,10 +44,12 @@
                             Actions
                         </div>
                         <div class="list-group list-group-flush">
-                            <div class="list-group-item">
-                                <a href="/individuals/new" class="btn btn-outline-primary w-100">Create new
-                                    Individual</a>
-                            </div>
+                            {{ if .RequestContext.Permissions.GetCountryIDsWithPermission "write"}}
+                                <div class="list-group-item">
+                                    <a href="/individuals/new" class="btn btn-outline-primary w-100">Create new
+                                        Individual</a>
+                                </div>
+                            {{end}}
                             <div class="list-group-item">
                                 <a href="/individuals/download" target="_blank"
                                    class="btn btn-outline-primary w-100">
@@ -61,16 +66,18 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="list-group-item">
-                                <form action="/individuals/upload" enctype="multipart/form-data" method="post">
-                                    <div class="form-group mb-3">
-                                        <label class="form-label">Upload Individuals CSV file</label>
-                                        <input accept="text/csv" name="file" type="file" class="form-control">
-                                    </div>
-                                    <button type="submit" class="btn btn-outline-primary w-100">Upload</button>
+                            {{ if .RequestContext.Permissions.GetCountryIDsWithPermission "write"}}
+                                <div class="list-group-item">
+                                    <form action="/individuals/upload" enctype="multipart/form-data" method="post">
+                                        <div class="form-group mb-3">
+                                            <label class="form-label">Upload Individuals CSV file</label>
+                                            <input accept="text/csv" name="file" type="file" class="form-control">
+                                        </div>
+                                        <button type="submit" class="btn btn-outline-primary w-100">Upload</button>
 
-                                </form>
-                            </div>
+                                    </form>
+                                </div>
+                            {{end}}
                         </div>
                     </div>
                     <div class="card shadow mb-5 mb-md-3">

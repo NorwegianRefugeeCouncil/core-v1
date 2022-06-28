@@ -86,7 +86,7 @@ static_resources:
                               "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthzPerRoute
                               disabled: true
                         - match:
-                            prefix: /oauth
+                            prefix: /oauth2
                           route:
                             cluster: oauth2_proxy
                           typed_per_filter_config:

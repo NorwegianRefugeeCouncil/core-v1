@@ -20,7 +20,10 @@
             "country-input",
             [
                 {{range .Countries }}
-                {"value": {{.Code}}, "label": "{{.Name}}"},
+                {
+                    "value": {{.Code}},
+                    "label": "{{.Name}}",
+                    "readOnly": {{not ($.PermissionHelper.CanWriteToCountryCode .Code)}}},
                 {{end}}
             ],
             [
@@ -30,16 +33,16 @@
             ],
         );
         document.addEventListener("DOMContentLoaded", function () {
-            const navbarToggler = document.getElementById("navbar-toggler")
+            const navbarToggler = document.getElementById("toolbar")
             const saveButton = document.createElement("button");
             saveButton.className = "btn btn-primary shadow px-5"
             saveButton.innerHTML = "Save"
 
             const navItem = document.createElement("div");
-            navItem.className = "nav-item order-lg-last"
+            navItem.className = ""
             navItem.appendChild(saveButton)
 
-            navbarToggler.parentElement.insertBefore(navItem, navbarToggler.previousSibling)
+            navbarToggler.appendChild(navItem)
 
             const formElement = document.getElementById("form")
             saveButton.onclick = function () {
@@ -182,7 +185,11 @@
 
                                     <!-- Birth Date -->
                                     <div class="form-floating mb-3">
-                                        <input type="date" id="BirthDate" name="BirthDate" class="form-control"
+                                        <input type="date"
+                                               id="BirthDate"
+                                               name="BirthDate"
+                                               forma
+                                               class="form-control"
                                                value="{{if .Individual.BirthDate}}{{.Individual.BirthDate.Format "2006-01-02"}}{{end}}"/>
                                         <label for="BirthDate" class="form-label">Birth Date</label>
                                     </div>

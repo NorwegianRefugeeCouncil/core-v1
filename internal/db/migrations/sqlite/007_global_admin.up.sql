@@ -1,0 +1,1 @@
+alter table users add column is_global_admin boolean not null default false;

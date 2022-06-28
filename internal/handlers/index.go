@@ -6,8 +6,8 @@ import (
 )
 
 func HandleIndex(templates map[string]*template.Template) http.Handler {
+	const templateName = "index.gohtml"
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		const templateName = "index.gohtml"
-		renderView(templates, templateName, w, r, map[string]interface{}{})
+		renderView(templates, templateName, w, r, viewParams{})
 	})
 }

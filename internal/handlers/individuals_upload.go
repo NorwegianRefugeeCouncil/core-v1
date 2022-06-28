@@ -11,20 +11,40 @@ import (
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
+	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
 )
 
-func UploadHandler(repo db.IndividualRepo) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func UploadHandler(individualRepo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
 
-		const (
-			formParamFile = "file"
-		)
+	const (
+		formParamFile = "file"
+	)
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		var (
 			ctx = r.Context()
 			l   = logging.NewLogger(ctx)
 		)
+
+		countries, err := countryRepo.GetAll(ctx)
+		if err != nil {
+			l.Error("failed to get countries", zap.Error(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		countryMap := map[string]*api.Country{}
+		for _, country := range countries {
+			countryMap[country.Code] = country
+		}
+
+		countryIDsWithWritePermission := utils.GetCountryIDsWithPermission(ctx, "write")
+		if len(countryIDsWithWritePermission) == 0 {
+			l.Warn("User does not have permission to upload individuals")
+			http.Error(w, "You are not allowed to upload", http.StatusForbidden)
+			return
+		}
 
 		// todo: find sensible max memory value
 		maxMemory := int64(1024 * 1024 * 1024)
@@ -48,7 +68,25 @@ func UploadHandler(repo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		_, err = repo.PutMany(r.Context(), individuals, fields)
+		allowedCountryCodes := map[string]bool{}
+		for _, countryID := range countryIDsWithWritePermission {
+			country := countryMap[countryID]
+			if country != nil {
+				allowedCountryCodes[country.Code] = true
+			}
+		}
+
+		for _, individual := range individuals {
+			for _, countryCode := range individual.Countries {
+				if !allowedCountryCodes[countryCode] {
+					l.Warn("user does not have permission to upload individuals to country", zap.String("country", countryCode))
+					http.Error(w, "You are not allowed to upload to country: "+countryCode, http.StatusForbidden)
+					return
+				}
+			}
+		}
+
+		_, err = individualRepo.PutMany(r.Context(), individuals, fields)
 		if err != nil {
 			l.Error("failed to put individuals", zap.Error(err))
 			http.Error(w, "failed to put records: "+err.Error(), http.StatusInternalServerError)

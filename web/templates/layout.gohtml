@@ -28,24 +28,41 @@
                     <span class="ms-1">Core</span>
                 </div>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    id="navbar-toggler"
-                    data-bs-target="#navbarContent" aria-controls="navbarContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <div id="toolbar" class="d-flex flex-col align-items-center order-lg-last">
+                {{ if logoutURL}}
+                    <a title="Logout" class="order-last ms-2 btn btn-outline-secondary" href="{{logoutURL}}"><i
+                                class="bi bi-box-arrow-right"></i></a>
+                {{end}}
+                <button class="navbar-toggler order-last ms-2" type="button" data-bs-toggle="collapse"
+                        id="navbar-toggler"
+                        data-bs-target="#navbarContent" aria-controls="navbarContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+            </div>
+
             <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
+                <div class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <div class="nav-item">
                         <a class="nav-link" href="/individuals">Individuals</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/countries">Countries</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/users">Users</a>
-                    </li>
-                </ul>
+                    </div>
+                    {{ $isGlobalAdmin := .RequestContext.Permissions.IsGlobalAdmin }}
+                    {{ $isAnyAdmin := .RequestContext.Permissions.GetCountryIDsWithPermission "admin" }}
+                    {{ if $isGlobalAdmin }}
+                        <div class="nav-item">
+                            <a class="nav-link" href="/countries">Countries</a>
+                        </div>
+                    {{end}}
+                    {{ if or $isGlobalAdmin $isAnyAdmin}}
+                        <div class="nav-item">
+                            <a class="nav-link" href="/users">Users</a>
+                        </div>
+                    {{end}}
+                    <div class="flex-grow-1">
+
+                    </div>
+                </div>
             </div>
         </div>
     </nav>

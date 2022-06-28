@@ -9,6 +9,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
@@ -17,17 +18,19 @@ import (
 )
 
 func HandleIndividual(templates map[string]*template.Template, repo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		const (
-			templateName          = "individual.gohtml"
-			pathParamIndividualID = "individual_id"
-			newID                 = "new"
-			viewParamIndividual   = "Individual"
-			viewParamCountries    = "Countries"
-			viewParamErrors       = "Errors"
-			viewParamWasValidated = "WasValidated"
-		)
+	const (
+		templateName              = "individual.gohtml"
+		pathParamIndividualID     = "individual_id"
+		newID                     = "new"
+		viewParamIndividual       = "Individual"
+		viewParamCountries        = "Countries"
+		viewParamErrors           = "Errors"
+		viewParamWasValidated     = "WasValidated"
+		viewParamPermissionHelper = "PermissionHelper"
+	)
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		var (
 			err              error
@@ -39,70 +42,116 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			wasValidated     bool
 			individualId     = mux.Vars(r)[pathParamIndividualID]
 			isNew            = individualId == newID
+			permsHelper      permissionHelper
 		)
 
 		render := func() {
 			if individual == nil {
 				individual = &api.Individual{}
 			}
-			renderView(templates, templateName, w, r, map[string]interface{}{
-				viewParamIndividual:   individual,
-				viewParamCountries:    countries,
-				viewParamErrors:       validationErrors,
-				viewParamWasValidated: wasValidated,
+			renderView(templates, templateName, w, r, viewParams{
+				viewParamIndividual:       individual,
+				viewParamCountries:        countries,
+				viewParamErrors:           validationErrors,
+				viewParamWasValidated:     wasValidated,
+				viewParamPermissionHelper: permsHelper,
 			})
 			return
 		}
 
 		errGroup, gCtx := errgroup.WithContext(ctx)
 		errGroup.Go(func() error {
+			// Load individual
+			if isNew {
+				return nil
+			}
 			var err error
-			if !isNew {
-				individual, err = repo.GetByID(gCtx, individualId)
-				if err != nil {
-					l.Error("failed to get individual", zap.Error(err))
-					return err
-				}
+			if individual, err = repo.GetByID(gCtx, individualId); err != nil {
+				l.Error("failed to get individual", zap.Error(err))
+				return err
 			}
 			return nil
 		})
+
 		errGroup.Go(func() error {
+			// Load countries
 			var err error
-			countries, err = countryRepo.GetAll(gCtx)
-			if err != nil {
+			if countries, err = countryRepo.GetAll(gCtx); err != nil {
 				l.Error("failed to get countries", zap.Error(err))
 				return err
 			}
 			return nil
 		})
+
+		// Wait for the individual and countries to be loaded
 		if err := errGroup.Wait(); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
+		permsHelper = newPermissionHelper(ctx, countries)
+
+		// Check if the user is allowed to read the individual
+		if !isNew && !permsHelper.CanReadIndividual(individual) {
+			l.Warn("user is not allowed to read individual", zap.String("individual_id", individualId))
+			http.Error(w, "You are not allowed to read this individual", http.StatusForbidden)
+			return
+		}
+
+		// If the user can write to a single country,
+		// then pre-fill the individual with that country.
+		if isNew {
+			writableCountryCodes := permsHelper.GetCountryCodesWithPermission("write")
+			if len(writableCountryCodes) == 1 {
+				individual.Countries = append(individual.Countries, writableCountryCodes.Items()[0])
+			} else {
+				individual.Countries = []string{}
+			}
+		}
+
+		// Render the form if GET
 		if r.Method == http.MethodGet {
 			render()
 			return
 		}
 
+		// Parse the form
 		if err := r.ParseForm(); err != nil {
 			l.Error("failed to parse form", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		if err := parseIndividualForm(r, individual); err != nil {
+		// Parse the individual form
+		if err := parseIndividualForm(r, permsHelper, individual); err != nil {
 			l.Error("failed to parse individual form", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
+		// Check if the user has permission to write to the individual
+		// to the selected countries
+		canWrite := false
+		for _, country := range individual.Countries {
+			if permsHelper.CanWriteToCountryCode(country) {
+				canWrite = true
+				break
+			}
+		}
+		if !canWrite {
+			l.Warn("country not allowed")
+			http.Error(w, "You are not allowed to add to this country", http.StatusForbidden)
+			return
+		}
+
+		// Validate the individual
 		validationErrors = validateIndividual(individual)
 		if len(validationErrors) > 0 {
 			render()
 			return
 		}
 
+		// Save the individual
 		individual, err = repo.Put(ctx, individual, api.AllndividualFields)
 		if err != nil {
 			l.Error("failed to put individual", zap.Error(err))
@@ -121,8 +170,6 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 
 	})
 }
-
-type ValidationErrors map[string]string
 
 func validateIndividual(individual *api.Individual) ValidationErrors {
 	ret := ValidationErrors{}
@@ -156,8 +203,7 @@ func normalizeIndividual(individual *api.Individual) {
 	sort.Strings(individual.Countries)
 }
 
-func parseIndividualForm(r *http.Request, individual *api.Individual) error {
-
+func parseIndividualForm(r *http.Request, permsHelper permissionHelper, individual *api.Individual) error {
 	var err error
 	individual.FullName = r.FormValue(formParamIndividualFullName)
 	individual.PreferredName = r.FormValue(formParamIndividualPreferredName)
@@ -175,14 +221,21 @@ func parseIndividualForm(r *http.Request, individual *api.Individual) error {
 	individual.PhysicalImpairment = r.FormValue(formParamIndividualPhysicalImpairment)
 	individual.MentalImpairment = r.FormValue(formParamIndividualMentalImpairment)
 	individual.SensoryImpairment = r.FormValue(formParamIndividualSensoryImpairment)
-	individual.Countries = make([]string, 0)
-	countries := strings.Split(r.FormValue(formParamIndividualCountries), ",")
-	for _, c := range countries {
+
+	previousCountryCodes := containers.NewStringSet(individual.Countries...)
+	writableCountryCodes := permsHelper.GetCountryCodesWithPermission("write")
+	wantCountryCodes := containers.NewStringSet()
+	for _, c := range strings.Split(r.FormValue(formParamIndividualCountries), ",") {
 		c = trimString(c)
 		if c != "" {
-			individual.Countries = append(individual.Countries, c)
+			wantCountryCodes.Add(c)
 		}
 	}
+	finalCountryCodes := containers.NewStringSet()
+	finalCountryCodes.Add(previousCountryCodes.Difference(writableCountryCodes).Items()...)
+	finalCountryCodes.Add(wantCountryCodes.Intersection(writableCountryCodes).Items()...)
+	individual.Countries = finalCountryCodes.Items()
+
 	normalizeIndividual(individual)
 	return nil
 }

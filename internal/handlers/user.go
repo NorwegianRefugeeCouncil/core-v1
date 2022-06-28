@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"html/template"
 	"net/http"
 	"strings"
@@ -20,35 +21,35 @@ func HandleUser(
 	userRepo db.UserRepo,
 	permissionRepo db.PermissionRepo,
 ) http.Handler {
+
+	const (
+		templateName         = "user.gohtml"
+		pathParamUserId      = "user_id"
+		viewParamUser        = "User"
+		viewParamPermissions = "Permissions"
+		viewParamCountries   = "Countries"
+	)
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		const (
-			templateName         = "user.gohtml"
-			pathParamUserId      = "user_id"
-			viewParamUser        = "User"
-			viewParamPermissions = "Permissions"
-			viewParamCountries   = "Countries"
-		)
-
-		var (
-			ctx         = r.Context()
-			userID      = mux.Vars(r)[pathParamUserId]
-			user        *api.User
-			permissions *api.UserPermissions
-			countries   []*api.Country
-			l           = logging.NewLogger(ctx)
-		)
+		var ctx = r.Context()
+		var l = logging.NewLogger(ctx)
+		var userID = mux.Vars(r)[pathParamUserId]
+		var user *api.User
+		var permissions *api.UserPermissions
+		var countries []*api.Country
+		var permHelper permissionHelper
 
 		render := func() {
-			renderView(templates, templateName, w, r, map[string]interface{}{
+			renderView(templates, templateName, w, r, viewParams{
 				viewParamUser:        user,
 				viewParamPermissions: permissions,
 				viewParamCountries:   countries,
 			})
 		}
 
-		group, gtx := errgroup.WithContext(ctx)
-		group.Go(func() error {
+		errGrp, gtx := errgroup.WithContext(ctx)
+		errGrp.Go(func() error {
 			var err error
 			if user, err = userRepo.GetByID(gtx, userID); err != nil {
 				l.Error("couldn't get user: ", zap.Error(err))
@@ -56,7 +57,7 @@ func HandleUser(
 			}
 			return nil
 		})
-		group.Go(func() error {
+		errGrp.Go(func() error {
 			var err error
 			if permissions, err = permissionRepo.GetPermissionsForUser(gtx, userID); err != nil {
 				l.Error("couldn't get permissions for user: ", zap.Error(err))
@@ -64,7 +65,7 @@ func HandleUser(
 			}
 			return nil
 		})
-		group.Go(func() error {
+		errGrp.Go(func() error {
 			var err error
 			if countries, err = countryRepo.GetAll(gtx); err != nil {
 				l.Error("couldn't get countries: ", zap.Error(err))
@@ -72,8 +73,18 @@ func HandleUser(
 			}
 			return nil
 		})
-		if err := group.Wait(); err != nil {
+		if err := errGrp.Wait(); err != nil {
 			http.Error(w, "couldn't get user: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		permHelper = newPermissionHelper(ctx, countries)
+		if !permHelper.IsGlobalAdmin() {
+			countries = filterCountriesWhereAdmin(permHelper, countries)
+		}
+
+		if !permHelper.IsGlobalAdmin() && len(countries) == 0 {
+			http.Error(w, "you don't have sufficient permissions", http.StatusForbidden)
 			return
 		}
 
@@ -88,37 +99,11 @@ func HandleUser(
 			return
 		}
 
-		var countryPermissions = api.CountryPermissions{}
-
-		for key, values := range r.Form {
-			if strings.HasPrefix(key, "permissions[") {
-				countryID := strings.TrimPrefix(key, "permissions[")
-				countryID = strings.TrimSuffix(countryID, "]")
-				if _, ok := countryPermissions[countryID]; !ok {
-					countryPermissions[countryID] = api.CountryPermission{
-						CountryID: countryID,
-					}
-				}
-				var permission = countryPermissions[countryID]
-				for _, value := range values {
-					if value == "read" {
-						permission.Read = true
-					}
-					if value == "write" {
-						permission.Write = true
-					}
-					if value == "admin" {
-						permission.Admin = true
-					}
-				}
-				countryPermissions[countryID] = permission
-			}
+		if err := parseUserForm(r, permHelper, permissions); err != nil {
+			http.Error(w, "you don't have sufficient permissions", http.StatusForbidden)
+			return
 		}
 
-		permissions = &api.UserPermissions{
-			UserID:             userID,
-			CountryPermissions: countryPermissions,
-		}
 		if err := permissionRepo.SavePermissionsForUser(ctx, permissions); err != nil {
 			l.Error("couldn't save permissions for user: ", zap.Error(err))
 			http.Error(w, "couldn't save permissions for user: "+err.Error(), http.StatusInternalServerError)
@@ -128,4 +113,55 @@ func HandleUser(
 		render()
 
 	})
+}
+
+func filterCountriesWhereAdmin(permHelper permissionHelper, countries []*api.Country) []*api.Country {
+	countryIdsWhereAdmin := permHelper.GetCountryIDsWithPermission("admin")
+	filteredCountryMap := map[string]*api.Country{}
+	for _, country := range countries {
+		if countryIdsWhereAdmin.Contains(country.ID) {
+			filteredCountryMap[country.ID] = country
+		}
+	}
+	filteredCountries := make([]*api.Country, 0, len(filteredCountryMap))
+	for _, country := range filteredCountryMap {
+		filteredCountries = append(filteredCountries, country)
+	}
+	return filteredCountries
+}
+
+func parseUserForm(r *http.Request, permHelper permissionHelper, permissions *api.UserPermissions) error {
+	for key, values := range r.Form {
+		if strings.HasPrefix(key, "permissions[") {
+			countryID := strings.TrimPrefix(key, "permissions[")
+			countryID = strings.TrimSuffix(countryID, "]")
+			if !permHelper.IsGlobalAdmin() && !permHelper.CanAdminCountryID(countryID) {
+				return errors.New("you don't have sufficient permissions")
+			}
+			var permission = api.CountryPermission{
+				CountryID: countryID,
+			}
+			for _, value := range values {
+				if value == "read" {
+					permission.Read = true
+				}
+				if value == "write" {
+					permission.Write = true
+				}
+				if value == "admin" {
+					permission.Admin = true
+				}
+			}
+			permissions.CountryPermissions[countryID] = permission
+		}
+	}
+
+	if len(r.Form["IsGlobalAdmin"]) != 0 {
+		if !permHelper.IsGlobalAdmin() {
+			return errors.New("you don't have sufficient permissions")
+		}
+		permissions.IsGlobalAdmin = r.FormValue("IsGlobalAdmin") == "true"
+	}
+
+	return nil
 }

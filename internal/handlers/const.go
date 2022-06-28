@@ -16,6 +16,18 @@ const (
 	formParamIndividualPresentsProtectionConcerns = "PresentsProtectionConcerns"
 	formParamIndividualSensoryImpairment          = "SensoryImpairment"
 
+	formParamGetIndividualsEmail               = "email"
+	formParamGetIndividualsName                = "name"
+	formParamGetIndividualsPhoneNumber         = "phone_number"
+	formParamsGetIndividualsAddress            = "address"
+	formParamsGetIndividualsGender             = "gender"
+	formParamsGetIndividualsIsMinor            = "is_minor"
+	formParamsGetIndividualsProtectionConcerns = "presents_protection_concerns"
+	formParamsGetIndividualsAgeFrom            = "age_from"
+	formParamsGetIndividualsAgeTo              = "age_to"
+	formParamGetIndividualsCountries           = "countries"
+	formParamsGetIndividualsDisplacementStatus = "displacement_status"
+
 	csvHeaderIndividualID                         = "id"
 	csvHeaderIndividualAddress                    = "address"
 	csvHeaderIndividualBirthDate                  = "birth_date"

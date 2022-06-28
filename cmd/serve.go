@@ -49,6 +49,7 @@ var serveCmd = &cobra.Command{
 			Address:        cmd.Flag("listen-address").Value.String(),
 			DatabaseDriver: cmd.Flag("db-driver").Value.String(),
 			DatabaseDSN:    dsn,
+			LogoutURL:      cmd.Flag("logout-url").Value.String(),
 		}
 
 		srv, err := options.New()
@@ -73,4 +74,5 @@ func init() {
 	serveCmd.PersistentFlags().String("db-driver", "", "database driver")
 	serveCmd.PersistentFlags().String("db-dsn", "", "database dsn")
 	serveCmd.PersistentFlags().String("db-dsn-file", "", "database dsn file")
+	serveCmd.PersistentFlags().String("logout-url", "", "logout url")
 }
