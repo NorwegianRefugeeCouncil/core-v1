@@ -82,37 +82,32 @@ func (u permissionRepo) SavePermissionsForUser(ctx context.Context, userPermissi
 		}
 
 		// if there are no country permissions, return early
-		if len(userCountries) == 0 {
-			return nil, nil
-		}
-
-		// build insertion query
-		var insertArgs []interface{}
-		var valueLists []string
-		for _, userCountry := range userCountries {
-			if !userCountry.Read && !userCountry.Write && !userCountry.Admin {
-				continue
+		if len(userCountries) != 0 {
+			// build insertion query
+			var insertArgs []interface{}
+			var valueLists []string
+			for _, userCountry := range userCountries {
+				if !userCountry.Read && !userCountry.Write && !userCountry.Admin {
+					continue
+				}
+				valueLists = append(valueLists, fmt.Sprintf("($%d, $%d, $%d, $%d, $%d)",
+					len(insertArgs)+1,
+					len(insertArgs)+2,
+					len(insertArgs)+3,
+					len(insertArgs)+4,
+					len(insertArgs)+5,
+				))
+				insertArgs = append(insertArgs, userCountry.UserID, userCountry.CountryID, userCountry.Read, userCountry.Write, userCountry.Admin)
 			}
-			valueLists = append(valueLists, fmt.Sprintf("($%d, $%d, $%d, $%d, $%d)",
-				len(insertArgs)+1,
-				len(insertArgs)+2,
-				len(insertArgs)+3,
-				len(insertArgs)+4,
-				len(insertArgs)+5,
-			))
-			insertArgs = append(insertArgs, userCountry.UserID, userCountry.CountryID, userCountry.Read, userCountry.Write, userCountry.Admin)
-		}
 
-		// if there are no permissions, return early
-		if len(valueLists) == 0 {
-			return nil, nil
-		}
-
-		insertQuery := "insert into user_countries (user_id, country_id, read, write, admin) values " + strings.Join(valueLists, ",")
-
-		if _, err := tx.ExecContext(ctx, insertQuery, insertArgs...); err != nil {
-			l.Error("failed to insert user countries", zap.Error(err))
-			return nil, err
+			// if there are no permissions, return early
+			if len(valueLists) != 0 {
+				insertQuery := "insert into user_countries (user_id, country_id, read, write, admin) values " + strings.Join(valueLists, ",")
+				if _, err := tx.ExecContext(ctx, insertQuery, insertArgs...); err != nil {
+					l.Error("failed to insert user countries", zap.Error(err))
+					return nil, err
+				}
+			}
 		}
 
 		findUserPermissionsQry := "select * from user_permissions where user_id = $1"
