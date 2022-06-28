@@ -193,7 +193,7 @@ func (r permissionRepo) createCountryPermissions(ctx context.Context, tx *sqlx.T
 	}
 
 	// if there are no permissions, return early
-	if len(valueLists) != 0 {
+	if len(valueLists) == 0 {
 		return nil
 	}
 
