@@ -131,13 +131,16 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 
 		// Check if the user has permission to write to the individual
 		// to the selected countries
-		canWrite := false
-		for _, country := range individual.Countries {
-			if permsHelper.CanWriteToCountryCode(country) {
-				canWrite = true
-				break
+		canWrite := permsHelper.IsGlobalAdmin()
+		if !canWrite {
+			for _, country := range individual.Countries {
+				if permsHelper.CanWriteToCountryCode(country) {
+					canWrite = true
+					break
+				}
 			}
 		}
+
 		if !canWrite {
 			l.Warn("country not allowed")
 			http.Error(w, "You are not allowed to add to this country", http.StatusForbidden)
@@ -222,8 +225,6 @@ func parseIndividualForm(r *http.Request, permsHelper permissionHelper, individu
 	individual.MentalImpairment = r.FormValue(formParamIndividualMentalImpairment)
 	individual.SensoryImpairment = r.FormValue(formParamIndividualSensoryImpairment)
 
-	previousCountryCodes := containers.NewStringSet(individual.Countries...)
-	writableCountryCodes := permsHelper.GetCountryCodesWithPermission("write")
 	wantCountryCodes := containers.NewStringSet()
 	for _, c := range strings.Split(r.FormValue(formParamIndividualCountries), ",") {
 		c = trimString(c)
@@ -231,10 +232,18 @@ func parseIndividualForm(r *http.Request, permsHelper permissionHelper, individu
 			wantCountryCodes.Add(c)
 		}
 	}
-	finalCountryCodes := containers.NewStringSet()
-	finalCountryCodes.Add(previousCountryCodes.Difference(writableCountryCodes).Items()...)
-	finalCountryCodes.Add(wantCountryCodes.Intersection(writableCountryCodes).Items()...)
-	individual.Countries = finalCountryCodes.Items()
+
+	if permsHelper.IsGlobalAdmin() {
+		individual.Countries = wantCountryCodes.Items()
+	} else {
+		previousCountryCodes := containers.NewStringSet(individual.Countries...)
+		writableCountryCodes := permsHelper.GetCountryCodesWithPermission("write")
+
+		finalCountryCodes := containers.NewStringSet()
+		finalCountryCodes.Add(previousCountryCodes.Difference(writableCountryCodes).Items()...)
+		finalCountryCodes.Add(wantCountryCodes.Intersection(writableCountryCodes).Items()...)
+		individual.Countries = finalCountryCodes.Items()
+	}
 
 	normalizeIndividual(individual)
 	return nil
