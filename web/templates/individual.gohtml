@@ -14,17 +14,22 @@
             navigator.clipboard.writeText(copyText);
         }
 
+        {{$isGlobalAdmin := $.PermissionHelper.IsGlobalAdmin}}
+
         countrySelector = new CountrySelector(
             "Countries",
             "country-list",
             "country-input",
             [
-                {{range .Countries }}
+                {{- range .Countries -}}
+                {{- $hasWritePermission := $.PermissionHelper.CanWriteToCountryCode .Code -}}
+                {{- $canWrite := or $isGlobalAdmin $hasWritePermission -}}
                 {
                     "value": {{.Code}},
                     "label": "{{.Name}}",
-                    "readOnly": {{not ($.PermissionHelper.CanWriteToCountryCode .Code)}}},
-                {{end}}
+                    "readOnly": {{not $canWrite}}
+                },
+                {{- end -}}
             ],
             [
                 {{range .Individual.Countries}}

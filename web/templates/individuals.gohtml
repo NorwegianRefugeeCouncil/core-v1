@@ -19,7 +19,7 @@
                 {
                     "value": {{.Code}},
                     "label": "{{.Name}}",
-                    "readOnly": {{not ($.PermissionsHelper.CanReadFromCountryCode .Code)}}},
+                    "readOnly": {{not (or ($.PermissionsHelper.IsGlobalAdmin) ($.PermissionsHelper.CanReadFromCountryCode .Code))}}},
                 {{end}}
             ],
             [
