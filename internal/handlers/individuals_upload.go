@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/csv"
+	"github.com/nrc-no/notcore/internal/clients"
 	"io"
 	"net/http"
 	"strconv"
@@ -15,7 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func UploadHandler(individualRepo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
+func UploadHandler(client zanzibar.Client, individualRepo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
 
 	const (
 		formParamFile = "file"

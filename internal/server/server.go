@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"github.com/nrc-no/notcore/cmd/devinit"
 	"net"
 	"net/http"
 	"time"
@@ -49,7 +50,13 @@ func (o Options) New() (*Server, error) {
 		return nil, err
 	}
 
-	s.router = buildRouter(individualRepo, countryRepo, userRepo, permissionRepo, tpl)
+	var config devinit.Config
+	err = config.MakeConfig()
+	if err != nil {
+		return nil, err
+	}
+	
+	s.router = buildRouter(individualRepo, countryRepo, userRepo, permissionRepo, tpl, config)
 
 	return s, nil
 }

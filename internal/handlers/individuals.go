@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/nrc-no/notcore/internal/clients"
 	"html/template"
 	"net/http"
 	"strings"
@@ -13,7 +14,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
+func ListHandler(templates map[string]*template.Template, client zanzibar.Client, repo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
 
 	const (
 		templateName                = "individuals.gohtml"

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/nrc-no/notcore/internal/clients"
 	"net/http"
 	"sync"
 
@@ -11,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func firstUserGlobalAdmin(permissionRepo db.PermissionRepo) func(h http.Handler) http.Handler {
+func firstUserGlobalAdmin(permissionRepo db.PermissionRepo, client zanzibar.Client) func(h http.Handler) http.Handler {
 
 	foundGlobalAdmin := atomic.NewBool(false)
 	lock := &sync.Mutex{}
@@ -23,7 +24,15 @@ func firstUserGlobalAdmin(permissionRepo db.PermissionRepo) func(h http.Handler)
 				l.Info("checking for global admin")
 				if lock.TryLock() {
 					defer lock.Unlock()
-					hasAny, err := permissionRepo.HasAnyGlobalAdmin(r.Context())
+
+					resp, err := client.CheckAnyGlobalAdmin(r.Context())
+					if err != nil {
+						l.Error("zanzibar: couldn't check if there is a global admin: ", zap.Error(err))
+						http.Error(w, err.Error(), http.StatusInternalServerError)
+						return
+					}
+
+					hasAny := resp //permissionRepo.HasAnyGlobalAdmin(r.Context())
 					if err != nil {
 						l.Error("couldn't check if there is a global admin: ", zap.Error(err))
 						http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -31,10 +40,14 @@ func firstUserGlobalAdmin(permissionRepo db.PermissionRepo) func(h http.Handler)
 					}
 					if !hasAny {
 						l.Info("no global admin found, assigning the first user as global admin")
+
+						// create global admin in zanzibar
+						_, err := client.WriteGlobalAdmin(r.Context())
+						l.Error("zanzibar: couldn't save global admin relation for user: ", zap.Error(err))
+
 						perms := utils.GetRequestUserPermissions(r.Context())
 						perms.IsGlobalAdmin = true
 						if err := permissionRepo.SavePermissionsForUser(r.Context(), &perms); err != nil {
-							l.Error("couldn't save permissions for user: ", zap.Error(err))
 							http.Error(w, err.Error(), http.StatusInternalServerError)
 							return
 						}

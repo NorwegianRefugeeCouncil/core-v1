@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/nrc-no/notcore/internal/clients"
 	"html/template"
 	"net/http"
 	"sort"
@@ -17,7 +18,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func HandleIndividual(templates map[string]*template.Template, repo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
+func HandleIndividual(templates map[string]*template.Template, client zanzibar.Client, repo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
 
 	const (
 		templateName              = "individual.gohtml"

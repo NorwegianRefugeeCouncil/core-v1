@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"github.com/nrc-no/notcore/internal/clients"
 	"html/template"
 	"net/http"
 	"strings"
@@ -17,6 +18,7 @@ import (
 
 func HandleUser(
 	templates map[string]*template.Template,
+	client zanzibar.Client,
 	countryRepo db.CountryRepo,
 	userRepo db.UserRepo,
 	permissionRepo db.PermissionRepo,

@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/csv"
 	"fmt"
+	"github.com/nrc-no/notcore/internal/clients"
 	"net/http"
 	"strconv"
 	"strings"
@@ -14,6 +15,7 @@ import (
 )
 
 func HandleDownload(
+	client zanzibar.Client,
 	userRepo db.IndividualRepo,
 	countryRepo db.CountryRepo,
 ) http.Handler {

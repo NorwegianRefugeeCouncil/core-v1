@@ -1,6 +1,8 @@
 package server
 
 import (
+	"github.com/nrc-no/notcore/cmd/devinit"
+	zanzibar "github.com/nrc-no/notcore/internal/clients"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -15,6 +17,7 @@ func buildRouter(
 	userRepo db.UserRepo,
 	permissionRepo db.PermissionRepo,
 	tpl templates,
+	config devinit.Config,
 ) *mux.Router {
 
 	r := mux.NewRouter()
@@ -23,23 +26,25 @@ func buildRouter(
 	staticRouter := r.PathPrefix("/static").Subrouter()
 	staticRouter.HandleFunc("/{file:.*}", web.ServeStatic)
 
+	zanzibarClient := zanzibar.NewZanzibarClient(config)
+
 	webRouter := r.PathPrefix("/").Subrouter()
 	webRouter.Use(
 		noCache,
 		logMiddleware,
 		authMiddleware(userRepo),
 		permissionMiddleware(permissionRepo),
-		firstUserGlobalAdmin(permissionRepo),
+		firstUserGlobalAdmin(permissionRepo, zanzibarClient),
 	)
-	webRouter.Path("/").Handler(handlers.HandleIndex(tpl))
-	webRouter.Path("/individuals").Handler(handlers.ListHandler(tpl, individualRepo, countryRepo))
-	webRouter.Path("/individuals/upload").Handler(handlers.UploadHandler(individualRepo, countryRepo))
-	webRouter.Path("/individuals/download").Handler(handlers.HandleDownload(individualRepo, countryRepo))
-	webRouter.Path("/individuals/{individual_id}").Handler(handlers.HandleIndividual(tpl, individualRepo, countryRepo))
-	webRouter.Path("/countries").Handler(handlers.HandleCountries(tpl, countryRepo))
-	webRouter.Path("/countries/{country_id}").Handler(handlers.HandleCountry(tpl, countryRepo))
-	webRouter.Path("/users").Handler(handlers.HandleUsers(tpl, userRepo))
-	webRouter.Path("/users/{user_id}").Handler(handlers.HandleUser(tpl, countryRepo, userRepo, permissionRepo))
+	webRouter.Path("/").Handler(handlers.HandleIndex(tpl, zanzibarClient))
+	webRouter.Path("/individuals").Handler(handlers.ListHandler(tpl, zanzibarClient, individualRepo, countryRepo))
+	webRouter.Path("/individuals/upload").Handler(handlers.UploadHandler(zanzibarClient, individualRepo, countryRepo))
+	webRouter.Path("/individuals/download").Handler(handlers.HandleDownload(zanzibarClient, individualRepo, countryRepo))
+	webRouter.Path("/individuals/{individual_id}").Handler(handlers.HandleIndividual(tpl, zanzibarClient, individualRepo, countryRepo))
+	webRouter.Path("/countries").Handler(handlers.HandleCountries(tpl, zanzibarClient, countryRepo))
+	webRouter.Path("/countries/{country_id}").Handler(handlers.HandleCountry(tpl, zanzibarClient, countryRepo))
+	webRouter.Path("/users").Handler(handlers.HandleUsers(tpl, zanzibarClient, userRepo))
+	webRouter.Path("/users/{user_id}").Handler(handlers.HandleUser(tpl, zanzibarClient, countryRepo, userRepo, permissionRepo))
 	return r
 }
 

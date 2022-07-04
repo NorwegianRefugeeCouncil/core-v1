@@ -102,3 +102,7 @@ fabric.properties
 
 certs/*
 !certs/.gitkeep
+
+/creds
+
+generated.csv
