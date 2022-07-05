@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/nrc-no/notcore/internal/clients"
+	"github.com/nrc-no/notcore/internal/clients/zanzibar"
 	"html/template"
 	"net/http"
 
@@ -69,6 +69,14 @@ func HandleCountry(templates map[string]*template.Template, client zanzibar.Clie
 		country, err = repo.Put(r.Context(), country)
 		if err != nil {
 			l.Error("failed to put country", zap.Error(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		_, err = client.AddCountry(r.Context(), country.Code)
+
+		if err != nil {
+			l.Error("failed to add country to zanzibar graph", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

@@ -56,6 +56,13 @@ func (u UserPermissions) HasCountryPermission(countryID, permission string) bool
 	return u.IsGlobalAdmin || u.CountryPermissions.HasPermission(countryID, permission)
 }
 
+//func (u UserPermissions) HasCountryPermission(countryID, permission string) bool {
+//	if u.CountryPermissions == nil {
+//		return false
+//	}
+//	return u.IsGlobalAdmin || u.CountryPermissions.HasPermission(countryID, permission)
+//}
+
 func (u UserPermissions) GetCountryIDsWithPermission(permission string) []string {
 	if u.CountryPermissions == nil {
 		return []string{}

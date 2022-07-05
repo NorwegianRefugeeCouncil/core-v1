@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/base64"
 	"encoding/json"
+	"github.com/nrc-no/notcore/internal/clients/zanzibar"
 	"net/http"
 
 	"github.com/nrc-no/notcore/internal/api"
@@ -12,7 +13,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func authMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handler {
+func authMiddleware(userRepo db.UserRepo, client zanzibar.Client) func(handler http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 
 		type AuthHeaderClaims struct {

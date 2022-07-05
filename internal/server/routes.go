@@ -2,7 +2,7 @@ package server
 
 import (
 	"github.com/nrc-no/notcore/cmd/devinit"
-	zanzibar "github.com/nrc-no/notcore/internal/clients"
+	"github.com/nrc-no/notcore/internal/clients/zanzibar"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -32,7 +32,7 @@ func buildRouter(
 	webRouter.Use(
 		noCache,
 		logMiddleware,
-		authMiddleware(userRepo),
+		authMiddleware(userRepo, zanzibarClient),
 		permissionMiddleware(permissionRepo),
 		firstUserGlobalAdmin(permissionRepo, zanzibarClient),
 	)

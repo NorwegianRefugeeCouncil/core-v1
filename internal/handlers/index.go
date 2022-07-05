@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/nrc-no/notcore/internal/clients"
+	"github.com/nrc-no/notcore/internal/clients/zanzibar"
 	"html/template"
 	"net/http"
 )

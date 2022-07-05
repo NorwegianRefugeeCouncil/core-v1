@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/csv"
 	"fmt"
-	"github.com/nrc-no/notcore/internal/clients"
+	"github.com/nrc-no/notcore/internal/clients/zanzibar"
 	"net/http"
 	"strconv"
 	"strings"

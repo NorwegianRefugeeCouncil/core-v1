@@ -1,13 +1,13 @@
 package server
 
 import (
-	"github.com/nrc-no/notcore/internal/clients"
+	"github.com/nrc-no/notcore/internal/clients/zanzibar"
+	"github.com/nrc-no/notcore/internal/utils"
 	"net/http"
 	"sync"
 
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
-	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/atomic"
 	"go.uber.org/zap"
 )
@@ -25,14 +25,13 @@ func firstUserGlobalAdmin(permissionRepo db.PermissionRepo, client zanzibar.Clie
 				if lock.TryLock() {
 					defer lock.Unlock()
 
-					resp, err := client.CheckAnyGlobalAdmin(r.Context())
+					hasAny, err := client.Permissions.CheckGlobalAdminExists(r.Context())
 					if err != nil {
 						l.Error("zanzibar: couldn't check if there is a global admin: ", zap.Error(err))
 						http.Error(w, err.Error(), http.StatusInternalServerError)
 						return
 					}
 
-					hasAny := resp //permissionRepo.HasAnyGlobalAdmin(r.Context())
 					if err != nil {
 						l.Error("couldn't check if there is a global admin: ", zap.Error(err))
 						http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -42,15 +41,19 @@ func firstUserGlobalAdmin(permissionRepo db.PermissionRepo, client zanzibar.Clie
 						l.Info("no global admin found, assigning the first user as global admin")
 
 						// create global admin in zanzibar
-						_, err := client.WriteGlobalAdmin(r.Context())
-						l.Error("zanzibar: couldn't save global admin relation for user: ", zap.Error(err))
-
-						perms := utils.GetRequestUserPermissions(r.Context())
-						perms.IsGlobalAdmin = true
-						if err := permissionRepo.SavePermissionsForUser(r.Context(), &perms); err != nil {
-							http.Error(w, err.Error(), http.StatusInternalServerError)
+						_, err := client.Relation.AddGlobalAdmin(r.Context())
+						if err != nil {
+							l.Error("zanzibar: couldn't save global admin relation for user: ", zap.Error(err))
 							return
 						}
+
+						//// adds admin permission to user
+						perms := utils.GetRequestUserPermissions(r.Context())
+						perms.IsGlobalAdmin = true
+						//if err := permissionRepo.SavePermissionsForUser(r.Context(), &perms); err != nil {
+						//	http.Error(w, err.Error(), http.StatusInternalServerError)
+						//	return
+						//}
 						r = r.WithContext(utils.WithUserPermissions(r.Context(), perms))
 						foundGlobalAdmin.Store(true)
 					} else {

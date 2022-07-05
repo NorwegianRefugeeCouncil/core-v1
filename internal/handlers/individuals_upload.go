@@ -3,7 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/csv"
-	"github.com/nrc-no/notcore/internal/clients"
+	"github.com/nrc-no/notcore/internal/clients/zanzibar"
 	"io"
 	"net/http"
 	"strconv"
@@ -77,17 +77,20 @@ func UploadHandler(client zanzibar.Client, individualRepo db.IndividualRepo, cou
 			}
 		}
 
+		validIndividuals := individuals
 		for _, individual := range individuals {
 			for _, countryCode := range individual.Countries {
 				if !allowedCountryCodes[countryCode] {
 					l.Warn("user does not have permission to upload individuals to country", zap.String("country", countryCode))
 					http.Error(w, "You are not allowed to upload to country: "+countryCode, http.StatusForbidden)
-					return
+					//return
+				} else {
+					validIndividuals = append(validIndividuals, individual)
 				}
 			}
 		}
 
-		_, err = individualRepo.PutMany(r.Context(), individuals, fields)
+		_, err = individualRepo.PutMany(r.Context(), validIndividuals, fields)
 		if err != nil {
 			l.Error("failed to put individuals", zap.Error(err))
 			http.Error(w, "failed to put records: "+err.Error(), http.StatusInternalServerError)
