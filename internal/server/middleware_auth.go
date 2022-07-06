@@ -81,7 +81,6 @@ func authMiddleware(userRepo db.UserRepo, client *zanzibar.ZanzibarClient) func(
 					return
 				}
 			}
-
 			r = r.WithContext(ctx)
 
 			h.ServeHTTP(w, r)

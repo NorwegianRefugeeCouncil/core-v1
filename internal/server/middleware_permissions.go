@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/nrc-no/notcore/internal/clients/zanzibar"
 	"net/http"
 
 	"github.com/nrc-no/notcore/internal/db"
@@ -9,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func permissionMiddleware(permissionRepo db.PermissionRepo) func(handler http.Handler) http.Handler {
+func permissionMiddleware(permissionRepo db.PermissionRepo, client *zanzibar.ZanzibarClient) func(handler http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -31,6 +32,8 @@ func permissionMiddleware(permissionRepo db.PermissionRepo) func(handler http.Ha
 				return
 			}
 
+			isGlobalAdmin, err := client.CheckIsGlobalAdmin(ctx)
+			permission.IsGlobalAdmin = isGlobalAdmin
 			ctx = utils.WithUserPermissions(ctx, *permission)
 			r = r.WithContext(ctx)
 

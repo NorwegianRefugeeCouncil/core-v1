@@ -33,7 +33,7 @@ func buildRouter(
 		noCache,
 		logMiddleware,
 		authMiddleware(userRepo, zanzibarClient),
-		permissionMiddleware(permissionRepo),
+		permissionMiddleware(permissionRepo, zanzibarClient),
 		firstUserGlobalAdmin(permissionRepo, zanzibarClient),
 	)
 	webRouter.Path("/").Handler(handlers.HandleIndex(tpl, zanzibarClient))

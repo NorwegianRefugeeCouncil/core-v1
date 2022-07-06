@@ -19,6 +19,7 @@ func NewZanzibarClient(c devinit.Config) *ZanzibarClient {
 		log.Fatalf("unable to initialize client: %s", err)
 	}
 
+	// TODO: use this when connection to local spicedb works
 	//request := &pb.WriteSchemaRequest{Schema: schema}
 	//_, err = client.WriteSchema(context.Background(), request)
 	//if err != nil {

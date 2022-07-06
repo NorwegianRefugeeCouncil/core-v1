@@ -128,7 +128,7 @@ func renderView(
 	}
 
 	rc := RequestContext{
-		User:        utils.GetRequestUser(r.Context()),
+		User:        utils.GetRequestUser(ctx),
 		Request:     r,
 		Permissions: utils.GetRequestUserPermissions(ctx),
 	}
