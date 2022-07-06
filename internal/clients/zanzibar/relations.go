@@ -12,7 +12,7 @@ type RelationClient interface {
 	AddCountryAdmin(ctx context.Context, countryCode string) (*pb.WriteRelationshipsResponse, error)
 }
 
-func (c *zanzibarClient) AddGlobalAdmin(ctx context.Context) (*pb.WriteRelationshipsResponse, error) {
+func (c *ZanzibarClient) AddGlobalAdmin(ctx context.Context) (*pb.WriteRelationshipsResponse, error) {
 	r := &pb.WriteRelationshipsRequest{
 		Updates: []*pb.RelationshipUpdate{
 			{
@@ -37,13 +37,13 @@ func (c *zanzibarClient) AddGlobalAdmin(ctx context.Context) (*pb.WriteRelations
 	resp, err := c.z.WriteRelationships(ctx, r)
 
 	if err != nil {
-		log.Fatalf("failed to create relationship between database and creator: %s, %s", err, resp)
+		log.Fatalf("failed to create global admin: %s, %s", err, resp)
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c *zanzibarClient) AddCountryAdmin(ctx context.Context, countryCode string) (*pb.WriteRelationshipsResponse, error) {
+func (c *ZanzibarClient) AddCountryAdmin(ctx context.Context, countryCode string) (*pb.WriteRelationshipsResponse, error) {
 	r := &pb.WriteRelationshipsRequest{
 		Updates: []*pb.RelationshipUpdate{
 			{
@@ -68,7 +68,7 @@ func (c *zanzibarClient) AddCountryAdmin(ctx context.Context, countryCode string
 	resp, err := c.z.WriteRelationships(ctx, r)
 
 	if err != nil {
-		log.Fatalf("failed to create relationship between database and creator: %s, %s", err, resp)
+		log.Fatalf("failed to create country admin: %s, %s", err, resp)
 		return nil, err
 	}
 	return resp, nil

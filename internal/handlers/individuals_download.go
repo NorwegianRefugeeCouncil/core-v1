@@ -15,7 +15,7 @@ import (
 )
 
 func HandleDownload(
-	client zanzibar.Client,
+	client *zanzibar.ZanzibarClient,
 	userRepo db.IndividualRepo,
 	countryRepo db.CountryRepo,
 ) http.Handler {

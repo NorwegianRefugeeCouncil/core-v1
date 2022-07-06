@@ -18,7 +18,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func HandleIndividual(templates map[string]*template.Template, client zanzibar.Client, repo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
+func HandleIndividual(templates map[string]*template.Template, client *zanzibar.ZanzibarClient, repo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
 
 	const (
 		templateName              = "individual.gohtml"

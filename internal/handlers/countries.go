@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func HandleCountries(templates map[string]*template.Template, client zanzibar.Client, countryRepo db.CountryRepo) http.Handler {
+func HandleCountries(templates map[string]*template.Template, client *zanzibar.ZanzibarClient, countryRepo db.CountryRepo) http.Handler {
 
 	const (
 		templateName        = "countries.gohtml"

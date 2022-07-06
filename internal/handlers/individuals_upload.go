@@ -16,7 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func UploadHandler(client zanzibar.Client, individualRepo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
+func UploadHandler(client *zanzibar.ZanzibarClient, individualRepo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
 
 	const (
 		formParamFile = "file"

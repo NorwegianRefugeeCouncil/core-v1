@@ -18,7 +18,7 @@ import (
 
 func HandleUser(
 	templates map[string]*template.Template,
-	client zanzibar.Client,
+	client *zanzibar.ZanzibarClient,
 	countryRepo db.CountryRepo,
 	userRepo db.UserRepo,
 	permissionRepo db.PermissionRepo,

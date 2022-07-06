@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func HandleIndex(templates map[string]*template.Template, client zanzibar.Client) http.Handler {
+func HandleIndex(templates map[string]*template.Template, client *zanzibar.ZanzibarClient) http.Handler {
 	const templateName = "index.gohtml"
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		renderView(templates, templateName, w, r, viewParams{})

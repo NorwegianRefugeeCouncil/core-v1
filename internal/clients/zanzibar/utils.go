@@ -1,14 +1,14 @@
 package zanzibar
 
-type LocationType string
+type LocationType int
 
 const (
-	LocationType_Global  LocationType = "global"
-	LocationType_Region  LocationType = "region"
-	LocationType_Country LocationType = "country"
-	LocationType_Area    LocationType = "area"
+	LocationType_Global LocationType = iota
+	LocationType_Region
+	LocationType_Country
+	LocationType_Area
 )
 
-func (x LocationType) String() string {
-	return x.String()
+func (l LocationType) String() string {
+	return [...]string{"global", "region", "country", "area"}[l]
 }

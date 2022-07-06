@@ -13,7 +13,7 @@ import (
 	"github.com/nrc-no/notcore/internal/db"
 )
 
-func HandleUsers(templates map[string]*template.Template, client zanzibar.Client, userRepo db.UserRepo) http.Handler {
+func HandleUsers(templates map[string]*template.Template, client *zanzibar.ZanzibarClient, userRepo db.UserRepo) http.Handler {
 
 	const (
 		templateName   = "users.gohtml"

@@ -7,14 +7,7 @@ import (
 	"log"
 )
 
-type PermissionClient interface {
-	CheckIsGlobalAdmin(ctx context.Context) (bool, error)
-	CheckGlobalAdminExists(ctx context.Context) (bool, error)
-	CheckPermittedLocations(ctx context.Context, locationType LocationType) (bool, error)
-	GetCountryViewPermissions(ctx context.Context) (*pb.ExpandPermissionTreeResponse, error)
-}
-
-func (c *zanzibarClient) CheckIsGlobalAdmin(ctx context.Context) (bool, error) {
+func (c *ZanzibarClient) CheckIsGlobalAdmin(ctx context.Context) (bool, error) {
 	r := &pb.CheckPermissionRequest{
 		Resource: &pb.ObjectReference{
 			ObjectType: c.prefix + "/global",
@@ -43,7 +36,7 @@ func (c *zanzibarClient) CheckIsGlobalAdmin(ctx context.Context) (bool, error) {
 	return false, err
 }
 
-func (c *zanzibarClient) CheckGlobalAdminExists(ctx context.Context) (bool, error) {
+func (c *ZanzibarClient) CheckGlobalAdminExists(ctx context.Context) (bool, error) {
 	r := &pb.LookupResourcesRequest{
 		ResourceObjectType: c.prefix + "/user",
 		Subject: &pb.SubjectReference{
@@ -71,7 +64,7 @@ func (c *zanzibarClient) CheckGlobalAdminExists(ctx context.Context) (bool, erro
 	return false, err
 }
 
-func (c *zanzibarClient) CheckPermittedLocations(ctx context.Context, locationType LocationType) (bool, error) {
+func (c *ZanzibarClient) CheckPermittedLocations(ctx context.Context, locationType LocationType) (bool, error) {
 	r := &pb.LookupResourcesRequest{
 		ResourceObjectType: c.prefix + "/" + locationType.String(),
 		Subject: &pb.SubjectReference{
@@ -99,7 +92,7 @@ func (c *zanzibarClient) CheckPermittedLocations(ctx context.Context, locationTy
 	return false, err
 }
 
-func (c *zanzibarClient) GetCountryViewPermissions(ctx context.Context) (*pb.ExpandPermissionTreeResponse, error) {
+func (c *ZanzibarClient) GetCountryViewPermissions(ctx context.Context) (*pb.ExpandPermissionTreeResponse, error) {
 	r := &pb.ExpandPermissionTreeRequest{
 		Resource: &pb.ObjectReference{
 			ObjectType: c.prefix + "/user",
@@ -119,4 +112,32 @@ func (c *zanzibarClient) GetCountryViewPermissions(ctx context.Context) (*pb.Exp
 	log.Fatalf(tree.String())
 
 	return nil, err
+}
+
+func (c *ZanzibarClient) CheckforUser(ctx context.Context, location LocationType) (bool, error) {
+
+	r := &pb.LookupResourcesRequest{
+		ResourceObjectType: c.prefix + "/" + location.String(),
+		Subject: &pb.SubjectReference{
+			Object: &pb.ObjectReference{
+				ObjectType: c.prefix + "/user",
+				ObjectId:   utils.GetRequestUser(ctx).ID,
+			},
+		},
+		Permission: "staff",
+	}
+
+	resp, err := c.z.LookupResources(ctx, r)
+	if err != nil {
+		log.Fatalf("failed to lookup location permissions: %s, %s", err, resp)
+		return false, err
+	}
+
+	lookupResp, err := resp.Recv()
+
+	if &lookupResp != nil {
+		return true, nil
+	}
+
+	return false, err
 }

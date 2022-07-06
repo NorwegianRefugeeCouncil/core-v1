@@ -13,7 +13,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func authMiddleware(userRepo db.UserRepo, client zanzibar.Client) func(handler http.Handler) http.Handler {
+func authMiddleware(userRepo db.UserRepo, client *zanzibar.ZanzibarClient) func(handler http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 
 		type AuthHeaderClaims struct {
@@ -60,12 +60,28 @@ func authMiddleware(userRepo db.UserRepo, client zanzibar.Client) func(handler h
 				Subject: sub,
 				Email:   email,
 			})
+
 			if err != nil {
 				http.Error(w, "couldn't save user: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
 
 			ctx = utils.WithUser(ctx, *user)
+
+			userExists, err := client.CheckforUser(ctx, zanzibar.LocationType_Global)
+			if err != nil {
+				l.Debug("failed to check for user", zap.Any("user", user))
+				return
+			}
+
+			if !userExists {
+				_, err = client.AddUserToLocation(ctx, zanzibar.LocationType_Global, "nrc")
+				if err != nil {
+					l.Debug("couldn't add user to zanzibar graph", zap.Any("user", user))
+					return
+				}
+			}
+
 			r = r.WithContext(ctx)
 
 			h.ServeHTTP(w, r)

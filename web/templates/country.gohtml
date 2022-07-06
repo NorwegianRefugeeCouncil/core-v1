@@ -1,9 +1,6 @@
 {{define "head"}}
 {{end}}
 {{define "body"}}
-    <header class="sticky-top">
-        {{template "nav" .}}
-    </header>
     <main class="bg-secondary" style="height: calc( 100vh - 3.5rem ); overflow: hidden; overflow-y: scroll">
         <div class="container mt-3">
             <form method="post" action="/countries/{{if eq "" .Country.ID}}new{{else}}{{.Country.ID}}{{end}}">

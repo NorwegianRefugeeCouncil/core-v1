@@ -9,10 +9,10 @@ import (
 
 type NodeClient interface {
 	AddCountry(ctx context.Context, countryCode string) (*pb.WriteRelationshipsResponse, error)
-	AddUserToCountry(ctx context.Context, countryCode string) (*pb.WriteRelationshipsResponse, error)
+	AddUserToLocation(ctx context.Context, location LocationType, locationCode string) (*pb.WriteRelationshipsResponse, error)
 }
 
-func (c *zanzibarClient) AddCountry(ctx context.Context, countryCode string) (*pb.WriteRelationshipsResponse, error) {
+func (c *ZanzibarClient) AddCountry(ctx context.Context, countryCode string) (*pb.WriteRelationshipsResponse, error) {
 	r := &pb.WriteRelationshipsRequest{
 		Updates: []*pb.RelationshipUpdate{
 			{
@@ -53,21 +53,21 @@ func (c *zanzibarClient) AddCountry(ctx context.Context, countryCode string) (*p
 	resp, err := c.z.WriteRelationships(ctx, r)
 
 	if err != nil {
-		log.Fatalf("failed to create relationship between database and creator: %s, %s", err, resp)
+		log.Fatalf("failed to add country to zanzibar graph: %s, %s", err, resp)
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c *zanzibarClient) AddUserToCountry(ctx context.Context, countryCode string) (*pb.WriteRelationshipsResponse, error) {
+func (c *ZanzibarClient) AddUserToLocation(ctx context.Context, location LocationType, locationCode string) (*pb.WriteRelationshipsResponse, error) {
 	r := &pb.WriteRelationshipsRequest{
 		Updates: []*pb.RelationshipUpdate{
 			{
 				Relationship: &pb.Relationship{
 					Relation: "staff",
 					Resource: &pb.ObjectReference{
-						ObjectType: c.prefix + "/" + countryCode,
-						ObjectId:   countryCode,
+						ObjectType: c.prefix + "/" + location.String(),
+						ObjectId:   locationCode,
 					},
 					Subject: &pb.SubjectReference{
 						Object: &pb.ObjectReference{
@@ -84,7 +84,7 @@ func (c *zanzibarClient) AddUserToCountry(ctx context.Context, countryCode strin
 	resp, err := c.z.WriteRelationships(ctx, r)
 
 	if err != nil {
-		log.Fatalf("failed to create relationship between database and creator: %s, %s", err, resp)
+		log.Fatalf("failed to add user to country staff: %s, %s", err, resp)
 		return nil, err
 	}
 	return resp, nil
