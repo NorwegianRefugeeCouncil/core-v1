@@ -36,7 +36,10 @@ func HandleUsers(templates map[string]*template.Template, client *zanzibar.Zanzi
 			})
 		}
 
-		if !utils.IsGlobalAdmin(ctx) {
+		isGlobalAdmin, err := client.CheckIsGlobalAdmin(ctx, utils.GetRequestUser(ctx).ID)
+		isAnyAdmin, err := client.IsAnyAdmin(ctx, zanzibar.LocationType_Country, utils.GetRequestUser(ctx).ID)
+
+		if !isGlobalAdmin && !isAnyAdmin {
 			l.Warn("cannot access country page without global admin role")
 			http.Error(w, "user is not global admin", http.StatusForbidden)
 			return

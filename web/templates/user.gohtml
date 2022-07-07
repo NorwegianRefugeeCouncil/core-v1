@@ -29,11 +29,11 @@
                             {{range .Countries}}
                                 <input type="hidden" name="permissions[{{.ID}}]" value=""/>
                             {{end}}
+                            <div class="card-header">
+                                Permissions
+                            </div>
                             <div class="card-body">
                                 {{ if $.RequestContext.Permissions.IsGlobalAdmin }}
-                                    <div class="card-title">
-                                        Permissions
-                                    </div>
                                     <input type="hidden"
                                            id="IsNotGlobalAdmin"
                                            name="IsGlobalAdmin"

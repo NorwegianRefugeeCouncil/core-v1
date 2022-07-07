@@ -61,10 +61,17 @@ func HandleUser(
 		})
 		errGrp.Go(func() error {
 			var err error
+
+			if _, err = client.GetCountryViewPermissions(ctx, userID); err != nil {
+				l.Error("couldn't get permissions for user: ", zap.Error(err))
+			}
+
 			if permissions, err = permissionRepo.GetPermissionsForUser(gtx, userID); err != nil {
 				l.Error("couldn't get permissions for user: ", zap.Error(err))
 				return err
 			}
+			isGlobalAdmin, err := client.CheckIsGlobalAdmin(ctx, userID)
+			permissions.IsGlobalAdmin = isGlobalAdmin
 			return nil
 		})
 		errGrp.Go(func() error {
@@ -104,6 +111,23 @@ func HandleUser(
 		if err := parseUserForm(r, permHelper, permissions); err != nil {
 			http.Error(w, "you don't have sufficient permissions", http.StatusForbidden)
 			return
+		}
+
+		for _, v := range permissions.CountryPermissions {
+			country, err := countryRepo.GetByID(ctx, v.CountryID)
+			if err != nil {
+				l.Error("couldn't fetch country: ", zap.Error(err))
+			}
+			if v.Admin {
+				if _, err := client.AddAdminToLocation(ctx, zanzibar.LocationType_Country, country.Code, userID); err != nil {
+					l.Error("couldn't add admin to country: ", zap.Error(err))
+				}
+			}
+			if v.Write || v.Read {
+				if _, err := client.AddUserToLocation(ctx, zanzibar.LocationType_Country, country.Code, userID); err != nil {
+					l.Error("couldn't add staff to country: ", zap.Error(err))
+				}
+			}
 		}
 
 		if err := permissionRepo.SavePermissionsForUser(ctx, permissions); err != nil {

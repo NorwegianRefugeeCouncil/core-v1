@@ -68,14 +68,14 @@ func authMiddleware(userRepo db.UserRepo, client *zanzibar.ZanzibarClient) func(
 
 			ctx = utils.WithUser(ctx, *user)
 
-			userExists, err := client.CheckforUser(ctx, zanzibar.LocationType_Global)
+			userExists, err := client.CheckUserIsStaffAtLocation(ctx, zanzibar.LocationType_Global)
 			if err != nil {
 				l.Debug("failed to check for user", zap.Any("user", user))
 				return
 			}
 
 			if !userExists {
-				_, err = client.AddUserToLocation(ctx, zanzibar.LocationType_Global, "nrc")
+				_, err = client.AddUserToLocation(ctx, zanzibar.LocationType_Global, "nrc", utils.GetRequestUser(ctx).ID)
 				if err != nil {
 					l.Debug("couldn't add user to zanzibar graph", zap.Any("user", user))
 					return

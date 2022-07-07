@@ -18,4 +18,4 @@ proxy:
 
 .PHONY: serve
 serve:
-	@go run . serve --listen-address=:8080 --db-driver=postgres --db-dsn=postgres://postgres:postgres@localhost:5432/core?sslmode=disable --log-level=debug
+	@go run . serve --listen-address=:8080 --db-driver=postgres --db-dsn=postgres://postgres:postgres@localhost:5432/core?sslmode=disable --log-level=debug --logout-url=https://localhost:10000/oauth2/sign_out

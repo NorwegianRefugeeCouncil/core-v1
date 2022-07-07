@@ -32,7 +32,7 @@ func permissionMiddleware(permissionRepo db.PermissionRepo, client *zanzibar.Zan
 				return
 			}
 
-			isGlobalAdmin, err := client.CheckIsGlobalAdmin(ctx)
+			isGlobalAdmin, err := client.CheckIsGlobalAdmin(ctx, utils.GetRequestUser(ctx).ID)
 			permission.IsGlobalAdmin = isGlobalAdmin
 			ctx = utils.WithUserPermissions(ctx, *permission)
 			r = r.WithContext(ctx)
