@@ -40,6 +40,7 @@ func (i individualRepo) driverName() string {
 	}
 }
 
+// TODO get all user has read permission for
 func (i individualRepo) GetAll(ctx context.Context, options api.GetAllOptions) ([]*api.Individual, error) {
 	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		return i.getAllInternal(ctx, tx, options)
@@ -207,6 +208,7 @@ func (i individualRepo) getByIdInternal(ctx context.Context, tx *sqlx.Tx, id str
 	return &ret, nil
 }
 
+// TODO add individuals to z graph
 func (i individualRepo) PutMany(ctx context.Context, individuals []*api.Individual, fields []string) ([]*api.Individual, error) {
 	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		var ret = make([]*api.Individual, len(individuals))

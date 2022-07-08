@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/csv"
 	"github.com/nrc-no/notcore/internal/clients/zanzibar"
+	"github.com/nrc-no/notcore/internal/containers"
 	"io"
 	"net/http"
 	"strconv"
@@ -16,7 +17,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func UploadHandler(client *zanzibar.ZanzibarClient, individualRepo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
+func UploadHandler(client *zanzibar.ZanzibarClient, individualRepo db.IndividualRepo) http.Handler {
 
 	const (
 		formParamFile = "file"
@@ -28,17 +29,6 @@ func UploadHandler(client *zanzibar.ZanzibarClient, individualRepo db.Individual
 			ctx = r.Context()
 			l   = logging.NewLogger(ctx)
 		)
-
-		countries, err := countryRepo.GetAll(ctx)
-		if err != nil {
-			l.Error("failed to get countries", zap.Error(err))
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		countryMap := map[string]*api.Country{}
-		for _, country := range countries {
-			countryMap[country.Code] = country
-		}
 
 		countryIDsWithWritePermission := utils.GetCountryIDsWithPermission(ctx, "write")
 		if len(countryIDsWithWritePermission) == 0 {
@@ -69,25 +59,25 @@ func UploadHandler(client *zanzibar.ZanzibarClient, individualRepo db.Individual
 			return
 		}
 
-		allowedCountryCodes := map[string]bool{}
-		for _, countryID := range countryIDsWithWritePermission {
-			country := countryMap[countryID]
-			if country != nil {
-				allowedCountryCodes[country.Code] = true
-			}
-		}
+		allowedCountryCodes, err := client.CheckPermittedLocations(ctx, zanzibar.LocationType_Country)
 
-		validIndividuals := individuals
+		var validIndividuals = []*api.Individual{}
+		forbiddenCountryCodes := containers.NewStringSet()
+		allowedCountrySet := containers.NewStringSet(allowedCountryCodes...)
+
 		for _, individual := range individuals {
 			for _, countryCode := range individual.Countries {
-				if !allowedCountryCodes[countryCode] {
-					l.Warn("user does not have permission to upload individuals to country", zap.String("country", countryCode))
-					http.Error(w, "You are not allowed to upload to country: "+countryCode, http.StatusForbidden)
-					//return
+				if !allowedCountrySet.Contains(countryCode) {
+					forbiddenCountryCodes.Add(countryCode)
 				} else {
 					validIndividuals = append(validIndividuals, individual)
 				}
 			}
+		}
+		if !forbiddenCountryCodes.IsEmpty() {
+			forbiddenCountryCodesStr := strings.Join(forbiddenCountryCodes.Items(), ", ")
+			l.Warn("user does not have permission to upload individuals to country", zap.String("country", forbiddenCountryCodesStr))
+			//http.Error(w, "You are not allowed to upload to countries: "+forbiddenCountryCodesStr, http.StatusForbidden)
 		}
 
 		_, err = individualRepo.PutMany(r.Context(), validIndividuals, fields)

@@ -38,7 +38,7 @@ func buildRouter(
 	)
 	webRouter.Path("/").Handler(handlers.HandleIndex(tpl, zanzibarClient))
 	webRouter.Path("/individuals").Handler(handlers.ListHandler(tpl, zanzibarClient, individualRepo, countryRepo))
-	webRouter.Path("/individuals/upload").Handler(handlers.UploadHandler(zanzibarClient, individualRepo, countryRepo))
+	webRouter.Path("/individuals/upload").Handler(handlers.UploadHandler(zanzibarClient, individualRepo))
 	webRouter.Path("/individuals/download").Handler(handlers.HandleDownload(zanzibarClient, individualRepo, countryRepo))
 	webRouter.Path("/individuals/{individual_id}").Handler(handlers.HandleIndividual(tpl, zanzibarClient, individualRepo, countryRepo))
 	webRouter.Path("/countries").Handler(handlers.HandleCountries(tpl, zanzibarClient, countryRepo))

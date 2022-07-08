@@ -35,7 +35,7 @@ func (c *ZanzibarClient) CheckGlobalAdminExists(ctx context.Context) (bool, erro
 	return false, err
 }
 
-func (c *ZanzibarClient) CheckPermittedLocations(ctx context.Context, locationType LocationType) (bool, error) {
+func (c *ZanzibarClient) CheckPermittedLocations(ctx context.Context, locationType LocationType) ([]string, error) {
 	r := &pb.LookupResourcesRequest{
 		ResourceObjectType: c.prefix + "/" + locationType.String(),
 		Subject: &pb.SubjectReference{
@@ -44,23 +44,31 @@ func (c *ZanzibarClient) CheckPermittedLocations(ctx context.Context, locationTy
 				ObjectId:   utils.GetRequestUser(ctx).ID,
 			},
 		},
-		Permission: "view",
+		Permission: "admin",
 	}
 
 	resp, err := c.z.LookupResources(ctx, r)
 
 	if err != nil {
 		log.Fatalf("failed to lookup location permissions: %s, %s", err, resp)
-		return false, err
+		return nil, err
 	}
 
-	lookupResp, err := resp.Recv()
+	locations := []string{}
 
-	if &lookupResp != nil {
-		return true, nil
+	for {
+		lookupResp, err := resp.Recv()
+		if lookupResp == nil {
+			err = resp.CloseSend()
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		locations = append(locations, lookupResp.ResourceObjectId)
 	}
 
-	return false, err
+	return locations, err
 }
 func (c *ZanzibarClient) IsAnyAdmin(ctx context.Context, locationType LocationType, userId string) (bool, error) {
 	r := &pb.LookupResourcesRequest{
