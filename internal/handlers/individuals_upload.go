@@ -31,7 +31,7 @@ func UploadHandler(client *zanzibar.ZanzibarClient, individualRepo db.Individual
 		)
 
 		countryIDsWithWritePermission := utils.GetCountryIDsWithPermission(ctx, "write")
-		if len(countryIDsWithWritePermission) == 0 {
+		if !utils.IsGlobalAdmin(ctx) && len(countryIDsWithWritePermission) == 0 {
 			l.Warn("User does not have permission to upload individuals")
 			http.Error(w, "You are not allowed to upload", http.StatusForbidden)
 			return
@@ -67,7 +67,7 @@ func UploadHandler(client *zanzibar.ZanzibarClient, individualRepo db.Individual
 
 		for _, individual := range individuals {
 			for _, countryCode := range individual.Countries {
-				if !allowedCountrySet.Contains(countryCode) {
+				if !utils.IsGlobalAdmin(ctx) && !allowedCountrySet.Contains(countryCode) {
 					forbiddenCountryCodes.Add(countryCode)
 				} else {
 					validIndividuals = append(validIndividuals, individual)
@@ -77,6 +77,7 @@ func UploadHandler(client *zanzibar.ZanzibarClient, individualRepo db.Individual
 		if !forbiddenCountryCodes.IsEmpty() {
 			forbiddenCountryCodesStr := strings.Join(forbiddenCountryCodes.Items(), ", ")
 			l.Warn("user does not have permission to upload individuals to country", zap.String("country", forbiddenCountryCodesStr))
+			// TODO show error in FE
 			//http.Error(w, "You are not allowed to upload to countries: "+forbiddenCountryCodesStr, http.StatusForbidden)
 		}
 
@@ -85,6 +86,11 @@ func UploadHandler(client *zanzibar.ZanzibarClient, individualRepo db.Individual
 			l.Error("failed to put individuals", zap.Error(err))
 			http.Error(w, "failed to put records: "+err.Error(), http.StatusInternalServerError)
 			return
+		}
+
+		_, err = client.AddIndividualsToLocation(ctx, zanzibar.LocationType_Country, validIndividuals)
+		if err != nil {
+			l.Error("failed to add individuals to zanzibar graph", zap.Error(err))
 		}
 
 		http.Redirect(w, r, "/individuals", http.StatusSeeOther)

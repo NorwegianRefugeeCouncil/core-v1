@@ -3,6 +3,7 @@ package zanzibar
 import (
 	"context"
 	pb "github.com/authzed/authzed-go/proto/authzed/api/v1"
+	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/utils"
 	"log"
 )
@@ -49,6 +50,49 @@ func (c *ZanzibarClient) AddCountry(ctx context.Context, countryCode string) (*p
 
 	if err != nil {
 		log.Fatalf("failed to add country to zanzibar graph: %s, %s", err, resp)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *ZanzibarClient) AddIndividualsToLocation(
+	ctx context.Context,
+	locationType LocationType,
+	individuals []*api.Individual,
+) (*pb.WriteRelationshipsResponse, error) {
+
+	var updates []*pb.RelationshipUpdate
+
+	for _, individual := range individuals {
+		for _, individualCountry := range individual.Countries {
+			update := &pb.RelationshipUpdate{
+				Relationship: &pb.Relationship{
+					Relation: locationType.String(),
+					Resource: &pb.ObjectReference{
+						ObjectType: c.prefix + "/individual",
+						ObjectId:   individual.ID,
+					},
+					Subject: &pb.SubjectReference{
+						Object: &pb.ObjectReference{
+							ObjectType: c.prefix + "/" + locationType.String(),
+							ObjectId:   individualCountry,
+						},
+					},
+				},
+				Operation: pb.RelationshipUpdate_OPERATION_CREATE,
+			}
+			updates = append(updates, update)
+		}
+	}
+
+	r := &pb.WriteRelationshipsRequest{
+		Updates: updates,
+	}
+
+	resp, err := c.z.WriteRelationships(ctx, r)
+
+	if err != nil {
+		log.Fatalf("failed to add individual to country: %s, %s", err, resp)
 		return nil, err
 	}
 	return resp, nil
