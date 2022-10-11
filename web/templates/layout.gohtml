@@ -12,6 +12,16 @@
         <link rel="stylesheet" href="/static/bootstrap.min.css">
         <link rel="stylesheet" href="/static/bootstrap-icons.css">
         <script src="/static/bootstrap.bundle.min.js"></script>
+
+        <script type="text/javascript">
+            function updateCountryId(selectObject) {
+                var value = selectObject.value;
+                var url = new URL(window.location.href);
+                url.searchParams.set("countryId", value);
+                window.location.href = url;
+            }
+        </script>
+
         {{template "head" .}}
     </head>
     <body>
@@ -63,6 +73,16 @@
 
                     </div>
                 </div>
+            </div>
+        
+
+            <div class="d-flex align-items-center">
+                <label for="country-select" class="form-label me-2">Country:</label>
+                <select class="form-select" id="country-select" onchange="updateCountryId(this)">
+                    {{range .RequestContext.Permissions.GetCountryIDsWithAnyPermission "admin" "read" "write"}}
+                        <option value="{{.}}">{{.}}</option>
+                    {{end}}
+                </select>
             </div>
         </div>
     </nav>
