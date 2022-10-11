@@ -14,6 +14,20 @@
         <script src="/static/bootstrap.bundle.min.js"></script>
 
         <script type="text/javascript">
+            function initCountryId() {
+                var urlParams = new URLSearchParams(window.location.search);
+                let queryString = urlParams.get("countryId");
+
+                if (queryString === null) {
+                    var value = document.getElementById("country-select").querySelector("option").value;
+                    var url = new URL(window.location.href);
+                    url.searchParams.set("countryId", value);
+                    window.location.href = url;
+                } else {
+                    document.getElementById("country-select").querySelector("option[value='" + queryString + "']").selected = true;
+                }
+            }
+
             function updateCountryId(selectObject) {
                 var value = selectObject.value;
                 var url = new URL(window.location.href);
@@ -24,7 +38,7 @@
 
         {{template "head" .}}
     </head>
-    <body>
+    <body onload="initCountryId()">
     {{template "body" .}}
     </body>
 {{end}}
