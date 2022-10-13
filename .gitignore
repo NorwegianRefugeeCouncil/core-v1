@@ -104,3 +104,5 @@ certs/*
 !certs/.gitkeep
 
 generated.csv
+
+.DS_Store
