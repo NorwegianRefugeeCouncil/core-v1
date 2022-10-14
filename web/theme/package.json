@@ -1,0 +1,10 @@
+{
+  "name": "theme",
+  "scripts": {
+    "build": "sass theme.scss:../static/theme.min.css --style=compressed"
+  },
+  "dependencies": {
+    "bootstrap": "^5.2.2",
+    "sass": "^1.55.0"
+  }
+}
