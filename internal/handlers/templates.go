@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/auth"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
@@ -96,10 +97,14 @@ func (v ViewData) RequestContext() RequestContext {
 type RequestContext struct {
 	// Request is the http request
 	Request *http.Request
-	// Permissions is the set of permissions for the current user
-	Permissions api.UserPermissions
+	// Auth is the auth.Interface
+	Auth auth.Interface
 	// User is the current user
 	User *api.User
+	// Countries is the list of all countries
+	Countries []*api.Country
+	// SelectedCountry is the selected country. May be nil
+	SelectedCountry *api.Country
 }
 
 // viewParams is a map of key/value pairs that can be used to render a view.
@@ -127,10 +132,43 @@ func renderView(
 		vd[k] = v
 	}
 
+	authIntf, err := utils.GetAuthContext(ctx)
+	if err != nil {
+		l.Error("failed to get auth context", zap.Error(err))
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	countries, err := utils.GetCountries(ctx)
+	if err != nil {
+		l.Error("failed to get countries", zap.Error(err))
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	selectedCountryID, err := utils.GetSelectedCountryID(ctx)
+	if err != nil {
+		l.Error("failed to get selected country ID", zap.Error(err))
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	var selectedCountry *api.Country
+	if len(selectedCountryID) != 0 {
+		for _, c := range countries {
+			if c.ID == selectedCountryID {
+				selectedCountry = c
+				break
+			}
+		}
+	}
+
 	rc := RequestContext{
-		User:        utils.GetRequestUser(r.Context()),
-		Request:     r,
-		Permissions: utils.GetRequestUserPermissions(ctx),
+		User:            utils.GetRequestUser(r.Context()),
+		Request:         r,
+		Auth:            authIntf,
+		Countries:       countries,
+		SelectedCountry: selectedCountry,
 	}
 	vd[vd.RequestContextKey()] = rc
 

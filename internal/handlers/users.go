@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/auth"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
@@ -22,11 +23,12 @@ func HandleUsers(templates map[string]*template.Template, userRepo db.UserRepo) 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		var (
-			ctx   = r.Context()
-			l     = logging.NewLogger(ctx)
-			users []*api.User
-			err   error
-			opts  api.GetAllUsersOptions
+			ctx      = r.Context()
+			l        = logging.NewLogger(ctx)
+			users    []*api.User
+			err      error
+			opts     api.GetAllUsersOptions
+			authIntf auth.Interface
 		)
 
 		render := func() {
@@ -35,7 +37,13 @@ func HandleUsers(templates map[string]*template.Template, userRepo db.UserRepo) 
 			})
 		}
 
-		if !utils.IsGlobalAdmin(ctx) {
+		authIntf, err = utils.GetAuthContext(ctx)
+		if err != nil {
+			l.Error("failed to get auth context", zap.Error(err))
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+		}
+
+		if !authIntf.IsGlobalAdmin() {
 			l.Warn("cannot access country page without global admin role")
 			http.Error(w, "user is not global admin", http.StatusForbidden)
 			return

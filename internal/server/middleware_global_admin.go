@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
@@ -18,34 +19,49 @@ func firstUserGlobalAdmin(permissionRepo db.PermissionRepo) func(h http.Handler)
 
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			l := logging.NewLogger(r.Context())
-			if !foundGlobalAdmin.Load() {
-				l.Info("checking for global admin")
-				if lock.TryLock() {
-					defer lock.Unlock()
-					hasAny, err := permissionRepo.HasAnyGlobalAdmin(r.Context())
-					if err != nil {
-						l.Error("couldn't check if there is a global admin: ", zap.Error(err))
+			ctx := r.Context()
+			l := logging.NewLogger(ctx)
+
+			if foundGlobalAdmin.Load() {
+				h.ServeHTTP(w, r)
+				return
+			}
+
+			l.Info("checking for global admin")
+			if lock.TryLock() {
+				defer lock.Unlock()
+
+				isEmpty, err := permissionRepo.IsEmpty(ctx)
+				if err != nil {
+					l.Error("couldn't check if there already is a user permission: ", zap.Error(err))
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				hasAny := !isEmpty
+
+				if !hasAny {
+					l.Info("no global admin found, assigning the first user as global admin")
+
+					requestUser := utils.GetRequestUser(ctx)
+					perms := api.UserPermissions{
+						UserID:        requestUser.ID,
+						IsGlobalAdmin: true,
+					}
+
+					if err := permissionRepo.SaveExplicitPermissionsForUser(ctx, &perms); err != nil {
+						l.Error("couldn't save permissions for user: ", zap.Error(err))
 						http.Error(w, err.Error(), http.StatusInternalServerError)
 						return
 					}
-					if !hasAny {
-						l.Info("no global admin found, assigning the first user as global admin")
-						perms := utils.GetRequestUserPermissions(r.Context())
-						perms.IsGlobalAdmin = true
-						if err := permissionRepo.SavePermissionsForUser(r.Context(), &perms); err != nil {
-							l.Error("couldn't save permissions for user: ", zap.Error(err))
-							http.Error(w, err.Error(), http.StatusInternalServerError)
-							return
-						}
-						r = r.WithContext(utils.WithUserPermissions(r.Context(), perms))
-						foundGlobalAdmin.Store(true)
-					} else {
-						l.Info("global admin found")
-						foundGlobalAdmin.Store(true)
-					}
+
+					foundGlobalAdmin.Store(true)
+				} else {
+					l.Info("global admin found")
+					foundGlobalAdmin.Store(true)
 				}
+
 			}
+
 			h.ServeHTTP(w, r)
 		})
 	}

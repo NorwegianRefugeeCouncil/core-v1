@@ -27,8 +27,8 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {{ if .Countries }}
-                                {{range .Countries}}
+                            {{ if $.RequestContext.Countries }}
+                                {{range $.RequestContext.Countries}}
                                     <tr>
                                         <td class="font-monospace"><code>{{.Code}}</code></td>
                                         <td><a href="/countries/{{.ID}}">{{.Name}}</a></td>

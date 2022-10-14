@@ -16,31 +16,10 @@
 
         {{$isGlobalAdmin := $.PermissionHelper.IsGlobalAdmin}}
 
-        countrySelector = new CountrySelector(
-            "Countries",
-            "country-list",
-            "country-input",
-            [
-                {{- range .Countries -}}
-                {{- $hasWritePermission := $.PermissionHelper.CanWriteToCountryCode .Code -}}
-                {{- $canWrite := or $isGlobalAdmin $hasWritePermission -}}
-                {
-                    "value": {{.Code}},
-                    "label": "{{.Name}}",
-                    "readOnly": {{not $canWrite}}
-                },
-                {{- end -}}
-            ],
-            [
-                {{range .Individual.Countries}}
-                "{{.}}",
-                {{end}}
-            ],
-        );
         document.addEventListener("DOMContentLoaded", function () {
             const navbarToggler = document.getElementById("toolbar")
             const saveButton = document.createElement("button");
-            saveButton.className = "btn btn-primary shadow px-5"
+            saveButton.className = "btn btn-primary shadow px-5 ms-2"
             saveButton.innerHTML = "Save"
 
             const navItem = document.createElement("div");
@@ -75,6 +54,7 @@
     <header class="sticky-top">
         {{template "nav" .}}
     </header>
+
     <main class="bg-secondary" style="height: calc( 100vh - 3.5rem ); overflow: hidden; overflow-y: scroll">
         <div class="mt-4">
             <form id="form" method="post"
@@ -193,7 +173,6 @@
                                         <input type="date"
                                                id="BirthDate"
                                                name="BirthDate"
-                                               forma
                                                class="form-control"
                                                value="{{if .Individual.BirthDate}}{{.Individual.BirthDate.Format "2006-01-02"}}{{end}}"/>
                                         <label for="BirthDate" class="form-label">Birth Date</label>
@@ -243,40 +222,6 @@
 
                                 </div>
                             </div>
-
-
-                            <!-- Countries -->
-                            <div class="card mb-3 shadow-sm">
-
-
-                                <div class="card-body">
-                                    <div class="card-title mb-0">
-                                        Countries
-                                        <input type="hidden" id="Countries" name="Countries"
-                                               value="{{ joinStrings .Individual.Countries ","}}"/>
-                                    </div>
-                                </div>
-
-                                <div class="list-group list-group-flush" id="country-list">
-
-                                </div>
-                                <div class="card-footer">
-                                    <div class="input-group">
-                                        <input type="text"
-                                               class="form-control {{ if .Error "Countries"}}is-invalid{{end}}"
-                                               id="country-input"
-                                               placeholder="Start typing..."
-                                               autocomplete="off"/>
-                                        {{ if .Error "Countries"}}
-                                            <div class="invalid-feedback">
-                                                {{.Error "Countries"}}
-                                            </div>
-                                        {{end}}
-                                    </div>
-
-                                </div>
-                            </div>
-                            <!-- End of Countries -->
 
 
                             <!-- Contact Information -->

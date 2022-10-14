@@ -1,13 +1,5 @@
 {{define "head"}}
-    <script type="application/javascript">
-        document.addEventListener("DOMContentLoaded", function (event) {
-            const isAdminCB = document.getElementById("IsGlobalAdmin")
-            const isNotAdminInput = document.getElementById("IsNotGlobalAdmin")
-            isAdminCB.onchange = () => {
-                isNotAdminInput.disabled = isAdminCB.checked
-            }
-        });
-    </script>
+
 {{end}}
 {{define "body"}}
     <header class="sticky-top">
@@ -33,20 +25,21 @@
                                 <input type="hidden" name="permissions[{{.ID}}]" value=""/>
                             {{end}}
                             <div class="card-body">
-                                {{ if $.RequestContext.Permissions.IsGlobalAdmin }}
+                                {{ if $.RequestContext.Auth.IsGlobalAdmin }}
                                     <div class="card-title">
                                         Permissions
                                     </div>
                                     <input type="hidden"
                                            id="IsNotGlobalAdmin"
                                            name="IsGlobalAdmin"
-                                           disabled="{{if not $.Permissions.IsGlobalAdmin}}disabled{{end}}"
+                                           disabled="{{if not $.Auth.IsGlobalAdmin}}disabled{{end}}"
                                            value="false">
                                     <div class="form-group my-3">
                                         <input class="form-check-input"
                                                type="checkbox"
                                                value="true"
-                                               {{if $.Permissions.IsGlobalAdmin}}checked{{end}}
+                                               {{if not $.RequestContext.Auth.IsGlobalAdmin}}disabled="disabled"{{end}}
+                                               {{if $.RequestContext.Auth.IsGlobalAdmin}}checked="checked"{{end}}
                                                name="IsGlobalAdmin"
                                                id="IsGlobalAdmin">
                                         <label for="IsGlobalAdmin">User is Global Administrator</label>
@@ -64,14 +57,15 @@
                                         <th>Admin</th>
                                     </thead>
                                     <tbody>
-                                    {{range .Countries}}
+
+                                    {{range $.RequestContext.Countries}}
                                         <tr>
                                             <td>{{.Name}}</td>
                                             <td>
                                                 <div class="form-check">
                                                     <input class="form-check-input"
                                                            type="checkbox"
-                                                           {{if $.Permissions.CountryPermissions.HasPermission .ID "read"}}checked{{end}}
+                                                           {{if $.RequestContext.Auth.HasExplicitPermission .ID "read"}}checked{{end}}
                                                            value="read"
                                                            name="permissions[{{.ID}}]"
                                                            id="country_permissions_{{.ID}}_read">
@@ -82,7 +76,7 @@
                                                     <input class="form-check-input"
                                                            type="checkbox"
                                                            value="write"
-                                                           {{if $.Permissions.CountryPermissions.HasPermission .ID "write"}}checked{{end}}
+                                                           {{if $.RequestContext.Auth.HasExplicitPermission .ID "write"}}checked{{end}}
                                                            name="permissions[{{.ID}}]"
                                                            id="country_permissions_{{.ID}}_write">
                                                 </div>
@@ -92,7 +86,7 @@
                                                     <input class="form-check-input"
                                                            type="checkbox"
                                                            value="admin"
-                                                           {{if $.Permissions.CountryPermissions.HasPermission .ID "admin"}}checked{{end}}
+                                                           {{if $.RequestContext.Auth.HasExplicitPermission .ID "admin"}}checked{{end}}
                                                            name="permissions[{{.ID}}]"
                                                            id="country_permissions_{{.ID}}_admin">
                                                 </div>

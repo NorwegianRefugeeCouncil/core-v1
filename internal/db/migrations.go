@@ -29,6 +29,7 @@ var migrations = []migration{
 	migrationFromFile("005_user_defaults"),
 	migrationFromFile("006_user_permissions"),
 	migrationFromFile("007_global_admin"),
+	migrationFromFile("008_individual_country"),
 }
 
 // Migrate runs the migrations on the database.

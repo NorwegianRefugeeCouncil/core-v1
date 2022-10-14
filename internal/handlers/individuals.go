@@ -3,24 +3,21 @@ package handlers
 import (
 	"html/template"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/nrc-no/notcore/internal/api"
-	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
+	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
 )
 
-func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
+func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo) http.Handler {
 
 	const (
-		templateName                = "individuals.gohtml"
-		viewParamIndividuals        = "Individuals"
-		viewParamCountries          = "Countries"
-		viewParamOptions            = "Options"
-		viewParamsPermissionsHelper = "PermissionsHelper"
+		templateName         = "individuals.gohtml"
+		viewParamIndividuals = "Individuals"
+		viewParamOptions     = "Options"
 	)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -28,46 +25,40 @@ func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo
 		var (
 			individuals   []*api.Individual
 			getAllOptions api.GetAllOptions
-			countries     []*api.Country
 			ctx           = r.Context()
-			l             = logging.NewLogger(ctx)
 			err           error
-			permsHelper   permissionHelper
+			l             = logging.NewLogger(ctx)
 		)
 
 		render := func() {
 			renderView(templates, templateName, w, r, viewParams{
-				viewParamIndividuals:        individuals,
-				viewParamCountries:          countries,
-				viewParamOptions:            getAllOptions,
-				viewParamsPermissionsHelper: permsHelper,
+				viewParamIndividuals: individuals,
+				viewParamOptions:     getAllOptions,
 			})
 			return
 		}
 
 		if err := r.ParseForm(); err != nil {
-			logging.NewLogger(ctx).Error("failed to parse form", zap.Error(err))
+			l.Error("failed to parse form", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		if err := parseGetAllOptions(r, &getAllOptions); err != nil {
-			logging.NewLogger(ctx).Error("failed to parse options", zap.Error(err))
+			l.Error("failed to parse options", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		countries, err = countryRepo.GetAll(ctx)
+		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
 		if err != nil {
-			l.Error("failed to get countries", zap.Error(err))
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			l.Error("failed to get selected country id", zap.Error(err))
+			http.Error(w, "internal server error", http.StatusInternalServerError)
 			return
 		}
+		getAllOptions.CountryID = selectedCountryID
 
-		permsHelper = newPermissionHelper(ctx, countries)
-		getAllOptionsForQry := applyPermissionsToIndividualsQuery(permsHelper, getAllOptions)
-
-		individuals, err = repo.GetAll(ctx, getAllOptionsForQry)
+		individuals, err = repo.GetAll(ctx, getAllOptions)
 		if err != nil {
 			l.Error("failed to get individuals", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -77,24 +68,6 @@ func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo
 		render()
 
 	})
-}
-
-func applyPermissionsToIndividualsQuery(
-	permsHelper permissionHelper,
-	getAllOptions api.GetAllOptions,
-) api.GetAllOptions {
-	if permsHelper.isGlobalAdmin {
-		return getAllOptions
-	}
-	allowedCountryCodes := permsHelper.GetCountryCodesWithAnyPermission("read", "write", "admin")
-	if getAllOptions.Countries == nil {
-		getAllOptions.Countries = allowedCountryCodes.Items()
-		return getAllOptions
-	}
-	wantCountryCodes := containers.NewStringSet(getAllOptions.Countries...)
-	finalCountryCodes := wantCountryCodes.Intersection(allowedCountryCodes)
-	getAllOptions.Countries = finalCountryCodes.Items()
-	return getAllOptions
 }
 
 func parseGetAllOptions(r *http.Request, out *api.GetAllOptions) error {
@@ -152,20 +125,7 @@ func parseGetAllOptions(r *http.Request, out *api.GetAllOptions) error {
 		yearsAgo := time.Now().AddDate(0, 0, -(ageTo+1)*365)
 		out.BirthDateFrom = &yearsAgo
 	}
-	countries := r.FormValue(formParamGetIndividualsCountries)
-	if len(countries) != 0 {
-		countrySet := containers.NewStringSet()
-		for _, c := range strings.Split(countries, ",") {
-			c = trimString(c)
-			if len(c) == 0 {
-				continue
-			}
-			countrySet.Add(c)
-		}
-		out.Countries = countrySet.Items()
-	} else {
-		out.Countries = nil
-	}
+	out.CountryID = r.FormValue(formParamGetIndividualsCountryID)
 	displacementStatuses := r.Form[formParamsGetIndividualsDisplacementStatus]
 	var displacementStatusMap = map[string]bool{}
 	for _, s := range displacementStatuses {

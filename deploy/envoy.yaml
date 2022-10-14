@@ -105,6 +105,7 @@ static_resources:
                             prefix: ""
                           route:
                             cluster: web
+                            timeout: 600s
                 http_filters:
                   - name: envoy.filters.http.ext_authz
                     typed_config:
@@ -129,6 +130,9 @@ static_resources:
                                 ignore_case: true
                               - exact: content-type
                                 ignore_case: true
+                          allowed_upstream_headers_to_append:
+                            patterns:
+                              - exact: set-cookie
                           allowed_upstream_headers:
                             patterns:
                               - exact: authorization
