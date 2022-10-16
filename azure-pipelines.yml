@@ -14,8 +14,9 @@ variables:
   imageRepository: 'core'
   containerRegistry: '47426b20707cdf3d.azurecr.io'
   dockerfilePath: 'build/package/app.Dockerfile'
+  buildContext: '$(Build.SourcesDirectory)'
   tag: '$(Build.BuildId)'
-
+  
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
