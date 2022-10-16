@@ -14,7 +14,7 @@ variables:
   imageRepository: 'core'
   containerRegistry: '47426b20707cdf3d.azurecr.io'
   dockerfilePath: 'build/package/app.Dockerfile'
-  buildContext: '$(Build.SourcesDirectory)'
+  buildContext: '$(Build.Repository.LocalPath)'
   tag: '$(Build.BuildId)'
   
   # Agent VM image name
@@ -35,6 +35,7 @@ stages:
         command: buildAndPush
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
+        buildContext: $(buildContext)
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
