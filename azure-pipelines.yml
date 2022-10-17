@@ -10,8 +10,6 @@ resources:
 
 variables:
   BUILD_CONTEXT: '$(Build.Repository.LocalPath)'
-  CONTAINER_REGISTRY_CONNECTION: 'c4845e33-342b-4634-8f08-e9785abe07be'
-  CONTAINER_REGISTRY: 'f9f946eb0d5468c1.azurecr.io'
   DOCKERFILE_PATH: 'build/package/app.Dockerfile'
   DOCKER_BUILDKIT: 1
   GOBIN:  '$(GOPATH)\bin'
