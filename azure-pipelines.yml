@@ -9,7 +9,6 @@ resources:
 - repo: self
 
 variables:
-  # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: 'c4845e33-342b-4634-8f08-e9785abe07be'
   imageRepository: 'core'
   containerRegistry: '47426b20707cdf3d.azurecr.io'
@@ -18,8 +17,8 @@ variables:
   tag: '$(Build.BuildId)'
   goVersion: '1.19.2'
   DOCKER_BUILDKIT: 1
-  
-  # Agent VM image name
+  GOBIN:  '$(GOPATH)\bin'
+  GOPATH: '$(System.DefaultWorkingDirectory)\gopath'
   vmImageName: 'ubuntu-latest'
 
 stages:
@@ -32,6 +31,10 @@ stages:
     - task: GoTool@0
       inputs:
         version: $(goVersion)
+        goBin: $(GOBIN)
+        goPath: $(GOPATH)
+    
+    - script: echo '##vso[task.prependpath]$(GOBIN)'
 
     - script: |
         go install github.com/jstemmer/go-junit-report/v2@latest
