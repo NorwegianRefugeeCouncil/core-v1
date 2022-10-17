@@ -37,9 +37,14 @@ stages:
     - script: echo '##vso[task.prependpath]$(GOBIN)'
 
     - script: |
+
+        echo Installing tools
         go install github.com/jstemmer/go-junit-report/v2@latest
         go install github.com/axw/gocov/gocov@latest
         go install github.com/AlekSi/gocov-xml@latest
+
+        echo Installing dependencies
+        go mod download
 
         echo Starting tests
         go test ./... -v -coverprofile=coverage.txt -covermode count 2>&1 | go-junit-report > report.xml
