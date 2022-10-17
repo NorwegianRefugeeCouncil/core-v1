@@ -58,7 +58,7 @@ stages:
         echo Converting coverage.json to xml
         gocov-xml < coverage.json > coverage.xml
         
-        echo Check if `go test` had an error
+        echo Check if go test had an error
         if [ $rc -ne 0 ]; then
           # Let script fail by writing to stderr
           >&2 echo "Tests failed"
@@ -67,10 +67,12 @@ stages:
         fi
       displayName: 'Run unit tests and convert results'
       failOnStderr: true
+      workingDirectory: $(Build.SourcesDirectory)
     - task: Go@0
       inputs:
         command: 'build'
         arguments: '-a -o core'
+        workingDirectory: $(Build.SourcesDirectory)
       displayName: 'Build Go app'
 
     - publish: '$(Build.SourcesDirectory)/core'
