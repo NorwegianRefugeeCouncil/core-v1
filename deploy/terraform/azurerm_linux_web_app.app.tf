@@ -13,7 +13,7 @@ resource "azurerm_linux_web_app" "app" {
   connection_string {
     name  = "db"
     type  = "PostgreSQL"
-    value = "postgres://${random_pet.postgres_admin_username.id}:${random_password.postgres_admin_password.result}@${azurerm_postgresql_flexible_server.example.fqdn}/${azurerm_postgresql_flexible_server_database.db.name}?sslmode=require"
+    value = "postgres://${random_pet.postgres_admin_username.id}:${random_password.postgres_admin_password.result}@${azurerm_postgresql_flexible_server.postgres.fqdn}/${azurerm_postgresql_flexible_server_database.db.name}?sslmode=require"
   }
   site_config {
     ftps_state                                    = "Disabled"

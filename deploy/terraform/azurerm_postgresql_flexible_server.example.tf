@@ -1,6 +1,6 @@
-resource "azurerm_postgresql_flexible_server" "example" {
+resource "azurerm_postgresql_flexible_server" "postgres" {
   provider               = azurerm.runtime
-  name                   = var.postgresql_server_name
+  name                   = random_id.postgresql_id.hex
   resource_group_name    = azurerm_resource_group.rg.name
   location               = azurerm_resource_group.rg.location
   version                = "14"
