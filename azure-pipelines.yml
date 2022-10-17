@@ -33,41 +33,40 @@ stages:
     displayName: Test, Lint & Coverage
     steps:
 
-    - displayName: Install GO
-      task: GoTool@0
+    - task: GoTool@0
+      displayName: Install GO
       inputs:
         version: $(GO_VERSION)
         goBin: $(GOBIN)
         goPath: $(GOPATH)
 
-    - displayName: 'Set up the Go workspace'
-      bash: |
+    - bash: |
         mkdir -p '$(GOBIN)'
         mkdir -p '$(GOPATH)/pkg'
         shopt -s extglob
         shopt -s dotglob
         echo '##vso[task.prependpath]$(GOBIN)'
         echo '##vso[task.prependpath]$(GOROOT)/bin'
-      
+      displayName: 'Set up the Go workspace'
 
-    - displayName: 'Get dependencies'
-      bash: |
+    - bash: |
         go version
         go install github.com/jstemmer/go-junit-report/v2@latest
         go install github.com/axw/gocov/gocov@latest
         go install github.com/AlekSi/gocov-xml@latest
+      displayName: 'Get dependencies'
 
-    - displayName: 'Run go vet'
-      continueOnError: 'true'
+    - continueOnError: 'true'
       bash: |
         go vet ./...
+      displayName: 'Run go vet'
 
-    - displayName: 'Run unit tests'
-      bash: |
+    - bash: |
         mkdir reports
         go test ./... -v -coverpkg=./... -coverprofile=./reports/coverage.txt -covermode count 2>&1 | go-junit-report > ./reports/junit.xml
         gocov convert ./reports/coverage.txt > ./reports/coverage.json
         gocov-xml < ./reports/coverage.json > ./reports/coverage.xml
+      displayName: 'Run unit tests'
 
     - task: PublishTestResults@2
       displayName: 'Publish test results'
@@ -78,7 +77,6 @@ stages:
         testResultsFiles: './reports/junit.xml'
         searchFolder: '$(Build.SourcesDirectory)'
 
-
     - task: PublishCodeCoverageResults@1
       displayName: 'Publish code coverage results'
       condition: always()
@@ -86,7 +84,6 @@ stages:
         failIfCoverageEmpty: true
         codeCoverageTool: 'Cobertura'
         summaryFileLocation: './reports/coverage.xml'
-
 
   - job: BuildPush
     dependsOn: [Test]
