@@ -20,6 +20,7 @@ variables:
   GOBIN:  '$(GOPATH)\bin'
   GOPATH: '$(System.DefaultWorkingDirectory)\gopath'
   vmImageName: 'ubuntu-latest'
+  isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
 
 stages:
 - stage: Build
@@ -90,6 +91,15 @@ stages:
         searchFolder: '$(Build.SourcesDirectory)'
       displayName: 'Publish test results'
 
+    - script: |
+          cd /app
+          mkdir -p coverage
+          go test ./... -coverpkg=./... -v -coverprofile=coverage/coverage.txt -covermode count 2>&1 | go-junit-report > coverage/report.xml
+          gocov convert coverage/coverage.txt > coverage/coverage.json
+          gocov-xml < coverage/coverage.json > coverage/coverage.xml
+      target:
+       container: builder
+
     - task: PublishCodeCoverageResults@1
       condition: always()
       inputs:
@@ -99,7 +109,8 @@ stages:
 
   - job: BuildImage
     dependsOn: [Test]
-    displayName: Build Docker Image
+    condition: and(succeeded(), eq(variables.isMain, 'true'))
+    displayName: Build and Push Docker Image
     pool:
       vmImage: $(vmImageName)
     steps:
