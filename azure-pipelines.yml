@@ -60,11 +60,11 @@ stages:
       displayName: 'vet and lint'
 
     - bash: |
-        mkdir coverage
-        go test ./... -v -coverpkg=./... -coverprofile=./coverage/coverage.txt -covermode count 2>&1 | go-junit-report > ./coverage/junit.xml
+        mkdir reports
+        go test ./... -v -coverpkg=./... -coverprofile=./reports/coverage.txt -covermode count 2>&1 | go-junit-report > ./reports/junit.xml
         rc=${PIPESTATUS[0]}
-        gocov convert ./coverage/coverage.txt > ./coverage/coverage.json
-        gocov-xml < ./coverage/coverage.json > ./coverage/coverage.xml
+        gocov convert ./reports/coverage.txt > ./reports/coverage.json
+        gocov-xml < ./reports/coverage.json > ./reports/coverage.xml
         if [ $rc -ne 0 ]; then
           echo "Tests failed"
           exit 1
@@ -92,17 +92,20 @@ stages:
     - task: PublishTestResults@2
       condition: always()
       inputs:
+        failTaskOnFailedTests: true
         testResultsFormat: 'JUnit'
-        testResultsFiles: '*report*.xml' 
+        testResultsFiles: './reports/junit.xml' 
         searchFolder: '$(Build.SourcesDirectory)'
       displayName: 'Publish test results'
 
     - task: PublishCodeCoverageResults@1
       condition: always()
       inputs:
+        failIfCoverageEmpty: true
         codeCoverageTool: 'Cobertura'
-        summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+        summaryFileLocation: './reports/coverage.xml'
       displayName: 'Publish code coverage results'
+
 
   - job: BuildImage
     dependsOn: [Test]
