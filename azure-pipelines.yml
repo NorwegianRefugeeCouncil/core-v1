@@ -62,16 +62,8 @@ stages:
     - bash: |
         mkdir reports
         go test ./... -v -coverpkg=./... -coverprofile=./reports/coverage.txt -covermode count 2>&1 | go-junit-report > ./reports/junit.xml
-        rc=${PIPESTATUS[0]}
         gocov convert ./reports/coverage.txt > ./reports/coverage.json
         gocov-xml < ./reports/coverage.json > ./reports/coverage.xml
-        if [ $rc -ne 0 ]; then
-          echo "Tests failed"
-          exit 1
-        else
-          echo "Tests succeeded"
-          exit 0
-        fi
       displayName: 'Run unit tests'
     - task: Go@0
       env:
