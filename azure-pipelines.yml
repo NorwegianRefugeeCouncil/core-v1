@@ -16,6 +16,7 @@ variables:
   dockerfilePath: 'build/package/app.Dockerfile'
   buildContext: '$(Build.Repository.LocalPath)'
   tag: '$(Build.BuildId)'
+  goVersion: '1.19.2'
   DOCKER_BUILDKIT: 1
   
   # Agent VM image name
@@ -25,8 +26,56 @@ stages:
 - stage: Build
   displayName: Build and push stage
   jobs:
-  - job: Build
-    displayName: Build
+  - job: Test
+    displayName: Test
+    steps:
+    - task: GoTool@0
+      inputs:
+        version: $(goVersion)
+    
+    - script: |
+        go get -u github.com/jstemmer/go-junit-report 2>&1
+        go get -u github.com/axw/gocov/gocov 2>&1
+        go get -u github.com/AlekSi/gocov-xml 2>&1
+        go test ./... -v -coverprofile=coverage.txt -covermode count 2>&1 | $HOME/go/bin/go-junit-report > report.xml
+        rc=${PIPESTATUS[0]} # Get result code of `go test`
+        # Convert coverage file into XML
+        $HOME/go/bin/gocov convert coverage.txt > coverage.json
+        $HOME/go/bin/gocov-xml < coverage.json > coverage.xml
+        # Check if `go test` had an error
+        if [ $rc -ne 0 ]; then
+          # Let script fail by writing to stderr
+          >&2 echo "Tests failed"
+        fi
+      displayName: 'Run unit tests and convert results'
+      failOnStderr: true
+    - task: Go@0
+      inputs:
+        command: 'build'
+        arguments: '-a -o core'
+      displayName: 'Build Go app'
+
+    - publish: '$(Build.SourcesDirectory)/core'
+      artifact: 'Executable'
+      displayName: 'Publish pipeline artifact'
+
+    - task: PublishTestResults@2
+      condition: always()
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '*report*.xml' 
+        searchFolder: '$(Build.SourcesDirectory)'
+      displayName: 'Publish test results'
+
+    - task: PublishCodeCoverageResults@1
+      condition: always()
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+      displayName: 'Publish code coverage results'
+
+  - job: BuildImage
+    displayName: Build Docker Image
     pool:
       vmImage: $(vmImageName)
     steps:
