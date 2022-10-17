@@ -113,3 +113,7 @@ stages:
     - publish: $(Build.SourcesDirectory)/tag.txt
       artifact: Version
       displayName: Publish version build artifact
+
+    - publish: $(Build.SourcesDirectory)/deploy/terraform
+      artifact: Terraform
+      displayName: Publish terraform manifests build artifact
