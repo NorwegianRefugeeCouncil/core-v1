@@ -105,4 +105,8 @@ certs/*
 
 generated.csv
 
+# Apple
 .DS_Store
+
+/coverage
+/reports
