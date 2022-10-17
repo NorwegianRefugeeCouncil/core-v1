@@ -56,7 +56,6 @@ stages:
 
     - bash: |
         go vet ./...
-        golint -set_exit_status
       continueOnError: 'true'
       displayName: 'vet and lint'
 
