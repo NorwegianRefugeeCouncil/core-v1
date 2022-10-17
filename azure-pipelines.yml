@@ -73,9 +73,14 @@ stages:
       displayName: 'Run unit tests and convert results'
       workingDirectory: $(Build.SourcesDirectory)
     - task: Go@0
+      env:
+        GO111MODULE: on
+        CGO_ENABLED: '0'
+        GOOS: linux
+        GOARCH: amd64
       inputs:
         command: 'build'
-        arguments: '-a -o core'
+        arguments: "-o core -ldflags '-w -s' --tags fts5"
         workingDirectory: $(Build.SourcesDirectory)
       displayName: 'Build Go app'
 
