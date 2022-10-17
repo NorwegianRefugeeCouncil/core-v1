@@ -17,7 +17,7 @@ variables:
   GO_VERSION: '1.19.2'
   IS_MAIN: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
   LDFLAGS: '-w -s'
-  REPOSITORY: 'core'
+  REPOSITORY: 'core/webapp'
   TAG: '$(Build.BuildId)'
 
 pool:
@@ -100,14 +100,14 @@ stages:
         tags: |
           $(TAG)
 
-    - bash: echo "$(CONTAINER_REGISTRY)/$(REPOSITORY):$(TAG)" > $(Build.SourcesDirectory)/image.txt
+    - bash: echo -n "$(CONTAINER_REGISTRY)/$(REPOSITORY):$(TAG)" > $(Build.SourcesDirectory)/image.txt
       displayName: Output version build artifact
 
     - publish: $(Build.SourcesDirectory)/image.txt
       artifact: ImageRef
       displayName: Publish image reference output build artifact
 
-    - bash: echo "$(TAG)" > $(Build.SourcesDirectory)/tag.txt
+    - bash: echo -n "$(TAG)" > $(Build.SourcesDirectory)/tag.txt
       displayName: Output version build artifact
 
     - publish: $(Build.SourcesDirectory)/tag.txt
