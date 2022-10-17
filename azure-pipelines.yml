@@ -56,9 +56,9 @@ stages:
         go install github.com/AlekSi/gocov-xml@latest
       displayName: 'Get dependencies'
 
-    - continueOnError: 'true'
-      bash: |
+    - bash: |
         go vet ./...
+      continueOnError: 'true'
       displayName: 'Run go vet'
 
     - bash: |
@@ -90,9 +90,9 @@ stages:
     condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
     displayName: Build and Push Docker Image
     steps:
-    - displayName: Build and push to container registry
-      task: Docker@2
+    - task: Docker@2
       name: docker
+      displayName: Build and push to container registry
       inputs:
         command: buildAndPush
         repository: $(REPOSITORY)
@@ -102,20 +102,20 @@ stages:
         tags: |
           $(TAG)
 
-    - displayName: Output version build artifact
-      bash: echo "$(CONTAINER_REGISTRY)/$(REPOSITORY):$(TAG)" > $(Build.SourcesDirectory)/image.txt
+    - bash: echo "$(CONTAINER_REGISTRY)/$(REPOSITORY):$(TAG)" > $(Build.SourcesDirectory)/image.txt
+      displayName: Output version build artifact
 
-    - displayName: Publish image reference output build artifact
-      publish: $(Build.SourcesDirectory)/image.txt
+    - publish: $(Build.SourcesDirectory)/image.txt
       artifact: ImageRef
+      displayName: Publish image reference output build artifact
 
-    - displayName: Publish docker output build artifact
-      publish: $(docker.DockerOutput)
+    - publish: $(docker.DockerOutput)
       artifact: DockerOutput
+      displayName: Publish docker output build artifact
 
-    - displayName: Output version build artifact
-      bash: echo "$(TAG)" > $(Build.SourcesDirectory)/tag.txt
+    - bash: echo "$(TAG)" > $(Build.SourcesDirectory)/tag.txt
+      displayName: Output version build artifact
 
-    - displayName: Publish version build artifact
-      publish: $(Build.SourcesDirectory)/tag.txt
+    - publish: $(Build.SourcesDirectory)/tag.txt
       artifact: Version
+      displayName: Publish version build artifact
