@@ -34,6 +34,8 @@ stages:
         version: $(goVersion)
     
     - script: |
+        echo "GOPATH ${go env GOPATH}"
+        
         PATH=${PATH}:$(go env GOPATH)/bin
         go get -u github.com/jstemmer/go-junit-report 2>&1
         go get -u github.com/axw/gocov/gocov 2>&1
