@@ -32,15 +32,18 @@ stages:
     - task: GoTool@0
       inputs:
         version: $(goVersion)
+        goPath: /home/vsts/go
+        goBin: /home/vsts/go/bin
     
     - script: |
-        echo "GOPATH=$(go env GOPATH)"
-        ls $(go env GOPATH)
-        
-        PATH=${PATH}:$(go env GOPATH)/bin
         go get -u github.com/jstemmer/go-junit-report 2>&1
         go get -u github.com/axw/gocov/gocov 2>&1
         go get -u github.com/AlekSi/gocov-xml 2>&1
+        
+        echo "GOPATH=$(go env GOPATH)"
+        ls $(go env GOPATH)
+        PATH=${PATH}:$(go env GOPATH)/bin
+
         go test ./... -v -coverprofile=coverage.txt -covermode count 2>&1 | go-junit-report > report.xml
         rc=${PIPESTATUS[0]} # Get result code of `go test`
         # Convert coverage file into XML
