@@ -37,6 +37,8 @@ stages:
     - script: echo '##vso[task.prependpath]$(GOBIN)'
 
     - script: |
+        
+        set -e
 
         echo Installing tools
         go install github.com/jstemmer/go-junit-report/v2@latest
@@ -61,12 +63,13 @@ stages:
         echo Check if go test had an error
         if [ $rc -ne 0 ]; then
           # Let script fail by writing to stderr
-          >&2 echo "Tests failed"
+          echo "Tests failed"
+          exit 1
         else
           echo "Tests succeeded"
+          exit 0
         fi
       displayName: 'Run unit tests and convert results'
-      failOnStderr: true
       workingDirectory: $(Build.SourcesDirectory)
     - task: Go@0
       inputs:
