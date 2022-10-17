@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"golang.org/x/exp/constraints"
+	"golang.org/x/exp/slices"
 )
 
 type empty struct{}
@@ -48,6 +49,7 @@ func (s Set[T]) Items() []T {
 	for item := range s {
 		items = append(items, item)
 	}
+	slices.Sort(items)
 	return items
 }
 
