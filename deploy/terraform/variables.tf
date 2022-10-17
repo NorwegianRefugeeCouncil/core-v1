@@ -64,11 +64,6 @@ variable "postgres_subnet_address_space" {
   description = "Address space for the postgres subnet"
 }
 
-variable "postgresql_server_name" {
-  type        = string
-  description = "Unique name for the postgresql server"
-}
-
 variable "postgres_sku_name" {
   type        = string
   description = "Name of the postgres SKU"
