@@ -107,10 +107,6 @@ stages:
       artifact: ImageRef
       displayName: Publish image reference output build artifact
 
-    - publish: $(docker.DockerOutput)
-      artifact: DockerOutput
-      displayName: Publish docker output build artifact
-
     - bash: echo "$(TAG)" > $(Build.SourcesDirectory)/tag.txt
       displayName: Output version build artifact
 
