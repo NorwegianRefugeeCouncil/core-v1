@@ -17,7 +17,8 @@ variables:
   buildContext: '$(Build.Repository.LocalPath)'
   tag: '$(Build.BuildId)'
   goVersion: '1.19.2'
-  goBin: '/gobin'
+  goBin: '/home/vsts/go/go1.19/bin'
+  goPath: '/home/vsts/go/go1.19'
   DOCKER_BUILDKIT: 1
   
   # Agent VM image name
@@ -36,11 +37,13 @@ stages:
         targetType: 'inline'
         script: |
           mkdir -p $(goBin)
+          mkdir -p $(goPath)
         failOnStderr: true    
     - task: GoTool@0
       inputs:
         version: $(goVersion)
         goBin: $(goBin)
+        goPath: $(goPath)
     
     - script: |
         go get -u github.com/jstemmer/go-junit-report 2>&1
