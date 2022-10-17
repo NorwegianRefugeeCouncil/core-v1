@@ -9,18 +9,20 @@ resources:
 - repo: self
 
 variables:
-  dockerRegistryServiceConnection: 'c4845e33-342b-4634-8f08-e9785abe07be'
-  imageRepository: 'core'
-  containerRegistry: '47426b20707cdf3d.azurecr.io'
-  dockerfilePath: 'build/package/app.Dockerfile'
-  buildContext: '$(Build.Repository.LocalPath)'
-  tag: '$(Build.BuildId)'
-  goVersion: '1.19.2'
+  BUILD_CONTEXT: '$(Build.Repository.LocalPath)'
+  CONTAINER_REGISTRY: 'c4845e33-342b-4634-8f08-e9785abe07be'
+  DOCKERFILE_PATH: 'build/package/app.Dockerfile'
   DOCKER_BUILDKIT: 1
   GOBIN:  '$(GOPATH)\bin'
   GOPATH: '$(System.DefaultWorkingDirectory)\gopath'
-  vmImageName: 'ubuntu-latest'
-  isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+  GO_VERSION: '1.19.2'
+  IS_MAIN: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+  LDFLAGS: '-w -s'
+  REPOSITORY: 'core'
+  TAG: '$(Build.BuildId)'
+
+pool:
+  vmImage: 'ubuntu-latest'
 
 stages:
 - stage: Build
@@ -29,49 +31,49 @@ stages:
   - job: Test
     displayName: Test
     steps:
+
     - task: GoTool@0
       inputs:
-        version: $(goVersion)
+        version: $(GO_VERSION)
         goBin: $(GOBIN)
         goPath: $(GOPATH)
     
-    - script: echo '##vso[task.prependpath]$(GOBIN)'
-
-    - script: |
-        
-        set -e
-
-        echo Installing tools
+    - bash: |
+        mkdir -p '$(GOBIN)'
+        mkdir -p '$(GOPATH)/pkg'
+        shopt -s extglob
+        shopt -s dotglob
+        echo '##vso[task.prependpath]$(GOBIN)'
+        echo '##vso[task.prependpath]$(GOROOT)/bin'
+      displayName: 'Set up the Go workspace'
+      
+    - bash: |
+        go version
         go install github.com/jstemmer/go-junit-report/v2@latest
         go install github.com/axw/gocov/gocov@latest
         go install github.com/AlekSi/gocov-xml@latest
+      displayName: 'Get dependencies'
 
-        echo Installing dependencies
-        go mod download
+    - bash: |
+        go vet ./...
+        golint -set_exit_status
+      continueOnError: 'true'
+      displayName: 'vet and lint'
 
-        echo Starting tests
-        go test ./... -coverpkg=./... -v -coverprofile=coverage.txt -covermode count 2>&1 | go-junit-report > report.xml
-        
-        rc=${PIPESTATUS[0]} 
-        echo go test exit code: ${rc}
-
-        echo Converting coverage.txt to json
-        gocov convert coverage.txt > coverage.json
-
-        echo Converting coverage.json to xml
-        gocov-xml < coverage.json > coverage.xml
-        
-        echo Check if go test had an error
+    - bash: |
+        mkdir coverage
+        go test ./... -v -coverpkg=./... -coverprofile=./coverage/coverage.txt -covermode count 2>&1 | go-junit-report > ./coverage/junit.xml
+        rc=${PIPESTATUS[0]}
+        gocov convert ./coverage/coverage.txt > ./coverage/coverage.json
+        gocov-xml < ./coverage/coverage.json > ./coverage/coverage.xml
         if [ $rc -ne 0 ]; then
-          # Let script fail by writing to stderr
           echo "Tests failed"
           exit 1
         else
           echo "Tests succeeded"
           exit 0
         fi
-      displayName: 'Run unit tests and convert results'
-      workingDirectory: $(Build.SourcesDirectory)
+      displayName: 'Run unit tests'
     - task: Go@0
       env:
         GO111MODULE: on
@@ -80,7 +82,7 @@ stages:
         GOARCH: amd64
       inputs:
         command: 'build'
-        arguments: "-o core -ldflags '-w -s' --tags fts5"
+        arguments: -o core -ldflags "$(LDFLAGS)" --tags fts5
         workingDirectory: $(Build.SourcesDirectory)
       displayName: 'Build Go app'
 
@@ -105,18 +107,16 @@ stages:
 
   - job: BuildImage
     dependsOn: [Test]
-    condition: and(succeeded(), eq(variables.isMain, 'true'))
+    condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
     displayName: Build and Push Docker Image
-    pool:
-      vmImage: $(vmImageName)
     steps:
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
         command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        buildContext: $(buildContext)
-        containerRegistry: $(dockerRegistryServiceConnection)
+        repository: $(REPOSITORY)
+        dockerfile: $(DOCKERFILE_PATH)
+        buildContext: $(BUILD_CONTEXT)
+        containerRegistry: $(CONTAINER_REGISTRY)
         tags: |
-          $(tag)
+          $(TAG)
