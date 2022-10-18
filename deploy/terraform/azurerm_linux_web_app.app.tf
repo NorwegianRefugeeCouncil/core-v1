@@ -77,7 +77,7 @@ resource azapi_update_resource app_auth {
               },
               login = {
                 nameClaimType = "name"
-                scope         = [
+                scopes         = [
                   "openid",
                   "profile",
                   "email",
