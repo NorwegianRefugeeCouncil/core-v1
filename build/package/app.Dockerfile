@@ -4,6 +4,10 @@ ENV GO111MODULE=on \
     GOOS=linux \
     GOARCH=amd64 \
     GOCACHE=/tmp/.cache
+RUN apt-get install -yq --no-install-recommends curl && \
+    curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && \
+    apt-get install -yq --no-install-recommends nodejs && \
+    npm install -g yarn
 ARG uid=1000
 ARG gid=1000
 RUN groupadd -g ${GROUP_ID} core || echo "Group already exists"
@@ -17,7 +21,10 @@ RUN go mod download && \
     go install github.com/jstemmer/go-junit-report/v2@latest && \
     go install github.com/axw/gocov/gocov@latest && \
     go install github.com/AlekSi/gocov-xml@latest
-COPY . .
+COPY --chown=${uid}:${gid} . .
+RUN cd web/theme && \
+    yarn && \
+    yarn build
 
 FROM base as dev
 ENTRYPOINT ["/app/scripts/docker-dev-entrypoint.sh"]
