@@ -21,7 +21,7 @@ RUN go mod download && \
     go install github.com/jstemmer/go-junit-report/v2@latest && \
     go install github.com/axw/gocov/gocov@latest && \
     go install github.com/AlekSi/gocov-xml@latest
-COPY . .
+COPY --chown=${uid}:${gid} . .
 
 FROM base as dev
 ENTRYPOINT ["/app/scripts/docker-dev-entrypoint.sh"]
