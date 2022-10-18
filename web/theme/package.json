@@ -1,7 +1,8 @@
 {
   "name": "theme",
   "scripts": {
-    "build": "sass theme.scss:../static/theme.min.css --style=compressed"
+    "build": "sass theme.scss:../static/theme.min.css --style=compressed",
+    "postbuild": "cp ./node_modules/bootstrap/dist/js/bootstrap.min.js ../static/bootstrap.min.js && cp ./node_modules/bootstrap/dist/js/bootstrap.min.js.map ../static/bootstrap.min.js.map"
   },
   "dependencies": {
     "bootstrap": "^5.2.2",
