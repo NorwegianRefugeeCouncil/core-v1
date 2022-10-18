@@ -138,7 +138,7 @@ func (s Set[T]) String() string {
 	sb.WriteString("{")
 	items := s.Items()
 	var i = 0
-	for item := range items {
+	for _, item := range items {
 		if i > 0 {
 			sb.WriteString(", ")
 		}
