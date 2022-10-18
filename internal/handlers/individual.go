@@ -3,8 +3,6 @@ package handlers
 import (
 	"html/template"
 	"net/http"
-	"strings"
-	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/notcore/internal/api"
@@ -13,6 +11,7 @@ import (
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
+	"github.com/nrc-no/notcore/internal/validation"
 	"go.uber.org/zap"
 )
 
@@ -34,7 +33,7 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			ctx              = r.Context()
 			l                = logging.NewLogger(ctx)
 			individual       = &api.Individual{}
-			validationErrors ValidationErrors
+			validationErrors validation.ValidationErrors
 			wasValidated     bool
 			individualId     = mux.Vars(r)[pathParamIndividualID]
 			isNew            = individualId == newID
@@ -123,7 +122,7 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 		}
 
 		// Validate the individual
-		validationErrors = validateIndividual(individual)
+		validationErrors = validation.ValidateIndividual(individual)
 		if len(validationErrors) > 0 {
 			render()
 			return
@@ -149,34 +148,6 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 	})
 }
 
-func validateIndividual(individual *api.Individual) ValidationErrors {
-	ret := ValidationErrors{}
-	if individual.FullName == "" {
-		ret[formParamIndividualFullName] = "Full name is required"
-	}
-	if len(individual.CountryID) == 0 {
-		ret[formParamIndividualCountry] = "Country is required"
-	}
-	return ret
-}
-
-func normalizeIndividual(individual *api.Individual) {
-	individual.FullName = trimString(individual.FullName)
-	individual.PreferredName = trimString(individual.PreferredName)
-	if individual.PreferredName == "" {
-		individual.PreferredName = individual.FullName
-	}
-	individual.DisplacementStatus = trimString(individual.DisplacementStatus)
-	individual.Email = trimString(utils.NormalizeEmail(individual.Email))
-	individual.PhoneNumber = trimString(individual.PhoneNumber)
-	individual.Address = trimString(individual.Address)
-	individual.Gender = trimString(individual.Gender)
-	individual.NormalizedPhoneNumber = utils.NormalizePhoneNumber(individual.PhoneNumber)
-	individual.PhysicalImpairment = trimString(individual.PhysicalImpairment)
-	individual.MentalImpairment = trimString(individual.MentalImpairment)
-	individual.SensoryImpairment = trimString(individual.SensoryImpairment)
-}
-
 func parseIndividualForm(r *http.Request, permsHelper auth.Interface, individual *api.Individual) error {
 	var err error
 	individual.FullName = r.FormValue(constants.FormParamIndividualFullName)
@@ -186,7 +157,7 @@ func parseIndividualForm(r *http.Request, permsHelper auth.Interface, individual
 	individual.PhoneNumber = r.FormValue(constants.FormParamIndividualPhoneNumber)
 	individual.Address = r.FormValue(constants.FormParamIndividualAddress)
 	individual.Gender = r.FormValue(constants.FormParamIndividualGender)
-	individual.BirthDate, err = parseBirthDate(r.FormValue(formParamIndividualBirthDate))
+	individual.BirthDate, err = utils.ParseDate(r.FormValue(constants.FormParamIndividualBirthDate))
 	if err != nil {
 		return err
 	}
@@ -196,66 +167,6 @@ func parseIndividualForm(r *http.Request, permsHelper auth.Interface, individual
 	individual.MentalImpairment = r.FormValue(constants.FormParamIndividualMentalImpairment)
 	individual.SensoryImpairment = r.FormValue(constants.FormParamIndividualSensoryImpairment)
 	individual.CountryID = r.FormValue(constants.FormParamIndividualCountry)
-	normalizeIndividual(individual)
+	validation.NormalizeIndividual(individual)
 	return nil
-}
-
-func parseIndividualCsvRow(colMapping map[string]int, cols []string) (*api.Individual, error) {
-	var err error
-	var individual = &api.Individual{}
-	for field, idx := range colMapping {
-		switch field {
-		case fileHeaderIndividualID:
-			individual.ID = cols[idx]
-		case fileHeaderIndividualFullName:
-			individual.FullName = cols[idx]
-		case fileHeaderIndividualPreferredName:
-			individual.PreferredName = cols[idx]
-		case fileHeaderIndividualDisplacementStatus:
-			individual.DisplacementStatus = cols[idx]
-		case fileHeaderIndividualPhoneNumber:
-			individual.PhoneNumber = cols[idx]
-		case fileHeaderIndividualEmail:
-			individual.Email = cols[idx]
-		case fileHeaderIndividualAddress:
-			individual.Address = cols[idx]
-		case fileHeaderIndividualGender:
-			individual.Gender = cols[idx]
-		case fileHeaderIndividualBirthDate:
-			individual.BirthDate, err = parseBirthDate(cols[idx])
-			if err != nil {
-				return nil, err
-			}
-		case fileHeaderIndividualIsMinor:
-			individual.IsMinor = cols[idx] == "true"
-		case fileHeaderIndividualPresentsProtectionConcerns:
-			individual.PresentsProtectionConcerns = cols[idx] == "true"
-		case fileHeaderIndividualPhysicalImpairment:
-			individual.PhysicalImpairment = cols[idx]
-		case fileHeaderIndividualSensoryImpairment:
-			individual.SensoryImpairment = cols[idx]
-		case fileHeaderIndividualMentalImpairment:
-			individual.MentalImpairment = cols[idx]
-		case fileHeaderIndividualCountryID:
-			individual.CountryID = cols[idx]
-		}
-
-	}
-	normalizeIndividual(individual)
-	return individual, nil
-}
-
-func parseBirthDate(s string) (*time.Time, error) {
-	if s != "" {
-		birthDate, err := time.Parse("2006-01-02", s)
-		if err != nil {
-			return nil, err
-		}
-		return &birthDate, nil
-	}
-	return nil, nil
-}
-
-func trimString(s string) string {
-	return strings.Trim(s, " \t\n\r")
 }

@@ -3,6 +3,7 @@ package handlers
 import (
 	"testing"
 
+	"github.com/nrc-no/notcore/internal/validation"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,32 +12,32 @@ func TestViewDataGetErrors(t *testing.T) {
 	testCases := []struct {
 		name     string
 		viewData ViewData
-		expect   ValidationErrors
+		expect   validation.ValidationErrors
 	}{
 		{
 			name:     "nil view data",
 			viewData: nil,
-			expect:   ValidationErrors{},
+			expect:   validation.ValidationErrors{},
 		}, {
 			name:     "empty view data",
 			viewData: ViewData{},
-			expect:   ValidationErrors{},
+			expect:   validation.ValidationErrors{},
 		},
 		{
 			name: "view data without errors",
 			viewData: ViewData{
-				"Errors": ValidationErrors{},
+				"Errors": validation.ValidationErrors{},
 			},
-			expect: ValidationErrors{},
+			expect: validation.ValidationErrors{},
 		},
 		{
 			name: "view data with errors",
 			viewData: ViewData{
-				"Errors": ValidationErrors{
+				"Errors": validation.ValidationErrors{
 					"field1": "error1",
 				},
 			},
-			expect: ValidationErrors{
+			expect: validation.ValidationErrors{
 				"field1": "error1",
 			},
 		},
@@ -71,7 +72,7 @@ func TestViewDataError(t *testing.T) {
 		{
 			name: "view data without errors",
 			viewData: ViewData{
-				"Errors": ValidationErrors{},
+				"Errors": validation.ValidationErrors{},
 			},
 			fieldName: "field",
 			expect:    "",
@@ -79,7 +80,7 @@ func TestViewDataError(t *testing.T) {
 		{
 			name: "view data with errors",
 			viewData: ViewData{
-				"Errors": ValidationErrors{
+				"Errors": validation.ValidationErrors{
 					"field": "error1",
 				},
 			},
@@ -116,14 +117,14 @@ func TestViewDataHasError(t *testing.T) {
 		{
 			name: "view data without errors",
 			viewData: ViewData{
-				"Errors": ValidationErrors{},
+				"Errors": validation.ValidationErrors{},
 			},
 			fieldName: "field",
 			expect:    false,
 		}, {
 			name: "different field",
 			viewData: ViewData{
-				"Errors": ValidationErrors{
+				"Errors": validation.ValidationErrors{
 					"bla": "error1",
 				},
 			},
@@ -132,7 +133,7 @@ func TestViewDataHasError(t *testing.T) {
 		}, {
 			name: "view data with errors",
 			viewData: ViewData{
-				"Errors": ValidationErrors{
+				"Errors": validation.ValidationErrors{
 					"field": "error1",
 				},
 			},
@@ -166,13 +167,13 @@ func TestViewDataHasErrors(t *testing.T) {
 		{
 			name: "view data without errors",
 			viewData: ViewData{
-				"Errors": ValidationErrors{},
+				"Errors": validation.ValidationErrors{},
 			},
 			expect: false,
 		}, {
 			name: "different field",
 			viewData: ViewData{
-				"Errors": ValidationErrors{
+				"Errors": validation.ValidationErrors{
 					"bla": "error1",
 				},
 			},
