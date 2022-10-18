@@ -4,6 +4,10 @@ ENV GO111MODULE=on \
     GOOS=linux \
     GOARCH=amd64 \
     GOCACHE=/tmp/.cache
+RUN apt-get install -yq --no-install-recommends curl && \
+    curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && \
+    apt-get install -yq --no-install-recommends nodejs && \
+    npm install -g yarn
 ARG uid=1000
 ARG gid=1000
 RUN groupadd -g ${GROUP_ID} core || echo "Group already exists"
