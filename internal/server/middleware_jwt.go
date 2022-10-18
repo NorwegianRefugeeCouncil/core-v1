@@ -3,31 +3,29 @@ package server
 import (
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/nrc-no/notcore/internal/api"
-	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
 )
 
-func jwtMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handler {
+type TokenClaims struct {
+	Sub    string   `json:"sub"`
+	Iss    string   `json:"iss"`
+	Email  string   `json:"email"`
+	Groups []string `json:"groups"`
+}
+
+func jwtMiddleware() func(handler http.Handler) http.Handler {
 
 	const (
 		keyJwtPayload = "X-Jwt-Payload"
-		keyJwtSub     = "sub"
-		keyJwtEmail   = "email"
 	)
 
 	return func(h http.Handler) http.Handler {
-
-		type AuthHeaderClaims struct {
-			Sub    string `json:"sub"`
-			Email  string `json:"email"`
-			Issuer string `json:"iss"`
-		}
-
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 			ctx := r.Context()
@@ -45,31 +43,25 @@ func jwtMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handler
 				return
 			}
 
-			var payload = map[string]interface{}{}
-			if err := json.Unmarshal(authHeaderJsonBytes, &payload); err != nil {
-				http.Error(w, "Invalid authorization header: "+err.Error(), http.StatusBadRequest)
-				return
-			}
-			l.Debug("auth header claims", zap.Any("payload", payload))
-
-			sub, done := getAuthPayload(w, payload, keyJwtSub)
-			if done {
-				return
-			}
-
-			email, done := getAuthPayload(w, payload, keyJwtEmail)
-			if done {
-				return
-			}
-
-			user, err := userRepo.Put(r.Context(), &api.User{
-				ID:      "",
-				Subject: sub,
-				Email:   email,
-			})
+			claims, err := unmarshalTokenClaims(authHeaderJsonBytes)
 			if err != nil {
-				http.Error(w, "couldn't save user: "+err.Error(), http.StatusInternalServerError)
+				l.Error("failed to unmarshal token claims", zap.Error(err))
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
+			}
+
+			if err := validateTokenClaims(claims); err != nil {
+				l.Error("failed to validate token claims", zap.Error(err))
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			user := &api.User{
+				ID:      fmt.Sprintf("%s/%s", claims.Iss, claims.Sub),
+				Issuer:  claims.Iss,
+				Subject: claims.Sub,
+				Email:   claims.Email,
+				Groups:  claims.Groups,
 			}
 
 			ctx = utils.WithUser(ctx, *user)
@@ -80,16 +72,26 @@ func jwtMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handler
 	}
 }
 
-func getAuthPayload(w http.ResponseWriter, payload map[string]interface{}, key string) (string, bool) {
-	valIntf := payload[key]
-	if valIntf == nil {
-		http.Error(w, "Invalid authorization header: missing "+key, http.StatusBadRequest)
-		return "", true
+func unmarshalTokenClaims(payload []byte) (TokenClaims, error) {
+	var claims TokenClaims
+	if err := json.Unmarshal(payload, &claims); err != nil {
+		return TokenClaims{}, err
 	}
-	val, ok := valIntf.(string)
-	if !ok {
-		http.Error(w, "Invalid authorization header: "+key+" is not a string", http.StatusBadRequest)
-		return "", true
+	return claims, nil
+}
+
+func validateTokenClaims(claims TokenClaims) error {
+	if claims.Iss == "" {
+		return fmt.Errorf("token is missing issuer")
 	}
-	return val, false
+	if claims.Sub == "" {
+		return fmt.Errorf("token is missing subject")
+	}
+	if claims.Email == "" {
+		return fmt.Errorf("token is missing email")
+	}
+	if len(claims.Groups) == 0 {
+		return fmt.Errorf("token is missing groups")
+	}
+	return nil
 }

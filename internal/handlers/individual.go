@@ -67,7 +67,7 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 		}
 
 		// Check if the user is allowed to read the individual
-		if !isNew && !authIntf.CanReadFromCountryID(individual.CountryID) {
+		if !isNew && !authIntf.CanReadWriteToCountryID(individual.CountryID) {
 			l.Warn("user is not allowed to read individual", zap.String("individual_id", individualId))
 			http.Error(w, "You are not allowed to read this individual", http.StatusForbidden)
 			return
@@ -114,7 +114,7 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 		individual.CountryID = selectedCountryID
 
 		// Check if the user has permission to write to the country
-		if !authIntf.CanWriteToCountryID(individual.CountryID) {
+		if !authIntf.CanReadWriteToCountryID(individual.CountryID) {
 			l.Warn("user is not allowed to create an individual for country",
 				zap.String("country_id", individual.CountryID))
 			http.Error(w, "You are not allowed to add an individual to this country", http.StatusForbidden)

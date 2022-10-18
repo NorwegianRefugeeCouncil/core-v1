@@ -3,6 +3,7 @@ package handlers
 import (
 	"html/template"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/notcore/internal/api"
@@ -21,6 +22,7 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 		viewParamCountry   = "Country"
 		formParamName      = "Name"
 		formParamCode      = "Code"
+		formParamJwtGroup  = "JwtGroup"
 	)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -69,8 +71,9 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 		if !isNew {
 			country.ID = countryID
 		}
-		country.Name = r.FormValue(formParamName)
-		country.Code = r.FormValue(formParamCode)
+		country.Name = strings.TrimSpace(r.FormValue(formParamName))
+		country.Code = strings.TrimSpace(strings.ToLower(r.FormValue(formParamCode)))
+		country.JwtGroup = strings.TrimSpace(r.FormValue(formParamJwtGroup))
 
 		country, err = repo.Put(r.Context(), country)
 		if err != nil {

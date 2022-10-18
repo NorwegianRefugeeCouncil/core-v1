@@ -69,11 +69,12 @@ func (c countryRepo) updateCountry(ctx context.Context, country *api.Country) (*
 	l := c.logger(ctx)
 	l.Debug("updating country")
 
-	const query = "UPDATE countries SET code = $2, name = $3 WHERE id = $1"
+	const query = "UPDATE countries SET code = $2, name = $3, jwt_group = $4 WHERE id = $1"
 	var args = []interface{}{
 		country.ID,
 		country.Code,
 		country.Name,
+		country.JwtGroup,
 	}
 
 	if _, err := c.db.ExecContext(ctx, query, args...); err != nil {
@@ -89,12 +90,13 @@ func (c countryRepo) createCountry(ctx context.Context, country *api.Country) (*
 	l.Debug("creating new country")
 	country.ID = xid.New().String()
 
-	const query = `INSERT INTO countries (id, code, name) VALUES ($1, $2, $3)`
+	const query = `INSERT INTO countries (id, code, name, jwt_group) VALUES ($1, $2, $3, $4)`
 
 	var args = []interface{}{
 		country.ID,
 		country.Code,
 		country.Name,
+		country.JwtGroup,
 	}
 
 	if _, err := c.db.ExecContext(ctx, query, args...); err != nil {

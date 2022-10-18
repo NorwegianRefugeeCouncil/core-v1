@@ -2,15 +2,20 @@ package server
 
 import (
 	"net/http"
+	"strings"
 
+	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/auth"
-	"github.com/nrc-no/notcore/internal/db"
+	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
 )
 
-func permissionMiddleware(permissionRepo db.PermissionRepo) func(handler http.Handler) http.Handler {
+// permissionMiddleware will compute the user's permissions and add them to the context
+func permissionMiddleware(
+	globalAdminGroup string,
+) func(handler http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -18,19 +23,10 @@ func permissionMiddleware(permissionRepo db.PermissionRepo) func(handler http.Ha
 			ctx := r.Context()
 			l := logging.NewLogger(ctx)
 
-			l.Debug("permission middleware")
-
 			user := utils.GetRequestUser(ctx)
 			if user == nil {
 				l.Error("user not found in context")
 				http.Error(w, "Invalid authorization header", http.StatusBadRequest)
-				return
-			}
-
-			permission, err := permissionRepo.GetExplicitPermissionsForUser(r.Context(), user.ID)
-			if err != nil {
-				l.Error("couldn't get permissions for user: ", zap.Error(err))
-				http.Error(w, "couldn't get permissions: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
 
@@ -41,9 +37,56 @@ func permissionMiddleware(permissionRepo db.PermissionRepo) func(handler http.Ha
 				return
 			}
 
-			authIntf := auth.New(*permission, allCountries)
+			allCountryIDs := containers.NewStringSet()
+			for _, c := range allCountries {
+				allCountryIDs.Add(c.ID)
+			}
+
+			perms := parsePermissions(allCountries, globalAdminGroup, user.Groups)
+			authIntf := auth.New(perms.countryIds, allCountryIDs, perms.isGlobalAdmin)
 			r = r.WithContext(utils.WithAuthContext(ctx, authIntf))
 			h.ServeHTTP(w, r)
+
 		})
+	}
+}
+
+// parsedPermissions is a helper struct to store the parsed permissions
+type parsedPermissions struct {
+	isGlobalAdmin bool
+	countryIds    containers.StringSet
+}
+
+// parsePermissions will retrieve the country ids from the user's groups
+// and determine if the user is a global admin
+func parsePermissions(allCountries []*api.Country, globalAdminGroup string, userGroups []string) *parsedPermissions {
+	countryIds := containers.NewStringSet()
+
+	// maps a jwt group name to a country id
+	countryGroupMap := make(map[string]string)
+	for _, c := range allCountries {
+		if len(c.JwtGroup) == 0 {
+			continue
+		}
+		countryGroupMap[strings.ToLower(c.JwtGroup)] = c.ID
+	}
+
+	isGlobalAdmin := false
+	for _, group := range userGroups {
+		if group == globalAdminGroup {
+			isGlobalAdmin = true
+			continue
+		}
+	}
+
+	for _, group := range userGroups {
+		if countryID, ok := countryGroupMap[group]; ok {
+			countryIds.Add(countryID)
+		}
+	}
+
+	return &parsedPermissions{
+		isGlobalAdmin: isGlobalAdmin,
+		countryIds:    countryIds,
 	}
 }

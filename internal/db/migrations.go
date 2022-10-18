@@ -30,6 +30,8 @@ var migrations = []migration{
 	migrationFromFile("006_user_permissions"),
 	migrationFromFile("007_global_admin"),
 	migrationFromFile("008_individual_country"),
+	migrationFromFile("009_remove_permissions"),
+	migrationFromFile("010_country_jwt_group"),
 }
 
 // Migrate runs the migrations on the database.

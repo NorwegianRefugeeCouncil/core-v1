@@ -8,18 +8,18 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
-	"github.com/nrc-no/notcore/internal/db"
-	"github.com/nrc-no/notcore/internal/logging"
-
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/nrc-no/notcore/internal/db"
+	"github.com/nrc-no/notcore/internal/logging"
 )
 
 type Options struct {
-	Address        string
-	DatabaseDriver string
-	DatabaseDSN    string
-	LogoutURL      string
+	Address             string
+	DatabaseDriver      string
+	DatabaseDSN         string
+	LogoutURL           string
+	JwtGroupGlobalAdmin string
 }
 
 func (o Options) New() (*Server, error) {
@@ -37,8 +37,6 @@ func (o Options) New() (*Server, error) {
 
 	individualRepo := db.NewIndividualRepo(sqlDb)
 	countryRepo := db.NewCountryRepo(sqlDb)
-	userRepo := db.NewUserRepo(sqlDb)
-	permissionRepo := db.NewPermissionRepo(sqlDb)
 
 	s := &Server{
 		address: o.Address,
@@ -49,7 +47,11 @@ func (o Options) New() (*Server, error) {
 		return nil, err
 	}
 
-	s.router = buildRouter(individualRepo, countryRepo, userRepo, permissionRepo, tpl)
+	s.router = buildRouter(
+		individualRepo,
+		countryRepo,
+		o.JwtGroupGlobalAdmin,
+		tpl)
 
 	return s, nil
 }

@@ -45,11 +45,18 @@ var serveCmd = &cobra.Command{
 			dsn = string(dsnBytes)
 		}
 
+		jwtGroupGlobalAdmin := cmd.Flag("jwt-global-admin-group").Value.String()
+
+		if len(jwtGroupGlobalAdmin) == 0 {
+			return fmt.Errorf("--jwt-global-admin-group is required")
+		}
+
 		options := server.Options{
-			Address:        cmd.Flag("listen-address").Value.String(),
-			DatabaseDriver: cmd.Flag("db-driver").Value.String(),
-			DatabaseDSN:    dsn,
-			LogoutURL:      cmd.Flag("logout-url").Value.String(),
+			Address:             cmd.Flag("listen-address").Value.String(),
+			DatabaseDriver:      cmd.Flag("db-driver").Value.String(),
+			DatabaseDSN:         dsn,
+			LogoutURL:           cmd.Flag("logout-url").Value.String(),
+			JwtGroupGlobalAdmin: jwtGroupGlobalAdmin,
 		}
 
 		srv, err := options.New()
@@ -75,4 +82,5 @@ func init() {
 	serveCmd.PersistentFlags().String("db-dsn", "", "database dsn")
 	serveCmd.PersistentFlags().String("db-dsn-file", "", "database dsn file")
 	serveCmd.PersistentFlags().String("logout-url", "", "logout url")
+	serveCmd.PersistentFlags().String("jwt-global-admin-group", "", "name of the group for global administrators")
 }
