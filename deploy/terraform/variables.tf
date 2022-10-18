@@ -18,22 +18,6 @@ variable "infra_resource_group_name" {
   description = "Infrastructure Resource Group name"
 }
 
-variable "infra_storage_account_name" {
-  type        = string
-  description = "Storage account name for infrastructure"
-}
-
-variable "infra_container_name" {
-  type        = string
-  description = "Storage Account Container name for infrastructure"
-}
-
-variable "infra_container_key" {
-  type        = string
-  description = "Storage Account Container key for infrastructure"
-  default     = "state.tfstate"
-}
-
 variable "infra_container_registry_name" {
   type        = string
   description = "Name of the azure container registry"
