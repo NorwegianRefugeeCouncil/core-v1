@@ -74,6 +74,15 @@ resource azapi_update_resource app_auth {
                 openIdConnectConfiguration = {
                   wellKnownOpenIdConfiguration = var.oidc_well_known_url
                 }
+              },
+              login = {
+                nameClaimType = "name"
+                scope         = [
+                  "openid",
+                  "profile",
+                  "email",
+                  "groups"
+                ]
               }
             }
           }
@@ -83,6 +92,9 @@ resource azapi_update_resource app_auth {
             enabled                    = true
             tokenRefreshExtensionHours = 72
           }
+        }
+        httpSettings = {
+          requireHttps = true
         }
       }
     }
