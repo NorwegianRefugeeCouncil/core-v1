@@ -36,21 +36,21 @@ func HandleDownload(
 		w.Header().Set("Content-Type", "text/csv")
 
 		if err := csvEncoder.Write([]string{
-			csvHeaderIndividualID,
-			csvHeaderIndividualFullName,
-			csvHeaderIndividualPreferredName,
-			csvHeaderIndividualDisplacementStatus,
-			csvHeaderIndividualEmail,
-			csvHeaderIndividualAddress,
-			csvHeaderIndividualPhoneNumber,
-			csvHeaderIndividualBirthDate,
-			csvHeaderIndividualIsMinor,
-			csvHeaderIndividualGender,
-			csvHeaderIndividualPresentsProtectionConcerns,
-			csvHeaderIndividualPhysicalImpairment,
-			csvHeaderIndividualSensoryImpairment,
-			csvHeaderIndividualMentalImpairment,
-			csvHeaderIndividualCountryID,
+			fileHeaderIndividualID,
+			fileHeaderIndividualFullName,
+			fileHeaderIndividualPreferredName,
+			fileHeaderIndividualDisplacementStatus,
+			fileHeaderIndividualEmail,
+			fileHeaderIndividualAddress,
+			fileHeaderIndividualPhoneNumber,
+			fileHeaderIndividualBirthDate,
+			fileHeaderIndividualIsMinor,
+			fileHeaderIndividualGender,
+			fileHeaderIndividualPresentsProtectionConcerns,
+			fileHeaderIndividualPhysicalImpairment,
+			fileHeaderIndividualSensoryImpairment,
+			fileHeaderIndividualMentalImpairment,
+			fileHeaderIndividualCountryID,
 		}); err != nil {
 			l.Error("failed to write header", zap.Error(err))
 			http.Error(w, "failed to write header: "+err.Error(), http.StatusInternalServerError)

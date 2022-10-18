@@ -204,38 +204,38 @@ func parseIndividualCsvRow(colMapping map[string]int, cols []string) (*api.Indiv
 	var individual = &api.Individual{}
 	for field, idx := range colMapping {
 		switch field {
-		case csvHeaderIndividualID:
+		case fileHeaderIndividualID:
 			individual.ID = cols[idx]
-		case csvHeaderIndividualFullName:
+		case fileHeaderIndividualFullName:
 			individual.FullName = cols[idx]
-		case csvHeaderIndividualPreferredName:
+		case fileHeaderIndividualPreferredName:
 			individual.PreferredName = cols[idx]
-		case csvHeaderIndividualDisplacementStatus:
+		case fileHeaderIndividualDisplacementStatus:
 			individual.DisplacementStatus = cols[idx]
-		case csvHeaderIndividualPhoneNumber:
+		case fileHeaderIndividualPhoneNumber:
 			individual.PhoneNumber = cols[idx]
-		case csvHeaderIndividualEmail:
+		case fileHeaderIndividualEmail:
 			individual.Email = cols[idx]
-		case csvHeaderIndividualAddress:
+		case fileHeaderIndividualAddress:
 			individual.Address = cols[idx]
-		case csvHeaderIndividualGender:
+		case fileHeaderIndividualGender:
 			individual.Gender = cols[idx]
-		case csvHeaderIndividualBirthDate:
+		case fileHeaderIndividualBirthDate:
 			individual.BirthDate, err = parseBirthDate(cols[idx])
 			if err != nil {
 				return nil, err
 			}
-		case csvHeaderIndividualIsMinor:
+		case fileHeaderIndividualIsMinor:
 			individual.IsMinor = cols[idx] == "true"
-		case csvHeaderIndividualPresentsProtectionConcerns:
+		case fileHeaderIndividualPresentsProtectionConcerns:
 			individual.PresentsProtectionConcerns = cols[idx] == "true"
-		case csvHeaderIndividualPhysicalImpairment:
+		case fileHeaderIndividualPhysicalImpairment:
 			individual.PhysicalImpairment = cols[idx]
-		case csvHeaderIndividualSensoryImpairment:
+		case fileHeaderIndividualSensoryImpairment:
 			individual.SensoryImpairment = cols[idx]
-		case csvHeaderIndividualMentalImpairment:
+		case fileHeaderIndividualMentalImpairment:
 			individual.MentalImpairment = cols[idx]
-		case csvHeaderIndividualCountryID:
+		case fileHeaderIndividualCountryID:
 			individual.CountryID = cols[idx]
 		}
 
