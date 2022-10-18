@@ -52,3 +52,18 @@ variable "postgres_sku_name" {
   type        = string
   description = "Name of the postgres SKU"
 }
+
+variable "oidc_client_id" {
+  type        = string
+  description = "OIDC Client ID"
+}
+
+variable "oidc_client_secret" {
+  type        = string
+  description = "OIDC Client Secret"
+}
+
+variable "oidc_well_known_url" {
+  type        = string
+  description = "OIDC Well Known URL"
+}
