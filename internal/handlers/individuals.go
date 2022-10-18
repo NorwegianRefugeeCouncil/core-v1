@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
@@ -88,45 +89,45 @@ func parseGetAllOptions(r *http.Request, out *api.GetAllOptions) error {
 		out.Skip = 0
 	}
 
-	out.Email = r.FormValue(formParamGetIndividualsEmail)
-	out.FullName = r.FormValue(formParamGetIndividualsName)
-	out.PhoneNumber = r.FormValue(formParamGetIndividualsPhoneNumber)
-	out.Address = r.FormValue(formParamsGetIndividualsAddress)
-	out.Genders = r.Form[formParamsGetIndividualsGender]
-	if r.FormValue(formParamsGetIndividualsIsMinor) == "true" {
+	out.Email = r.FormValue(constants.FormParamGetIndividualsEmail)
+	out.FullName = r.FormValue(constants.FormParamGetIndividualsName)
+	out.PhoneNumber = r.FormValue(constants.FormParamGetIndividualsPhoneNumber)
+	out.Address = r.FormValue(constants.FormParamsGetIndividualsAddress)
+	out.Genders = r.Form[constants.FormParamsGetIndividualsGender]
+	if r.FormValue(constants.FormParamsGetIndividualsIsMinor) == "true" {
 		isMinor := true
 		out.IsMinor = &isMinor
-	} else if r.FormValue(formParamsGetIndividualsIsMinor) == "false" {
+	} else if r.FormValue(constants.FormParamsGetIndividualsIsMinor) == "false" {
 		isMinor := false
 		out.IsMinor = &isMinor
 	}
-	if r.FormValue(formParamsGetIndividualsProtectionConcerns) == "true" {
+	if r.FormValue(constants.FormParamsGetIndividualsProtectionConcerns) == "true" {
 		presentsProtectionConcerns := true
 		out.PresentsProtectionConcerns = &presentsProtectionConcerns
-	} else if r.FormValue(formParamsGetIndividualsProtectionConcerns) == "false" {
+	} else if r.FormValue(constants.FormParamsGetIndividualsProtectionConcerns) == "false" {
 		presentsProtectionConcerns := false
 		out.PresentsProtectionConcerns = &presentsProtectionConcerns
 	}
-	ageFromStr := r.FormValue(formParamsGetIndividualsAgeFrom)
+	ageFromStr := r.FormValue(constants.FormParamsGetIndividualsAgeFrom)
 	if len(ageFromStr) != 0 {
-		ageFrom, err := parseQryParamInt(r, formParamsGetIndividualsAgeFrom)
+		ageFrom, err := parseQryParamInt(r, constants.FormParamsGetIndividualsAgeFrom)
 		if err != nil {
 			return err
 		}
 		yearsAgo := time.Now().AddDate(0, 0, -(ageFrom+1)*365)
 		out.BirthDateTo = &yearsAgo
 	}
-	ageToStr := r.FormValue(formParamsGetIndividualsAgeTo)
+	ageToStr := r.FormValue(constants.FormParamsGetIndividualsAgeTo)
 	if len(ageToStr) != 0 {
-		ageTo, err := parseQryParamInt(r, formParamsGetIndividualsAgeTo)
+		ageTo, err := parseQryParamInt(r, constants.FormParamsGetIndividualsAgeTo)
 		if err != nil {
 			return err
 		}
 		yearsAgo := time.Now().AddDate(0, 0, -(ageTo+1)*365)
 		out.BirthDateFrom = &yearsAgo
 	}
-	out.CountryID = r.FormValue(formParamGetIndividualsCountryID)
-	displacementStatuses := r.Form[formParamsGetIndividualsDisplacementStatus]
+	out.CountryID = r.FormValue(constants.FormParamGetIndividualsCountryID)
+	displacementStatuses := r.Form[constants.FormParamsGetIndividualsDisplacementStatus]
 	var displacementStatusMap = map[string]bool{}
 	for _, s := range displacementStatuses {
 		if displacementStatusMap[s] {

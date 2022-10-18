@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/auth"
+	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
@@ -178,23 +179,23 @@ func normalizeIndividual(individual *api.Individual) {
 
 func parseIndividualForm(r *http.Request, permsHelper auth.Interface, individual *api.Individual) error {
 	var err error
-	individual.FullName = r.FormValue(formParamIndividualFullName)
-	individual.PreferredName = r.FormValue(formParamIndividualPreferredName)
-	individual.DisplacementStatus = r.FormValue(formParamIndividualDisplacementStatus)
-	individual.Email = r.FormValue(formParamIndividualEmail)
-	individual.PhoneNumber = r.FormValue(formParamIndividualPhoneNumber)
-	individual.Address = r.FormValue(formParamIndividualAddress)
-	individual.Gender = r.FormValue(formParamIndividualGender)
+	individual.FullName = r.FormValue(constants.FormParamIndividualFullName)
+	individual.PreferredName = r.FormValue(constants.FormParamIndividualPreferredName)
+	individual.DisplacementStatus = r.FormValue(constants.FormParamIndividualDisplacementStatus)
+	individual.Email = r.FormValue(constants.FormParamIndividualEmail)
+	individual.PhoneNumber = r.FormValue(constants.FormParamIndividualPhoneNumber)
+	individual.Address = r.FormValue(constants.FormParamIndividualAddress)
+	individual.Gender = r.FormValue(constants.FormParamIndividualGender)
 	individual.BirthDate, err = parseBirthDate(r.FormValue(formParamIndividualBirthDate))
 	if err != nil {
 		return err
 	}
-	individual.IsMinor = r.FormValue(formParamIndividualIsMinor) == "true"
-	individual.PresentsProtectionConcerns = r.FormValue(formParamIndividualPresentsProtectionConcerns) == "true"
-	individual.PhysicalImpairment = r.FormValue(formParamIndividualPhysicalImpairment)
-	individual.MentalImpairment = r.FormValue(formParamIndividualMentalImpairment)
-	individual.SensoryImpairment = r.FormValue(formParamIndividualSensoryImpairment)
-	individual.CountryID = r.FormValue(formParamIndividualCountry)
+	individual.IsMinor = r.FormValue(constants.FormParamIndividualIsMinor) == "true"
+	individual.PresentsProtectionConcerns = r.FormValue(constants.FormParamIndividualPresentsProtectionConcerns) == "true"
+	individual.PhysicalImpairment = r.FormValue(constants.FormParamIndividualPhysicalImpairment)
+	individual.MentalImpairment = r.FormValue(constants.FormParamIndividualMentalImpairment)
+	individual.SensoryImpairment = r.FormValue(constants.FormParamIndividualSensoryImpairment)
+	individual.CountryID = r.FormValue(constants.FormParamIndividualCountry)
 	normalizeIndividual(individual)
 	return nil
 }
