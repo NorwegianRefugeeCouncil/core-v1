@@ -136,8 +136,9 @@ func (s Set[T]) SymmetricDifference(other Set[T]) Set[T] {
 func (s Set[T]) String() string {
 	sb := &strings.Builder{}
 	sb.WriteString("{")
+	items := s.Items()
 	var i = 0
-	for item := range s {
+	for item := range items {
 		if i > 0 {
 			sb.WriteString(", ")
 		}
