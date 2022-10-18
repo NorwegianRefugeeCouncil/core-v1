@@ -22,6 +22,9 @@ RUN go mod download && \
     go install github.com/axw/gocov/gocov@latest && \
     go install github.com/AlekSi/gocov-xml@latest
 COPY --chown=${uid}:${gid} . .
+RUN cd web/theme && \
+    yarn && \
+    yarn build
 
 FROM base as dev
 ENTRYPOINT ["/app/scripts/docker-dev-entrypoint.sh"]
