@@ -1,0 +1,36 @@
+{{define "head"}}
+{{end}}
+{{define "body"}}
+    <header class="sticky-top">
+        {{template "nav" .}}
+    </header>
+    <main class="bg-secondary" style="height: calc( 100vh - 3.5rem ); overflow: hidden; overflow-y: scroll">
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow">
+                        <div class="card-header">
+                            Select country
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group">
+                                {{ if .AllowedCountries }}
+                                    {{range .AllowedCountries}}
+                                        <a href="/countries/select/{{.ID}}" class="list-group-item list-group-item-action">
+                                            {{.Name}}
+                                        </a>
+                                    {{end}}
+                                {{else}}
+                                    <div class="list-group-item">
+                                        No country found
+                                    </div>
+                                {{end}}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{{end}}

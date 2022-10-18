@@ -23,24 +23,46 @@ func buildRouter(
 	staticRouter := r.PathPrefix("/static").Subrouter()
 	staticRouter.HandleFunc("/{file:.*}", web.ServeStatic)
 
-	webRouter := r.PathPrefix("/").Subrouter()
+	webRouter := r.PathPrefix("").Subrouter()
 	webRouter.Use(
 		noCache,
 		logMiddleware,
-		authMiddleware(userRepo),
-		permissionMiddleware(permissionRepo),
+		jwtMiddleware(userRepo),
+		countriesMiddleware(countryRepo),
 		firstUserGlobalAdmin(permissionRepo),
+		permissionMiddleware(permissionRepo),
+		selectedCountryMiddleware(),
 	)
-	webRouter.Path("/").Handler(handlers.HandleIndex(tpl))
-	webRouter.Path("/individuals").Handler(handlers.ListHandler(tpl, individualRepo, countryRepo))
-	webRouter.Path("/individuals/upload").Handler(handlers.UploadHandler(individualRepo, countryRepo))
-	webRouter.Path("/individuals/download").Handler(handlers.HandleDownload(individualRepo, countryRepo))
-	webRouter.Path("/individuals/{individual_id}").Handler(handlers.HandleIndividual(tpl, individualRepo, countryRepo))
+
+	webRouter.Path("/individuals").Handler(withMiddleware(
+		handlers.ListHandler(tpl, individualRepo),
+		ensureSelectedCountryMiddleware()))
+
+	webRouter.Path("/individuals/upload").Handler(withMiddleware(
+		handlers.UploadHandler(individualRepo),
+		ensureSelectedCountryMiddleware()))
+
+	webRouter.Path("/individuals/download").Handler(withMiddleware(
+		handlers.HandleDownload(individualRepo),
+		ensureSelectedCountryMiddleware()))
+
+	webRouter.Path("/individuals/{individual_id}").Handler(handlers.HandleIndividual(tpl, individualRepo))
+
 	webRouter.Path("/countries").Handler(handlers.HandleCountries(tpl, countryRepo))
+	webRouter.Path("/countries/select").Handler(handlers.HandleCountrySelector(tpl))
+	webRouter.Path("/countries/select/{country_id}").Handler(handlers.HandleSelectCountry())
 	webRouter.Path("/countries/{country_id}").Handler(handlers.HandleCountry(tpl, countryRepo))
 	webRouter.Path("/users").Handler(handlers.HandleUsers(tpl, userRepo))
-	webRouter.Path("/users/{user_id}").Handler(handlers.HandleUser(tpl, countryRepo, userRepo, permissionRepo))
+	webRouter.Path("/users/{user_id}").Handler(handlers.HandleUser(tpl, userRepo, permissionRepo))
+	webRouter.PathPrefix("").Handler(handlers.HandleIndex(tpl))
 	return r
+}
+
+func withMiddleware(handler http.Handler, mw ...mux.MiddlewareFunc) http.Handler {
+	for i := len(mw) - 1; i >= 0; i-- {
+		handler = mw[i](handler)
+	}
+	return handler
 }
 
 func noCache(h http.Handler) http.Handler {

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
@@ -15,7 +14,6 @@ import (
 
 func HandleDownload(
 	userRepo db.IndividualRepo,
-	countryRepo db.CountryRepo,
 ) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
@@ -24,17 +22,7 @@ func HandleDownload(
 			l   = logging.NewLogger(ctx)
 		)
 
-		countries, err := countryRepo.GetAll(ctx)
-		if err != nil {
-			l.Error("failed to get countries", zap.Error(err))
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		permsHelper := newPermissionHelper(ctx, countries)
-		getAllOptions := applyPermissionsToIndividualsQuery(permsHelper, api.GetAllOptions{})
-
-		ret, err := userRepo.GetAll(ctx, getAllOptions)
+		ret, err := userRepo.GetAll(ctx, api.GetAllOptions{})
 		if err != nil {
 			l.Error("failed to get individuals", zap.Error(err))
 			http.Error(w, "failed to get records: "+err.Error(), http.StatusInternalServerError)
@@ -62,7 +50,7 @@ func HandleDownload(
 			csvHeaderIndividualPhysicalImpairment,
 			csvHeaderIndividualSensoryImpairment,
 			csvHeaderIndividualMentalImpairment,
-			csvHeaderIndividualCountries,
+			csvHeaderIndividualCountryID,
 		}); err != nil {
 			l.Error("failed to write header", zap.Error(err))
 			http.Error(w, "failed to write header: "+err.Error(), http.StatusInternalServerError)
@@ -89,7 +77,7 @@ func HandleDownload(
 				individual.PhysicalImpairment,
 				individual.SensoryImpairment,
 				individual.MentalImpairment,
-				strings.Join(individual.Countries, ","),
+				individual.CountryID,
 			}); err != nil {
 				l.Error("failed to write record", zap.Error(err))
 				http.Error(w, "failed to write record: "+err.Error(), http.StatusInternalServerError)

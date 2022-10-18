@@ -9,25 +9,6 @@
                 window.location.href = "{{.BaseURL}}/individuals/" + id;
             }
         }
-
-        countrySelector = new CountrySelector(
-            "Countries",
-            "country-list",
-            "country-input",
-            [
-                {{range .Countries }}
-                {
-                    "value": {{.Code}},
-                    "label": "{{.Name}}",
-                    "readOnly": {{not (or ($.PermissionsHelper.IsGlobalAdmin) ($.PermissionsHelper.CanReadFromCountryCode .Code))}}},
-                {{end}}
-            ],
-            [
-                {{range .Options.Countries}}
-                "{{.}}",
-                {{end}}
-            ],
-        );
     </script>
 {{end}}
 {{define "body"}}
@@ -44,7 +25,7 @@
                             Actions
                         </div>
                         <div class="list-group list-group-flush">
-                            {{ if or (.RequestContext.Permissions.IsGlobalAdmin) (.RequestContext.Permissions.GetCountryIDsWithPermission "write")}}
+                            {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.GetCountryIDsWithPermission "write")}}
                                 <div class="list-group-item">
                                     <a href="/individuals/new" class="btn btn-outline-primary w-100">Create new
                                         Individual</a>
@@ -66,7 +47,7 @@
                                     </button>
                                 </div>
                             </div>
-                            {{ if or (.RequestContext.Permissions.IsGlobalAdmin) (.RequestContext.Permissions.GetCountryIDsWithPermission "write")}}
+                            {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.GetCountryIDsWithPermission "write")}}
                                 <div class="list-group-item">
                                     <form action="/individuals/upload" enctype="multipart/form-data" method="post">
                                         <div class="form-group mb-3">
@@ -100,30 +81,6 @@
                                            value="{{.Options.FullName}}">
                                 </div>
                                 <!-- End Full Name -->
-
-                                <!-- Country -->
-
-                                <div class="card my-3">
-                                    <div class="card-header">
-                                        Countries
-                                        <input type="hidden" id="Countries" name="countries"
-                                               value="{{ joinStrings .Options.Countries ","}}"/>
-                                    </div>
-
-                                    <div class="list-group  list-group-flush" id="country-list">
-
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="country-input"
-                                                   placeholder="Start typing..."
-                                                   autocomplete="off"/>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <!-- End Country -->
 
                                 <!-- Age -->
                                 <label class="form-label">Age</label>

@@ -34,7 +34,14 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 			isNew     = countryID == newId
 		)
 
-		if !utils.IsGlobalAdmin(ctx) {
+		authCtx, err := utils.GetAuthContext(ctx)
+		if err != nil {
+			l.Error("failed to get auth context", zap.Error(err))
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		if !authCtx.IsGlobalAdmin() {
 			l.Warn("cannot access country page without global admin role")
 			http.Error(w, "user is not global admin", http.StatusForbidden)
 			return

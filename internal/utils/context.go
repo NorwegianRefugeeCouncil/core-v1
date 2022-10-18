@@ -2,8 +2,10 @@ package utils
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/auth"
 )
 
 const (
@@ -12,6 +14,9 @@ const (
 	keyRequestUserEmail       = "__request_user_email"
 	keyRequestUser            = "__request_user"
 	keyRequestUserPermissions = "__request_user_permissions"
+	keyAuthContext            = "__request_auth"
+	keyCountries              = "__request_countries"
+	keySelectedCountryID      = "__request_selected_country"
 )
 
 func WithRequestID(ctx context.Context, id string) context.Context {
@@ -42,48 +47,47 @@ func GetRequestUser(ctx context.Context) *api.User {
 	return nil
 }
 
-func WithUserPermissions(ctx context.Context, userPermissions api.UserPermissions) context.Context {
-	ctx = context.WithValue(ctx, keyRequestUserPermissions, userPermissions)
+func WithAuthContext(ctx context.Context, authCtx auth.Interface) context.Context {
+	ctx = context.WithValue(ctx, keyAuthContext, authCtx)
 	return ctx
 }
 
-func GetRequestUserPermissions(ctx context.Context) api.UserPermissions {
-	if userPermissions := ctx.Value(keyRequestUserPermissions); userPermissions != nil {
-		if up, ok := userPermissions.(api.UserPermissions); ok {
-			return up
+func GetAuthContext(ctx context.Context) (auth.Interface, error) {
+	if authCtxIntf := ctx.Value(keyAuthContext); authCtxIntf != nil {
+		if authCtx, ok := authCtxIntf.(auth.Interface); ok {
+			return authCtx, nil
 		}
+		return nil, fmt.Errorf("failed to get auth context: wrong value type")
 	}
-	return api.UserPermissions{}
+	return nil, fmt.Errorf("failed to get auth context: value not present")
 }
 
-func HasCountryPermission(ctx context.Context, countryID string, permission string) bool {
-	userPermissions := GetRequestUserPermissions(ctx)
-	return userPermissions.HasCountryPermission(countryID, permission)
+func WithCountries(ctx context.Context, countries []*api.Country) context.Context {
+	ctx = context.WithValue(ctx, keyCountries, countries)
+	return ctx
 }
 
-func HasReadPermission(ctx context.Context, countryID string) bool {
-	return HasCountryPermission(ctx, countryID, "read")
+func GetCountries(ctx context.Context) ([]*api.Country, error) {
+	if countriesIntf := ctx.Value(keyCountries); countriesIntf != nil {
+		if countries, ok := countriesIntf.([]*api.Country); ok {
+			return countries, nil
+		}
+		return nil, fmt.Errorf("failed to get countries: wrong value type")
+	}
+	return nil, fmt.Errorf("failed to get countries: value not present")
 }
 
-func HasWritePermission(ctx context.Context, countryID string) bool {
-	return HasCountryPermission(ctx, countryID, "write")
+func WithSelectedCountryID(ctx context.Context, selectedCountryID string) context.Context {
+	ctx = context.WithValue(ctx, keySelectedCountryID, selectedCountryID)
+	return ctx
 }
 
-func HasAdminPermission(ctx context.Context, countryID string) bool {
-	return HasCountryPermission(ctx, countryID, "admin")
-}
-
-func GetCountryIDsWithPermission(ctx context.Context, permission string) []string {
-	userPermissions := GetRequestUserPermissions(ctx)
-	return userPermissions.GetCountryIDsWithPermission(permission)
-}
-
-func GetCountryIDsWithAnyPermission(ctx context.Context, permissions ...string) []string {
-	userPermissions := GetRequestUserPermissions(ctx)
-	return userPermissions.GetCountryIDsWithAnyPermission(permissions...)
-}
-
-func IsGlobalAdmin(ctx context.Context) bool {
-	userPermissions := GetRequestUserPermissions(ctx)
-	return userPermissions.IsGlobalAdmin
+func GetSelectedCountryID(ctx context.Context) (string, error) {
+	if selectedCountryIDIntf := ctx.Value(keySelectedCountryID); selectedCountryIDIntf != nil {
+		if countries, ok := selectedCountryIDIntf.(string); ok {
+			return countries, nil
+		}
+		return "", fmt.Errorf("failed to get selected country id: wrong value type")
+	}
+	return "", nil
 }

@@ -14,23 +14,37 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+// UserCountry stores the user permissions within a country
 type UserCountry struct {
-	UserID    string `db:"user_id"`
+	// UserID is the id of the user
+	UserID string `db:"user_id"`
+	// CountryID is the id of the country
 	CountryID string `db:"country_id"`
-	Read      bool   `db:"read"`
-	Write     bool   `db:"write"`
-	Admin     bool   `db:"admin"`
+	// Read has read permissions
+	Read bool `db:"read"`
+	// Write has write permissions
+	Write bool `db:"write"`
+	// Admin has admin permissions
+	Admin bool `db:"admin"`
 }
 
+// UserPermissions stores the global permissions for a user
 type UserPermissions struct {
-	UserID        string `db:"user_id"`
-	IsGlobalAdmin bool   `db:"is_global_admin"`
+	// UserID is the ID of the user
+	UserID string `db:"user_id"`
+	// IsGlobalAdmin if the user is a global administrator
+	IsGlobalAdmin bool `db:"is_global_admin"`
 }
 
 type PermissionRepo interface {
-	GetPermissionsForUser(ctx context.Context, userID string) (*api.UserPermissions, error)
-	SavePermissionsForUser(ctx context.Context, userPermissions *api.UserPermissions) error
+	// GetExplicitPermissionsForUser returns the explicitly assigned permissions for the user
+	GetExplicitPermissionsForUser(ctx context.Context, userID string) (*api.UserPermissions, error)
+	// SaveExplicitPermissionsForUser overwrites the explicitly assigned permissions for the user
+	SaveExplicitPermissionsForUser(ctx context.Context, userPermissions *api.UserPermissions) error
+	// HasAnyGlobalAdmin checks if there is any global admin currently assigned
 	HasAnyGlobalAdmin(ctx context.Context) (bool, error)
+	// IsEmpty checks if there are any records
+	IsEmpty(ctx context.Context) (bool, error)
 }
 
 type permissionRepo struct {
@@ -39,6 +53,17 @@ type permissionRepo struct {
 
 func NewPermissionRepo(db *sqlx.DB) PermissionRepo {
 	return &permissionRepo{db: db}
+}
+
+func (r permissionRepo) IsEmpty(ctx context.Context) (bool, error) {
+	l := logging.NewLogger(ctx)
+	l.Debug("checking if there are any records in the user permission table")
+	var count int
+	if err := r.db.GetContext(ctx, &count, "select count(*) from user_permissions where true limit 1"); err != nil {
+		l.Error("failed to check if the user permissions table has any record", zap.Error(err))
+		return false, err
+	}
+	return count > 0, nil
 }
 
 func (r permissionRepo) HasAnyGlobalAdmin(ctx context.Context) (bool, error) {
@@ -53,7 +78,7 @@ func (r permissionRepo) HasAnyGlobalAdmin(ctx context.Context) (bool, error) {
 	return count > 0, nil
 }
 
-func (r permissionRepo) SavePermissionsForUser(ctx context.Context, userPermissions *api.UserPermissions) error {
+func (r permissionRepo) SaveExplicitPermissionsForUser(ctx context.Context, userPermissions *api.UserPermissions) error {
 	l := logging.NewLogger(ctx).With(zap.String("user_id", userPermissions.UserID))
 	l.Debug("saving user permissions")
 	_, err := doInTransaction(ctx, r.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
@@ -85,7 +110,7 @@ func (r permissionRepo) SavePermissionsForUser(ctx context.Context, userPermissi
 	return nil
 }
 
-func (r permissionRepo) GetPermissionsForUser(ctx context.Context, userID string) (*api.UserPermissions, error) {
+func (r permissionRepo) GetExplicitPermissionsForUser(ctx context.Context, userID string) (*api.UserPermissions, error) {
 	l := logging.NewLogger(ctx).With(zap.String("user_id", userID))
 	l.Debug("getting user countries")
 
@@ -125,12 +150,12 @@ func (r permissionRepo) GetPermissionsForUser(ctx context.Context, userID string
 	}
 
 	var ret = api.UserPermissions{
-		IsGlobalAdmin:      userPermissions.IsGlobalAdmin,
-		UserID:             userID,
-		CountryPermissions: api.CountryPermissions{},
+		IsGlobalAdmin:              userPermissions.IsGlobalAdmin,
+		UserID:                     userID,
+		ExplicitCountryPermissions: api.ExplicitCountryPermissions{},
 	}
 	for _, userCountry := range userCountries {
-		ret.CountryPermissions[userCountry.CountryID] = api.CountryPermission{
+		ret.ExplicitCountryPermissions[userCountry.CountryID] = api.ExplicitCountryPermission{
 			CountryID: userCountry.CountryID,
 			Read:      userCountry.Read,
 			Write:     userCountry.Write,
@@ -157,9 +182,9 @@ func (r permissionRepo) createCountryPermissions(ctx context.Context, tx *sqlx.T
 	l := logging.NewLogger(ctx).With(zap.String("user_id", permissions.UserID))
 
 	// create new country permissions
-	var userCountries = make([]*UserCountry, len(permissions.CountryPermissions))
+	var userCountries = make([]*UserCountry, len(permissions.ExplicitCountryPermissions))
 	var i = 0
-	for _, countryPermission := range permissions.CountryPermissions {
+	for _, countryPermission := range permissions.ExplicitCountryPermissions {
 		userCountries[i] = &UserCountry{
 			UserID:    permissions.UserID,
 			CountryID: countryPermission.CountryID,

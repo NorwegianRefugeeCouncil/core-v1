@@ -12,7 +12,14 @@ import (
 	"go.uber.org/zap"
 )
 
-func authMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handler {
+func jwtMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handler {
+
+	const (
+		keyJwtPayload = "X-Jwt-Payload"
+		keyJwtSub     = "sub"
+		keyJwtEmail   = "email"
+	)
+
 	return func(h http.Handler) http.Handler {
 
 		type AuthHeaderClaims struct {
@@ -26,7 +33,7 @@ func authMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handle
 			ctx := r.Context()
 			l := logging.NewLogger(ctx)
 
-			authHeaderBase64 := r.Header.Get("X-Jwt-Payload")
+			authHeaderBase64 := r.Header.Get(keyJwtPayload)
 			if len(authHeaderBase64) == 0 {
 				http.Error(w, "Invalid authorization header", http.StatusBadRequest)
 				return
@@ -45,11 +52,12 @@ func authMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handle
 			}
 			l.Debug("auth header claims", zap.Any("payload", payload))
 
-			sub, done := getAuthPayloadStr(w, payload, "sub")
+			sub, done := getAuthPayload(w, payload, keyJwtSub)
 			if done {
 				return
 			}
-			email, done := getAuthPayloadStr(w, payload, "email")
+
+			email, done := getAuthPayload(w, payload, keyJwtEmail)
 			if done {
 				return
 			}
@@ -72,7 +80,7 @@ func authMiddleware(userRepo db.UserRepo) func(handler http.Handler) http.Handle
 	}
 }
 
-func getAuthPayloadStr(w http.ResponseWriter, payload map[string]interface{}, key string) (string, bool) {
+func getAuthPayload(w http.ResponseWriter, payload map[string]interface{}, key string) (string, bool) {
 	valIntf := payload[key]
 	if valIntf == nil {
 		http.Error(w, "Invalid authorization header: missing "+key, http.StatusBadRequest)

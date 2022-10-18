@@ -15,7 +15,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func UploadHandler(individualRepo db.IndividualRepo, countryRepo db.CountryRepo) http.Handler {
+func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 
 	const (
 		formParamFile = "file"
@@ -28,22 +28,15 @@ func UploadHandler(individualRepo db.IndividualRepo, countryRepo db.CountryRepo)
 			l   = logging.NewLogger(ctx)
 		)
 
-		countries, err := countryRepo.GetAll(ctx)
+		authIntf, err := utils.GetAuthContext(ctx)
 		if err != nil {
-			l.Error("failed to get countries", zap.Error(err))
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			l.Error("failed to get auth context", zap.Error(err))
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}
 
-		permsHelper := newPermissionHelper(ctx, countries)
-
-		countryMap := map[string]*api.Country{}
-		for _, country := range countries {
-			countryMap[country.Code] = country
-		}
-
-		countryIDsWithWritePermission := utils.GetCountryIDsWithPermission(ctx, "write")
-		if !permsHelper.IsGlobalAdmin() && len(countryIDsWithWritePermission) == 0 {
+		countryIDsWithWritePermission := authIntf.GetCountryIDsWithPermission("write")
+		if len(countryIDsWithWritePermission) == 0 {
 			l.Warn("User does not have permission to upload individuals")
 			http.Error(w, "You are not allowed to upload", http.StatusForbidden)
 			return
@@ -71,21 +64,11 @@ func UploadHandler(individualRepo db.IndividualRepo, countryRepo db.CountryRepo)
 			return
 		}
 
-		allowedCountryCodes := map[string]bool{}
-		for _, countryID := range countryIDsWithWritePermission {
-			country := countryMap[countryID]
-			if country != nil {
-				allowedCountryCodes[country.Code] = true
-			}
-		}
-
 		for _, individual := range individuals {
-			for _, countryCode := range individual.Countries {
-				if !permsHelper.IsGlobalAdmin() && !allowedCountryCodes[countryCode] {
-					l.Warn("user does not have permission to upload individuals to country", zap.String("country", countryCode))
-					http.Error(w, "You are not allowed to upload to country: "+countryCode, http.StatusForbidden)
-					return
-				}
+			if !authIntf.CanWriteToCountryID(individual.CountryID) {
+				l.Warn("user does not have permission to upload individuals to country", zap.String("country_id", individual.CountryID))
+				http.Error(w, "You are not allowed to upload to country: "+individual.CountryID, http.StatusForbidden)
+				return
 			}
 		}
 

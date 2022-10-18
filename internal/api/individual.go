@@ -1,19 +1,17 @@
 package api
 
 import (
-	"database/sql/driver"
 	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/url"
 	"strings"
 	"time"
-
-	"github.com/lib/pq"
 )
 
 type Individual struct {
 	ID                         string     `db:"id"`
+	CountryID                  string     `db:"country_id"`
 	FullName                   string     `db:"full_name"`
 	PhoneNumber                string     `db:"phone_number"`
 	NormalizedPhoneNumber      string     `db:"normalized_phone_number"`
@@ -28,26 +26,11 @@ type Individual struct {
 	PhysicalImpairment         string     `db:"physical_impairment"`
 	SensoryImpairment          string     `db:"sensory_impairment"`
 	MentalImpairment           string     `db:"mental_impairment"`
-	Countries                  Countries  `db:"countries"`
-}
-
-type Countries []string
-
-func (c *Countries) Scan(value interface{}) error {
-	var ret = make([]string, 0)
-	if err := pq.Array(&ret).Scan(value); err != nil {
-		return err
-	}
-	*c = ret
-	return nil
-}
-
-func (c Countries) Value() (driver.Value, error) {
-	return pq.Array([]string(c)).Value()
 }
 
 var AllndividualFields = []string{
 	"id",
+	"country_id",
 	"full_name",
 	"phone_number",
 	"normalized_phone_number",
@@ -62,43 +45,42 @@ var AllndividualFields = []string{
 	"physical_impairment",
 	"sensory_impairment",
 	"mental_impairment",
-	"countries",
 }
 
 func (i Individual) GetFieldValue(field string) (interface{}, error) {
 	switch field {
-	case "id":
-		return i.ID, nil
-	case "full_name":
-		return i.FullName, nil
-	case "phone_number":
-		return i.PhoneNumber, nil
-	case "normalized_phone_number":
-		return i.NormalizedPhoneNumber, nil
-	case "email":
-		return i.Email, nil
 	case "address":
 		return i.Address, nil
 	case "birth_date":
 		return i.BirthDate, nil
-	case "gender":
-		return i.Gender, nil
+	case "country_id":
+		return i.CountryID, nil
 	case "displacement_status":
 		return i.DisplacementStatus, nil
-	case "preferred_name":
-		return i.PreferredName, nil
+	case "email":
+		return i.Email, nil
+	case "full_name":
+		return i.FullName, nil
+	case "gender":
+		return i.Gender, nil
+	case "id":
+		return i.ID, nil
 	case "is_minor":
 		return i.IsMinor, nil
-	case "presents_protection_concerns":
-		return i.PresentsProtectionConcerns, nil
-	case "physical_impairment":
-		return i.PhysicalImpairment, nil
-	case "sensory_impairment":
-		return i.SensoryImpairment, nil
 	case "mental_impairment":
 		return i.MentalImpairment, nil
-	case "countries":
-		return i.Countries, nil
+	case "normalized_phone_number":
+		return i.NormalizedPhoneNumber, nil
+	case "phone_number":
+		return i.PhoneNumber, nil
+	case "physical_impairment":
+		return i.PhysicalImpairment, nil
+	case "preferred_name":
+		return i.PreferredName, nil
+	case "presents_protection_concerns":
+		return i.PresentsProtectionConcerns, nil
+	case "sensory_impairment":
+		return i.SensoryImpairment, nil
 	default:
 		return nil, fmt.Errorf("unknown field: %s", field)
 	}
@@ -113,19 +95,19 @@ func (i Individual) String() string {
 }
 
 type GetAllOptions struct {
-	Genders                    []string
+	Address                    string
 	BirthDateFrom              *time.Time
 	BirthDateTo                *time.Time
-	PhoneNumber                string
-	Address                    string
-	Take                       int
-	Skip                       int
+	CountryID                  string
+	DisplacementStatuses       []string
 	Email                      string
 	FullName                   string
+	Genders                    []string
 	IsMinor                    *bool
+	PhoneNumber                string
 	PresentsProtectionConcerns *bool
-	Countries                  []string
-	DisplacementStatuses       []string
+	Skip                       int
+	Take                       int
 }
 
 func (o GetAllOptions) IsMinorSelected() bool {
@@ -222,13 +204,12 @@ func (o GetAllOptions) QueryParams() template.HTML {
 	} else if o.IsNotPresentsProtectionConcernsSelected() {
 		params.Add("presents_protection_concerns", "false")
 	}
-	if len(o.Countries) != 0 {
-		params.Add("countries", strings.Join(o.Countries, ","))
+	if len(o.CountryID) != 0 {
+		params.Add("country_id", o.CountryID)
 	}
 	if len(o.DisplacementStatuses) != 0 {
 		params.Add("displacement_status", strings.Join(o.DisplacementStatuses, ","))
 	}
-
 	u := url.URL{
 		Path: "/individuals",
 	}
