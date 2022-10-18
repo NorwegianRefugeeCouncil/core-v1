@@ -15,28 +15,22 @@
     <header class="sticky-top">
         {{template "nav" .}}
     </header>
-    <main class="bg-secondary" style="height: calc( 100vh - 3.5rem ); overflow: hidden; overflow-y: scroll">
+    <main style="height: calc( 100vh - 3.5rem ); overflow: hidden; overflow-y: scroll">
 
         <div class="container-fluid container-xxl pt-3">
             <div class="row">
                 <div class="col-12 mt-3 mt-md-0 col-md-4 order-md-last">
-                    <div class="card shadow mb-5 mb-md-3">
+                    <div class="card  mb-5 mb-md-3">
                         <div class="card-header">
                             Actions
                         </div>
-                        <div class="list-group list-group-flush">
+                        <div class="card-body list-group list-group-flush">
                             {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.GetCountryIDsWithPermission "write")}}
                                 <div class="list-group-item">
                                     <a href="/individuals/new" class="btn btn-outline-primary w-100">Create new
                                         Individual</a>
                                 </div>
                             {{end}}
-                            <div class="list-group-item">
-                                <a href="/individuals/download" target="_blank"
-                                   class="btn btn-outline-primary w-100">
-                                    Download CSV
-                                </a>
-                            </div>
                             <div class="list-group-item">
                                 <label for="goToIndividualId" class="form-label">Go to Individual</label>
                                 <div class="input-group mb-3">
@@ -47,10 +41,16 @@
                                     </button>
                                 </div>
                             </div>
+                            <div class="list-group-item">
+                                <a href="/individuals/download" target="_blank"
+                                   class="btn btn-outline-primary w-100">
+                                    Download CSV
+                                </a>
+                            </div>
                             {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.GetCountryIDsWithPermission "write")}}
                                 <div class="list-group-item">
                                     <form action="/individuals/upload" enctype="multipart/form-data" method="post">
-                                        <div class="form-group mb-3">
+                                        <div class="form-group mb-2">
                                             <label class="form-label">Upload Individuals CSV file</label>
                                             <input accept="text/csv" name="file" type="file" class="form-control">
                                         </div>
@@ -61,7 +61,7 @@
                             {{end}}
                         </div>
                     </div>
-                    <div class="card shadow mb-5 mb-md-3">
+                    <div class="card  mb-5 mb-md-3">
                         <form method="get" action="/individuals">
                             <div class="card-header">
                                 Search
@@ -237,15 +237,15 @@
                             </div>
 
                             <div class="card-footer">
+                                <a href="/individuals" class="btn btn-outline-primary">Clear</a>
                                 <button class="btn btn-primary" type="submit">Search</button>
-                                <a href="/individuals" class="btn btn-primary">Clear</a>
                             </div>
                         </form>
                     </div>
                 </div>
                 <div class="col-12 col-md-8">
-                    <div class="card shadow mb-5">
-                        <div class="overflow-scroll">
+                    <div class="mb-5">
+                        <div class="overflow-scroll mb-3">
                             <table class="table">
                                 <thead>
                                 <tr>

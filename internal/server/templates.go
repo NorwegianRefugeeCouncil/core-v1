@@ -50,7 +50,7 @@ func parseTemplates(logoutURL string) (templates, error) {
 				return logoutURL
 			},
 		})
-		t[name], err = tpl.ParseFS(web.Content, "templates/layout.gohtml", "templates/"+name)
+		t[name], err = tpl.ParseFS(web.Content, "templates/layout.gohtml", "templates/base.gohtml", "templates/"+name)
 		if err != nil {
 			return nil, err
 		}

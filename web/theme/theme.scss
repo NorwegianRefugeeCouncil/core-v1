@@ -1,5 +1,241 @@
 // Add override variables here
 
+$font-family-base: 'Roboto';
+
+$body-bg: #FFFFFF;
+$danger: #CE3616;
+$success: #006605;
+$dark: #24303E;
+$light: #EAE7DD;
+$white: #FFFFFF;
+
+$orange-100: #FFE0C6;
+$orange-200: #FFA152;
+$orange-300: #FF7602;
+$orange-400: #FF7602;
+$orange-500: #FF7602;
+$orange-600: #E56900;
+$orange-700: #E56900;
+$orange-800: #E56900;
+$orange-900: #E56900;
+
+$oranges: (
+    "orange-100": $orange-100,
+    "orange-200": $orange-200,
+    "orange-300": $orange-300,
+    "orange-400": $orange-400,
+    "orange-500": $orange-500,
+    "orange-600": $orange-600,
+    "orange-700": $orange-700,
+    "orange-800": $orange-800,
+    "orange-900": $orange-900
+) !default;
+$orange:  $orange-500;
+$primary: $orange;
+
+$blue-100: #E4EDF6;
+$blue-200: #96B3D0;
+$blue-300: #3C5067;
+$blue-400: #3C5067;
+$blue-500: #24303E;
+$blue-600: #24303E;
+$blue-700: #24303E;
+$blue-800: #24303E;
+$blue-900: #24303E;
+$blues: (
+    "blue-100": $blue-100,
+    "blue-200": $blue-200,
+    "blue-300": $blue-300,
+    "blue-400": $blue-400,
+    "blue-500": $blue-500,
+    "blue-600": $blue-600,
+    "blue-700": $blue-700,
+    "blue-800": $blue-800,
+    "blue-900": $blue-900
+) !default;
+$blue:  $blue-500;
+$secondary: $blue;
+
+$neutral100: #F6F6F7;
+$neutral200: #E1E1E1;
+$neutral300: #C7C7C7;
+$neutral400: #666666;
+$neutral500: #404040;
+$neutral600: #000000;
+$neutral700: #000000;
+$grays: (
+    "100": $neutral100,
+    "200": $neutral200,
+    "300": $neutral300,
+    "400": $neutral400,
+    "500": $neutral500,
+    "600": $neutral600,
+    "700": $neutral700,
+    "800": $neutral700,
+    "900": $neutral700
+) !default;
+
+
+$nav-link-color: $white;
+
+$btn-border-radius: 3px;
+$btn-line-height: 50px;
+$btn-padding-x: 50px;
+$btn-padding-y: 0;
+
+$card-border-color: $secondary;
+$card-bg: $white;
+
+$h1-font-size: 44px;
+$h2-font-size: 40px;
+$h3-font-size: 32px;
+$h4-font-size: 28px;
+$h5-font-size: 24px;
+$h6-font-size: 20px;
+$font-size-base: 18;
+$font-size-sm: $font-size-base;
+$font-size-root: $font-size-base;
+$input-font-size: $font-size-base;
+$btn-font-size: $h6-font-size;
+$form-label-font-size: $font-size-base;
+$form-feedback-font-size: 14px;
+$toast-font-size: $h6-font-size;
+
+$spacer: 5px;
+$spacers: (
+    0: 0,
+    1: $spacer,
+    2: $spacer * 2,
+    3: $spacer * 3,
+    4: $spacer * 4,
+    5: $spacer * 5,
+);
+
+$code-color: $neutral400;
+$link-color: $secondary;
+
+$card-border-radius: 3px;
+$input-border-radius: 3px;
+$pagination-border-radius: 3px;
+$alert-border-radius: 3px;
+$card-inner-border-radius: 3px;
+$form-check-input-border-radius: 3px;
+$toast-border-radius: 3px;
+$dropdown-border-radius: 3px;
+
+$form-label-margin-bottom: 0px;
+$grid-gutter-width: 10px;
+
+$dropdown-border-color: $secondary;
+$dropdown-link-hover-bg: $blue-300;
+$dropdown-link-hover-color: $white;
+
+//$form-check-input-checked-color: $primary;
+//$form-check-input-checked-bg-color: $primary;
+//$form-check-input-checked-border-color: $primary;
 @import "node_modules/bootstrap/scss/bootstrap";
 
+
 // Add custom styles here
+
+button, .btn {
+    color: $white;
+    font-weight: 500;
+    &:hover,&:active, &:focus-visible, &:focus {
+        color: $white !important;
+        font-weight: 500;
+    }
+    .btn-primary {
+        &:active, &:focus-visible, &:focus {
+            background-color: $orange-700;
+            border-color: $orange-700;
+        }
+    }
+    .btn-primary {
+        &:hover {
+            background-color: $orange-200;
+            border-color: $orange-200;
+        }
+    }
+    &.btn-outline-primary {
+        color: $primary;
+    }
+    .btn-secondary {
+        &:hover {
+            background-color: $blue-300;
+            border-color: $blue-300;
+        }
+    }
+    .btn-secondary {
+        &:active, &:focus-visible, &:focus {
+            background-color: $blue-700;
+            border-color: $blue-700;
+        }
+    }
+    &.btn-outline-secondary {
+        color: $secondary;
+    }
+}
+
+main {
+    background-color: $white;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.card {
+    .card-header {
+        background-color: $secondary;
+        color: $white;
+        height: 50px;
+        font-weight: bold;
+        padding: 0 10px;
+        line-height: 50px;
+    }
+    .list-group {
+        border-bottom: 0;
+    }
+    .card-body.list-group, .card-body.list-group.list-group-flush {
+        padding: 10px;
+        .list-group-item {
+            padding: 0;
+            border: 0;
+            margin-bottom: 10px;
+        }
+    }
+    .card-body, .card-footer {
+        background-color: $white;
+        padding: 10px;
+        border: 0;
+        float: right;
+    }
+}
+
+table {
+    thead {
+        border-color: $neutral200;
+        background-color: $neutral200;
+        font-weight: bold;
+    }
+    td {
+        border-bottom-width: 0;
+    }
+    tr {
+        border-bottom-width: 1px;
+    }
+}
+
+.navbar.bg-secondary {
+    height: 50px;
+    padding-left: 20px;
+    padding-right: 20px;
+    a.nav-link, .navbar-brand {
+        color: $white;
+    }
+}
+
+.alert {
+    height: 50px;
+    line-height: 50px;
+    padding: 0 10px;
+}

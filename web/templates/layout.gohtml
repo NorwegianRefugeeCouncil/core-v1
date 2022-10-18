@@ -1,32 +1,10 @@
-{{define "base"}}
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <title>Core</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
-        <link rel="manifest" href="/static/site.webmanifest">
-        <link rel="stylesheet" href="/static/bootstrap-icons.css">
-        <link rel="stylesheet" href="/static/theme.min.css">
-        <script src="/static/bootstrap.bundle.min.js"></script>
-
-        {{template "head" .}}
-    </head>
-    <body>
-    {{template "body" .}}
-    </body>
-{{end}}
-
 {{define "nav"}}
-    <nav class="navbar navbar-expand-lg bg-light shadow" style="z-index: 1">
+    <nav class="navbar navbar-expand-lg bg-secondary " style="z-index: 1">
         <div class="container-fluid" id="navbar-container">
             <a class="navbar-brand me-0 me-lg-2" href="/" style="margin-top:-0.3rem">
-                <div class="d-flex flex-row align-items-center">
-                    <img src="/static/favicon-16x16.png" alt="" width="16" height="16" class="d-inline-block"/>
-                    <span class="ms-1">Core</span>
+                <div class="d-flex flex-row align-items-center me-5">
+                    <img src="/static/favicon.ico" alt="" width="16" height="16" class="d-inline-block"/>
+                    <span class="ms-3 fw-bold">Core</span>
                 </div>
             </a>
             <div id="toolbar" class="d-flex flex-col align-items-center order-lg-last">
