@@ -48,7 +48,6 @@ serve:
 
 .PHONY: bootstrap 
 bootstrap:
-	@cd web/theme && yarn build
 	@cd web/theme && yarn && yarn build
 
 .DEFAULT_GOAL := show-help
