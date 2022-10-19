@@ -12,7 +12,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/logging"
-	"github.com/nrc-no/notcore/internal/utils"
 	"github.com/rs/xid"
 	"go.uber.org/zap"
 )
@@ -106,7 +105,7 @@ func (i individualRepo) getAllInternal(ctx context.Context, tx *sqlx.Tx, options
 	}
 
 	if len(options.PhoneNumber) != 0 {
-		normalizedPhoneNumber := utils.NormalizePhoneNumber(options.PhoneNumber)
+		normalizedPhoneNumber := api.NormalizePhoneNumber(options.PhoneNumber)
 		whereClauses = append(whereClauses, "normalized_phone_number LIKE "+nextArg("%"+normalizedPhoneNumber+"%"))
 	}
 

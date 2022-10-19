@@ -8,11 +8,9 @@ import (
 	"github.com/nrc-no/notcore/internal/auth"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
+	"github.com/nrc-no/notcore/internal/validation"
 	"go.uber.org/zap"
 )
-
-// ValidationErrors is a map of field names to error messages.
-type ValidationErrors map[string]string
 
 // ViewData is a map of key/value pairs that can be used to render a view.
 // We can add methods to this type to make it more useful when rendering views.
@@ -29,16 +27,16 @@ func (v ViewData) RequestContextKey() string {
 }
 
 // GetErrors returns a map of field names to error messages.
-func (v ViewData) GetErrors() ValidationErrors {
+func (v ViewData) GetErrors() validation.ValidationErrors {
 	if v == nil {
-		return ValidationErrors{}
+		return validation.ValidationErrors{}
 	}
 	if errs, ok := v[v.ErrorsKey()]; ok {
-		if errsMap, ok := errs.(ValidationErrors); ok {
+		if errsMap, ok := errs.(validation.ValidationErrors); ok {
 			return errsMap
 		}
 	}
-	return ValidationErrors{}
+	return validation.ValidationErrors{}
 }
 
 // Error returns the error message for the given field.

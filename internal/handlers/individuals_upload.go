@@ -1,12 +1,8 @@
 package handlers
 
 import (
-	"context"
-	"encoding/csv"
-	"io"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
@@ -57,7 +53,8 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		fields, individuals, err := parseIndividualsCSV(ctx, formFile)
+		var individuals []*api.Individual
+		fields, err := api.UnmarshalIndividualsCSV(formFile, &individuals)
 		if err != nil {
 			l.Error("failed to parse csv", zap.Error(err))
 			http.Error(w, "failed to parse csv: "+err.Error(), http.StatusBadRequest)
@@ -80,44 +77,7 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 		}
 
 		http.Redirect(w, r, "/individuals", http.StatusSeeOther)
-
 	})
-}
-
-func parseIndividualsCSV(ctx context.Context, reader io.Reader) ([]string, []*api.Individual, error) {
-
-	l := logging.NewLogger(ctx)
-
-	csvReader := csv.NewReader(reader)
-	csvReader.TrimLeadingSpace = true
-	records, err := csvReader.ReadAll()
-	if err != nil {
-		l.Error("failed to read csv", zap.Error(err))
-		return nil, nil, err
-	}
-	var fields []string
-	var individuals = make([]*api.Individual, len(records)-1)
-	colMapping := map[string]int{}
-	for i, cols := range records {
-		if i == 0 {
-			fields = make([]string, len(cols))
-			for i, col := range cols {
-				fields[i] = trimString(col)
-			}
-			for j, col := range cols {
-				col = trimString(col)
-				colMapping[strings.Trim(col, " \n\t\r")] = j
-			}
-		} else {
-			individual, err := parseIndividualCsvRow(colMapping, cols)
-			if err != nil {
-				l.Error("failed to parse individual row", zap.Error(err))
-				return nil, nil, err
-			}
-			individuals[i-1] = individual
-		}
-	}
-	return fields, individuals, nil
 }
 
 func parseQryParamInt(r *http.Request, key string) (int, error) {
