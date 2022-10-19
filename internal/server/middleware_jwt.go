@@ -19,11 +19,9 @@ type TokenClaims struct {
 	Groups []string `json:"groups"`
 }
 
-func jwtMiddleware() func(handler http.Handler) http.Handler {
 
-	const (
-		keyJwtPayload = "X-Jwt-Payload"
-	)
+
+func jwtMiddleware(idTokenHeaderName string) func(handler http.Handler) http.Handler {
 
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -31,7 +29,7 @@ func jwtMiddleware() func(handler http.Handler) http.Handler {
 			ctx := r.Context()
 			l := logging.NewLogger(ctx)
 
-			authHeaderBase64 := r.Header.Get(keyJwtPayload)
+			authHeaderBase64 := r.Header.Get(idTokenHeaderName)
 			if len(authHeaderBase64) == 0 {
 				http.Error(w, "Invalid authorization header", http.StatusBadRequest)
 				return

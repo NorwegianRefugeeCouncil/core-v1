@@ -10,22 +10,29 @@ resource "azurerm_linux_web_app" "app" {
     type         = "SystemAssigned, UserAssigned"
     identity_ids = [azurerm_user_assigned_identity.app.id]
   }
-  connection_string {
-    name  = "db"
-    type  = "PostgreSQL"
-    value = "postgres://${random_pet.postgres_admin_username.id}:${random_password.postgres_admin_password.result}@${azurerm_postgresql_flexible_server.postgres.fqdn}/${azurerm_postgresql_flexible_server_database.db.name}?sslmode=require"
-  }
   site_config {
     ftps_state                                    = "Disabled"
     container_registry_use_managed_identity       = true
     container_registry_managed_identity_client_id = azurerm_user_assigned_identity.app.client_id
+    remote_debugging_enabled                      = false
+    websockets_enabled                            = false
+    http2_enabled                                 = true
     application_stack {
-      docker_image     = "ealen/echo-server"
-      docker_image_tag = "latest"
+      docker_image     = var.container_image
+      docker_image_tag = var.container_image_tag
     }
   }
   app_settings = {
+    # See https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?pivots=container-linux#configure-port-number
+    WEBSITES_PORT = var.port
     oidc_AUTHENTICATION_SECRET = var.oidc_client_secret
+    CORE_DB_DSN = "postgres://${random_pet.postgres_admin_username.id}:${random_password.postgres_admin_password.result}@${azurerm_postgresql_flexible_server.postgres.fqdn}/${azurerm_postgresql_flexible_server_database.db.name}?sslmode=require"
+    CORE_DB_DRIVER = "postgres"
+    CORE_LISTEN_ADDRESS = ":${var.port}"
+    # See https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-customize-sign-in-out?source=recommendations#sign-out-of-a-session
+    CORE_LOGOUT_URL = "/.auth/logout"
+    CORE_JWT_GLOBAL_ADMIN_GROUP = var.jwt_global_admin_group
+    CORE_ID_TOKEN_HEADER_NAME = "x-ms-token-oidc-id-token"
   }
   sticky_settings {
     app_setting_names = [
@@ -77,7 +84,7 @@ resource azapi_update_resource app_auth {
               },
               login = {
                 nameClaimType = "name"
-                scopes         = [
+                scopes        = [
                   "openid",
                   "profile",
                   "email",
@@ -100,3 +107,4 @@ resource azapi_update_resource app_auth {
     }
   })
 }
+
