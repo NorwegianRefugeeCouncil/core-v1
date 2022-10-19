@@ -9,9 +9,10 @@
                 window.location.href = "{{.BaseURL}}/individuals/" + id;
             }
         }
-        document.addEventListener("DOMContentLoaded", function() {
+
+        document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("searchForm")
-            form.onsubmit=function(){
+            form.onsubmit = function () {
                 let inputs, index;
                 inputs = [
                     ...document.getElementsByTagName('input'),
@@ -236,7 +237,7 @@
                                            type="text"
                                            class="form-control"
                                            placeholder="Search by phone number"
-                                            {{ if .Options.PhoneNumber }} value="{{.Options.PhoneNumber}}"{{ end }}>
+                                           value="{{.Options.PhoneNumber}}">
                                 </div>
                                 <!-- End Phone -->
 
