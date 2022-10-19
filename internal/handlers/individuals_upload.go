@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
-	"github.com/nrc-no/notcore/internal/file_service"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
@@ -53,7 +53,8 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		fields, individuals, err := file_service.ParseIndividualsCSV(ctx, formFile)
+		var individuals []*api.Individual
+		fields, err := api.UnmarshalIndividualsCSV(formFile, &individuals)
 		if err != nil {
 			l.Error("failed to parse csv", zap.Error(err))
 			http.Error(w, "failed to parse csv: "+err.Error(), http.StatusBadRequest)
@@ -76,7 +77,6 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 		}
 
 		http.Redirect(w, r, "/individuals", http.StatusSeeOther)
-
 	})
 }
 
