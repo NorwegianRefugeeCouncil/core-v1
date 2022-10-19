@@ -33,6 +33,7 @@ resource "azurerm_linux_web_app" "app" {
     CORE_LOGOUT_URL             = "/.auth/logout"
     CORE_JWT_GLOBAL_ADMIN_GROUP = var.jwt_global_admin_group
     CORE_ID_TOKEN_HEADER_NAME   = "x-ms-token-oidc-id-token"
+    DOCKER_CUSTOM_IMAGE_NAME    = "${var.container_image}:${var.container_image_tag}"
   }
   sticky_settings {
     app_setting_names = [
