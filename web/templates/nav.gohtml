@@ -24,7 +24,10 @@
             <div class="collapse navbar-collapse" id="navbarContent">
                 <div class="navbar-nav me-auto mb-2 mb-lg-0">
                     <div class="nav-item">
-                        <a class="nav-link" href="/individuals">Individuals</a>
+                        <a class="nav-link"
+                           href="/individuals{{if .RequestContext.SelectedCountryID}}?country_id={{.RequestContext.SelectedCountryID}}{{end}}">
+                            Individuals
+                        </a>
                     </div>
                     {{ $isGlobalAdmin := .RequestContext.Auth.IsGlobalAdmin }}
                     {{ if $isGlobalAdmin }}

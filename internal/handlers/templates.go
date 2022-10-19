@@ -105,6 +105,13 @@ type RequestContext struct {
 	SelectedCountry *api.Country
 }
 
+func (r RequestContext) SelectedCountryID() string {
+	if r.SelectedCountry == nil {
+		return ""
+	}
+	return r.SelectedCountry.ID
+}
+
 // viewParams is a map of key/value pairs that can be used to render a view.
 type viewParams map[string]interface{}
 
