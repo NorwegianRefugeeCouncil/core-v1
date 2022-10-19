@@ -72,17 +72,16 @@ func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo
 		}
 
 		queryCountryID := r.FormValue(queryParamCountryID)
+		if queryCountryID != "" && !countryIdMap[queryCountryID] {
+			// If the selected country ID is not in the list of countries,
+			// return an error.
+			http.Error(w, "country id not found", http.StatusNotFound)
+			return
+		}
+
 		if queryCountryID == "" {
 			// If the country ID from query param is empty, redirect to
 			// the selected country ID
-
-			if !countryIdMap[selectedCountryID] {
-				// If the selected country ID is not in the list of countries,
-				// return an error
-				http.Error(w, "country id not found", http.StatusNotFound)
-				return
-			}
-
 			url := r.URL
 			q := url.Query()
 			q.Set(queryParamCountryID, selectedCountryID)
@@ -95,14 +94,6 @@ func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo
 			// If the selected country ID does not match the country ID
 			// from the query param, force the selection of the country ID
 			// from the query param
-
-			if !countryIdMap[queryCountryID] {
-				// If the country ID from query param is not in the list of countries,
-				// return an error
-				http.Error(w, "country id not found", http.StatusNotFound)
-				return
-			}
-
 			ctx = utils.WithSelectedCountryID(ctx, queryCountryID)
 			r = r.WithContext(ctx)
 			selectedCountryID = queryCountryID
