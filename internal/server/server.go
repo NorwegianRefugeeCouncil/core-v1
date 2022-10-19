@@ -14,7 +14,6 @@ import (
 	"github.com/nrc-no/notcore/internal/logging"
 )
 
-
 func (o Options) New(ctx context.Context) (*Server, error) {
 	if err := o.validate(); err != nil {
 		return nil, err
@@ -47,7 +46,8 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 		individualRepo,
 		countryRepo,
 		o.JwtGroupGlobalAdmin,
-		o.IDTokenHeaderName,
+		o.AuthHeaderName,
+		o.AuthHeaderFormat,
 		tpl)
 
 	return s, nil

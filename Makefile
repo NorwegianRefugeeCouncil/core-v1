@@ -39,7 +39,7 @@ test: .dev-image
 .PHONY: proxy
 ## Runs the envoy proxy
 proxy: prerequisites
-	@envoy -c deploy/envoy.yaml
+	@envoy -c deploy/envoy.yaml -l debug
 
 .PHONY: serve
 # Starts the server
@@ -50,7 +50,8 @@ serve: prerequisites
 		--db-dsn=postgres://postgres:postgres@localhost:5432/core?sslmode=disable \
 		--log-level=debug \
 		--jwt-global-admin-group="NRC_Core_GlobalAdmin" \
-		--id-token-header-name="X-Jwt-Payload" \
+		--auth-header-name="X-Jwt-Payload" \
+		--auth-header-format="json-base64-url-encoded-claims" \
 		--logout-url="https://localhost:10000/oauth2/sign_out?rd=https%3A%2F%2Flocalhost:10000%2Fsession%2Fend"
 
 .PHONY: bootstrap

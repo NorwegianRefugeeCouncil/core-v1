@@ -157,6 +157,8 @@ static_resources:
                                 ignore_case: true
                               - exact: x-auth-request-access-token
                                 ignore_case: true
+                              - exact: x-auth-request-id-token
+                                ignore_case: true
                   - name: envoy.filters.http.jwt_authn
                     typed_config:
                       '@type': type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication

@@ -29,9 +29,26 @@ func (o Options) WithJwtGroupGlobalAdmin(jwtGroupGlobalAdmin string) Options {
 	return o
 }
 
-func (o Options) WithIDTokenHeaderName(idTokenHeaderName string) Options {
-	o.IDTokenHeaderName = idTokenHeaderName
+func (o Options) WithAuthHeaderName(authHeaderName string) Options {
+	o.AuthHeaderName = authHeaderName
 	return o
+}
+
+func (o Options) WithAuthHeaderFormat(authHeaderFormat string) Options {
+	o.AuthHeaderFormat = authHeaderFormat
+	return o
+}
+
+func (o Options) WithAuthHeaderJWT() Options {
+	return o.WithAuthHeaderFormat(AuthHeaderFormatJWT)
+}
+
+func (o Options) WithAuthHeaderBearerToken() Options {
+	return o.WithAuthHeaderFormat(AuthHeaderFormatBearerToken)
+}
+
+func (o Options) WithAuthHeaderFormatJsonBase64UrlEncodedClaims() Options {
+	return o.WithAuthHeaderFormat(AuthHeaderFormatJsonBase64UrlEncodedClaims)
 }
 
 func validOptions() Options {
@@ -41,7 +58,8 @@ func validOptions() Options {
 		DatabaseDSN:         "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable",
 		LogoutURL:           "http://localhost:8080",
 		JwtGroupGlobalAdmin: "global-admin",
-		IDTokenHeaderName:   "X-Auth-Token",
+		AuthHeaderName:      "X-Auth-Token",
+		AuthHeaderFormat:    AuthHeaderFormatJWT,
 	}
 }
 
@@ -54,6 +72,21 @@ func TestOptions_validate(t *testing.T) {
 		{
 			name:    "valid",
 			options: validOptions(),
+			wantErr: false,
+		},
+		{
+			name:    "valid with jwt auth header format",
+			options: validOptions().WithAuthHeaderJWT(),
+			wantErr: false,
+		},
+		{
+			name:    "valid with bearer token auth header format",
+			options: validOptions().WithAuthHeaderBearerToken(),
+			wantErr: false,
+		},
+		{
+			name:    "valid with json base64 url encoded claims auth header format",
+			options: validOptions().WithAuthHeaderFormatJsonBase64UrlEncodedClaims(),
 			wantErr: false,
 		},
 		{
@@ -102,13 +135,13 @@ func TestOptions_validate(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name:    "ID token header name is required",
-			options: validOptions().WithIDTokenHeaderName(""),
+			name:    "Auth header name is required",
+			options: validOptions().WithAuthHeaderName(""),
 			wantErr: true,
 		},
 		{
-			name:    "ID token header name is invalid",
-			options: validOptions().WithIDTokenHeaderName("   "),
+			name:    "Auth header name is invalid",
+			options: validOptions().WithAuthHeaderName("   "),
 			wantErr: true,
 		},
 	}
@@ -242,7 +275,7 @@ func TestIsValidRFC7230HeaderName(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := isValidRFC7230HeaderName(tt.header); got != tt.want {
-				t.Errorf("idTokenHeaderNameRegex.MatchString() = %v, want %v", got, tt.want)
+				t.Errorf("isValidRFC7230HeaderName() = %v, want %v", got, tt.want)
 			}
 		})
 	}

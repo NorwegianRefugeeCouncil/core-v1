@@ -13,7 +13,8 @@ type Options struct {
 	DatabaseDSN         string
 	LogoutURL           string
 	JwtGroupGlobalAdmin string
-	IDTokenHeaderName   string
+	AuthHeaderName      string
+	AuthHeaderFormat    string
 }
 
 var globalAdminGroupRegex = regexp.MustCompile(`^[A-Za-z0-9_-]+(?: +[A-Za-z0-9_-]+)*$`)
@@ -50,8 +51,17 @@ func (o Options) validate() error {
 	if !globalAdminGroupRegex.MatchString(o.JwtGroupGlobalAdmin) {
 		return fmt.Errorf("JWT group global admin is invalid")
 	}
-	if !isValidRFC7230HeaderName(o.IDTokenHeaderName) {
-		return fmt.Errorf("ID token header name is invalid")
+	if !isValidRFC7230HeaderName(o.AuthHeaderName) {
+		return fmt.Errorf("auth header name is invalid")
+	}
+	if o.AuthHeaderFormat != AuthHeaderFormatJWT &&
+		o.AuthHeaderFormat != AuthHeaderFormatJsonBase64UrlEncodedClaims &&
+		o.AuthHeaderFormat != AuthHeaderFormatBearerToken {
+		return fmt.Errorf("auth header format is invalid. must be one of: %s, %s, %s",
+			AuthHeaderFormatJWT,
+			AuthHeaderFormatJsonBase64UrlEncodedClaims,
+			AuthHeaderFormatBearerToken)
+
 	}
 	return nil
 }
