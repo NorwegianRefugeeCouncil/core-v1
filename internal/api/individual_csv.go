@@ -42,38 +42,38 @@ func (i *Individual) UnmarshalCSV(colMapping map[string]int, cols []string) erro
 	var err error
 	for field, idx := range colMapping {
 		switch field {
-		case constants.FileHeaderIndividualID:
+		case constants.FileColumnIndividualID:
 			i.ID = cols[idx]
-		case constants.FileHeaderIndividualFullName:
+		case constants.FileColumnIndividualFullName:
 			i.FullName = cols[idx]
-		case constants.FileHeaderIndividualPreferredName:
+		case constants.FileColumnIndividualPreferredName:
 			i.PreferredName = cols[idx]
-		case constants.FileHeaderIndividualDisplacementStatus:
+		case constants.FileColumnIndividualDisplacementStatus:
 			i.DisplacementStatus = cols[idx]
-		case constants.FileHeaderIndividualPhoneNumber:
+		case constants.FileColumnIndividualPhoneNumber:
 			i.PhoneNumber = cols[idx]
-		case constants.FileHeaderIndividualEmail:
+		case constants.FileColumnIndividualEmail:
 			i.Email = cols[idx]
-		case constants.FileHeaderIndividualAddress:
+		case constants.FileColumnIndividualAddress:
 			i.Address = cols[idx]
-		case constants.FileHeaderIndividualGender:
+		case constants.FileColumnIndividualGender:
 			i.Gender = cols[idx]
-		case constants.FileHeaderIndividualBirthDate:
+		case constants.FileColumnIndividualBirthDate:
 			i.BirthDate, err = ParseDate(cols[idx])
 			if err != nil {
 				return err
 			}
-		case constants.FileHeaderIndividualIsMinor:
+		case constants.FileColumnIndividualIsMinor:
 			i.IsMinor = cols[idx] == "true"
-		case constants.FileHeaderIndividualPresentsProtectionConcerns:
+		case constants.FileColumnIndividualPresentsProtectionConcerns:
 			i.PresentsProtectionConcerns = cols[idx] == "true"
-		case constants.FileHeaderIndividualPhysicalImpairment:
+		case constants.FileColumnIndividualPhysicalImpairment:
 			i.PhysicalImpairment = cols[idx]
-		case constants.FileHeaderIndividualSensoryImpairment:
+		case constants.FileColumnIndividualSensoryImpairment:
 			i.SensoryImpairment = cols[idx]
-		case constants.FileHeaderIndividualMentalImpairment:
+		case constants.FileColumnIndividualMentalImpairment:
 			i.MentalImpairment = cols[idx]
-		case constants.FileHeaderIndividualCountryID:
+		case constants.FileColumnIndividualCountryID:
 			i.CountryID = cols[idx]
 		}
 
@@ -87,21 +87,21 @@ func MarshalIndividualsCSV(w io.Writer, individuals []*Individual) error {
 	defer csvEncoder.Flush()
 
 	if err := csvEncoder.Write([]string{
-		constants.FileHeaderIndividualID,
-		constants.FileHeaderIndividualFullName,
-		constants.FileHeaderIndividualPreferredName,
-		constants.FileHeaderIndividualDisplacementStatus,
-		constants.FileHeaderIndividualEmail,
-		constants.FileHeaderIndividualAddress,
-		constants.FileHeaderIndividualPhoneNumber,
-		constants.FileHeaderIndividualBirthDate,
-		constants.FileHeaderIndividualIsMinor,
-		constants.FileHeaderIndividualGender,
-		constants.FileHeaderIndividualPresentsProtectionConcerns,
-		constants.FileHeaderIndividualPhysicalImpairment,
-		constants.FileHeaderIndividualSensoryImpairment,
-		constants.FileHeaderIndividualMentalImpairment,
-		constants.FileHeaderIndividualCountryID,
+		constants.FileColumnIndividualID,
+		constants.FileColumnIndividualFullName,
+		constants.FileColumnIndividualPreferredName,
+		constants.FileColumnIndividualDisplacementStatus,
+		constants.FileColumnIndividualEmail,
+		constants.FileColumnIndividualAddress,
+		constants.FileColumnIndividualPhoneNumber,
+		constants.FileColumnIndividualBirthDate,
+		constants.FileColumnIndividualIsMinor,
+		constants.FileColumnIndividualGender,
+		constants.FileColumnIndividualPresentsProtectionConcerns,
+		constants.FileColumnIndividualPhysicalImpairment,
+		constants.FileColumnIndividualSensoryImpairment,
+		constants.FileColumnIndividualMentalImpairment,
+		constants.FileColumnIndividualCountryID,
 	}); err != nil {
 		return err
 	}
