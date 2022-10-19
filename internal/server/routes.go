@@ -13,6 +13,7 @@ func buildRouter(
 	individualRepo db.IndividualRepo,
 	countryRepo db.CountryRepo,
 	globalAdminGroup string,
+	idTokenHeaderName string,
 	tpl templates,
 ) *mux.Router {
 
@@ -26,7 +27,7 @@ func buildRouter(
 	webRouter.Use(
 		noCache,
 		logMiddleware,
-		jwtMiddleware(),
+		jwtMiddleware(idTokenHeaderName),
 		countriesMiddleware(countryRepo),
 		permissionMiddleware(globalAdminGroup),
 		selectedCountryMiddleware(),

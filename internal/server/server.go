@@ -20,10 +20,11 @@ type Options struct {
 	DatabaseDSN         string
 	LogoutURL           string
 	JwtGroupGlobalAdmin string
+	IDTokenHeaderName   string
 }
 
-func (o Options) New() (*Server, error) {
-	sqlDb, err := sqlx.Connect(o.DatabaseDriver, o.DatabaseDSN)
+func (o Options) New(ctx context.Context) (*Server, error) {
+	sqlDb, err := sqlx.ConnectContext(ctx, o.DatabaseDriver, o.DatabaseDSN)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +32,7 @@ func (o Options) New() (*Server, error) {
 	sqlDb.SetMaxOpenConns(10)
 	sqlDb.SetConnMaxLifetime(time.Minute * 5)
 
-	if err := db.Migrate(context.Background(), sqlDb); err != nil {
+	if err := db.Migrate(ctx, sqlDb); err != nil {
 		return nil, err
 	}
 
@@ -51,6 +52,7 @@ func (o Options) New() (*Server, error) {
 		individualRepo,
 		countryRepo,
 		o.JwtGroupGlobalAdmin,
+		o.IDTokenHeaderName,
 		tpl)
 
 	return s, nil
