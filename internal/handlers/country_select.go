@@ -34,7 +34,7 @@ func HandleSelectCountry() http.Handler {
 			return
 		}
 
-		allowedCountryIDs := authCtx.GetCountryIDsWithPermission("read")
+		allowedCountryIDs := authCtx.GetCountryIDsWithReadWritePermissions()
 		if !allowedCountryIDs.Contains(countryID) {
 			l.Warn("user is not allowed to select country", zap.Error(err))
 			http.Error(w, "You are not allowed to select this country", http.StatusForbidden)

@@ -12,8 +12,7 @@ import (
 func buildRouter(
 	individualRepo db.IndividualRepo,
 	countryRepo db.CountryRepo,
-	userRepo db.UserRepo,
-	permissionRepo db.PermissionRepo,
+	globalAdminGroup string,
 	tpl templates,
 ) *mux.Router {
 
@@ -27,10 +26,9 @@ func buildRouter(
 	webRouter.Use(
 		noCache,
 		logMiddleware,
-		jwtMiddleware(userRepo),
+		jwtMiddleware(),
 		countriesMiddleware(countryRepo),
-		firstUserGlobalAdmin(permissionRepo),
-		permissionMiddleware(permissionRepo),
+		permissionMiddleware(globalAdminGroup),
 		selectedCountryMiddleware(),
 	)
 
@@ -52,8 +50,6 @@ func buildRouter(
 	webRouter.Path("/countries/select").Handler(handlers.HandleCountrySelector(tpl))
 	webRouter.Path("/countries/select/{country_id}").Handler(handlers.HandleSelectCountry())
 	webRouter.Path("/countries/{country_id}").Handler(handlers.HandleCountry(tpl, countryRepo))
-	webRouter.Path("/users").Handler(handlers.HandleUsers(tpl, userRepo))
-	webRouter.Path("/users/{user_id}").Handler(handlers.HandleUser(tpl, userRepo, permissionRepo))
 	webRouter.PathPrefix("").Handler(handlers.HandleIndex(tpl))
 	return r
 }

@@ -49,15 +49,9 @@
                         <a class="nav-link" href="/individuals">Individuals</a>
                     </div>
                     {{ $isGlobalAdmin := .RequestContext.Auth.IsGlobalAdmin }}
-                    {{ $isAnyAdmin := .RequestContext.Auth.GetCountryIDsWithPermission "admin" }}
                     {{ if $isGlobalAdmin }}
                         <div class="nav-item">
                             <a class="nav-link" href="/countries">Countries</a>
-                        </div>
-                    {{end}}
-                    {{ if or $isGlobalAdmin $isAnyAdmin}}
-                        <div class="nav-item">
-                            <a class="nav-link" href="/users">Users</a>
                         </div>
                     {{end}}
                     <div class="flex-grow-1">

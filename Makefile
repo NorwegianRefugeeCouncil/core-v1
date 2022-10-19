@@ -42,11 +42,17 @@ proxy: prerequisites
 	@envoy -c deploy/envoy.yaml
 
 .PHONY: serve
-## Runs the development server
-serve:
-	@go run . serve --listen-address=:8080 --db-driver=postgres --db-dsn=postgres://postgres:postgres@localhost:5432/core?sslmode=disable --log-level=debug
+# Starts the server
+serve: prerequisites
+	@go run . serve \
+		--listen-address=:8080 \
+		--db-driver=postgres \
+		--db-dsn=postgres://postgres:postgres@localhost:5432/core?sslmode=disable \
+		--log-level=debug \
+		--jwt-global-admin-group="NRC_Core_GlobalAdmin" \
+		--logout-url="https://localhost:10000/oauth2/sign_out?rd=https%3A%2F%2Flocalhost:10000%2Fsession%2Fend"
 
-.PHONY: bootstrap 
+.PHONY: bootstrap
 bootstrap:
 	@cd web/theme && yarn && yarn build
 

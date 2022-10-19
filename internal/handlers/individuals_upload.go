@@ -35,8 +35,8 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		countryIDsWithWritePermission := authIntf.GetCountryIDsWithPermission("write")
-		if len(countryIDsWithWritePermission) == 0 {
+		allowedCountryIDs := authIntf.GetCountryIDsWithReadWritePermissions()
+		if len(allowedCountryIDs) == 0 {
 			l.Warn("User does not have permission to upload individuals")
 			http.Error(w, "You are not allowed to upload", http.StatusForbidden)
 			return
@@ -65,7 +65,7 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 		}
 
 		for _, individual := range individuals {
-			if !authIntf.CanWriteToCountryID(individual.CountryID) {
+			if !authIntf.CanReadWriteToCountryID(individual.CountryID) {
 				l.Warn("user does not have permission to upload individuals to country", zap.String("country_id", individual.CountryID))
 				http.Error(w, "You are not allowed to upload to country: "+individual.CountryID, http.StatusForbidden)
 				return

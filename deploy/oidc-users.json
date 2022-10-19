@@ -7,8 +7,7 @@
     "nickname": "harley",
     "password": "Password1!",
     "groups": [
-      "Everyone",
-      "Sales"
+      "NRC_Core_GlobalAdmin"
     ]
   },
   {
@@ -19,8 +18,7 @@
     "nickname": "barb",
     "password": "Password1!",
     "groups": [
-      "Everyone",
-      "Support"
+      "NRC_Core_Uganda"
     ]
   },
   {
@@ -31,8 +29,7 @@
     "nickname": "quinn",
     "password": "Password1!",
     "groups": [
-      "Everyone",
-      "Accounting"
+      "NRC_Core_Colombia"
     ]
   },
   {
@@ -43,8 +40,8 @@
     "nickname": "sim",
     "password": "Password1!",
     "groups": [
-      "Everyone",
-      "Accounting"
+      "NRC_Core_Colombia",
+      "NRC_Core_Uganda"
     ]
   },
   {
@@ -55,69 +52,9 @@
     "nickname": "phillie",
     "password": "Password1!",
     "groups": [
-      "Everyone",
-      "Marketing",
-      "Sales"
-    ]
-  },
-  {
-    "id": "SIMPLE_OIDC_USER_PETA",
-    "email": "peta@qlik.example",
-    "email_verified": true,
-    "name": "Peta Sammon",
-    "nickname": "peta",
-    "password": "Password1!",
-    "groups": [
-      "Everyone",
-      "Engineering"
-    ]
-  },
-  {
-    "id": "SIMPLE_OIDC_USER_MARNE",
-    "email": "marne@qlik.example",
-    "email_verified": true,
-    "name": "Marne Probetts",
-    "nickname": "marne",
-    "password": "Password1!",
-    "groups": [
-      "Everyone",
-      "Marketing"
-    ]
-  },
-  {
-    "id": "SIMPLE_OIDC_USER_SIBYLLA",
-    "email": "sibylla@qlik.example",
-    "email_verified": true,
-    "name": "Sibylla Meadows",
-    "nickname": "sibylla",
-    "password": "Password1!",
-    "groups": [
-      "Everyone",
-      "Accounting"
-    ]
-  },
-  {
-    "id": "SIMPLE_OIDC_USER_EVAN",
-    "email": "evan@qlik.example",
-    "email_verified": true,
-    "name": "Evan Highman",
-    "nickname": "evan",
-    "password": "Password1!",
-    "groups": [
-      "Everyone",
-      "Engineering"
-    ]
-  },
-  {
-    "id": "SIMPLE_OIDC_USER_FRANKLIN",
-    "email": "franklin@qlik.example",
-    "email_verified": true,
-    "name": "Franklin Glamart",
-    "nickname": "franklin",
-    "password": "Password1!",
-    "groups": [
-      "Everyone",
-      "Sales"
+      "Fake",
+      "Group",
+      "Here"
     ]
   }
 ]

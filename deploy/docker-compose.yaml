@@ -17,6 +17,7 @@ services:
     command:
       - /bin/oauth2-proxy
       - --cookie-secret=5bbca15ead8e545ad4ad262b60faf127
+      - --whitelist-domain=localhost:10000
       - --http-address=0.0.0.0:4180
       - --client-id=foo
       - --client-secret=bar
@@ -26,6 +27,7 @@ services:
       - --provider-display-name="Oidc"
       - --client-id=foo
       - --client-secret=bar
+      - --scope=openid email profile groups
       - --redirect-url=https://localhost:10000/oauth2/callback
       - --cookie-secure=true
       - --cookie-samesite=lax
