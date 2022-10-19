@@ -100,7 +100,7 @@ stages:
         tags: |
           $(TAG)
 
-    - bash: echo -n "$(CONTAINER_REGISTRY)/$(REPOSITORY):$(TAG)" > $(Build.SourcesDirectory)/imageref.txt
+    - bash: echo -n "$(CONTAINER_REGISTRY)/$(REPOSITORY):$(TAG)" > $(Build.SourcesDirectory)/ref.txt
       displayName: Output version build artifact
 
     - publish: $(Build.SourcesDirectory)/ref.txt
