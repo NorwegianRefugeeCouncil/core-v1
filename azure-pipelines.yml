@@ -100,12 +100,19 @@ stages:
         tags: |
           $(TAG)
 
-    - bash: echo -n "$(CONTAINER_REGISTRY)/$(REPOSITORY):$(TAG)" > $(Build.SourcesDirectory)/image.txt
+    - bash: echo -n "$(CONTAINER_REGISTRY)/$(REPOSITORY):$(TAG)" > $(Build.SourcesDirectory)/imageref.txt
       displayName: Output version build artifact
 
-    - publish: $(Build.SourcesDirectory)/image.txt
+    - publish: $(Build.SourcesDirectory)/ref.txt
       artifact: ImageRef
       displayName: Publish image reference output build artifact
+
+    - bash: echo -n "$(CONTAINER_REGISTRY)/$(REPOSITORY)" > $(Build.SourcesDirectory)/image.txt
+      displayName: Output image build artifact
+
+    - publish: $(Build.SourcesDirectory)/image.txt
+      artifact: Image
+      displayName: Publish image output build artifact
 
     - bash: echo -n "$(TAG)" > $(Build.SourcesDirectory)/tag.txt
       displayName: Output version build artifact
