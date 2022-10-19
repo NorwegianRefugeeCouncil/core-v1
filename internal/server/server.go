@@ -14,16 +14,11 @@ import (
 	"github.com/nrc-no/notcore/internal/logging"
 )
 
-type Options struct {
-	Address             string
-	DatabaseDriver      string
-	DatabaseDSN         string
-	LogoutURL           string
-	JwtGroupGlobalAdmin string
-	IDTokenHeaderName   string
-}
 
 func (o Options) New(ctx context.Context) (*Server, error) {
+	if err := o.validate(); err != nil {
+		return nil, err
+	}
 	sqlDb, err := sqlx.ConnectContext(ctx, o.DatabaseDriver, o.DatabaseDSN)
 	if err != nil {
 		return nil, err
@@ -32,7 +27,7 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 	sqlDb.SetMaxOpenConns(10)
 	sqlDb.SetConnMaxLifetime(time.Minute * 5)
 
-	if err := db.Migrate(ctx, sqlDb); err != nil {
+	if err := db.Migrate(context.Background(), sqlDb); err != nil {
 		return nil, err
 	}
 
