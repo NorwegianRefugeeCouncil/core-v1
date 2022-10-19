@@ -94,6 +94,23 @@ func (i Individual) String() string {
 	return string(jsonBytes)
 }
 
+func (individual *Individual) Normalize() {
+	individual.FullName = trimString(individual.FullName)
+	individual.PreferredName = trimString(individual.PreferredName)
+	if individual.PreferredName == "" {
+		individual.PreferredName = individual.FullName
+	}
+	individual.DisplacementStatus = trimString(individual.DisplacementStatus)
+	individual.Email = trimString(normalizeEmail(individual.Email))
+	individual.PhoneNumber = trimString(individual.PhoneNumber)
+	individual.Address = trimString(individual.Address)
+	individual.Gender = trimString(individual.Gender)
+	individual.NormalizedPhoneNumber = NormalizePhoneNumber(individual.PhoneNumber)
+	individual.PhysicalImpairment = trimString(individual.PhysicalImpairment)
+	individual.MentalImpairment = trimString(individual.MentalImpairment)
+	individual.SensoryImpairment = trimString(individual.SensoryImpairment)
+}
+
 type GetAllOptions struct {
 	Address                    string
 	BirthDateFrom              *time.Time

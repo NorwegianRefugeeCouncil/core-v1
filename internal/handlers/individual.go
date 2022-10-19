@@ -167,6 +167,6 @@ func parseIndividualForm(r *http.Request, permsHelper auth.Interface, individual
 	individual.MentalImpairment = r.FormValue(constants.FormParamIndividualMentalImpairment)
 	individual.SensoryImpairment = r.FormValue(constants.FormParamIndividualSensoryImpairment)
 	individual.CountryID = r.FormValue(constants.FormParamIndividualCountry)
-	validation.NormalizeIndividual(individual)
+	individual.Normalize()
 	return nil
 }
