@@ -18,14 +18,16 @@ const (
 	envListenAddress       = "CORE_LISTEN_ADDRESS"
 	envLogoutURL           = "CORE_LOGOUT_URL"
 	envJwtGlobalAdminGroup = "CORE_JWT_GLOBAL_ADMIN_GROUP"
-	envIDTokenHeaderName   = "CORE_ID_TOKEN_HEADER_NAME"
+	envAuthHeaderName      = "CORE_AUTH_HEADER_NAME"
+	envAuthHeaderFormat    = "CORE_AUTH_HEADER_FORMAT"
 
 	flagDbDSN               = "db-dsn"
 	flagDbDriver            = "db-driver"
 	flagListenAddress       = "listen-address"
 	flagLogoutURL           = "logout-url"
 	flagJwtGlobalAdminGroup = "jwt-global-admin-group"
-	flagIDTokenHeaderName   = "id-token-header-name"
+	flagAuthHeaderName      = "auth-header-name"
+	flagAuthHeaderFormat    = "auth-header-format"
 )
 
 // serveCmd represents the serve command
@@ -72,9 +74,14 @@ var serveCmd = &cobra.Command{
 			return fmt.Errorf("--%s is required", flagLogoutURL)
 		}
 
-		idTokenHeaderName := getFlagOrEnv(cmd, flagIDTokenHeaderName, envIDTokenHeaderName)
-		if len(idTokenHeaderName) == 0 {
-			return fmt.Errorf("--%s is required", flagIDTokenHeaderName)
+		authHeaderName := getFlagOrEnv(cmd, flagAuthHeaderName, envAuthHeaderName)
+		if len(authHeaderName) == 0 {
+			return fmt.Errorf("--%s is required", flagAuthHeaderName)
+		}
+
+		authHeaderFormat := getFlagOrEnv(cmd, flagAuthHeaderFormat, envAuthHeaderFormat)
+		if len(authHeaderFormat) == 0 {
+			return fmt.Errorf("--%s is required", flagAuthHeaderFormat)
 		}
 
 		options := server.Options{
@@ -83,7 +90,8 @@ var serveCmd = &cobra.Command{
 			DatabaseDSN:         dbDsn,
 			LogoutURL:           logoutURL,
 			JwtGroupGlobalAdmin: jwtGroupGlobalAdmin,
-			IDTokenHeaderName:   idTokenHeaderName,
+			AuthHeaderName:      authHeaderName,
+			AuthHeaderFormat:    authHeaderFormat,
 		}
 
 		srv, err := options.New(ctx)
@@ -109,7 +117,12 @@ func init() {
 	serveCmd.PersistentFlags().String(flagDbDSN, "", fmt.Sprintf("database dsn. Can also be set with %s", envDbDSN))
 	serveCmd.PersistentFlags().String(flagLogoutURL, "", fmt.Sprintf("logout url. Can also be set with %s", envLogoutURL))
 	serveCmd.PersistentFlags().String(flagJwtGlobalAdminGroup, "", fmt.Sprintf("jwt global admin group. Can also be set with %s", envJwtGlobalAdminGroup))
-	serveCmd.PersistentFlags().String(flagIDTokenHeaderName, "", fmt.Sprintf("id token header name. Can also be set with %s", envIDTokenHeaderName))
+	serveCmd.PersistentFlags().String(flagAuthHeaderName, "", fmt.Sprintf("auth header name. Can also be set with %s", envAuthHeaderName))
+	serveCmd.PersistentFlags().String(flagAuthHeaderFormat, "", fmt.Sprintf(`auth header format. Can also be set with %s. Allowed values are "%s", "%s" and "%s"`,
+		envAuthHeaderFormat,
+		server.AuthHeaderFormatJWT,
+		server.AuthHeaderFormatBearerToken,
+		server.AuthHeaderFormatJsonBase64UrlEncodedClaims))
 }
 
 func getFlagOrEnv(cmd *cobra.Command, flagName string, envName string) string {

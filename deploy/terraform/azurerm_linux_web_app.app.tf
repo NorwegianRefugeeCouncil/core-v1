@@ -33,7 +33,8 @@ resource "azurerm_linux_web_app" "app" {
     # See https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-customize-sign-in-out?source=recommendations#sign-out-of-a-session
     CORE_LOGOUT_URL             = "/.auth/logout"
     CORE_JWT_GLOBAL_ADMIN_GROUP = var.jwt_global_admin_group
-    CORE_ID_TOKEN_HEADER_NAME   = "x-ms-token-oidc-id-token"
+    CORE_AUTH_HEADER_NAME       = "x-ms-token-oidc-id-token"
+    CORE_AUTH_HEADER_FORMAT     = "jwt"
     DOCKER_CUSTOM_IMAGE_NAME    = "${var.container_image}:${var.container_image_tag}"
   }
   sticky_settings {
