@@ -21,6 +21,7 @@ resource "azurerm_linux_web_app" "app" {
       docker_image     = var.container_image
       docker_image_tag = var.container_image_tag
     }
+    app_command_line = "serve"
   }
   app_settings = {
     # See https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?pivots=container-linux#configure-port-number
