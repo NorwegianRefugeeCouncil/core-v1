@@ -157,7 +157,7 @@ func parseIndividualForm(r *http.Request, permsHelper auth.Interface, individual
 	individual.PhoneNumber = r.FormValue(constants.FormParamIndividualPhoneNumber)
 	individual.Address = r.FormValue(constants.FormParamIndividualAddress)
 	individual.Gender = r.FormValue(constants.FormParamIndividualGender)
-	individual.BirthDate, err = utils.ParseDate(r.FormValue(constants.FormParamIndividualBirthDate))
+	individual.BirthDate, err = api.ParseDate(r.FormValue(constants.FormParamIndividualBirthDate))
 	if err != nil {
 		return err
 	}
