@@ -104,7 +104,7 @@ var serveCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(serveCmd)
-	serveCmd.PersistentFlags().String(flagListenAddress, ":8080", fmt.Sprintf("listen address. Can also be set with %s", envListenAddress))
+	serveCmd.PersistentFlags().String(flagListenAddress, "", fmt.Sprintf("listen address. Can also be set with %s", envListenAddress))
 	serveCmd.PersistentFlags().String(flagDbDriver, "", fmt.Sprintf("database driver. Can also be set with %s", envDbDriver))
 	serveCmd.PersistentFlags().String(flagDbDSN, "", fmt.Sprintf("database dsn. Can also be set with %s", envDbDSN))
 	serveCmd.PersistentFlags().String(flagLogoutURL, "", fmt.Sprintf("logout url. Can also be set with %s", envLogoutURL))
