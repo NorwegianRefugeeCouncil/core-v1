@@ -34,6 +34,12 @@ type idTokenVerifier struct {
 	verifier *oidc.IDTokenVerifier
 }
 
+func newIDTokenVerifier(verifier *oidc.IDTokenVerifier) IDTokenVerifier {
+	return idTokenVerifier{
+		verifier: verifier,
+	}
+}
+
 func (i idTokenVerifier) Verify(ctx context.Context, rawIDToken string) (IDToken, error) {
 	return i.verifier.Verify(ctx, rawIDToken)
 }
