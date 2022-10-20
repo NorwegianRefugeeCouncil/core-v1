@@ -9,6 +9,25 @@
                 window.location.href = "{{.BaseURL}}/individuals/" + id;
             }
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("searchForm")
+            form.onsubmit = function () {
+                let inputs, index;
+                inputs = [
+                    ...document.getElementsByTagName('input'),
+                    ...document.getElementsByTagName('select'),
+                ];
+                for (index = 0; index < inputs.length; ++index) {
+                    if (!form.contains(inputs[index])) {
+                        continue
+                    }
+                    if (inputs[index].value === "") {
+                        inputs[index].disabled = true;
+                    }
+                }
+            }
+        });
     </script>
 {{end}}
 {{define "body"}}
@@ -62,12 +81,13 @@
                         </div>
                     </div>
                     <div class="card  mb-5 mb-md-3">
-                        <form method="get" action="/individuals">
+                        <form method="get" action="/individuals" id="searchForm">
                             <div class="card-header">
                                 Search
                             </div>
                             <input type="hidden" name="take" value="">
-                            <input type="hidden" name="skip" value="0">
+                            <input type="hidden" name="skip" value="">
+                            <input type="hidden" name="country_id" value="{{.Options.CountryID}}"/>
                             <div class="card-body">
 
                                 <!-- Full Name -->

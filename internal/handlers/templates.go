@@ -105,8 +105,33 @@ type RequestContext struct {
 	SelectedCountry *api.Country
 }
 
+func (r RequestContext) SelectedCountryID() string {
+	if r.SelectedCountry == nil {
+		return ""
+	}
+	return r.SelectedCountry.ID
+}
+
 // viewParams is a map of key/value pairs that can be used to render a view.
 type viewParams map[string]interface{}
+
+type Renderer interface {
+	RenderView(w http.ResponseWriter, r *http.Request, templateName string, data viewParams)
+}
+
+type renderer struct {
+	templates map[string]*template.Template
+}
+
+func NewRenderer(templates map[string]*template.Template) Renderer {
+	return &renderer{
+		templates: templates,
+	}
+}
+
+func (r *renderer) RenderView(w http.ResponseWriter, req *http.Request, templateName string, data viewParams) {
+	renderView(r.templates, templateName, w, req, data)
+}
 
 // renderView renders a view with the given name and data.
 func renderView(

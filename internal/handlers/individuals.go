@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"html/template"
 	"net/http"
 	"time"
 
@@ -13,12 +12,13 @@ import (
 	"go.uber.org/zap"
 )
 
-func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo) http.Handler {
+func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 	const (
 		templateName         = "individuals.gohtml"
 		viewParamIndividuals = "Individuals"
 		viewParamOptions     = "Options"
+		queryParamCountryID  = "country_id"
 	)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -29,14 +29,26 @@ func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo
 			ctx           = r.Context()
 			err           error
 			l             = logging.NewLogger(ctx)
+			allCountries  []*api.Country
 		)
 
 		render := func() {
-			renderView(templates, templateName, w, r, viewParams{
+			renderer.RenderView(w, r, templateName, map[string]interface{}{
 				viewParamIndividuals: individuals,
 				viewParamOptions:     getAllOptions,
 			})
 			return
+		}
+
+		if allCountries, err = utils.GetCountries(ctx); err != nil {
+			l.Error("failed to get countries", zap.Error(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		countryIdMap := map[string]bool{}
+		for _, c := range allCountries {
+			countryIdMap[c.ID] = true
 		}
 
 		if err := r.ParseForm(); err != nil {
@@ -57,8 +69,50 @@ func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo
 			http.Error(w, "internal server error", http.StatusInternalServerError)
 			return
 		}
-		getAllOptions.CountryID = selectedCountryID
 
+		queryCountryID := r.FormValue(queryParamCountryID)
+		if queryCountryID != "" && !countryIdMap[queryCountryID] {
+			// If the selected country ID is not in the list of countries,
+			// return an error.
+			http.Error(w, "country id not found", http.StatusNotFound)
+			return
+		}
+
+		if selectedCountryID == "" && queryCountryID == "" {
+			// If there is no selected country ID and no query country ID,
+			// return an error.
+			http.Redirect(w, r, "/countries/select", http.StatusSeeOther)
+			return
+		}
+
+		if queryCountryID == "" {
+			// If the country ID from query param is empty, redirect to
+			// the selected country ID
+			url := r.URL
+			q := url.Query()
+			q.Set(queryParamCountryID, selectedCountryID)
+			url.RawQuery = q.Encode()
+			http.Redirect(w, r, url.String(), http.StatusSeeOther)
+			return
+		}
+
+		if queryCountryID != selectedCountryID {
+			// If the selected country ID does not match the country ID
+			// from the query param, force the selection of the country ID
+			// from the query param
+			ctx = utils.WithSelectedCountryID(ctx, queryCountryID)
+			r = r.WithContext(ctx)
+			selectedCountryID = queryCountryID
+		}
+
+		authIntf, err := utils.GetAuthContext(ctx)
+		if !authIntf.CanReadWriteToCountryID(selectedCountryID) {
+			l.Warn("user does not have permission to read/write to country", zap.String("country_id", selectedCountryID))
+			http.Error(w, "forbidden", http.StatusForbidden)
+			return
+		}
+
+		getAllOptions.CountryID = selectedCountryID
 		individuals, err = repo.GetAll(ctx, getAllOptions)
 		if err != nil {
 			l.Error("failed to get individuals", zap.Error(err))

@@ -16,6 +16,8 @@ import (
 	"go.uber.org/zap"
 )
 
+//go:generate mockgen -destination=./individual_mock.go -package=db . IndividualRepo
+
 type IndividualRepo interface {
 	GetAll(ctx context.Context, options api.GetAllOptions) ([]*api.Individual, error)
 	GetByID(ctx context.Context, id string) (*api.Individual, error)

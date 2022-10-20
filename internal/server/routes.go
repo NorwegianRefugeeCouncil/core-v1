@@ -26,6 +26,7 @@ func buildRouter(
 		gorillahandlers.CompressHandler,
 		requestIdMiddleware,
 	)
+	renderer := handlers.NewRenderer(tpl)
 
 	staticRouter := r.PathPrefix("/static").Subrouter()
 	staticRouter.HandleFunc("/{file:.*}", web.ServeStatic)
@@ -42,7 +43,7 @@ func buildRouter(
 	)
 
 	webRouter.Path("/individuals").Handler(withMiddleware(
-		handlers.ListHandler(tpl, individualRepo),
+		handlers.HandleIndividuals(renderer, individualRepo),
 		ensureSelectedCountryMiddleware()))
 
 	webRouter.Path("/individuals/upload").Handler(withMiddleware(

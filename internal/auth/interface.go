@@ -4,6 +4,8 @@ import (
 	"github.com/nrc-no/notcore/internal/containers"
 )
 
+//go:generate mockgen -destination=./interface_mock.go -package=auth . Interface
+
 type Interface interface {
 	IsGlobalAdmin() bool
 	CanReadWriteToCountryID(countryID string) bool
