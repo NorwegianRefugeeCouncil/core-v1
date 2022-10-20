@@ -15,6 +15,8 @@ type Options struct {
 	JwtGroupGlobalAdmin string
 	AuthHeaderName      string
 	AuthHeaderFormat    string
+	OIDCIssuerURL       string
+	OAuthClientID       string
 }
 
 var globalAdminGroupRegex = regexp.MustCompile(`^[A-Za-z0-9_-]+(?: +[A-Za-z0-9_-]+)*$`)
@@ -55,13 +57,19 @@ func (o Options) validate() error {
 		return fmt.Errorf("auth header name is invalid")
 	}
 	if o.AuthHeaderFormat != AuthHeaderFormatJWT &&
-		o.AuthHeaderFormat != AuthHeaderFormatJsonBase64UrlEncodedClaims &&
 		o.AuthHeaderFormat != AuthHeaderFormatBearerToken {
-		return fmt.Errorf("auth header format is invalid. must be one of: %s, %s, %s",
+		return fmt.Errorf("auth header format is invalid. must be one of: %s, %s",
 			AuthHeaderFormatJWT,
-			AuthHeaderFormatJsonBase64UrlEncodedClaims,
 			AuthHeaderFormatBearerToken)
 
+	}
+	if o.OIDCIssuerURL == "" {
+		return fmt.Errorf("OIDC issuer url is required")
+	} else if _, err := url.Parse(o.OIDCIssuerURL); err != nil {
+		return fmt.Errorf("OIDC issuer URL is invalid: %w", err)
+	}
+	if len(o.OAuthClientID) == 0 {
+		return fmt.Errorf("OAuth client ID is required")
 	}
 	return nil
 }

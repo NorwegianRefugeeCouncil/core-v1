@@ -220,6 +220,14 @@ EOF
 
 }
 
+variable "oidc_issuer_url" {
+  type        = string
+  description = <<EOF
+The URL of the OIDC issuer.
+EOF
+}
+
+
 variable "container_image" {
   type        = string
   description = <<EOF

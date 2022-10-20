@@ -15,6 +15,7 @@ func buildRouter(
 	globalAdminGroup string,
 	authHeaderName string,
 	authHeaderFormat string,
+	idTokenVerifier IDTokenVerifier,
 	tpl templates,
 ) *mux.Router {
 
@@ -25,10 +26,11 @@ func buildRouter(
 	staticRouter.HandleFunc("/{file:.*}", web.ServeStatic)
 
 	webRouter := r.PathPrefix("").Subrouter()
+
 	webRouter.Use(
 		noCache,
 		logMiddleware,
-		authMiddleware(authHeaderName, authHeaderFormat),
+		authMiddleware(authHeaderName, authHeaderFormat, idTokenVerifier),
 		countriesMiddleware(countryRepo),
 		permissionMiddleware(globalAdminGroup),
 		selectedCountryMiddleware(),

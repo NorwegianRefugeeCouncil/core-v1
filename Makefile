@@ -50,8 +50,8 @@ serve: prerequisites
 		--db-dsn=postgres://postgres:postgres@localhost:5432/core?sslmode=disable \
 		--log-level=debug \
 		--jwt-global-admin-group="NRC_Core_GlobalAdmin" \
-		--auth-header-name="X-Jwt-Payload" \
-		--auth-header-format="json-base64-url-encoded-claims" \
+		--auth-header-name="Authorization" \
+		--auth-header-format="bearer-token" \
 		--logout-url="https://localhost:10000/oauth2/sign_out?rd=https%3A%2F%2Flocalhost:10000%2Fsession%2Fend"
 
 .PHONY: bootstrap
