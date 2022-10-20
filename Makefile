@@ -60,6 +60,13 @@ serve: prerequisites
 bootstrap:
 	@cd web/theme && yarn && yarn build
 
+
+.PHONY: generate
+# Generates source code
+generate: prerequisites
+	@go generate ./...
+	@go fix ./...
+
 .DEFAULT_GOAL := show-help
 # See <https://gist.github.com/klmr/575726c7e05d8780505a> for explanation.
 .PHONY: show-help

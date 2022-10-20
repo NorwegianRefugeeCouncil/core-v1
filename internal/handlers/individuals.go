@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"html/template"
 	"net/http"
 	"time"
 
@@ -13,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo) http.Handler {
+func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 	const (
 		templateName         = "individuals.gohtml"
@@ -34,7 +33,7 @@ func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo
 		)
 
 		render := func() {
-			renderView(templates, templateName, w, r, viewParams{
+			renderer.RenderView(w, r, templateName, map[string]interface{}{
 				viewParamIndividuals: individuals,
 				viewParamOptions:     getAllOptions,
 			})
@@ -76,6 +75,13 @@ func ListHandler(templates map[string]*template.Template, repo db.IndividualRepo
 			// If the selected country ID is not in the list of countries,
 			// return an error.
 			http.Error(w, "country id not found", http.StatusNotFound)
+			return
+		}
+
+		if selectedCountryID == "" && queryCountryID == "" {
+			// If there is no selected country ID and no query country ID,
+			// return an error.
+			http.Redirect(w, r, "/countries/select", http.StatusSeeOther)
 			return
 		}
 
