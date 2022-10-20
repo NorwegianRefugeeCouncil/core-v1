@@ -39,7 +39,7 @@ resource "azurerm_linux_web_app" "app" {
     CORE_OIDC_ISSUER            = var.oidc_issuer_url
     CORE_OAUTH_CLIENT_ID        = var.oidc_client_id
     CORE_REFRESH_TOKEN_BEFORE   = "1h"
-    CORE_REFRESH_TOKEN_URL      = "https://${var.app_name}-${var.environment}}-${random_id.app_id.hex}.azurewebsites.net/.auth/refresh"
+    CORE_REFRESH_TOKEN_URL      = "https://${var.app_name}-${var.environment}-${random_id.app_id.hex}.azurewebsites.net/.auth/refresh"
   }
   sticky_settings {
     app_setting_names = [
