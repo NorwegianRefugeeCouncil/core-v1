@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/auth"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
@@ -39,10 +40,6 @@ func (i idTokenVerifier) Verify(ctx context.Context, rawIDToken string) (IDToken
 
 type IDToken interface {
 	Claims(v interface{}) error
-}
-
-func newIDTokenVerifier(verifier *oidc.IDTokenVerifier) IDTokenVerifier {
-	return idTokenVerifier{verifier: verifier}
 }
 
 func authMiddleware(
@@ -92,33 +89,34 @@ func authMiddleware(
 
 			idToken, err := idTokenVerifier.Verify(ctx, rawIdToken)
 			if err != nil {
-				l.Error("failed to verify token", zap.Error(err))
+				l.Warn("failed to verify token", zap.Error(err))
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
 
 			var tokenClaims TokenClaims
 			if err := idToken.Claims(&tokenClaims); err != nil {
-				l.Error("failed to extract claims from token", zap.Error(err))
+				l.Warn("failed to extract claims from token", zap.Error(err))
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
 
 			if err := validateTokenClaims(tokenClaims); err != nil {
-				l.Error("failed to validate token claims", zap.Error(err))
+				l.Warn("failed to validate token claims", zap.Error(err))
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
 
-			user := &api.User{
-				ID:      fmt.Sprintf("%s:%s", tokenClaims.Iss, tokenClaims.Sub),
-				Issuer:  tokenClaims.Iss,
-				Subject: tokenClaims.Sub,
-				Email:   tokenClaims.Email,
-				Groups:  tokenClaims.Groups,
-			}
+			session := auth.NewAuthenticatedSession(
+				tokenClaims.Groups,
+				tokenClaims.Email,
+				tokenClaims.Iss,
+				tokenClaims.Sub,
+				time.Unix(tokenClaims.Exp, 0),
+				time.Unix(tokenClaims.Iat, 0),
+			)
 
-			ctx = utils.WithUser(ctx, *user)
+			ctx = utils.WithSession(ctx, session)
 			r = r.WithContext(ctx)
 
 			h.ServeHTTP(w, r)

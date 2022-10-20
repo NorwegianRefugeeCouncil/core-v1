@@ -41,7 +41,7 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 	s := &Server{address: o.Address}
 
 	// parse html templates
-	tpl, err := parseTemplates(o.LogoutURL)
+	tpl, err := parseTemplates(o.LogoutURL, o.RefreshTokenURL)
 	if err != nil {
 		return nil, err
 	}

@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/url"
 	"regexp"
+	"time"
 )
 
 type Options struct {
@@ -17,6 +18,8 @@ type Options struct {
 	AuthHeaderFormat    string
 	OIDCIssuerURL       string
 	OAuthClientID       string
+	RefreshTokenURL     string
+	RefreshTokenBefore  time.Duration
 }
 
 var globalAdminGroupRegex = regexp.MustCompile(`^[A-Za-z0-9_-]+(?: +[A-Za-z0-9_-]+)*$`)
@@ -41,11 +44,14 @@ func (o Options) validate() error {
 	if len(o.DatabaseDSN) == 0 {
 		return fmt.Errorf("database DSN is required")
 	}
-	if len(o.LogoutURL) == 0 {
-		return fmt.Errorf("logout URL is required")
+	if err := o.validateRequiredURLOption(o.LogoutURL, "Logout URL"); err != nil {
+		return err
 	}
-	if _, err := url.Parse(o.LogoutURL); err != nil {
-		return fmt.Errorf("logout URL is invalid: %w", err)
+	if err := o.validateRequiredURLOption(o.RefreshTokenURL, "Refresh URL"); err != nil {
+		return err
+	}
+	if o.RefreshTokenBefore <= time.Minute {
+		return fmt.Errorf("minimum value for token refresh duration is 1 minute")
 	}
 	if len(o.JwtGroupGlobalAdmin) == 0 {
 		return fmt.Errorf("JWT group global admin is required")
@@ -63,13 +69,21 @@ func (o Options) validate() error {
 			AuthHeaderFormatBearerToken)
 
 	}
-	if o.OIDCIssuerURL == "" {
-		return fmt.Errorf("OIDC issuer url is required")
-	} else if _, err := url.Parse(o.OIDCIssuerURL); err != nil {
-		return fmt.Errorf("OIDC issuer URL is invalid: %w", err)
+	if err := o.validateRequiredURLOption(o.OIDCIssuerURL, "Issuer URL"); err != nil {
+		return err
 	}
 	if len(o.OAuthClientID) == 0 {
 		return fmt.Errorf("OAuth client ID is required")
+	}
+	return nil
+}
+
+func (o Options) validateRequiredURLOption(u string, name string) error {
+	if len(u) == 0 {
+		return fmt.Errorf("%s is required", name)
+	}
+	if _, err := url.Parse(u); err != nil {
+		return fmt.Errorf("%s is invalid: %w", name, err)
 	}
 	return nil
 }

@@ -23,10 +23,10 @@ func permissionMiddleware(
 			ctx := r.Context()
 			l := logging.NewLogger(ctx)
 
-			user := utils.GetRequestUser(ctx)
-			if user == nil {
-				l.Error("user not found in context")
-				http.Error(w, "Invalid authorization header", http.StatusBadRequest)
+			session, ok := utils.GetSession(ctx)
+			if !ok {
+				l.Error("no session found in context")
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
 
@@ -42,7 +42,7 @@ func permissionMiddleware(
 				allCountryIDs.Add(c.ID)
 			}
 
-			perms := parsePermissions(allCountries, globalAdminGroup, user.Groups)
+			perms := parsePermissions(allCountries, globalAdminGroup, session.GetUserGroups())
 			authIntf := auth.New(perms.countryIds, allCountryIDs, perms.isGlobalAdmin)
 			r = r.WithContext(utils.WithAuthContext(ctx, authIntf))
 			h.ServeHTTP(w, r)

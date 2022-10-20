@@ -15,17 +15,12 @@ func NewLogger(ctx context.Context) *zap.Logger {
 		// request id
 		rid := utils.GetRequestID(ctx)
 		if rid != "" {
-			fields = append(fields, zap.String("request_id", rid))
+			fields = append(fields, zap.String("rid", rid))
 		}
 
-		user := utils.GetRequestUser(ctx)
-		if user != nil {
-			if user.Subject != "" {
-				fields = append(fields, zap.String("user_subject", user.Subject))
-			}
-			if user.Email != "" {
-				fields = append(fields, zap.String("user_email", user.Email))
-			}
+		session, ok := utils.GetSession(ctx)
+		if ok {
+			fields = append(fields, zap.String("user", session.GetUserID()))
 		}
 
 	}
