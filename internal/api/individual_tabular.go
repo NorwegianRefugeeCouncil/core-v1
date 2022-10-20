@@ -9,6 +9,7 @@ import (
 
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/xuri/excelize/v2"
+	"golang.org/x/exp/slices"
 )
 
 // Unmarshal
@@ -99,9 +100,9 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				return err
 			}
 		case constants.FileColumnIndividualIsMinor:
-			i.IsMinor = cols[idx] == "true"
+			i.IsMinor = isTrue(cols[idx])
 		case constants.FileColumnIndividualPresentsProtectionConcerns:
-			i.PresentsProtectionConcerns = cols[idx] == "true"
+			i.PresentsProtectionConcerns = isTrue(cols[idx])
 		case constants.FileColumnIndividualPhysicalImpairment:
 			i.PhysicalImpairment = cols[idx]
 		case constants.FileColumnIndividualSensoryImpairment:
@@ -180,4 +181,10 @@ func (i *Individual) MarshalCSV(csvEncoder *csv.Writer) error {
 	}
 
 	return nil
+}
+
+var TRUE_VALUES = []string{"true", "yes", "1"}
+
+func isTrue(value string) bool {
+	return slices.Contains(TRUE_VALUES, strings.ToLower(value))
 }
