@@ -21,7 +21,7 @@ func UnmarshalIndividualsCSV(reader io.Reader, individuals *[]*Individual, field
 	if err != nil {
 		return err
 	}
-	return unmarshalIndividualsTabularData(records, individuals, fields)
+	return UnmarshalIndividualsTabularData(records, individuals, fields)
 }
 
 func UnmarshalIndividualsExcel(reader io.Reader, individuals *[]*Individual, fields *[]string) error {
@@ -51,10 +51,10 @@ func UnmarshalIndividualsExcel(reader io.Reader, individuals *[]*Individual, fie
 		return err
 	}
 
-	return unmarshalIndividualsTabularData(rows, individuals, fields)
+	return UnmarshalIndividualsTabularData(rows, individuals, fields)
 }
 
-func unmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual, fields *[]string) error {
+func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual, fields *[]string) error {
 	colMapping := map[string]int{}
 	headerRow := data[0]
 	for i, col := range headerRow {
