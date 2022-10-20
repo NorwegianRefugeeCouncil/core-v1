@@ -13,14 +13,20 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
+	"go.uber.org/zap"
 )
 
 func (o Options) New(ctx context.Context) (*Server, error) {
+
+	l := logging.NewLogger(ctx)
+
 	if err := o.validate(); err != nil {
+		l.Error("invalid options", zap.Error(err))
 		return nil, err
 	}
 	sqlDb, err := sqlx.ConnectContext(ctx, o.DatabaseDriver, o.DatabaseDSN)
 	if err != nil {
+		l.Error("failed to connect to db", zap.Error(err))
 		return nil, err
 	}
 	// TODO: make this configurable at some point
@@ -29,6 +35,7 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 	sqlDb.SetConnMaxLifetime(time.Minute * 5)
 
 	if err := db.Migrate(context.Background(), sqlDb); err != nil {
+		l.Error("failed to migrate database", zap.Error(err))
 		return nil, err
 	}
 
@@ -43,12 +50,14 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 	// parse html templates
 	tpl, err := parseTemplates(o.LogoutURL)
 	if err != nil {
+		l.Error("failed to parse templates", zap.Error(err))
 		return nil, err
 	}
 
 	// create the oidc provider
 	oidcProvider, err := oidc.NewProvider(ctx, o.OIDCIssuerURL)
 	if err != nil {
+		l.Error("failed to get oidc provider", zap.Error(err))
 		return nil, err
 	}
 
