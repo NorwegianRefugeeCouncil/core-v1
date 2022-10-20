@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 
+	gorillahandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/handlers"
@@ -20,7 +21,11 @@ func buildRouter(
 ) *mux.Router {
 
 	r := mux.NewRouter()
-	r.Use(requestIdMiddleware)
+	r.Use(
+		gorillahandlers.RecoveryHandler(),
+		gorillahandlers.CompressHandler,
+		requestIdMiddleware,
+	)
 
 	staticRouter := r.PathPrefix("/static").Subrouter()
 	staticRouter.HandleFunc("/{file:.*}", web.ServeStatic)
