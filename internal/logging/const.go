@@ -15,7 +15,7 @@ func NewLogger(ctx context.Context) *zap.Logger {
 		// request id
 		rid := utils.GetRequestID(ctx)
 		if rid != "" {
-			fields = append(fields, zap.String("rid", rid))
+			fields = append(fields, zap.String("request_id", rid))
 		}
 
 		session, ok := utils.GetSession(ctx)
