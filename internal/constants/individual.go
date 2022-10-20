@@ -28,6 +28,22 @@ const (
 	FormParamGetIndividualsCountryID           = "country_id"
 	FormParamsGetIndividualsDisplacementStatus = "displacement_status"
 
+	DBColumnIndividualID                         = "id"
+	DBColumnIndividualAddress                    = "address"
+	DBColumnIndividualBirthDate                  = "birth_date"
+	DBColumnIndividualCountryID                  = "country_id"
+	DBColumnIndividualDisplacementStatus         = "displacement_status"
+	DBColumnIndividualEmail                      = "email"
+	DBColumnIndividualFullName                   = "full_name"
+	DBColumnIndividualGender                     = "gender"
+	DBColumnIndividualIsMinor                    = "is_minor"
+	DBColumnIndividualMentalImpairment           = "mental_impairment"
+	DBColumnIndividualPhoneNumber                = "phone_number"
+	DBColumnIndividualPhysicalImpairment         = "physical_impairment"
+	DBColumnIndividualPreferredName              = "preferred_name"
+	DBColumnIndividualPresentsProtectionConcerns = "presents_protection_concerns"
+	DBColumnIndividualSensoryImpairment          = "sensory_impairment"
+
 	FileColumnIndividualID                         = "id"
 	FileColumnIndividualAddress                    = "address"
 	FileColumnIndividualBirthDate                  = "birth_date"
@@ -44,3 +60,75 @@ const (
 	FileColumnIndividualPresentsProtectionConcerns = "presents_protection_concerns"
 	FileColumnIndividualSensoryImpairment          = "sensory_impairment"
 )
+
+var IndividualDBColumns = []string{
+	DBColumnIndividualID,
+	DBColumnIndividualAddress,
+	DBColumnIndividualBirthDate,
+	DBColumnIndividualCountryID,
+	DBColumnIndividualDisplacementStatus,
+	DBColumnIndividualEmail,
+	DBColumnIndividualFullName,
+	DBColumnIndividualGender,
+	DBColumnIndividualIsMinor,
+	DBColumnIndividualMentalImpairment,
+	DBColumnIndividualPhoneNumber,
+	DBColumnIndividualPhysicalImpairment,
+	DBColumnIndividualPreferredName,
+	DBColumnIndividualPresentsProtectionConcerns,
+	DBColumnIndividualSensoryImpairment,
+}
+
+var IndividualFileColumns = []string{
+	FileColumnIndividualID,
+	FileColumnIndividualAddress,
+	FileColumnIndividualBirthDate,
+	FileColumnIndividualCountryID,
+	FileColumnIndividualDisplacementStatus,
+	FileColumnIndividualEmail,
+	FileColumnIndividualFullName,
+	FileColumnIndividualGender,
+	FileColumnIndividualIsMinor,
+	FileColumnIndividualMentalImpairment,
+	FileColumnIndividualPhoneNumber,
+	FileColumnIndividualPhysicalImpairment,
+	FileColumnIndividualPreferredName,
+	FileColumnIndividualPresentsProtectionConcerns,
+	FileColumnIndividualSensoryImpairment,
+}
+
+var IndividualDBToFileMap = map[string]string{
+	DBColumnIndividualID:                         FileColumnIndividualID,
+	DBColumnIndividualAddress:                    FileColumnIndividualAddress,
+	DBColumnIndividualBirthDate:                  FileColumnIndividualBirthDate,
+	DBColumnIndividualCountryID:                  FileColumnIndividualCountryID,
+	DBColumnIndividualDisplacementStatus:         FileColumnIndividualDisplacementStatus,
+	DBColumnIndividualEmail:                      FileColumnIndividualEmail,
+	DBColumnIndividualFullName:                   FileColumnIndividualFullName,
+	DBColumnIndividualGender:                     FileColumnIndividualGender,
+	DBColumnIndividualIsMinor:                    FileColumnIndividualIsMinor,
+	DBColumnIndividualMentalImpairment:           FileColumnIndividualMentalImpairment,
+	DBColumnIndividualPhoneNumber:                FileColumnIndividualPhoneNumber,
+	DBColumnIndividualPhysicalImpairment:         FileColumnIndividualPhysicalImpairment,
+	DBColumnIndividualPreferredName:              FileColumnIndividualPreferredName,
+	DBColumnIndividualPresentsProtectionConcerns: FileColumnIndividualPresentsProtectionConcerns,
+	DBColumnIndividualSensoryImpairment:          FileColumnIndividualSensoryImpairment,
+}
+
+var IndividualFileToDBMap = map[string]string{
+	FileColumnIndividualID:                         DBColumnIndividualID,
+	FileColumnIndividualAddress:                    DBColumnIndividualAddress,
+	FileColumnIndividualBirthDate:                  DBColumnIndividualBirthDate,
+	FileColumnIndividualCountryID:                  DBColumnIndividualCountryID,
+	FileColumnIndividualDisplacementStatus:         DBColumnIndividualDisplacementStatus,
+	FileColumnIndividualEmail:                      DBColumnIndividualEmail,
+	FileColumnIndividualFullName:                   DBColumnIndividualFullName,
+	FileColumnIndividualGender:                     DBColumnIndividualGender,
+	FileColumnIndividualIsMinor:                    DBColumnIndividualIsMinor,
+	FileColumnIndividualMentalImpairment:           DBColumnIndividualMentalImpairment,
+	FileColumnIndividualPhoneNumber:                DBColumnIndividualPhoneNumber,
+	FileColumnIndividualPhysicalImpairment:         DBColumnIndividualPhysicalImpairment,
+	FileColumnIndividualPreferredName:              DBColumnIndividualPreferredName,
+	FileColumnIndividualPresentsProtectionConcerns: DBColumnIndividualPresentsProtectionConcerns,
+	FileColumnIndividualSensoryImpairment:          DBColumnIndividualSensoryImpairment,
+}
