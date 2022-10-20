@@ -19,4 +19,21 @@
     <body>
     {{template "body" .}}
     </body>
+    {{ if .RequestContext.Session.IsAuthenticated }}
+        {{ $refreshURL := refreshURL }}
+        {{ if $refreshURL }}
+            {{ if (lt ((.RequestContext.Session.GetExpiration).Sub time.Now) (time.Minute 45))}}
+                <script type="application/javascript">
+                    fetch({{$refreshURL}}, {method: 'GET'}).catch(e => {
+                        console.log("error renewing session", e)
+                    }).then(function (response) {
+                        console.log("refreshed token")
+                        if (response.redirected) {
+                            window.location = response.url;
+                        }
+                    });
+                </script>
+            {{end}}
+        {{end}}
+    {{end}}
 {{end}}
