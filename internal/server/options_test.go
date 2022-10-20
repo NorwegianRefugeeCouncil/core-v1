@@ -47,8 +47,14 @@ func (o Options) WithAuthHeaderBearerToken() Options {
 	return o.WithAuthHeaderFormat(AuthHeaderFormatBearerToken)
 }
 
-func (o Options) WithAuthHeaderFormatJsonBase64UrlEncodedClaims() Options {
-	return o.WithAuthHeaderFormat(AuthHeaderFormatJsonBase64UrlEncodedClaims)
+func (o Options) WithOIDCIssuerURL(oidcIssuerURL string) Options {
+	o.OIDCIssuerURL = oidcIssuerURL
+	return o
+}
+
+func (o Options) WithOAuthClientID(oauthClientID string) Options {
+	o.OAuthClientID = oauthClientID
+	return o
 }
 
 func validOptions() Options {
@@ -60,6 +66,8 @@ func validOptions() Options {
 		JwtGroupGlobalAdmin: "global-admin",
 		AuthHeaderName:      "X-Auth-Token",
 		AuthHeaderFormat:    AuthHeaderFormatJWT,
+		OIDCIssuerURL:       "https://foo",
+		OAuthClientID:       "bar",
 	}
 }
 
@@ -82,11 +90,6 @@ func TestOptions_validate(t *testing.T) {
 		{
 			name:    "valid with bearer token auth header format",
 			options: validOptions().WithAuthHeaderBearerToken(),
-			wantErr: false,
-		},
-		{
-			name:    "valid with json base64 url encoded claims auth header format",
-			options: validOptions().WithAuthHeaderFormatJsonBase64UrlEncodedClaims(),
 			wantErr: false,
 		},
 		{
@@ -142,6 +145,21 @@ func TestOptions_validate(t *testing.T) {
 		{
 			name:    "Auth header name is invalid",
 			options: validOptions().WithAuthHeaderName("   "),
+			wantErr: true,
+		},
+		{
+			name:    "OIDC Issuer URL is required",
+			options: validOptions().WithOIDCIssuerURL(""),
+			wantErr: true,
+		},
+		{
+			name:    "OIDC Issuer URL is invalid",
+			options: validOptions().WithOIDCIssuerURL(string([]byte{0x7f})),
+			wantErr: true,
+		},
+		{
+			name:    "OAuth Client ID is required",
+			options: validOptions().WithOAuthClientID(""),
 			wantErr: true,
 		},
 	}

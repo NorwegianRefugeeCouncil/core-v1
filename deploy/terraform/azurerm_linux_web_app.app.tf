@@ -36,6 +36,8 @@ resource "azurerm_linux_web_app" "app" {
     CORE_AUTH_HEADER_NAME       = "x-ms-token-oidc-id-token"
     CORE_AUTH_HEADER_FORMAT     = "jwt"
     DOCKER_CUSTOM_IMAGE_NAME    = "${var.container_image}:${var.container_image_tag}"
+    CORE_OIDC_ISSUER            = var.oidc_issuer_url
+    CORE_OAUTH_CLIENT_ID        = var.oidc_client_id
   }
   sticky_settings {
     app_setting_names = [

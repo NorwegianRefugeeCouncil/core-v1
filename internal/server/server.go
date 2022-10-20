@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -22,6 +23,7 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
+	// TODO: make this configurable at some point
 	sqlDb.SetMaxIdleConns(5)
 	sqlDb.SetMaxOpenConns(10)
 	sqlDb.SetConnMaxLifetime(time.Minute * 5)
@@ -30,24 +32,41 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 		return nil, err
 	}
 
+	// create the individual db repository
 	individualRepo := db.NewIndividualRepo(sqlDb)
+
+	// create the country db repository
 	countryRepo := db.NewCountryRepo(sqlDb)
 
-	s := &Server{
-		address: o.Address,
-	}
+	s := &Server{address: o.Address}
 
+	// parse html templates
 	tpl, err := parseTemplates(o.LogoutURL)
 	if err != nil {
 		return nil, err
 	}
 
+	// create the oidc provider
+	oidcProvider, err := oidc.NewProvider(ctx, o.OIDCIssuerURL)
+	if err != nil {
+		return nil, err
+	}
+
+	// create the id token verifier
+	oidcVerifier := oidcProvider.Verifier(&oidc.Config{
+		ClientID:             o.OAuthClientID,
+		SupportedSigningAlgs: []string{oidc.RS256},
+	})
+	idTokenVerifier := newIDTokenVerifier(oidcVerifier)
+
+	// build the router
 	s.router = buildRouter(
 		individualRepo,
 		countryRepo,
 		o.JwtGroupGlobalAdmin,
 		o.AuthHeaderName,
 		o.AuthHeaderFormat,
+		idTokenVerifier,
 		tpl)
 
 	return s, nil
