@@ -1,10 +1,11 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/nrc-no/notcore/cmd/mockdata"
 	"github.com/spf13/cobra"
 )
@@ -19,21 +20,29 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		mockdata.Generate()
+	RunE: func(cmd *cobra.Command, args []string) error {
+		countryID, err := cmd.Flags().GetString("country-id")
+		if err != nil {
+			return err
+		}
+		if countryID == "" {
+			return fmt.Errorf("country-id is required")
+		}
+
+		count, err := cmd.Flags().GetUint("count")
+		if err != nil {
+			return err
+		}
+		if count == 0 {
+			return fmt.Errorf("count is required")
+		}
+
+		return mockdata.Generate(countryID, count)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(mockDataCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// mockDataCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// mockDataCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	mockDataCmd.PersistentFlags().String("country-id", "", "Country ID")
+	mockDataCmd.PersistentFlags().Uint("count", 0, "Number of records to generate")
 }
