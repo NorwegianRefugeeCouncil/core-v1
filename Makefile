@@ -52,6 +52,8 @@ serve: prerequisites
 		--jwt-global-admin-group="NRC_Core_GlobalAdmin" \
 		--auth-header-name="Authorization" \
 		--auth-header-format="bearer-token" \
+		--oidc-issuer="https://localhost:10000" \
+		--oauth-client-id="foo" \
 		--logout-url="https://localhost:10000/oauth2/sign_out?rd=https%3A%2F%2Flocalhost:10000%2Fsession%2Fend"
 
 .PHONY: bootstrap
