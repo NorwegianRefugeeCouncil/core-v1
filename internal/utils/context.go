@@ -8,15 +8,14 @@ import (
 	"github.com/nrc-no/notcore/internal/auth"
 )
 
+type key uint8
+
 const (
-	keyRequestID              = "__request_id"
-	keyRequestUserSubject     = "__request_user_subject"
-	keyRequestUserEmail       = "__request_user_email"
-	keyRequestUser            = "__request_user"
-	keyRequestUserPermissions = "__request_user_permissions"
-	keyAuthContext            = "__request_auth"
-	keyCountries              = "__request_countries"
-	keySelectedCountryID      = "__request_selected_country"
+	keyRequestID key = iota
+	keyRequestSession
+	keyAuthContext
+	keyCountries
+	keySelectedCountryID
 )
 
 func WithRequestID(ctx context.Context, id string) context.Context {
@@ -30,21 +29,21 @@ func GetRequestID(ctx context.Context) string {
 	return ""
 }
 
-func WithUser(ctx context.Context, user api.User) context.Context {
-	ctx = context.WithValue(ctx, keyRequestUser, user)
+func WithSession(ctx context.Context, session auth.Session) context.Context {
+	ctx = context.WithValue(ctx, keyRequestSession, session)
 	return ctx
 }
 
-func GetRequestUser(ctx context.Context) *api.User {
+func GetSession(ctx context.Context) (auth.Session, bool) {
 	if ctx == nil {
-		return nil
+		return nil, false
 	}
-	if user := ctx.Value(keyRequestUser); user != nil {
-		if u, ok := user.(api.User); ok {
-			return &u
+	if session := ctx.Value(keyRequestSession); session != nil {
+		if s, ok := session.(auth.Session); ok {
+			return s, true
 		}
 	}
-	return nil
+	return nil, false
 }
 
 func WithAuthContext(ctx context.Context, authCtx auth.Interface) context.Context {

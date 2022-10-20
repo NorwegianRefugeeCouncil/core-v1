@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/nrc-no/notcore/internal/server"
 	"github.com/spf13/cobra"
@@ -17,6 +18,8 @@ const (
 	envDbDriver            = "CORE_DB_DRIVER"
 	envListenAddress       = "CORE_LISTEN_ADDRESS"
 	envLogoutURL           = "CORE_LOGOUT_URL"
+	envRefreshTokenURL     = "CORE_REFRESH_TOKEN_URL"
+	envRefreshTokenBefore  = "CORE_REFRESH_TOKEN_BEFORE"
 	envJwtGlobalAdminGroup = "CORE_JWT_GLOBAL_ADMIN_GROUP"
 	envAuthHeaderName      = "CORE_AUTH_HEADER_NAME"
 	envAuthHeaderFormat    = "CORE_AUTH_HEADER_FORMAT"
@@ -27,6 +30,8 @@ const (
 	flagDbDriver            = "db-driver"
 	flagListenAddress       = "listen-address"
 	flagLogoutURL           = "logout-url"
+	flagRefreshTokenURL     = "refresh-token-url"
+	flagRefreshTokenBefore  = "refresh-token-before"
 	flagJwtGlobalAdminGroup = "jwt-global-admin-group"
 	flagAuthHeaderName      = "auth-header-name"
 	flagAuthHeaderFormat    = "auth-header-format"
@@ -78,6 +83,20 @@ var serveCmd = &cobra.Command{
 			return fmt.Errorf("--%s is required", flagLogoutURL)
 		}
 
+		refreshURL := getFlagOrEnv(cmd, flagRefreshTokenURL, envRefreshTokenURL)
+		if len(refreshURL) == 0 {
+			return fmt.Errorf("--%s is required", flagRefreshTokenURL)
+		}
+
+		refreshTokenBefore := getFlagOrEnv(cmd, flagRefreshTokenBefore, envRefreshTokenBefore)
+		if refreshTokenBefore == "0s" {
+			return fmt.Errorf("--%s is required", flagRefreshTokenBefore)
+		}
+		refreshBeforeDuration, err := time.ParseDuration(refreshTokenBefore)
+		if err != nil {
+			return fmt.Errorf("--%s is invalid: %w", flagRefreshTokenBefore, err)
+		}
+
 		authHeaderName := getFlagOrEnv(cmd, flagAuthHeaderName, envAuthHeaderName)
 		if len(authHeaderName) == 0 {
 			return fmt.Errorf("--%s is required", flagAuthHeaderName)
@@ -103,6 +122,8 @@ var serveCmd = &cobra.Command{
 			DatabaseDriver:      dbDriver,
 			DatabaseDSN:         dbDsn,
 			LogoutURL:           logoutURL,
+			RefreshTokenURL:     refreshURL,
+			RefreshTokenBefore:  refreshBeforeDuration,
 			JwtGroupGlobalAdmin: jwtGroupGlobalAdmin,
 			AuthHeaderName:      authHeaderName,
 			AuthHeaderFormat:    authHeaderFormat,
@@ -132,6 +153,7 @@ func init() {
 	serveCmd.PersistentFlags().String(flagDbDriver, "", fmt.Sprintf("database driver. Can also be set with %s", envDbDriver))
 	serveCmd.PersistentFlags().String(flagDbDSN, "", fmt.Sprintf("database dsn. Can also be set with %s", envDbDSN))
 	serveCmd.PersistentFlags().String(flagLogoutURL, "", fmt.Sprintf("logout url. Can also be set with %s", envLogoutURL))
+	serveCmd.PersistentFlags().String(flagRefreshTokenURL, "", fmt.Sprintf("session refresh url. Can also be set with %s", envRefreshTokenURL))
 	serveCmd.PersistentFlags().String(flagJwtGlobalAdminGroup, "", fmt.Sprintf("jwt global admin group. Can also be set with %s", envJwtGlobalAdminGroup))
 	serveCmd.PersistentFlags().String(flagAuthHeaderName, "", fmt.Sprintf("auth header name. Can also be set with %s", envAuthHeaderName))
 	serveCmd.PersistentFlags().String(flagAuthHeaderFormat, "", fmt.Sprintf(`auth header format. Can also be set with %s. Allowed values are "%s", "%s"`,
@@ -140,6 +162,7 @@ func init() {
 		server.AuthHeaderFormatBearerToken))
 	serveCmd.PersistentFlags().String(flagOidcIssuer, "", fmt.Sprintf("oidc issuer. Can also be set with %s", envOidcIssuer))
 	serveCmd.PersistentFlags().String(flagOidcClientID, "", fmt.Sprintf("oauth client id. Can also be set with %s", envOidcClientID))
+	serveCmd.PersistentFlags().Duration(flagRefreshTokenBefore, 0, fmt.Sprintf("refresh token before. Can also be set with %s", envRefreshTokenBefore))
 }
 
 func getFlagOrEnv(cmd *cobra.Command, flagName string, envName string) string {

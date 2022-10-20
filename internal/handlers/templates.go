@@ -97,12 +97,12 @@ type RequestContext struct {
 	Request *http.Request
 	// Auth is the auth.Interface
 	Auth auth.Interface
-	// User is the current user
-	User *api.User
 	// Countries is the list of all countries
 	Countries []*api.Country
 	// SelectedCountry is the selected country. May be nil
 	SelectedCountry *api.Country
+	// Session is the current user session
+	Session auth.Session
 }
 
 func (r RequestContext) SelectedCountryID() string {
@@ -176,6 +176,13 @@ func renderView(
 		return
 	}
 
+	session, ok := utils.GetSession(ctx)
+	if !ok {
+		l.Error("failed to get session")
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
 	var selectedCountry *api.Country
 	if len(selectedCountryID) != 0 {
 		for _, c := range countries {
@@ -187,11 +194,11 @@ func renderView(
 	}
 
 	rc := RequestContext{
-		User:            utils.GetRequestUser(r.Context()),
 		Request:         r,
 		Auth:            authIntf,
 		Countries:       countries,
 		SelectedCountry: selectedCountry,
+		Session:         session,
 	}
 	vd[vd.RequestContextKey()] = rc
 

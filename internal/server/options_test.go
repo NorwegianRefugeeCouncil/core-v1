@@ -2,6 +2,7 @@ package server
 
 import (
 	"testing"
+	"time"
 )
 
 func (o Options) WithAddress(address string) Options {
@@ -21,6 +22,16 @@ func (o Options) WithDatabaseDSN(databaseDSN string) Options {
 
 func (o Options) WithLogoutURL(logoutURL string) Options {
 	o.LogoutURL = logoutURL
+	return o
+}
+
+func (o Options) WithRefreshURL(refreshURL string) Options {
+	o.RefreshTokenURL = refreshURL
+	return o
+}
+
+func (o Options) WithRefreshTokenBefore(refreshTokenBefore time.Duration) Options {
+	o.RefreshTokenBefore = refreshTokenBefore
 	return o
 }
 
@@ -63,6 +74,8 @@ func validOptions() Options {
 		DatabaseDriver:      "postgres",
 		DatabaseDSN:         "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable",
 		LogoutURL:           "http://localhost:8080",
+		RefreshTokenURL:     "http://localhost:8080",
+		RefreshTokenBefore:  5 * time.Minute,
 		JwtGroupGlobalAdmin: "global-admin",
 		AuthHeaderName:      "X-Auth-Token",
 		AuthHeaderFormat:    AuthHeaderFormatJWT,
@@ -125,6 +138,16 @@ func TestOptions_validate(t *testing.T) {
 		{
 			name:    "logout URL is invalid",
 			options: validOptions().WithLogoutURL(string([]byte{0x7f})),
+			wantErr: true,
+		},
+		{
+			name:    "refresh URL is invalid",
+			options: validOptions().WithRefreshURL(string([]byte{0x7f})),
+			wantErr: true,
+		},
+		{
+			name:    "refresh token before is invalid",
+			options: validOptions().WithRefreshTokenBefore(-1 * time.Second),
 			wantErr: true,
 		},
 		{
