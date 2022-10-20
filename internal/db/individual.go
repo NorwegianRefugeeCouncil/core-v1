@@ -186,7 +186,6 @@ func (i individualRepo) getByIdInternal(ctx context.Context, tx *sqlx.Tx, id str
 	var ret = api.Individual{}
 	err := tx.GetContext(ctx, &ret, "SELECT * FROM individuals WHERE id = $1", id)
 	if err != nil {
-		l.Error("failed to get individual", zap.Error(err))
 		return nil, err
 	}
 	return &ret, nil

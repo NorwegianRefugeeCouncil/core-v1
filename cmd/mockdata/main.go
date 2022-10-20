@@ -4,14 +4,12 @@ import (
 	"encoding/csv"
 	"math/rand"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/manveru/faker"
-	"github.com/rs/xid"
 )
 
-func Generate() error {
+func Generate(countryID string, count uint) error {
 
 	f, err := faker.New("en")
 	if err != nil {
@@ -25,7 +23,6 @@ func Generate() error {
 
 	writer := csv.NewWriter(file)
 	if err := writer.Write([]string{
-		"id",
 		"full_name",
 		"preferred_name",
 		"email",
@@ -39,11 +36,11 @@ func Generate() error {
 		"sensory_impairment",
 		"mental_impairment",
 		"displacement_status",
-		"countries",
+		"country_id",
 	}); err != nil {
 		return err
 	}
-	for i := 0; i < 200; i++ {
+	for i := 0; i < int(count); i++ {
 
 		var name = f.Name()
 		var preferredName = name
@@ -119,26 +116,7 @@ func Generate() error {
 			displacementStatus = "host_community"
 		}
 
-		var countries = []string{}
-		if randBool(20) {
-			countries = append(countries, "kenya")
-		}
-		if randBool(20) {
-			countries = append(countries, "uganda")
-		}
-		if randBool(20) {
-			countries = append(countries, "colombia")
-		}
-		if randBool(20) {
-			countries = append(countries, "ukraine")
-		}
-		var countriesStr = ""
-		if len(countries) > 0 {
-			countriesStr = strings.Join(countries, ",")
-		}
-
 		if err := writer.Write([]string{
-			xid.New().String(),
 			name,
 			preferredName,
 			email,
@@ -152,7 +130,7 @@ func Generate() error {
 			sensoryImpairment,
 			mentalImpairment,
 			displacementStatus,
-			countriesStr,
+			countryID,
 		}); err != nil {
 			return err
 		}
