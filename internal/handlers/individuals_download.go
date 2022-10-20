@@ -6,20 +6,55 @@ import (
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
+	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
 )
 
-const queryParamFormat = "format"
+
 
 func HandleDownload(
 	userRepo db.IndividualRepo,
 ) http.Handler {
+
+	const queryParamFormat = "format"
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		var (
 			ctx = r.Context()
 			l   = logging.NewLogger(ctx)
 		)
+
+		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
+		if err != nil {
+			l.Error("failed to get selected country id", zap.Error(err))
+			http.Error(w, "couldn't get selected country id: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		authIntf, err := utils.GetAuthContext(ctx)
+		if err != nil {
+			l.Error("failed to get auth context", zap.Error(err))
+			http.Error(w, "couldn't get auth context: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if !authIntf.CanReadWriteToCountryID(selectedCountryID) {
+			l.Warn("user does not have permission to download individuals", zap.Error(err))
+			http.Error(w, "user does not have permission to download individuals", http.StatusForbidden)
+			return
+		}
+
+		var getAllOptions api.GetAllOptions
+		if err := parseGetAllOptions(r, &getAllOptions); err != nil {
+			l.Error("failed to parse options", zap.Error(err))
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		getAllOptions.CountryID = selectedCountryID
+		getAllOptions.Take = 0
+		getAllOptions.Skip = 0
 
 		format := r.URL.Query().Get(queryParamFormat)
 		if format == "" {
