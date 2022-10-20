@@ -61,6 +61,18 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 			return
 		}
 
+		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
+		if err != nil {
+			l.Error("failed to get selected country id", zap.Error(err))
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		for _, individual := range individuals {
+			individual.CountryID = selectedCountryID
+			fields = append(fields, "country_id")
+		}
+
 		for _, individual := range individuals {
 			if !authIntf.CanReadWriteToCountryID(individual.CountryID) {
 				l.Warn("user does not have permission to upload individuals to country", zap.String("country_id", individual.CountryID))
