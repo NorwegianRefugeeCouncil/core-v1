@@ -2,43 +2,79 @@ package api
 
 import (
 	"encoding/csv"
+	"errors"
 	"io"
 	"strconv"
 	"strings"
 
 	"github.com/nrc-no/notcore/internal/constants"
+	"github.com/xuri/excelize/v2"
+	"golang.org/x/exp/slices"
 )
 
-func UnmarshalIndividualsCSV(reader io.Reader, values *[]*Individual) ([]string, error) {
+// Unmarshal
+
+func UnmarshalIndividualsCSV(reader io.Reader, individuals *[]*Individual, fields *[]string) error {
 	csvReader := csv.NewReader(reader)
 	csvReader.TrimLeadingSpace = true
 	records, err := csvReader.ReadAll()
 	if err != nil {
-		return nil, err
+		return err
+	}
+	return UnmarshalIndividualsTabularData(records, individuals, fields)
+}
+
+func UnmarshalIndividualsExcel(reader io.Reader, individuals *[]*Individual, fields *[]string) error {
+	f, err := excelize.OpenReader(reader)
+
+	if err != nil {
+		return err
 	}
 
-	var fields []string
+	// defer func() {
+	// 	if err := f.Close(); err != nil {
+	// 	}
+	// }()
+
+	sheets := f.GetSheetList()
+	if len(sheets) == 0 {
+		err := errors.New("no sheets found")
+		return err
+	}
+
+	rows, err := f.GetRows(sheets[0])
+	if err != nil {
+		return err
+	}
+	if len(rows) == 0 {
+		err := errors.New("no rows found")
+		return err
+	}
+
+	return UnmarshalIndividualsTabularData(rows, individuals, fields)
+}
+
+func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual, fields *[]string) error {
 	colMapping := map[string]int{}
-	headerRow := records[0]
-	fields = make([]string, len(headerRow))
+	headerRow := data[0]
 	for i, col := range headerRow {
-		fields[i] = trimString(col)
+		*fields = append(*fields, constants.IndividualFileToDBMap[trimString(col)])
 		col = trimString(col)
 		colMapping[strings.Trim(col, " \n\t\r")] = i
 	}
 
-	for _, cols := range records[1:] {
+	for _, cols := range data[1:] {
 		individual := &Individual{}
-		if err := individual.UnmarshalCSV(colMapping, cols); err != nil {
-			return nil, err
+		if err := individual.unmarshalTabularData(colMapping, cols); err != nil {
+			return err
 		}
-		*values = append(*values, individual)
+		*individuals = append(*individuals, individual)
 	}
 
-	return fields, nil
+	return nil
 }
 
-func (i *Individual) UnmarshalCSV(colMapping map[string]int, cols []string) error {
+func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []string) error {
 	var err error
 	for field, idx := range colMapping {
 		switch field {
@@ -64,9 +100,9 @@ func (i *Individual) UnmarshalCSV(colMapping map[string]int, cols []string) erro
 				return err
 			}
 		case constants.FileColumnIndividualIsMinor:
-			i.IsMinor = cols[idx] == "true"
+			i.IsMinor = isTrue(cols[idx])
 		case constants.FileColumnIndividualPresentsProtectionConcerns:
-			i.PresentsProtectionConcerns = cols[idx] == "true"
+			i.PresentsProtectionConcerns = isTrue(cols[idx])
 		case constants.FileColumnIndividualPhysicalImpairment:
 			i.PhysicalImpairment = cols[idx]
 		case constants.FileColumnIndividualSensoryImpairment:
@@ -81,6 +117,8 @@ func (i *Individual) UnmarshalCSV(colMapping map[string]int, cols []string) erro
 	i.Normalize()
 	return nil
 }
+
+// Marshal
 
 func MarshalIndividualsCSV(w io.Writer, individuals []*Individual) error {
 	csvEncoder := csv.NewWriter(w)
@@ -143,4 +181,10 @@ func (i *Individual) MarshalCSV(csvEncoder *csv.Writer) error {
 	}
 
 	return nil
+}
+
+var TRUE_VALUES = []string{"true", "yes", "1"}
+
+func isTrue(value string) bool {
+	return slices.Contains(TRUE_VALUES, strings.ToLower(value))
 }

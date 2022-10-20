@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
@@ -46,6 +48,8 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 			return
 		}
 
+		filename := r.MultipartForm.File[formParamFile][0].Filename
+
 		formFile, _, err := r.FormFile(formParamFile)
 		if err != nil {
 			l.Error("failed to get form file", zap.Error(err))
@@ -54,10 +58,23 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 		}
 
 		var individuals []*api.Individual
-		fields, err := api.UnmarshalIndividualsCSV(formFile, &individuals)
-		if err != nil {
-			l.Error("failed to parse csv", zap.Error(err))
-			http.Error(w, "failed to parse csv: "+err.Error(), http.StatusBadRequest)
+		var fields []string
+
+		if strings.HasSuffix(filename, ".csv") {
+			if err = api.UnmarshalIndividualsCSV(formFile, &individuals, &fields); err != nil {
+				l.Error("failed to parse csv", zap.Error(err))
+				http.Error(w, "failed to parse csv: "+err.Error(), http.StatusBadRequest)
+				return
+			}
+		} else if strings.HasSuffix(filename, ".xlsx") || strings.HasSuffix(filename, ".xls") {
+			if err = api.UnmarshalIndividualsExcel(formFile, &individuals, &fields); err != nil {
+				l.Error("failed to parse excel file", zap.Error(err))
+				http.Error(w, "failed to parse excel file: "+err.Error(), http.StatusBadRequest)
+				return
+			}
+		} else {
+			l.Error(fmt.Sprintf("unsupported content type: %s", r.Header.Get("Content-Type")))
+			http.Error(w, "invalid content type", http.StatusBadRequest)
 			return
 		}
 
