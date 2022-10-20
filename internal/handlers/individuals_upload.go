@@ -70,6 +70,7 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 
 		for _, individual := range individuals {
 			individual.CountryID = selectedCountryID
+			fields = append(fields, "country_id")
 		}
 
 		for _, individual := range individuals {
