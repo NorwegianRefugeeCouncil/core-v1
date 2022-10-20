@@ -52,7 +52,7 @@ func buildRouter(
 	webRouter.Path("/countries/select").Handler(handlers.HandleCountrySelector(tpl))
 	webRouter.Path("/countries/select/{country_id}").Handler(handlers.HandleSelectCountry())
 	webRouter.Path("/countries/{country_id}").Handler(handlers.HandleCountry(tpl, countryRepo))
-	webRouter.PathPrefix("").Handler(handlers.HandleIndex(tpl))
+	webRouter.PathPrefix("").Handler(handlers.HandleHome(tpl))
 	return r
 }
 

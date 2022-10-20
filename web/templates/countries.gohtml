@@ -4,11 +4,11 @@
     <header class="sticky-top">
         {{template "nav" .}}
     </header>
-    <main class="bg-secondary" style="height: calc( 100vh - 3.5rem ); overflow: hidden; overflow-y: scroll">
+    <main style="height: calc( 100vh - 3.5rem ); overflow: hidden; overflow-y: scroll">
         <div class="container mt-4">
             <div class="row">
                 <div class="col-12 mb-3 mt-3 col-md-4 mt-md-0 order-md-last">
-                    <div class="card shadow mb-3">
+                    <div class="card  mb-3">
                         <div class="card-header">
                             Actions
                         </div>
@@ -18,30 +18,28 @@
                     </div>
                 </div>
                 <div class="col-12 col-md-8">
-                    <div class="card shadow">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Code</th>
-                                <th>Name</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {{ if $.RequestContext.Countries }}
-                                {{range $.RequestContext.Countries}}
-                                    <tr>
-                                        <td class="font-monospace"><code>{{.Code}}</code></td>
-                                        <td><a href="/countries/{{.ID}}">{{.Name}}</a></td>
-                                    </tr>
-                                {{end}}
-                            {{else}}
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Name</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{ if $.RequestContext.Countries }}
+                            {{range $.RequestContext.Countries}}
                                 <tr>
-                                    <td>No countries found</td>
+                                    <td class="font-monospace"><code>{{.Code}}</code></td>
+                                    <td><a href="/countries/{{.ID}}">{{.Name}}</a></td>
                                 </tr>
                             {{end}}
-                            </tbody>
-                        </table>
-                    </div>
+                        {{else}}
+                            <tr>
+                                <td>No countries found</td>
+                            </tr>
+                        {{end}}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

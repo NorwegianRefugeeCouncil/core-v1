@@ -4,12 +4,12 @@
     <header class="sticky-top">
         {{template "nav" .}}
     </header>
-    <main class="bg-secondary" style="height: calc( 100vh - 3.5rem ); overflow: hidden; overflow-y: scroll">
+    <main style="height: calc( 100vh - 3.5rem ); overflow: hidden; overflow-y: scroll">
         <div class="container mt-3">
             <form method="post" action="/countries/{{if eq "" .Country.ID}}new{{else}}{{.Country.ID}}{{end}}">
                 <div class="row">
                     <div class="col">
-                        <div class="card shadow">
+                        <div class="card">
                             <div class="card-header">
                                 {{if .Country.ID}}
                                     {{.Country.Name}}
@@ -17,66 +17,56 @@
                                     New Country
                                 {{end}}
                             </div>
-                            <div class="list-group list-group-flush pt-2">
-                                <div class="list-group-item">
-
-
-                                    <!-- ID -->
-                                    {{if .Country.ID}}
-                                        <div class="form-floating mb-3">
-                                            <input id="ID" disabled="disabled" name="ID"
-                                                   class="form-control font-monospace"
-                                                   value="{{.Country.ID}}" readonly="readonly">
-                                            <label for="ID" class="form-label">ID</label>
-                                        </div>
-                                    {{end}}
-                                    <!-- End of ID -->
-
-
-                                    <!-- Code -->
-                                    <div class="form-floating mb-3">
-                                        <input id="Code" name="Code" class="form-control font-monospace"
-                                               value="{{.Country.Code}}">
-                                        <label for="Code" class="form-label">Code</label>
+                            <div class="card-body list-group list-group-flush pt-2">
+                                <!-- ID -->
+                                {{if .Country.ID}}
+                                    <div class="form mb-3">
+                                        <label for="ID" class="form-label">ID</label>
+                                        <input id="ID" disabled="disabled" name="ID"
+                                               class="form-control font-monospace"
+                                               value="{{.Country.ID}}" readonly="readonly">
                                     </div>
-                                    <!-- End of Code -->
+                                {{end}}
+                                <!-- End of ID -->
 
-
-                                    <!-- Name -->
-                                    <div class="form-floating mb-3">
-                                        <input id="Name" name="Name" class="form-control"
-                                               value="{{.Country.Name}}">
-                                        <label for="Name" class="form-label">Name</label>
-                                    </div>
-                                    <!-- End of Name -->
-
-
-                                    <!-- JWT Group -->
-                                    <div class="form-floating mb-3">
-                                        <input id="JwtGroup"
-                                               name="JwtGroup"
-                                               class="form-control"
-                                               aria-describedby="JwtGroupHelp"
-                                               aria-labelledby="JwtGroupLabel"
-                                               value="{{.Country.JwtGroup}}">
-
-                                        <label id="JwtGroupLabel"
-                                               for="JwtGroup"
-                                               class="form-label">
-                                            JWT Group
-                                        </label>
-                                        <div class="form-text"
-                                             id="JwtGroupHelp">
-                                                The authentication group that this country is associated with.
-                                                Users that belong to this group will be able to access this country's
-                                                data.
-                                        </div>
-                                    </div>
-                                    <!-- End of JWT Group -->
-
-
+                                <!-- Code -->
+                                <div class="form mb-3">
+                                    <label for="Code" class="form-label">Code</label>
+                                    <input id="Code" name="Code" class="form-control font-monospace"
+                                           value="{{.Country.Code}}">
                                 </div>
+                                <!-- End of Code -->
 
+                                <!-- Name -->
+                                <div class="form mb-3">
+                                    <label for="Name" class="form-label">Name</label>
+                                    <input id="Name" name="Name" class="form-control"
+                                           value="{{.Country.Name}}">
+                                </div>
+                                <!-- End of Name -->
+
+                                <!-- JWT Group -->
+                                <div class="form mb-3">
+                                    <label id="JwtGroupLabel"
+                                           for="JwtGroup"
+                                           class="form-label">
+                                        JWT Group
+                                    </label>
+                                    <input id="JwtGroup"
+                                           name="JwtGroup"
+                                           class="form-control"
+                                           aria-describedby="JwtGroupHelp"
+                                           aria-labelledby="JwtGroupLabel"
+                                           value="{{.Country.JwtGroup}}">
+
+                                    <div class="form-text"
+                                         id="JwtGroupHelp">
+                                            The authentication group that this country is associated with.
+                                            Users that belong to this group will be able to access this country's
+                                            data.
+                                    </div>
+                                </div>
+                                <!-- End of JWT Group -->
                             </div>
                             <div class="card-footer">
                                 <button class="btn btn-primary" type="submit">Save</button>
