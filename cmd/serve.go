@@ -88,9 +88,12 @@ var serveCmd = &cobra.Command{
 			return fmt.Errorf("--%s is required", flagRefreshTokenURL)
 		}
 
-		refreshTokenBefore := getFlagOrEnv(cmd, flagRefreshTokenBefore, envRefreshTokenBefore)
+		refreshTokenBefore := cmd.Flag(flagRefreshTokenBefore).Value.String()
 		if refreshTokenBefore == "0s" {
-			return fmt.Errorf("--%s is required", flagRefreshTokenBefore)
+			refreshTokenBefore = os.Getenv(envRefreshTokenBefore)
+			if refreshTokenBefore == "" {
+				return fmt.Errorf("--%s is required", flagRefreshTokenBefore)
+			}
 		}
 		refreshBeforeDuration, err := time.ParseDuration(refreshTokenBefore)
 		if err != nil {
