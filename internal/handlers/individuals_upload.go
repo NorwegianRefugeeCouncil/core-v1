@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
@@ -85,9 +86,12 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 			return
 		}
 
+		fieldSet := containers.NewStringSet(fields...)
+		fieldSet.Add("country_id")
+		fields = fieldSet.Items()
+
 		for _, individual := range individuals {
 			individual.CountryID = selectedCountryID
-			fields = append(fields, "country_id")
 		}
 
 		for _, individual := range individuals {
