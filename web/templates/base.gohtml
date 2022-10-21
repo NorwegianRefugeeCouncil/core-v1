@@ -1,39 +1,46 @@
 {{define "base"}}
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <title>Core</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon.ico">
-        <link rel="manifest" href="/static/site.webmanifest">
-        <link rel="stylesheet" href="/static/bootstrap-icons.css">
-        <link rel="stylesheet" href="/static/theme.min.css">
-        <script src="/static/bootstrap.bundle.min.js"></script>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-        {{template "head" .}}
-    </head>
-    <body>
-    {{template "body" .}}
-    </body>
-    {{ if .RequestContext.Session.IsAuthenticated }}
-        {{ $refreshURL := refreshURL }}
-        {{ if $refreshURL }}
-            {{ if (lt ((.RequestContext.Session.GetExpiration).Sub time.Now) (time.Minute 45))}}
-                <script type="application/javascript">
-                    fetch({{$refreshURL}}, {method: 'GET'}).catch(e => {
-                        console.log("error renewing session", e)
-                    }).then(function (response) {
-                        console.log("refreshed token")
-                        if (response.redirected) {
-                            window.location = response.url;
-                        }
-                    });
-                </script>
-            {{end}}
-        {{end}}
-    {{end}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Core</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon.ico">
+    <link rel="manifest" href="/static/site.webmanifest">
+    <link rel="stylesheet" href="/static/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/theme.min.css">
+    <script src="/static/bootstrap.bundle.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    {{template "head" .}}
+</head>
+<body>
+{{template "body" .}}
+</body>
+
+{{ $refreshURL := refreshURL }}
+{{ if $refreshURL }}
+    <script type="application/javascript">
+        /**
+         * @typedef sessionResponse
+         * @property {number} expiresInMs
+         * @property {boolean} isAuthenticated
+         */
+        function pollRefreshToken() {
+            fetch("/api/session")
+                .then(r => r.json())
+                .then(/**@type {sessionResponse} */ (r) => {
+                    const expirationMs = r.expiresInMs
+                    const refreshMs = expirationMs - 1800000 // 30 minutes
+                    return new Promise(resolve => setTimeout(resolve, refreshMs))
+                })
+                .then(() => fetch("{{ $refreshURL }}"))
+                .then(() => pollRefreshToken())
+        }
+        pollRefreshToken()
+    </script>
+{{end}}
+
 {{end}}

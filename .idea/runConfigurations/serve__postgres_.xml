@@ -3,7 +3,7 @@
     <module name="notcore" />
     <working_directory value="$PROJECT_DIR$" />
     <go_parameters value="--tags fts5" />
-    <parameters value="serve --listen-address=:8080 --db-driver=postgres --db-dsn=postgres://postgres:postgres@localhost:5432/core?sslmode=disable --log-level=debug --logout-url='https://localhost:10000/oauth2/sign_out?rd=https%3A%2F%2Flocalhost:10000%2Fsession%2Fend' --refresh-token-before=45m --refresh-token-url=https://localhost:10000/oauth2/start --jwt-global-admin-group=&quot;NRC_Core_GlobalAdmin&quot; --auth-header-name=&quot;Authorization&quot; --auth-header-format=&quot;bearer-token&quot; --oidc-issuer=&quot;https://localhost:10000&quot; --oauth-client-id=&quot;foo&quot;" />
+    <parameters value="serve --listen-address=:8080 --db-driver=postgres --db-dsn=postgres://postgres:postgres@localhost:5432/core?sslmode=disable --log-level=debug --logout-url='https://localhost:10000/oauth2/sign_out?rd=https%3A%2F%2Flocalhost:10000%2Fsession%2Fend' --login-url='https://localhost:10000/oauth2/start' --token-refresh-before=45m --token-refresh-url=https://localhost:10000/oauth2/start --jwt-global-admin-group=&quot;NRC_Core_GlobalAdmin&quot; --auth-header-name=&quot;Authorization&quot; --auth-header-format=&quot;bearer-token&quot; --oidc-issuer=&quot;https://localhost:10000&quot; --oauth-client-id=&quot;foo&quot;" />
     <kind value="PACKAGE" />
     <package value="github.com/nrc-no/notcore" />
     <directory value="$PROJECT_DIR$" />

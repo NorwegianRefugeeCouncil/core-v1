@@ -19,8 +19,9 @@ const (
 	envDbDriver            = "CORE_DB_DRIVER"
 	envListenAddress       = "CORE_LISTEN_ADDRESS"
 	envLogoutURL           = "CORE_LOGOUT_URL"
-	envRefreshTokenURL     = "CORE_REFRESH_TOKEN_URL"
-	envRefreshTokenBefore  = "CORE_REFRESH_TOKEN_BEFORE"
+	envLoginURL            = "CORE_LOGIN_URL"
+	envTokenRefreshURL     = "CORE_TOKEN_REFRESH_URL"
+	envTokenRefreshBefore  = "CORE_TOKEN_REFRESH_BEFORE"
 	envJwtGlobalAdminGroup = "CORE_JWT_GLOBAL_ADMIN_GROUP"
 	envAuthHeaderName      = "CORE_AUTH_HEADER_NAME"
 	envAuthHeaderFormat    = "CORE_AUTH_HEADER_FORMAT"
@@ -31,8 +32,9 @@ const (
 	flagDbDriver            = "db-driver"
 	flagListenAddress       = "listen-address"
 	flagLogoutURL           = "logout-url"
-	flagRefreshTokenURL     = "refresh-token-url"
-	flagRefreshTokenBefore  = "refresh-token-before"
+	flagLoginURL            = "login-url"
+	flagTokenRefreshURL     = "token-refresh-url"
+	flagTokenRefreshBefore  = "token-refresh-before"
 	flagJwtGlobalAdminGroup = "jwt-global-admin-group"
 	flagAuthHeaderName      = "auth-header-name"
 	flagAuthHeaderFormat    = "auth-header-format"
@@ -84,21 +86,26 @@ var serveCmd = &cobra.Command{
 			return fmt.Errorf("--%s is required", flagLogoutURL)
 		}
 
-		refreshURL := getFlagOrEnv(cmd, flagRefreshTokenURL, envRefreshTokenURL)
-		if len(refreshURL) == 0 {
-			return fmt.Errorf("--%s is required", flagRefreshTokenURL)
+		loginURL := getFlagOrEnv(cmd, flagLoginURL, envLoginURL)
+		if len(logoutURL) == 0 {
+			return fmt.Errorf("--%s is required", flagLoginURL)
 		}
 
-		refreshTokenBefore := cmd.Flag(flagRefreshTokenBefore).Value.String()
+		refreshURL := getFlagOrEnv(cmd, flagTokenRefreshURL, envTokenRefreshURL)
+		if len(refreshURL) == 0 {
+			return fmt.Errorf("--%s is required", flagTokenRefreshURL)
+		}
+
+		refreshTokenBefore := cmd.Flag(flagTokenRefreshBefore).Value.String()
 		if refreshTokenBefore == "0s" {
-			refreshTokenBefore = os.Getenv(envRefreshTokenBefore)
+			refreshTokenBefore = os.Getenv(envTokenRefreshBefore)
 			if refreshTokenBefore == "" {
-				return fmt.Errorf("--%s is required", flagRefreshTokenBefore)
+				return fmt.Errorf("--%s is required", flagTokenRefreshBefore)
 			}
 		}
 		refreshBeforeDuration, err := time.ParseDuration(refreshTokenBefore)
 		if err != nil {
-			return fmt.Errorf("--%s is invalid: %w", flagRefreshTokenBefore, err)
+			return fmt.Errorf("--%s is invalid: %w", flagTokenRefreshBefore, err)
 		}
 
 		authHeaderName := getFlagOrEnv(cmd, flagAuthHeaderName, envAuthHeaderName)
@@ -126,8 +133,9 @@ var serveCmd = &cobra.Command{
 			DatabaseDriver:      dbDriver,
 			DatabaseDSN:         dbDsn,
 			LogoutURL:           logoutURL,
-			RefreshTokenURL:     refreshURL,
-			RefreshTokenBefore:  refreshBeforeDuration,
+			LoginURL:            loginURL,
+			TokenRefreshURL:     refreshURL,
+			TokenRefreshBefore:  refreshBeforeDuration,
 			JwtGroupGlobalAdmin: jwtGroupGlobalAdmin,
 			AuthHeaderName:      authHeaderName,
 			AuthHeaderFormat:    authHeaderFormat,
@@ -174,16 +182,22 @@ Allowed values are
 	serveCmd.PersistentFlags().String(flagLogoutURL, "", cleanDoc(fmt.Sprintf(`
 logout url. Can also be set with %s
 
-This URL is used to redirect the user with a malformed authentication header or token to the logout page.
-This is useful if we need to clear the browser cookies associated with a user.
+The URL is used to populate the "href" attribute of the logout button.
 `, envLogoutURL)))
 
-	serveCmd.PersistentFlags().String(flagRefreshTokenURL, "", cleanDoc(fmt.Sprintf(`
+	serveCmd.PersistentFlags().String(flagLoginURL, "", cleanDoc(fmt.Sprintf(`
+login url. Can also be set with %s
+
+This URL is used to redirect the user with a malformed authentication header or token to the login page.
+This is useful when the user token is expired, or if there is a problem with the authentication.
+`, envLoginURL)))
+
+	serveCmd.PersistentFlags().String(flagTokenRefreshURL, "", cleanDoc(fmt.Sprintf(`
 session refresh url. Can also be set with %s
 
 This URL is used to refresh the user session. It is called by the frontend application to refresh the user session
 when it is about to expire.
-`, envRefreshTokenURL)))
+`, envTokenRefreshURL)))
 
 	serveCmd.PersistentFlags().String(flagJwtGlobalAdminGroup, "", cleanDoc(fmt.Sprintf(`
 jwt global admin group. Can also be set with %s
@@ -231,13 +245,13 @@ OIDC provider's discovery document'
 
 	serveCmd.PersistentFlags().String(flagOidcClientID, "", fmt.Sprintf("oauth client id. Can also be set with %s", envOidcClientID))
 
-	serveCmd.PersistentFlags().Duration(flagRefreshTokenBefore, 0, cleanDoc(fmt.Sprintf(`
+	serveCmd.PersistentFlags().Duration(flagTokenRefreshBefore, 0, cleanDoc(fmt.Sprintf(`
 This flag specifies the duration before exporation for which the user token should be refreshed. Can also be set with %s
 
 For example, if the value of this flag is set to 50m, the token will be refreshed 50 minutes before it expires.
 The browser will be responsible for refreshing the token before it expires, so that an active
 user would not be logged out. Though, if the user is not active, the token will expire and the user
-will have to login again.`, envRefreshTokenBefore)))
+will have to login again.`, envTokenRefreshBefore)))
 }
 
 func cleanDoc(s string) string {

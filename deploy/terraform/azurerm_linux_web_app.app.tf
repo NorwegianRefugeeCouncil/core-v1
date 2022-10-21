@@ -31,15 +31,16 @@ resource "azurerm_linux_web_app" "app" {
     CORE_DB_DRIVER              = "postgres"
     CORE_LISTEN_ADDRESS         = ":${var.port}"
     # See https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-customize-sign-in-out?source=recommendations#sign-out-of-a-session
-    CORE_LOGOUT_URL             = "/.auth/logout"
+    CORE_LOGOUT_URL             = "https://${var.app_name}-${var.environment}-${random_id.app_id.hex}.azurewebsites.net/.auth/logout"
+    CORE_LOGIN_URL              = "https://${var.app_name}-${var.environment}-${random_id.app_id.hex}.azurewebsites.net/.auth/login/oidc"
     CORE_JWT_GLOBAL_ADMIN_GROUP = var.jwt_global_admin_group
     CORE_AUTH_HEADER_NAME       = "x-ms-token-oidc-id-token"
     CORE_AUTH_HEADER_FORMAT     = "jwt"
     DOCKER_CUSTOM_IMAGE_NAME    = "${var.container_image}:${var.container_image_tag}"
     CORE_OIDC_ISSUER            = var.oidc_issuer_url
     CORE_OAUTH_CLIENT_ID        = var.oidc_client_id
-    CORE_REFRESH_TOKEN_BEFORE   = "1h"
-    CORE_REFRESH_TOKEN_URL      = "https://${var.app_name}-${var.environment}-${random_id.app_id.hex}.azurewebsites.net/.auth/refresh"
+    CORE_TOKEN_REFRESH_BEFORE   = "1h"
+    CORE_TOKEN_REFRESH_URL      = "https://${var.app_name}-${var.environment}-${random_id.app_id.hex}.azurewebsites.net/.auth/refresh"
   }
   sticky_settings {
     app_setting_names = [

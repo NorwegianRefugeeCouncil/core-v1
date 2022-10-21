@@ -52,7 +52,12 @@ func authMiddleware(
 	authHeaderName,
 	authHeaderFormat string,
 	idTokenVerifier IDTokenVerifier,
+	loginURL string,
 ) func(handler http.Handler) http.Handler {
+
+	redirectToLogin := func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, loginURL, http.StatusTemporaryRedirect)
+	}
 
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -62,7 +67,8 @@ func authMiddleware(
 
 			authPayload := r.Header.Get(authHeaderName)
 			if len(authPayload) == 0 {
-				http.Error(w, "Invalid authorization header", http.StatusBadRequest)
+				l.Warn("missing authentication header")
+				redirectToLogin(w, r)
 				return
 			}
 
@@ -78,38 +84,38 @@ func authMiddleware(
 				bearerTokenParts := strings.Split(r.Header.Get(authHeaderName), " ")
 				if len(bearerTokenParts) != 2 {
 					l.Warn("invalid bearer token format. parts != 2")
-					http.Error(w, "Invalid authorization header", http.StatusBadRequest)
+					redirectToLogin(w, r)
 					return
 				}
 				if len(bearerTokenParts[0]) != 6 && bearerTokenParts[0] != "Bearer" {
 					l.Warn("invalid bearer token format. Does not start with 'Bearer'")
-					http.Error(w, "Invalid authorization header", http.StatusBadRequest)
+					redirectToLogin(w, r)
 					return
 				}
 				rawIdToken = bearerTokenParts[1]
 			} else {
-				l.Error("invalid auth header format", zap.String("authHeaderFormat", authHeaderFormat))
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				l.Warn("invalid auth header format", zap.String("authHeaderFormat", authHeaderFormat))
+				redirectToLogin(w, r)
 				return
 			}
 
 			idToken, err := idTokenVerifier.Verify(ctx, rawIdToken)
 			if err != nil {
 				l.Warn("failed to verify token", zap.Error(err))
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				redirectToLogin(w, r)
 				return
 			}
 
 			var tokenClaims TokenClaims
 			if err := idToken.Claims(&tokenClaims); err != nil {
 				l.Warn("failed to extract claims from token", zap.Error(err))
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				redirectToLogin(w, r)
 				return
 			}
 
 			if err := validateTokenClaims(tokenClaims); err != nil {
 				l.Warn("failed to validate token claims", zap.Error(err))
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				redirectToLogin(w, r)
 				return
 			}
 
