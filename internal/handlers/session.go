@@ -11,8 +11,8 @@ import (
 func HandleSession() http.Handler {
 
 	type SessionResponse struct {
-		Authenticated bool  `json:"authenticated"`
-		ExpiresInMs   int64 `json:"expiresInMs"`
+		IsAuthenticated bool  `json:"isAuthenticated"`
+		ExpiresInMs     int64 `json:"expiresInMs"`
 	}
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -26,21 +26,15 @@ func HandleSession() http.Handler {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		if !session.IsAuthenticated() {
-			ret := SessionResponse{
-				Authenticated: false,
-			}
-			json.NewEncoder(w).Encode(ret)
-			return
-		} else {
-			expiration := session.GetExpiration()
-			expiresInMs := expiration.Sub(time.Now()).Milliseconds()
-			ret := SessionResponse{
-				Authenticated: true,
-				ExpiresInMs:   expiresInMs,
-			}
-			json.NewEncoder(w).Encode(ret)
+		ret := SessionResponse{
+			IsAuthenticated: session.IsAuthenticated(),
 		}
+
+		if session.IsAuthenticated() {
+			ret.ExpiresInMs = session.GetExpiration().Sub(time.Now()).Milliseconds()
+		}
+
+		json.NewEncoder(w).Encode(ret)
 
 	})
 }

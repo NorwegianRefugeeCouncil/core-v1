@@ -23,18 +23,23 @@
 {{ $refreshURL := refreshURL }}
 {{ if $refreshURL }}
     <script type="application/javascript">
-        (function () {
-            const callee = arguments.callee;
+        /**
+         * @typedef sessionResponse
+         * @property {number} expiresInMs
+         * @property {boolean} isAuthenticated
+         */
+        function pollRefreshToken() {
             fetch("/api/session")
                 .then(r => r.json())
-                .then(r => {
+                .then(/**@type {sessionResponse} */ (r) => {
                     const expirationMs = r.expiresInMs
                     const refreshMs = expirationMs - 1800000 // 30 minutes
                     return new Promise(resolve => setTimeout(resolve, refreshMs))
                 })
                 .then(() => fetch("{{ $refreshURL }}"))
-                .then(() => callee())
-        })()
+                .then(() => pollRefreshToken())
+        }
+        pollRefreshToken()
     </script>
 {{end}}
 
