@@ -92,3 +92,60 @@ Go to [https://localhost:10000](https://localhost:10000)
 The available usernames and passwords for logging in during development are in
 the `/deploy/oidc-users.json` file.
 
+
+# Changing the form field
+
+**WARNING: This is potentially incomplete**
+
+## Database
+
+Add a database migration
+TODO: Add more details
+
+## Backend
+
+`internal/constants/individual.go`
+For field `Foo`:
+- Add constant `FormParamIndividualFoo`
+- Add constant `FormParamGetIndividualFoo`
+- Add constant `DBColumnIndividualFoo` and add to `IndividualDBColumns` array
+- Add constant `FileColumnIndividualFoo` and add to `IndividualFileColumns` array
+- Update `IndividualDBToFileMap` and `IndividualFileToDBMap` maps
+
+`internal/api/individual.go`
+Add the field to the individual struct, eg:
+```
+type Individual struct {
+    ...
+    Foo string `db:"foo"`
+    ...
+}
+```
+`GetFieldValue`: add/remove/change the field in the switch statement, eg:
+```
+case constants.DBColumnIndividualFoo:
+		return i.Foo, nil
+```
+`Normalize` If required, add a normalise step for the field, eg:
+```
+individual.Foo = trimString(individual.Foo)
+```
+
+`internal/api/individual_tabular.go`
+`unmarshalTabularData`: add/remove/change the field in the switch statement, eg:
+```
+case constants.FormParamGetIndividualFoo:
+    i.Foo = cols[idx]
+```
+`marshalTabularData` If the field is not a string, add a formatting step to the switch statement, eg:
+```
+case constants.FileColumnIndividualFoo:
+  row[j] = strconv.FormatInt(value, 10)
+```
+If a column of the given type already exists, add the field to the switch statement, eg:
+```
+case constants.FileColumnIndividualIsMinor, constants.FileColumnIndividualPresentsProtectionConcerns, constats.FileColumnIndividualFoo:
+	row[j] = strconv.FormatBool(value.(bool))
+```
+
+## Frontend
