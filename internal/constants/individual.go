@@ -47,7 +47,6 @@ const (
 	FileColumnIndividualID                         = "id"
 	FileColumnIndividualAddress                    = "address"
 	FileColumnIndividualBirthDate                  = "birth_date"
-	FileColumnIndividualCountryID                  = "country_id"
 	FileColumnIndividualDisplacementStatus         = "displacement_status"
 	FileColumnIndividualEmail                      = "email"
 	FileColumnIndividualFullName                   = "full_name"
@@ -83,7 +82,6 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualID,
 	FileColumnIndividualAddress,
 	FileColumnIndividualBirthDate,
-	FileColumnIndividualCountryID,
 	FileColumnIndividualDisplacementStatus,
 	FileColumnIndividualEmail,
 	FileColumnIndividualFullName,
@@ -101,7 +99,6 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualID:                         FileColumnIndividualID,
 	DBColumnIndividualAddress:                    FileColumnIndividualAddress,
 	DBColumnIndividualBirthDate:                  FileColumnIndividualBirthDate,
-	DBColumnIndividualCountryID:                  FileColumnIndividualCountryID,
 	DBColumnIndividualDisplacementStatus:         FileColumnIndividualDisplacementStatus,
 	DBColumnIndividualEmail:                      FileColumnIndividualEmail,
 	DBColumnIndividualFullName:                   FileColumnIndividualFullName,
@@ -119,7 +116,6 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualID:                         DBColumnIndividualID,
 	FileColumnIndividualAddress:                    DBColumnIndividualAddress,
 	FileColumnIndividualBirthDate:                  DBColumnIndividualBirthDate,
-	FileColumnIndividualCountryID:                  DBColumnIndividualCountryID,
 	FileColumnIndividualDisplacementStatus:         DBColumnIndividualDisplacementStatus,
 	FileColumnIndividualEmail:                      DBColumnIndividualEmail,
 	FileColumnIndividualFullName:                   DBColumnIndividualFullName,

@@ -109,10 +109,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.SensoryImpairment = cols[idx]
 		case constants.FileColumnIndividualMentalImpairment:
 			i.MentalImpairment = cols[idx]
-		case constants.FileColumnIndividualCountryID:
-			i.CountryID = cols[idx]
 		}
-
 	}
 	i.Normalize()
 	return nil
@@ -139,7 +136,6 @@ func MarshalIndividualsCSV(w io.Writer, individuals []*Individual) error {
 		constants.FileColumnIndividualPhysicalImpairment,
 		constants.FileColumnIndividualSensoryImpairment,
 		constants.FileColumnIndividualMentalImpairment,
-		constants.FileColumnIndividualCountryID,
 	}); err != nil {
 		return err
 	}
@@ -175,7 +171,6 @@ func (i *Individual) MarshalCSV(csvEncoder *csv.Writer) error {
 		i.PhysicalImpairment,
 		i.SensoryImpairment,
 		i.MentalImpairment,
-		i.CountryID,
 	}); err != nil {
 		return err
 	}

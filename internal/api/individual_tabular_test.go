@@ -21,7 +21,6 @@ var paramaters = []struct {
 	{constants.FileColumnIndividualAddress, "123 Fake Alle, Berlin", "123 Fake Alle, Berlin", false},
 	{constants.FileColumnIndividualBirthDate, "1992-07-31", &foo, false},
 	{constants.FileColumnIndividualBirthDate, "31-07-1992", "", true},
-	{constants.FileColumnIndividualCountryID, "country-id", "country-id", false},
 	{constants.FileColumnIndividualDisplacementStatus, "refugee", "refugee", false},
 	{constants.FileColumnIndividualEmail, "person@not-nrc.no", "person@not-nrc.no", false},
 	{constants.FileColumnIndividualFullName, "Hugh Jazz", "Hugh Jazz", false},
