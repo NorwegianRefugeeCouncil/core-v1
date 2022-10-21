@@ -25,13 +25,13 @@ func (o Options) WithLogoutURL(logoutURL string) Options {
 	return o
 }
 
-func (o Options) WithRefreshURL(refreshURL string) Options {
-	o.RefreshTokenURL = refreshURL
+func (o Options) WithTokenRefreshURL(tokenRefreshURL string) Options {
+	o.TokenRefreshURL = tokenRefreshURL
 	return o
 }
 
-func (o Options) WithRefreshTokenBefore(refreshTokenBefore time.Duration) Options {
-	o.RefreshTokenBefore = refreshTokenBefore
+func (o Options) WithTokenRefreshBefore(tokenRefreshBefore time.Duration) Options {
+	o.TokenRefreshBefore = tokenRefreshBefore
 	return o
 }
 
@@ -74,8 +74,8 @@ func validOptions() Options {
 		DatabaseDriver:      "postgres",
 		DatabaseDSN:         "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable",
 		LogoutURL:           "http://localhost:8080",
-		RefreshTokenURL:     "http://localhost:8080",
-		RefreshTokenBefore:  5 * time.Minute,
+		TokenRefreshURL:     "http://localhost:8080",
+		TokenRefreshBefore:  5 * time.Minute,
 		JwtGroupGlobalAdmin: "global-admin",
 		AuthHeaderName:      "X-Auth-Token",
 		AuthHeaderFormat:    AuthHeaderFormatJWT,
@@ -142,12 +142,12 @@ func TestOptions_validate(t *testing.T) {
 		},
 		{
 			name:    "refresh URL is invalid",
-			options: validOptions().WithRefreshURL(string([]byte{0x7f})),
+			options: validOptions().WithTokenRefreshURL(string([]byte{0x7f})),
 			wantErr: true,
 		},
 		{
 			name:    "refresh token before is invalid",
-			options: validOptions().WithRefreshTokenBefore(-1 * time.Second),
+			options: validOptions().WithTokenRefreshBefore(-1 * time.Second),
 			wantErr: true,
 		},
 		{

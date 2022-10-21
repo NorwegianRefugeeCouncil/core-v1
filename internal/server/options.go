@@ -19,8 +19,8 @@ type Options struct {
 	AuthHeaderFormat    string
 	OIDCIssuerURL       string
 	OAuthClientID       string
-	RefreshTokenURL     string
-	RefreshTokenBefore  time.Duration
+	TokenRefreshURL     string
+	TokenRefreshBefore  time.Duration
 }
 
 var globalAdminGroupRegex = regexp.MustCompile(`^[A-Za-z0-9_-]+(?: +[A-Za-z0-9_-]+)*$`)
@@ -48,10 +48,10 @@ func (o Options) validate() error {
 	if err := o.validateRequiredURLOption(o.LogoutURL, "Logout URL"); err != nil {
 		return err
 	}
-	if err := o.validateRequiredURLOption(o.RefreshTokenURL, "Refresh URL"); err != nil {
+	if err := o.validateRequiredURLOption(o.TokenRefreshURL, "Refresh URL"); err != nil {
 		return err
 	}
-	if o.RefreshTokenBefore <= time.Minute {
+	if o.TokenRefreshBefore <= time.Minute {
 		return fmt.Errorf("minimum value for token refresh duration is 1 minute")
 	}
 	if len(o.JwtGroupGlobalAdmin) == 0 {
