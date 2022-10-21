@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net"
-	"net/url"
 	"os"
 	"os/signal"
 	"strings"
@@ -112,13 +111,9 @@ var serveCmd = &cobra.Command{
 			return fmt.Errorf("--%s is required", flagAuthHeaderFormat)
 		}
 
-		oidcIssuerURLStr := getFlagOrEnv(cmd, flagOidcIssuerURL, envOidcIssuerURL)
-		if len(oidcIssuerURLStr) == 0 {
+		oidcIssuerURL := getFlagOrEnv(cmd, flagOidcIssuerURL, envOidcIssuerURL)
+		if len(oidcIssuerURL) == 0 {
 			return fmt.Errorf("--%s is required", flagOidcIssuerURL)
-		}
-		oidcIssuerURL, err := url.Parse(oidcIssuerURLStr)
-		if err != nil {
-			return errors.New("invalid oidc issuer url")
 		}
 
 		oauthClientID := getFlagOrEnv(cmd, flagOidcClientID, envOidcClientID)
@@ -131,13 +126,12 @@ var serveCmd = &cobra.Command{
 			DatabaseDriver:      dbDriver,
 			DatabaseDSN:         dbDsn,
 			LogoutURL:           logoutURL,
-			LoginURL:            loginURL,
 			RefreshTokenURL:     refreshURL,
 			RefreshTokenBefore:  refreshBeforeDuration,
 			JwtGroupGlobalAdmin: jwtGroupGlobalAdmin,
 			AuthHeaderName:      authHeaderName,
 			AuthHeaderFormat:    authHeaderFormat,
-			OIDCIssuerURL:       *oidcIssuerURL,
+			OIDCIssuerURL:       oidcIssuerURL,
 			OAuthClientID:       oauthClientID,
 		}
 
