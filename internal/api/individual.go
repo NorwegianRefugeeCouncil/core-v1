@@ -28,25 +28,6 @@ type Individual struct {
 	MentalImpairment           string     `db:"mental_impairment"`
 }
 
-var AllndividualFields = []string{
-	"id",
-	"country_id",
-	"full_name",
-	"phone_number",
-	"normalized_phone_number",
-	"email",
-	"address",
-	"birth_date",
-	"gender",
-	"displacement_status",
-	"preferred_name",
-	"is_minor",
-	"presents_protection_concerns",
-	"physical_impairment",
-	"sensory_impairment",
-	"mental_impairment",
-}
-
 func (i Individual) GetFieldValue(field string) (interface{}, error) {
 	switch field {
 	case "address":
