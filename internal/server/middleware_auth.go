@@ -106,15 +106,23 @@ func authMiddleware(
 				return
 			}
 
+			var tokenParts = strings.Split(rawIdToken, ".")
+			var claimsPart = tokenParts[1]
+
 			var tokenClaims TokenClaims
 			if err := idToken.Claims(&tokenClaims); err != nil {
-				l.Warn("failed to extract claims from token", zap.Error(err))
+				l.Warn("failed to extract claims from token",
+					zap.Error(err),
+					zap.String("token", claimsPart))
 				redirectToLogin(w, r)
 				return
 			}
 
 			if err := validateTokenClaims(tokenClaims); err != nil {
-				l.Warn("failed to validate token claims", zap.Error(err))
+				l.Warn("failed to validate token claims",
+					zap.Error(err),
+					zap.String("token", claimsPart),
+				)
 				redirectToLogin(w, r)
 				return
 			}
