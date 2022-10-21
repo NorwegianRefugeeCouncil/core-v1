@@ -43,6 +43,7 @@ const (
 	DBColumnIndividualPreferredName              = "preferred_name"
 	DBColumnIndividualPresentsProtectionConcerns = "presents_protection_concerns"
 	DBColumnIndividualSensoryImpairment          = "sensory_impairment"
+	DBColumnIndividualNormalizedPhoneNumber      = "normalized_phone_number"
 
 	FileColumnIndividualID                         = "id"
 	FileColumnIndividualAddress                    = "address"
