@@ -9,6 +9,8 @@ import (
 	"go.uber.org/zap"
 )
 
+const queryParamFormat = "format"
+
 func HandleDownload(
 	userRepo db.IndividualRepo,
 ) http.Handler {
@@ -19,6 +21,11 @@ func HandleDownload(
 			l   = logging.NewLogger(ctx)
 		)
 
+		format := r.URL.Query().Get(queryParamFormat)
+		if format == "" {
+			format = "xlsx"
+		}
+
 		ret, err := userRepo.GetAll(ctx, api.GetAllOptions{})
 		if err != nil {
 			l.Error("failed to get individuals", zap.Error(err))
@@ -26,12 +33,26 @@ func HandleDownload(
 			return
 		}
 
-		w.Header().Set("Content-Disposition", "attachment; filename=records.csv")
-		w.Header().Set("Content-Type", "text/csv")
+		if format == "xlsx" {
+			w.Header().Set("Content-Disposition", "attachment; filename=records.xlsx")
+			w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
-		if err := api.MarshalIndividualsCSV(w, ret); err != nil {
-			l.Error("failed to write csv", zap.Error(err))
-			http.Error(w, "failed to write csv: "+err.Error(), http.StatusInternalServerError)
+			if err := api.MarshalIndividualsExcel(w, ret); err != nil {
+				l.Error("failed to write xlsx", zap.Error(err))
+				http.Error(w, "failed to write xlsx: "+err.Error(), http.StatusInternalServerError)
+				return
+			}
+		} else if format == "csv" {
+			w.Header().Set("Content-Disposition", "attachment; filename=records.csv")
+			w.Header().Set("Content-Type", "text/csv")
+
+			if err := api.MarshalIndividualsCSV(w, ret); err != nil {
+				l.Error("failed to write csv", zap.Error(err))
+				http.Error(w, "failed to write csv: "+err.Error(), http.StatusInternalServerError)
+				return
+			}
+		} else {
+			http.Error(w, "invalid format", http.StatusBadRequest)
 			return
 		}
 	})
