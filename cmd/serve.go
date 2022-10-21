@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"strings"
 	"time"
 
 	"github.com/nrc-no/notcore/internal/server"
@@ -23,7 +24,7 @@ const (
 	envJwtGlobalAdminGroup = "CORE_JWT_GLOBAL_ADMIN_GROUP"
 	envAuthHeaderName      = "CORE_AUTH_HEADER_NAME"
 	envAuthHeaderFormat    = "CORE_AUTH_HEADER_FORMAT"
-	envOidcIssuer          = "CORE_OIDC_ISSUER"
+	envOidcIssuerURL       = "CORE_OIDC_ISSUER"
 	envOidcClientID        = "CORE_OAUTH_CLIENT_ID"
 
 	flagDbDSN               = "db-dsn"
@@ -35,7 +36,7 @@ const (
 	flagJwtGlobalAdminGroup = "jwt-global-admin-group"
 	flagAuthHeaderName      = "auth-header-name"
 	flagAuthHeaderFormat    = "auth-header-format"
-	flagOidcIssuer          = "oidc-issuer"
+	flagOidcIssuerURL       = "oidc-issuer"
 	flagOidcClientID        = "oauth-client-id"
 )
 
@@ -110,9 +111,9 @@ var serveCmd = &cobra.Command{
 			return fmt.Errorf("--%s is required", flagAuthHeaderFormat)
 		}
 
-		oidcIssuer := getFlagOrEnv(cmd, flagOidcIssuer, envOidcIssuer)
-		if len(oidcIssuer) == 0 {
-			return fmt.Errorf("--%s is required", flagOidcIssuer)
+		oidcIssuerURL := getFlagOrEnv(cmd, flagOidcIssuerURL, envOidcIssuerURL)
+		if len(oidcIssuerURL) == 0 {
+			return fmt.Errorf("--%s is required", flagOidcIssuerURL)
 		}
 
 		oauthClientID := getFlagOrEnv(cmd, flagOidcClientID, envOidcClientID)
@@ -130,7 +131,7 @@ var serveCmd = &cobra.Command{
 			JwtGroupGlobalAdmin: jwtGroupGlobalAdmin,
 			AuthHeaderName:      authHeaderName,
 			AuthHeaderFormat:    authHeaderFormat,
-			OIDCIssuerURL:       oidcIssuer,
+			OIDCIssuerURL:       oidcIssuerURL,
 			OAuthClientID:       oauthClientID,
 		}
 
@@ -152,20 +153,101 @@ var serveCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(serveCmd)
-	serveCmd.PersistentFlags().String(flagListenAddress, "", fmt.Sprintf("listen address. Can also be set with %s", envListenAddress))
-	serveCmd.PersistentFlags().String(flagDbDriver, "", fmt.Sprintf("database driver. Can also be set with %s", envDbDriver))
+
+	serveCmd.PersistentFlags().String(flagListenAddress, "", cleanDoc(fmt.Sprintf(`
+listen address. Can also be set with %[2]s
+For example:
+	--%[1]s=":8080"
+	--%[1]s="127.0.0.1:8080"
+`, flagListenAddress, envListenAddress)))
+
+	serveCmd.PersistentFlags().String(flagDbDriver, "", cleanDoc(fmt.Sprintf(`
+database driver. Can also be set with %s
+
+Allowed values are 
+	- sqlite (experimental support)
+	- postgres
+`, envDbDriver)))
+
 	serveCmd.PersistentFlags().String(flagDbDSN, "", fmt.Sprintf("database dsn. Can also be set with %s", envDbDSN))
-	serveCmd.PersistentFlags().String(flagLogoutURL, "", fmt.Sprintf("logout url. Can also be set with %s", envLogoutURL))
-	serveCmd.PersistentFlags().String(flagRefreshTokenURL, "", fmt.Sprintf("session refresh url. Can also be set with %s", envRefreshTokenURL))
-	serveCmd.PersistentFlags().String(flagJwtGlobalAdminGroup, "", fmt.Sprintf("jwt global admin group. Can also be set with %s", envJwtGlobalAdminGroup))
-	serveCmd.PersistentFlags().String(flagAuthHeaderName, "", fmt.Sprintf("auth header name. Can also be set with %s", envAuthHeaderName))
-	serveCmd.PersistentFlags().String(flagAuthHeaderFormat, "", fmt.Sprintf(`auth header format. Can also be set with %s. Allowed values are "%s", "%s"`,
+
+	serveCmd.PersistentFlags().String(flagLogoutURL, "", cleanDoc(fmt.Sprintf(`
+logout url. Can also be set with %s
+
+This URL is used to redirect the user with a malformed authentication header or token to the logout page.
+This is useful if we need to clear the browser cookies associated with a user.
+`, envLogoutURL)))
+
+	serveCmd.PersistentFlags().String(flagRefreshTokenURL, "", cleanDoc(fmt.Sprintf(`
+session refresh url. Can also be set with %s
+
+This URL is used to refresh the user session. It is called by the frontend application to refresh the user session
+when it is about to expire.
+`, envRefreshTokenURL)))
+
+	serveCmd.PersistentFlags().String(flagJwtGlobalAdminGroup, "", cleanDoc(fmt.Sprintf(`
+jwt global admin group. Can also be set with %s
+
+This group is used to identify the global admin group. If the user is part of this group, he will be considered 
+as having Global Administrator permissions. 
+`, envJwtGlobalAdminGroup)))
+
+	serveCmd.PersistentFlags().String(flagAuthHeaderName, "", cleanDoc(fmt.Sprintf(`
+auth header name. Can also be set with %[2]s
+
+Different deployment scenarios exist for setting up an authentication proxy.
+Usually, a proxy will forward the authorization information via a header. 
+This parameter is used to specify the name of the header that contains the authorization information.
+
+For example
+	--%[1]s="X-Forwarded-ID-Token"
+`, flagAuthHeaderName, envAuthHeaderName)))
+
+	serveCmd.PersistentFlags().String(flagAuthHeaderFormat, "", cleanDoc(fmt.Sprintf(`
+authentication header format. Can also be set with %s. 
+Allowed values are 
+- "%s"
+- "%s"
+
+Depending on the authentication proxy, the value of the authentication header can be in different formats.
+This parameter is used to specify the expected format of the authentication header.
+
+A value of "%[2]s" means that the header value is a JWT token.
+The application will expect a header like "<HeaderName>: <Token>".
+
+A value of "%[3]s" means that the header value is a JWT token prefixed with "bearer".
+The application will expect a header like "<HeaderName>: bearer <Token>".
+`,
 		envAuthHeaderFormat,
 		server.AuthHeaderFormatJWT,
-		server.AuthHeaderFormatBearerToken))
-	serveCmd.PersistentFlags().String(flagOidcIssuer, "", fmt.Sprintf("oidc issuer. Can also be set with %s", envOidcIssuer))
+		server.AuthHeaderFormatBearerToken)))
+
+	serveCmd.PersistentFlags().String(flagOidcIssuerURL, "", cleanDoc(fmt.Sprintf(`
+oidc issuer URL. Can also be set with %s
+
+The oidc issuer URL is used to identify the OIDC provider. It is also used to retrieve the 
+OIDC provider's discovery document'
+`, envOidcIssuerURL)))
+
 	serveCmd.PersistentFlags().String(flagOidcClientID, "", fmt.Sprintf("oauth client id. Can also be set with %s", envOidcClientID))
-	serveCmd.PersistentFlags().Duration(flagRefreshTokenBefore, 0, fmt.Sprintf("refresh token before. Can also be set with %s", envRefreshTokenBefore))
+
+	serveCmd.PersistentFlags().Duration(flagRefreshTokenBefore, 0, cleanDoc(fmt.Sprintf(`
+This flag specifies the duration before exporation for which the user token should be refreshed. Can also be set with %s
+
+For example, if the value of this flag is set to 50m, the token will be refreshed 50 minutes before it expires.
+The browser will be responsible for refreshing the token before it expires, so that an active
+user would not be logged out. Though, if the user is not active, the token will expire and the user
+will have to login again.`, envRefreshTokenBefore)))
+}
+
+func cleanDoc(s string) string {
+	if strings.HasPrefix(s, "\n") {
+		s = s[1:]
+	}
+	if !strings.HasSuffix(s, "\n") {
+		s += "\n"
+	}
+	return s
 }
 
 func getFlagOrEnv(cmd *cobra.Command, flagName string, envName string) string {
