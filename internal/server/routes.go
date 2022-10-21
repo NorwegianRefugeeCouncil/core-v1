@@ -13,6 +13,7 @@ import (
 func buildRouter(
 	individualRepo db.IndividualRepo,
 	countryRepo db.CountryRepo,
+	statisticsRepo db.StatisticRepo,
 	globalAdminGroup string,
 	authHeaderName string,
 	authHeaderFormat string,
@@ -60,6 +61,9 @@ func buildRouter(
 	webRouter.Path("/countries/select").Handler(handlers.HandleCountrySelector(tpl))
 	webRouter.Path("/countries/select/{country_id}").Handler(handlers.HandleSelectCountry())
 	webRouter.Path("/countries/{country_id}").Handler(handlers.HandleCountry(tpl, countryRepo))
+
+	webRouter.Path("/api/countries/{country_id}/statistics").Handler(handlers.HandleCountryStatistics(statisticsRepo))
+
 	webRouter.PathPrefix("").Handler(handlers.HandleHome(tpl))
 	return r
 }

@@ -45,6 +45,9 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 	// create the country db repository
 	countryRepo := db.NewCountryRepo(sqlDb)
 
+	// create statistics repo
+	statisticsRepo := db.NewStatisticsRepo(sqlDb)
+
 	s := &Server{address: o.Address}
 
 	// parse html templates
@@ -72,6 +75,7 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 	s.router = buildRouter(
 		individualRepo,
 		countryRepo,
+		statisticsRepo,
 		o.JwtGroupGlobalAdmin,
 		o.AuthHeaderName,
 		o.AuthHeaderFormat,

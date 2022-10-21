@@ -1,4 +1,204 @@
 {{define "head"}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="application/javascript">
+        document.addEventListener('DOMContentLoaded', ev => {
+
+            /**
+             * @typedef StatsObject
+             * @type {object}
+             * @property {number} totalCount
+             * @property {number} childrenCount
+             * @property {number} womenAndChildrenCount
+             * @property {number} elderlyCount
+             * @property {Object.<string, Object.<string, number>>} genderAge
+             * @property {Object.<string, number>} displacementStatus
+             * @property {Object.<string, number>} physicalImpairment
+             * @property {Object.<string, number>} mentalImpairment
+             * @property {Object.<string, number>} sensoryImpairment
+             */
+
+            fetch('/api/countries/{{.Country.ID}}/statistics')
+                .then(r => r.json())
+                .then(statsJson => {
+
+                    const fmt = new Intl.NumberFormat()
+
+                    const chartSectionElement = document.getElementById('chartSection')
+                    chartSectionElement.classList.remove("d-none")
+
+                    /** @type {StatsObject} */
+                    const stats = statsJson
+                    const totalIndividualCountElement = document.getElementById('totalIndividualCount');
+                    totalIndividualCountElement.innerText = fmt.format(stats.totalCount)
+
+                    const totalChildrenCountElement = document.getElementById('totalChildrenCount');
+                    totalChildrenCountElement.innerText = fmt.format(stats.childrenCount);
+
+                    const totalWomenAndChildrenCountElement = document.getElementById('totalWomenAndChildrenCount');
+                    totalWomenAndChildrenCountElement.innerText = fmt.format(stats.womenAndChildrenCount);
+
+                    const totalElderlyCountElement = document.getElementById('totalElderlyCount');
+                    totalElderlyCountElement.innerText = fmt.format(stats.elderlyCount);
+
+                    const genderSet = new Set()
+                    const ageGroupSet = new Set()
+                    for (const g of Object.keys(stats.genderAge).sort()) {
+                        if (g === 'unknown') {
+                            continue
+                        }
+                        genderSet.add(g)
+                        for (const a of Object.keys(stats.genderAge[g])) {
+                            if (a === 'unknown') {
+                                continue
+                            }
+                            ageGroupSet.add(a);
+                        }
+                    }
+                    const genders = Array.from(genderSet).sort()
+                    const ageGroups = Array.from(ageGroupSet).sort();
+
+                    const genderAgeData = {
+                        labels: ageGroups,
+                        datasets: genders.map((g) => {
+                            return {
+                                label: g,
+                                data: ageGroups.map((a) => {
+                                    if (g === 'female') {
+                                        return -stats.genderAge[g][a]
+                                    } else {
+                                        return stats.genderAge[g][a]
+                                    }
+                                }),
+                                backgroundColor: g === 'female' ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)',
+                            }
+                        })
+                    }
+
+                    new Chart(document.getElementById("genderAgeChart"), {
+                        type: 'bar',
+                        data: genderAgeData,
+                        options: {
+                            indexAxis: 'y',
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            let label = context.dataset.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            label += Math.abs(context.parsed.x);
+                                            return label
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    stacked: true,
+                                    ticks: {beginAtZero: true, callback: (v) => Math.abs(v)},
+                                    grid: {display: false,}
+                                },
+                                y: {
+                                    stacked: true,
+                                    ticks: {beginAtZero: true,},
+                                    grid: {display: false,},
+                                    position: 'left',
+                                }
+                            }
+                        }
+                    })
+
+
+                    const displacementStatuses = Object
+                        .keys(stats.displacementStatus)
+                        .filter(d => d !== 'unknown')
+                        .sort()
+
+                    const displacementStatusData = {
+                        labels: displacementStatuses.map(d => {
+                            switch (d) {
+                                case 'host_community':
+                                    return 'Host Community'
+                                case 'idp':
+                                    return 'Internally Displaced'
+                                case 'refugee':
+                                    return 'Refugee'
+                            }
+                        }),
+                        datasets: [{
+                            label: 'Displacement Status',
+                            data: displacementStatuses.map((s) => stats.displacementStatus[s]),
+                            backgroundColor: displacementStatuses.map(d => {
+                                switch (d) {
+                                    case 'refugee':
+                                        return 'rgba(255, 99, 132, 0.2)'
+                                    case 'host_community':
+                                        return 'rgba(54, 162, 235, 0.2)'
+                                    case 'idp':
+                                        return 'rgba(255, 206, 86, 0.2)'
+                                }
+                            })
+                        }]
+                    }
+
+                    new Chart(document.getElementById("displacementStatusChart"), {
+                        type: 'pie',
+                        data: displacementStatusData,
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                        }
+                    })
+
+                    const impairmentTypes = ['physical', 'mental', 'sensory']
+                    const impairmentLabels = {
+                        physical: 'Physical Impairment',
+                        mental: 'Mental Impairment',
+                        sensory: 'Sensory Impairment',
+                    }
+                    const impairmentSeverities = ['mild', 'moderate', 'severe']
+                    const impairmentSeverityLabels = {
+                        mild: 'Mild',
+                        moderate: 'Moderate',
+                        severe: 'Severe',
+                    }
+                    const impairmentSeverityColors = {
+                        severe: 'rgba(255, 99, 132, 0.2)',
+                        mild: 'rgba(54, 162, 235, 0.2)',
+                        moderate: 'rgba(255, 206, 86, 0.2)',
+                    }
+
+                    const impairmentData = {
+                        labels: impairmentTypes.map(s => impairmentLabels[s]),
+                        datasets: impairmentSeverities.map((s) => {
+                            return {
+                                label: impairmentSeverityLabels[s],
+                                data: impairmentTypes.map((t) => stats[`${t}Impairment`][s]),
+                                backgroundColor: impairmentSeverityColors[s],
+                            }
+                        })
+                    }
+
+                    new Chart(document.getElementById("impairmentChart"), {
+                        type: 'bar',
+                        data: impairmentData,
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            indexAxis: 'y',
+                            scales: {
+                                x: {stacked: true},
+                                y: {stacked: true,}
+                            }
+                        }
+                    })
+                })
+
+        })
+    </script>
 {{end}}
 {{define "body"}}
     <header class="sticky-top">
@@ -61,9 +261,9 @@
 
                                     <div class="form-text"
                                          id="JwtGroupHelp">
-                                            The authentication group that this country is associated with.
-                                            Users that belong to this group will be able to access this country's
-                                            data.
+                                        The authentication group that this country is associated with.
+                                        Users that belong to this group will be able to access this country's
+                                        data.
                                     </div>
                                 </div>
                                 <!-- End of JWT Group -->
@@ -75,6 +275,48 @@
                     </div>
                 </div>
             </form>
+            <div id="chartSection" class="d-none row gx-3 gy-3 mt-3">
+                <div class="col-12 col-md-4">
+                    <div class="shadow-sm border h-100 p-3 text-center d-flex flex-column justify-content-center">
+                        <h5 class="text-muted">Total number of individuals</h5>
+                        <h1 class="display-4" id="totalIndividualCount"></h1>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="shadow-sm border h-100 p-3 text-center d-flex flex-column justify-content-center">
+                        <h6 class="text-muted">Women and Children</h6>
+                        <h1 class="display-6" id="totalWomenAndChildrenCount"></h1>
+                        <h6 class="text-muted">Children</h6>
+                        <h1 class="display-6" id="totalChildrenCount"></h1>
+                        <h6 class="text-muted">Elderly</h6>
+                        <h1 class="display-6" id="totalElderlyCount"></h1>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="shadow-sm border h-100 p-3 text-center d-flex flex-column">
+                        <h5 class="text-muted">Gender and Age Breakdown</h5>
+                        <div class="position-relative flex-grow-1">
+                            <canvas id="genderAgeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="shadow-sm border h-100 p-3 text-center d-flex flex-column">
+                        <h5 class="text-muted">By Displacement Status</h5>
+                        <div class="position-relative flex-grow-1">
+                            <canvas id="displacementStatusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="shadow-sm border h-100 p-3 text-center d-flex flex-column">
+                        <h5 class="text-muted">By Disability</h5>
+                        <div class="position-relative flex-grow-1">
+                            <canvas id="impairmentChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
