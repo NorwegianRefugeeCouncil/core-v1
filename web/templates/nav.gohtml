@@ -1,15 +1,15 @@
 {{define "nav"}}
     <nav class="navbar navbar-expand-lg bg-secondary " style="z-index: 1">
         <div class="container-fluid" id="navbar-container">
-            <a class="navbar-brand me-0 me-lg-2" href="/" style="margin-top:-0.3rem">
+            <a class="navbar-brand me-0 me-lg-2" href="/">
                 <div class="d-flex flex-row align-items-center me-5">
-                    <img src="/static/favicon.ico" alt="" width="16" height="16" class="d-inline-block"/>
-                    <span class="ms-3 fw-bold">Core</span>
+                    <img src="/static/favicon.ico" alt="" width="18" height="18" class="d-inline-block"/>
+                    <span class="ms-1 fw-bold">Core</span>
                 </div>
             </a>
             <div id="toolbar" class="d-flex flex-col align-items-center order-lg-last">
                 {{ if logoutURL}}
-                    <a title="Logout" class="order-last ms-2 btn btn-outline-secondary" href="{{logoutURL}}"><i
+                    <a title="Logout" class="nav-link order-last ms-2" href="{{logoutURL}}"><i
                                 class="bi bi-box-arrow-right"></i></a>
                 {{end}}
                 <button class="navbar-toggler order-last ms-2" type="button" data-bs-toggle="collapse"
@@ -42,11 +42,11 @@
             </div>
 
 
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center me-3">
                 {{ if $.RequestContext.SelectedCountry }}
 
                     <div class="dropdown ms-2">
-                        <button class="btn btn-secondary dropdown-toggle"
+                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
                                 type="button"
                                 id="countryMenuButton"
                                 data-bs-toggle="dropdown"
@@ -58,7 +58,7 @@
                         </ul>
                     </div>
                 {{else}}
-                    <a href="/countries/select">Select country</a>
+                    <a class="nav-link" href="/countries/select">Select country</a>
                 {{end}}
             </div>
         </div>
