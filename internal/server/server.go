@@ -75,6 +75,7 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 		o.JwtGroupGlobalAdmin,
 		o.AuthHeaderName,
 		o.AuthHeaderFormat,
+		o.LoginURL,
 		idTokenVerifier,
 		tpl)
 

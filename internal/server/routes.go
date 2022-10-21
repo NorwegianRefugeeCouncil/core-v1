@@ -16,6 +16,7 @@ func buildRouter(
 	globalAdminGroup string,
 	authHeaderName string,
 	authHeaderFormat string,
+	loginURL string,
 	idTokenVerifier IDTokenVerifier,
 	tpl templates,
 ) *mux.Router {
@@ -36,11 +37,13 @@ func buildRouter(
 	webRouter.Use(
 		noCache,
 		logMiddleware,
-		authMiddleware(authHeaderName, authHeaderFormat, idTokenVerifier),
+		authMiddleware(authHeaderName, authHeaderFormat, idTokenVerifier, loginURL),
 		countriesMiddleware(countryRepo),
 		permissionMiddleware(globalAdminGroup),
 		selectedCountryMiddleware(),
 	)
+
+	webRouter.Path("/api/session").Handler(handlers.HandleSession())
 
 	webRouter.Path("/individuals").Handler(withMiddleware(
 		handlers.HandleIndividuals(renderer, individualRepo),

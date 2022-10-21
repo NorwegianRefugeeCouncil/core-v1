@@ -13,6 +13,7 @@ type Options struct {
 	DatabaseDriver      string
 	DatabaseDSN         string
 	LogoutURL           string
+	LoginURL            string
 	JwtGroupGlobalAdmin string
 	AuthHeaderName      string
 	AuthHeaderFormat    string
