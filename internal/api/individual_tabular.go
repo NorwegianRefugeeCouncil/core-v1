@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/csv"
 	"errors"
+	"fmt"
 	"io"
 	"strconv"
 	"strings"
@@ -116,27 +117,16 @@ func MarshalIndividualsCSV(w io.Writer, individuals []*Individual) error {
 	csvEncoder := csv.NewWriter(w)
 	defer csvEncoder.Flush()
 
-	if err := csvEncoder.Write([]string{
-		constants.FileColumnIndividualID,
-		constants.FileColumnIndividualFullName,
-		constants.FileColumnIndividualPreferredName,
-		constants.FileColumnIndividualDisplacementStatus,
-		constants.FileColumnIndividualEmail,
-		constants.FileColumnIndividualAddress,
-		constants.FileColumnIndividualPhoneNumber,
-		constants.FileColumnIndividualBirthDate,
-		constants.FileColumnIndividualIsMinor,
-		constants.FileColumnIndividualGender,
-		constants.FileColumnIndividualPresentsProtectionConcerns,
-		constants.FileColumnIndividualPhysicalImpairment,
-		constants.FileColumnIndividualSensoryImpairment,
-		constants.FileColumnIndividualMentalImpairment,
-	}); err != nil {
+	if err := csvEncoder.Write(constants.IndividualFileColumns); err != nil {
 		return err
 	}
 
 	for _, individual := range individuals {
-		if err := individual.MarshalCSV(csvEncoder); err != nil {
+		row, err := individual.marshalTabularData()
+		if err != nil {
+			return err
+		}
+		if err := csvEncoder.Write(row); err != nil {
 			return err
 		}
 	}
@@ -144,33 +134,58 @@ func MarshalIndividualsCSV(w io.Writer, individuals []*Individual) error {
 	return nil
 }
 
-func (i *Individual) MarshalCSV(csvEncoder *csv.Writer) error {
-	var birthDate string
+func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
+	const sheetName = "Individuals"
 
-	if i.BirthDate != nil {
-		birthDate = i.BirthDate.Format("2006-01-02")
+	f := excelize.NewFile()
+
+	sheet := f.NewSheet(sheetName)
+
+	if err := f.SetSheetRow(sheetName, "A1", &constants.IndividualFileColumns); err != nil {
+		return err
 	}
 
-	if err := csvEncoder.Write([]string{
-		i.ID,
-		i.FullName,
-		i.PreferredName,
-		i.DisplacementStatus,
-		i.Email,
-		i.Address,
-		i.PhoneNumber,
-		birthDate,
-		strconv.FormatBool(i.IsMinor),
-		i.Gender,
-		strconv.FormatBool(i.PresentsProtectionConcerns),
-		i.PhysicalImpairment,
-		i.SensoryImpairment,
-		i.MentalImpairment,
-	}); err != nil {
+	for i, individual := range individuals {
+		row, err := individual.marshalTabularData()
+		if err != nil {
+			return err
+		}
+		if err := f.SetSheetRow(sheetName, fmt.Sprintf("A%d", i+2), &row); err != nil {
+			return err
+		}
+	}
+
+	f.SetActiveSheet(sheet)
+
+	if err := f.Write(w); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (i *Individual) marshalTabularData() ([]string, error) {
+	row := make([]string, len(constants.IndividualFileColumns))
+	for j, col := range constants.IndividualFileColumns {
+		value, err := i.GetFieldValue(constants.IndividualFileToDBMap[col])
+		if err != nil {
+			return nil, err
+		}
+
+		switch col {
+		case constants.FileColumnIndividualBirthDate:
+			var birthDate string
+			if i.BirthDate != nil {
+				birthDate = i.BirthDate.Format("2006-01-02")
+			}
+			row[j] = birthDate
+		case constants.FileColumnIndividualIsMinor, constants.FileColumnIndividualPresentsProtectionConcerns:
+			row[j] = strconv.FormatBool(value.(bool))
+		default:
+			row[j] = value.(string)
+		}
+	}
+	return row, nil
 }
 
 var TRUE_VALUES = []string{"true", "yes", "1"}
