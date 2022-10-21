@@ -10,8 +10,6 @@ import (
 	"go.uber.org/zap"
 )
 
-
-
 func HandleDownload(
 	userRepo db.IndividualRepo,
 ) http.Handler {
@@ -40,8 +38,10 @@ func HandleDownload(
 		}
 
 		if !authIntf.CanReadWriteToCountryID(selectedCountryID) {
-			l.Warn("user does not have permission to download individuals", zap.Error(err))
-			http.Error(w, "user does not have permission to download individuals", http.StatusForbidden)
+			l.Warn("user does not have permission to download individuals in country",
+				zap.Error(err),
+				zap.String("country_id", selectedCountryID))
+			http.Error(w, "user does not have permission to download individuals in country "+selectedCountryID, http.StatusForbidden)
 			return
 		}
 
