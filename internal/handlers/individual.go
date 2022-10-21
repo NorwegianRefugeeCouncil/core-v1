@@ -129,7 +129,7 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 		}
 
 		// Save the individual
-		individual, err = repo.Put(ctx, individual, api.AllndividualFields)
+		individual, err = repo.Put(ctx, individual, constants.IndividualDBColumns)
 		if err != nil {
 			l.Error("failed to put individual", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)

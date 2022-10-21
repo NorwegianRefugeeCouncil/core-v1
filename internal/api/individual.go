@@ -7,6 +7,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/nrc-no/notcore/internal/constants"
 )
 
 type Individual struct {
@@ -28,58 +30,39 @@ type Individual struct {
 	MentalImpairment           string     `db:"mental_impairment"`
 }
 
-var AllndividualFields = []string{
-	"id",
-	"country_id",
-	"full_name",
-	"phone_number",
-	"normalized_phone_number",
-	"email",
-	"address",
-	"birth_date",
-	"gender",
-	"displacement_status",
-	"preferred_name",
-	"is_minor",
-	"presents_protection_concerns",
-	"physical_impairment",
-	"sensory_impairment",
-	"mental_impairment",
-}
-
 func (i Individual) GetFieldValue(field string) (interface{}, error) {
 	switch field {
-	case "address":
+	case constants.DBColumnIndividualAddress:
 		return i.Address, nil
-	case "birth_date":
+	case constants.DBColumnIndividualBirthDate:
 		return i.BirthDate, nil
-	case "country_id":
+	case constants.DBColumnIndividualCountryID:
 		return i.CountryID, nil
-	case "displacement_status":
+	case constants.DBColumnIndividualDisplacementStatus:
 		return i.DisplacementStatus, nil
-	case "email":
+	case constants.DBColumnIndividualEmail:
 		return i.Email, nil
-	case "full_name":
+	case constants.DBColumnIndividualFullName:
 		return i.FullName, nil
-	case "gender":
+	case constants.DBColumnIndividualGender:
 		return i.Gender, nil
-	case "id":
+	case constants.DBColumnIndividualID:
 		return i.ID, nil
-	case "is_minor":
+	case constants.DBColumnIndividualIsMinor:
 		return i.IsMinor, nil
-	case "mental_impairment":
+	case constants.DBColumnIndividualMentalImpairment:
 		return i.MentalImpairment, nil
-	case "normalized_phone_number":
+	case constants.DBColumnIndividualNormalizedPhoneNumber:
 		return i.NormalizedPhoneNumber, nil
-	case "phone_number":
+	case constants.DBColumnIndividualPhoneNumber:
 		return i.PhoneNumber, nil
-	case "physical_impairment":
+	case constants.DBColumnIndividualPhysicalImpairment:
 		return i.PhysicalImpairment, nil
-	case "preferred_name":
+	case constants.DBColumnIndividualPreferredName:
 		return i.PreferredName, nil
-	case "presents_protection_concerns":
+	case constants.DBColumnIndividualPresentsProtectionConcerns:
 		return i.PresentsProtectionConcerns, nil
-	case "sensory_impairment":
+	case constants.DBColumnIndividualSensoryImpairment:
 		return i.SensoryImpairment, nil
 	default:
 		return nil, fmt.Errorf("unknown field: %s", field)
