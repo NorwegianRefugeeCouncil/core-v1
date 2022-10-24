@@ -81,16 +81,6 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			return
 		}
 
-		if !isNew {
-			// At this point, the user might have followed a link to an existing individual.
-			// At this point, the user might have followed a link to an existing individual.
-			// That individual might not be in the users' selected country.
-			// In this case, update the users' selected country to match the individual
-			ctx = utils.WithSelectedCountryID(ctx, individual.CountryID)
-			r = r.WithContext(ctx)
-			setSelectedCountryCookie(w, individual.CountryID)
-		}
-
 		// Render the form if GET
 		if r.Method == http.MethodGet {
 			render()
