@@ -1,5 +1,36 @@
 [
   {
+    "id": "EASY_TO_REMEMBER_LOGIN__global",
+    "email": "a@gmail.com",
+    "email_verified": true,
+    "name": "Global admin user",
+    "nickname": "gau",
+    "password": "123",
+    "groups": [
+      "NRC_Core_GlobalAdmin"
+    ]
+  },
+  {
+    "id": "EASY_TO_REMEMBER_LOGIN__country",
+    "email": "b@gmail.com",
+    "email_verified": true,
+    "name": "Country user",
+    "nickname": "cu",
+    "password": "123",
+    "groups": [
+      "NRC_Core_Uganda"
+    ]
+  },
+  {
+    "id": "EASY_TO_REMEMBER_LOGIN__none",
+    "email": "c@gmail.com",
+    "email_verified": true,
+    "name": "No country user",
+    "nickname": "ncu",
+    "password": "123",
+    "groups": []
+  },
+  {
     "id": "SIMPLE_OIDC_USER_HARLEY",
     "email": "harley@qlik.example",
     "email_verified": true,
