@@ -78,6 +78,7 @@ func (i Individual) String() string {
 }
 
 func (individual *Individual) Normalize() {
+	individual.ID = trimString(individual.ID)
 	individual.FullName = trimString(individual.FullName)
 	individual.PreferredName = trimString(individual.PreferredName)
 	if individual.PreferredName == "" {
@@ -96,6 +97,7 @@ func (individual *Individual) Normalize() {
 
 type GetAllOptions struct {
 	Address                    string
+	ID                         string
 	BirthDateFrom              *time.Time
 	BirthDateTo                *time.Time
 	CountryID                  string
@@ -168,6 +170,9 @@ func (o GetAllOptions) QueryParams() template.HTML {
 	if len(o.FullName) != 0 {
 		params.Add("full_name", o.FullName)
 	}
+	if len(o.ID) != 0 {
+		params.Add("id", o.ID)
+	}
 	if len(o.Address) != 0 {
 		params.Add("address", o.Address)
 	}
@@ -194,9 +199,10 @@ func (o GetAllOptions) QueryParams() template.HTML {
 	if o.BirthDateTo != nil {
 		params.Add("age_to", fmt.Sprintf("%d", o.AgeFrom()))
 	}
-	if o.IsMinorSelected() {
+
+	if *o.IsMinor {
 		params.Add("is_minor", "true")
-	} else if o.IsNotMinorSelected() {
+	} else {
 		params.Add("is_minor", "false")
 	}
 	if o.IsPresentsProtectionConcernsSelected() {

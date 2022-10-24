@@ -73,10 +73,10 @@ $grays: (
     "900": $neutral700
 ) !default;
 
-$nav-link-color: $white;
 $code-color: $neutral400;
 $link-color: $secondary;
-
+$navbar-light-color: $white;
+$navbar-light-toggler-border-radius: $white;
 
 $spacer: 5px;
 $spacers: (
@@ -135,6 +135,14 @@ $dropdown-link-hover-color: $white;
 
 
 // Add custom styles here
+
+h1, h2 {
+    font-weight: 700;
+}
+
+h3, h4, h5, h6 {
+    font-weight: 500;
+}
 
 button, .btn {
     color: $white;
@@ -198,8 +206,13 @@ button, .btn {
 
 main {
     background-color: $white;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 50px;
+    padding-right: 50px;
+
+    @media only screen and (max-width: 992px) {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
 }
 
 .card {
@@ -210,7 +223,6 @@ main {
         font-weight: bold;
         padding: 0 10px;
         line-height: 50px;
-        //border-radius: 0;
     }
     .list-group {
         border-bottom: 0;
@@ -227,6 +239,8 @@ main {
         background-color: $white;
         padding: 10px;
         border: 0;
+    }
+    .card-footer {
         float: right;
     }
 }
@@ -246,11 +260,15 @@ table {
 }
 
 .navbar.bg-secondary {
-    height: 50px;
+    min-height: 50px;
     padding-left: 20px;
     padding-right: 20px;
     a.nav-link, .navbar-brand {
         color: $white;
+    }
+    .navbar-brand {
+        height: 50px;
+        line-height: 50px;
     }
 }
 

@@ -12,16 +12,7 @@
         {{$isGlobalAdmin := $.PermissionHelper.IsGlobalAdmin}}
 
         document.addEventListener("DOMContentLoaded", function () {
-            const navbarToggler = document.getElementById("toolbar")
-            const saveButton = document.createElement("button");
-            saveButton.className = "btn btn-primary px-5 ms-2"
-            saveButton.innerHTML = "Save"
-
-            const navItem = document.createElement("div");
-            navItem.className = ""
-            navItem.appendChild(saveButton)
-
-            navbarToggler.appendChild(navItem)
+            const saveButton = document.getElementById("save-individual");
 
             const formElement = document.getElementById("form")
             saveButton.onclick = function () {
@@ -50,14 +41,17 @@
         {{template "nav" .}}
     </header>
 
-    <main style="height: calc( 100vh - 3.5rem ); overflow: hidden; overflow-y: scroll">
+    <main>
         <div class="mt-4">
             <form id="form" method="post"
                   action="/individuals/{{if eq "" .Individual.ID}}new{{else}}{{.Individual.ID}}{{end}}">
 
                 <div class="container-fluid container-xxl">
-                    <div class="row justify-content-center">
-                        <div class="col-12 col-md-10 col-lg-8 col-xl-6">
+                    <div class="d-flex flex-column justify-content-center col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
+
+                            <div class="mb-3">
+                                <button class="btn btn-primary float-end" id="save-individual" type="submit">Save</button>
+                            </div>
 
                             {{ if .HasErrors }}
                                 <div class="alert alert-dismissible alert-danger mb-3 d-flex align-items-center justify-content-between"
@@ -386,7 +380,6 @@
                             </div>
                             <!-- End of Disability -->
 
-                        </div>
                     </div>
                 </div>
             </form>

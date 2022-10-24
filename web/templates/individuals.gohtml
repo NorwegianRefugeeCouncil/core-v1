@@ -34,236 +34,222 @@
     <header class="sticky-top">
         {{template "nav" .}}
     </header>
-    <main style="height: calc( 100vh - 3.5rem ); overflow: hidden; overflow-y: scroll">
-
+    <main style="">
         <div class="container-fluid container-xxl pt-3">
-            <div class="row">
-                <div class="col-12 mt-3 mt-md-0 col-md-4 order-md-last">
-                    <div class="card  mb-5 mb-md-3">
-                        <div class="card-header">
-                            Actions
-                        </div>
-                        <div class="card-body list-group list-group-flush">
-                            {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.GetCountryIDsWithPermission "write")}}
-                                <div class="list-group-item">
-                                    <a href="/individuals/new" class="btn btn-outline-primary w-100">Create new
-                                        Individual</a>
-                                </div>
-                            {{end}}
-                            <div class="list-group-item">
-                                <label for="goToIndividualId" class="form-label">Go to Individual</label>
-                                <div class="input-group mb-3">
-                                    <input id="goToIndividualId" type="text" class="form-control font-monospace"
-                                           placeholder="Individual ID" aria-label="Individual's ID">
-                                    <button onclick="goToIndividual()" class="btn btn-outline-secondary"
-                                            type="button">Go
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="list-group-item">
-                                <a href="/individuals/download?format=xlsx" target="_blank"
-                                   class="btn btn-outline-primary w-100">
-                                    Download 
-                                </a>
-                            </div>
-                            {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.GetCountryIDsWithPermission "write")}}
-                                <div class="list-group-item">
-                                    <form action="/individuals/upload" enctype="multipart/form-data" method="post">
-                                        <div class="form-group mb-2">
-                                            <label class="form-label">Upload Individuals Excel or CSV file</label>
-                                            <input accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+            <div class="d-flex justify-content-end align-items-center">
+                {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.GetCountryIDsWithPermission "write")}}
+                    <a href="/individuals/new" class="btn btn-outline-primary me-2">
+                        Create new Individual
+                    </a>
+                {{end}}
+                <a href="/individuals/download" target="_blank" class="btn btn-outline-primary">
+                    Download CSV
+                </a>
+                {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.GetCountryIDsWithPermission "write")}}
+                    <form action="/individuals/upload" enctype="multipart/form-data" method="post" class="ms-2">
+                        <div class="form-group mb-2">
+                            <label class="form-label">Upload Individuals Excel or CSV file</label>
+                            <input accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
 " name="file" type="file" class="form-control">
-                                        </div>
-                                        <button type="submit" class="btn btn-outline-primary w-100">Upload</button>
-                                    </form>
-                                </div>
-                            {{end}}
                         </div>
-                    </div>
-                    <div class="card  mb-5 mb-md-3">
-                        <form method="get" action="/individuals" id="searchForm">
-                            <div class="card-header">
-                                Search
-                            </div>
-                            <input type="hidden" name="take" value="">
-                            <input type="hidden" name="skip" value="">
-                            <input type="hidden" name="country_id" value="{{.Options.CountryID}}"/>
-                            <div class="card-body">
+                        <button type="submit" class="btn btn-outline-primary">Upload</button>
+                    </form>
+                {{end}}
+            </div>
 
-                                <!-- Full Name -->
-                                <div class="form-group mb-3">
-                                    <label class="form-label" for="Name">Name</label>
-                                    <input id="Name"
-                                           name="name"
-                                           type="text"
-                                           placeholder="Search by name"
-                                           class="form-control"
-                                           value="{{.Options.FullName}}">
+            <h1 class="my-4">{{ $.RequestContext.SelectedCountry.Name }}</h1>
+
+            <div class="row">
+                <div class="col-12 my-4">
+                    <div class="card">
+                        <div class="card-header" id="searchFormAccordion">
+                            <button class="btn btn-link d-flex w-100 justify-content-between px-0" data-bs-toggle="collapse" data-bs-target="#search-form" aria-expanded="true" aria-controls="search-form">
+                                Filter
+                                <i class="bi-caret-down" title="NavbarToggle"></i>
+                            </button>
+                        </div>
+                        <div id="search-form" class="collapse" aria-labelledby="searchFormAccordion">
+                            <form method="get" action="/individuals" id="searchForm">
+                                <div class="card-body">
+                                    <input type="hidden" name="take" value="">
+                                    <input type="hidden" name="skip" value="">
+                                    <input type="hidden" name="country_id" value="{{.Options.CountryID}}"/>
+
+                                    <div class="row">
+                                        <!-- ID -->
+                                        <div class="form-group mb-3 col-6">
+                                            <label class="form-label" for="ID">ID</label>
+                                            <input id="ID"
+                                                   name="id"
+                                                   type="text"
+                                                   placeholder="Search by ID"
+                                                   class="form-control"
+                                                   value="{{.Options.ID}}">
+                                        </div>
+                                        <!-- End ID -->
+
+                                        <!-- Full Name -->
+                                        <div class="form-group mb-3 col-6">
+                                            <label class="form-label" for="Name">Name</label>
+                                            <input id="Name"
+                                                   name="name"
+                                                   type="text"
+                                                   placeholder="Search by name"
+                                                   class="form-control"
+                                                   value="{{.Options.FullName}}">
+                                        </div>
+                                        <!-- End Full Name -->
+                                    </div>
+
+                                    <div class="row">
+                                        <!-- Is Minor -->
+                                        <div class="form-group mb-3 col-2">
+                                            <label class="form-label">Is Minor</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="true" id="IsMinor"
+                                                       name="is_minor"
+                                                       {{if .Options.IsMinorSelected }}checked="checked"{{end}}>
+                                                <label class="form-check-label" for="IsMinor">
+                                                    Yes
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <!-- End Is Minor -->
+
+                                        <!-- Protection Concerns -->
+                                        <div class="form-group mb-3 col-4">
+                                            <label class="form-label">Presents Protection
+                                                Concerns</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="true" id="PresentsProtectionConcerns"
+                                                       name="presents_protection_concerns"
+                                                       {{if .Options.IsPresentsProtectionConcernsSelected }}checked="checked"{{end}}>
+                                                <label class="form-check-label" for="PresentsProtectionConcerns">
+                                                    Yes
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <!-- End Protection Concerns -->
+
+                                        <!-- Gender -->
+                                        <div class="form-group col-6">
+                                            <label class="form-text">Gender</label>
+                                            <div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" value="male" id="MaleGender"
+                                                           name="gender"
+                                                           {{if contains .Options.Genders "male"}}checked="checked"{{end}}>
+                                                    <label class="form-check-label" for="MaleGender">
+                                                        Male
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline mb-3">
+                                                    <input class="form-check-input" type="radio" value="female" id="FemaleGender"
+                                                           name="gender"
+                                                           {{if contains .Options.Genders "female"}}checked="checked"{{end}}>
+                                                    <label class="form-check-label" for="FemaleGender">
+                                                        Female
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- End Gender -->
+                                    </div>
+
+                                    <div class="row">
+                                        <!-- Displacement Status -->
+                                        <div class="col-6">
+                                            <label class="form-label" for="IDPDisplacementStatus">Displacement Status
+                                                Concerns</label>
+                                            <select id="IDPDisplacementStatus" name="displacement_status" class="form-control">
+                                                <option value="" {{if contains .Options.DisplacementStatuses "" }}selected{{end}}>
+                                                    None
+                                                </option>
+                                                <option value="idp" {{if contains .Options.DisplacementStatuses "idp" }}selected{{end}}>
+                                                    Internally Displaced Person
+                                                </option>
+                                                <option value="refugee" {{if contains .Options.DisplacementStatuses "refugee" }}selected{{end}}>
+                                                    Refugee
+                                                </option>
+                                                <option value="host_community" {{if contains .Options.DisplacementStatuses "host_community" }}selected{{end}}>
+                                                    Host Community
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <!-- End Displacement Status -->
+
+                                        <!-- Address -->
+                                        <div class="form-group mb-3 col-6">
+                                            <label class="form-label" for="Address">Address</label>
+                                            <input id="Address"
+                                                   name="address"
+                                                   type="text"
+                                                   class="form-control"
+                                                   placeholder="Search by address"
+                                                   value="{{.Options.Address}}">
+                                        </div>
+                                        <!-- End Address -->
+                                    </div>
+
+                                    <div class="row">
+                                        <!-- Email -->
+                                        <div class="form-group mb-3 col-6">
+                                            <label class="form-label" for="Email">Email</label>
+                                            <input id="Email"
+                                                   name="email"
+                                                   type="text"
+                                                   class="form-control"
+                                                   placeholder="Search by email"
+                                                   value="{{.Options.Email}}">
+                                        </div>
+                                        <!-- End Email -->
+
+                                        <!-- Phone -->
+                                        <div class="form-group mb-3 col-6">
+                                            <label class="form-label" for="PhoneNumber">Phone Number</label>
+                                            <input id="PhoneNumber"
+                                                   name="phone_number"
+                                                   type="text"
+                                                   class="form-control"
+                                                   placeholder="Search by phone number"
+                                                   value="{{.Options.PhoneNumber}}">
+                                        </div>
+                                        <!-- End Phone -->
+                                    </div>
+
+                                    <!-- Age -->
+                                    <div class="col-6">
+                                        <label class="form-label">Age</label>
+                                        <div class="row">
+                                            <div class="col-3 input-group mb-2 w-50">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">From</div>
+                                                </div>
+                                                <input type="number" name="age_from" class="form-control" id="AgeFrom"
+                                                       value="{{if not (eq .Options.AgeFrom 0)}}{{.Options.AgeFrom}}{{end}}">
+                                            </div>
+
+                                            <div class="col-3 input-group mb-2 w-50">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">To</div>
+                                                </div>
+                                                <input type="number" name="age_to" class="form-control" id="AgeTo"
+                                                       value="{{if not (eq .Options.AgeTo 0)}}{{.Options.AgeTo}}{{end}}">
+                                            </div>
+                                        </div>
+                                        <!-- End Age -->
+                                    </div>
                                 </div>
-                                <!-- End Full Name -->
-
-                                <!-- Age -->
-                                <label class="form-label">Age</label>
-                                <div class="input-group mb-3">
-                                    <label class="input-group-text" for="AgeFrom">From</label>
-                                    <input id="AgeFrom" name="age_from" type="number"
-                                           class="form-control"
-                                           placeholder="From Age"
-                                           value="{{if not (eq .Options.AgeFrom 0)}}{{.Options.AgeFrom}}{{end}}">
-                                    <label class="input-group-text" for="AgeTo">To</label>
-                                    <input id="AgeTo" name="age_to" type="number"
-                                           placeholder="To Age"
-                                           class="form-control"
-                                           value="{{if not (eq .Options.AgeTo 0)}}{{.Options.AgeTo}}{{end}}">
-                                </div>
-                                <!-- End Age -->
-
-                                <!-- Is Minor -->
-                                <div class="form-group mb-3">
-                                    <label class="form-label" for="IsMinor">Is Minor</label>
-                                    <select id="IsMinor" name="is_minor" class="form-control">
-                                        <option value="">All</option>
-                                        <option value="true" {{if .Options.IsMinorSelected }}selected{{end}}>
-                                            Yes
-                                        </option>
-                                        <option value="false" {{if .Options.IsNotMinorSelected}}selected{{end}}>
-                                            No
-                                        </option>
-                                    </select>
-                                </div>
-                                <!-- End Is Minor -->
-
-
-                                <!-- Protection Concerns -->
-                                <div class="form-group mb-3">
-                                    <label class="form-label" for="PresentsProtectionConcerns">Presents Protection
-                                        Concerns</label>
-                                    <select id="PresentsProtectionConcerns" name="presents_protection_concerns"
-                                            class="form-control">
-                                        <option value="">All</option>
-                                        <option value="true"
-                                                {{if .Options.IsPresentsProtectionConcernsSelected }}selected{{end}}>
-                                            Yes
-                                        </option>
-                                        <option value="false"
-                                                {{if .Options.IsNotPresentsProtectionConcernsSelected}}selected{{end}}>
-                                            No
-                                        </option>
-                                    </select>
-                                </div>
-                                <!-- End Protection Concerns -->
-
-
-                                <!-- Gender -->
-
-                                <label class="form-text">Displacement Status</label>
-
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="idp"
-                                           id="IDPDisplacementStatus"
-                                           name="displacement_status"
-                                           {{if contains .Options.DisplacementStatuses "idp"}}checked="checked"{{end}}>
-                                    <label class="form-check-label" for="IDPDisplacementStatus">
-                                        Internally Displaced Person
-                                    </label>
-                                </div>
-
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="refugee"
-                                           id="RefugeeDisplacementStatus"
-                                           name="displacement_status"
-                                           {{if contains .Options.DisplacementStatuses "refugee"}}checked="checked"{{end}}>
-                                    <label class="form-check-label" for="RefugeeDisplacementStatus">
-                                        Refugee
-                                    </label>
-                                </div>
-
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="host_community"
-                                           id="HostCommunityDisplacementStatus"
-                                           name="displacement_status"
-                                           {{if contains .Options.DisplacementStatuses "host_community"}}checked="checked"{{end}}>
-                                    <label class="form-check-label" for="HostCommunityDisplacementStatus">
-                                        Host Community
-                                    </label>
-                                </div>
-
-                                <!-- End Gender -->
-
-
-                                <!-- Gender -->
-
-                                <label class="form-text">Gender</label>
-
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="male" id="MaleGender"
-                                           name="gender"
-                                           {{if contains .Options.Genders "male"}}checked="checked"{{end}}>
-                                    <label class="form-check-label" for="MaleGender">
-                                        Male
-                                    </label>
-                                </div>
-
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" value="female" id="FemaleGender"
-                                           name="gender"
-                                           {{if contains .Options.Genders "female"}}checked="checked"{{end}}>
-                                    <label class="form-check-label" for="FemaleGender">
-                                        Female
-                                    </label>
-                                </div>
-
-                                <!-- End Gender -->
-
-
-                                <!-- Email -->
-                                <div class="form-group mb-3">
-                                    <label class="form-label" for="Email">Email</label>
-                                    <input id="Email"
-                                           name="email"
-                                           type="text"
-                                           class="form-control"
-                                           placeholder="Search by email"
-                                           value="{{.Options.Email}}">
-                                </div>
-                                <!-- End Email -->
-
-
-                                <!-- Phone -->
-                                <div class="form-group mb-3">
-                                    <label class="form-label" for="PhoneNumber">Phone Number</label>
-                                    <input id="PhoneNumber"
-                                           name="phone_number"
-                                           type="text"
-                                           class="form-control"
-                                           placeholder="Search by phone number"
-                                           value="{{.Options.PhoneNumber}}">
-                                </div>
-                                <!-- End Phone -->
-
-
-                                <!-- Address -->
-                                <div class="form-group mb-3">
-                                    <label class="form-label" for="Address">Address</label>
-                                    <input id="Address"
-                                           name="address"
-                                           type="text"
-                                           class="form-control"
-                                           placeholder="Search by address"
-                                           value="{{.Options.Address}}">
-                                </div>
-                                <!-- End Address -->
-
-                            </div>
-
+                            </form>
                             <div class="card-footer">
                                 <a href="/individuals" class="btn btn-outline-primary">Clear</a>
-                                <button class="btn btn-primary" type="submit">Search</button>
+                                <button class="btn btn-primary" type="submit" form="searchForm">Search</button>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-8">
+
+                <div class="col-12">
                     <div class="mb-5">
                         <div class="overflow-scroll mb-3">
                             <table class="table">
