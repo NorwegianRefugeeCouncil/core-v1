@@ -200,11 +200,12 @@ func (o GetAllOptions) QueryParams() template.HTML {
 		params.Add("age_to", fmt.Sprintf("%d", o.AgeFrom()))
 	}
 
-	if *o.IsMinor {
+	if o.IsMinorSelected() {
 		params.Add("is_minor", "true")
-	} else {
+	} else if o.IsNotMinorSelected() {
 		params.Add("is_minor", "false")
 	}
+
 	if o.IsPresentsProtectionConcernsSelected() {
 		params.Add("presents_protection_concerns", "true")
 	} else if o.IsNotPresentsProtectionConcernsSelected() {
