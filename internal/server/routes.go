@@ -43,25 +43,37 @@ func buildRouter(
 		selectedCountryMiddleware(),
 	)
 
-	webRouter.Path("/countries").Handler(handlers.HandleCountries(tpl))
-	webRouter.Path("/countries/{country_id}").Handler(handlers.HandleCountry(tpl, countryRepo))
+	countriesRouter := webRouter.PathPrefix("/countries").Subrouter()
+	countriesRouter.Path("").Handler(handlers.HandleCountries(tpl))
 
-	webRouter.Path("/countries/{country_id}/individuals").Handler(withMiddleware(
+	countryRouter := countriesRouter.PathPrefix("/{country_id}").Subrouter()
+	countryRouter.Path("").Handler(withMiddleware(
+		handlers.HandleCountry(tpl, countryRepo),
+		hasGlobalAdminPermissionMiddleware(),
+	))
+
+	individualsRouter := countryRouter.PathPrefix("/individuals").Subrouter()
+	individualsRouter.Path("").Handler(withMiddleware(
 		handlers.HandleIndividuals(renderer, individualRepo),
-		ensureSelectedCountryMiddleware()),
-	)
-
-	webRouter.Path("/countries/{country_id}/individuals/upload").Handler(withMiddleware(
+		ensureSelectedCountryMiddleware(),
+		hasCountryPermissionMiddleware(),
+	))
+	individualsRouter.Path("/upload").Handler(withMiddleware(
 		handlers.UploadHandler(individualRepo),
-		ensureSelectedCountryMiddleware()),
-	)
-
-	webRouter.Path("/countries/{country_id}/individuals/download").Handler(withMiddleware(
+		ensureSelectedCountryMiddleware(),
+		hasCountryPermissionMiddleware(),
+	))
+	individualsRouter.Path("/download").Handler(withMiddleware(
 		handlers.HandleDownload(individualRepo),
-		ensureSelectedCountryMiddleware()),
-	)
+		ensureSelectedCountryMiddleware(),
+		hasCountryPermissionMiddleware(),
+	))
 
-	webRouter.Path("/countries/{country_id}/individuals/{individual_id}").Handler(handlers.HandleIndividual(tpl, individualRepo))
+	webRouter.Path("/individuals/{individual_id}").Handler(withMiddleware(
+		handlers.HandleIndividual(tpl, individualRepo),
+		ensureSelectedCountryMiddleware(),
+		canAccessIndividualMiddleware(individualRepo),
+	))
 
 	webRouter.PathPrefix("").Handler(handlers.HandleHome(tpl))
 
