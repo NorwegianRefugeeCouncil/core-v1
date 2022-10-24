@@ -17,8 +17,7 @@ func ensureSelectedCountryMiddleware() func(handler http.Handler) http.Handler {
 			l := logging.NewLogger(ctx)
 
 			redirect := func() {
-				http.Redirect(w, r, "/countries/select", http.StatusTemporaryRedirect)
-				return
+				http.Redirect(w, r, "/countries", http.StatusTemporaryRedirect)
 			}
 
 			selectedCountryID, err := utils.GetSelectedCountryID(ctx)

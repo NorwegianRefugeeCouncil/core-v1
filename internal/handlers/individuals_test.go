@@ -76,7 +76,7 @@ func Test_IndividualSelectedCountry(t *testing.T) {
 			name:           "no country selected. should redirect to select a country",
 			wantStatusCode: http.StatusSeeOther,
 			wantHeaders: map[string]string{
-				"Location": "/countries/select",
+				"Location": "/countries",
 			},
 			repoMock: func(t *testing.T, m *db.MockIndividualRepo) {
 				m.EXPECT().GetAll(Any(), Any()).Times(0)
