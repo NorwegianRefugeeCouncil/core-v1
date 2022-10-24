@@ -274,7 +274,7 @@
                                 {{ if .Individuals }}
                                     {{range .Individuals}}
                                         <tr>
-                                            <td><a href="/individuals/{{.ID}}">{{.FullName}}</a></td>
+                                            <td><a href="/countries/{{.CountryID}}/individuals/{{.ID}}">{{.FullName}}</a></td>
                                             <td>
                                                 {{if .BirthDate}}
                                                     <span title="{{.BirthDate.Format "2006-01-02"}}">{{age .BirthDate}}</span>
