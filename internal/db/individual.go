@@ -9,6 +9,7 @@ import (
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/logging"
+	"github.com/nrc-no/notcore/internal/utils"
 	"github.com/rs/xid"
 	"go.uber.org/zap"
 )
@@ -200,13 +201,6 @@ func (i individualRepo) PutMany(ctx context.Context, individuals []*api.Individu
 	return ret.([]*api.Individual), nil
 }
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
 func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, individuals []*api.Individual, fields []string) ([]*api.Individual, error) {
 
 	fieldsSet := containers.NewStringSet(fields...)
@@ -218,12 +212,13 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 
 	fieldCount := len(fields)
 	individualCount := len(individuals)
+	// this is the maximum number of arguments that can be passed to a postgres query
 	maxParams := 65535
 	individualPerBatch := maxParams / fieldCount
 	ret := make([]*api.Individual, 0, individualCount)
 	for batch := 0; batch < individualCount; batch += individualPerBatch {
 
-		var individualsInBatch = individuals[batch:min(batch+individualPerBatch, individualCount)]
+		var individualsInBatch = individuals[batch:utils.Min(batch+individualPerBatch, individualCount)]
 
 		args := make([]interface{}, 0)
 		b := &strings.Builder{}
