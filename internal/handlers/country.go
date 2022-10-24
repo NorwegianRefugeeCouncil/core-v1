@@ -9,7 +9,6 @@ import (
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
-	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
 )
 
@@ -35,19 +34,6 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 			countryID = mux.Vars(r)[pathParamCountryID]
 			isNew     = countryID == newId
 		)
-
-		authCtx, err := utils.GetAuthContext(ctx)
-		if err != nil {
-			l.Error("failed to get auth context", zap.Error(err))
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-			return
-		}
-
-		if !authCtx.IsGlobalAdmin() {
-			l.Warn("cannot access country page without global admin role")
-			http.Error(w, "user is not global admin", http.StatusForbidden)
-			return
-		}
 
 		render := func() {
 			renderView(templates, templateName, w, r, viewParams{

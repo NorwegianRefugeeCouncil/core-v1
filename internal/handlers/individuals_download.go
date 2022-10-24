@@ -30,21 +30,6 @@ func HandleDownload(
 			return
 		}
 
-		authInterface, err := utils.GetAuthContext(ctx)
-		if err != nil {
-			l.Error("failed to get auth context", zap.Error(err))
-			http.Error(w, "couldn't get auth context: "+err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		if !authInterface.CanReadWriteToCountryID(selectedCountryID) {
-			l.Warn("user does not have permission to download individuals in country",
-				zap.Error(err),
-				zap.String("country_id", selectedCountryID))
-			http.Error(w, "user does not have permission to download individuals in country "+selectedCountryID, http.StatusForbidden)
-			return
-		}
-
 		var getAllOptions api.GetAllOptions
 		if err := parseGetAllOptions(r, &getAllOptions); err != nil {
 			l.Error("failed to parse options", zap.Error(err))

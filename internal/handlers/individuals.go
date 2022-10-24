@@ -69,13 +69,6 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		authInterface, err := utils.GetAuthContext(ctx)
-		if !authInterface.CanReadWriteToCountryID(selectedCountryID) {
-			l.Warn("user does not have permission to read/write to country", zap.String("country_id", selectedCountryID))
-			http.Error(w, "forbidden", http.StatusForbidden)
-			return
-		}
-
 		getAllOptions.CountryID = selectedCountryID
 		individuals, err = repo.GetAll(ctx, getAllOptions)
 		if err != nil {
