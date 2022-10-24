@@ -86,27 +86,6 @@ func Generate(countryID string, count uint) error {
 			protectionConcerns = "true"
 		}
 
-		var physicalImpairment = ""
-		if randBool(10) {
-			physicalImpairment = "moderate"
-		} else if randBool(5) {
-			physicalImpairment = "severe"
-		}
-
-		var sensoryImpairment = ""
-		if randBool(10) {
-			sensoryImpairment = "moderate"
-		} else if randBool(5) {
-			sensoryImpairment = "severe"
-		}
-
-		var mentalImpairment = ""
-		if randBool(10) {
-			mentalImpairment = "moderate"
-		} else if randBool(5) {
-			mentalImpairment = "severe"
-		}
-
 		var displacementStatus = ""
 		if randBool(20) {
 			displacementStatus = "refugee"
@@ -126,9 +105,6 @@ func Generate(countryID string, count uint) error {
 			isMinor,
 			gender,
 			protectionConcerns,
-			physicalImpairment,
-			sensoryImpairment,
-			mentalImpairment,
 			displacementStatus,
 			countryID,
 		}); err != nil {

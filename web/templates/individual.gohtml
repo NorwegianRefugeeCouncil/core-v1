@@ -195,7 +195,6 @@
                                                 name="DisplacementStatus"
                                                 class="form-select"
                                                 aria-label="Displacement Status"
-                                                aria-describedby="PhysicalImpairmentHelp"
                                         >
                                             <option {{if eq .Individual.DisplacementStatus ""}}selected="selected"{{end}}></option>
                                             <option value="refugee"
@@ -281,110 +280,6 @@
                             </div>
                             <!-- End of Protection Concerns -->
 
-
-                            <!-- Disability -->
-                            <div class="card mb-3">
-                                <div class="card-header">
-                                    Disability
-                                </div>
-
-                                <div class="card-body">
-                                    <!-- Physical Impairment -->
-                                    <div class="form mb-3">
-                                        <label for="PhysicalImpairment" class="form-label">Physical
-                                            Impairment</label>
-                                        <select
-                                                id="PhysicalImpairment"
-                                                name="PhysicalImpairment"
-                                                class="form-select"
-                                                aria-label="Physical Impairment"
-                                                aria-describedby="PhysicalImpairmentHelp"
-                                        >
-                                            <option value=""
-                                                    {{if eq .Individual.PhysicalImpairment ""}}selected="selected"{{end}}>
-                                                No physical impairment
-                                            </option>
-                                            <option value="moderate"
-                                                    {{if eq .Individual.PhysicalImpairment "moderate"}}selected="selected"{{end}}>
-                                                Moderate physical impairment
-                                            </option>
-                                            <option value="severe"
-                                                    {{if eq .Individual.PhysicalImpairment "severe"}}selected="selected"{{end}}>
-                                                Severe physical impairment
-                                            </option>
-                                        </select>
-                                        <div class="form-text" id="PhysicalImpairmentHelp">
-                                            Would you say the beneficiary experiences some form of physical
-                                            challenges?
-                                        </div>
-                                    </div>
-                                    <!-- End of Physical Impairment -->
-
-
-                                    <!-- Sensory Impairment -->
-                                    <div class="form mb-3">
-                                        <label for="SensoryImpairment" class="form-label">Sensory Impairment</label>
-                                        <select
-                                                id="SensoryImpairment"
-                                                name="SensoryImpairment"
-                                                class="form-select"
-                                                aria-label="Sensory Impairment"
-                                                aria-describedby="SensoryImpairmentHelp"
-                                        >
-                                            <option value=""
-                                                    {{if eq .Individual.SensoryImpairment ""}}selected="selected"{{end}}>
-                                                No sensory impairment
-                                            </option>
-                                            <option value="moderate"
-                                                    {{if eq .Individual.SensoryImpairment "moderate"}}selected="selected"{{end}}>
-                                                Moderate sensory impairment
-                                            </option>
-                                            <option value="severe"
-                                                    {{if eq .Individual.SensoryImpairment "severe"}}selected="selected"{{end}}>
-                                                Severe sensory impairment
-                                            </option>
-                                        </select>
-                                        <div class="form-text" id="SensoryImpairmentHelp">
-                                            Would you say the beneficiary experiences some form of sensory
-                                            challenges?
-                                        </div>
-                                    </div>
-                                    <!-- End of Sensory Impairment -->
-
-
-                                    <!-- Mental Impairment -->
-                                    <div class="form mb-3">
-                                        <label for="MentalImpairment" class="form-label">Mental Impairment</label>
-                                        <select
-                                                id="MentalImpairment"
-                                                name="MentalImpairment"
-                                                class="form-select"
-                                                aria-label="Mental Impairment"
-                                                aria-describedby="MentalImpairmentHelp"
-                                        >
-                                            <option value=""
-                                                    {{if eq .Individual.MentalImpairment ""}}selected="selected"{{end}}>
-                                                No mental impairment
-                                            </option>
-                                            <option value="moderate"
-                                                    {{if eq .Individual.MentalImpairment "moderate"}}selected="selected"{{end}}>
-                                                Moderate mental impairment
-                                            </option>
-                                            <option value="severe"
-                                                    {{if eq .Individual.MentalImpairment "severe"}}selected="selected"{{end}}>
-                                                Severe mental impairment
-                                            </option>
-                                        </select>
-                                        <div class="form-text" id="MentalImpairmentHelp">
-                                            Would you say the beneficiary experiences some form of mental
-                                            challenges?
-                                        </div>
-                                    </div>
-                                    <!-- End of Mental Impairment -->
-
-                                </div>
-                            </div>
-                            <!-- End of Disability -->
 
                         </div>
                     </div>

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"strings"
 	"time"
 )
@@ -33,5 +34,22 @@ func NormalizePhoneNumber(phoneNumber string) string {
 }
 
 func normalizeEmail(email string) string {
-	return strings.ToLower(email)
+	out := strings.ToLower(email)
+	out = trimString(out)
+	return out
+}
+
+func ParseDisabilityLevel(s string) (DisabilityLevel, error) {
+	switch s {
+	case "0":
+		return DisabilityLevelNone, nil
+	case "1":
+		return DisabilityLevelMild, nil
+	case "2":
+		return DisabilityLevelModerate, nil
+	case "3":
+		return DisabilityLevelSevere, nil
+	default:
+		return 0, fmt.Errorf("invalid disability level %q", s)
+	}
 }

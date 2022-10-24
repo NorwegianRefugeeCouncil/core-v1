@@ -5,13 +5,15 @@ import (
 	"github.com/nrc-no/notcore/internal/constants"
 )
 
-func ValidateIndividual(individual *api.Individual) ValidationErrors {
+func ValidateIndividual(i *api.Individual) ValidationErrors {
 	ret := ValidationErrors{}
-	if individual.FullName == "" {
-		ret[constants.FormParamIndividualFullName] = "Full name is required"
+	if len(i.CountryID) == 0 {
+		ret[constants.FormParamIndividualCountryID] = "Country is required"
 	}
-	if len(individual.CountryID) == 0 {
-		ret[constants.FormParamIndividualCountry] = "Country is required"
+	if !i.PrefersToRemainAnonymous {
+		if i.FullName == "" {
+			ret[constants.FormParamIndividualFullName] = "Full name is required if individual does not prefer to remain anonymous"
+		}
 	}
 	return ret
 }

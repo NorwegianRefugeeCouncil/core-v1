@@ -29,15 +29,12 @@ var paramaters = []struct {
 	{constants.FileColumnIndividualIsMinor, "YeS", true, false},
 	{constants.FileColumnIndividualIsMinor, "1", true, false},
 	{constants.FileColumnIndividualIsMinor, "anything-else", false, false},
-	{constants.FileColumnIndividualMentalImpairment, "yes", "yes", false},
 	{constants.FileColumnIndividualPhoneNumber, "01234", "01234", false},
-	{constants.FileColumnIndividualPhysicalImpairment, "no", "no", false},
 	{constants.FileColumnIndividualPreferredName, "Hughie", "Hughie", false},
 	{constants.FileColumnIndividualPresentsProtectionConcerns, "tRuE", true, false},
 	{constants.FileColumnIndividualPresentsProtectionConcerns, "YeS", true, false},
 	{constants.FileColumnIndividualPresentsProtectionConcerns, "1", true, false},
 	{constants.FileColumnIndividualPresentsProtectionConcerns, "anything-else", false, false},
-	{constants.FileColumnIndividualSensoryImpairment, "maybe", "maybe", false},
 }
 
 func TestUnmarshalIndividualsTabularData(t *testing.T) {
