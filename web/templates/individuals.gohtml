@@ -6,7 +6,7 @@
         function goToIndividual() {
             const id = document.getElementById("goToIndividualId").value;
             if (id !== "") {
-                window.location.href = "{{.BaseURL}}/individuals/" + id;
+                window.location.href = "{{.BaseURL}}{{.CurrentUrl}}/" + id;
             }
         }
 
@@ -38,15 +38,15 @@
         <div class="container-fluid container-xxl pt-3">
             <div class="d-flex justify-content-end align-items-center">
                 {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.GetCountryIDsWithPermission "write")}}
-                    <a href="/individuals/new" class="btn btn-outline-primary me-2">
+                    <a href="{{.CurrentUrl}}/new" class="btn btn-outline-primary me-2">
                         Create new Individual
                     </a>
                 {{end}}
-                <a href="/individuals/download" target="_blank" class="btn btn-outline-primary">
-                    Download CSV
+                <a href="{{.CurrentUrl}}/download" target="_blank" class="btn btn-outline-primary">
+                    Download
                 </a>
                 {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.GetCountryIDsWithPermission "write")}}
-                    <form action="/individuals/upload" enctype="multipart/form-data" method="post" class="ms-2">
+                    <form action="{{.CurrentUrl}}/upload" enctype="multipart/form-data" method="post" class="ms-2">
                         <div class="form-group mb-2">
                             <label class="form-label">Upload Individuals Excel or CSV file</label>
                             <input accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
@@ -69,7 +69,7 @@
                             </button>
                         </div>
                         <div id="search-form" class="collapse" aria-labelledby="searchFormAccordion">
-                            <form method="get" action="/individuals" id="searchForm">
+                            <form method="get" action="{{.CurrentUrl}}/individuals" id="searchForm">
                                 <div class="card-body">
                                     <input type="hidden" name="take" value="">
                                     <input type="hidden" name="skip" value="">

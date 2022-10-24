@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -16,6 +17,7 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 	const (
 		templateName         = "individuals.gohtml"
+		viewParamCurrentUrl  = "CurrentUrl"
 		viewParamIndividuals = "Individuals"
 		viewParamOptions     = "Options"
 	)
@@ -31,8 +33,16 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			allCountries  []*api.Country
 		)
 
+		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
+		if err != nil {
+			l.Error("failed to get selected country id", zap.Error(err))
+			http.Error(w, "internal server error", http.StatusInternalServerError)
+			return
+		}
+
 		render := func() {
 			renderer.RenderView(w, r, templateName, map[string]interface{}{
+				viewParamCurrentUrl:  fmt.Sprintf("/countries/%s/individuals", selectedCountryID),
 				viewParamIndividuals: individuals,
 				viewParamOptions:     getAllOptions,
 			})
@@ -59,13 +69,6 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 		if err := parseGetAllOptions(r, &getAllOptions); err != nil {
 			l.Error("failed to parse options", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
-		if err != nil {
-			l.Error("failed to get selected country id", zap.Error(err))
-			http.Error(w, "internal server error", http.StatusInternalServerError)
 			return
 		}
 

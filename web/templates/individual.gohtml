@@ -24,7 +24,7 @@
             }, 0)
 
             new QRCode("qrcode", {
-                text: window.location.protocol + "//" + window.location.host + "/individuals/" + {{.Individual.ID}},
+                text: window.location.protocol + "//" + window.location.host + "/countries/" + {{.Individual.CountryID}} + "/individuals/" + {{.Individual.ID}},
                 width: 128,
                 height: 128,
                 colorDark: "#000000",
@@ -43,10 +43,9 @@
 
     <main>
         <div class="mt-4">
-
             <div class="container-fluid container-xxl">
                 <form id="form" method="post"
-                      action="/individuals/{{if eq "" .Individual.ID}}new{{else}}{{.Individual.ID}}{{end}}">
+                      action="/countries/{{.Individual.CountryID}}/individuals/{{if eq "" .Individual.ID}}new{{else}}{{.Individual.ID}}{{end}}">
 
                     <div class="row mb-3">
                         <div class="col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
@@ -411,7 +410,7 @@
                                     Actions
                                 </div>
                                 <div class="card-body">
-                                    <form action="/individuals/{{.Individual.ID}}/delete" method="post">
+                                    <form action="/countries/{{.Individual.CountryID}}/individuals/{{.Individual.ID}}/delete" method="post">
                                         <button class="btn btn-danger">Delete individual</button>
                                     </form>
                                 </div>
