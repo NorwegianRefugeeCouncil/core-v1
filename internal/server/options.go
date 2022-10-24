@@ -51,8 +51,8 @@ func (o Options) validate() error {
 	if err := o.validateRequiredURLOption(o.TokenRefreshURL, "Refresh URL"); err != nil {
 		return err
 	}
-	if o.TokenRefreshInterval <= time.Minute {
-		return fmt.Errorf("minimum value for token refresh duration is 1 minute")
+	if o.TokenRefreshInterval < time.Minute {
+		return fmt.Errorf("minimum value for token refresh interval is 1 minute")
 	}
 	if len(o.JwtGroupGlobalAdmin) == 0 {
 		return fmt.Errorf("JWT group global admin is required")
