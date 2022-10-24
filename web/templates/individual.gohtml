@@ -43,44 +43,52 @@
 
     <main>
         <div class="mt-4">
-            <form id="form" method="post"
-                  action="/individuals/{{if eq "" .Individual.ID}}new{{else}}{{.Individual.ID}}{{end}}">
 
-                <div class="container-fluid container-xxl">
-                    <div class="d-flex flex-column justify-content-center col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
+            <div class="container-fluid container-xxl">
+                <form id="form" method="post"
+                      action="/individuals/{{if eq "" .Individual.ID}}new{{else}}{{.Individual.ID}}{{end}}">
 
-                            <div class="mb-3">
-                                <button class="btn btn-primary float-end" id="save-individual" type="submit">Save</button>
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
+                            <button class="btn btn-primary float-end" id="save-individual" type="submit">Save</button>
+                        </div>
+                    </div>
+                    {{ if or .HasErrors .WasValidated}}
+                        <div class="row mb-3">
+                            <div class="col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
+                                {{ if .HasErrors }}
+                                    <div class="alert alert-dismissible alert-danger mb-3 d-flex align-items-center justify-content-between"
+                                         role="alert"
+                                         style="cursor:pointer"
+                                         data-bs-dismiss="alert">
+                                        <div>
+                                            <strong class="me-1">Whoops!</strong> There were validation errors while
+                                            processing
+                                            the form.
+                                        </div>
+                                        <i class="bi bi-x-lg" role="button" data-bs-dismiss="alert"></i>
+
+                                    </div>
+                                {{else if .WasValidated}}
+                                    <div class="alert alert-dismissible alert-success mb-3 d-flex align-items-center justify-content-between"
+                                         role="alert"
+                                         style="cursor:pointer"
+                                         data-bs-dismiss="alert">
+                                        <div>
+                                            <strong class="me-1">Success!</strong> The form was successfully processed.
+                                        </div>
+                                        <i class="bi bi-x-lg" role="button" data-bs-dismiss="alert"></i>
+                                    </div>
+                                {{end}}
                             </div>
-
-                            {{ if .HasErrors }}
-                                <div class="alert alert-dismissible alert-danger mb-3 d-flex align-items-center justify-content-between"
-                                     role="alert"
-                                     style="cursor:pointer"
-                                     data-bs-dismiss="alert">
-                                    <div>
-                                        <strong class="me-1">Whoops!</strong> There were validation errors while processing the form.
-                                    </div>
-                                    <i class="bi bi-x-lg" role="button" data-bs-dismiss="alert"></i>
-
-                                </div>
-                            {{else if .WasValidated}}
-                                <div class="alert alert-dismissible alert-success mb-3 d-flex align-items-center justify-content-between"
-                                     role="alert"
-                                     style="cursor:pointer"
-                                     data-bs-dismiss="alert">
-                                    <div>
-                                        <strong class="me-1">Success!</strong> The form was successfully processed.
-                                    </div>
-                                    <i class="bi bi-x-lg" role="button" data-bs-dismiss="alert"></i>
-                                </div>
-                            {{end}}
-
-
-                            <div class="card mb-3">
+                        </div>
+                    {{end}}
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
+                            <div class="card">
                                 <div class="card-header">
                                     {{ if not .Individual.ID }}
-                                            New Individual
+                                        New Individual
                                     {{else}}
                                         {{.Individual.FullName}}
                                     {{end}}
@@ -93,7 +101,7 @@
 
                                         <div class="d-flex flex-row align-items-center mb-3">
                                             <div class="d-flex flex-column flex-grow-1">
-                                                    <label for="ID" class="form-label">ID</label>
+                                                <label for="ID" class="form-label">ID</label>
                                                 <div class="form input-group">
                                                     <input id="ID" disabled="disabled" name="ID"
                                                            class="form-control font-monospace"
@@ -210,10 +218,13 @@
 
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
                             <!-- Contact Information -->
-                            <div class="card mb-3">
+                            <div class="card">
                                 <div class="card-header">
                                     Contact Information
                                 </div>
@@ -244,17 +255,22 @@
                                     <div class="form mb-3">
                                         <label for="Address" class="form-label">Address</label>
                                         <textarea style="height:auto" rows="4" id="Address" name="Address"
-                                              class="form-control">{{.Individual.Address}}</textarea>
+                                                  class="form-control">{{.Individual.Address}}</textarea>
                                     </div>
                                     <!-- End of Address -->
 
                                 </div>
                             </div>
                             <!-- End of Contact Information -->
+                        </div>
+                    </div>
 
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
 
                             <!-- Protection Concerns -->
-                            <div class="card mb-3">
+                            <div class="card">
                                 <div class="card-header">
                                     Protection Concerns
                                 </div>
@@ -274,10 +290,13 @@
                                 </div>
                             </div>
                             <!-- End of Protection Concerns -->
+                        </div>
+                    </div>
 
-
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
                             <!-- Disability -->
-                            <div class="card mb-3">
+                            <div class="card">
                                 <div class="card-header">
                                     Disability
                                 </div>
@@ -379,10 +398,29 @@
                                 </div>
                             </div>
                             <!-- End of Disability -->
+                        </div>
+                    </div>
+                </form>
 
+                <div class="row mb-3">
+                    <div class="col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
+                        <!-- Actions -->
+                        <div class="card">
+                            <div class="card-header">
+                                Actions
+                            </div>
+                            <div class="card-body">
+                                <form action="/individuals/{{.Individual.ID}}/delete" method="post">
+                                    <button class="btn btn-danger">Delete individual</button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- End of Actions -->
                     </div>
                 </div>
-            </form>
+
+            </div>
+
         </div>
     </main>
 {{end}}

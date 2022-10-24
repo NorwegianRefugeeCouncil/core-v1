@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/nrc-no/notcore/internal/api"
@@ -21,7 +22,7 @@ type IndividualRepo interface {
 	GetByID(ctx context.Context, id string) (*api.Individual, error)
 	Put(ctx context.Context, individual *api.Individual, fields []string) (*api.Individual, error)
 	PutMany(ctx context.Context, individuals []*api.Individual, fields []string) ([]*api.Individual, error)
-	Delete(ctx context.Context, id string) error
+	SoftDelete(ctx context.Context, id string) error
 }
 
 type individualRepo struct {
@@ -65,6 +66,9 @@ func (i individualRepo) getAllInternal(ctx context.Context, tx *sqlx.Tx, options
 		args = append(args, arg)
 		return fmt.Sprintf("$%d", len(args))
 	}
+
+	// we do not want to return deleted individuals
+	whereClauses = append(whereClauses, "deleted_at IS NULL")
 
 	if len(options.FullName) != 0 {
 		if i.driverName() == "sqlite" {
@@ -184,7 +188,7 @@ func (i individualRepo) getByIdInternal(ctx context.Context, tx *sqlx.Tx, id str
 	l := logging.NewLogger(ctx).With(zap.String("individual_id", id))
 	l.Debug("getting individual by id")
 	var ret = api.Individual{}
-	err := tx.GetContext(ctx, &ret, "SELECT * FROM individuals WHERE id = $1", id)
+	err := tx.GetContext(ctx, &ret, "SELECT * FROM individuals WHERE id = $1 and deleted_at IS NULL", id)
 	if err != nil {
 		return nil, err
 	}
@@ -203,11 +207,15 @@ func (i individualRepo) PutMany(ctx context.Context, individuals []*api.Individu
 
 func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, individuals []*api.Individual, fields []string) ([]*api.Individual, error) {
 
+	now := time.Now().UTC()
+	nowStr := now.Format(time.RFC3339)
+
 	fieldsSet := containers.NewStringSet(fields...)
 	if fieldsSet.Contains("phone_number") {
 		fieldsSet.Add("normalized_phone_number")
 	}
 	fieldsSet.Add("id")
+
 	fields = fieldsSet.Items()
 
 	fieldCount := len(fields)
@@ -222,7 +230,7 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 
 		args := make([]interface{}, 0)
 		b := &strings.Builder{}
-		b.WriteString("INSERT INTO individuals (" + strings.Join(fields, ",") + ") VALUES ")
+		b.WriteString("INSERT INTO individuals (" + strings.Join(fields, ",") + ",created_at,updated_at) VALUES ")
 
 		for i, individual := range individualsInBatch {
 			if individual.ID == "" {
@@ -243,7 +251,7 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 				args = append(args, fieldValue)
 				b.WriteString(fmt.Sprintf("$%d", len(args)))
 			}
-			b.WriteString(")")
+			b.WriteString(",'" + nowStr + "','" + nowStr + "')")
 		}
 		b.WriteString(" ON CONFLICT (id) DO UPDATE SET ")
 		isFirst := true
@@ -257,7 +265,12 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 			isFirst = false
 			b.WriteString(fmt.Sprintf("%s = EXCLUDED.%s", field, field))
 		}
+		b.WriteString(", updated_at='" + nowStr + "'")
 
+		// We don't want to update the soft-deleted rows.
+		// If an update on a deleted individual is performed,
+		// the database will throw an error.
+		// TODO: confirm this is the desired behavior
 		b.WriteString(" RETURNING *")
 
 		var out []*api.Individual
@@ -306,6 +319,12 @@ func getFieldValue(i *api.Individual, field string) (interface{}, error) {
 		return i.CountryID, nil
 	case "displacement_status":
 		return i.DisplacementStatus, nil
+	case "created_at":
+		return i.CreatedAt, nil
+	case "deleted_at":
+		return i.DeletedAt, nil
+	case "updated_at":
+		return i.UpdatedAt, nil
 	default:
 		return "", fmt.Errorf("unknown field %s", field)
 	}
@@ -332,20 +351,20 @@ func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual
 	return ret[0], nil
 }
 
-func (i individualRepo) Delete(ctx context.Context, id string) error {
+func (i individualRepo) SoftDelete(ctx context.Context, id string) error {
 	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		err := i.deleteInternal(ctx, tx, id)
+		err := i.softDeleteInternal(ctx, tx, id)
 		return err, nil
 	})
 	return err
 }
 
-func (i individualRepo) deleteInternal(ctx context.Context, tx *sqlx.Tx, id string) error {
+func (i individualRepo) softDeleteInternal(ctx context.Context, tx *sqlx.Tx, id string) error {
 	l := logging.NewLogger(ctx).With(zap.String("individual_id", id))
 	l.Debug("deleting individual")
 
-	const query = "DELETE FROM individuals WHERE id = ?"
-	var args = []interface{}{id}
+	const query = "UPDATE individuals SET deleted_at = $1 WHERE id = $2 and deleted_at IS NULL"
+	var args = []interface{}{time.Now().UTC(), id}
 
 	if _, err := tx.ExecContext(ctx, query, args...); err != nil {
 		l.Error("failed to delete individual", zap.Error(err))

@@ -28,9 +28,12 @@ type Individual struct {
 	PhysicalImpairment         string     `db:"physical_impairment"`
 	SensoryImpairment          string     `db:"sensory_impairment"`
 	MentalImpairment           string     `db:"mental_impairment"`
+	CreatedAt                  time.Time  `db:"created_at"`
+	UpdatedAt                  time.Time  `db:"updated_at"`
+	DeletedAt                  *time.Time `db:"deleted_at"`
 }
 
-func (i Individual) GetFieldValue(field string) (interface{}, error) {
+func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 	switch field {
 	case constants.DBColumnIndividualAddress:
 		return i.Address, nil
@@ -64,12 +67,18 @@ func (i Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.PresentsProtectionConcerns, nil
 	case constants.DBColumnIndividualSensoryImpairment:
 		return i.SensoryImpairment, nil
+	case constants.DBColumnIndividualCreatedAt:
+		return i.CreatedAt, nil
+	case constants.DBColumnIndividualUpdatedAt:
+		return i.UpdatedAt, nil
+	case constants.DBColumnIndividualDeletedAt:
+		return i.DeletedAt, nil
 	default:
 		return nil, fmt.Errorf("unknown field: %s", field)
 	}
 }
 
-func (i Individual) String() string {
+func (i *Individual) String() string {
 	jsonBytes, err := json.Marshal(i)
 	if err != nil {
 		return ""
@@ -77,22 +86,22 @@ func (i Individual) String() string {
 	return string(jsonBytes)
 }
 
-func (individual *Individual) Normalize() {
-	individual.ID = trimString(individual.ID)
-	individual.FullName = trimString(individual.FullName)
-	individual.PreferredName = trimString(individual.PreferredName)
-	if individual.PreferredName == "" {
-		individual.PreferredName = individual.FullName
+func (i *Individual) Normalize() {
+	i.ID = trimString(i.ID)
+	i.FullName = trimString(i.FullName)
+	i.PreferredName = trimString(i.PreferredName)
+	if i.PreferredName == "" {
+		i.PreferredName = i.FullName
 	}
-	individual.DisplacementStatus = trimString(individual.DisplacementStatus)
-	individual.Email = trimString(normalizeEmail(individual.Email))
-	individual.PhoneNumber = trimString(individual.PhoneNumber)
-	individual.Address = trimString(individual.Address)
-	individual.Gender = trimString(individual.Gender)
-	individual.NormalizedPhoneNumber = NormalizePhoneNumber(individual.PhoneNumber)
-	individual.PhysicalImpairment = trimString(individual.PhysicalImpairment)
-	individual.MentalImpairment = trimString(individual.MentalImpairment)
-	individual.SensoryImpairment = trimString(individual.SensoryImpairment)
+	i.DisplacementStatus = trimString(i.DisplacementStatus)
+	i.Email = trimString(normalizeEmail(i.Email))
+	i.PhoneNumber = trimString(i.PhoneNumber)
+	i.Address = trimString(i.Address)
+	i.Gender = trimString(i.Gender)
+	i.NormalizedPhoneNumber = NormalizePhoneNumber(i.PhoneNumber)
+	i.PhysicalImpairment = trimString(i.PhysicalImpairment)
+	i.MentalImpairment = trimString(i.MentalImpairment)
+	i.SensoryImpairment = trimString(i.SensoryImpairment)
 }
 
 type GetAllOptions struct {
