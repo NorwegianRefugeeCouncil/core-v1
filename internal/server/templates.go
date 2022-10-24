@@ -10,7 +10,12 @@ import (
 
 type templates map[string]*template.Template
 
-func parseTemplates(logoutURL, refreshURL string) (templates, error) {
+func parseTemplates(
+	loginURL string,
+	logoutURL string,
+	refreshURL string,
+	tokenRefreshInterval time.Duration,
+) (templates, error) {
 	t := make(templates)
 	entries, err := web.Content.ReadDir("templates")
 	if err != nil {
@@ -49,8 +54,14 @@ func parseTemplates(logoutURL, refreshURL string) (templates, error) {
 			"logoutURL": func() string {
 				return logoutURL
 			},
-			"refreshURL": func() string {
+			"loginURL": func() string {
+				return loginURL
+			},
+			"tokenRefreshURL": func() string {
 				return refreshURL
+			},
+			"tokenRefreshInterval": func() time.Duration {
+				return tokenRefreshInterval
 			},
 			"time": func() TimeFunctions {
 				return TimeFunctions{}

@@ -20,27 +20,55 @@
 {{template "body" .}}
 </body>
 
-{{ $refreshURL := refreshURL }}
-{{ if $refreshURL }}
-    <script type="application/javascript">
-        /**
-         * @typedef sessionResponse
-         * @property {number} expiresInMs
-         * @property {boolean} isAuthenticated
-         */
-        function pollRefreshToken() {
-            fetch("/api/session")
-                .then(r => r.json())
-                .then(/**@type {sessionResponse} */ (r) => {
-                    const expirationMs = r.expiresInMs
-                    const refreshMs = expirationMs - 1800000 // 30 minutes
-                    return new Promise(resolve => setTimeout(resolve, refreshMs))
-                })
-                .then(() => fetch("{{ $refreshURL }}"))
-                .then(() => pollRefreshToken())
+
+<script type="application/javascript">
+    /**
+     * @typedef sessionResponse
+     * @property {number} expiresInMs
+     * @property {boolean} isAuthenticated
+     */
+
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function retryPromise(fn, tentatives, delayMs) {
+        let errorsCount = 0;
+        try {
+            return await fn();
+        } catch (e) {
+            if (errorsCount < tentatives) {
+                errorsCount++;
+                await delay(delayMs);
+                return await retryPromise(fn, tentatives);
+            }
+            throw e;
         }
-        pollRefreshToken()
-    </script>
-{{end}}
+    }
+
+    async function pollRefreshToken() {
+        while (true) {
+            try {
+                await retryPromise(async () => {
+                    const resp = await fetch("{{tokenRefreshURL}}")
+                    if (resp.status > 399) {
+                        throw new Error("Failed to refresh session");
+                    }
+                }, 3, 500)
+                await delay({{tokenRefreshInterval.Milliseconds}})
+            } catch (e) {
+                console.error(e);
+                window.location.href = "{{loginURL}}";
+            }
+        }
+    }
+
+    (async () => {
+        await pollRefreshToken();
+    })();
+
+    pollRefreshToken()
+</script>
+
 
 {{end}}
