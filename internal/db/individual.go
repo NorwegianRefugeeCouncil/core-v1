@@ -266,11 +266,6 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 			b.WriteString(fmt.Sprintf("%s = EXCLUDED.%s", field, field))
 		}
 		b.WriteString(", updated_at='" + nowStr + "'")
-
-		// We don't want to update the soft-deleted rows.
-		// If an update on a deleted individual is performed,
-		// the database will throw an error.
-		// TODO: confirm this is the desired behavior
 		b.WriteString(" RETURNING *")
 
 		var out []*api.Individual
