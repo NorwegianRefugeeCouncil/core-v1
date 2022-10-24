@@ -2,7 +2,6 @@ package server
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/auth"
@@ -68,7 +67,7 @@ func parsePermissions(allCountries []*api.Country, globalAdminGroup string, user
 		if len(c.JwtGroup) == 0 {
 			continue
 		}
-		countryGroupMap[strings.ToLower(c.JwtGroup)] = c.ID
+		countryGroupMap[c.JwtGroup] = c.ID
 	}
 
 	isGlobalAdmin := false
