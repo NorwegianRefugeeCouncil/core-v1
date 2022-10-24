@@ -49,10 +49,10 @@ func HandleCountries(templates map[string]*template.Template) http.Handler {
 
 		if len(allowedCountries) == 0 {
 			renderView(templates, "no_countries.gohtml", w, r, nil)
+		} else {
+			renderView(templates, templateName, w, r, viewParams{
+				viewParamsAllowedCountries: allowedCountries,
+			})
 		}
-
-		renderView(templates, templateName, w, r, viewParams{
-			viewParamsAllowedCountries: allowedCountries,
-		})
 	})
 }
