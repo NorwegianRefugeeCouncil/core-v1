@@ -1,4 +1,4 @@
-package server
+package middleware
 
 import (
 	"net/http"
@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func selectedCountryMiddleware() func(handler http.Handler) http.Handler {
+func SelectedCountry() func(handler http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 
 		const pathParamCountryID = "country_id"

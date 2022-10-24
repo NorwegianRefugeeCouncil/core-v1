@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/nrc-no/notcore/internal/server"
+	"github.com/nrc-no/notcore/internal/server/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -233,8 +234,8 @@ A value of "%[3]s" means that the header value is a JWT token prefixed with "bea
 The application will expect a header like "<HeaderName>: bearer <Token>".
 `,
 		envAuthHeaderFormat,
-		server.AuthHeaderFormatJWT,
-		server.AuthHeaderFormatBearerToken)))
+		middleware.AuthHeaderFormatJWT,
+		middleware.AuthHeaderFormatBearerToken)))
 
 	serveCmd.PersistentFlags().String(flagOidcIssuerURL, "", cleanDoc(fmt.Sprintf(`
 oidc issuer URL. Can also be set with %s

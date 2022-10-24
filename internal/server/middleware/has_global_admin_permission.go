@@ -1,4 +1,4 @@
-package server
+package middleware
 
 import (
 	"net/http"
@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func hasGlobalAdminPermissionMiddleware() func(handler http.Handler) http.Handler {
+func HasGlobalAdminPermission() func(handler http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()

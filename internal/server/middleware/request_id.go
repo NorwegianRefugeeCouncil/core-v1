@@ -1,4 +1,4 @@
-package server
+package middleware
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 	"github.com/nrc-no/notcore/internal/utils"
 )
 
-func requestIdMiddleware(h http.Handler) http.Handler {
+func RequestIdMiddleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		requestID := r.Header.Get("X-Request-ID")
 		if len(requestID) == 0 {
