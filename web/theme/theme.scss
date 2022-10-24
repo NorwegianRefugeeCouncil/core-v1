@@ -1,7 +1,5 @@
 // Add override variables here
 
-$font-family-base: 'Roboto';
-
 $body-bg: #FFFFFF;
 $danger: #CE3616;
 $success: #006605;
@@ -75,17 +73,23 @@ $grays: (
     "900": $neutral700
 ) !default;
 
-
 $nav-link-color: $white;
+$code-color: $neutral400;
+$link-color: $secondary;
 
-$btn-border-radius: 3px;
-$btn-line-height: 50px;
-$btn-padding-x: 50px;
-$btn-padding-y: 0;
 
-$card-border-color: $secondary;
-$card-bg: $white;
+$spacer: 5px;
+$spacers: (
+    0: 0,
+    1: $spacer,
+    2: $spacer * 2,
+    3: $spacer * 3,
+    4: $spacer * 4,
+    5: $spacer * 5,
+);
 
+
+$font-family-base: 'Roboto';
 $h1-font-size: 44px;
 $h2-font-size: 40px;
 $h3-font-size: 32px;
@@ -101,27 +105,24 @@ $form-label-font-size: $font-size-base;
 $form-feedback-font-size: 14px;
 $toast-font-size: $h6-font-size;
 
-$spacer: 5px;
-$spacers: (
-    0: 0,
-    1: $spacer,
-    2: $spacer * 2,
-    3: $spacer * 3,
-    4: $spacer * 4,
-    5: $spacer * 5,
-);
-
-$code-color: $neutral400;
-$link-color: $secondary;
 
 $card-border-radius: 3px;
 $input-border-radius: 3px;
 $pagination-border-radius: 3px;
 $alert-border-radius: 3px;
-$card-inner-border-radius: 3px;
+$card-inner-border-radius: 0;
 $form-check-input-border-radius: 3px;
 $toast-border-radius: 3px;
 $dropdown-border-radius: 3px;
+
+
+$btn-border-radius: 3px;
+$btn-line-height: 50px;
+$btn-padding-x: 50px;
+$btn-padding-y: 0;
+
+$card-border-color: $secondary;
+$card-bg: $white;
 
 $form-label-margin-bottom: 0px;
 $grid-gutter-width: 10px;
@@ -130,9 +131,6 @@ $dropdown-border-color: $secondary;
 $dropdown-link-hover-bg: $blue-300;
 $dropdown-link-hover-color: $white;
 
-//$form-check-input-checked-color: $primary;
-//$form-check-input-checked-bg-color: $primary;
-//$form-check-input-checked-border-color: $primary;
 @import "node_modules/bootstrap/scss/bootstrap";
 
 
@@ -141,17 +139,22 @@ $dropdown-link-hover-color: $white;
 button, .btn {
     color: $white;
     font-weight: 500;
+
+    &.btn-sm {
+        height: 30px;
+        line-height: 30px;
+        padding: 0 30px;
+    }
+
     &:hover,&:active, &:focus-visible, &:focus {
-        color: $white !important;
+        color: $white;
         font-weight: 500;
     }
-    .btn-primary {
+    &.btn-primary {
         &:active, &:focus-visible, &:focus {
             background-color: $orange-700;
             border-color: $orange-700;
         }
-    }
-    .btn-primary {
         &:hover {
             background-color: $orange-200;
             border-color: $orange-200;
@@ -159,21 +162,37 @@ button, .btn {
     }
     &.btn-outline-primary {
         color: $primary;
+        background-color: $white;
+        &:hover {
+            background-color: $orange-100;
+            color: $primary;
+        }
+        &:active, &:focus-visible, &:focus {
+            background-color: $orange-200;
+            border-color: $orange-200;
+        }
     }
-    .btn-secondary {
+    &.btn-secondary {
+        &:active, &:focus-visible, &:focus {
+            background-color: $blue-700;
+            border-color: $blue-700;
+        }
         &:hover {
             background-color: $blue-300;
             border-color: $blue-300;
         }
     }
-    .btn-secondary {
-        &:active, &:focus-visible, &:focus {
-            background-color: $blue-700;
-            border-color: $blue-700;
-        }
-    }
     &.btn-outline-secondary {
+        background-color: $white;
         color: $secondary;
+        &:hover {
+            background-color: $blue-100;
+            color: $secondary;
+        }
+        &:active, &:focus-visible, &:focus {
+            background-color: $blue-200;
+            border-color: $blue-200;
+        }
     }
 }
 
@@ -191,6 +210,7 @@ main {
         font-weight: bold;
         padding: 0 10px;
         line-height: 50px;
+        //border-radius: 0;
     }
     .list-group {
         border-bottom: 0;
