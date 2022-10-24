@@ -70,11 +70,10 @@ func buildRouter(
 		ensureSelectedCountryMiddleware(),
 		hasCountryPermissionMiddleware(),
 	))
-
-	webRouter.Path("/individuals/{individual_id}").Handler(withMiddleware(
+	individualsRouter.Path("/{individual_id}").Handler(withMiddleware(
 		handlers.HandleIndividual(tpl, individualRepo),
 		ensureSelectedCountryMiddleware(),
-		canAccessIndividualMiddleware(individualRepo),
+		hasCountryPermissionMiddleware(),
 	))
 
 	webRouter.PathPrefix("").Handler(handlers.HandleHome(tpl))
