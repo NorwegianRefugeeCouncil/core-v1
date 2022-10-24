@@ -83,7 +83,7 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		http.Redirect(w, r, "/individuals", http.StatusSeeOther)
+		http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals", selectedCountryID), http.StatusSeeOther)
 	})
 }
 

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 
@@ -113,7 +114,7 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 
 		wasValidated = true
 		if individualId == "new" {
-			http.Redirect(w, r, "/individuals/"+individual.ID, http.StatusFound)
+			http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals/%s", individual.CountryID, individual.ID), http.StatusFound)
 			return
 		} else {
 			render()
