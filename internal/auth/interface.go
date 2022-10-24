@@ -10,6 +10,7 @@ type Interface interface {
 	IsGlobalAdmin() bool
 	CanReadWriteToCountryID(countryID string) bool
 	GetCountryIDsWithReadWritePermissions() containers.StringSet
+	GetCountryIDsWithPermission(perm string) containers.StringSet
 }
 
 type permissions struct {
@@ -43,6 +44,17 @@ func (p permissions) GetCountryIDsWithReadWritePermissions() containers.StringSe
 		return containers.NewStringSet(p.allCountryIDs.Items()...)
 	}
 	return containers.NewStringSet(p.allowedCountryIDs.Items()...)
+}
+
+// This allows us to use granular permissions, but proxies it to the generic read/write permissions
+func (p permissions) GetCountryIDsWithPermission(perm string) containers.StringSet {
+	if perm == "read" {
+		return p.GetCountryIDsWithReadWritePermissions()
+	} else if perm == "write" {
+		return p.GetCountryIDsWithReadWritePermissions()
+	} else {
+		return containers.NewStringSet()
+	}
 }
 
 func (p permissions) hasExplicitReadWritePermissionInCountry(countryID string) bool {
