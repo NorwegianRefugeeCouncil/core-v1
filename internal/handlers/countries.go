@@ -4,16 +4,17 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/nrc-no/notcore/internal/db"
+	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
 )
 
-func HandleCountries(templates map[string]*template.Template, countryRepo db.CountryRepo) http.Handler {
+func HandleCountries(templates map[string]*template.Template) http.Handler {
 
 	const (
-		templateName = "countries.gohtml"
+		templateName               = "countries.gohtml"
+		viewParamsAllowedCountries = "AllowedCountries"
 	)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -31,16 +32,23 @@ func HandleCountries(templates map[string]*template.Template, countryRepo db.Cou
 			return
 		}
 
-		if !authCtx.IsGlobalAdmin() {
-			l.Warn("User is not global admin")
-			http.Error(w, "You are not allowed to access this page", http.StatusForbidden)
+		allowedCountryIDs := authCtx.GetCountryIDsWithReadWritePermissions()
+		countries, err := utils.GetCountries(ctx)
+		if err != nil {
+			l.Error("failed to get countries", zap.Error(err))
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}
 
-		render := func() {
-			renderView(templates, templateName, w, r, viewParams{})
+		var allowedCountries []*api.Country
+		for _, c := range countries {
+			if allowedCountryIDs.Contains(c.ID) {
+				allowedCountries = append(allowedCountries, c)
+			}
 		}
 
-		render()
+		renderView(templates, templateName, w, r, viewParams{
+			viewParamsAllowedCountries: allowedCountries,
+		})
 	})
 }
