@@ -155,7 +155,7 @@ func validateTokenClaims(claims TokenClaims) error {
 	if claims.Email == "" {
 		return fmt.Errorf("token is missing email")
 	}
-	if len(claims.Groups) == 0 {
+	if claims.Groups == nil {
 		return fmt.Errorf("token is missing groups")
 	}
 	if claims.Exp == 0 {
