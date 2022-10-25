@@ -1,4 +1,4 @@
-package server
+package middleware
 
 import (
 	"net/http"
@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestHasCountryPermissionMiddleware(t *testing.T) {
+func TestHasCountryPermission(t *testing.T) {
 	var permissions = []struct {
 		permission auth.Permission
 	}{
@@ -51,7 +51,7 @@ func TestHasCountryPermissionMiddleware(t *testing.T) {
 					tt.isGlobalAdmin,
 					tt.selectedCountryID,
 				)(
-					hasCountryPermissionMiddleware(pp.permission)(
+					HasCountryPermission(pp.permission)(
 						nextHandler(),
 					),
 				)
