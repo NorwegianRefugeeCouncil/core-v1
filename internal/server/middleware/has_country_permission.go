@@ -1,4 +1,4 @@
-package server
+package middleware
 
 import (
 	"net/http"
@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func hasCountryPermissionMiddleware(permission auth.Permission) func(handler http.Handler) http.Handler {
+func HasCountryPermission(permission auth.Permission) func(handler http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()
