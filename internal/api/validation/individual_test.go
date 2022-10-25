@@ -114,6 +114,11 @@ func ValidIndividual() *IndividualBuilder {
 func TestValidateIndividual(t *testing.T) {
 	futureDate := time.Now().AddDate(1, 0, 0)
 	emptyDate := time.Time{}
+	emailPath := validation.NewPath("email")
+	birthDatePath := validation.NewPath("birthDate")
+	countryIDPath := validation.NewPath("countryId")
+	displacementStatusPath := validation.NewPath("displacementStatus")
+	genderPath := validation.NewPath("gender")
 	tests := []struct {
 		name string
 		i    *api.Individual
@@ -126,35 +131,35 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "invalid email",
 			i:    ValidIndividual().WithEmail("invalid").Build(),
-			want: validation.ErrorList{validation.Invalid(validation.NewPath("email"), "invalid", "invalid email address")},
+			want: validation.ErrorList{validation.Invalid(emailPath, "invalid", "invalid email address")},
 		}, {
 			name: "birth date in future",
 			i:    ValidIndividual().WithBirthDate(&futureDate).Build(),
-			want: validation.ErrorList{validation.Invalid(validation.NewPath("birthDate"), &futureDate, "birthdate cannot be in the future")},
+			want: validation.ErrorList{validation.Invalid(birthDatePath, &futureDate, "birthdate cannot be in the future")},
 		}, {
 			name: "birth date empty",
 			i:    ValidIndividual().WithBirthDate(&emptyDate).Build(),
-			want: validation.ErrorList{validation.Invalid(validation.NewPath("birthDate"), &emptyDate, "must be a valid date")},
+			want: validation.ErrorList{validation.Invalid(birthDatePath, &emptyDate, "must be a valid date")},
 		}, {
 			name: "empty country id",
 			i:    ValidIndividual().WithCountryID("").Build(),
-			want: validation.ErrorList{validation.Required(validation.NewPath("countryId"), "country id is required")},
+			want: validation.ErrorList{validation.Required(countryIDPath, "country id is required")},
 		}, {
 			name: "empty displacement status",
 			i:    ValidIndividual().WithDisplacementStatus("").Build(),
-			want: validation.ErrorList{validation.Required(validation.NewPath("displacementStatus"), "displacement status is required")},
+			want: validation.ErrorList{validation.Required(displacementStatusPath, "displacement status is required")},
 		}, {
 			name: "invalid displacement status",
 			i:    ValidIndividual().WithDisplacementStatus("bla").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("displacementStatus"), "bla", []string{"idp", "refugee", "host_community"})},
+			want: validation.ErrorList{validation.NotSupported(displacementStatusPath, "bla", []string{"idp", "refugee", "host_community"})},
 		}, {
 			name: "empty gender",
 			i:    ValidIndividual().WithGender("").Build(),
-			want: validation.ErrorList{validation.Required(validation.NewPath("gender"), "gender is required")},
+			want: validation.ErrorList{validation.Required(genderPath, "gender is required")},
 		}, {
 			name: "invalid gender",
 			i:    ValidIndividual().WithGender("bla").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("gender"), "bla", []string{"male", "female", "other", "prefers_not_to_say"})},
+			want: validation.ErrorList{validation.NotSupported(genderPath, "bla", []string{"male", "female", "other", "prefers_not_to_say"})},
 		},
 	}
 	for _, tt := range tests {
