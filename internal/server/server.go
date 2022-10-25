@@ -13,6 +13,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
+	"github.com/nrc-no/notcore/internal/server/middleware"
 	"go.uber.org/zap"
 )
 
@@ -66,7 +67,7 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 		ClientID:             o.OAuthClientID,
 		SupportedSigningAlgs: []string{oidc.RS256},
 	})
-	idTokenVerifier := newIDTokenVerifier(oidcVerifier)
+	idTokenVerifier := middleware.NewIDTokenVerifier(oidcVerifier)
 
 	// build the router
 	s.router = buildRouter(
@@ -77,7 +78,8 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 		o.AuthHeaderFormat,
 		o.LoginURL,
 		idTokenVerifier,
-		tpl)
+		tpl,
+	)
 
 	return s, nil
 }

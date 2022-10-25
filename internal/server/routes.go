@@ -8,6 +8,7 @@ import (
 	"github.com/nrc-no/notcore/internal/auth"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/handlers"
+	"github.com/nrc-no/notcore/internal/server/middleware"
 	"github.com/nrc-no/notcore/web"
 )
 
@@ -18,7 +19,7 @@ func buildRouter(
 	authHeaderName string,
 	authHeaderFormat string,
 	loginURL string,
-	idTokenVerifier IDTokenVerifier,
+	idTokenVerifier middleware.IDTokenVerifier,
 	tpl templates,
 ) *mux.Router {
 
@@ -26,7 +27,7 @@ func buildRouter(
 	r.Use(
 		gorillahandlers.RecoveryHandler(),
 		gorillahandlers.CompressHandler,
-		requestIdMiddleware,
+		middleware.RequestId,
 	)
 	renderer := handlers.NewRenderer(tpl)
 
@@ -37,11 +38,11 @@ func buildRouter(
 
 	webRouter.Use(
 		noCache,
-		logMiddleware,
-		authMiddleware(authHeaderName, authHeaderFormat, idTokenVerifier, loginURL),
-		countriesMiddleware(countryRepo),
-		permissionMiddleware(globalAdminGroup),
-		selectedCountryMiddleware(),
+		middleware.RequestLogging,
+		middleware.Authentication(authHeaderName, authHeaderFormat, idTokenVerifier, loginURL),
+		middleware.PrefetchCountries(countryRepo),
+		middleware.ComputePermissions(globalAdminGroup),
+		middleware.SelectedCountry(),
 	)
 
 	countriesRouter := webRouter.PathPrefix("/countries").Subrouter()
@@ -50,34 +51,34 @@ func buildRouter(
 	countryRouter := countriesRouter.PathPrefix("/{country_id}").Subrouter()
 	countryRouter.Path("").Handler(withMiddleware(
 		handlers.HandleCountry(tpl, countryRepo),
-		hasGlobalAdminPermissionMiddleware(),
+		middleware.HasGlobalAdminPermission(),
 	))
 
 	individualsRouter := countryRouter.PathPrefix("/individuals").Subrouter()
 	individualsRouter.Path("").Methods(http.MethodGet).Handler(withMiddleware(
 		handlers.HandleIndividuals(renderer, individualRepo),
-		ensureSelectedCountryMiddleware(),
-		hasCountryPermissionMiddleware(auth.PermissionRead),
+		middleware.EnsureSelectedCountry(),
+		middleware.HasCountryPermission(auth.PermissionRead),
 	))
 	individualsRouter.Path("/upload").Methods(http.MethodPost).Handler(withMiddleware(
 		handlers.UploadHandler(individualRepo),
-		ensureSelectedCountryMiddleware(),
-		hasCountryPermissionMiddleware(auth.PermissionWrite),
+		middleware.EnsureSelectedCountry(),
+		middleware.HasCountryPermission(auth.PermissionWrite),
 	))
 	individualsRouter.Path("/download").Methods(http.MethodGet).Handler(withMiddleware(
 		handlers.HandleDownload(individualRepo),
-		ensureSelectedCountryMiddleware(),
-		hasCountryPermissionMiddleware(auth.PermissionRead),
+		middleware.EnsureSelectedCountry(),
+		middleware.HasCountryPermission(auth.PermissionRead),
 	))
 	individualsRouter.Path("/{individual_id}").Methods(http.MethodGet).Handler(withMiddleware(
 		handlers.HandleIndividual(tpl, individualRepo),
-		ensureSelectedCountryMiddleware(),
-		hasCountryPermissionMiddleware(auth.PermissionRead),
+		middleware.EnsureSelectedCountry(),
+		middleware.HasCountryPermission(auth.PermissionRead),
 	))
 	individualsRouter.Path("/{individual_id}").Methods(http.MethodPost).Handler(withMiddleware(
 		handlers.HandleIndividual(tpl, individualRepo),
-		ensureSelectedCountryMiddleware(),
-		hasCountryPermissionMiddleware(auth.PermissionWrite),
+		middleware.EnsureSelectedCountry(),
+		middleware.HasCountryPermission(auth.PermissionWrite),
 	))
 
 	webRouter.PathPrefix("").Handler(handlers.HandleHome(tpl))
