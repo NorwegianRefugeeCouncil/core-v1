@@ -30,7 +30,7 @@ func hasCountryPermissionMiddleware(permission auth.Permission) func(handler htt
 			}
 
 			if len(selectedCountryID) > 0 {
-				if !authInterface.HasCountryLevelPermission(selectedCountryID, auth.PermissionRead) {
+				if !authInterface.HasCountryLevelPermission(selectedCountryID, permission) {
 					l.Error("user does not have permission to access country", zap.String("country_id", selectedCountryID))
 					http.Error(w, "forbidden", http.StatusForbidden)
 					return
