@@ -5,20 +5,17 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/nrc-no/notcore/internal/auth"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestHasCountryPermissionMiddleware(t *testing.T) {
-	var methodParametrizedTests = []struct {
-		method  string
-		allowed bool
+	var permissions = []struct {
+		permission auth.Permission
 	}{
-		{"GET", true},
-		{"POST", true},
-		{"PUT", true},
-		{"DELETE", true},
-		{"PATCH", false},
+		{permission: auth.PermissionRead},
+		{permission: auth.PermissionWrite},
 	}
 
 	var parametrizedTests = []struct {
@@ -45,7 +42,7 @@ func TestHasCountryPermissionMiddleware(t *testing.T) {
 		{containers.NewStringSet("1"), containers.NewStringSet("2", "3"), true, "3", http.StatusOK},
 	}
 
-	for _, mm := range methodParametrizedTests {
+	for _, pp := range permissions {
 		for _, tt := range parametrizedTests {
 			t.Run("", func(t *testing.T) {
 				handlerToTest := configureDummyContextMiddleware(
@@ -54,18 +51,14 @@ func TestHasCountryPermissionMiddleware(t *testing.T) {
 					tt.isGlobalAdmin,
 					tt.selectedCountryID,
 				)(
-					hasCountryPermissionMiddleware()(
+					hasCountryPermissionMiddleware(pp.permission)(
 						nextHandler(),
 					),
 				)
-				req := httptest.NewRequest(mm.method, "http://testing", nil)
+				req := httptest.NewRequest("GET", "http://testing", nil)
 				responeRecorder := httptest.NewRecorder()
 				handlerToTest.ServeHTTP(responeRecorder, req)
-				if mm.allowed {
-					assert.Equal(t, tt.expectedStatus, responeRecorder.Code)
-				} else {
-					assert.Equal(t, http.StatusMethodNotAllowed, responeRecorder.Code)
-				}
+				assert.Equal(t, tt.expectedStatus, responeRecorder.Code)
 			})
 		}
 	}
