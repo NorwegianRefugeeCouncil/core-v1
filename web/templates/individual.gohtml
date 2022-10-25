@@ -402,22 +402,24 @@
                     </div>
                 </form>
 
-                <div class="row mb-3">
-                    <div class="col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
-                        <!-- Actions -->
-                        <div class="card">
-                            <div class="card-header">
-                                Actions
+                {{if not (eq "" .Individual.ID)}}
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
+                            <!-- Actions -->
+                            <div class="card">
+                                <div class="card-header">
+                                    Actions
+                                </div>
+                                <div class="card-body">
+                                    <form action="/individuals/{{.Individual.ID}}/delete" method="post">
+                                        <button class="btn btn-danger">Delete individual</button>
+                                    </form>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <form action="/individuals/{{.Individual.ID}}/delete" method="post">
-                                    <button class="btn btn-danger">Delete individual</button>
-                                </form>
-                            </div>
+                            <!-- End of Actions -->
                         </div>
-                        <!-- End of Actions -->
                     </div>
-                </div>
+                {{end}}
 
             </div>
 
