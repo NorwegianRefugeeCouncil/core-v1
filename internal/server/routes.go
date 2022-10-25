@@ -5,6 +5,7 @@ import (
 
 	gorillahandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/nrc-no/notcore/internal/auth"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/handlers"
 	"github.com/nrc-no/notcore/web"
@@ -55,25 +56,30 @@ func buildRouter(
 	))
 
 	individualsRouter := countryRouter.PathPrefix("/individuals").Subrouter()
-	individualsRouter.Path("").Handler(withMiddleware(
+	individualsRouter.Path("").Methods(http.MethodGet).Handler(withMiddleware(
 		handlers.HandleIndividuals(renderer, individualRepo),
 		ensureSelectedCountryMiddleware(),
-		hasCountryPermissionMiddleware(),
+		hasCountryPermissionMiddleware(auth.PermissionRead),
 	))
-	individualsRouter.Path("/upload").Handler(withMiddleware(
+	individualsRouter.Path("/upload").Methods(http.MethodPost).Handler(withMiddleware(
 		handlers.UploadHandler(individualRepo),
 		ensureSelectedCountryMiddleware(),
-		hasCountryPermissionMiddleware(),
+		hasCountryPermissionMiddleware(auth.PermissionWrite),
 	))
-	individualsRouter.Path("/download").Handler(withMiddleware(
+	individualsRouter.Path("/download").Methods(http.MethodGet).Handler(withMiddleware(
 		handlers.HandleDownload(individualRepo),
 		ensureSelectedCountryMiddleware(),
-		hasCountryPermissionMiddleware(),
+		hasCountryPermissionMiddleware(auth.PermissionRead),
 	))
-	individualsRouter.Path("/{individual_id}").Handler(withMiddleware(
+	individualsRouter.Path("/{individual_id}").Methods(http.MethodGet).Handler(withMiddleware(
 		handlers.HandleIndividual(tpl, individualRepo),
 		ensureSelectedCountryMiddleware(),
-		hasCountryPermissionMiddleware(),
+		hasCountryPermissionMiddleware(auth.PermissionRead),
+	))
+	individualsRouter.Path("/{individual_id}").Methods(http.MethodPost).Handler(withMiddleware(
+		handlers.HandleIndividual(tpl, individualRepo),
+		ensureSelectedCountryMiddleware(),
+		hasCountryPermissionMiddleware(auth.PermissionWrite),
 	))
 
 	webRouter.PathPrefix("").Handler(handlers.HandleHome(tpl))
