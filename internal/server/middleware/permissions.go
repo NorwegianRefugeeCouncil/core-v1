@@ -12,7 +12,7 @@ import (
 )
 
 // permissionMiddleware will compute the user's permissions and add them to the context
-func PermissionMiddleware(
+func ComputePermissions(
 	globalAdminGroup string,
 ) func(handler http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {

@@ -48,7 +48,7 @@ type IDToken interface {
 	Claims(v interface{}) error
 }
 
-func AuthMiddleware(
+func Authentication(
 	authHeaderName,
 	authHeaderFormat string,
 	idTokenVerifier IDTokenVerifier,

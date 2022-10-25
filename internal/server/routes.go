@@ -27,7 +27,7 @@ func buildRouter(
 	r.Use(
 		gorillahandlers.RecoveryHandler(),
 		gorillahandlers.CompressHandler,
-		middleware.RequestIdMiddleware,
+		middleware.RequestId,
 	)
 	renderer := handlers.NewRenderer(tpl)
 
@@ -38,10 +38,10 @@ func buildRouter(
 
 	webRouter.Use(
 		noCache,
-		middleware.LogMiddleware,
-		middleware.AuthMiddleware(authHeaderName, authHeaderFormat, idTokenVerifier, loginURL),
-		middleware.CountriesMiddleware(countryRepo),
-		middleware.PermissionMiddleware(globalAdminGroup),
+		middleware.RequestLogging,
+		middleware.Authentication(authHeaderName, authHeaderFormat, idTokenVerifier, loginURL),
+		middleware.PrefetchCountries(countryRepo),
+		middleware.ComputePermissions(globalAdminGroup),
 		middleware.SelectedCountry(),
 	)
 
