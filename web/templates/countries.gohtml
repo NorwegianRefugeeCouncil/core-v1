@@ -8,6 +8,11 @@
     <main>
         <div class="container mt-4">
             <div class="row">
+                {{ if $isGlobalAdmin }}
+                    <div class="col-12 mb-3 mt-3 col-lg-4 mt-md-0 order-lg-last">
+                        <a href="/countries/new" class="btn btn-primary float-end">New Country</a>
+                    </div>
+                {{ end }}
                 <div class="col-12">
                     <div class="card ">
                         <div class="card-header">
