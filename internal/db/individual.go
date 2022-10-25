@@ -244,7 +244,7 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 				if j != 0 {
 					b.WriteString(",")
 				}
-				fieldValue, err := getFieldValue(individual, field)
+				fieldValue, err := individual.GetFieldValue(field)
 				if err != nil {
 					return nil, err
 				}
@@ -278,51 +278,6 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 	}
 	return ret, nil
 
-}
-
-func getFieldValue(i *api.Individual, field string) (interface{}, error) {
-	switch field {
-	case "id":
-		return i.ID, nil
-	case "full_name":
-		return i.FullName, nil
-	case "preferred_name":
-		return i.PreferredName, nil
-	case "address":
-		return i.Address, nil
-	case "phone_number":
-		return i.PhoneNumber, nil
-	case "normalized_phone_number":
-		return i.NormalizedPhoneNumber, nil
-	case "email":
-		return i.Email, nil
-	case "birth_date":
-		return i.BirthDate, nil
-	case "gender":
-		return i.Gender, nil
-	case "is_minor":
-		return i.IsMinor, nil
-	case "presents_protection_concerns":
-		return i.PresentsProtectionConcerns, nil
-	case "physical_impairment":
-		return i.PhysicalImpairment, nil
-	case "mental_impairment":
-		return i.MentalImpairment, nil
-	case "sensory_impairment":
-		return i.SensoryImpairment, nil
-	case "country_id":
-		return i.CountryID, nil
-	case "displacement_status":
-		return i.DisplacementStatus, nil
-	case "created_at":
-		return i.CreatedAt, nil
-	case "deleted_at":
-		return i.DeletedAt, nil
-	case "updated_at":
-		return i.UpdatedAt, nil
-	default:
-		return "", fmt.Errorf("unknown field %s", field)
-	}
 }
 
 func (i individualRepo) Put(ctx context.Context, individual *api.Individual, fields []string) (*api.Individual, error) {
