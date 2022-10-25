@@ -28,17 +28,16 @@
     }
 
     async function retryPromise(fn, tentatives, delayMs) {
-        let errorsCount = 0;
-        try {
-            return await fn();
-        } catch (e) {
-            if (errorsCount < tentatives) {
-                errorsCount++;
+        const errors = [];
+        while (errors.length < tentatives) {
+            try {
+                return await fn();
+            } catch (e) {
+                errors.push(e);
                 await delay(delayMs);
-                return await retryPromise(fn, tentatives);
             }
-            throw e;
         }
+        throw new Error("Max tentatives reached");
     }
 
     async function pollRefreshToken() {
