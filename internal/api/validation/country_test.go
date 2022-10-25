@@ -52,6 +52,7 @@ func TestValidateCountry(t *testing.T) {
 	namePath := validation.NewPath("name")
 	codePath := validation.NewPath("code")
 	jwtGroupPath := validation.NewPath("jwtGroup")
+	weirdString := string([]byte{0x7f, 0x7f})
 	tests := []struct {
 		name    string
 		country *api.Country
@@ -63,8 +64,8 @@ func TestValidateCountry(t *testing.T) {
 			want:    validation.ErrorList{},
 		}, {
 			name:    "invalid name",
-			country: ValidCountry().WithName("!!").Build(),
-			want:    validation.ErrorList{validation.Invalid(namePath, "!!", "country name can only contain letters or spaces")},
+			country: ValidCountry().WithName(weirdString).Build(),
+			want:    validation.ErrorList{validation.Invalid(namePath, weirdString, "country name can only contain letters or spaces")},
 		}, {
 			name:    "missing name",
 			country: ValidCountry().WithName("").Build(),
@@ -101,6 +102,10 @@ func TestValidateCountry(t *testing.T) {
 			name:    "invalid jwt group",
 			country: ValidCountry().WithJwtGroup("!!").Build(),
 			want:    validation.ErrorList{validation.Invalid(jwtGroupPath, "!!", "jwt group is invalid")},
+		}, {
+			name:    "jwt group too long",
+			country: ValidCountry().WithJwtGroup(longString(256)).Build(),
+			want:    validation.ErrorList{validation.TooLongMaxLength(jwtGroupPath, longString(256), 255)},
 		},
 	}
 	for _, tt := range tests {

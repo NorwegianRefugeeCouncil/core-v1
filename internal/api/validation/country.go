@@ -17,7 +17,13 @@ func ValidateCountry(country *api.Country) validation.ErrorList {
 
 var countryNameMaxLength = 255
 var countryNameMinLength = 2
-var countryNamePattern = regexp.MustCompile(`^[a-zA-Z]+(?: [a-zA-Z]+)*$`)
+var allowedCountryNameChars = map[rune]bool{}
+
+func init() {
+	for _, r := range `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789èéêëàâäôöûüçÈÉÊËÀÂÄÔÖÛÜÇ_-'"!@#$%^&*()[]{}|;:,./<>? ` {
+		allowedCountryNameChars[r] = true
+	}
+}
 
 var countryCodeMaxLength = 255
 var countryCodeMinLength = 2
@@ -35,10 +41,19 @@ func validateCountryName(name string, path *validation.Path) validation.ErrorLis
 		allErrs = append(allErrs, validation.TooLongMaxLength(path, name, countryNameMaxLength))
 	} else if len(name) < countryNameMinLength {
 		allErrs = append(allErrs, validation.TooShortMinLength(path, name, countryNameMinLength))
-	} else if !countryNamePattern.MatchString(name) {
+	} else if !countryNameContainsOnlyValidChars(name) {
 		allErrs = append(allErrs, validation.Invalid(path, name, "country name can only contain letters or spaces"))
 	}
 	return allErrs
+}
+
+func countryNameContainsOnlyValidChars(name string) bool {
+	for _, r := range name {
+		if !allowedCountryNameChars[r] {
+			return false
+		}
+	}
+	return true
 }
 
 func validateCountryCode(code string, path *validation.Path) validation.ErrorList {
