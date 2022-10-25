@@ -116,6 +116,44 @@ func TestValidateCountry(t *testing.T) {
 	}
 }
 
+func TestValidateCountryList(t *testing.T) {
+	tests := []struct {
+		name        string
+		countryList *api.CountryList
+		want        validation.ErrorList
+	}{
+		{
+			name:        "empty",
+			countryList: &api.CountryList{},
+			want:        validation.ErrorList{},
+		}, {
+			name: "valid",
+			countryList: &api.CountryList{
+				Items: []*api.Country{
+					ValidCountry().Build(),
+				},
+			},
+			want: validation.ErrorList{},
+		}, {
+			name: "invalid",
+			countryList: &api.CountryList{
+				Items: []*api.Country{
+					ValidCountry().WithName("").Build(),
+				},
+			},
+			want: validation.ErrorList{
+				validation.Required(validation.NewPath("items[0].name"), "country name is required"),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := ValidateCountryList(tt.countryList)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
 func longString(n int) string {
 	return strings.Repeat("a", n)
 }

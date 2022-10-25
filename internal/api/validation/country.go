@@ -8,10 +8,23 @@ import (
 )
 
 func ValidateCountry(country *api.Country) validation.ErrorList {
+	return validateCountry(nil, country)
+}
+
+func ValidateCountryList(countryList *api.CountryList) validation.ErrorList {
 	allErrs := validation.ErrorList{}
-	allErrs = append(allErrs, validateCountryName(country.Name, validation.NewPath("name"))...)
-	allErrs = append(allErrs, validateCountryCode(country.Code, validation.NewPath("code"))...)
-	allErrs = append(allErrs, validateCountryJWTGroup(country.JwtGroup, validation.NewPath("jwtGroup"))...)
+	itemsPath := validation.NewPath("items")
+	for i, country := range countryList.Items {
+		allErrs = append(allErrs, validateCountry(itemsPath.Index(i), country)...)
+	}
+	return allErrs
+}
+
+func validateCountry(path *validation.Path, country *api.Country) validation.ErrorList {
+	allErrs := validation.ErrorList{}
+	allErrs = append(allErrs, validateCountryName(country.Name, path.Child("name"))...)
+	allErrs = append(allErrs, validateCountryCode(country.Code, path.Child("code"))...)
+	allErrs = append(allErrs, validateCountryJWTGroup(country.JwtGroup, path.Child("jwtGroup"))...)
 	return allErrs
 }
 

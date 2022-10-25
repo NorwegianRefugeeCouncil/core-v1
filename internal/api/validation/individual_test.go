@@ -151,7 +151,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "invalid displacement status",
 			i:    ValidIndividual().WithDisplacementStatus("bla").Build(),
-			want: validation.ErrorList{validation.NotSupported(displacementStatusPath, "bla", []string{"idp", "refugee", "host_community"})},
+			want: validation.ErrorList{validation.NotSupported(displacementStatusPath, "bla", []string{"host_community", "idp", "refugee"})},
 		}, {
 			name: "empty gender",
 			i:    ValidIndividual().WithGender("").Build(),
@@ -159,7 +159,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "invalid gender",
 			i:    ValidIndividual().WithGender("bla").Build(),
-			want: validation.ErrorList{validation.NotSupported(genderPath, "bla", []string{"male", "female", "other", "prefers_not_to_say"})},
+			want: validation.ErrorList{validation.NotSupported(genderPath, "bla", []string{"female", "male", "other", "prefers_not_to_say"})},
 		},
 	}
 	for _, tt := range tests {
