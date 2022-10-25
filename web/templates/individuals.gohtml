@@ -37,7 +37,7 @@
     <main style="">
         <div class="container-fluid container-xxl pt-3">
             <div class="d-flex justify-content-end align-items-center">
-                {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.GetCountryIDsWithPermission "write")}}
+                {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
                     <a href="{{.CurrentUrl}}/new" class="btn btn-outline-primary me-2">
                         Create new Individual
                     </a>
@@ -45,7 +45,7 @@
                 <a href="{{.CurrentUrl}}/download" target="_blank" class="btn btn-outline-primary">
                     Download
                 </a>
-                {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.GetCountryIDsWithPermission "write")}}
+                {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
                     <form action="{{.CurrentUrl}}/upload" enctype="multipart/form-data" method="post" class="ms-2">
                         <div class="form-group mb-2">
                             <label class="form-label">Upload Individuals Excel or CSV file</label>

@@ -6,11 +6,18 @@ import (
 
 //go:generate mockgen -destination=./interface_mock.go -package=auth . Interface
 
+type Permission uint8
+
+const (
+	PermissionGlobalAdmin Permission = iota
+	PermissionWrite
+	PermissionRead
+)
+
 type Interface interface {
 	IsGlobalAdmin() bool
-	CanReadWriteToCountryID(countryID string) bool
 	GetCountryIDsWithReadWritePermissions() containers.StringSet
-	GetCountryIDsWithPermission(perm string) containers.StringSet
+	HasCountryLevelPermission(countryID string, perm Permission) bool
 }
 
 type permissions struct {
@@ -35,8 +42,21 @@ func (p permissions) IsGlobalAdmin() bool {
 	return p.isGlobalAdmin
 }
 
-func (p permissions) CanReadWriteToCountryID(countryID string) bool {
-	return p.IsGlobalAdmin() || p.hasExplicitReadWritePermissionInCountry(countryID)
+func (p permissions) HasCountryLevelPermission(countryID string, perm Permission) bool {
+	if !p.allCountryIDs.Contains(countryID) {
+		return false
+	}
+
+	switch perm {
+	case PermissionGlobalAdmin:
+		return p.IsGlobalAdmin()
+	case PermissionWrite:
+		return p.IsGlobalAdmin() || p.hasExplicitReadWritePermissionInCountry(countryID)
+	case PermissionRead:
+		return p.IsGlobalAdmin() || p.hasExplicitReadWritePermissionInCountry(countryID)
+	default:
+		return false
+	}
 }
 
 func (p permissions) GetCountryIDsWithReadWritePermissions() containers.StringSet {
@@ -44,17 +64,6 @@ func (p permissions) GetCountryIDsWithReadWritePermissions() containers.StringSe
 		return containers.NewStringSet(p.allCountryIDs.Items()...)
 	}
 	return containers.NewStringSet(p.allowedCountryIDs.Items()...)
-}
-
-// This allows us to use granular permissions, but proxies it to the generic read/write permissions
-func (p permissions) GetCountryIDsWithPermission(perm string) containers.StringSet {
-	if perm == "read" {
-		return p.GetCountryIDsWithReadWritePermissions()
-	} else if perm == "write" {
-		return p.GetCountryIDsWithReadWritePermissions()
-	} else {
-		return containers.NewStringSet()
-	}
 }
 
 func (p permissions) hasExplicitReadWritePermissionInCountry(countryID string) bool {

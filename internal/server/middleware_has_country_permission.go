@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 
+	"github.com/nrc-no/notcore/internal/auth"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
@@ -30,13 +31,13 @@ func hasCountryPermissionMiddleware() func(handler http.Handler) http.Handler {
 
 			if len(selectedCountryID) > 0 {
 				if r.Method == http.MethodGet {
-					if !authInterface.CanReadWriteToCountryID(selectedCountryID) {
+					if !authInterface.HasCountryLevelPermission(selectedCountryID, auth.PermissionRead) {
 						l.Warn("user does not have permission to read country", zap.String("country_id", selectedCountryID))
 						http.Error(w, "forbidden", http.StatusForbidden)
 						return
 					}
 				} else if r.Method == http.MethodPost || r.Method == http.MethodPut || r.Method == http.MethodDelete {
-					if !authInterface.CanReadWriteToCountryID(selectedCountryID) {
+					if !authInterface.HasCountryLevelPermission(selectedCountryID, auth.PermissionWrite) {
 						l.Warn("user does not have permission to write to country", zap.String("country_id", selectedCountryID))
 						http.Error(w, "forbidden", http.StatusForbidden)
 						return
