@@ -69,7 +69,3 @@ func (p permissions) GetCountryIDsWithReadWritePermissions() containers.StringSe
 func (p permissions) hasExplicitReadWritePermissionInCountry(countryID string) bool {
 	return p.allowedCountryIDs.Contains(countryID)
 }
-
-func (p permissions) countryExists(countryID string) bool {
-	return p.allCountryIDs.Contains(countryID)
-}
