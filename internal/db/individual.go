@@ -2,16 +2,14 @@ package db
 
 import (
 	"context"
-	"database/sql"
-	"errors"
 	"fmt"
-	"sort"
-	"strconv"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/logging"
+	"github.com/nrc-no/notcore/internal/utils"
 	"github.com/rs/xid"
 	"go.uber.org/zap"
 )
@@ -195,20 +193,122 @@ func (i individualRepo) getByIdInternal(ctx context.Context, tx *sqlx.Tx, id str
 
 func (i individualRepo) PutMany(ctx context.Context, individuals []*api.Individual, fields []string) ([]*api.Individual, error) {
 	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		var ret = make([]*api.Individual, len(individuals))
-		for k, individual := range individuals {
-			ind, err := i.putInternal(ctx, tx, individual, fields)
-			if err != nil {
-				return nil, err
-			}
-			ret[k] = ind
-		}
-		return ret, nil
+		return i.putManyInternal(ctx, tx, individuals, fields)
 	})
 	if err != nil {
 		return nil, err
 	}
 	return ret.([]*api.Individual), nil
+}
+
+func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, individuals []*api.Individual, fields []string) ([]*api.Individual, error) {
+
+	fieldsSet := containers.NewStringSet(fields...)
+	if fieldsSet.Contains("phone_number") {
+		fieldsSet.Add("normalized_phone_number")
+	}
+	fieldsSet.Add("id")
+	fields = fieldsSet.Items()
+
+	fieldCount := len(fields)
+	individualCount := len(individuals)
+	// this is the maximum number of arguments that can be passed to a postgres query
+	maxParams := 65535
+	individualPerBatch := maxParams / fieldCount
+	ret := make([]*api.Individual, 0, individualCount)
+	for batch := 0; batch < individualCount; batch += individualPerBatch {
+
+		var individualsInBatch = individuals[batch:utils.Min(batch+individualPerBatch, individualCount)]
+
+		args := make([]interface{}, 0)
+		b := &strings.Builder{}
+		b.WriteString("INSERT INTO individuals (" + strings.Join(fields, ",") + ") VALUES ")
+
+		for i, individual := range individualsInBatch {
+			if individual.ID == "" {
+				individual.ID = xid.New().String()
+			}
+			if i != 0 {
+				b.WriteString(",")
+			}
+			b.WriteString("(")
+			for j, field := range fields {
+				if j != 0 {
+					b.WriteString(",")
+				}
+				fieldValue, err := getFieldValue(individual, field)
+				if err != nil {
+					return nil, err
+				}
+				args = append(args, fieldValue)
+				b.WriteString(fmt.Sprintf("$%d", len(args)))
+			}
+			b.WriteString(")")
+		}
+		b.WriteString(" ON CONFLICT (id) DO UPDATE SET ")
+		isFirst := true
+		for _, field := range fields {
+			if field == "id" {
+				continue
+			}
+			if !isFirst {
+				b.WriteString(",")
+			}
+			isFirst = false
+			b.WriteString(fmt.Sprintf("%s = EXCLUDED.%s", field, field))
+		}
+
+		b.WriteString(" RETURNING *")
+
+		var out []*api.Individual
+		qry := b.String()
+		err := tx.SelectContext(ctx, &out, qry, args...)
+		if err != nil {
+			return nil, err
+		}
+		ret = append(ret, out...)
+	}
+	return ret, nil
+
+}
+
+func getFieldValue(i *api.Individual, field string) (interface{}, error) {
+	switch field {
+	case "id":
+		return i.ID, nil
+	case "full_name":
+		return i.FullName, nil
+	case "preferred_name":
+		return i.PreferredName, nil
+	case "address":
+		return i.Address, nil
+	case "phone_number":
+		return i.PhoneNumber, nil
+	case "normalized_phone_number":
+		return i.NormalizedPhoneNumber, nil
+	case "email":
+		return i.Email, nil
+	case "birth_date":
+		return i.BirthDate, nil
+	case "gender":
+		return i.Gender, nil
+	case "is_minor":
+		return i.IsMinor, nil
+	case "presents_protection_concerns":
+		return i.PresentsProtectionConcerns, nil
+	case "physical_impairment":
+		return i.PhysicalImpairment, nil
+	case "mental_impairment":
+		return i.MentalImpairment, nil
+	case "sensory_impairment":
+		return i.SensoryImpairment, nil
+	case "country_id":
+		return i.CountryID, nil
+	case "displacement_status":
+		return i.DisplacementStatus, nil
+	default:
+		return "", fmt.Errorf("unknown field %s", field)
+	}
 }
 
 func (i individualRepo) Put(ctx context.Context, individual *api.Individual, fields []string) (*api.Individual, error) {
@@ -222,91 +322,14 @@ func (i individualRepo) Put(ctx context.Context, individual *api.Individual, fie
 }
 
 func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual *api.Individual, fields []string) (*api.Individual, error) {
-	l := logging.NewLogger(ctx)
-	l.Debug("putting individual")
-	fieldMap := map[string]bool{"id": true}
-	for _, field := range fields {
-		if field == "phone_number" {
-			fieldMap["normalized_phone_number"] = true
-		}
-		fieldMap[field] = true
+	ret, err := i.putManyInternal(ctx, tx, []*api.Individual{individual}, fields)
+	if err != nil {
+		return nil, err
 	}
-	fields = make([]string, 0, len(fieldMap))
-	for field := range fieldMap {
-		fields = append(fields, field)
+	if len(ret) != 1 {
+		return nil, fmt.Errorf("unexpected number of individuals returned: %d", len(ret))
 	}
-	sort.Strings(fields)
-
-	isNew := true
-	if len(individual.ID) != 0 {
-		_, err := i.getByIdInternal(ctx, tx, individual.ID)
-		if err != nil {
-			if !errors.Is(err, sql.ErrNoRows) {
-				l.Error("failed to get individual", zap.Error(err))
-				return nil, err
-			}
-			individual.ID = xid.New().String()
-			isNew = true
-		} else {
-			isNew = false
-		}
-	} else {
-		individual.ID = xid.New().String()
-	}
-
-	if isNew {
-
-		var args []interface{}
-		statement := "INSERT INTO individuals (" + strings.Join(fields, ",") + ") VALUES ("
-		for i, field := range fields {
-			if i != 0 {
-				statement += ","
-			}
-			fieldValue, err := individual.GetFieldValue(field)
-			if err != nil {
-				l.Error("failed to get field value", zap.String("field", field), zap.Error(err))
-				return nil, err
-			}
-			args = append(args, fieldValue)
-			statement += "$" + strconv.Itoa(len(args))
-		}
-		statement = statement + ")"
-		_, err := tx.ExecContext(ctx, statement, args...)
-		if err != nil {
-			l.Error("failed to insert individual", zap.Error(err))
-			return nil, err
-		}
-
-	} else {
-
-		var args []interface{}
-		statement := "UPDATE individuals SET "
-		for i, field := range fields {
-			if field == "id" {
-				continue
-			}
-			if i != 0 {
-				statement = statement + ","
-			}
-			fieldValue, err := individual.GetFieldValue(field)
-			if err != nil {
-				l.Error("failed to get field value", zap.String("field", field), zap.Error(err))
-				return nil, err
-			}
-			args = append(args, fieldValue)
-			statement = statement + field + "=$" + strconv.Itoa(len(args))
-		}
-		args = append(args, individual.ID)
-		statement = statement + " WHERE id = $" + strconv.Itoa(len(args))
-		_, err := tx.ExecContext(ctx, statement, args...)
-		if err != nil {
-			l.Error("failed to update individual", zap.Error(err))
-			return nil, err
-		}
-
-	}
-
-	return i.getByIdInternal(ctx, tx, individual.ID)
+	return ret[0], nil
 }
 
 func (i individualRepo) Delete(ctx context.Context, id string) error {
