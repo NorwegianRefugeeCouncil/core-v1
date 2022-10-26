@@ -57,7 +57,7 @@ serve: prerequisites
 		--logout-url="https://localhost:10000/oauth2/sign_out?rd=https%3A%2F%2Flocalhost:10000%2Fsession%2Fend" \
 		--login-url="https://localhost:10000/oauth2/start" \
 		--token-refresh-url=https://localhost:10000/oauth2/start \
-		--token-refresh-before=45m
+		--token-refresh-interval=15m
 .PHONY: bootstrap
 bootstrap:
 	@cd web/theme && yarn && yarn build

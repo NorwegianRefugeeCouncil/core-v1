@@ -20,27 +20,48 @@
 {{template "body" .}}
 </body>
 
-{{ $refreshURL := refreshURL }}
-{{ if $refreshURL }}
-    <script type="application/javascript">
-        /**
-         * @typedef sessionResponse
-         * @property {number} expiresInMs
-         * @property {boolean} isAuthenticated
-         */
-        function pollRefreshToken() {
-            fetch("/api/session")
-                .then(r => r.json())
-                .then(/**@type {sessionResponse} */ (r) => {
-                    const expirationMs = r.expiresInMs
-                    const refreshMs = expirationMs - 1800000 // 30 minutes
-                    return new Promise(resolve => setTimeout(resolve, refreshMs))
-                })
-                .then(() => fetch("{{ $refreshURL }}"))
-                .then(() => pollRefreshToken())
+
+<script type="application/javascript">
+
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function retryPromise(fn, maxErrorCount, delayMs) {
+        const errors = [];
+        while (errors.length < maxErrorCount) {
+            try {
+                return fn();
+            } catch (e) {
+                errors.push(e);
+                await delay(delayMs);
+            }
         }
-        pollRefreshToken()
-    </script>
-{{end}}
+        throw new Error("Max tentatives reached");
+    }
+
+    async function pollRefreshToken() {
+        while (true) {
+            try {
+                await retryPromise(async () => {
+                    const resp = await fetch("{{tokenRefreshURL}}")
+                    if (resp.status >= 400) {
+                        throw new Error("Failed to refresh session");
+                    }
+                }, 3, 500)
+                await delay({{tokenRefreshInterval.Milliseconds}})
+            } catch (e) {
+                console.error(e);
+                window.location.href = "{{loginURL}}";
+            }
+        }
+    }
+
+    (async () => {
+        await pollRefreshToken();
+    })();
+
+</script>
+
 
 {{end}}
