@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/nrc-no/notcore/pkg/meta"
+	"github.com/nrc-no/notcore/pkg/api/meta"
 	"github.com/nrc-no/notcore/pkg/validation"
 )
 
