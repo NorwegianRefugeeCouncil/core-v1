@@ -27,6 +27,16 @@
                     }
                 }
             }
+
+            function openDialog() {
+                document.getElementById('individual-upload--file').click();
+            }
+            function submitForm() {
+                document.getElementById('individual-upload--button').disabled = true;
+                document.getElementById('individual-upload--form').submit();
+            }
+            document.getElementById('individual-upload--button').addEventListener('click', openDialog);
+            document.getElementById('individual-upload--file').addEventListener('change', submitForm);
         });
     </script>
 {{end}}
@@ -46,13 +56,17 @@
                     Download
                 </a>
                 {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                    <form action="{{.CurrentUrl}}/upload" enctype="multipart/form-data" method="post" class="ms-2">
-                        <div class="form-group mb-2">
-                            <label class="form-label">Upload Individuals Excel or CSV file</label>
-                            <input accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-" name="file" type="file" class="form-control">
-                        </div>
-                        <button type="submit" class="btn btn-outline-primary">Upload</button>
+                    <form id="individual-upload--form" action="{{.CurrentUrl}}/upload" enctype="multipart/form-data" method="post" class="ms-2">
+                        <input
+                            hidden
+                            id="individual-upload--file"
+                            name="file" 
+                            type="file" 
+                            class="form-control"
+                            accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+" 
+                        >
+                        <button id="individual-upload--button" type="button" class="btn btn-outline-primary">Upload</button>
                     </form>
                 {{end}}
             </div>
