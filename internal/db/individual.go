@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/nrc-no/notcore/internal/api"
@@ -21,7 +22,7 @@ type IndividualRepo interface {
 	GetByID(ctx context.Context, id string) (*api.Individual, error)
 	Put(ctx context.Context, individual *api.Individual, fields []string) (*api.Individual, error)
 	PutMany(ctx context.Context, individuals []*api.Individual, fields []string) ([]*api.Individual, error)
-	Delete(ctx context.Context, id string) error
+	SoftDelete(ctx context.Context, id string) error
 }
 
 type individualRepo struct {
@@ -65,6 +66,9 @@ func (i individualRepo) getAllInternal(ctx context.Context, tx *sqlx.Tx, options
 		args = append(args, arg)
 		return fmt.Sprintf("$%d", len(args))
 	}
+
+	// we do not want to return deleted individuals
+	whereClauses = append(whereClauses, "deleted_at IS NULL")
 
 	if len(options.FullName) != 0 {
 		if i.driverName() == "sqlite" {
@@ -184,7 +188,7 @@ func (i individualRepo) getByIdInternal(ctx context.Context, tx *sqlx.Tx, id str
 	l := logging.NewLogger(ctx).With(zap.String("individual_id", id))
 	l.Debug("getting individual by id")
 	var ret = api.Individual{}
-	err := tx.GetContext(ctx, &ret, "SELECT * FROM individuals WHERE id = $1", id)
+	err := tx.GetContext(ctx, &ret, "SELECT * FROM individuals WHERE id = $1 and deleted_at IS NULL", id)
 	if err != nil {
 		return nil, err
 	}
@@ -203,6 +207,9 @@ func (i individualRepo) PutMany(ctx context.Context, individuals []*api.Individu
 
 func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, individuals []*api.Individual, fields []string) ([]*api.Individual, error) {
 
+	now := time.Now().UTC()
+	nowStr := now.Format(time.RFC3339)
+  
 	fieldsSet := containers.NewStringSet(fields...)
 	if fieldsSet.Contains("phone_number") {
 		fieldsSet.Add("normalized_phone_number")
@@ -222,7 +229,7 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 
 		args := make([]interface{}, 0)
 		b := &strings.Builder{}
-		b.WriteString("INSERT INTO individuals (" + strings.Join(fields, ",") + ") VALUES ")
+		b.WriteString("INSERT INTO individuals (" + strings.Join(fields, ",") + ",created_at,updated_at) VALUES ")
 
 		for i, individual := range individualsInBatch {
 			if individual.ID == "" {
@@ -236,14 +243,14 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 				if j != 0 {
 					b.WriteString(",")
 				}
-				fieldValue, err := getFieldValue(individual, field)
+				fieldValue, err := individual.GetFieldValue(field)
 				if err != nil {
 					return nil, err
 				}
 				args = append(args, fieldValue)
 				b.WriteString(fmt.Sprintf("$%d", len(args)))
 			}
-			b.WriteString(")")
+			b.WriteString(",'" + nowStr + "','" + nowStr + "')")
 		}
 		b.WriteString(" ON CONFLICT (id) DO UPDATE SET ")
 		isFirst := true
@@ -257,7 +264,7 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 			isFirst = false
 			b.WriteString(fmt.Sprintf("%s = EXCLUDED.%s", field, field))
 		}
-
+		b.WriteString(", updated_at='" + nowStr + "'")
 		b.WriteString(" RETURNING *")
 
 		var out []*api.Individual
@@ -270,45 +277,6 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 	}
 	return ret, nil
 
-}
-
-func getFieldValue(i *api.Individual, field string) (interface{}, error) {
-	switch field {
-	case "id":
-		return i.ID, nil
-	case "full_name":
-		return i.FullName, nil
-	case "preferred_name":
-		return i.PreferredName, nil
-	case "address":
-		return i.Address, nil
-	case "phone_number":
-		return i.PhoneNumber, nil
-	case "normalized_phone_number":
-		return i.NormalizedPhoneNumber, nil
-	case "email":
-		return i.Email, nil
-	case "birth_date":
-		return i.BirthDate, nil
-	case "gender":
-		return i.Gender, nil
-	case "is_minor":
-		return i.IsMinor, nil
-	case "presents_protection_concerns":
-		return i.PresentsProtectionConcerns, nil
-	case "physical_impairment":
-		return i.PhysicalImpairment, nil
-	case "mental_impairment":
-		return i.MentalImpairment, nil
-	case "sensory_impairment":
-		return i.SensoryImpairment, nil
-	case "country_id":
-		return i.CountryID, nil
-	case "displacement_status":
-		return i.DisplacementStatus, nil
-	default:
-		return "", fmt.Errorf("unknown field %s", field)
-	}
 }
 
 func (i individualRepo) Put(ctx context.Context, individual *api.Individual, fields []string) (*api.Individual, error) {
@@ -332,20 +300,20 @@ func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual
 	return ret[0], nil
 }
 
-func (i individualRepo) Delete(ctx context.Context, id string) error {
+func (i individualRepo) SoftDelete(ctx context.Context, id string) error {
 	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		err := i.deleteInternal(ctx, tx, id)
+		err := i.softDeleteInternal(ctx, tx, id)
 		return err, nil
 	})
 	return err
 }
 
-func (i individualRepo) deleteInternal(ctx context.Context, tx *sqlx.Tx, id string) error {
+func (i individualRepo) softDeleteInternal(ctx context.Context, tx *sqlx.Tx, id string) error {
 	l := logging.NewLogger(ctx).With(zap.String("individual_id", id))
 	l.Debug("deleting individual")
 
-	const query = "DELETE FROM individuals WHERE id = ?"
-	var args = []interface{}{id}
+	const query = "UPDATE individuals SET deleted_at = $1 WHERE id = $2 and deleted_at IS NULL"
+	var args = []interface{}{time.Now().UTC(), id}
 
 	if _, err := tx.ExecContext(ctx, query, args...); err != nil {
 		l.Error("failed to delete individual", zap.Error(err))

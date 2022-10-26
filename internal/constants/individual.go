@@ -44,6 +44,9 @@ const (
 	DBColumnIndividualPresentsProtectionConcerns = "presents_protection_concerns"
 	DBColumnIndividualSensoryImpairment          = "sensory_impairment"
 	DBColumnIndividualNormalizedPhoneNumber      = "normalized_phone_number"
+	DBColumnIndividualCreatedAt                  = "created_at"
+	DBColumnIndividualUpdatedAt                  = "updated_at"
+	DBColumnIndividualDeletedAt                  = "deleted_at"
 
 	FileColumnIndividualID                         = "id"
 	FileColumnIndividualAddress                    = "address"
@@ -77,6 +80,9 @@ var IndividualDBColumns = []string{
 	DBColumnIndividualPreferredName,
 	DBColumnIndividualPresentsProtectionConcerns,
 	DBColumnIndividualSensoryImpairment,
+	DBColumnIndividualCreatedAt,
+	DBColumnIndividualUpdatedAt,
+	DBColumnIndividualDeletedAt,
 }
 
 var IndividualFileColumns = []string{

@@ -35,20 +35,6 @@ func (m *MockIndividualRepo) EXPECT() *MockIndividualRepoMockRecorder {
 	return m.recorder
 }
 
-// Delete mocks base method.
-func (m *MockIndividualRepo) Delete(arg0 context.Context, arg1 string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Delete", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Delete indicates an expected call of Delete.
-func (mr *MockIndividualRepoMockRecorder) Delete(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockIndividualRepo)(nil).Delete), arg0, arg1)
-}
-
 // GetAll mocks base method.
 func (m *MockIndividualRepo) GetAll(arg0 context.Context, arg1 api.GetAllOptions) ([]*api.Individual, error) {
 	m.ctrl.T.Helper()
@@ -107,4 +93,18 @@ func (m *MockIndividualRepo) PutMany(arg0 context.Context, arg1 []*api.Individua
 func (mr *MockIndividualRepoMockRecorder) PutMany(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PutMany", reflect.TypeOf((*MockIndividualRepo)(nil).PutMany), arg0, arg1, arg2)
+}
+
+// SoftDelete mocks base method.
+func (m *MockIndividualRepo) SoftDelete(arg0 context.Context, arg1 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SoftDelete", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SoftDelete indicates an expected call of SoftDelete.
+func (mr *MockIndividualRepoMockRecorder) SoftDelete(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SoftDelete", reflect.TypeOf((*MockIndividualRepo)(nil).SoftDelete), arg0, arg1)
 }

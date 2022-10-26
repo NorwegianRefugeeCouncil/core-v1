@@ -55,6 +55,7 @@ func buildRouter(
 		handlers.HandleDownload(individualRepo),
 		ensureSelectedCountryMiddleware()))
 
+	webRouter.Path("/individuals/{individual_id}/delete").Handler(handlers.HandleIndividualDelete(individualRepo))
 	webRouter.Path("/individuals/{individual_id}").Handler(handlers.HandleIndividual(tpl, individualRepo))
 
 	webRouter.Path("/countries").Handler(handlers.HandleCountries(tpl, countryRepo))
