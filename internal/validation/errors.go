@@ -86,18 +86,19 @@ func (v *Error) ErrorBody() string {
 type ErrorType string
 
 const (
-	ErrorTypeNotFound         ErrorType = "FieldValueNotFound"
-	ErrorTypeRequired         ErrorType = "FieldValueRequired"
-	ErrorTypeDuplicate        ErrorType = "FieldValueDuplicate"
-	ErrorTypeInvalid          ErrorType = "FieldValueInvalid"
-	ErrorTypeNotSupported     ErrorType = "FieldValueNotSupported"
-	ErrorTypeForbidden        ErrorType = "FieldValueForbidden"
-	ErrorTypeTooLong          ErrorType = "FieldValueTooLong"
-	ErrorTypeTooShort         ErrorType = "FieldValueTooShort"
-	ErrorTypeTooMany          ErrorType = "FieldValueTooMany"
-	ErrorTypeTooFew           ErrorType = "FieldValueTooFew"
-	ErrorTypeInternal         ErrorType = "InternalError"
-	ErrorTypeValueTypeInvalid ErrorType = "FieldValueTypeInvalid"
+	ErrorTypeNotFound                 ErrorType = "FieldValueNotFound"
+	ErrorTypeRequired                 ErrorType = "FieldValueRequired"
+	ErrorTypeDuplicate                ErrorType = "FieldValueDuplicate"
+	ErrorTypeInvalid                  ErrorType = "FieldValueInvalid"
+	ErrorTypeNotSupported             ErrorType = "FieldValueNotSupported"
+	ErrorTypeForbidden                ErrorType = "FieldValueForbidden"
+	ErrorTypeTooLong                  ErrorType = "FieldValueTooLong"
+	ErrorTypeTooShort                 ErrorType = "FieldValueTooShort"
+	ErrorTypeTooMany                  ErrorType = "FieldValueTooMany"
+	ErrorTypeTooFew                   ErrorType = "FieldValueTooFew"
+	ErrorTypeInternal                 ErrorType = "InternalError"
+	ErrorTypeValueTypeInvalid         ErrorType = "FieldValueTypeInvalid"
+	ErrorTypeUnexpectedServerResponse ErrorType = "UnexpectedServerResponse"
 )
 
 func (t ErrorType) String() string {
@@ -243,6 +244,23 @@ func InternalError(field *Path, err error) *Error {
 }
 
 type ErrorList []*Error
+
+func (e ErrorList) ToAggregate() Aggregate {
+	if len(e) == 0 {
+		return nil
+	}
+	errs := make([]error, 0, len(e))
+	errorMessages := containers.NewStringSet()
+	for _, err := range e {
+		msg := fmt.Sprintf("%v", err)
+		if errorMessages.Contains(msg) {
+			continue
+		}
+		errorMessages.Add(msg)
+		errs = append(errs, err)
+	}
+	return NewAggregate(errs)
+}
 
 type Aggregate interface {
 	error
