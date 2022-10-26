@@ -209,13 +209,12 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 
 	now := time.Now().UTC()
 	nowStr := now.Format(time.RFC3339)
-
+  
 	fieldsSet := containers.NewStringSet(fields...)
 	if fieldsSet.Contains("phone_number") {
 		fieldsSet.Add("normalized_phone_number")
 	}
 	fieldsSet.Add("id")
-
 	fields = fieldsSet.Items()
 
 	fieldCount := len(fields)

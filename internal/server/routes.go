@@ -43,8 +43,6 @@ func buildRouter(
 		selectedCountryMiddleware(),
 	)
 
-	webRouter.Path("/api/session").Handler(handlers.HandleSession())
-
 	webRouter.Path("/individuals").Handler(withMiddleware(
 		handlers.HandleIndividuals(renderer, individualRepo),
 		ensureSelectedCountryMiddleware()))

@@ -15,31 +15,31 @@ import (
 )
 
 const (
-	envDbDSN               = "CORE_DB_DSN"
-	envDbDriver            = "CORE_DB_DRIVER"
-	envListenAddress       = "CORE_LISTEN_ADDRESS"
-	envLogoutURL           = "CORE_LOGOUT_URL"
-	envLoginURL            = "CORE_LOGIN_URL"
-	envTokenRefreshURL     = "CORE_TOKEN_REFRESH_URL"
-	envTokenRefreshBefore  = "CORE_TOKEN_REFRESH_BEFORE"
-	envJwtGlobalAdminGroup = "CORE_JWT_GLOBAL_ADMIN_GROUP"
-	envAuthHeaderName      = "CORE_AUTH_HEADER_NAME"
-	envAuthHeaderFormat    = "CORE_AUTH_HEADER_FORMAT"
-	envOidcIssuerURL       = "CORE_OIDC_ISSUER"
-	envOidcClientID        = "CORE_OAUTH_CLIENT_ID"
+	envDbDSN                = "CORE_DB_DSN"
+	envDbDriver             = "CORE_DB_DRIVER"
+	envListenAddress        = "CORE_LISTEN_ADDRESS"
+	envLogoutURL            = "CORE_LOGOUT_URL"
+	envLoginURL             = "CORE_LOGIN_URL"
+	envTokenRefreshURL      = "CORE_TOKEN_REFRESH_URL"
+	envTokenRefreshInterval = "CORE_TOKEN_REFRESH_INTERVAL"
+	envJwtGlobalAdminGroup  = "CORE_JWT_GLOBAL_ADMIN_GROUP"
+	envAuthHeaderName       = "CORE_AUTH_HEADER_NAME"
+	envAuthHeaderFormat     = "CORE_AUTH_HEADER_FORMAT"
+	envOidcIssuerURL        = "CORE_OIDC_ISSUER"
+	envOidcClientID         = "CORE_OAUTH_CLIENT_ID"
 
-	flagDbDSN               = "db-dsn"
-	flagDbDriver            = "db-driver"
-	flagListenAddress       = "listen-address"
-	flagLogoutURL           = "logout-url"
-	flagLoginURL            = "login-url"
-	flagTokenRefreshURL     = "token-refresh-url"
-	flagTokenRefreshBefore  = "token-refresh-before"
-	flagJwtGlobalAdminGroup = "jwt-global-admin-group"
-	flagAuthHeaderName      = "auth-header-name"
-	flagAuthHeaderFormat    = "auth-header-format"
-	flagOidcIssuerURL       = "oidc-issuer"
-	flagOidcClientID        = "oauth-client-id"
+	flagDbDSN                = "db-dsn"
+	flagDbDriver             = "db-driver"
+	flagListenAddress        = "listen-address"
+	flagLogoutURL            = "logout-url"
+	flagLoginURL             = "login-url"
+	flagTokenRefreshURL      = "token-refresh-url"
+	flagTokenRefreshInterval = "token-refresh-interval"
+	flagJwtGlobalAdminGroup  = "jwt-global-admin-group"
+	flagAuthHeaderName       = "auth-header-name"
+	flagAuthHeaderFormat     = "auth-header-format"
+	flagOidcIssuerURL        = "oidc-issuer"
+	flagOidcClientID         = "oauth-client-id"
 )
 
 // serveCmd represents the serve command
@@ -96,16 +96,16 @@ var serveCmd = &cobra.Command{
 			return fmt.Errorf("--%s is required", flagTokenRefreshURL)
 		}
 
-		refreshTokenBefore := cmd.Flag(flagTokenRefreshBefore).Value.String()
-		if refreshTokenBefore == "0s" {
-			refreshTokenBefore = os.Getenv(envTokenRefreshBefore)
-			if refreshTokenBefore == "" {
-				return fmt.Errorf("--%s is required", flagTokenRefreshBefore)
+		tokenRefreshIntervalStr := cmd.Flag(flagTokenRefreshInterval).Value.String()
+		if tokenRefreshIntervalStr == "0s" {
+			tokenRefreshIntervalStr = os.Getenv(envTokenRefreshInterval)
+			if tokenRefreshIntervalStr == "" {
+				return fmt.Errorf("--%s is required", flagTokenRefreshInterval)
 			}
 		}
-		refreshBeforeDuration, err := time.ParseDuration(refreshTokenBefore)
+		tokenRefreshInterval, err := time.ParseDuration(tokenRefreshIntervalStr)
 		if err != nil {
-			return fmt.Errorf("--%s is invalid: %w", flagTokenRefreshBefore, err)
+			return fmt.Errorf("--%s is invalid: %w", flagTokenRefreshInterval, err)
 		}
 
 		authHeaderName := getFlagOrEnv(cmd, flagAuthHeaderName, envAuthHeaderName)
@@ -129,18 +129,18 @@ var serveCmd = &cobra.Command{
 		}
 
 		options := server.Options{
-			Address:             listenAddress,
-			DatabaseDriver:      dbDriver,
-			DatabaseDSN:         dbDsn,
-			LogoutURL:           logoutURL,
-			LoginURL:            loginURL,
-			TokenRefreshURL:     refreshURL,
-			TokenRefreshBefore:  refreshBeforeDuration,
-			JwtGroupGlobalAdmin: jwtGroupGlobalAdmin,
-			AuthHeaderName:      authHeaderName,
-			AuthHeaderFormat:    authHeaderFormat,
-			OIDCIssuerURL:       oidcIssuerURL,
-			OAuthClientID:       oauthClientID,
+			Address:              listenAddress,
+			DatabaseDriver:       dbDriver,
+			DatabaseDSN:          dbDsn,
+			LogoutURL:            logoutURL,
+			LoginURL:             loginURL,
+			TokenRefreshURL:      refreshURL,
+			TokenRefreshInterval: tokenRefreshInterval,
+			JwtGroupGlobalAdmin:  jwtGroupGlobalAdmin,
+			AuthHeaderName:       authHeaderName,
+			AuthHeaderFormat:     authHeaderFormat,
+			OIDCIssuerURL:        oidcIssuerURL,
+			OAuthClientID:        oauthClientID,
 		}
 
 		srv, err := options.New(ctx)
@@ -245,13 +245,13 @@ OIDC provider's discovery document'
 
 	serveCmd.PersistentFlags().String(flagOidcClientID, "", fmt.Sprintf("oauth client id. Can also be set with %s", envOidcClientID))
 
-	serveCmd.PersistentFlags().Duration(flagTokenRefreshBefore, 0, cleanDoc(fmt.Sprintf(`
-This flag specifies the duration before exporation for which the user token should be refreshed. Can also be set with %s
+	serveCmd.PersistentFlags().Duration(flagTokenRefreshInterval, 0, cleanDoc(fmt.Sprintf(`
+This flag specifies the interval at which user token should be refreshed. Can also be set with %s
 
-For example, if the value of this flag is set to 50m, the token will be refreshed 50 minutes before it expires.
-The browser will be responsible for refreshing the token before it expires, so that an active
-user would not be logged out. Though, if the user is not active, the token will expire and the user
-will have to login again.`, envTokenRefreshBefore)))
+For example, if the value of this flag is set to 50m, the token will be refreshed every 50 minutes.
+The browser will be responsible for refreshing the token. So if the user does not have a browser window
+opened, the token will not be refreshed.
+`, envTokenRefreshInterval)))
 }
 
 func cleanDoc(s string) string {

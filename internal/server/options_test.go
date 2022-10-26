@@ -30,8 +30,8 @@ func (o Options) WithTokenRefreshURL(tokenRefreshURL string) Options {
 	return o
 }
 
-func (o Options) WithTokenRefreshBefore(tokenRefreshBefore time.Duration) Options {
-	o.TokenRefreshBefore = tokenRefreshBefore
+func (o Options) WithTokenRefreshInterval(tokenRefreshInterval time.Duration) Options {
+	o.TokenRefreshInterval = tokenRefreshInterval
 	return o
 }
 
@@ -70,17 +70,17 @@ func (o Options) WithOAuthClientID(oauthClientID string) Options {
 
 func validOptions() Options {
 	return Options{
-		Address:             ":8080",
-		DatabaseDriver:      "postgres",
-		DatabaseDSN:         "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable",
-		LogoutURL:           "http://localhost:8080",
-		TokenRefreshURL:     "http://localhost:8080",
-		TokenRefreshBefore:  5 * time.Minute,
-		JwtGroupGlobalAdmin: "global-admin",
-		AuthHeaderName:      "X-Auth-Token",
-		AuthHeaderFormat:    AuthHeaderFormatJWT,
-		OIDCIssuerURL:       "https://foo",
-		OAuthClientID:       "bar",
+		Address:              ":8080",
+		DatabaseDriver:       "postgres",
+		DatabaseDSN:          "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable",
+		LogoutURL:            "http://localhost:8080",
+		TokenRefreshURL:      "http://localhost:8080",
+		TokenRefreshInterval: 5 * time.Minute,
+		JwtGroupGlobalAdmin:  "global-admin",
+		AuthHeaderName:       "X-Auth-Token",
+		AuthHeaderFormat:     AuthHeaderFormatJWT,
+		OIDCIssuerURL:        "https://foo",
+		OAuthClientID:        "bar",
 	}
 }
 
@@ -146,8 +146,8 @@ func TestOptions_validate(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name:    "refresh token before is invalid",
-			options: validOptions().WithTokenRefreshBefore(-1 * time.Second),
+			name:    "token refresh interval is invalid",
+			options: validOptions().WithTokenRefreshInterval(-1 * time.Second),
 			wantErr: true,
 		},
 		{
