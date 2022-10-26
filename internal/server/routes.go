@@ -70,6 +70,11 @@ func buildRouter(
 		middleware.EnsureSelectedCountry(),
 		middleware.HasCountryPermission(auth.PermissionRead),
 	))
+	individualsRouter.Path("/delete").Methods(http.MethodPost).Handler(withMiddleware(
+		handlers.HandleIndividualDelete(individualRepo),
+		middleware.EnsureSelectedCountry(),
+		middleware.HasCountryPermission(auth.PermissionWrite),
+	))
 	individualsRouter.Path("/{individual_id}").Methods(http.MethodGet).Handler(withMiddleware(
 		handlers.HandleIndividual(tpl, individualRepo),
 		middleware.EnsureSelectedCountry(),
