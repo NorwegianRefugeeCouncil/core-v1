@@ -6,7 +6,7 @@ import (
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
-	"github.com/nrc-no/notcore/internal/validation"
+	"github.com/nrc-no/notcore/pkg/validation"
 )
 
 func ValidateIndividual(i *api.Individual) validation.ErrorList {

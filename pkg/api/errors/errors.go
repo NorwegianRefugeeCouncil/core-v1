@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/nrc-no/notcore/internal/api/meta"
-	"github.com/nrc-no/notcore/internal/validation"
+	"github.com/nrc-no/notcore/pkg/meta"
+	"github.com/nrc-no/notcore/pkg/validation"
 )
 
 type StatusError struct {
@@ -156,10 +156,16 @@ func NewInvalid(resourceType, name string, fieldErrors validation.ErrorList) *St
 		},
 	}}
 	aggregatedErrs := fieldErrors.ToAggregate()
-	if aggregatedErrs == nil {
-		err.ErrStatus.Message = fmt.Sprintf("%s %q is invalid", resourceType, name)
+	var identifier string
+	if len(name) != 0 {
+		identifier = fmt.Sprintf("%s %q", resourceType, name)
 	} else {
-		err.ErrStatus.Message = fmt.Sprintf("%s %q is invalid: %v", resourceType, name, aggregatedErrs)
+		identifier = resourceType
+	}
+	if aggregatedErrs == nil {
+		err.ErrStatus.Message = fmt.Sprintf("%s is invalid", identifier)
+	} else {
+		err.ErrStatus.Message = fmt.Sprintf("%s is invalid: %v", identifier, aggregatedErrs)
 	}
 	return err
 }

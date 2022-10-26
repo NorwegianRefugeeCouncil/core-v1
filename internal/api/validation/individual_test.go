@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/nrc-no/notcore/internal/api"
-	"github.com/nrc-no/notcore/internal/validation"
+	"github.com/nrc-no/notcore/pkg/validation"
 	"github.com/stretchr/testify/assert"
 )
 

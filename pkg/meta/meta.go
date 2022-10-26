@@ -1,6 +1,8 @@
 package meta
 
-import "github.com/nrc-no/notcore/internal/validation"
+import (
+	"github.com/nrc-no/notcore/pkg/validation"
+)
 
 type Status struct {
 	Status  string         `json:"status,omitempty"`

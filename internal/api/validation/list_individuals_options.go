@@ -3,7 +3,7 @@ package validation
 import (
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
-	"github.com/nrc-no/notcore/internal/validation"
+	"github.com/nrc-no/notcore/pkg/validation"
 )
 
 func ValidateListIndividualsOptions(opts *api.GetAllOptions) validation.ErrorList {

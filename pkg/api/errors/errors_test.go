@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/nrc-no/notcore/internal/api/meta"
-	"github.com/nrc-no/notcore/internal/validation"
+	"github.com/nrc-no/notcore/pkg/meta"
+	"github.com/nrc-no/notcore/pkg/validation"
 	"github.com/stretchr/testify/assert"
 )
 

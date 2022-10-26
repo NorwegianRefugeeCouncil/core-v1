@@ -4,7 +4,7 @@ import (
 	"regexp"
 
 	"github.com/nrc-no/notcore/internal/api"
-	"github.com/nrc-no/notcore/internal/validation"
+	"github.com/nrc-no/notcore/pkg/validation"
 )
 
 func ValidateCountry(country *api.Country) validation.ErrorList {
