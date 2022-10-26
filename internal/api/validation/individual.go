@@ -10,12 +10,25 @@ import (
 )
 
 func ValidateIndividual(i *api.Individual) validation.ErrorList {
+	return validateIndividual(i, nil)
+}
+
+func ValidateIndividualList(i *api.IndividualList) validation.ErrorList {
 	allErrs := validation.ErrorList{}
-	allErrs = append(allErrs, validateIndividualCountryID(i.CountryID, validation.NewPath("countryId"))...)
-	allErrs = append(allErrs, validateBirthDate(i.BirthDate, validation.NewPath("birthDate"))...)
-	allErrs = append(allErrs, validateIndividualDisplacementStatus(i.DisplacementStatus, validation.NewPath("displacementStatus"))...)
-	allErrs = append(allErrs, validateIndividualGender(i.Gender, validation.NewPath("gender"))...)
-	allErrs = append(allErrs, validateIndividualEmail(i.Email, validation.NewPath("email"))...)
+	itemsPath := validation.NewPath("items")
+	for i, individual := range i.Items {
+		allErrs = append(allErrs, validateIndividual(individual, itemsPath.Index(i))...)
+	}
+	return allErrs
+}
+
+func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorList {
+	allErrs := validation.ErrorList{}
+	allErrs = append(allErrs, validateIndividualCountryID(i.CountryID, p.Child("countryId"))...)
+	allErrs = append(allErrs, validateBirthDate(i.BirthDate, p.Child("birthDate"))...)
+	allErrs = append(allErrs, validateIndividualDisplacementStatus(i.DisplacementStatus, p.Child("displacementStatus"))...)
+	allErrs = append(allErrs, validateIndividualGender(i.Gender, p.Child("gender"))...)
+	allErrs = append(allErrs, validateIndividualEmail(i.Email, p.Child("email"))...)
 	return allErrs
 }
 

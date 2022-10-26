@@ -169,3 +169,35 @@ func TestValidateIndividual(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateIndividualList(t *testing.T) {
+	tests := []struct {
+		name string
+		i    *api.IndividualList
+		want validation.ErrorList
+	}{
+		{
+			name: "valid",
+			i: &api.IndividualList{
+				Items: []*api.Individual{ValidIndividual().Build()},
+			},
+			want: validation.ErrorList{},
+		}, {
+			name: "invalid",
+			i: &api.IndividualList{
+				Items: []*api.Individual{ValidIndividual().WithDisplacementStatus("bla").Build()},
+			},
+			want: validation.ErrorList{
+				validation.NotSupported(
+					validation.NewPath("items[0].displacementStatus"),
+					"bla",
+					[]string{"host_community", "idp", "refugee"})},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := ValidateIndividualList(tt.i)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
