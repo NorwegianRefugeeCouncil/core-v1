@@ -21,7 +21,6 @@ func SelectedCountry() func(handler http.Handler) http.Handler {
 
 			countryId := mux.Vars(r)[pathParamCountryID]
 
-			l.Debug("selected country id path param", zap.String("country_id", countryId))
 			allCountries, err := utils.GetCountries(ctx)
 			if err != nil {
 				l.Error("failed to get all countries", zap.Error(err))
