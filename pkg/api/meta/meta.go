@@ -1,7 +1,7 @@
 package meta
 
 import (
-	"github.com/nrc-no/notcore/pkg/validation"
+	"github.com/nrc-no/notcore/pkg/api/validation"
 )
 
 type Status struct {

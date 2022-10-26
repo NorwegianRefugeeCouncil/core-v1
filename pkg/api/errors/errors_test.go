@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/nrc-no/notcore/pkg/api/meta"
-	"github.com/nrc-no/notcore/pkg/validation"
+	"github.com/nrc-no/notcore/pkg/api/validation"
 	"github.com/stretchr/testify/assert"
 )
 
