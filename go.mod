@@ -14,7 +14,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.15
 	github.com/rs/xid v1.4.0
 	github.com/spf13/cobra v1.4.0
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.1
 	github.com/xuri/excelize/v2 v2.6.1
 	go.uber.org/zap v1.23.0
 	golang.org/x/exp v0.0.0-20220613132600-b0d781184e0d
