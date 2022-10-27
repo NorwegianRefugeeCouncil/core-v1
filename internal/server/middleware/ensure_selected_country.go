@@ -1,4 +1,4 @@
-package server
+package middleware
 
 import (
 	"net/http"
@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func ensureSelectedCountryMiddleware() func(handler http.Handler) http.Handler {
+func EnsureSelectedCountry() func(handler http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -17,8 +17,7 @@ func ensureSelectedCountryMiddleware() func(handler http.Handler) http.Handler {
 			l := logging.NewLogger(ctx)
 
 			redirect := func() {
-				http.Redirect(w, r, "/countries/select", http.StatusTemporaryRedirect)
-				return
+				http.Redirect(w, r, "/countries", http.StatusTemporaryRedirect)
 			}
 
 			selectedCountryID, err := utils.GetSelectedCountryID(ctx)

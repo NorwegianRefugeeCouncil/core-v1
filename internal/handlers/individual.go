@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 
@@ -66,29 +67,12 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			return
 		}
 
-		// Check if the user is allowed to read the individual
-		if !isNew && !authIntf.CanReadWriteToCountryID(individual.CountryID) {
-			l.Warn("user is not allowed to read individual", zap.String("individual_id", individualId))
-			http.Error(w, "You are not allowed to read this individual", http.StatusForbidden)
-			return
-		}
-
 		// Get the currently selected Country ID
 		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
 		if err != nil {
 			l.Error("failed to get selected country id", zap.Error(err))
 			http.Error(w, "internal server error", http.StatusInternalServerError)
 			return
-		}
-
-		if !isNew {
-			// At this point, the user might have followed a link to an existing individual.
-			// At this point, the user might have followed a link to an existing individual.
-			// That individual might not be in the users' selected country.
-			// In this case, update the users' selected country to match the individual
-			ctx = utils.WithSelectedCountryID(ctx, individual.CountryID)
-			r = r.WithContext(ctx)
-			setSelectedCountryCookie(w, individual.CountryID)
 		}
 
 		// Render the form if GET
@@ -113,14 +97,6 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 
 		individual.CountryID = selectedCountryID
 
-		// Check if the user has permission to write to the country
-		if !authIntf.CanReadWriteToCountryID(individual.CountryID) {
-			l.Warn("user is not allowed to create an individual for country",
-				zap.String("country_id", individual.CountryID))
-			http.Error(w, "You are not allowed to add an individual to this country", http.StatusForbidden)
-			return
-		}
-
 		// Validate the individual
 		validationErrors = validation.ValidateIndividual(individual)
 		if len(validationErrors) > 0 {
@@ -138,7 +114,7 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 
 		wasValidated = true
 		if individualId == "new" {
-			http.Redirect(w, r, "/individuals/"+individual.ID, http.StatusFound)
+			http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals/%s", individual.CountryID, individual.ID), http.StatusFound)
 			return
 		} else {
 			render()

@@ -3,6 +3,8 @@ package server
 import (
 	"testing"
 	"time"
+
+	"github.com/nrc-no/notcore/internal/server/middleware"
 )
 
 func (o Options) WithAddress(address string) Options {
@@ -51,11 +53,11 @@ func (o Options) WithAuthHeaderFormat(authHeaderFormat string) Options {
 }
 
 func (o Options) WithAuthHeaderJWT() Options {
-	return o.WithAuthHeaderFormat(AuthHeaderFormatJWT)
+	return o.WithAuthHeaderFormat(middleware.AuthHeaderFormatJWT)
 }
 
 func (o Options) WithAuthHeaderBearerToken() Options {
-	return o.WithAuthHeaderFormat(AuthHeaderFormatBearerToken)
+	return o.WithAuthHeaderFormat(middleware.AuthHeaderFormatBearerToken)
 }
 
 func (o Options) WithOIDCIssuerURL(oidcIssuerURL string) Options {
@@ -78,7 +80,7 @@ func validOptions() Options {
 		TokenRefreshInterval: 5 * time.Minute,
 		JwtGroupGlobalAdmin:  "global-admin",
 		AuthHeaderName:       "X-Auth-Token",
-		AuthHeaderFormat:     AuthHeaderFormatJWT,
+		AuthHeaderFormat:     middleware.AuthHeaderFormatJWT,
 		OIDCIssuerURL:        "https://foo",
 		OAuthClientID:        "bar",
 	}

@@ -6,6 +6,8 @@ import (
 	"net/url"
 	"regexp"
 	"time"
+
+	"github.com/nrc-no/notcore/internal/server/middleware"
 )
 
 type Options struct {
@@ -63,11 +65,11 @@ func (o Options) validate() error {
 	if !isValidRFC7230HeaderName(o.AuthHeaderName) {
 		return fmt.Errorf("auth header name is invalid")
 	}
-	if o.AuthHeaderFormat != AuthHeaderFormatJWT &&
-		o.AuthHeaderFormat != AuthHeaderFormatBearerToken {
+	if o.AuthHeaderFormat != middleware.AuthHeaderFormatJWT &&
+		o.AuthHeaderFormat != middleware.AuthHeaderFormatBearerToken {
 		return fmt.Errorf("auth header format is invalid. must be one of: %s, %s",
-			AuthHeaderFormatJWT,
-			AuthHeaderFormatBearerToken)
+			middleware.AuthHeaderFormatJWT,
+			middleware.AuthHeaderFormatBearerToken)
 
 	}
 	if err := o.validateRequiredURLOption(o.OIDCIssuerURL, "Issuer URL"); err != nil {

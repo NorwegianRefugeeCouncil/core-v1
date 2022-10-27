@@ -27,20 +27,6 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 			l   = logging.NewLogger(ctx)
 		)
 
-		authIntf, err := utils.GetAuthContext(ctx)
-		if err != nil {
-			l.Error("failed to get auth context", zap.Error(err))
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-			return
-		}
-
-		allowedCountryIDs := authIntf.GetCountryIDsWithReadWritePermissions()
-		if len(allowedCountryIDs) == 0 {
-			l.Warn("User does not have permission to upload individuals")
-			http.Error(w, "You are not allowed to upload", http.StatusForbidden)
-			return
-		}
-
 		// todo: find sensible max memory value
 		maxMemory := int64(1024 * 1024 * 1024)
 		if err := r.ParseMultipartForm(maxMemory); err != nil {
@@ -94,14 +80,6 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 			individual.CountryID = selectedCountryID
 		}
 
-		for _, individual := range individuals {
-			if !authIntf.CanReadWriteToCountryID(individual.CountryID) {
-				l.Warn("user does not have permission to upload individuals to country", zap.String("country_id", individual.CountryID))
-				http.Error(w, "You are not allowed to upload to country: "+individual.CountryID, http.StatusForbidden)
-				return
-			}
-		}
-
 		_, err = individualRepo.PutMany(r.Context(), individuals, fields)
 		if err != nil {
 			l.Error("failed to put individuals", zap.Error(err))
@@ -109,7 +87,7 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		http.Redirect(w, r, "/individuals", http.StatusSeeOther)
+		http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals", selectedCountryID), http.StatusSeeOther)
 	})
 }
 

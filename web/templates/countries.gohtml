@@ -1,38 +1,47 @@
 {{define "head"}}
 {{end}}
 {{define "body"}}
+    {{ $isGlobalAdmin := .RequestContext.Auth.IsGlobalAdmin }}
     <header class="sticky-top">
         {{template "nav" .}}
     </header>
     <main>
         <div class="container mt-4">
             <div class="row">
-                <div class="col-12 mb-3 mt-3 col-lg-4 mt-md-0 order-lg-last">
-                    <a href="/countries/new" class="btn btn-primary float-end">New Country</a>
-                </div>
-                <div class="col-12 col-lg-8">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>Code</th>
-                            <th>Name</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {{ if $.RequestContext.Countries }}
-                            {{range $.RequestContext.Countries}}
-                                <tr>
-                                    <td class="font-monospace"><code>{{.Code}}</code></td>
-                                    <td><a href="/countries/{{.ID}}">{{.Name}}</a></td>
-                                </tr>
-                            {{end}}
-                        {{else}}
-                            <tr>
-                                <td>No countries found</td>
-                            </tr>
-                        {{end}}
-                        </tbody>
-                    </table>
+                {{ if $isGlobalAdmin }}
+                    <div class="col-12 mb-3 mt-3 col-lg-4 mt-md-0 order-lg-last">
+                        <a href="/countries/new" class="btn btn-primary float-end">New Country</a>
+                    </div>
+                {{ end }}
+                <div class="col-12">
+                    <div class="card ">
+                        <div class="card-header">
+                            Select country
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group">
+                                {{ if .AllowedCountries }}
+                                    {{range .AllowedCountries}}
+                                        <div class="list-group-item">
+                                            <a href="/countries/{{.ID}}/individuals" class="list-group-item-action">
+                                                {{.Name}}
+                                            </a>
+                                            {{ if $isGlobalAdmin }}
+                                            <a href="/countries/{{.ID}}" class="list-group-item-action">
+                                            Edit 
+                                            </a>
+                                            {{end}}
+                                        </div>
+                                    {{end}}
+                                {{else}}
+                                    <div class="list-group-item">
+                                        No country found
+                                    </div>
+                                {{end}}
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>

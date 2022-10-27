@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -16,9 +17,9 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 	const (
 		templateName         = "individuals.gohtml"
+		viewParamCurrentUrl  = "CurrentUrl"
 		viewParamIndividuals = "Individuals"
 		viewParamOptions     = "Options"
-		queryParamCountryID  = "country_id"
 	)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -32,8 +33,16 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			allCountries  []*api.Country
 		)
 
+		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
+		if err != nil {
+			l.Error("failed to get selected country id", zap.Error(err))
+			http.Error(w, "internal server error", http.StatusInternalServerError)
+			return
+		}
+
 		render := func() {
 			renderer.RenderView(w, r, templateName, map[string]interface{}{
+				viewParamCurrentUrl:  fmt.Sprintf("/countries/%s/individuals", selectedCountryID),
 				viewParamIndividuals: individuals,
 				viewParamOptions:     getAllOptions,
 			})
@@ -60,55 +69,6 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 		if err := parseGetAllOptions(r, &getAllOptions); err != nil {
 			l.Error("failed to parse options", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
-		if err != nil {
-			l.Error("failed to get selected country id", zap.Error(err))
-			http.Error(w, "internal server error", http.StatusInternalServerError)
-			return
-		}
-
-		queryCountryID := r.FormValue(queryParamCountryID)
-		if queryCountryID != "" && !countryIdMap[queryCountryID] {
-			// If the selected country ID is not in the list of countries,
-			// return an error.
-			http.Error(w, "country id not found", http.StatusNotFound)
-			return
-		}
-
-		if selectedCountryID == "" && queryCountryID == "" {
-			// If there is no selected country ID and no query country ID,
-			// return an error.
-			http.Redirect(w, r, "/countries/select", http.StatusSeeOther)
-			return
-		}
-
-		if queryCountryID == "" {
-			// If the country ID from query param is empty, redirect to
-			// the selected country ID
-			url := r.URL
-			q := url.Query()
-			q.Set(queryParamCountryID, selectedCountryID)
-			url.RawQuery = q.Encode()
-			http.Redirect(w, r, url.String(), http.StatusSeeOther)
-			return
-		}
-
-		if queryCountryID != selectedCountryID {
-			// If the selected country ID does not match the country ID
-			// from the query param, force the selection of the country ID
-			// from the query param
-			ctx = utils.WithSelectedCountryID(ctx, queryCountryID)
-			r = r.WithContext(ctx)
-			selectedCountryID = queryCountryID
-		}
-
-		authInterface, err := utils.GetAuthContext(ctx)
-		if !authInterface.CanReadWriteToCountryID(selectedCountryID) {
-			l.Warn("user does not have permission to read/write to country", zap.String("country_id", selectedCountryID))
-			http.Error(w, "forbidden", http.StatusForbidden)
 			return
 		}
 

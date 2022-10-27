@@ -6,10 +6,18 @@ import (
 
 //go:generate mockgen -destination=./interface_mock.go -package=auth . Interface
 
+type Permission uint8
+
+const (
+	PermissionGlobalAdmin Permission = iota
+	PermissionWrite
+	PermissionRead
+)
+
 type Interface interface {
 	IsGlobalAdmin() bool
-	CanReadWriteToCountryID(countryID string) bool
 	GetCountryIDsWithReadWritePermissions() containers.StringSet
+	HasCountryLevelPermission(countryID string, perm Permission) bool
 }
 
 type permissions struct {
@@ -34,8 +42,21 @@ func (p permissions) IsGlobalAdmin() bool {
 	return p.isGlobalAdmin
 }
 
-func (p permissions) CanReadWriteToCountryID(countryID string) bool {
-	return p.IsGlobalAdmin() || p.hasExplicitReadWritePermissionInCountry(countryID)
+func (p permissions) HasCountryLevelPermission(countryID string, perm Permission) bool {
+	if !p.allCountryIDs.Contains(countryID) {
+		return false
+	}
+
+	switch perm {
+	case PermissionGlobalAdmin:
+		return p.IsGlobalAdmin()
+	case PermissionWrite:
+		return p.IsGlobalAdmin() || p.hasExplicitReadWritePermissionInCountry(countryID)
+	case PermissionRead:
+		return p.IsGlobalAdmin() || p.hasExplicitReadWritePermissionInCountry(countryID)
+	default:
+		return false
+	}
 }
 
 func (p permissions) GetCountryIDsWithReadWritePermissions() containers.StringSet {

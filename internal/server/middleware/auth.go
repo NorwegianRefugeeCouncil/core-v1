@@ -1,4 +1,4 @@
-package server
+package middleware
 
 import (
 	"context"
@@ -34,7 +34,7 @@ type idTokenVerifier struct {
 	verifier *oidc.IDTokenVerifier
 }
 
-func newIDTokenVerifier(verifier *oidc.IDTokenVerifier) IDTokenVerifier {
+func NewIDTokenVerifier(verifier *oidc.IDTokenVerifier) IDTokenVerifier {
 	return idTokenVerifier{
 		verifier: verifier,
 	}
@@ -48,7 +48,7 @@ type IDToken interface {
 	Claims(v interface{}) error
 }
 
-func authMiddleware(
+func Authentication(
 	authHeaderName,
 	authHeaderFormat string,
 	idTokenVerifier IDTokenVerifier,
@@ -155,7 +155,7 @@ func validateTokenClaims(claims TokenClaims) error {
 	if claims.Email == "" {
 		return fmt.Errorf("token is missing email")
 	}
-	if len(claims.Groups) == 0 {
+	if claims.Groups == nil {
 		return fmt.Errorf("token is missing groups")
 	}
 	if claims.Exp == 0 {
