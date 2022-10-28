@@ -323,7 +323,7 @@ func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx,
 	l := logging.NewLogger(ctx).With(zap.Strings("individual_ids", ids))
 	l.Debug("deleting individuals")
 
-	const query = "UPDATE individuals SET deleted_at = $1 WHERE id = ANY($2) and deleted_at IS NULL and country_id = $3"
+	const query = "UPDATE individuals SET deleted_at = $1 WHERE id IN ($2) and deleted_at IS NULL and country_id = $3"
 	var args = []interface{}{time.Now().UTC(), pq.Array(ids), countryId}
 
 	if _, err := tx.ExecContext(ctx, query, args...); err != nil {
