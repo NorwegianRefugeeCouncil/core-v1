@@ -1,32 +1,16 @@
 {{define "nav"}}
-    <nav class="navbar navbar-expand-lg bg-secondary " style="z-index: 1">
+    <nav class="navbar" style="z-index: 1">
         <div class="container-fluid" id="navbar-container">
-            <a class="navbar-brand me-0 me-lg-2" href="/">
+            <a class="home-link me-0 me-lg-2" href="{{if eq "" .RequestContext.SelectedCountryID}}/{{else}}/countries/{{.RequestContext.SelectedCountryID}}/individuals{{end}}">
                 <div class="d-flex flex-row align-items-center me-5">
-                    <img src="/static/favicon.ico" alt="" width="18" height="18" class="d-inline-block"/>
-                    <span class="ms-1 fw-bold">Core</span>
+                    <img src="/static/nrc_logo.png" alt="nrc logo" width="65" height="65" class="d-inline-block"/>
+                    <span class="ms-3">Core{{if .RequestContext.SelectedCountry}} {{.RequestContext.SelectedCountry.Name}}{{end}}</span>
                 </div>
             </a>
 
-
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <div class="navbar-nav me-auto mb-2 mb-lg-0 w-100">
+            <div id="navbarContent">
+                <div class="me-auto mb-2 mb-lg-0 w-100">
                     <div class="d-flex flex-lg-row flex-column w-100">
-                        <div class="nav-item">
-                            <a class="nav-link"
-                               href="/individuals{{if .RequestContext.SelectedCountryID}}?country_id={{.RequestContext.SelectedCountryID}}{{end}}">
-                                Individuals
-                            </a>
-                        </div>
-                        {{ $isGlobalAdmin := .RequestContext.Auth.IsGlobalAdmin }}
-                        {{ if $isGlobalAdmin }}
-                            <div class="nav-item">
-                                <a class="nav-link" href="/countries">Countries</a>
-                            </div>
-                        {{end}}
-                        <div class="flex-grow-1">
-                        </div>
-
                         <a class="nav-link" href="/countries">
                             {{ if $.RequestContext.SelectedCountry }}
                                 Change Country
@@ -35,22 +19,13 @@
                             {{end}}
                         </a>
                         {{ if logoutURL}}
-                            <a title="Logout" class="nav-link order-last ms-lg-2 ms-0" href="{{logoutURL}}">
+                            <a title="Logout" class="nav-link order-last ms-lg-5 ms-0" href="{{logoutURL}}">
+                                <div class="nav-item d-inline-block">Logout</div>
                                 <i class="bi bi-box-arrow-right d-lg-inline-block"></i>
-                                <div class="nav-item d-inline-block d-lg-none">Logout</div>
                             </a>
                         {{end}}
                     </div>
                 </div>
-            </div>
-
-            <div id="toolbar" class="d-flex flex-col align-items-center order-lg-last py-2">
-                <button class="nav-link navbar-toggler order-last border-white" type="button" data-bs-toggle="collapse"
-                        id="navbar-toggler"
-                        data-bs-target="#navbarContent" aria-controls="navbarContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="navbar-toggler-icon" title="NavbarToggle"></i>
-                </button>
             </div>
         </div>
     </nav>
