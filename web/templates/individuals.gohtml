@@ -46,43 +46,44 @@
     </header>
     <main style="">
         <div class="container-fluid container-xxl pt-3">
-            <div class="d-flex justify-content-end align-items-center">
-                {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                    <a href="{{.CurrentUrl}}/new" class="btn btn-outline-primary me-2">
-                        Create new Individual
-                    </a>
-                {{end}}
-                <a href="{{.CurrentUrl}}/download" target="_blank" class="btn btn-outline-primary">
-                    Download
-                </a>
-                {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                    <form id="individual-upload--form" action="{{.CurrentUrl}}/upload" enctype="multipart/form-data" method="post" class="ms-2">
-                        <input
-                            hidden
-                            id="individual-upload--file"
-                            name="file" 
-                            type="file" 
-                            class="form-control"
-                            accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-" 
-                        >
-                        <button id="individual-upload--button" type="button" class="btn btn-outline-primary">Upload</button>
-                    </form>
-                {{end}}
-            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="my-4">{{ $.RequestContext.SelectedCountry.Name }}</h1>
 
-            <h1 class="my-4">{{ $.RequestContext.SelectedCountry.Name }}</h1>
+                <div class="d-flex justify-content-end align-items-center">
+                    {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
+                        <a href="{{.CurrentUrl}}/new" class="btn btn-outline-primary me-2">
+                            Create new Individual
+                        </a>
+                    {{end}}
+                    <a href="{{.CurrentUrl}}/download" target="_blank" class="btn btn-outline-primary">
+                        Download
+                    </a>
+                    {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
+                        <form id="individual-upload--form" action="{{.CurrentUrl}}/upload" enctype="multipart/form-data" method="post" class="ms-2">
+                            <input
+                                hidden
+                                id="individual-upload--file"
+                                name="file" 
+                                type="file" 
+                                class="form-control"
+                                accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
+                            >
+                            <button id="individual-upload--button" type="button" class="btn btn-outline-primary">Upload</button>
+                        </form>
+                    {{end}}
+                </div>
+            </div>
 
             <div class="row">
                 <div class="col-12 my-4">
                     <div class="card">
                         <div class="card-header" id="searchFormAccordion">
-                            <button class="btn btn-link d-flex w-100 justify-content-between px-0" data-bs-toggle="collapse" data-bs-target="#search-form" aria-expanded="true" aria-controls="search-form">
+                            <button class="btn btn-link d-flex w-100 justify-content-between px-0 no-text-decoration" data-bs-toggle="collapse" data-bs-target="#search-form" aria-expanded="true" aria-controls="search-form">
                                 Filter
-                                <i class="bi-caret-down" title="NavbarToggle"></i>
+                                <i class="bi-caret-down-fill" title="NavbarToggle"></i>
                             </button>
                         </div>
-                        <div id="search-form" class="collapse" aria-labelledby="searchFormAccordion">
+                        <div id="search-form" class="collapse nrc-accordion-body" aria-labelledby="searchFormAccordion">
                             <form method="get" action="{{.CurrentUrl}}/individuals" id="searchForm">
                                 <div class="card-body">
                                     <input type="hidden" name="take" value="">

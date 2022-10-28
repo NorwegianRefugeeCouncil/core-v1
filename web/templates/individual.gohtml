@@ -31,7 +31,6 @@
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
-
         });
     </script>
 {{end}}
@@ -44,17 +43,19 @@
     <main>
         <div class="mt-4">
             <div class="container-fluid container-xxl">
+                <h1 class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto my-4">
+                    {{if .Individual.FullName}}
+                        {{.Individual.FullName}}
+                    {{else}}
+                        New Individual 
+                    {{end}}
+                </h1>
                 <form id="form" method="post"
-                      action="/countries/{{.Individual.CountryID}}/individuals/{{if eq "" .Individual.ID}}new{{else}}{{.Individual.ID}}{{end}}">
+                      action="/countries/{{.RequestContext.SelectedCountryID}}/individuals/{{if eq "" .Individual.ID}}new{{else}}{{.Individual.ID}}{{end}}">
 
-                    <div class="row mb-3">
-                        <div class="col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
-                            <button class="btn btn-primary float-end" id="save-individual" type="submit">Save</button>
-                        </div>
-                    </div>
                     {{ if or .HasErrors .WasValidated}}
                         <div class="row mb-3">
-                            <div class="col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
+                            <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto">
                                 {{ if .HasErrors }}
                                     <div class="alert alert-dismissible alert-danger mb-3 d-flex align-items-center justify-content-between"
                                          role="alert"
@@ -83,7 +84,7 @@
                         </div>
                     {{end}}
                     <div class="row mb-3">
-                        <div class="col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
+                        <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto">
                             <div class="card">
                                 <div class="card-header">
                                     {{ if not .Individual.ID }}
@@ -221,7 +222,7 @@
                     </div>
 
                     <div class="row mb-3">
-                        <div class="col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
+                        <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto">
                             <!-- Contact Information -->
                             <div class="card">
                                 <div class="card-header">
@@ -266,7 +267,7 @@
 
 
                     <div class="row mb-3">
-                        <div class="col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
+                        <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto">
 
                             <!-- Protection Concerns -->
                             <div class="card">
@@ -293,7 +294,7 @@
                     </div>
 
                     <div class="row mb-3">
-                        <div class="col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
+                        <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto">
                             <!-- Disability -->
                             <div class="card">
                                 <div class="card-header">
@@ -399,24 +400,19 @@
                             <!-- End of Disability -->
                         </div>
                     </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto">
+                            <button class="btn btn-primary float-end" id="save-individual" type="submit">Save</button>
+                        </div>
+                    </div>
                 </form>
 
                 {{if not (eq "" .Individual.ID)}}
-                    <div class="row mb-3">
-                        <div class="col-12 col-md-10 col-lg-8 col-xl-6 mx-auto">
-                            <!-- Actions -->
-                            <div class="card">
-                                <div class="card-header">
-                                    Actions
-                                </div>
-                                <div class="card-body">
-                                    <form action="/countries/{{.Individual.CountryID}}/individuals/{{.Individual.ID}}/delete" method="post">
-                                        <button class="btn btn-danger">Delete individual</button>
-                                    </form>
-                                </div>
-                            </div>
-                            <!-- End of Actions -->
-                        </div>
+                    <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto nrc-individual-delete-btn">
+                        <form action="/countries/{{.Individual.CountryID}}/individuals/{{.Individual.ID}}/delete" method="post">
+                            <button class="btn btn-danger">Delete individual</button>
+                        </form>
                     </div>
                 {{end}}
 

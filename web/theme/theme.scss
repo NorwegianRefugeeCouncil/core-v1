@@ -75,8 +75,7 @@ $grays: (
 
 $code-color: $neutral400;
 $link-color: $secondary;
-$navbar-light-color: $white;
-$navbar-light-toggler-border-radius: $white;
+$link-hover-color: $orange;
 
 $spacer: 5px;
 $spacers: (
@@ -122,7 +121,8 @@ $btn-padding-x: 50px;
 $btn-padding-y: 0;
 
 $card-border-color: $secondary;
-$card-bg: $white;
+$card-bg: $neutral100 !default;
+$card-border-width: 0;
 
 $form-label-margin-bottom: 0px;
 $grid-gutter-width: 10px;
@@ -130,6 +130,13 @@ $grid-gutter-width: 10px;
 $dropdown-border-color: $secondary;
 $dropdown-link-hover-bg: $blue-300;
 $dropdown-link-hover-color: $white;
+
+$nav-link-color: $secondary;
+$nav-link-hover-color: $orange;
+$nav-link-font-size: 18px;
+$navbar-padding-y:                  40px !default;
+$navbar-brand-padding-y:            $navbar-padding-y !default;
+$navbar-brand-height:               65px;
 
 @import "node_modules/bootstrap/scss/bootstrap";
 
@@ -204,7 +211,7 @@ button, .btn {
     }
 }
 
-main {
+main, nav.navbar {
     background-color: $white;
     padding-left: 50px;
     padding-right: 50px;
@@ -236,12 +243,12 @@ main {
         }
     }
     .card-body, .card-footer {
-        background-color: $white;
         padding: 10px;
         border: 0;
     }
     .card-footer {
         float: right;
+        background-color: $white;
     }
 }
 
@@ -259,21 +266,44 @@ table {
     }
 }
 
-.navbar.bg-secondary {
-    min-height: 50px;
-    padding-left: 20px;
-    padding-right: 20px;
-    a.nav-link, .navbar-brand {
-        color: $white;
-    }
-    .navbar-brand {
-        height: 50px;
-        line-height: 50px;
-    }
-}
-
 .alert {
     height: 50px;
     line-height: 50px;
     padding: 0 10px;
+}
+
+.nav-link {
+    color: $nav-link-color;
+    font-size: $nav-link-font-size;
+    &:hover {
+        color: $nav-link-hover-color;
+    }
+}
+
+a.home-link {
+    color: $nav-link-color;
+    font-size: 24px;
+    font-weight: $font-weight-bold;
+    text-decoration: none;
+
+    &:hover {
+        color: $nav-link-hover-color;
+    }
+}
+
+.no-text-decoration {
+    text-decoration: none;
+}
+
+.card {
+    .nrc-accordion-body {
+        .card-footer {
+            background-color: $card-bg;
+        }
+    }
+}
+
+.nrc-individual-delete-btn {
+    position: relative;
+    top: -67px;
 }

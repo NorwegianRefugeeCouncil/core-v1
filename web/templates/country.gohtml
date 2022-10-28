@@ -6,16 +6,19 @@
     </header>
     <main>
         <div class="container mt-3">
+            <h1 class="my-4">
+                {{if .Country.ID}}
+                    {{.Country.Name}}
+                {{else}}
+                    New Country
+                {{end}}
+            </h1>
             <form method="post" action="/countries/{{if eq "" .Country.ID}}new{{else}}{{.Country.ID}}{{end}}">
                 <div class="row">
                     <div class="col">
                         <div class="card">
                             <div class="card-header">
-                                {{if .Country.ID}}
-                                    {{.Country.Name}}
-                                {{else}}
-                                    New Country
-                                {{end}}
+                                Country details
                             </div>
                             <div class="card-body list-group list-group-flush pt-2">
                                 <!-- ID -->
