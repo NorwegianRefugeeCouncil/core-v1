@@ -301,7 +301,7 @@ func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual
 func (i individualRepo) SoftDelete(ctx context.Context, id string) error {
 	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		err := i.softDeleteInternal(ctx, tx, id)
-		return err, nil
+		return nil, err
 	})
 	return err
 }
