@@ -22,7 +22,7 @@ type IndividualRepo interface {
 	GetByID(ctx context.Context, id string) (*api.Individual, error)
 	Put(ctx context.Context, individual *api.Individual, fields []string) (*api.Individual, error)
 	PutMany(ctx context.Context, individuals []*api.Individual, fields []string) ([]*api.Individual, error)
-	SoftDelete(ctx context.Context, id string) error
+	SoftDelete(ctx context.Context, id string, countryId string) error
 	SoftDeleteMany(ctx context.Context, ids []string, countryId string) error
 }
 
@@ -300,26 +300,12 @@ func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual
 	return ret[0], nil
 }
 
-func (i individualRepo) SoftDelete(ctx context.Context, id string) error {
+func (i individualRepo) SoftDelete(ctx context.Context, id string, countryId string) error {
 	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		err := i.softDeleteInternal(ctx, tx, id)
+		err := i.softDeleteManyInternal(ctx, tx, []string{id}, countryId)
 		return nil, err
 	})
 	return err
-}
-
-func (i individualRepo) softDeleteInternal(ctx context.Context, tx *sqlx.Tx, id string) error {
-	l := logging.NewLogger(ctx).With(zap.String("individual_id", id))
-	l.Debug("deleting individual")
-
-	const query = "UPDATE individuals SET deleted_at = $1 WHERE id = $2 and deleted_at IS NULL"
-	var args = []interface{}{time.Now().UTC(), id}
-
-	if _, err := tx.ExecContext(ctx, query, args...); err != nil {
-		l.Error("failed to delete individual", zap.Error(err))
-		return err
-	}
-	return nil
 }
 
 func (i individualRepo) SoftDeleteMany(ctx context.Context, ids []string, countryId string) error {
