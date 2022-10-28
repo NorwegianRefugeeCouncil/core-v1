@@ -377,7 +377,7 @@ func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx,
 		if err != nil {
 			l.Error("failed to get rows affected", zap.Error(err))
 			return err
-		} else if rowsAffected != int64(len(idsInBatch)) {
+		} else if rowsAffected != int64(len(ids)) {
 			l.Error("failed to delete all individuals", zap.Int64("rows_affected", rowsAffected))
 			return fmt.Errorf("failed to delete all individuals")
 		}
@@ -386,6 +386,7 @@ func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx,
 	}); err != nil {
 		return err
 	}
+
 	return nil
 }
 
