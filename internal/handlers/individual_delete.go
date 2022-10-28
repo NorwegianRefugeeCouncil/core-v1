@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -36,7 +37,7 @@ func HandleIndividualDelete(repo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		http.Redirect(w, r, "/individuals", http.StatusFound)
+		http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals", individual.CountryID), http.StatusFound)
 
 	})
 }
