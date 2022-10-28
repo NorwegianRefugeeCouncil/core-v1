@@ -27,10 +27,9 @@ func HandleIndividualsDelete(repo db.IndividualRepo) http.Handler {
 			l   = logging.NewLogger(ctx)
 		)
 
-		countryID, err := utils.GetSelectedCountryID(ctx)
-
 		individualIds := r.MultipartForm.Value[formParamField]
 
+		countryID, err := utils.GetSelectedCountryID(ctx)
 		if err != nil {
 			l.Error("failed to get selected country", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
