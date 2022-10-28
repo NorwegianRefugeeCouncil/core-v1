@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
+	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
 )
 
@@ -24,6 +25,13 @@ func HandleIndividualDelete(repo db.IndividualRepo) http.Handler {
 			l   = logging.NewLogger(ctx)
 		)
 
+		countryID, err := utils.GetSelectedCountryID(ctx)
+		if err != nil {
+			l.Error("failed to get selected country", zap.Error(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		individual, err := repo.GetByID(ctx, mux.Vars(r)[pathParamIndividualID])
 		if err != nil {
 			l.Error("failed to get individual", zap.Error(err))
@@ -31,7 +39,7 @@ func HandleIndividualDelete(repo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		if err := repo.SoftDelete(ctx, individual.ID); err != nil {
+		if err := repo.SoftDelete(ctx, individual.ID, countryID); err != nil {
 			l.Error("failed to delete individual", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
