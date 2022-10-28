@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/lib/pq"
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/logging"
@@ -23,7 +22,7 @@ type IndividualRepo interface {
 	Put(ctx context.Context, individual *api.Individual, fields []string) (*api.Individual, error)
 	PutMany(ctx context.Context, individuals []*api.Individual, fields []string) ([]*api.Individual, error)
 	SoftDelete(ctx context.Context, id string) error
-	SoftDeleteMany(ctx context.Context, ids []string, countryId string) error
+	SoftDeleteMany(ctx context.Context, ids []string) error
 }
 
 type individualRepo struct {
@@ -385,29 +384,6 @@ func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx,
 
 		return nil
 	}); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (i individualRepo) SoftDeleteMany(ctx context.Context, ids []string, countryId string) error {
-	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		err := i.softDeleteManyInternal(ctx, tx, ids, countryId)
-		return nil, err
-	})
-	return err
-}
-
-func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx, ids []string, countryId string) error {
-	l := logging.NewLogger(ctx).With(zap.Strings("individual_ids", ids))
-	l.Debug("deleting individuals")
-
-	const query = "UPDATE individuals SET deleted_at = $1 WHERE id = ANY($2) and deleted_at IS NULL and country_id = $3"
-	var args = []interface{}{time.Now().UTC(), pq.Array(ids), countryId}
-
-	if _, err := tx.ExecContext(ctx, query, args...); err != nil {
-		l.Error("failed to delete individuals", zap.Error(err))
 		return err
 	}
 
