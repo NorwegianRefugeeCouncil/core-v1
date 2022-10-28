@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
+<<<<<<< HEAD
 	"github.com/nrc-no/notcore/internal/api"
+=======
+>>>>>>> 3cca0ba (Add handler to soft delete many individuals)
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
@@ -25,6 +28,9 @@ func HandleIndividualsDelete(repo db.IndividualRepo) http.Handler {
 		)
 
 		countryID, err := utils.GetSelectedCountryID(ctx)
+
+		individualIds := r.MultipartForm.Value[formParamField]
+
 		if err != nil {
 			l.Error("failed to get selected country", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
