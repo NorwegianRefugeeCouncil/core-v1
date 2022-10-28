@@ -317,6 +317,9 @@ func (i individualRepo) SoftDeleteMany(ctx context.Context, ids []string, countr
 }
 
 func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx, ids []string, countryId string) error {
+	idSet := containers.NewStringSet(ids...)
+	ids = idSet.Items()
+
 	l := logging.NewLogger(ctx).With(zap.Strings("individual_ids", ids))
 	l.Debug("deleting individuals")
 
