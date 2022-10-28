@@ -7,40 +7,35 @@
     </header>
     <main>
         <div class="container mt-4">
-            <div class="row">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="my-4">Countries</h1>
                 {{ if $isGlobalAdmin }}
-                    <div class="col-12 mb-3 mt-3 col-lg-4 mt-md-0 order-lg-last">
+                    <div>
                         <a href="/countries/new" class="btn btn-primary float-end">New Country</a>
                     </div>
                 {{ end }}
+            </div>
+            <div>
                 <div class="col-12">
-                    <div class="card ">
-                        <div class="card-header">
-                            Select country
-                        </div>
-                        <div class="card-body">
-                            <div class="list-group">
-                                {{ if .AllowedCountries }}
-                                    {{range .AllowedCountries}}
-                                        <div class="list-group-item">
-                                            <a href="/countries/{{.ID}}/individuals" class="list-group-item-action">
-                                                {{.Name}}
-                                            </a>
-                                            {{ if $isGlobalAdmin }}
-                                            <a href="/countries/{{.ID}}" class="list-group-item-action">
-                                            Edit 
-                                            </a>
-                                            {{end}}
-                                        </div>
+                    <div class="list-group">
+                        {{ if .AllowedCountries }}
+                            {{range .AllowedCountries}}
+                                <div class="list-group-item">
+                                    <a href="/countries/{{.ID}}/individuals" class="list-group-item-action">
+                                        {{.Name}}
+                                    </a>
+                                    {{ if $isGlobalAdmin }}
+                                    <a href="/countries/{{.ID}}" class="list-group-item-action">
+                                    Edit 
+                                    </a>
                                     {{end}}
-                                {{else}}
-                                    <div class="list-group-item">
-                                        No country found
-                                    </div>
-                                {{end}}
+                                </div>
+                            {{end}}
+                        {{else}}
+                            <div class="list-group-item">
+                                No country found
                             </div>
-                        </div>
-
+                        {{end}}
                     </div>
                 </div>
             </div>
