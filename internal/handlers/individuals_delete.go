@@ -23,14 +23,20 @@ func HandleIndividualsDelete(repo db.IndividualRepo) http.Handler {
 			l   = logging.NewLogger(ctx)
 		)
 
-		individualIds := r.MultipartForm.Value[formParamField]
-
 		countryID, err := utils.GetSelectedCountryID(ctx)
 		if err != nil {
 			l.Error("failed to get selected country", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		err = r.ParseForm()
+		if err != nil {
+			l.Error("failed to parse form", zap.Error(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		individualIds := r.Form[formParamField]
 
 		if err := repo.SoftDeleteMany(ctx, individualIds, countryID); err != nil {
 			l.Error("failed to delete individual", zap.Error(err))
