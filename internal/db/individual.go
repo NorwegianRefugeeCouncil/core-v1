@@ -326,9 +326,19 @@ func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx,
 	const query = "UPDATE individuals SET deleted_at = $1 WHERE id IN ($2) and deleted_at IS NULL and country_id = $3"
 	var args = []interface{}{time.Now().UTC(), pq.Array(ids), countryId}
 
-	if _, err := tx.ExecContext(ctx, query, args...); err != nil {
+	result, err := tx.ExecContext(ctx, query, args...)
+	if err != nil {
 		l.Error("failed to delete individuals", zap.Error(err))
 		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		l.Error("failed to get rows affected", zap.Error(err))
+		return err
+	} else if rowsAffected != int64(len(ids)) {
+		l.Error("failed to delete all individuals", zap.Int64("rows_affected", rowsAffected))
+		return fmt.Errorf("failed to delete all individuals")
 	}
 
 	return nil
