@@ -19,7 +19,7 @@ var rootCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		logLevel := getFlagOrEnv(cmd, "log-level", "LOG_LEVEL")
+		logLevel := getFlagOrEnv(cmd, flagLogLevel, envLogLevel)
 		if logLevel == "" {
 			logLevel = string(logging.DefaultLevel)
 		}
