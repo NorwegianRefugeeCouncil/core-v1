@@ -1,10 +1,7 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/nrc-no/notcore/internal/logging"
@@ -13,12 +10,21 @@ import (
 
 var logLevel string
 
+const (
+	flagLogLevel = "log-level"
+	envLogLevel  = "CORE_LOG_LEVEL"
+)
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "core",
 	Short: "",
 	Long:  ``,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		logLevel := getFlagOrEnv(cmd, "log-level", "LOG_LEVEL")
+		if logLevel == "" {
+			logLevel = string(logging.DefaultLevel)
+		}
 		if err := logging.SetLogLevel(logLevel); err != nil {
 			return err
 		}
@@ -36,5 +42,9 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&logLevel, "log-level", "l", "info", "Log level")
+	rootCmd.PersistentFlags().StringVarP(&logLevel, flagLogLevel, "", "", cleanDoc(fmt.Sprintf(`
+Log Level. Valid values are: %v. Can also be set with the %s environment variable.
+`,
+		logging.AllowedLogLevels(),
+		envLogLevel)))
 }

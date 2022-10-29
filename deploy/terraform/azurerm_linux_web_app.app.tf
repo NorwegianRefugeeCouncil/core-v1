@@ -41,6 +41,7 @@ resource "azurerm_linux_web_app" "app" {
     CORE_OAUTH_CLIENT_ID        = var.oidc_client_id
     CORE_TOKEN_REFRESH_INTERVAL = "15m"
     CORE_TOKEN_REFRESH_URL      = "https://${var.app_name}-${var.environment}-${random_id.app_id.hex}.azurewebsites.net/.auth/refresh"
+    CORE_LOG_LEVEL              = var.log_level
   }
   sticky_settings {
     app_setting_names = [

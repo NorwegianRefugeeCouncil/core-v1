@@ -272,3 +272,15 @@ Whether or not to prevent the deletion of the resource group.
 This is implemented using an Azure Management Lock.
 EOF
 }
+
+variable "log_level" {
+  type        = string
+  default     = "info"
+  description = <<EOF
+The log level of the application.
+EOF
+  validation {
+    condition     = contains(["debug", "info", "warn", "error"], var.log_level)
+    error_message = "The log level must be one of \"debug\", \"info\", \"warn\", or \"error\"."
+  }
+}

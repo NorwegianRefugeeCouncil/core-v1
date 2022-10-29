@@ -14,11 +14,12 @@ var logLevel zap.AtomicLevel
 type Level string
 
 const (
-	DebugLevel Level = "debug"
-	InfoLevel  Level = "info"
-	WarnLevel  Level = "warn"
-	ErrorLevel Level = "error"
-	FatalLevel Level = "fatal"
+	DebugLevel   Level = "debug"
+	InfoLevel    Level = "info"
+	WarnLevel    Level = "warn"
+	ErrorLevel   Level = "error"
+	FatalLevel   Level = "fatal"
+	DefaultLevel Level = InfoLevel
 )
 
 type Config struct {
@@ -30,7 +31,7 @@ func init() {
 	encoderConfig := zap.NewProductionEncoderConfig()
 	encoderConfig.TimeKey = ""
 	logger = zap.New(zapcore.NewCore(
-		zapcore.NewJSONEncoder(encoderConfig),
+		zapcore.NewConsoleEncoder(encoderConfig),
 		zapcore.Lock(os.Stdout),
 		logLevel,
 	))
@@ -43,6 +44,10 @@ func SetLogLevel(level string) error {
 	}
 	logLevel.SetLevel(lvl)
 	return nil
+}
+
+func AllowedLogLevels() []Level {
+	return []Level{DebugLevel, InfoLevel, WarnLevel, ErrorLevel, FatalLevel}
 }
 
 func parseLogLevel(level string) (zapcore.Level, error) {
