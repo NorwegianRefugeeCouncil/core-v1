@@ -8,8 +8,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var logLevel string
-
 const (
 	flagLogLevel = "log-level"
 	envLogLevel  = "CORE_LOG_LEVEL"
@@ -42,7 +40,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&logLevel, flagLogLevel, "", "", cleanDoc(fmt.Sprintf(`
+	rootCmd.PersistentFlags().String(flagLogLevel, "", cleanDoc(fmt.Sprintf(`
 Log Level. Valid values are: %v. Can also be set with the %s environment variable.
 `,
 		logging.AllowedLogLevels(),

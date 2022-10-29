@@ -39,7 +39,7 @@ func RequestLogging(h http.Handler) http.Handler {
 			uri = url.RequestURI()
 		}
 
-		rw := &responseWriter{ResponseWriter: w}
+		rw := &responseWriter{ResponseWriter: w, statusCode: http.StatusOK}
 
 		fields := []zap.Field{
 			zap.String("ip", host),
