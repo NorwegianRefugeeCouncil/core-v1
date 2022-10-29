@@ -159,6 +159,14 @@
                                             <label class="form-text">Gender</label>
                                             <div>
                                                 <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" value="" id="AllGenders"
+                                                           name="gender"
+                                                           {{if not .Options.Genders }}checked="checked"{{end}}>
+                                                    <label class="form-check-label" for="AllGenders">
+                                                        All
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
                                                     <input class="form-check-input" type="radio" value="male" id="MaleGender"
                                                            name="gender"
                                                            {{if contains .Options.Genders "male"}}checked="checked"{{end}}>
