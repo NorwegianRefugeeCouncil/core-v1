@@ -6,7 +6,7 @@
         function goToIndividual() {
             const id = document.getElementById("goToIndividualId").value;
             if (id !== "") {
-                window.location.href = "{{.BaseURL}}{{.CurrentUrl}}/" + id;
+                window.location.href = "/countries/{{.Options.CountryID}}/individuals/" + id;
             }
         }
 
@@ -59,15 +59,15 @@
 
                 <div class="d-flex justify-content-end align-items-center">
                     {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                        <a href="{{.CurrentUrl}}/new" class="btn btn-outline-primary me-2">
+                        <a href="/countries/{{.Options.CountryID}}/individuals/new" class="btn btn-outline-primary me-2">
                             Create new Individual
                         </a>
                     {{end}}
-                    <a href="{{.CurrentUrl}}/download" target="_blank" class="btn btn-outline-primary">
+                    <a href="/countries/{{.Options.CountryID}}/individuals/download" target="_blank" class="btn btn-outline-primary">
                         Download
                     </a>
                     {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                        <form id="individual-upload--form" action="{{.CurrentUrl}}/upload" enctype="multipart/form-data" method="post" class="ms-2">
+                        <form id="individual-upload--form" action="/countries/{{.Options.CountryID}}/individuals/upload" enctype="multipart/form-data" method="post" class="ms-2">
                             <input
                                 hidden
                                 id="individual-upload--file"
@@ -92,7 +92,7 @@
                             </button>
                         </div>
                         <div id="search-form" class="collapse nrc-accordion-body" aria-labelledby="searchFormAccordion">
-                            <form method="get" action="{{.CurrentUrl}}" id="searchForm">
+                            <form method="get" action="/countries/{{.Options.CountryID}}/individuals" id="searchForm">
                                 <div class="card-body">
                                     <input type="hidden" name="take" value="">
                                     <input type="hidden" name="skip" value="">
@@ -182,11 +182,10 @@
                                     <div class="row">
                                         <!-- Displacement Status -->
                                         <div class="col-6">
-                                            <label class="form-label" for="IDPDisplacementStatus">Displacement Status
-                                                Concerns</label>
-                                            <select id="IDPDisplacementStatus" name="displacement_status" class="form-control">
+                                            <label class="form-label" for="DisplacementStatus">Displacement Status</label>
+                                            <select id="DisplacementStatus" name="displacement_status" class="form-control">
                                                 <option value="" {{if contains .Options.DisplacementStatuses "" }}selected{{end}}>
-                                                    None
+
                                                 </option>
                                                 <option value="idp" {{if contains .Options.DisplacementStatuses "idp" }}selected{{end}}>
                                                     Internally Displaced Person
@@ -265,7 +264,7 @@
                                 </div>
                             </form>
                             <div class="card-footer">
-                                <a href="{{.CurrentUrl}}" class="btn btn-outline-primary">Clear</a>
+                                <a href="/countries/{{.Options.CountryID}}/individuals" class="btn btn-outline-primary">Clear</a>
                                 <button class="btn btn-primary" type="submit" form="searchForm">Search</button>
                             </div>
                         </div>
