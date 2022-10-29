@@ -33,6 +33,7 @@
             try {
                 return fn();
             } catch (e) {
+                console.log("Promise failed " + errors.length + " times. Retrying in " + delayMs + "ms", e);
                 errors.push(e);
                 await delay(delayMs);
             }
@@ -44,8 +45,10 @@
         while (true) {
             try {
                 await retryPromise(async () => {
+                    console.log("Refreshing token");
                     const resp = await fetch("{{tokenRefreshURL}}")
                     if (resp.status >= 400) {
+                        console.log("Error refreshing token", resp);
                         throw new Error("Failed to refresh session");
                     }
                 }, 3, 500)
@@ -57,10 +60,14 @@
         }
     }
 
-    (async () => {
-        await delay(5000);
-        await pollRefreshToken();
-    })();
+    // TODO: Wait for Okta Ticket to be resolved.
+    // Disabling this for now, as Okta is not returning the groups
+    // as part of the refresh token response. This means that the
+    // user will have to login after 5 seconds. This is not ideal.
+    // (async () => {
+    //     await delay(5000);
+    //     await pollRefreshToken();
+    // })();
 
 </script>
 
