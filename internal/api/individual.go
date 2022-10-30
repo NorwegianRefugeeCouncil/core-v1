@@ -231,7 +231,7 @@ func (o GetAllOptions) QueryParams() template.HTML {
 		params.Add("displacement_status", strings.Join(o.DisplacementStatuses, ","))
 	}
 	u := url.URL{
-		Path: "/individuals",
+		Path: "/countries/" + o.CountryID + "/individuals",
 	}
 	u.RawQuery = params.Encode()
 	return template.HTML(u.String())
