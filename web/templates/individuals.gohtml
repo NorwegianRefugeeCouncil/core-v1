@@ -125,30 +125,65 @@
 
                                     <div class="row">
                                         <!-- Is Minor -->
-                                        <div class="form-group mb-3 col-2">
-                                            <label class="form-label">Is Minor</label>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="true" id="IsMinor"
-                                                       name="is_minor"
-                                                       {{if .Options.IsMinorSelected }}checked="checked"{{end}}>
-                                                <label class="form-check-label" for="IsMinor">
-                                                    Yes
-                                                </label>
+                                        <div class="form-group col-6">
+                                            <label class="form-text">Is Minor</label>
+                                            <div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" value="" id="IsMinorYesNo"
+                                                           name="is_minor"
+                                                           {{if eq .Options.IsMinor nil }}checked="checked"{{end}}>
+                                                    <label class="form-check-label" for="IsMinorYesNo">
+                                                        All
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" value="true" id="IsMinorYes"
+                                                           name="is_minor"
+                                                           {{if .Options.IsMinorSelected }}checked="checked"{{end}}>
+                                                    <label class="form-check-label" for="IsMinorYes">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline mb-3">
+                                                    <input class="form-check-input" type="radio" value="false" id="IsMinorNo"
+                                                           name="is_minor"
+                                                           {{if .Options.IsNotMinorSelected }}checked="checked"{{end}}>
+                                                    <label class="form-check-label" for="IsMinorNo">
+                                                        No
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                         <!-- End Is Minor -->
 
                                         <!-- Protection Concerns -->
-                                        <div class="form-group mb-3 col-4">
-                                            <label class="form-label">Presents Protection
-                                                Concerns</label>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="true" id="PresentsProtectionConcerns"
-                                                       name="presents_protection_concerns"
-                                                       {{if .Options.IsPresentsProtectionConcernsSelected }}checked="checked"{{end}}>
-                                                <label class="form-check-label" for="PresentsProtectionConcerns">
-                                                    Yes
-                                                </label>
+                                        <div class="form-group col-6">
+                                            <label class="form-text">Presents Protection Concerns</label>
+                                            <div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" value="" id="PresentsProtectionConcernsAll"
+                                                           name="presents_protection_concerns"
+                                                           {{if eq .Options.PresentsProtectionConcerns nil }}checked="checked"{{end}}>
+                                                    <label class="form-check-label" for="PresentsProtectionConcernsAll">
+                                                        All
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" value="true" id="PresentsProtectionConcernsYes"
+                                                           name="presents_protection_concerns"
+                                                           {{if .Options.IsPresentsProtectionConcernsSelected }}checked="checked"{{end}}>
+                                                    <label class="form-check-label" for="PresentsProtectionConcernsYes">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline mb-3">
+                                                    <input class="form-check-input" type="radio" value="false" id="PresentsProtectionConcernsNo"
+                                                           name="presents_protection_concerns"
+                                                           {{if .Options.IsNotPresentsProtectionConcernsSelected }}checked="checked"{{end}}>
+                                                    <label class="form-check-label" for="PresentsProtectionConcernsNo">
+                                                        No
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                         <!-- End Protection Concerns -->
