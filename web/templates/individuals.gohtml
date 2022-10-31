@@ -71,10 +71,10 @@
                             <input
                                 hidden
                                 id="individual-upload--file"
-                                name="file" 
-                                type="file" 
+                                name="file"
+                                type="file"
                                 class="form-control"
-                                accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
+                                accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                             >
                             <button id="individual-upload--button" type="button" class="btn btn-outline-primary">Upload</button>
                         </form>
@@ -299,7 +299,15 @@
                                     {{range .Individuals}}
                                         <tr>
                                             <td><input class="form-check-input" type="checkbox" value="{{.ID}}" name="individual_id"></td>
-                                            <td><a href="/countries/{{.CountryID}}/individuals/{{.ID}}">{{.FullName}}</a></td>
+                                            <td>
+                                                <a href="/countries/{{.CountryID}}/individuals/{{.ID}}">
+                                                    {{if .FullName}}
+                                                        {{.FullName}}
+                                                    {{else}}
+                                                        <span class="text-muted"><em>anonymous</em></span>
+                                                    {{end}}
+                                                </a>
+                                            </td>
                                             <td>
                                                 {{if .BirthDate}}
                                                     <span title="{{.BirthDate.Format "2006-01-02"}}">{{age .BirthDate}}</span>
