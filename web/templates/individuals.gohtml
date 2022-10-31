@@ -10,6 +10,21 @@
             }
         }
 
+        function openDialog() {
+            document.getElementById('individual-upload--file').click();
+        }
+        function submitForm() {
+            document.getElementById('individual-upload--button').disabled = true;
+            document.getElementById('individual-upload--form').submit();
+        }
+
+        function submitActionForm(action) {
+            const form = document.getElementById('individuals-action-form');
+            form.action = "{{.CurrentUrl}}/" + action;
+            console.log("submitting form with action " + form.action);
+            form.submit();
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("searchForm")
             form.onsubmit = function () {
@@ -28,13 +43,6 @@
                 }
             }
 
-            function openDialog() {
-                document.getElementById('individual-upload--file').click();
-            }
-            function submitForm() {
-                document.getElementById('individual-upload--button').disabled = true;
-                document.getElementById('individual-upload--form').submit();
-            }
             document.getElementById('individual-upload--button').addEventListener('click', openDialog);
             document.getElementById('individual-upload--file').addEventListener('change', submitForm);
         });
@@ -84,7 +92,7 @@
                             </button>
                         </div>
                         <div id="search-form" class="collapse nrc-accordion-body" aria-labelledby="searchFormAccordion">
-                            <form method="get" action="{{.CurrentUrl}}/individuals" id="searchForm">
+                            <form method="get" action="{{.CurrentUrl}}" id="searchForm">
                                 <div class="card-body">
                                     <input type="hidden" name="take" value="">
                                     <input type="hidden" name="skip" value="">
@@ -257,7 +265,7 @@
                                 </div>
                             </form>
                             <div class="card-footer">
-                                <a href="/individuals" class="btn btn-outline-primary">Clear</a>
+                                <a href="{{.CurrentUrl}}" class="btn btn-outline-primary">Clear</a>
                                 <button class="btn btn-primary" type="submit" form="searchForm">Search</button>
                             </div>
                         </div>
@@ -266,10 +274,11 @@
 
                 <div class="col-12">
                     <div class="mb-5">
-                        <div class="overflow-scroll mb-3">
+                        <form id="individuals-action-form" class="table-responsive mb-3" method="post">
                             <table class="table">
                                 <thead>
                                 <tr>
+                                    <th>Select</th>
                                     <th style="min-width:12rem">Name</th>
                                     <th>
                                         <span class="" title="Age">A</span>
@@ -289,6 +298,7 @@
                                 {{ if .Individuals }}
                                     {{range .Individuals}}
                                         <tr>
+                                            <td><input class="form-check-input" type="checkbox" value="{{.ID}}" name="individual_id"></td>
                                             <td><a href="/countries/{{.CountryID}}/individuals/{{.ID}}">{{.FullName}}</a></td>
                                             <td>
                                                 {{if .BirthDate}}
@@ -322,7 +332,7 @@
                                 {{end}}
                                 </tbody>
                             </table>
-                        </div>
+                        </form>
                         <nav class="card-footer" aria-label="Page navigation example">
                             <ul class="pagination">
                                 <li class="page-item">
