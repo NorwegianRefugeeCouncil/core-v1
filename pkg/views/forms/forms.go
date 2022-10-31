@@ -50,26 +50,11 @@ type FormSection struct {
 	Fields      []*Field
 }
 
-type FormInteraction struct {
-	ButtonIcon            string
-	ButtonLabel           string
-	ButtonStyle           string
-	ButtonTitle           string
-	FormAction            string
-	FormMethod            string
-	ModalIcon             string
-	ModalIconStyle        string
-	ModalContent          template.HTML
-	ShowConfirmationModal bool
-}
-
 type Form struct {
-	ColClasses   string
 	Action       string
 	Method       string
 	WasValidated bool
 	Sections     []*FormSection
-	Interactions []*FormInteraction
 }
 
 func (f *Form) HTML() (template.HTML, error) {

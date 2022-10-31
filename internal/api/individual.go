@@ -37,10 +37,6 @@ type IndividualList struct {
 	Items []*Individual `json:"items"`
 }
 
-type IndividualList struct {
-	Items []*Individual `json:"items"`
-}
-
 func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 	switch field {
 	case constants.DBColumnIndividualAddress:

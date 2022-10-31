@@ -1,7 +1,6 @@
 package views
 
 import (
-	"html/template"
 	"path"
 	"strconv"
 
@@ -275,27 +274,9 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 		action += "new"
 	}
 	f := forms.Form{
-		Action:     action,
-		Method:     "post",
-		ColClasses: "col-12 col-md-10 col-lg-10 col-xl-8 mx-auto",
-		Sections:   formSections,
-		Interactions: []*forms.FormInteraction{
-			{
-				ButtonIcon:     "trash",
-				ButtonLabel:    "Delete Individual",
-				ButtonStyle:    "danger",
-				ButtonTitle:    "This will delete the individual and all associated data.",
-				FormAction:     "/individuals/" + i.ID + "/delete",
-				FormMethod:     "post",
-				ModalIcon:      "exclamation-circle",
-				ModalIconStyle: "danger",
-				ModalContent: template.HTML(`
-Are you sure you want to delete this individual? 
-<span class="fw-bold text-danger">This action cannot be undone.</span>
-`),
-				ShowConfirmationModal: true,
-			},
-		},
+		Action:   action,
+		Method:   "post",
+		Sections: formSections,
 	}
 
 	return &IndividualForm{

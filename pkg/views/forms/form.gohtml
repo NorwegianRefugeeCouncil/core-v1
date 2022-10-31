@@ -187,67 +187,6 @@
     {{end}}
 {{end}}
 
-{{define "formInteraction"}}
-    {{$interaction := .Interaction}}
-    {{$interactionIndex := .InteractionIndex}}
-    {{$form := .Form}}
-    {{ if $interaction.ShowConfirmationModal }}
-        <button class="btn btn-{{if $interaction.ButtonStyle}}{{$interaction.ButtonStyle}}{{else}}primary{{end}}"
-                data-bs-toggle="modal"
-                data-bs-target="#action-confirm-modal-{{$interactionIndex}}"
-                title="{{$interaction.ButtonTitle}}">
-            {{ if $interaction.ButtonIcon }}
-                <i class="bi bi-{{$interaction.ButtonIcon}} me-2"></i>
-            {{end}}
-            {{$interaction.ButtonLabel}}
-        </button>
-        <div class="modal modal-lg" tabindex="-1" id="action-confirm-modal-{{$interactionIndex}}">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            {{ if $interaction.ModalIcon }}
-                                <i class="bi bi-{{$interaction.ModalIcon}} me-2 {{if $interaction.ModalIconStyle}}text-{{$interaction.ModalIconStyle}}{{end}}"></i>
-                            {{end}}
-                            {{$interaction.ButtonLabel}}
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>{{$interaction.ModalContent}}</p>
-                    </div>
-                    <div class="modal-footer">
-                        <form action="{{$interaction.FormAction}}" method="{{$interaction.FormMethod}}">
-                            <button type="button" class="btn btn-outline-secondary"
-                                    data-bs-dismiss="modal">Cancel
-                            </button>
-                            <button type="submit"
-                                    class="btn btn-{{if $interaction.ButtonStyle}}{{$interaction.ButtonStyle}}{{else}}primary{{end}}"
-                                    title="{{$interaction.ButtonTitle}}">
-                                {{ if $interaction.ButtonIcon }}
-                                    <i class="bi bi-{{$interaction.ButtonIcon}} me-2"></i>
-                                {{end}}
-                                {{$interaction.ButtonLabel}}
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {{ else }}
-        <form action="{{$interaction.FormAction}}" method="{{$interaction.FormMethod}}">
-            <button class="btn btn-{{if $interaction.ButtonStyle}}{{$interaction.ButtonStyle}}{{else}}primary{{end}}"
-                    title="{{$interaction.ButtonTitle}}">
-                {{ if $interaction.ButtonIcon }}
-                    <i class="bi bi-{{$interaction.ButtonIcon}} me-2"></i>
-                {{end}}
-                {{$interaction.ButtonLabel}}
-            </button>
-        </form>
-    {{end}}
-{{end}}
-
 {{define "section"}}
     {{$section := .Section}}
     {{$sectionIndex := .SectionIndex}}
@@ -271,7 +210,7 @@
                 })
             </script>
         {{end}}
-        <div class="{{$form.ColClasses}}">
+        <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto">
             <div class="card">
                 {{ if $section.Title }}
                     {{ if $section.Collapsible}}
@@ -332,31 +271,10 @@
             display: inline-block;
         }
     </style>
-    <form action="{{.Action}}" method="{{.Method}}" novalidate>
-        <div class="row mb-3 justify-content-end">
-            <div class="{{$.ColClasses}}">
-                <button class="btn btn-primary">
-                    Submit
-                </button>
-            </div>
-        </div>
+    <form id="form" action="{{.Action}}" method="{{.Method}}" novalidate>
         {{ range $sectionIndex, $section := .Sections }}
             {{$args := dict "Section" $section "SectionIndex" $sectionIndex "Form" $}}
             {{ template "section" $args }}
         {{end}}
     </form>
-    {{ if .Interactions }}
-        <div class="row mb-3">
-            <div class="{{$.ColClasses}}">
-                <div class="card">
-                    <div class="card-body w-100">
-                        {{ range $interactionIndex, $interaction := .Interactions }}
-                            {{$args := dict "Interaction" $interaction "InteractionIndex" $interactionIndex "Form" $}}
-                            {{ template "formInteraction" $args }}
-                        {{end}}
-                    </div>
-                </div>
-            </div>
-        </div>
-    {{end}}
 {{end}}
