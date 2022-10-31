@@ -9,7 +9,6 @@ import (
 )
 
 type IndividualForm struct {
-	Title string
 	*forms.Form
 }
 
@@ -248,17 +247,7 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 		Sections: formSections,
 	}
 
-	var title string
-	if isNew {
-		title = "New Individual"
-	} else if i.FullName == "" {
-		title = "Anonymous Individual"
-	} else {
-		title = i.FullName
-	}
-
 	return &IndividualForm{
-		Title: title,
 		Form:  &f,
 	}
 }

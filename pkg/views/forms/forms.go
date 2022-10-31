@@ -2,12 +2,12 @@ package forms
 
 import (
 	"bytes"
+	_ "embed"
 	"html/template"
 	"net/url"
 	"reflect"
 	"strconv"
 	"strings"
-
 	"github.com/nrc-no/notcore/pkg/api/validation"
 )
 
@@ -44,11 +44,11 @@ func (f *Form) ParseURLValues(v url.Values) {
 		for _, field := range section.Fields {
 			inputField, ok := field.(InputField)
 			if !ok {
-				return
+				continue
 			}
 			fieldName := inputField.GetName()
 			if fieldName == "" {
-				return
+				continue
 			}
 			if !v.Has(fieldName) {
 				continue
@@ -68,11 +68,11 @@ func (f *Form) SetErrors(errors validation.ErrorList) {
 		for _, field := range section.Fields {
 			inputField, ok := field.(InputField)
 			if !ok {
-				return
+				continue
 			}
 			fieldName := inputField.GetName()
 			if fieldName == "" {
-				return
+				continue
 			}
 			inputField.SetErrors(errsPerField[fieldName])
 		}
