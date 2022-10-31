@@ -21,14 +21,6 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		countryID, err := cmd.Flags().GetString("country-id")
-		if err != nil {
-			return err
-		}
-		if countryID == "" {
-			return fmt.Errorf("country-id is required")
-		}
-
 		count, err := cmd.Flags().GetUint("count")
 		if err != nil {
 			return err
@@ -37,12 +29,11 @@ to quickly create a Cobra application.`,
 			return fmt.Errorf("count is required")
 		}
 
-		return mockdata.Generate(countryID, count)
+		return mockdata.Generate(count)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(mockDataCmd)
-	mockDataCmd.PersistentFlags().String("country-id", "", "Country ID")
 	mockDataCmd.PersistentFlags().Uint("count", 0, "Number of records to generate")
 }
