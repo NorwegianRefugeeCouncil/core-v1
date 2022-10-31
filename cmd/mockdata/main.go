@@ -9,7 +9,7 @@ import (
 	"github.com/manveru/faker"
 )
 
-func Generate(countryID string, count uint) error {
+func Generate(count uint) error {
 
 	f, err := faker.New("en")
 	if err != nil {
@@ -36,7 +36,6 @@ func Generate(countryID string, count uint) error {
 		"sensory_impairment",
 		"mental_impairment",
 		"displacement_status",
-		"country_id",
 	}); err != nil {
 		return err
 	}
@@ -130,7 +129,6 @@ func Generate(countryID string, count uint) error {
 			sensoryImpairment,
 			mentalImpairment,
 			displacementStatus,
-			countryID,
 		}); err != nil {
 			return err
 		}
