@@ -9,60 +9,51 @@ import (
 // TestFieldDefinitions_Add checks that all field kinds are handled
 // by the FieldDefinitions.Add method.
 func TestFieldDefinitions_Add(t *testing.T) {
-	type test struct {
-		name  string
-		f     FieldDefinitions
-		field Field
-	}
-	var tests []test
 	for _, fieldKind := range KnownFieldKinds() {
 		fieldForKind := genField(fieldKind)
-		tests = append(tests, test{
-			name:  fieldKind.String(),
-			field: fieldForKind,
-		})
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(fieldKind.String(), func(t *testing.T) {
+			fieldDefs := NewFieldDefinitions()
 			assert.NotPanicsf(t, func() {
-				tt.f.Add(tt.field)
+				fieldDefs.Add(fieldForKind)
 			}, `Error occurred while calling FieldDefinitions.Add(field with kind=%s).
 This either means that a new field kind was added, and was not handled in FieldDefinitions.Add, or
 that the file fieldkind_string.go was not re-generated. 
 To fix
 - Run make generate
-- Make sure that FieldDefinitions.Add properly handles all field kinds`, tt.name)
+- Make sure that FieldDefinitions.Add properly handles all field kinds`, fieldKind.String())
 		})
 	}
 }
 
 func TestFieldDefinition_getField(t *testing.T) {
-	type test struct {
-		name  string
-		field Field
-		kind  FieldKind
-	}
-	var tests []test
 	for _, fieldKind := range KnownFieldKinds() {
-		fieldForKind := genField(fieldKind)
-		tests = append(tests, test{
-			name:  fieldKind.String(),
-			field: fieldForKind,
-			kind:  fieldKind,
-		})
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			want := genField(tt.kind)
+		t.Run(fieldKind.String(), func(t *testing.T) {
+			want := genField(fieldKind)
 			assert.NotPanicsf(t, func() {
-				fieldDef := NewFieldDefinition(tt.field)
+				fieldDef := NewFieldDefinition(want)
 				assert.Equal(t, want, fieldDef.getField())
 			}, `Error occurred while calling FieldDefinition.getField() with field kind "%s".
 This either means that a new field kind was added, and was not handled in FieldDefinition.getField(), or
 that the file fieldkind_string.go was not re-generated. 
 To fix
 - Run make generate
-- Make sure that FieldDefinition.getField() properly handles all field kinds`, tt.name)
+- Make sure that FieldDefinition.getField() properly handles all field kinds`, fieldKind.String())
+
+		})
+	}
+}
+
+func TestGenFields(t *testing.T) {
+	for _, fieldKind := range KnownFieldKinds() {
+		t.Run(fieldKind.String(), func(t *testing.T) {
+			assert.NotPanicsf(t, func() {
+				genField(fieldKind)
+			}, `Error occurred while calling genField with field kind "%s".
+This either means that a new field kind was added, and was not handled in genField, or
+that the file fieldkind_string.go was not re-generated. 
+To fix
+- Run make generate
+- Make sure that genField properly handles all field kinds`, fieldKind.String())
 
 		})
 	}
