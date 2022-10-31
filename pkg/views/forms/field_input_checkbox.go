@@ -44,6 +44,13 @@ func (f *CheckboxInputField) HasErrors() bool {
 	return len(f.Errors) > 0
 }
 
+// GetErrors implements FieldDefinition.GetErrors
+func (f *CheckboxInputField) GetErrors() []string {
+	copied := make([]string, len(f.Errors))
+	copy(copied, f.Errors)
+	return copied
+}
+
 // GetKind implements FieldDefinition.GetKind
 func (f *CheckboxInputField) GetKind() FieldKind {
 	return FieldKindCheckboxInput

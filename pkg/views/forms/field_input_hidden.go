@@ -36,6 +36,11 @@ func (f *HiddenInputField) HasErrors() bool {
 	return false
 }
 
+// GetErrors implements FieldDefinition.GetErrors
+func (f *HiddenInputField) GetErrors() []string {
+	return []string{}
+}
+
 // GetKind implements FieldDefinition.GetKind
 func (f *HiddenInputField) GetKind() FieldKind {
 	return FieldKindHiddenInput

@@ -44,6 +44,11 @@ func (f *TextAreaInputField) HasErrors() bool {
 	return len(f.Errors) > 0
 }
 
+// GetErrors implements FieldDefinition.GetErrors
+func (f *TextAreaInputField) GetErrors() []string {
+	return []string{}
+}
+
 // GetKind implements FieldDefinition.GetKind
 func (f *TextAreaInputField) GetKind() FieldKind {
 	return FieldKindTextarea

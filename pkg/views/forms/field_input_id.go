@@ -46,6 +46,11 @@ func (f *IDField) HasErrors() bool {
 	return len(f.Errors) > 0
 }
 
+// GetErrors implements FieldDefinition.GetErrors
+func (f *IDField) GetErrors() []string {
+	return []string{}
+}
+
 // GetKind implements FieldDefinition.GetKind
 func (f *IDField) GetKind() FieldKind {
 	return FieldKindID

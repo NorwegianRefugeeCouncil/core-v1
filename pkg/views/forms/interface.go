@@ -20,4 +20,6 @@ type InputField interface {
 	SetErrors(errors []string)
 	// HasErrors returns true if the field has errors.
 	HasErrors() bool
+	// GetErrors returns the errors of the field.
+	GetErrors() []string
 }

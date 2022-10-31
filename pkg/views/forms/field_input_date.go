@@ -44,6 +44,13 @@ func (f *DateInputField) HasErrors() bool {
 	return len(f.Errors) > 0
 }
 
+// GetErrors implements FieldDefinition.GetErrors
+func (f *DateInputField) GetErrors() []string {
+	copied := make([]string, len(f.Errors))
+	copy(copied, f.Errors)
+	return copied
+}
+
 // GetKind implements FieldDefinition.GetKind
 func (f *DateInputField) GetKind() FieldKind {
 	return FieldKindDateInput

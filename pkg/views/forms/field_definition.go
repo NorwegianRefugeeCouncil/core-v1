@@ -47,7 +47,7 @@ func NewFieldDefinition(field Field) *FieldDefinition {
 	}
 }
 
-// GetKind returns the kind of field.
+// GetKind implements InputField.GetKind
 func (f *FieldDefinition) GetKind() FieldKind {
 	field := f.getField()
 	if inputField, ok := field.(InputField); ok {
@@ -56,7 +56,7 @@ func (f *FieldDefinition) GetKind() FieldKind {
 	return FieldKindUnknown
 }
 
-// GetName returns the name of the field.
+// GetName implements InputField.GetName
 func (f *FieldDefinition) GetName() string {
 	field := f.getField()
 	if inputField, ok := field.(InputField); ok {
@@ -65,7 +65,7 @@ func (f *FieldDefinition) GetName() string {
 	return ""
 }
 
-// SetValue sets the value of the field.
+// SetValue implements InputField.SetValue
 func (f *FieldDefinition) SetValue(value string) {
 	field := f.getField()
 	if inputField, ok := field.(InputField); ok {
@@ -73,7 +73,7 @@ func (f *FieldDefinition) SetValue(value string) {
 	}
 }
 
-// GetValue returns the value of the field.
+// GetValue implements InputField.GetValue
 func (f *FieldDefinition) GetValue() string {
 	field := f.getField()
 	if inputField, ok := field.(InputField); ok {
@@ -82,12 +82,30 @@ func (f *FieldDefinition) GetValue() string {
 	return ""
 }
 
-// SetErrors sets the errors of the field.
+// SetErrors implements InputField.SetErrors
 func (f *FieldDefinition) SetErrors(errors []string) {
 	field := f.getField()
 	if inputField, ok := field.(InputField); ok {
 		inputField.SetErrors(errors)
 	}
+}
+
+// HasErrors implements InputField.HasErrors
+func (f *FieldDefinition) HasErrors() bool {
+	field := f.getField()
+	if inputField, ok := field.(InputField); ok {
+		return inputField.HasErrors()
+	}
+	return false
+}
+
+// GetErrors implements InputField.GetErrors
+func (f *FieldDefinition) GetErrors() []string {
+	field := f.getField()
+	if inputField, ok := field.(InputField); ok {
+		return inputField.GetErrors()
+	}
+	return nil
 }
 
 func (f *FieldDefinition) getField() Field {
