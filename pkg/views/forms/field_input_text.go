@@ -16,6 +16,9 @@ type TextInputField struct {
 	Errors []string `json:"errors"`
 }
 
+// Ensure TextInputField implements InputField
+var _ InputField = (*TextInputField)(nil)
+
 // GetName implements FieldDefinition.GetName
 func (f *TextInputField) GetName() string {
 	return f.Name

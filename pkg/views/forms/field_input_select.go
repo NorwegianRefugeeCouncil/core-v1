@@ -18,6 +18,9 @@ type SelectInputField struct {
 	Options []SelectInputFieldOption `json:"options"`
 }
 
+// Ensure SelectInputField implements InputField
+var _ InputField = (*SelectInputField)(nil)
+
 // GetName implements FieldDefinition.GetName
 func (f *SelectInputField) GetName() string {
 	return f.Name

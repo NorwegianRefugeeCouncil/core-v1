@@ -18,6 +18,9 @@ type IDField struct {
 	Errors []string `json:"errors"`
 }
 
+// Ensure IDField implements InputField
+var _ InputField = (*IDField)(nil)
+
 // GetName implements FieldDefinition.GetName
 func (f *IDField) GetName() string {
 	return f.Name

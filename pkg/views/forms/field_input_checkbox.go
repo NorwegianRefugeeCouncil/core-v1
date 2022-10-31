@@ -16,6 +16,9 @@ type CheckboxInputField struct {
 	Errors []string `json:"errors"`
 }
 
+// Ensure CheckboxInputField implements InputField
+var _ InputField = (*CheckboxInputField)(nil)
+
 // GetName implements FieldDefinition.GetName
 func (f *CheckboxInputField) GetName() string {
 	return f.Name

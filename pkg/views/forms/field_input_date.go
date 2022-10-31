@@ -16,6 +16,9 @@ type DateInputField struct {
 	Errors []string `json:"errors"`
 }
 
+// Ensure DateInputField implements InputField
+var _ InputField = (*DateInputField)(nil)
+
 // GetName implements FieldDefinition.GetName
 func (f *DateInputField) GetName() string {
 	return f.Name

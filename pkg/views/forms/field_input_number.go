@@ -16,6 +16,9 @@ type NumberInputField struct {
 	Errors []string `json:"errors"`
 }
 
+// Ensure NumberInputField implements InputField
+var _ InputField = (*NumberInputField)(nil)
+
 // GetName implements FieldDefinition.GetName
 func (f *NumberInputField) GetName() string {
 	return f.Name

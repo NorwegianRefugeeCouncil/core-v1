@@ -8,6 +8,9 @@ type HiddenInputField struct {
 	Value string `json:"value"`
 }
 
+// Ensure HiddenInputField implements InputField
+var _ InputField = (*HiddenInputField)(nil)
+
 // GetName implements FieldDefinition.GetName
 func (f *HiddenInputField) GetName() string {
 	return f.Name
