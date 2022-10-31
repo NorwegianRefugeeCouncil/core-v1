@@ -1,7 +1,9 @@
 package forms
 
-type FieldNamer interface {
+type InputField interface {
 	GetName() string
+	GetValue() string
+	SetValue(value string)
 }
 
 type Field struct {
