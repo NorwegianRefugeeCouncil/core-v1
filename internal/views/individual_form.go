@@ -178,11 +178,7 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 		Options:     impairmentOptions,
 	}
 
-	personalInfoFields := forms.NewFieldDefinitions()
-	if !isNew {
-		personalInfoFields.Add(idField)
-	}
-	personalInfoFields.Add(
+	personalInfoFields := forms.NewFieldDefinitions(
 		fullNameField,
 		preferredNameField,
 		genderField,
@@ -190,6 +186,9 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 		isMinorField,
 		displacementStatusField,
 	)
+	if !isNew {
+		personalInfoFields.Insert(0, idField)
+	}
 
 	contactInfoFields := forms.NewFieldDefinitions(
 		emailField,

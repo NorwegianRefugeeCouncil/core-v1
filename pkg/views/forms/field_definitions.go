@@ -56,3 +56,9 @@ func (f *FieldDefinitions) Add(fields ...Field) {
 		*f = append(*f, fieldDef)
 	}
 }
+
+// Insert adds a field to field definitions at the given index
+func (f *FieldDefinitions) Insert(index int, field Field) {
+	fieldDef := NewFieldDefinition(field)
+	*f = append((*f)[:index], append(FieldDefinitions{fieldDef}, (*f)[index:]...)...)
+}
