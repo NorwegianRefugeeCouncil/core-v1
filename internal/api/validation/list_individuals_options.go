@@ -43,12 +43,16 @@ func validateListIndividualsOptionsTake(take int, p *validation.Path) validation
 	return allErrs
 }
 
-func validateListIndividualsOptionsGenders(genders []string, p *validation.Path) validation.ErrorList {
+func validateListIndividualsOptionsGenders(genders []api.Gender, p *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
-	seenGenders := containers.NewStringSet()
+	seenGenders := containers.NewSet[api.Gender]()
 	for i, g := range genders {
 		if !allowedGenders.Contains(g) {
-			allErrs = append(allErrs, validation.NotSupported(p.Index(i), g, allowedGenders.Items()))
+			genderStrings := make([]string, len(allowedGenders))
+			for i, g := range allowedGenders.Items() {
+				genderStrings[i] = string(g)
+			}
+			allErrs = append(allErrs, validation.NotSupported(p.Index(i), g, genderStrings))
 		} else {
 			if seenGenders.Contains(g) {
 				allErrs = append(allErrs, validation.Duplicate(p.Index(i), g, "gender specified multiple times in options"))
@@ -59,12 +63,16 @@ func validateListIndividualsOptionsGenders(genders []string, p *validation.Path)
 	return allErrs
 }
 
-func validateListIndividualsOptionsDisplacementStatuses(displacementStatuses []string, p *validation.Path) validation.ErrorList {
+func validateListIndividualsOptionsDisplacementStatuses(displacementStatuses []api.DisplacementStatus, p *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
-	seenDisplacementStatuses := containers.NewStringSet()
+	seenDisplacementStatuses := containers.NewSet[api.DisplacementStatus]()
 	for i, g := range displacementStatuses {
 		if !allowedDisplacementStatuses.Contains(g) {
-			allErrs = append(allErrs, validation.NotSupported(p.Index(i), g, allowedDisplacementStatuses.Items()))
+			displacementStatusStrings := make([]string, len(allowedDisplacementStatuses))
+			for i, g := range allowedDisplacementStatuses.Items() {
+				displacementStatusStrings[i] = string(g)
+			}
+			allErrs = append(allErrs, validation.NotSupported(p.Index(i), g, displacementStatusStrings))
 		} else {
 			if seenDisplacementStatuses.Contains(g) {
 				allErrs = append(allErrs, validation.Duplicate(p.Index(i), g, "displacement status specified multiple times in options"))

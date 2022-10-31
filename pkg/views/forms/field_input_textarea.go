@@ -16,6 +16,8 @@ type TextAreaInputField struct {
 	Errors []string
 	// Codec is the codec of the field.
 	Codec Codec
+	// Rows is the number of rows of the text area.
+	Rows int
 }
 
 // Ensure TextAreaInputField implements InputField

@@ -17,6 +17,9 @@ func TestAllFieldKinds(t *testing.T) {
 		FieldKindCheckboxInput,
 		FieldKindTextarea,
 		FieldKindHiddenInput,
+		FieldKindHeader,
+		FieldKindSeparator,
+		FieldKindSpacer,
 	}, AllFieldKinds())
 }
 
@@ -30,5 +33,8 @@ func TestKnownFieldKinds(t *testing.T) {
 		FieldKindCheckboxInput,
 		FieldKindTextarea,
 		FieldKindHiddenInput,
+		FieldKindHeader,
+		FieldKindSeparator,
+		FieldKindSpacer,
 	}, KnownFieldKinds())
 }

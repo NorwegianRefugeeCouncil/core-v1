@@ -2,12 +2,12 @@ package forms
 
 import (
 	"bytes"
-	_ "embed"
 	"html/template"
 	"net/url"
 	"reflect"
 	"strconv"
 	"strings"
+
 	"github.com/nrc-no/notcore/pkg/api/validation"
 )
 
@@ -74,7 +74,9 @@ func (f *Form) SetErrors(errors validation.ErrorList) {
 			if fieldName == "" {
 				continue
 			}
-			inputField.SetErrors(errsPerField[fieldName])
+			if errs, ok := errsPerField[fieldName]; ok {
+				inputField.SetErrors(errs)
+			}
 		}
 	}
 }
@@ -117,9 +119,11 @@ func (f *Form) Into(i interface{}) error {
 				fieldValue = ptrValue
 			} else if !propIsPointer && fieldValueIsPointer {
 				if fieldValue.IsNil() {
-					continue
+					fieldValue = reflect.Zero(fieldValue.Type().Elem())
+				} else {
+					fieldValue = fieldValue.Elem()
 				}
-				fieldValue = fieldValue.Elem()
+
 			}
 			propValue.Set(fieldValue)
 		}

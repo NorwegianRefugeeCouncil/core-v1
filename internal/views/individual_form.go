@@ -1,78 +1,228 @@
 package views
 
 import (
-	"path"
-	"strconv"
+	"fmt"
 
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/pkg/views/forms"
 )
 
 type IndividualForm struct {
 	*forms.Form
+	individual            *api.Individual
+	personalInfoSection   *forms.FormSection
+	contactInfoSection    *forms.FormSection
+	protectionSection     *forms.FormSection
+	disabilitiesSection   *forms.FormSection
+	dataCollectionSection *forms.FormSection
 }
 
-func NewIndividualForm(i *api.Individual) *IndividualForm {
+func NewIndividualForm(i *api.Individual) (*IndividualForm, error) {
+	f := &IndividualForm{
+		Form:       &forms.Form{},
+		individual: i,
+	}
+	if err := f.build(); err != nil {
+		return nil, err
+	}
+	return f, nil
+}
 
-	isNew := i.ID == ""
+func (f *IndividualForm) build() error {
+	type builderFuncs func() error
 
-	impairmentOptions := []forms.SelectInputFieldOption{
-		{
-			Value: "",
-			Label: "None",
-		}, {
-			Value: "mild",
-			Label: "Mild",
-		}, {
-			Value: "moderate",
-			Label: "Moderate",
-		}, {
-			Value: "severe",
-			Label: "Severe",
-		},
+	runBuilders := func(builders ...builderFuncs) error {
+		for _, builder := range builders {
+			if err := builder(); err != nil {
+				return err
+			}
+		}
+		return nil
 	}
 
-	var birthDate string
-	if i.BirthDate != nil {
-		birthDate = i.BirthDate.Format("2006-01-02")
+	if err := runBuilders(
+		f.buildPersonalInfoSection,
+		f.buildContactInfoSection,
+		f.buildProtectionSection,
+		f.buildDisabilitiesSection,
+		f.buildDataColletionSection,
+	); err != nil {
+		return err
 	}
 
-	idField := &forms.IDField{
-		Name:        "id",
-		DisplayName: "ID",
-		Value:       i.ID,
-		QRCodeURL:   path.Join("/countries", i.CountryID, "individuals", i.ID),
+	builders := []builderFuncs{
+		f.buildIdField,
+		f.buildFullName,
+		f.buildPreferredName,
+		f.buildPrefersToRemainAnonymous,
+		f.buildGender,
+		f.buildBirthDate,
+		f.buildIsMinor,
+		addSpacer(f.personalInfoSection),
+		f.buildNationality1,
+		f.buildNationality2,
+		addSpacer(f.personalInfoSection),
+		f.buildIdentification1Type,
+		f.buildIdentification1Other,
+		f.buildIdentification1Number,
+		addSpacer(f.personalInfoSection),
+		f.buildIdentification2Type,
+		f.buildIdentification2Other,
+		f.buildIdentification2Number,
+		addSpacer(f.personalInfoSection),
+		f.buildIdentification3Type,
+		f.buildIdentification3Other,
+		f.buildIdentification3Number,
+		addSpacer(f.personalInfoSection),
+		f.buildInternalID,
+		addSpacer(f.personalInfoSection),
+		f.buildHouseholdID,
+		f.buildIsHeadOfHousehold,
+		addSpacer(f.personalInfoSection),
+		f.buildCommunityID,
+		f.buildIsHeadOfCommunity,
+		addSpacer(f.personalInfoSection),
+		f.buildSpokenLanguage1,
+		f.buildSpokenLanguage2,
+		f.buildSpokenLanguage3,
+		f.buildPreferredCommunicationLanguage,
+		f.buildPhoneNumber,
+		f.buildEmailAddress,
+		f.buildAddress,
+		f.buildPreferredMeansOfContact,
+		f.buildContactInstructions,
+		f.buildHasConsentedToRgpd,
+		f.buildHasConsentedToReferral,
+		f.buildPresentsProtectionConcerns,
+		f.buildDisplacementStatus,
+		f.buildHasVisionDisability,
+		f.buildVisionDisabilityLevel,
+		f.buildHasHearingDisability,
+		f.buildHearingDisabilityLevel,
+		f.buildHasMobilityDisability,
+		f.buildMobilityDisabilityLevel,
+		f.buildHasCognitiveDisability,
+		f.buildCognitiveDisabilityLevel,
+		f.buildHasSelfCareDisability,
+		f.buildSelfCareDisabilityLevel,
+		f.buildHasCommunicationDisability,
+		f.buildCommunicationDisabilityLevel,
+		f.buildIdentificationContext,
+		f.buildCollectionAgent,
+		f.buildCollectionAgentTitle,
+		f.buildCollectionDate,
+		f.buildCollectionLocation1,
+		f.buildCollectionLocation2,
+		f.buildCollectionLocation3,
 	}
+	for _, builder := range builders {
+		if err := builder(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
-	fullNameField := &forms.TextInputField{
+func (f *IndividualForm) buildPersonalInfoSection() error {
+	f.personalInfoSection = &forms.FormSection{
+		Title:       "Personal Information",
+		Fields:      []forms.Field{},
+		Collapsible: true,
+		Collapsed:   false,
+	}
+	f.Form.Sections = append(f.Form.Sections, f.personalInfoSection)
+	return nil
+}
+
+func (f *IndividualForm) buildContactInfoSection() error {
+	f.contactInfoSection = &forms.FormSection{
+		Title:       "Contact Information",
+		Fields:      []forms.Field{},
+		Collapsible: true,
+		Collapsed:   !f.isNew(),
+	}
+	f.Form.Sections = append(f.Form.Sections, f.contactInfoSection)
+	return nil
+}
+
+func (f *IndividualForm) buildProtectionSection() error {
+	f.protectionSection = &forms.FormSection{
+		Title:       "Protection",
+		Fields:      []forms.Field{},
+		Collapsible: true,
+		Collapsed:   !f.isNew(),
+	}
+	f.Form.Sections = append(f.Form.Sections, f.protectionSection)
+	return nil
+}
+
+func (f *IndividualForm) buildDisabilitiesSection() error {
+	f.disabilitiesSection = &forms.FormSection{
+		Title:       "Disabilities",
+		Fields:      []forms.Field{},
+		Collapsible: true,
+		Collapsed:   !f.isNew(),
+	}
+	f.Form.Sections = append(f.Form.Sections, f.disabilitiesSection)
+	return nil
+}
+
+func (f *IndividualForm) buildDataColletionSection() error {
+	f.dataCollectionSection = &forms.FormSection{
+		Title:       "Data Collection",
+		Fields:      []forms.Field{},
+		Collapsible: true,
+		Collapsed:   !f.isNew(),
+	}
+	f.Form.Sections = append(f.Form.Sections, f.dataCollectionSection)
+	return nil
+}
+
+func (f *IndividualForm) buildIdField() error {
+	if !f.isNew() {
+		idField := &forms.IDField{
+			Name:        "id",
+			DisplayName: "ID",
+			QRCodeURL:   fmt.Sprintf("/countries/%s/individuals/%s/qr", f.individual.CountryID, f.individual.ID),
+		}
+		if err := idField.SetValue(f.individual.ID); err != nil {
+			return err
+		}
+		f.personalInfoSection.Fields = append(f.personalInfoSection.Fields, idField)
+	}
+	return nil
+}
+
+func (f *IndividualForm) isNew() bool {
+	return len(f.individual.ID) == 0
+}
+
+func (f *IndividualForm) buildFullName() error {
+	return buildField(&forms.TextInputField{
 		Name:        "fullName",
 		DisplayName: "Full Name",
-		Value:       i.FullName,
-	}
+	}, f.personalInfoSection, f.individual.FullName)
+}
 
-	preferredNameField := &forms.TextInputField{
+func (f *IndividualForm) buildPreferredName() error {
+	return buildField(&forms.TextInputField{
 		Name:        "preferredName",
 		DisplayName: "Preferred Name",
-		Value:       i.PreferredName,
-	}
+		Value:       f.individual.PreferredName,
+	}, f.personalInfoSection, f.individual.PreferredName)
+}
 
-	genderOptions := []forms.SelectInputFieldOption{
-		{
-			Value: "male",
-			Label: "Male",
-		}, {
-			Value: "female",
-			Label: "Female",
-		}, {
-			Value: "other",
-			Label: "Other",
-		}, {
-			Value: "prefers_not_to_say",
-			Label: "Prefer not to say",
-		},
-	}
+func (f *IndividualForm) buildPrefersToRemainAnonymous() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "prefersToRemainAnonymous",
+		DisplayName: "Prefers to Remain Anonymous",
+	}, f.personalInfoSection, f.individual.PrefersToRemainAnonymous)
+}
 
-	if isNew {
+func (f *IndividualForm) buildGender() error {
+	genderOptions := getGenderOptions()
+	if f.isNew() {
 		genderOptions = append([]forms.SelectInputFieldOption{
 			{
 				Value: "",
@@ -80,174 +230,630 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 			},
 		}, genderOptions...)
 	}
-
-	genderField := &forms.SelectInputField{
+	return buildField(&forms.SelectInputField{
 		Name:        "gender",
 		DisplayName: "Gender",
-		Value:       i.Gender,
 		Required:    true,
 		Options:     genderOptions,
-	}
+		Codec:       &genderCodec{},
+	}, f.personalInfoSection, f.individual.Gender)
+}
 
-	birthDateField := &forms.DateInputField{
+func (f *IndividualForm) buildBirthDate() error {
+	return buildField(&forms.DateInputField{
 		Name:        "birthDate",
 		DisplayName: "Birth Date",
-		Value:       birthDate,
-	}
+	}, f.personalInfoSection, f.individual.BirthDate)
+}
 
-	isMinorField := &forms.CheckboxInputField{
+func (f *IndividualForm) buildIsMinor() error {
+	return buildField(&forms.CheckboxInputField{
 		Name:        "isMinor",
 		DisplayName: "Is Minor",
-		Value:       strconv.FormatBool(i.IsMinor),
-	}
+	}, f.personalInfoSection, f.individual.IsMinor)
+}
 
-	displacementStatusOptions := []forms.SelectInputFieldOption{
-		{
-			Value: "refugee",
-			Label: "Refugee",
-		}, {
-			Value: "idp",
-			Label: "Internally Displaced Person",
-		}, {
-			Value: "hostCommunity",
-			Label: "Host Community",
-		},
-	}
+func (f *IndividualForm) buildNationality1() error {
+	return buildField(&forms.SelectInputField{
+		Name:        "nationality1",
+		DisplayName: "Nationality 1",
+		Options:     buildCountryOptions(),
+	}, f.personalInfoSection, f.individual.Nationality1)
+}
 
-	if isNew {
-		displacementStatusOptions = append([]forms.SelectInputFieldOption{
-			{
-				Value: "",
-				Label: "",
-			},
-		}, displacementStatusOptions...)
-	}
+func (f *IndividualForm) buildNationality2() error {
+	return buildField(&forms.SelectInputField{
+		Name:        "nationality2",
+		DisplayName: "Nationality 2",
+		Options:     buildCountryOptions(),
+	}, f.personalInfoSection, f.individual.Nationality2)
+}
 
-	displacementStatusField := &forms.SelectInputField{
-		Options:     displacementStatusOptions,
+func (f *IndividualForm) buildIdentification1Type() error {
+	return buildField(&forms.SelectInputField{
+		Name:        "identificationType1",
+		DisplayName: "Identification Type 1",
+		Options:     getIdentificationTypeOptions(),
+	}, f.personalInfoSection, f.individual.IdentificationType1)
+}
+
+func (f *IndividualForm) buildIdentification1Other() error {
+	return buildField(&forms.TextAreaInputField{
+		Name:        "identificationTypeExplanation1",
+		DisplayName: "If Other, please explain",
+	}, f.personalInfoSection, f.individual.IdentificationTypeExplanation1)
+}
+
+func (f *IndividualForm) buildIdentification1Number() error {
+	return buildField(&forms.TextInputField{
+		Name:        "identificationNumber1",
+		DisplayName: "Identification Number 1",
+	}, f.personalInfoSection, f.individual.IdentificationNumber1)
+}
+
+func (f *IndividualForm) buildIdentification2Type() error {
+	return buildField(&forms.SelectInputField{
+		Name:        "identificationType2",
+		DisplayName: "Identification Type 2",
+		Options:     getIdentificationTypeOptions(),
+	}, f.personalInfoSection, f.individual.IdentificationType1)
+}
+
+func (f *IndividualForm) buildIdentification2Other() error {
+	return buildField(&forms.TextAreaInputField{
+		Name:        "identificationTypeExplanation2",
+		DisplayName: "If Other, please explain",
+	}, f.personalInfoSection, f.individual.IdentificationTypeExplanation2)
+}
+
+func (f *IndividualForm) buildIdentification2Number() error {
+	return buildField(&forms.TextInputField{
+		Name:        "identificationNumber2",
+		DisplayName: "Identification Number 2",
+	}, f.personalInfoSection, f.individual.IdentificationNumber2)
+}
+func (f *IndividualForm) buildIdentification3Type() error {
+	return buildField(&forms.SelectInputField{
+		Name:        "identificationType3",
+		DisplayName: "Identification Type 3",
+		Options:     getIdentificationTypeOptions(),
+	}, f.personalInfoSection, f.individual.IdentificationType1)
+}
+
+func (f *IndividualForm) buildIdentification3Other() error {
+	return buildField(&forms.TextAreaInputField{
+		Name:        "identificationTypeExplanation3",
+		DisplayName: "If Other, please explain",
+	}, f.personalInfoSection, f.individual.IdentificationTypeExplanation3)
+}
+
+func (f *IndividualForm) buildIdentification3Number() error {
+	return buildField(&forms.TextInputField{
+		Name:        "identificationNumber3",
+		DisplayName: "Identification Number 3",
+	}, f.personalInfoSection, f.individual.IdentificationNumber3)
+}
+
+func (f *IndividualForm) buildInternalID() error {
+	return buildField(&forms.TextInputField{
+		Name:        "internalId",
+		DisplayName: "Internal ID",
+	}, f.personalInfoSection, f.individual.InternalID)
+}
+
+func (f *IndividualForm) buildHouseholdID() error {
+	return buildField(&forms.TextInputField{
+		Name:        "householdId",
+		DisplayName: "Household ID",
+	}, f.personalInfoSection, f.individual.HouseholdID)
+}
+
+func (f *IndividualForm) buildIsHeadOfHousehold() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "isHeadOfHousehold",
+		DisplayName: "Is Head of Household",
+	}, f.personalInfoSection, f.individual.IsHeadOfHousehold)
+}
+func (f *IndividualForm) buildCommunityID() error {
+	return buildField(&forms.TextInputField{
+		Name:        "communityId",
+		DisplayName: "Community ID",
+	}, f.personalInfoSection, f.individual.CommunityID)
+}
+
+func (f *IndividualForm) buildIsHeadOfCommunity() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "isHeadOfCommunity",
+		DisplayName: "Is Head of Community",
+	}, f.personalInfoSection, f.individual.IsHeadOfCommunity)
+}
+
+func (f *IndividualForm) buildSpokenLanguage1() error {
+	return buildField(&forms.SelectInputField{
+		Name:        "spokenLanguage1",
+		DisplayName: "Spoken Language 1",
+		Options:     buildLanguageOptions(),
+	}, f.personalInfoSection, f.individual.SpokenLanguage1)
+}
+
+func (f *IndividualForm) buildSpokenLanguage2() error {
+	return buildField(&forms.SelectInputField{
+		Name:        "spokenLanguage2",
+		DisplayName: "Spoken Language 2",
+		Options:     buildLanguageOptions(),
+	}, f.personalInfoSection, f.individual.SpokenLanguage2)
+}
+
+func (f *IndividualForm) buildSpokenLanguage3() error {
+	return buildField(&forms.SelectInputField{
+		Name:        "spokenLanguage3",
+		DisplayName: "Spoken Language 3",
+		Options:     buildLanguageOptions(),
+	}, f.personalInfoSection, f.individual.SpokenLanguage3)
+}
+
+func (f *IndividualForm) buildPreferredCommunicationLanguage() error {
+	return buildField(&forms.SelectInputField{
+		Name:        "preferredCommunicationLanguage",
+		DisplayName: "Preferred Communication Language",
+		Options:     buildLanguageOptions(),
+	}, f.personalInfoSection, f.individual.PreferredCommunicationLanguage)
+}
+
+func (f *IndividualForm) buildPhoneNumber() error {
+	return buildField(&forms.TextInputField{
+		Name:        "phoneNumber",
+		DisplayName: "Phone Number",
+	}, f.contactInfoSection, f.individual.PhoneNumber)
+}
+
+func (f *IndividualForm) buildEmailAddress() error {
+	return buildField(&forms.TextInputField{
+		Name:        "email",
+		DisplayName: "Email Address",
+	}, f.contactInfoSection, f.individual.Email)
+}
+
+func (f *IndividualForm) buildAddress() error {
+	return buildField(&forms.TextAreaInputField{
+		Name:        "address",
+		DisplayName: "Residence Address",
+		Rows:        5,
+	}, f.contactInfoSection, f.individual.Address)
+}
+
+func (f *IndividualForm) buildPreferredMeansOfContact() error {
+	options := []forms.SelectInputFieldOption{
+		{Label: "WhatsApp", Value: "whatsapp"},
+		{Label: "Phone", Value: "phone"},
+		{Label: "Email", Value: "email"},
+		{Label: "SMS", Value: "sms"},
+		{Label: "Other", Value: "other"},
+	}
+	if f.isNew() {
+		options = append([]forms.SelectInputFieldOption{
+			{Label: "Select Preferred Means of Contact", Value: ""},
+		}, options...)
+	}
+	return buildField(&forms.SelectInputField{
+		Name:        "preferredContactMethod",
+		DisplayName: "Preferred contact method",
+		Required:    true,
+		Options:     options,
+	}, f.contactInfoSection, f.individual.PreferredContactMethod)
+}
+
+func (f *IndividualForm) buildContactInstructions() error {
+	return buildField(&forms.TextAreaInputField{
+		Name:        "preferredContactMethodComments",
+		DisplayName: "Instructions for contact or other comments",
+		Required:    true,
+		Rows:        4,
+	}, f.contactInfoSection, f.individual.PreferredContactMethodComments)
+}
+
+func (f *IndividualForm) buildHasConsentedToRgpd() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "hasConsentedToRgpd",
+		DisplayName: "Has the person consented to NRC using their data?",
+		Required:    true,
+	}, f.protectionSection, f.individual.HasConsentedToRGPD)
+}
+
+func (f *IndividualForm) buildHasConsentedToReferral() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "hasConsentedToReferral",
+		DisplayName: "Has the person consented to NRC referring them to other service providers within or outside of NRC",
+		Required:    true,
+	}, f.protectionSection, f.individual.HasConsentedToRGPD)
+}
+
+func (f *IndividualForm) buildPresentsProtectionConcerns() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "presentsProtectionConcerns",
+		DisplayName: "Presents protection concerns",
+		Required:    true,
+	}, f.protectionSection, f.individual.PresentsProtectionConcerns)
+}
+
+func (f *IndividualForm) buildDisplacementStatus() error {
+	options := getDisplacementStatusOptions()
+	if f.isNew() {
+		options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
+	}
+	return buildField(&forms.SelectInputField{
 		Name:        "displacementStatus",
 		DisplayName: "Displacement Status",
-		Value:       i.DisplacementStatus,
-	}
-
-	emailField := &forms.TextInputField{
-		Name:        "email",
-		DisplayName: "Email",
-		Value:       i.Email,
+		Options:     options,
 		Required:    true,
-	}
+		Codec:       &displacementStatusCodec{},
+	}, f.protectionSection, f.individual.DisplacementStatus)
+}
 
-	phoneNumberField := &forms.TextInputField{
-		Name:        "phoneNumber",
-		DisplayName: "Phone",
-		Value:       i.PhoneNumber,
-	}
+func (f *IndividualForm) buildHasVisionDisability() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "hasVisionDisability",
+		DisplayName: "Has Vision disability",
+	}, f.disabilitiesSection, f.individual.HasVisionDisability)
+}
 
-	addressField := &forms.TextAreaInputField{
-		Name:        "address",
-		DisplayName: "Address",
-		Value:       i.Address,
-	}
+func (f *IndividualForm) buildVisionDisabilityLevel() error {
+	return buildField(&forms.SelectInputField{
+		Name:        "visionDisabilityLevel",
+		DisplayName: "Vision disability",
+		Options:     getDisabilityLevels(),
+		Codec:       &disabilityLevelCodec{},
+	}, f.disabilitiesSection, f.individual.VisionDisabilityLevel)
+}
 
-	presentsProtectionConcernsField := &forms.CheckboxInputField{
-		Name:        "presentsProtectionConcerns",
-		DisplayName: "Presents Protection Concerns",
-		Value:       strconv.FormatBool(i.PresentsProtectionConcerns),
-	}
+func (f *IndividualForm) buildHasHearingDisability() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "hasHearingDisability",
+		DisplayName: "Has Hearing Disability",
+	}, f.disabilitiesSection, f.individual.HasHearingDisability)
+}
 
-	physicalImpairmentField := &forms.SelectInputField{
-		Name:        "physicalImpairment",
-		DisplayName: "Physical Impairment",
-		Value:       i.PhysicalImpairment,
-		Options:     impairmentOptions,
-	}
+func (f *IndividualForm) buildHearingDisabilityLevel() error {
+	return buildField(&forms.SelectInputField{
+		Name:        "hearingDisabilityLevel",
+		DisplayName: "Hearing disability level",
+		Options:     getDisabilityLevels(),
+		Codec:       &disabilityLevelCodec{},
+	}, f.disabilitiesSection, f.individual.HearingDisabilityLevel)
+}
 
-	mentalImpairmentField := &forms.SelectInputField{
-		Name:        "mentalImpairment",
-		DisplayName: "Mental Impairment",
-		Value:       i.MentalImpairment,
-		Required:    false,
-		Options:     impairmentOptions,
-	}
+func (f *IndividualForm) buildHasMobilityDisability() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "hasMobilityDisability",
+		DisplayName: "Has Mobility Disability",
+	}, f.disabilitiesSection, f.individual.HasMobilityDisability)
+}
 
-	sensoryImpairmentField := &forms.SelectInputField{
-		Name:        "sensoryImpairment",
-		DisplayName: "Sensory Impairment",
-		Value:       i.SensoryImpairment,
-		Required:    false,
-		Options:     impairmentOptions,
-	}
+func (f *IndividualForm) buildMobilityDisabilityLevel() error {
+	return buildField(&forms.SelectInputField{
+		Name:        "mobilityDisabilityLevel",
+		DisplayName: "Mobility disability level",
+		Options:     getDisabilityLevels(),
+		Codec:       &disabilityLevelCodec{},
+	}, f.disabilitiesSection, f.individual.MobilityDisabilityLevel)
+}
 
-	personalInfoFields := []forms.Field{
-		fullNameField,
-		preferredNameField,
-		genderField,
-		birthDateField,
-		isMinorField,
-		displacementStatusField,
-	}
-	if !isNew {
-		personalInfoFields = append([]forms.Field{idField}, personalInfoFields...)
-	}
+func (f *IndividualForm) buildHasCognitiveDisability() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "hasCognitiveDisability",
+		DisplayName: "Has Cognitive Disability",
+	}, f.disabilitiesSection, f.individual.HasCognitiveDisability)
+}
 
-	contactInfoFields := []forms.Field{
-		emailField,
-		phoneNumberField,
-		addressField,
-	}
+func (f *IndividualForm) buildCognitiveDisabilityLevel() error {
+	return buildField(&forms.SelectInputField{
+		Name:        "cognitiveDisabilityLevel",
+		DisplayName: "Cognitive disability level",
+		Options:     getDisabilityLevels(),
+		Codec:       &disabilityLevelCodec{},
+	}, f.disabilitiesSection, f.individual.CognitiveDisabilityLevel)
+}
 
-	protectionFields := []forms.Field{
-		presentsProtectionConcernsField,
-	}
+func (f *IndividualForm) buildHasSelfCareDisability() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "hasSelfCareDisability",
+		DisplayName: "Has SelfCare Disability",
+	}, f.disabilitiesSection, f.individual.HasSelfCareDisability)
+}
 
-	disabilityFields := []forms.Field{
-		physicalImpairmentField,
-		mentalImpairmentField,
-		sensoryImpairmentField,
-	}
+func (f *IndividualForm) buildSelfCareDisabilityLevel() error {
+	return buildField(&forms.SelectInputField{
+		Name:        "selfCareDisabilityLevel",
+		DisplayName: "SelfCare disability level",
+		Options:     getDisabilityLevels(),
+		Codec:       &disabilityLevelCodec{},
+	}, f.disabilitiesSection, f.individual.SelfCareDisabilityLevel)
+}
 
-	personalInfoSection := &forms.FormSection{
-		Title:       "Personal Information",
-		Fields:      personalInfoFields,
-		Collapsible: true,
-	}
+func (f *IndividualForm) buildHasCommunicationDisability() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "hasCommunicationDisability",
+		DisplayName: "Has Communication Disability",
+	}, f.disabilitiesSection, f.individual.HasCommunicationDisability)
+}
 
-	contactInfoSection := &forms.FormSection{
-		Title:       "Contact Information",
-		Fields:      contactInfoFields,
-		Collapsible: true,
-	}
+func (f *IndividualForm) buildCommunicationDisabilityLevel() error {
+	return buildField(&forms.SelectInputField{
+		Name:        "communicationDisabilityLevel",
+		DisplayName: "Communication disability level",
+		Options:     getDisabilityLevels(),
+		Codec:       &disabilityLevelCodec{},
+	}, f.disabilitiesSection, f.individual.CommunicationDisabilityLevel)
+}
 
-	protectionSection := &forms.FormSection{
-		Title:       "Protection Concerns",
-		Fields:      protectionFields,
-		Collapsible: true,
-	}
+func (f *IndividualForm) buildIdentificationContext() error {
+	return buildField(&forms.SelectInputField{
+		Name:        "identificationContext",
+		DisplayName: "Identification Context",
+		Options: []forms.SelectInputFieldOption{
+			{Label: "", Value: ""},
+			{Label: "House Visit", Value: "houseVisit"},
+			{Label: "Field Activity", Value: "fieldActivity"},
+			{Label: "In-Office", Value: "inOffice"},
+			{Label: "Remote Channels", Value: "remoteChannels"},
+			{Label: "Other", Value: "other"},
+		},
+	}, f.dataCollectionSection, f.individual.IdentificationContext)
+}
 
-	disabilitySection := &forms.FormSection{
-		Title:       "Disability",
-		Fields:      disabilityFields,
-		Collapsible: true,
-	}
+func (f *IndividualForm) buildCollectionAgent() error {
+	return buildField(&forms.TextInputField{
+		Name:        "collectionAgentName",
+		DisplayName: "Collection Agent Name",
+		Required:    true,
+	}, f.dataCollectionSection, f.individual.CollectionAgentName)
+}
 
-	formSections := []*forms.FormSection{
-		personalInfoSection,
-		contactInfoSection,
-		protectionSection,
-		disabilitySection,
-	}
+func (f *IndividualForm) buildCollectionAgentTitle() error {
+	return buildField(&forms.TextInputField{
+		Name:        "collectionAgentTitle",
+		DisplayName: "Collection Agent Title",
+		Required:    true,
+	}, f.dataCollectionSection, f.individual.CollectionAgentTitle)
+}
 
-	action := "/countries/" + i.CountryID + "/individuals/"
-	if len(i.ID) != 0 {
-		action += i.ID
-	} else {
-		action += "new"
-	}
-	f := forms.Form{
-		Sections: formSections,
-	}
+func (f *IndividualForm) buildCollectionDate() error {
+	return buildField(&forms.DateInputField{
+		Name:        "collectionTime",
+		DisplayName: "Collection Date",
+		Required:    true,
+	}, f.dataCollectionSection, f.individual.CollectionTime)
+}
 
-	return &IndividualForm{
-		Form:  &f,
+func (f *IndividualForm) buildCollectionLocation1() error {
+	return buildField(&forms.TextInputField{
+		Name:        "collectionAdministrativeArea1",
+		DisplayName: "Collection Location 1",
+	}, f.dataCollectionSection, f.individual.CollectionAdministrativeArea1)
+}
+
+func (f *IndividualForm) buildCollectionLocation2() error {
+	return buildField(&forms.TextInputField{
+		Name:        "collectionAdministrativeArea2",
+		DisplayName: "Collection Location 2",
+	}, f.dataCollectionSection, f.individual.CollectionAdministrativeArea2)
+}
+
+func (f *IndividualForm) buildCollectionLocation3() error {
+	return buildField(&forms.TextInputField{
+		Name:        "collectionAdministrativeArea3",
+		DisplayName: "Collection Location 3",
+	}, f.dataCollectionSection, f.individual.CollectionAdministrativeArea3)
+}
+
+func buildField(field forms.InputField, section *forms.FormSection, value interface{}) error {
+	if err := field.SetValue(value); err != nil {
+		return err
+	}
+	section.Fields = append(section.Fields, field)
+	return nil
+}
+
+func getDisabilityLevels() []forms.SelectInputFieldOption {
+	return []forms.SelectInputFieldOption{
+		{Value: "0", Label: "No disability"},
+		{Value: "1", Label: "Mild"},
+		{Value: "2", Label: "Moderate"},
+		{Value: "3", Label: "Severe"},
+	}
+}
+
+func getIdentificationTypeOptions() []forms.SelectInputFieldOption {
+	return []forms.SelectInputFieldOption{
+		{Label: "", Value: ""},
+		{Label: "Passport", Value: "passport"},
+		{Label: "National ID", Value: "national_id"},
+		{Label: "Driver's License", Value: "drivers_license"},
+		{Label: "Other", Value: "other"},
+	}
+}
+
+func getGenderOptions() []forms.SelectInputFieldOption {
+	var ret []forms.SelectInputFieldOption
+	for _, g := range api.AllGenders().Items() {
+		ret = append(ret, forms.SelectInputFieldOption{
+			Label: g.String(),
+			Value: string(g),
+		})
+	}
+	return ret
+}
+
+func getDisplacementStatusOptions() []forms.SelectInputFieldOption {
+	var ret []forms.SelectInputFieldOption
+	for _, s := range api.AllDisplacementStatuses().Items() {
+		ret = append(ret, forms.SelectInputFieldOption{
+			Label: s.String(),
+			Value: string(s),
+		})
+	}
+	return ret
+}
+
+func addSeparator(s *forms.FormSection) func() error {
+	return func() error {
+		s.Fields = append(s.Fields, &forms.Separator{})
+		return nil
+	}
+}
+
+func addSpacer(s *forms.FormSection) func() error {
+	return func() error {
+		s.Fields = append(s.Fields, &forms.Spacer{})
+		return nil
+	}
+}
+
+func addHeader(s *forms.FormSection, content string, level int) func() error {
+	return func() error {
+		s.Fields = append(s.Fields, &forms.HeaderField{
+			Content: content,
+			Level:   level,
+		})
+		return nil
+	}
+}
+
+func buildCountryOptions() []forms.SelectInputFieldOption {
+	var opts = make([]forms.SelectInputFieldOption, 0, len(constants.Countries))
+	opts = append(opts, forms.SelectInputFieldOption{
+		Value: "",
+		Label: "",
+	})
+	for _, country := range constants.Countries {
+		opts = append(opts, forms.SelectInputFieldOption{
+			Value: country.ISO3166Alpha3,
+			Label: country.Name,
+		})
+	}
+	return opts
+}
+
+func buildLanguageOptions() []forms.SelectInputFieldOption {
+	var opts = make([]forms.SelectInputFieldOption, 0, len(constants.Languages))
+	opts = append(opts, forms.SelectInputFieldOption{
+		Value: "",
+		Label: "",
+	})
+	for _, lang := range constants.Languages {
+		opts = append(opts, forms.SelectInputFieldOption{
+			Value: lang.ID,
+			Label: lang.Name,
+		})
+	}
+	return opts
+}
+
+type displacementStatusCodec struct{}
+
+func (d *displacementStatusCodec) Encode(v interface{}) (string, error) {
+	switch v.(type) {
+	case api.DisplacementStatus:
+		switch v.(api.DisplacementStatus) {
+		case api.DisplacementStatusIDP:
+			return string(api.DisplacementStatusIDP), nil
+		case api.DisplacementStatusRefugee:
+			return string(api.DisplacementStatusRefugee), nil
+		case api.DisplacementStatusHostCommunity:
+			return string(api.DisplacementStatusHostCommunity), nil
+		default:
+			return "", fmt.Errorf("invalid displacement status: %v", v)
+		}
+	default:
+		return "", fmt.Errorf("invalid displacement status type: %T", v)
+	}
+}
+
+func (d *displacementStatusCodec) Decode(v string) (interface{}, error) {
+	switch v {
+	case string(api.DisplacementStatusIDP):
+		return api.DisplacementStatusIDP, nil
+	case string(api.DisplacementStatusRefugee):
+		return api.DisplacementStatusRefugee, nil
+	case string(api.DisplacementStatusHostCommunity):
+		return api.DisplacementStatusHostCommunity, nil
+	default:
+		return nil, fmt.Errorf("invalid displacement status: %v", v)
+	}
+}
+
+type disabilityLevelCodec struct{}
+
+func (d disabilityLevelCodec) Encode(value interface{}) (string, error) {
+	switch v := value.(type) {
+	case api.DisabilityLevel:
+		switch v {
+		case api.DisabilityLevelNone:
+			return "0", nil
+		case api.DisabilityLevelMild:
+			return "1", nil
+		case api.DisabilityLevelModerate:
+			return "2", nil
+		case api.DisabilityLevelSevere:
+			return "3", nil
+		default:
+			return "", fmt.Errorf("unknown disability level: %v", v)
+		}
+	default:
+		return "", fmt.Errorf("invalid type %T", value)
+	}
+}
+
+func (d disabilityLevelCodec) Decode(value string) (interface{}, error) {
+	switch value {
+	case "0":
+		return api.DisabilityLevelNone, nil
+	case "1":
+		return api.DisabilityLevelMild, nil
+	case "2":
+		return api.DisabilityLevelModerate, nil
+	case "3":
+		return api.DisabilityLevelSevere, nil
+	default:
+		return nil, fmt.Errorf("unknown disability level: %v", value)
+	}
+}
+
+var _ forms.Codec = &disabilityLevelCodec{}
+
+type genderCodec struct{}
+
+func (g genderCodec) Encode(value interface{}) (string, error) {
+	switch v := value.(type) {
+	case api.Gender:
+		switch v {
+		case api.GenderMale:
+			return string(api.GenderMale), nil
+		case api.GenderFemale:
+			return string(api.GenderFemale), nil
+		case api.GenderOther:
+			return string(api.GenderOther), nil
+		case api.GenderPreferNotToSay:
+			return string(api.GenderPreferNotToSay), nil
+		default:
+			return "", fmt.Errorf("unknown gender: %v", v)
+		}
+	default:
+		return "", fmt.Errorf("invalid type %T", value)
+	}
+}
+
+func (g genderCodec) Decode(value string) (interface{}, error) {
+	switch value {
+	case string(api.GenderMale):
+		return api.GenderMale, nil
+	case string(api.GenderFemale):
+		return api.GenderFemale, nil
+	case string(api.GenderOther):
+		return api.GenderOther, nil
+	case string(api.GenderPreferNotToSay):
+		return api.GenderPreferNotToSay, nil
+	default:
+		return nil, fmt.Errorf("unknown gender: %v", value)
 	}
 }

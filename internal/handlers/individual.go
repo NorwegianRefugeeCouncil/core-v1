@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/notcore/internal/api"
 	apivalidation "github.com/nrc-no/notcore/internal/api/validation"
@@ -15,6 +16,7 @@ import (
 	"github.com/nrc-no/notcore/internal/views"
 	apierrs "github.com/nrc-no/notcore/pkg/api/errors"
 	"github.com/nrc-no/notcore/pkg/api/validation"
+	"github.com/nrc-no/notcore/pkg/views/alerts"
 	"go.uber.org/zap"
 )
 
@@ -37,12 +39,15 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			individualId     = mux.Vars(r)[pathParamIndividualID]
 			isNew            = individualId == newID
 			individualForm   *views.IndividualForm
+			viewAlerts       = alerts.NewAlerts()
 		)
 
 		render := func() {
 			individualForm.SetErrors(validationErrors)
 			renderView(templates, templateName, w, r, viewParams{
-				"form": individualForm,
+				"Form":       individualForm,
+				"Individual": individual,
+				"Alerts":     viewAlerts,
 			})
 			return
 		}
@@ -56,12 +61,19 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			}
 		}
 
-		individualForm = views.NewIndividualForm(individual)
-
 		// Get the currently selected Country ID
 		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
 		if err != nil {
 			l.Error("failed to get selected country id", zap.Error(err))
+			err = apierrs.ErrorFrom(err)
+			render()
+			return
+		}
+
+		individual.CountryID = selectedCountryID
+		individualForm, err = views.NewIndividualForm(individual)
+		if err != nil {
+			l.Error("failed to create individual form", zap.Error(err))
 			err = apierrs.ErrorFrom(err)
 			render()
 			return
@@ -89,10 +101,22 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			return
 		}
 		individual.CountryID = selectedCountryID
+		if !isNew {
+			individual.ID = individualId
+		} else {
+			individual.ID = uuid.New().String()
+		}
 
 		// Validate the individual
 		validationErrors = apivalidation.ValidateIndividual(individual)
 		if len(validationErrors) > 0 {
+			viewAlerts = append(viewAlerts, &alerts.Alert{
+				Style:       alerts.AlertStyleDanger,
+				Title:       "Validation errors",
+				Body:        "Please correct the errors below",
+				Dismissible: true,
+				Icon:        "exclamation-triangle",
+			})
 			render()
 			return
 		}
@@ -106,7 +130,14 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			return
 		}
 
-		if individualId == "new" {
+		viewAlerts = append(viewAlerts, &alerts.Alert{
+			Style:       alerts.AlertStyleSuccess,
+			Body:        fmt.Sprintf("Individual %s saved", individual.FullName),
+			Dismissible: true,
+			Icon:        "check-circle",
+		})
+
+		if isNew {
 			http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals/%s", individual.CountryID, individual.ID), http.StatusFound)
 			return
 		} else {

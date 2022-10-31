@@ -104,7 +104,9 @@ func parseGetAllOptions(r *http.Request, out *api.GetAllOptions) error {
 	out.FullName = r.FormValue(constants.FormParamGetIndividualsName)
 	out.PhoneNumber = r.FormValue(constants.FormParamGetIndividualsPhoneNumber)
 	out.Address = r.FormValue(constants.FormParamsGetIndividualsAddress)
-	out.Genders = r.Form[constants.FormParamsGetIndividualsGender]
+	for _, v := range r.Form[constants.FormParamsGetIndividualsGender] {
+		out.Genders = append(out.Genders, api.Gender(v))
+	}
 	if r.FormValue(constants.FormParamsGetIndividualsIsMinor) == "true" {
 		isMinor := true
 		out.IsMinor = &isMinor
@@ -145,7 +147,7 @@ func parseGetAllOptions(r *http.Request, out *api.GetAllOptions) error {
 			continue
 		}
 		displacementStatusMap[s] = true
-		out.DisplacementStatuses = append(out.DisplacementStatuses, s)
+		out.DisplacementStatuses = append(out.DisplacementStatuses, api.DisplacementStatus(s))
 	}
 	return nil
 }

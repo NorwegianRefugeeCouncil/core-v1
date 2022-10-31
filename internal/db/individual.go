@@ -6,12 +6,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
-	"github.com/rs/xid"
 	"go.uber.org/zap"
 )
 
@@ -58,7 +58,7 @@ func (i individualRepo) getAllInternal(ctx context.Context, tx *sqlx.Tx, options
 
 	var ret []*api.Individual
 	args := []interface{}{}
-	query := "SELECT * FROM individuals"
+	query := "SELECT * FROM individual_registration"
 
 	var whereClauses []string
 
@@ -188,7 +188,7 @@ func (i individualRepo) getByIdInternal(ctx context.Context, tx *sqlx.Tx, id str
 	l := logging.NewLogger(ctx).With(zap.String("individual_id", id))
 	l.Debug("getting individual by id")
 	var ret = api.Individual{}
-	err := tx.GetContext(ctx, &ret, "SELECT * FROM individuals WHERE id = $1 and deleted_at IS NULL", id)
+	err := tx.GetContext(ctx, &ret, "SELECT * FROM individual_registration WHERE id = $1 and deleted_at IS NULL", id)
 	if err != nil {
 		return nil, err
 	}
@@ -232,11 +232,11 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 
 		args := make([]interface{}, 0)
 		b := &strings.Builder{}
-		b.WriteString("INSERT INTO individuals (" + strings.Join(fields, ",") + ",created_at,updated_at) VALUES ")
+		b.WriteString("INSERT INTO individual_registration (" + strings.Join(fields, ",") + ",created_at,updated_at) VALUES ")
 
 		for i, individual := range individualsInBatch {
 			if individual.ID == "" {
-				individual.ID = xid.New().String()
+				individual.ID = uuid.New().String()
 			}
 			if i != 0 {
 				b.WriteString(",")
@@ -315,7 +315,7 @@ func (i individualRepo) softDeleteInternal(ctx context.Context, tx *sqlx.Tx, id 
 	l := logging.NewLogger(ctx).With(zap.String("individual_id", id))
 	l.Debug("deleting individual")
 
-	const query = "UPDATE individuals SET deleted_at = $1 WHERE id = $2 and deleted_at IS NULL"
+	const query = "UPDATE individual_registration SET deleted_at = $1 WHERE id = $2 and deleted_at IS NULL"
 	var args = []interface{}{time.Now().UTC(), id}
 
 	if _, err := tx.ExecContext(ctx, query, args...); err != nil {

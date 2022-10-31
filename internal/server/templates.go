@@ -2,6 +2,7 @@ package server
 
 import (
 	"html/template"
+	"reflect"
 	"strings"
 	"time"
 
@@ -43,11 +44,19 @@ func parseTemplates(
 			"joinStrings": func(a []string, b string) string {
 				return strings.Join(a, b)
 			},
-			"contains": func(arr []string, str string) bool {
-				for _, v := range arr {
-					if v == str {
-						return true
+			"contains": func(arr interface{}, item interface{}) bool {
+				arrType := reflect.TypeOf(arr)
+				valType := reflect.TypeOf(item)
+				if arrType.Kind() == reflect.String || arrType.Kind() == reflect.Array {
+					arrVal := reflect.ValueOf(arr)
+					for i := 0; i < arrVal.Len(); i++ {
+						if arrVal.Index(i).Interface() == item {
+							return true
+						}
 					}
+				}
+				if arrType.Kind() == reflect.String && valType.Kind() == reflect.String {
+					return strings.Contains(arr.(string), item.(string))
 				}
 				return false
 			},

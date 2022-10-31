@@ -114,6 +114,7 @@
             {{if $field.Errors}}required{{end}}>
         {{range $optionIndex, $option := $field.Options}}
             <option value="{{$option.Value}}"
+                    {{if $option.Disabled}}disabled="disabled"{{end}}
                     {{if $field.IsSelected $option.Value}}selected{{end}}>
                 {{$option.Label}}
             </option>
@@ -135,10 +136,10 @@
                aria-labelledby="{{$field.Name}}--label"
                aria-describedby="{{$field.Name}}--help {{if $field.Errors}}{{$field.Name}}--errors{{end}}"
                 {{if $field.Errors}}required{{end}}>
-        <label class="form-check-label"
+        <label class="form-check-label {{if $field.Required}}fw-bold{{end}}"
                for="{{$field.Name}}"
                id="{{$field.Name}}--label">
-            {{$field.DisplayName}}{{if $field.Required}}<span class="text-danger">*</span>{{end}}
+            {{$field.DisplayName}}{{if $field.Required}}<span class="text-danger"> *</span>{{end}}
         </label>
     </div>
     {{template "inputHelp" .}}
@@ -151,11 +152,24 @@
     <textarea class="form-control {{if $field.Errors}}is-invalid{{end}}"
               id="{{$field.Name}}"
               name="{{$field.Name}}"
+              {{if $field.Rows}}rows="{{$field.Rows}}"{{end}}
               aria-labelledby="{{$field.Name}}--label"
               aria-describedby="{{$field.Name}}--help {{if $field.Errors}}{{$field.Name}}--errors{{end}}"
               {{if $field.Errors}}required{{end}}>{{$field.Value}}</textarea>
     {{template "inputHelp" .}}
     {{template "inputError" .}}
+{{end}}
+
+{{define "separator"}}
+    <hr/>
+{{end}}
+
+{{define "header"}}
+    <h{{.Field.Level}}/>{{.Field.Content}}</h{{.Field.Level}}>
+{{end}}
+
+{{define "spacer"}}
+    <div class="mb-2">&nbsp;</div>
 {{end}}
 
 {{define "field"}}
@@ -174,6 +188,12 @@
         {{template "checkboxField" .}}
     {{else if eq $kind "textarea"}}
         {{template "textAreaField" .}}
+    {{else if eq $kind "separator"}}
+        {{template "separator" .}}
+    {{else if eq $kind "header"}}
+        {{template "header" .}}
+    {{else if eq $kind "spacer"}}
+        {{template "spacer" .}}
     {{end}}
 {{end}}
 
@@ -262,6 +282,30 @@
             display: inline-block;
         }
     </style>
+    <script type="application/javascript">
+        function scrollTo(element) {
+            if (element.scrollIntoView) {
+                element.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+            } else {
+                window.scroll({
+                    top: element.offsetTop,
+                    left: 0,
+                    behavior: 'smooth'
+                });
+            }
+            element.focus({preventScroll: true});
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const invalid = document.querySelector('.form-control.is-invalid');
+            const first = document.querySelector('.form-control:not([disabled])');
+            if (invalid) {
+                scrollTo(invalid);
+            } else if (first) {
+                scrollTo(first);
+            }
+        })
+    </script>
     {{ range $sectionIndex, $section := .Sections }}
         {{$args := dict "Section" $section "SectionIndex" $sectionIndex "Form" $}}
         {{ template "section" $args }}

@@ -141,6 +141,16 @@ $navbar-brand-height:               65px;
 $modal-inner-padding: 20px !default;
 $modal-content-border-radius: 3px !default;
 
+$alert-padding-y:               1rem;
+$alert-padding-x:               1rem;
+
+$btn-close-width:            1em;
+$btn-close-height:           $btn-close-width;
+$btn-close-padding-x:        .25em;
+$btn-close-padding-y:        $btn-close-padding-x;
+
+
+
 @import "node_modules/bootstrap/scss/bootstrap";
 
 
@@ -267,12 +277,6 @@ table {
     tr {
         border-bottom-width: 1px;
     }
-}
-
-.alert {
-    height: 50px;
-    line-height: 50px;
-    padding: 0 10px;
 }
 
 .nav-link {

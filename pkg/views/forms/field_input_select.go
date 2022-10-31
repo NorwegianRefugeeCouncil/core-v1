@@ -97,6 +97,8 @@ type SelectInputFieldOption struct {
 	Value string
 	// Label is the label of the option.
 	Label string
+	// Disabled is true if the option is enabled.
+	Disabled bool
 }
 
 func (f *SelectInputField) getCodecOrDefault() Codec {

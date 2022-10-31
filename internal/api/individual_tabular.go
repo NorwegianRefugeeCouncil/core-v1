@@ -81,7 +81,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualPreferredName:
 			i.PreferredName = cols[idx]
 		case constants.FileColumnIndividualDisplacementStatus:
-			i.DisplacementStatus = cols[idx]
+			i.DisplacementStatus = DisplacementStatus(cols[idx])
 		case constants.FileColumnIndividualPhoneNumber:
 			i.PhoneNumber = cols[idx]
 		case constants.FileColumnIndividualEmail:
@@ -89,7 +89,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualAddress:
 			i.Address = cols[idx]
 		case constants.FileColumnIndividualGender:
-			i.Gender = cols[idx]
+			i.Gender = Gender(cols[idx])
 		case constants.FileColumnIndividualBirthDate:
 			i.BirthDate, err = ParseDate(cols[idx])
 			if err != nil {
@@ -99,12 +99,6 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.IsMinor = isTrue(cols[idx])
 		case constants.FileColumnIndividualPresentsProtectionConcerns:
 			i.PresentsProtectionConcerns = isTrue(cols[idx])
-		case constants.FileColumnIndividualPhysicalImpairment:
-			i.PhysicalImpairment = cols[idx]
-		case constants.FileColumnIndividualSensoryImpairment:
-			i.SensoryImpairment = cols[idx]
-		case constants.FileColumnIndividualMentalImpairment:
-			i.MentalImpairment = cols[idx]
 		}
 	}
 	i.Normalize()

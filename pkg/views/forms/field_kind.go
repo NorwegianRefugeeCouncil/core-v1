@@ -15,6 +15,8 @@ func RegisterFieldKind(fieldKind FieldKind) {
 }
 
 func init() {
+	RegisterFieldKind(FieldKindUnknown)
+
 	RegisterFieldKind(FieldKindCheckboxInput)
 	RegisterFieldKind(FieldKindDateInput)
 	RegisterFieldKind(FieldKindHiddenInput)
@@ -23,7 +25,10 @@ func init() {
 	RegisterFieldKind(FieldKindSelect)
 	RegisterFieldKind(FieldKindTextInput)
 	RegisterFieldKind(FieldKindTextarea)
-	RegisterFieldKind(FieldKindUnknown)
+
+	RegisterFieldKind(FieldKindSeparator)
+	RegisterFieldKind(FieldKindHeader)
+	RegisterFieldKind(FieldKindSpacer)
 }
 
 const (
@@ -46,6 +51,13 @@ const (
 	FieldKindTextInput FieldKind = "text"
 	// FieldKindTextarea is the kind of field that represents a textarea input.
 	FieldKindTextarea FieldKind = "textarea"
+
+	// FieldKindSeparator is the kind of field that represents a separator.
+	FieldKindSeparator FieldKind = "separator"
+	// FieldKindHeader is the kind of field that represents a header.
+	FieldKindHeader FieldKind = "header"
+	// FieldKindSpacer is the kind of field that represents a spacer.
+	FieldKindSpacer FieldKind = "spacer"
 )
 
 func AllFieldKinds() []FieldKind {
