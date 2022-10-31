@@ -138,6 +138,9 @@ $navbar-padding-y:                  40px !default;
 $navbar-brand-padding-y:            $navbar-padding-y !default;
 $navbar-brand-height:               65px;
 
+$modal-inner-padding: 20px !default;
+$modal-content-border-radius: 3px !default;
+
 @import "node_modules/bootstrap/scss/bootstrap";
 
 

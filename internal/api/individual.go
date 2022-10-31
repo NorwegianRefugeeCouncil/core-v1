@@ -12,25 +12,29 @@ import (
 )
 
 type Individual struct {
-	ID                         string     `db:"id"`
-	CountryID                  string     `db:"country_id"`
-	FullName                   string     `db:"full_name"`
-	PhoneNumber                string     `db:"phone_number"`
-	NormalizedPhoneNumber      string     `db:"normalized_phone_number"`
-	Email                      string     `db:"email"`
-	Address                    string     `db:"address"`
-	BirthDate                  *time.Time `db:"birth_date"`
-	Gender                     string     `db:"gender"`
-	DisplacementStatus         string     `db:"displacement_status"`
-	PreferredName              string     `db:"preferred_name"`
-	IsMinor                    bool       `db:"is_minor"`
-	PresentsProtectionConcerns bool       `db:"presents_protection_concerns"`
-	PhysicalImpairment         string     `db:"physical_impairment"`
-	SensoryImpairment          string     `db:"sensory_impairment"`
-	MentalImpairment           string     `db:"mental_impairment"`
-	CreatedAt                  time.Time  `db:"created_at"`
-	UpdatedAt                  time.Time  `db:"updated_at"`
-	DeletedAt                  *time.Time `db:"deleted_at"`
+	ID                         string     `json:"id" db:"id"`
+	CountryID                  string     `json:"countryId" db:"country_id"`
+	FullName                   string     `json:"fullName" db:"full_name"`
+	PhoneNumber                string     `json:"phoneNumber" db:"phone_number"`
+	NormalizedPhoneNumber      string     `json:"normalizedPhoneNumber" db:"normalized_phone_number"`
+	Email                      string     `json:"email" db:"email"`
+	Address                    string     `json:"address" db:"address"`
+	BirthDate                  *time.Time `json:"birthDate" db:"birth_date"`
+	Gender                     string     `json:"gender" db:"gender"`
+	DisplacementStatus         string     `json:"displacementStatus" db:"displacement_status"`
+	PreferredName              string     `json:"preferredName" db:"preferred_name"`
+	IsMinor                    bool       `json:"isMinor" db:"is_minor"`
+	PresentsProtectionConcerns bool       `json:"presentsProtectionConcerns" db:"presents_protection_concerns"`
+	PhysicalImpairment         string     `json:"physicalImpairment" db:"physical_impairment"`
+	SensoryImpairment          string     `json:"sensoryImpairment" db:"sensory_impairment"`
+	MentalImpairment           string     `json:"mentalImpairment" db:"mental_impairment"`
+	CreatedAt                  time.Time  `json:"createdAt" db:"created_at"`
+	UpdatedAt                  time.Time  `json:"updatedAt" db:"updated_at"`
+	DeletedAt                  *time.Time `json:"deletedAt" db:"deleted_at"`
+}
+
+type IndividualList struct {
+	Items []*Individual `json:"items"`
 }
 
 type IndividualList struct {

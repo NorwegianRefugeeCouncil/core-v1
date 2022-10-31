@@ -7,12 +7,14 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/notcore/internal/api"
-	"github.com/nrc-no/notcore/internal/auth"
+	apivalidation "github.com/nrc-no/notcore/internal/api/validation"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
-	"github.com/nrc-no/notcore/internal/validation"
+	"github.com/nrc-no/notcore/internal/views"
+	apierrs "github.com/nrc-no/notcore/pkg/api/errors"
+	"github.com/nrc-no/notcore/pkg/api/validation"
 	"go.uber.org/zap"
 )
 
@@ -22,9 +24,6 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 		templateName          = "individual.gohtml"
 		pathParamIndividualID = "individual_id"
 		newID                 = "new"
-		viewParamIndividual   = "Individual"
-		viewParamErrors       = "Errors"
-		viewParamWasValidated = "WasValidated"
 	)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -34,21 +33,16 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			ctx              = r.Context()
 			l                = logging.NewLogger(ctx)
 			individual       = &api.Individual{}
-			validationErrors validation.ValidationErrors
-			wasValidated     bool
+			validationErrors validation.ErrorList
 			individualId     = mux.Vars(r)[pathParamIndividualID]
 			isNew            = individualId == newID
-			authIntf         auth.Interface
+			individualForm   *views.IndividualForm
 		)
 
 		render := func() {
-			if individual == nil {
-				individual = &api.Individual{}
-			}
+			individualForm.SetErrors(validationErrors)
 			renderView(templates, templateName, w, r, viewParams{
-				viewParamIndividual:   individual,
-				viewParamErrors:       validationErrors,
-				viewParamWasValidated: wasValidated,
+				"form": individualForm,
 			})
 			return
 		}
@@ -56,22 +50,20 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 		if !isNew {
 			if individual, err = repo.GetByID(ctx, individualId); err != nil {
 				l.Error("failed to get individual", zap.Error(err))
-				http.Error(w, "failed to get individual", http.StatusInternalServerError)
+				err = apierrs.ErrorFrom(err)
+				render()
+				return
 			}
 		}
 
-		authIntf, err = utils.GetAuthContext(ctx)
-		if err != nil {
-			l.Error("failed to get auth context", zap.Error(err))
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-			return
-		}
+		individualForm = views.NewIndividualForm(individual)
 
 		// Get the currently selected Country ID
 		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
 		if err != nil {
 			l.Error("failed to get selected country id", zap.Error(err))
-			http.Error(w, "internal server error", http.StatusInternalServerError)
+			err = apierrs.ErrorFrom(err)
+			render()
 			return
 		}
 
@@ -84,21 +76,22 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 		// Parse the form
 		if err := r.ParseForm(); err != nil {
 			l.Error("failed to parse form", zap.Error(err))
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			err = apierrs.ErrorFrom(err)
+			render()
 			return
 		}
 
-		// Parse the individual form
-		if err := parseIndividualForm(r, authIntf, individual); err != nil {
+		individualForm.ParseURLValues(r.Form)
+		if err := individualForm.Into(individual); err != nil {
 			l.Error("failed to parse individual form", zap.Error(err))
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			err = apierrs.ErrorFrom(err)
+			render()
 			return
 		}
-
 		individual.CountryID = selectedCountryID
 
 		// Validate the individual
-		validationErrors = validation.ValidateIndividual(individual)
+		validationErrors = apivalidation.ValidateIndividual(individual)
 		if len(validationErrors) > 0 {
 			render()
 			return
@@ -108,11 +101,11 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 		individual, err = repo.Put(ctx, individual, constants.IndividualDBColumns)
 		if err != nil {
 			l.Error("failed to put individual", zap.Error(err))
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			err = apierrs.ErrorFrom(err)
+			render()
 			return
 		}
 
-		wasValidated = true
 		if individualId == "new" {
 			http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals/%s", individual.CountryID, individual.ID), http.StatusFound)
 			return
@@ -122,27 +115,4 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 		}
 
 	})
-}
-
-func parseIndividualForm(r *http.Request, permsHelper auth.Interface, individual *api.Individual) error {
-	var err error
-	individual.FullName = r.FormValue(constants.FormParamIndividualFullName)
-	individual.PreferredName = r.FormValue(constants.FormParamIndividualPreferredName)
-	individual.DisplacementStatus = r.FormValue(constants.FormParamIndividualDisplacementStatus)
-	individual.Email = r.FormValue(constants.FormParamIndividualEmail)
-	individual.PhoneNumber = r.FormValue(constants.FormParamIndividualPhoneNumber)
-	individual.Address = r.FormValue(constants.FormParamIndividualAddress)
-	individual.Gender = r.FormValue(constants.FormParamIndividualGender)
-	individual.BirthDate, err = api.ParseDate(r.FormValue(constants.FormParamIndividualBirthDate))
-	if err != nil {
-		return err
-	}
-	individual.IsMinor = r.FormValue(constants.FormParamIndividualIsMinor) == "true"
-	individual.PresentsProtectionConcerns = r.FormValue(constants.FormParamIndividualPresentsProtectionConcerns) == "true"
-	individual.PhysicalImpairment = r.FormValue(constants.FormParamIndividualPhysicalImpairment)
-	individual.MentalImpairment = r.FormValue(constants.FormParamIndividualMentalImpairment)
-	individual.SensoryImpairment = r.FormValue(constants.FormParamIndividualSensoryImpairment)
-	individual.CountryID = r.FormValue(constants.FormParamIndividualCountry)
-	individual.Normalize()
-	return nil
 }
