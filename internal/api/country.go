@@ -6,3 +6,7 @@ type Country struct {
 	Name     string `db:"name"`
 	JwtGroup string `db:"jwt_group"`
 }
+
+type CountryList struct {
+	Items []*Country `db:"items"`
+}
