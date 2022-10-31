@@ -63,8 +63,7 @@ func genField(fieldKind FieldKind) Field {
 	var field Field
 	switch fieldKind {
 	case FieldKindUnknown:
-		// Skip this field kind.
-		return nil
+		panic("cannot generate field for unknown field kind")
 	case FieldKindID:
 		field = &IDField{}
 	case FieldKindTextInput:
