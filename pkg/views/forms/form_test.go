@@ -23,63 +23,51 @@ type DummyStruct struct {
 	SelectFieldPtr   *string    `json:"selectFieldPtr"`
 }
 
-func formWithFields(fields ...*Field) *Form {
+func formWithFields(fields ...Field) *Form {
 	return &Form{
 		Sections: []*FormSection{
 			{
-				Fields: fields,
+				Fields: NewFieldDefinitions(fields...),
 			},
 		},
 	}
 }
 
-func textField(name, value string) *Field {
-	return &Field{
-		Text: &TextInputField{
-			Name:  name,
-			Value: value,
-		},
+func textField(name, value string) *TextInputField {
+	return &TextInputField{
+		Name:  name,
+		Value: value,
 	}
 }
-func numberField(name, value string) *Field {
-	return &Field{
-		Number: &NumberInputField{
-			Name:  name,
-			Value: value,
-		},
+func numberField(name, value string) *NumberInputField {
+	return &NumberInputField{
+		Name:  name,
+		Value: value,
 	}
 }
-func textAreaField(name, value string) *Field {
-	return &Field{
-		MultilineText: &MultilineTextInputField{
-			Name:  name,
-			Value: value,
-		},
+func textAreaField(name, value string) *TextAreaInputField {
+	return &TextAreaInputField{
+		Name:  name,
+		Value: value,
 	}
 }
-func checkboxField(name, value string) *Field {
-	return &Field{
-		Checkbox: &CheckboxInputField{
-			Name:  name,
-			Value: value,
-		},
+func checkboxField(name, value string) *CheckboxInputField {
+	return &CheckboxInputField{
+		Name:  name,
+		Value: value,
 	}
 }
-func dateField(name, value string) *Field {
-	return &Field{
-		Date: &DateInputField{
-			Name:  name,
-			Value: value,
-		},
+func dateField(name, value string) *DateInputField {
+	return &DateInputField{
+		Name:  name,
+		Value: value,
 	}
 }
-func selectField(name, value string, options []SelectInputFieldOption) *Field {
-	return &Field{
-		Select: &SelectInputField{
-			Name:    name,
-			Value:   value,
-			Options: options,
-		},
+func selectField(name, value string, options []SelectInputFieldOption) *SelectInputField {
+	return &SelectInputField{
+		Name:    name,
+		Value:   value,
+		Options: options,
 	}
 }
 

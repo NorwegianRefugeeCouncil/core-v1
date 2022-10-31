@@ -2,7 +2,6 @@ package forms
 
 import (
 	"bytes"
-	_ "embed"
 	"errors"
 	"fmt"
 	"html/template"
@@ -15,46 +14,17 @@ import (
 	"github.com/nrc-no/notcore/pkg/api/validation"
 )
 
-var formTemplate *template.Template
-
-//go:embed form.gohtml
-var formHtmlTemplate string
-
-func init() {
-	t := template.New("form").Funcs(template.FuncMap{
-		"isLast": func(i int, arr interface{}) bool {
-			return i == reflect.ValueOf(arr).Len()-1
-		},
-		"dict": func(values ...interface{}) (map[string]interface{}, error) {
-			if len(values)%2 != 0 {
-				return nil, errors.New("dict must have an even number of arguments")
-			}
-			dict := make(map[string]interface{})
-			for i := 0; i < len(values); i += 2 {
-				key, ok := values[i].(string)
-				if !ok {
-					return nil, errors.New("dict keys must be strings")
-				}
-				dict[key] = values[i+1]
-			}
-			return dict, nil
-		},
-	})
-	formTemplate = template.Must(t.Parse(formHtmlTemplate))
-}
-
 type FormSection struct {
 	Title       string
 	Collapsible bool
 	Collapsed   bool
-	Fields      []*Field
+	Fields      *FieldDefinitions
 }
 
 type Form struct {
-	Action       string
-	Method       string
-	WasValidated bool
-	Sections     []*FormSection
+	Action   string
+	Method   string
+	Sections []*FormSection
 }
 
 func (f *Form) HTML() (template.HTML, error) {
@@ -76,43 +46,46 @@ func (f *Form) ParseURLValues(v url.Values) {
 			section.Collapsed = false
 		}
 
-		for _, f := range section.Fields {
-			fieldName := f.GetName()
+		section.Fields.Each(func(fieldIndex int, field Field) {
+			inputField, ok := field.(InputField)
+			if !ok {
+				return
+			}
+			fieldName := inputField.GetName()
 			if fieldName == "" {
-				continue
+				return
 			}
-			if f.Checkbox != nil {
-				if v.Get(fieldName) == "true" {
-					f.Checkbox.Value = "true"
+			urlValueForField := v.Get(fieldName)
+			if inputField.GetKind() == FieldKindCheckboxInput {
+				if urlValueForField == "true" {
+					inputField.SetValue("true")
 				} else {
-					f.Checkbox.Value = "false"
+					inputField.SetValue("false")
 				}
-			} else if v.Has(fieldName) {
-				f.SetValue(v.Get(fieldName))
+			} else {
+				inputField.SetValue(urlValueForField)
 			}
-		}
+		})
 	}
 }
 
 func (f *Form) SetErrors(errors validation.ErrorList) {
-	if len(errors) > 0 {
-		f.WasValidated = true
-	}
-	errsPerField := make(map[string][]*validation.Error)
+	errsPerField := make(map[string][]string)
 	for _, err := range errors {
-		errsPerField[err.Field] = append(errsPerField[err.Field], err)
+		errsPerField[err.Field] = append(errsPerField[err.Field], err.ErrorBody())
 	}
 	for _, s := range f.Sections {
-		for _, f := range s.Fields {
-			var errStrings []string
-			if errs, ok := errsPerField[f.GetName()]; ok {
-				for _, err := range errs {
-					s.Collapsed = false
-					errStrings = append(errStrings, err.ErrorBody())
-				}
+		s.Fields.Each(func(fieldIndex int, field Field) {
+			inputField, ok := field.(InputField)
+			if !ok {
+				return
 			}
-			f.SetErrors(errStrings)
-		}
+			fieldName := inputField.GetName()
+			if fieldName == "" {
+				return
+			}
+			inputField.SetErrors(errsPerField[fieldName])
+		})
 	}
 }
 
@@ -124,24 +97,29 @@ func (f *Form) Into(i interface{}) error {
 	var allErrs validation.ErrorList
 
 	for _, s := range f.Sections {
-		for _, f := range s.Fields {
-			name := f.GetName()
+		s.Fields.Each(func(fieldIndex int, field Field) {
+			inputField, ok := field.(InputField)
+			if !ok {
+				return
+			}
+			name := inputField.GetName()
 			if name == "" {
-				continue
+				return
 			}
 			structField, ok := structFieldsByName[name]
 			if !ok {
-				return fmt.Errorf("form field %q not found in struct %T", name, i)
+				allErrs = append(allErrs, validation.NotFound(nil, name))
+				return
 			}
 			reflectFieldValue := reflectValue.Elem().FieldByName(structField.Name)
 			isPtrValue := reflectFieldValue.Kind() == reflect.Ptr
-			actualValue, validationErrors := parseFieldValue(f)
+			actualValue, validationErrors := parseFieldValue(inputField)
 			allErrs = append(allErrs, validationErrors...)
 			if len(validationErrors) > 0 {
-				continue
+				return
 			}
 			if actualValue == nil {
-				continue
+				return
 			}
 			if isPtrValue {
 				ptrValue := reflect.New(reflectFieldValue.Type().Elem())
@@ -149,7 +127,7 @@ func (f *Form) Into(i interface{}) error {
 				actualValue = &ptrValue
 			}
 			reflectFieldValue.Set(*actualValue)
-		}
+		})
 	}
 	if len(allErrs) > 0 {
 		return allErrs.ToAggregate()
@@ -175,49 +153,50 @@ func computeStructFields(i interface{}) map[string]reflect.StructField {
 	return structFieldsByName
 }
 
-func parseFieldValue(f *Field) (*reflect.Value, validation.ErrorList) {
+func parseFieldValue(inputField InputField) (*reflect.Value, validation.ErrorList) {
 	var actualValue reflect.Value
-	switch {
-	case f.Checkbox != nil:
-		boolValue := f.Checkbox.Value == "true"
+	fieldValue := inputField.GetValue()
+	fieldName := inputField.GetName()
+
+	switch inputField.GetKind() {
+	case FieldKindCheckboxInput:
+		boolValue := fieldValue == "true"
 		actualValue = reflect.ValueOf(boolValue)
-	case f.Date != nil:
+	case FieldKindDateInput:
 		var dateValue time.Time
-		if f.Date.Value == "" {
+		if fieldValue == "" {
 			return nil, nil
 		}
-		dateValue, err := time.Parse("2006-01-02", f.Date.Value)
+		dateValue, err := time.Parse("2006-01-02", fieldValue)
 		if err != nil {
 			return nil, validation.ErrorList{
 				validation.Invalid(
-					validation.NewPath(f.Date.Name),
-					f.Date.Value,
+					validation.NewPath(fieldName),
+					fieldValue,
 					fmt.Sprintf("invalid date: %v", err)),
 			}
 		}
 		actualValue = reflect.ValueOf(dateValue)
-	case f.Text != nil ||
-		f.MultilineText != nil ||
-		f.IDField != nil ||
-		f.Select != nil:
-		actualValue = reflect.ValueOf(f.GetValue())
-	case f.Number != nil:
-		intValue, err := strconv.Atoi(f.Number.Value)
+	case FieldKindTextInput | FieldKindTextarea | FieldKindID | FieldKindSelect:
+		actualValue = reflect.ValueOf(fieldValue)
+	case FieldKindNumberInput:
+		intValue, err := strconv.Atoi(fieldValue)
 		if err != nil {
 			return nil, validation.ErrorList{
 				validation.Invalid(
-					validation.NewPath(f.Number.Name),
-					f.Number.Value,
-					fmt.Sprintf("unable to convert %q to int", f.Number.Value)),
+					validation.NewPath(fieldName),
+					fieldValue,
+					fmt.Sprintf("unable to convert %q to int", fieldValue)),
 			}
 		}
 		actualValue = reflect.ValueOf(intValue)
 	default:
 		return nil, validation.ErrorList{
 			validation.InternalError(
-				validation.NewPath(f.GetName()),
+				validation.NewPath(fieldName),
 				errors.New("unknown field type")),
 		}
 	}
+
 	return &actualValue, nil
 }

@@ -37,29 +37,23 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 		birthDate = i.BirthDate.Format("2006-01-02")
 	}
 
-	idField := &forms.Field{
-		IDField: &forms.IDField{
-			Name:        "id",
-			DisplayName: "ID",
-			Value:       i.ID,
-			QRCodeURL:   path.Join("/countries", i.CountryID, "individuals", i.ID),
-		},
+	idField := &forms.IDField{
+		Name:        "id",
+		DisplayName: "ID",
+		Value:       i.ID,
+		QRCodeURL:   path.Join("/countries", i.CountryID, "individuals", i.ID),
 	}
 
-	fullNameField := &forms.Field{
-		Text: &forms.TextInputField{
-			Name:        "fullName",
-			DisplayName: "Full Name",
-			Value:       i.FullName,
-		},
+	fullNameField := &forms.TextInputField{
+		Name:        "fullName",
+		DisplayName: "Full Name",
+		Value:       i.FullName,
 	}
 
-	preferredNameField := &forms.Field{
-		Text: &forms.TextInputField{
-			Name:        "preferredName",
-			DisplayName: "Preferred Name",
-			Value:       i.PreferredName,
-		},
+	preferredNameField := &forms.TextInputField{
+		Name:        "preferredName",
+		DisplayName: "Preferred Name",
+		Value:       i.PreferredName,
 	}
 
 	genderOptions := []forms.SelectInputFieldOption{
@@ -87,30 +81,24 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 		}, genderOptions...)
 	}
 
-	genderField := &forms.Field{
-		Select: &forms.SelectInputField{
-			Name:        "gender",
-			DisplayName: "Gender",
-			Value:       i.Gender,
-			Required:    true,
-			Options:     genderOptions,
-		},
+	genderField := &forms.SelectInputField{
+		Name:        "gender",
+		DisplayName: "Gender",
+		Value:       i.Gender,
+		Required:    true,
+		Options:     genderOptions,
 	}
 
-	birthDateField := &forms.Field{
-		Date: &forms.DateInputField{
-			Name:        "birthDate",
-			DisplayName: "Birth Date",
-			Value:       birthDate,
-		},
+	birthDateField := &forms.DateInputField{
+		Name:        "birthDate",
+		DisplayName: "Birth Date",
+		Value:       birthDate,
 	}
 
-	isMinorField := &forms.Field{
-		Checkbox: &forms.CheckboxInputField{
-			Name:        "isMinor",
-			DisplayName: "Is Minor",
-			Value:       strconv.FormatBool(i.IsMinor),
-		},
+	isMinorField := &forms.CheckboxInputField{
+		Name:        "isMinor",
+		DisplayName: "Is Minor",
+		Value:       strconv.FormatBool(i.IsMinor),
 	}
 
 	displacementStatusOptions := []forms.SelectInputFieldOption{
@@ -135,105 +123,89 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 		}, displacementStatusOptions...)
 	}
 
-	displacementStatusField := &forms.Field{
-		Select: &forms.SelectInputField{
-			Options:     displacementStatusOptions,
-			Name:        "displacementStatus",
-			DisplayName: "Displacement Status",
-			Value:       i.DisplacementStatus,
-		},
+	displacementStatusField := &forms.SelectInputField{
+		Options:     displacementStatusOptions,
+		Name:        "displacementStatus",
+		DisplayName: "Displacement Status",
+		Value:       i.DisplacementStatus,
 	}
 
-	emailField := &forms.Field{
-		Text: &forms.TextInputField{
-			Name:        "email",
-			DisplayName: "Email",
-			Value:       i.Email,
-			Required:    true,
-		},
+	emailField := &forms.TextInputField{
+		Name:        "email",
+		DisplayName: "Email",
+		Value:       i.Email,
+		Required:    true,
 	}
 
-	phoneNumberField := &forms.Field{
-		Text: &forms.TextInputField{
-			Name:        "phoneNumber",
-			DisplayName: "Phone",
-			Value:       i.PhoneNumber,
-		},
+	phoneNumberField := &forms.TextInputField{
+		Name:        "phoneNumber",
+		DisplayName: "Phone",
+		Value:       i.PhoneNumber,
 	}
 
-	addressField := &forms.Field{
-		MultilineText: &forms.MultilineTextInputField{
-			Name:        "address",
-			DisplayName: "Address",
-			Value:       i.Address,
-		},
+	addressField := &forms.TextAreaInputField{
+		Name:        "address",
+		DisplayName: "Address",
+		Value:       i.Address,
 	}
 
-	presentsProtectionConcernsField := &forms.Field{
-		Checkbox: &forms.CheckboxInputField{
-			Name:        "presentsProtectionConcerns",
-			DisplayName: "Presents Protection Concerns",
-			Value:       strconv.FormatBool(i.PresentsProtectionConcerns),
-		},
+	presentsProtectionConcernsField := &forms.CheckboxInputField{
+		Name:        "presentsProtectionConcerns",
+		DisplayName: "Presents Protection Concerns",
+		Value:       strconv.FormatBool(i.PresentsProtectionConcerns),
 	}
 
-	physicalImpairmentField := &forms.Field{
-		Select: &forms.SelectInputField{
-			Name:        "physicalImpairment",
-			DisplayName: "Physical Impairment",
-			Value:       i.PhysicalImpairment,
-			Options:     impairmentOptions,
-		},
+	physicalImpairmentField := &forms.SelectInputField{
+		Name:        "physicalImpairment",
+		DisplayName: "Physical Impairment",
+		Value:       i.PhysicalImpairment,
+		Options:     impairmentOptions,
 	}
 
-	mentalImpairmentField := &forms.Field{
-		Select: &forms.SelectInputField{
-			Name:        "mentalImpairment",
-			DisplayName: "Mental Impairment",
-			Value:       i.MentalImpairment,
-			Required:    false,
-			Options:     impairmentOptions,
-		},
+	mentalImpairmentField := &forms.SelectInputField{
+		Name:        "mentalImpairment",
+		DisplayName: "Mental Impairment",
+		Value:       i.MentalImpairment,
+		Required:    false,
+		Options:     impairmentOptions,
 	}
 
-	sensoryImpairmentField := &forms.Field{
-		Select: &forms.SelectInputField{
-			Name:        "sensoryImpairment",
-			DisplayName: "Sensory Impairment",
-			Value:       i.SensoryImpairment,
-			Required:    false,
-			Options:     impairmentOptions,
-		},
+	sensoryImpairmentField := &forms.SelectInputField{
+		Name:        "sensoryImpairment",
+		DisplayName: "Sensory Impairment",
+		Value:       i.SensoryImpairment,
+		Required:    false,
+		Options:     impairmentOptions,
 	}
 
-	personalInfoFields := []*forms.Field{
+	personalInfoFields := forms.NewFieldDefinitions()
+	if !isNew {
+		personalInfoFields.Add(idField)
+	}
+	personalInfoFields.Add(
 		fullNameField,
 		preferredNameField,
 		genderField,
 		birthDateField,
 		isMinorField,
 		displacementStatusField,
-	}
+	)
 
-	if !isNew {
-		personalInfoFields = append([]*forms.Field{idField}, personalInfoFields...)
-	}
-
-	contactInfoFields := []*forms.Field{
+	contactInfoFields := forms.NewFieldDefinitions(
 		emailField,
 		phoneNumberField,
 		addressField,
-	}
+	)
 
-	protectionFields := []*forms.Field{
+	protectionFields := forms.NewFieldDefinitions(
 		presentsProtectionConcernsField,
-	}
+	)
 
-	disabilityFields := []*forms.Field{
+	disabilityFields := forms.NewFieldDefinitions(
 		physicalImpairmentField,
 		mentalImpairmentField,
 		sensoryImpairmentField,
-	}
+	)
 
 	personalInfoSection := &forms.FormSection{
 		Title:  "Personal Information",

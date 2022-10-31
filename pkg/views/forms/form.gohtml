@@ -181,8 +181,8 @@
     {{else if $field.Checkbox}}
         {{$args := dict "Field" $field.Checkbox "FieldIndex" $fieldIndex "Form" $form "Section" $section "SectionIndex" $sectionIndex}}
         {{template "checkboxField" $args}}
-    {{else if $field.MultilineText}}
-        {{$args := dict "Field" $field.MultilineText "FieldIndex" $fieldIndex "Form" $form "Section" $section "SectionIndex" $sectionIndex}}
+    {{else if $field.TextArea}}
+        {{$args := dict "Field" $field.TextArea "FieldIndex" $fieldIndex "Form" $form "Section" $section "SectionIndex" $sectionIndex}}
         {{template "multilineTextField" $args}}
     {{end}}
 {{end}}
@@ -250,6 +250,7 @@
 {{end}}
 
 {{define "form"}}
+    <!--suppress CssUnusedSymbol -->
     <style>
         .card-header {
             text-decoration: none;
