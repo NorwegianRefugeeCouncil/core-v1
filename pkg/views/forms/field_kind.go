@@ -25,3 +25,21 @@ const (
 	// FieldKindHiddenInput is the kind of field that represents a hidden input.
 	FieldKindHiddenInput
 )
+
+func AllFieldKinds() []FieldKind {
+	numFieldKinds := len(_FieldKind_index) - 1
+	fieldKinds := make([]FieldKind, numFieldKinds)
+	for i := 0; i < numFieldKinds; i++ {
+		fieldKinds[i] = FieldKind(i)
+	}
+	return fieldKinds
+}
+
+func KnownFieldKinds() []FieldKind {
+	numFieldKinds := len(_FieldKind_index) - 2
+	fieldKinds := make([]FieldKind, numFieldKinds)
+	for i := 1; i <= numFieldKinds; i++ {
+		fieldKinds[i-1] = FieldKind(i)
+	}
+	return fieldKinds
+}

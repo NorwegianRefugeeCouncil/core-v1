@@ -177,9 +177,12 @@ func parseFieldValue(inputField InputField) (*reflect.Value, validation.ErrorLis
 			}
 		}
 		actualValue = reflect.ValueOf(dateValue)
-	case FieldKindTextInput | FieldKindTextarea | FieldKindID | FieldKindSelect:
+	case FieldKindTextInput, FieldKindTextarea, FieldKindID, FieldKindSelect:
 		actualValue = reflect.ValueOf(fieldValue)
 	case FieldKindNumberInput:
+		if fieldValue == "" {
+			return nil, nil
+		}
 		intValue, err := strconv.Atoi(fieldValue)
 		if err != nil {
 			return nil, validation.ErrorList{

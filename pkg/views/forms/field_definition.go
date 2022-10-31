@@ -21,58 +21,29 @@ type FieldDefinition struct {
 	Hidden *HiddenInputField `json:"hidden,omitempty"`
 }
 
-// FieldDefinitions represents a list of field definitions.
-type FieldDefinitions []*FieldDefinition
-
-func NewFieldDefinitions(fields ...Field) *FieldDefinitions {
-	ret := make(FieldDefinitions, 0)
-	ret.Add(fields...)
-	return &ret
-}
-
-// FindField returns the field with the given name or nil if not found.
-func (f *FieldDefinitions) FindField(name string) Field {
-	for _, field := range *f {
-		if field.GetName() == name {
-			return field
-		}
-	}
-	return nil
-}
-
-// Each calls the given function for each field.
-func (f *FieldDefinitions) Each(fn func(int, Field)) {
-	for i, field := range *f {
-		fn(i, field)
-	}
-}
-
-// Add adds a field to field definitions
-func (f *FieldDefinitions) Add(fields ...Field) {
-	for _, field := range fields {
-		field = ensurePtr(field).(Field)
-		switch typ := field.(type) {
-		case *FieldDefinition:
-			*f = append(*f, typ)
-		case *IDField:
-			*f = append(*f, &FieldDefinition{IDField: typ})
-		case *TextInputField:
-			*f = append(*f, &FieldDefinition{Text: typ})
-		case *NumberInputField:
-			*f = append(*f, &FieldDefinition{Number: typ})
-		case *DateInputField:
-			*f = append(*f, &FieldDefinition{Date: typ})
-		case *SelectInputField:
-			*f = append(*f, &FieldDefinition{Select: typ})
-		case *CheckboxInputField:
-			*f = append(*f, &FieldDefinition{Checkbox: typ})
-		case *TextAreaInputField:
-			*f = append(*f, &FieldDefinition{TextArea: typ})
-		case *HiddenInputField:
-			*f = append(*f, &FieldDefinition{Hidden: typ})
-		default:
-			panic("unknown field type")
-		}
+func NewFieldDefinition(field Field) *FieldDefinition {
+	field = ensurePtr(field).(Field)
+	switch typ := field.(type) {
+	case *FieldDefinition:
+		return typ
+	case *IDField:
+		return &FieldDefinition{IDField: typ}
+	case *TextInputField:
+		return &FieldDefinition{Text: typ}
+	case *NumberInputField:
+		return &FieldDefinition{Number: typ}
+	case *DateInputField:
+		return &FieldDefinition{Date: typ}
+	case *SelectInputField:
+		return &FieldDefinition{Select: typ}
+	case *CheckboxInputField:
+		return &FieldDefinition{Checkbox: typ}
+	case *TextAreaInputField:
+		return &FieldDefinition{TextArea: typ}
+	case *HiddenInputField:
+		return &FieldDefinition{Hidden: typ}
+	default:
+		panic("unknown field type")
 	}
 }
 
@@ -139,5 +110,39 @@ func (f *FieldDefinition) getField() Field {
 		return f.Hidden
 	default:
 		panic("unknown field type")
+	}
+}
+
+// FieldDefinitions represents a list of field definitions.
+type FieldDefinitions []*FieldDefinition
+
+func NewFieldDefinitions(fields ...Field) *FieldDefinitions {
+	ret := make(FieldDefinitions, 0)
+	ret.Add(fields...)
+	return &ret
+}
+
+// FindField returns the field with the given name or nil if not found.
+func (f *FieldDefinitions) FindField(name string) Field {
+	for _, field := range *f {
+		if field.GetName() == name {
+			return field
+		}
+	}
+	return nil
+}
+
+// Each calls the given function for each field.
+func (f *FieldDefinitions) Each(fn func(int, Field)) {
+	for i, field := range *f {
+		fn(i, field.getField())
+	}
+}
+
+// Add adds a field to field definitions
+func (f *FieldDefinitions) Add(fields ...Field) {
+	for _, field := range fields {
+		fieldDef := NewFieldDefinition(field)
+		*f = append(*f, fieldDef)
 	}
 }

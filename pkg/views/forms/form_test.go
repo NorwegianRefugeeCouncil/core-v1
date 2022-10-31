@@ -199,6 +199,9 @@ func TestFormInto(t *testing.T) {
 			if tt.wantErr {
 				assert.Error(t, err)
 			} else {
+				if !assert.NoError(t, err) {
+					return
+				}
 				assert.Equal(t, tt.want, ds)
 			}
 		})
