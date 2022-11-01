@@ -95,6 +95,8 @@ the `/deploy/oidc-users.json` file.
 
 # Changing the form field
 
+View documentation on field types [Form Fields](pkg/views/forms/README.md)
+
 **WARNING: This is potentially incomplete**
 
 ## Database
