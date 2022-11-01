@@ -224,14 +224,11 @@ func (o GetAllOptions) QueryParams() template.HTML {
 	} else if o.IsNotPresentsProtectionConcernsSelected() {
 		params.Add("presents_protection_concerns", "false")
 	}
-	if len(o.CountryID) != 0 {
-		params.Add("country_id", o.CountryID)
-	}
 	if len(o.DisplacementStatuses) != 0 {
 		params.Add("displacement_status", strings.Join(o.DisplacementStatuses, ","))
 	}
 	u := url.URL{
-		Path: "/individuals",
+		Path: "/countries/" + o.CountryID + "/individuals",
 	}
 	u.RawQuery = params.Encode()
 	return template.HTML(u.String())

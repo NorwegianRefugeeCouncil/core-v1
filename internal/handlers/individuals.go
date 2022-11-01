@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -17,7 +16,6 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 	const (
 		templateName         = "individuals.gohtml"
-		viewParamCurrentUrl  = "CurrentUrl"
 		viewParamIndividuals = "Individuals"
 		viewParamOptions     = "Options"
 	)
@@ -42,7 +40,6 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 		render := func() {
 			renderer.RenderView(w, r, templateName, map[string]interface{}{
-				viewParamCurrentUrl:  fmt.Sprintf("/countries/%s/individuals", selectedCountryID),
 				viewParamIndividuals: individuals,
 				viewParamOptions:     getAllOptions,
 			})
