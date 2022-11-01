@@ -47,6 +47,14 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			return
 		}
 
+		// Get the currently selected Country ID
+		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
+		if err != nil {
+			l.Error("failed to get selected country id", zap.Error(err))
+			http.Error(w, "internal server error", http.StatusInternalServerError)
+			return
+		}
+
 		if !isNew {
 			if individual, err = repo.GetByID(ctx, individualId); err != nil {
 				l.Error("failed to get individual", zap.Error(err))
@@ -54,18 +62,15 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 				render()
 				return
 			}
+
+			if individual.CountryID != selectedCountryID {
+				l.Error("individual does not belong to selected country", zap.Error(err))
+				http.Error(w, "individual does not belong to selected country", http.StatusForbidden)
+				return
+			}
 		}
 
 		individualForm = views.NewIndividualForm(individual)
-
-		// Get the currently selected Country ID
-		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
-		if err != nil {
-			l.Error("failed to get selected country id", zap.Error(err))
-			err = apierrs.ErrorFrom(err)
-			render()
-			return
-		}
 
 		// Render the form if GET
 		if r.Method == http.MethodGet {
