@@ -53,6 +53,14 @@ func HandleIndividualsDelete(repo db.IndividualRepo) http.Handler {
 			return
 		}
 
+		for _, individual := range individuals {
+			if individual.CountryID != countryID {
+				l.Error("individual does not belong to selected country", zap.String("individual_id", individual.ID), zap.String("country_id", countryID))
+				http.Error(w, fmt.Sprintf("individual %s does not belong to selected country", individual.ID), http.StatusBadRequest)
+				return
+			}
+		}
+
 		if err := repo.SoftDeleteMany(ctx, individualIds); err != nil {
 			l.Error("failed to delete individuals", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
