@@ -76,7 +76,7 @@ func buildRouter(
 		middleware.HasCountryPermission(auth.PermissionWrite),
 	))
 
-	individualRouter := countryRouter.PathPrefix("/{individual_id}").Subrouter()
+	individualRouter := individualsRouter.PathPrefix("/{individual_id}").Subrouter()
 	individualRouter.Path("").Methods(http.MethodGet).Handler(withMiddleware(
 		handlers.HandleIndividual(tpl, individualRepo),
 		middleware.EnsureSelectedCountry(),
