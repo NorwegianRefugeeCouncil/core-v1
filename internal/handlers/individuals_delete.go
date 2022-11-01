@@ -38,7 +38,8 @@ func HandleIndividualsDelete(repo db.IndividualRepo) http.Handler {
 		}
 		individualIds := r.Form[formParamField]
 
-		if err := repo.SoftDeleteMany(ctx, individualIds, countryID); err != nil {
+
+		if err := repo.SoftDeleteMany(ctx, individualIds); err != nil {
 			l.Error("failed to delete individual", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

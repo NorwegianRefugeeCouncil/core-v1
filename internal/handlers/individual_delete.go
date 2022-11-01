@@ -39,7 +39,8 @@ func HandleIndividualDelete(repo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		if err := repo.SoftDelete(ctx, individual.ID, countryID); err != nil {
+
+		if err := repo.SoftDelete(ctx, individual.ID); err != nil {
 			l.Error("failed to delete individual", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
