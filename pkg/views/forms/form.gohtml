@@ -144,7 +144,7 @@
     {{template "inputError" .}}
 {{end}}
 
-{{define "multilineTextField"}}
+{{define "textAreaField"}}
     {{$field := .Field}}
     {{template "inputLabel" .}}
     <textarea class="form-control {{if $field.Errors}}is-invalid{{end}}"
@@ -158,32 +158,21 @@
 {{end}}
 
 {{define "field"}}
-    {{$field := .Field}}
-    {{$fieldIndex := .FieldIndex}}
-    {{$form := .Form}}
-    {{$section := .Section}}
-    {{$sectionIndex := .SectionIndex}}
-    {{if $field.IDField }}
-        {{$args := dict "Field" $field.IDField "FieldIndex" $fieldIndex "Form" $form "Section" $section "SectionIndex" $sectionIndex}}
-        {{template "idField" $args}}
-    {{else if $field.Text}}
-        {{$args := dict "Field" $field.Text "FieldIndex" $fieldIndex "Form" $form "Section" $section "SectionIndex" $sectionIndex}}
-        {{template "textField" $args}}
-    {{else if $field.Number}}
-        {{$args := dict "Field" $field.Number "FieldIndex" $fieldIndex "Form" $form "Section" $section "SectionIndex" $sectionIndex}}
-        {{template "numberField" $args}}
-    {{else if $field.Date}}
-        {{$args := dict "Field" $field.Date "FieldIndex" $fieldIndex "Form" $form "Section" $section "SectionIndex" $sectionIndex}}
-        {{template "dateField" $args}}
-    {{else if $field.Select}}
-        {{$args := dict "Field" $field.Select "FieldIndex" $fieldIndex "Form" $form "Section" $section "SectionIndex" $sectionIndex}}
-        {{template "selectField" $args}}
-    {{else if $field.Checkbox}}
-        {{$args := dict "Field" $field.Checkbox "FieldIndex" $fieldIndex "Form" $form "Section" $section "SectionIndex" $sectionIndex}}
-        {{template "checkboxField" $args}}
-    {{else if $field.TextArea}}
-        {{$args := dict "Field" $field.TextArea "FieldIndex" $fieldIndex "Form" $form "Section" $section "SectionIndex" $sectionIndex}}
-        {{template "multilineTextField" $args}}
+    {{$kind := .Field.GetKind}}
+    {{if eq $kind "id" }}
+        {{template "idField" .}}
+    {{else if eq $kind "text" }}
+        {{template "textField" .}}
+    {{else if eq $kind "number" }}
+        {{template "numberField" .}}
+    {{else if eq $kind "date"}}
+        {{template "dateField" .}}
+    {{else if eq $kind "select"}}
+        {{template "selectField" .}}
+    {{else if eq $kind "checkbox"}}
+        {{template "checkboxField" .}}
+    {{else if eq $kind "textarea"}}
+        {{template "textAreaField" .}}
     {{end}}
 {{end}}
 

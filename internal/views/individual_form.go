@@ -178,33 +178,33 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 		Options:     impairmentOptions,
 	}
 
-	personalInfoFields := forms.NewFieldDefinitions(
+	personalInfoFields := []forms.Field{
 		fullNameField,
 		preferredNameField,
 		genderField,
 		birthDateField,
 		isMinorField,
 		displacementStatusField,
-	)
+	}
 	if !isNew {
-		personalInfoFields.Insert(0, idField)
+		personalInfoFields = append([]forms.Field{idField}, personalInfoFields...)
 	}
 
-	contactInfoFields := forms.NewFieldDefinitions(
+	contactInfoFields := []forms.Field{
 		emailField,
 		phoneNumberField,
 		addressField,
-	)
+	}
 
-	protectionFields := forms.NewFieldDefinitions(
+	protectionFields := []forms.Field{
 		presentsProtectionConcernsField,
-	)
+	}
 
-	disabilityFields := forms.NewFieldDefinitions(
+	disabilityFields := []forms.Field{
 		physicalImpairmentField,
 		mentalImpairmentField,
 		sensoryImpairmentField,
-	)
+	}
 
 	personalInfoSection := &forms.FormSection{
 		Title:  "Personal Information",

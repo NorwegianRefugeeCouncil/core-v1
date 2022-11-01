@@ -16,6 +16,8 @@ type IDField struct {
 	Help string `json:"help"`
 	// Errors are the errors of the field.
 	Errors []string `json:"errors"`
+	// Codec is the codec of the field.
+	Codec Codec `json:"-"`
 }
 
 // Ensure IDField implements InputField
@@ -26,14 +28,30 @@ func (f *IDField) GetName() string {
 	return f.Name
 }
 
-// GetValue implements FieldDefinition.GetValue
-func (f *IDField) GetValue() string {
+// GetStringValue implements FieldDefinition.GetStringValue
+func (f *IDField) GetStringValue() string {
 	return f.Value
 }
 
-// SetValue implements FieldDefinition.SetValue
-func (f *IDField) SetValue(value string) {
+// SetStringValue implements FieldDefinition.SetStringValue
+func (f *IDField) SetStringValue(value string) {
 	f.Value = value
+}
+
+// GetValue implements InputField.GetValue
+func (f *IDField) GetValue() (interface{}, error) {
+	return f.getCodecOrDefault().Decode(f.Value)
+}
+
+// SetValue implements InputField.SetValue
+func (f *IDField) SetValue(value interface{}) error {
+	codec := f.getCodecOrDefault()
+	val, err := codec.Encode(value)
+	if err != nil {
+		return err
+	}
+	f.Value = val
+	return nil
 }
 
 // SetErrors implements FieldDefinition.SetErrors
@@ -54,4 +72,12 @@ func (f *IDField) GetErrors() []string {
 // GetKind implements FieldDefinition.GetKind
 func (f *IDField) GetKind() FieldKind {
 	return FieldKindID
+}
+
+func (f *IDField) getCodecOrDefault() Codec {
+	codec := f.Codec
+	if codec == nil {
+		codec = &StringCodec{}
+	}
+	return codec
 }

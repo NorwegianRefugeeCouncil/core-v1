@@ -1,45 +1,68 @@
 package forms
 
-//go:generate stringer -type=FieldKind
+import "fmt"
 
 // FieldKind represents the kind of field.
-type FieldKind uint8
+type FieldKind string
+
+var knownFieldKinds = map[FieldKind]struct{}{}
+
+func RegisterFieldKind(fieldKind FieldKind) {
+	if _, ok := knownFieldKinds[fieldKind]; ok {
+		panic(fmt.Sprintf("field kind %s is already registered", fieldKind))
+	}
+	knownFieldKinds[fieldKind] = struct{}{}
+}
+
+func init() {
+	RegisterFieldKind(FieldKindCheckboxInput)
+	RegisterFieldKind(FieldKindDateInput)
+	RegisterFieldKind(FieldKindHiddenInput)
+	RegisterFieldKind(FieldKindID)
+	RegisterFieldKind(FieldKindNumberInput)
+	RegisterFieldKind(FieldKindSelect)
+	RegisterFieldKind(FieldKindTextInput)
+	RegisterFieldKind(FieldKindTextarea)
+	RegisterFieldKind(FieldKindUnknown)
+}
 
 const (
 	// FieldKindUnknown is the default value for a field kind.
-	FieldKindUnknown FieldKind = iota
-	// FieldKindID is the kind of field that represents an ID.
-	FieldKindID
-	// FieldKindTextInput is the kind of field that represents a text input.
-	FieldKindTextInput
-	// FieldKindNumberInput is the kind of field that represents a number input.
-	FieldKindNumberInput
-	// FieldKindDateInput is the kind of field that represents a date input.
-	FieldKindDateInput
-	// FieldKindSelect is the kind of field that represents a select input.
-	FieldKindSelect
+	FieldKindUnknown FieldKind = "unknown"
+
 	// FieldKindCheckboxInput is the kind of field that represents a checkbox input.
-	FieldKindCheckboxInput
-	// FieldKindTextarea is the kind of field that represents a textarea input.
-	FieldKindTextarea
+	FieldKindCheckboxInput FieldKind = "checkbox"
+	// FieldKindDateInput is the kind of field that represents a date input.
+	FieldKindDateInput FieldKind = "date"
 	// FieldKindHiddenInput is the kind of field that represents a hidden input.
-	FieldKindHiddenInput
+	FieldKindHiddenInput FieldKind = "hidden"
+	// FieldKindID is the kind of field that represents an ID.
+	FieldKindID FieldKind = "id"
+	// FieldKindNumberInput is the kind of field that represents a number input.
+	FieldKindNumberInput FieldKind = "number"
+	// FieldKindSelect is the kind of field that represents a select input.
+	FieldKindSelect FieldKind = "select"
+	// FieldKindTextInput is the kind of field that represents a text input.
+	FieldKindTextInput FieldKind = "text"
+	// FieldKindTextarea is the kind of field that represents a textarea input.
+	FieldKindTextarea FieldKind = "textarea"
 )
 
 func AllFieldKinds() []FieldKind {
-	numFieldKinds := len(_FieldKind_index) - 1
-	fieldKinds := make([]FieldKind, numFieldKinds)
-	for i := 0; i < numFieldKinds; i++ {
-		fieldKinds[i] = FieldKind(i)
+	ret := make([]FieldKind, 0, len(knownFieldKinds)-1)
+	for k := range knownFieldKinds {
+		ret = append(ret, k)
 	}
-	return fieldKinds
+	return ret
 }
 
 func KnownFieldKinds() []FieldKind {
-	numFieldKinds := len(_FieldKind_index) - 2
-	fieldKinds := make([]FieldKind, numFieldKinds)
-	for i := 1; i <= numFieldKinds; i++ {
-		fieldKinds[i-1] = FieldKind(i)
+	ret := make([]FieldKind, 0, len(knownFieldKinds))
+	for k := range knownFieldKinds {
+		if k == FieldKindUnknown {
+			continue
+		}
+		ret = append(ret, k)
 	}
-	return fieldKinds
+	return ret
 }

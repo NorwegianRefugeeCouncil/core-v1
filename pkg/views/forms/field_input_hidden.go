@@ -6,6 +6,8 @@ type HiddenInputField struct {
 	Name string `json:"name"`
 	// Value is the string value of the field.
 	Value string `json:"value"`
+	// Codec is the codec of the field.
+	Codec Codec `json:"-"`
 }
 
 // Ensure HiddenInputField implements InputField
@@ -16,14 +18,30 @@ func (f *HiddenInputField) GetName() string {
 	return f.Name
 }
 
-// GetValue implements FieldDefinition.GetValue
-func (f *HiddenInputField) GetValue() string {
+// GetStringValue implements FieldDefinition.GetStringValue
+func (f *HiddenInputField) GetStringValue() string {
 	return f.Value
 }
 
-// SetValue implements FieldDefinition.SetValue
-func (f *HiddenInputField) SetValue(value string) {
+// SetStringValue implements FieldDefinition.SetStringValue
+func (f *HiddenInputField) SetStringValue(value string) {
 	f.Value = value
+}
+
+// GetValue implements InputField.GetValue
+func (f *HiddenInputField) GetValue() (interface{}, error) {
+	return f.getCodecOrDefault().Decode(f.Value)
+}
+
+// SetValue implements InputField.SetValue
+func (f *HiddenInputField) SetValue(value interface{}) error {
+	codec := f.getCodecOrDefault()
+	val, err := codec.Encode(value)
+	if err != nil {
+		return err
+	}
+	f.Value = val
+	return nil
 }
 
 // SetErrors implements FieldDefinition.SetErrors
@@ -44,4 +62,12 @@ func (f *HiddenInputField) GetErrors() []string {
 // GetKind implements FieldDefinition.GetKind
 func (f *HiddenInputField) GetKind() FieldKind {
 	return FieldKindHiddenInput
+}
+
+func (f *HiddenInputField) getCodecOrDefault() Codec {
+	codec := f.Codec
+	if codec == nil {
+		codec = &StringCodec{}
+	}
+	return codec
 }

@@ -16,6 +16,8 @@ type SelectInputField struct {
 	Errors []string `json:"errors"`
 	// Options are the options of the field.
 	Options []SelectInputFieldOption `json:"options"`
+	// Codec is the codec of the field.
+	Codec Codec `json:"-"`
 }
 
 // Ensure SelectInputField implements InputField
@@ -26,14 +28,30 @@ func (f *SelectInputField) GetName() string {
 	return f.Name
 }
 
-// GetValue implements FieldDefinition.GetValue
-func (f *SelectInputField) GetValue() string {
+// GetStringValue implements FieldDefinition.GetStringValue
+func (f *SelectInputField) GetStringValue() string {
 	return f.Value
 }
 
-// SetValue implements FieldDefinition.SetValue
-func (f *SelectInputField) SetValue(value string) {
+// SetStringValue implements FieldDefinition.SetStringValue
+func (f *SelectInputField) SetStringValue(value string) {
 	f.Value = value
+}
+
+// GetValue implements InputField.GetValue
+func (f *SelectInputField) GetValue() (interface{}, error) {
+	return f.getCodecOrDefault().Decode(f.Value)
+}
+
+// SetValue implements InputField.SetValue
+func (f *SelectInputField) SetValue(value interface{}) error {
+	codec := f.getCodecOrDefault()
+	val, err := codec.Encode(value)
+	if err != nil {
+		return err
+	}
+	f.Value = val
+	return nil
 }
 
 // SetErrors implements FieldDefinition.SetErrors
@@ -62,4 +80,12 @@ type SelectInputFieldOption struct {
 	Value string
 	// Label is the label of the option.
 	Label string
+}
+
+func (f *SelectInputField) getCodecOrDefault() Codec {
+	codec := f.Codec
+	if codec == nil {
+		codec = &StringCodec{}
+	}
+	return codec
 }

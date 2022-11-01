@@ -14,6 +14,8 @@ type DateInputField struct {
 	Help string `json:"help"`
 	// Errors are the errors of the field.
 	Errors []string `json:"errors"`
+	// Codec is the codec of the field.
+	Codec Codec `json:"-"`
 }
 
 // Ensure DateInputField implements InputField
@@ -24,14 +26,30 @@ func (f *DateInputField) GetName() string {
 	return f.Name
 }
 
-// GetValue implements FieldDefinition.GetValue
-func (f *DateInputField) GetValue() string {
+// GetStringValue implements FieldDefinition.GetStringValue
+func (f *DateInputField) GetStringValue() string {
 	return f.Value
 }
 
-// SetValue implements FieldDefinition.SetValue
-func (f *DateInputField) SetValue(value string) {
+// SetStringValue implements FieldDefinition.SetStringValue
+func (f *DateInputField) SetStringValue(value string) {
 	f.Value = value
+}
+
+// GetValue implements InputField.GetValue
+func (f *DateInputField) GetValue() (interface{}, error) {
+	return f.getCodecOrDefault().Decode(f.Value)
+}
+
+// SetValue implements InputField.SetValue
+func (f *DateInputField) SetValue(value interface{}) error {
+	codec := f.getCodecOrDefault()
+	val, err := codec.Encode(value)
+	if err != nil {
+		return err
+	}
+	f.Value = val
+	return nil
 }
 
 // SetErrors implements FieldDefinition.SetErrors
@@ -54,4 +72,14 @@ func (f *DateInputField) GetErrors() []string {
 // GetKind implements FieldDefinition.GetKind
 func (f *DateInputField) GetKind() FieldKind {
 	return FieldKindDateInput
+}
+
+func (f *DateInputField) getCodecOrDefault() Codec {
+	codec := f.Codec
+	if codec == nil {
+		codec = &TimeCodec{
+			format: "2006-01-02",
+		}
+	}
+	return codec
 }

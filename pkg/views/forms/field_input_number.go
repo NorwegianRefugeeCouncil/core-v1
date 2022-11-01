@@ -14,6 +14,8 @@ type NumberInputField struct {
 	Help string `json:"help"`
 	// Errors are the errors of the field.
 	Errors []string `json:"errors"`
+	// Codec is the codec of the field.
+	Codec Codec `json:"-"`
 }
 
 // Ensure NumberInputField implements InputField
@@ -24,14 +26,30 @@ func (f *NumberInputField) GetName() string {
 	return f.Name
 }
 
-// GetValue implements FieldDefinition.GetValue
-func (f *NumberInputField) GetValue() string {
+// GetStringValue implements FieldDefinition.GetStringValue
+func (f *NumberInputField) GetStringValue() string {
 	return f.Value
 }
 
-// SetValue implements FieldDefinition.SetValue
-func (f *NumberInputField) SetValue(value string) {
+// SetStringValue implements FieldDefinition.SetStringValue
+func (f *NumberInputField) SetStringValue(value string) {
 	f.Value = value
+}
+
+// GetValue implements InputField.GetValue
+func (f *NumberInputField) GetValue() (interface{}, error) {
+	return f.getCodecOrDefault().Decode(f.Value)
+}
+
+// SetValue implements InputField.SetValue
+func (f *NumberInputField) SetValue(value interface{}) error {
+	codec := f.getCodecOrDefault()
+	val, err := codec.Encode(value)
+	if err != nil {
+		return err
+	}
+	f.Value = val
+	return nil
 }
 
 // SetErrors implements FieldDefinition.SetErrors
@@ -52,4 +70,12 @@ func (f *NumberInputField) GetErrors() []string {
 // GetKind implements FieldDefinition.GetKind
 func (f *NumberInputField) GetKind() FieldKind {
 	return FieldKindNumberInput
+}
+
+func (f *NumberInputField) getCodecOrDefault() Codec {
+	codec := f.Codec
+	if codec == nil {
+		codec = &IntCodec{}
+	}
+	return codec
 }

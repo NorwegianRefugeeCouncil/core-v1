@@ -2,14 +2,11 @@ package forms
 
 import (
 	"bytes"
-	"errors"
-	"fmt"
 	"html/template"
 	"net/url"
 	"reflect"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/nrc-no/notcore/pkg/api/validation"
 )
@@ -18,7 +15,7 @@ type FormSection struct {
 	Title       string
 	Collapsible bool
 	Collapsed   bool
-	Fields      *FieldDefinitions
+	Fields      []Field
 }
 
 type Form struct {
@@ -46,7 +43,7 @@ func (f *Form) ParseURLValues(v url.Values) {
 			section.Collapsed = false
 		}
 
-		section.Fields.Each(func(fieldIndex int, field Field) {
+		for _, field := range section.Fields {
 			inputField, ok := field.(InputField)
 			if !ok {
 				return
@@ -56,16 +53,8 @@ func (f *Form) ParseURLValues(v url.Values) {
 				return
 			}
 			urlValueForField := v.Get(fieldName)
-			if inputField.GetKind() == FieldKindCheckboxInput {
-				if urlValueForField == "true" {
-					inputField.SetValue("true")
-				} else {
-					inputField.SetValue("false")
-				}
-			} else {
-				inputField.SetValue(urlValueForField)
-			}
-		})
+			inputField.SetStringValue(urlValueForField)
+		}
 	}
 }
 
@@ -74,8 +63,8 @@ func (f *Form) SetErrors(errors validation.ErrorList) {
 	for _, err := range errors {
 		errsPerField[err.Field] = append(errsPerField[err.Field], err.ErrorBody())
 	}
-	for _, s := range f.Sections {
-		s.Fields.Each(func(fieldIndex int, field Field) {
+	for _, section := range f.Sections {
+		for _, field := range section.Fields {
 			inputField, ok := field.(InputField)
 			if !ok {
 				return
@@ -85,7 +74,7 @@ func (f *Form) SetErrors(errors validation.ErrorList) {
 				return
 			}
 			inputField.SetErrors(errsPerField[fieldName])
-		})
+		}
 	}
 }
 
@@ -97,37 +86,39 @@ func (f *Form) Into(i interface{}) error {
 	var allErrs validation.ErrorList
 
 	for _, s := range f.Sections {
-		s.Fields.Each(func(fieldIndex int, field Field) {
+		for _, field := range s.Fields {
 			inputField, ok := field.(InputField)
 			if !ok {
-				return
+				continue
 			}
 			name := inputField.GetName()
 			if name == "" {
-				return
+				continue
 			}
 			structField, ok := structFieldsByName[name]
 			if !ok {
 				allErrs = append(allErrs, validation.NotFound(nil, name))
-				return
+				continue
 			}
-			reflectFieldValue := reflectValue.Elem().FieldByName(structField.Name)
-			isPtrValue := reflectFieldValue.Kind() == reflect.Ptr
-			actualValue, validationErrors := parseFieldValue(inputField)
-			allErrs = append(allErrs, validationErrors...)
-			if len(validationErrors) > 0 {
-				return
+			propValue := reflectValue.Elem().FieldByName(structField.Name)
+			propIsPointer := propValue.Kind() == reflect.Ptr
+
+			v, err := inputField.GetValue()
+			if err != nil {
+				allErrs = append(allErrs, validation.Invalid(nil, name, err.Error()))
+				continue
 			}
-			if actualValue == nil {
-				return
+			fieldValue := reflect.ValueOf(v)
+			fieldValueIsPointer := fieldValue.Kind() == reflect.Ptr
+			if propIsPointer && !fieldValueIsPointer {
+				ptrValue := reflect.New(propValue.Type().Elem())
+				ptrValue.Elem().Set(fieldValue)
+				fieldValue = ptrValue
+			} else if !propIsPointer && fieldValueIsPointer {
+				fieldValue = fieldValue.Elem()
 			}
-			if isPtrValue {
-				ptrValue := reflect.New(reflectFieldValue.Type().Elem())
-				ptrValue.Elem().Set(*actualValue)
-				actualValue = &ptrValue
-			}
-			reflectFieldValue.Set(*actualValue)
-		})
+			propValue.Set(fieldValue)
+		}
 	}
 	if len(allErrs) > 0 {
 		return allErrs.ToAggregate()
@@ -151,55 +142,4 @@ func computeStructFields(i interface{}) map[string]reflect.StructField {
 		structFieldsByName[fieldName] = field
 	}
 	return structFieldsByName
-}
-
-func parseFieldValue(inputField InputField) (*reflect.Value, validation.ErrorList) {
-	var actualValue reflect.Value
-	fieldValue := inputField.GetValue()
-	fieldName := inputField.GetName()
-
-	switch inputField.GetKind() {
-	case FieldKindCheckboxInput:
-		boolValue := fieldValue == "true"
-		actualValue = reflect.ValueOf(boolValue)
-	case FieldKindDateInput:
-		var dateValue time.Time
-		if fieldValue == "" {
-			return nil, nil
-		}
-		dateValue, err := time.Parse("2006-01-02", fieldValue)
-		if err != nil {
-			return nil, validation.ErrorList{
-				validation.Invalid(
-					validation.NewPath(fieldName),
-					fieldValue,
-					fmt.Sprintf("invalid date: %v", err)),
-			}
-		}
-		actualValue = reflect.ValueOf(dateValue)
-	case FieldKindTextInput, FieldKindTextarea, FieldKindID, FieldKindSelect:
-		actualValue = reflect.ValueOf(fieldValue)
-	case FieldKindNumberInput:
-		if fieldValue == "" {
-			return nil, nil
-		}
-		intValue, err := strconv.Atoi(fieldValue)
-		if err != nil {
-			return nil, validation.ErrorList{
-				validation.Invalid(
-					validation.NewPath(fieldName),
-					fieldValue,
-					fmt.Sprintf("unable to convert %q to int", fieldValue)),
-			}
-		}
-		actualValue = reflect.ValueOf(intValue)
-	default:
-		return nil, validation.ErrorList{
-			validation.InternalError(
-				validation.NewPath(fieldName),
-				errors.New("unknown field type")),
-		}
-	}
-
-	return &actualValue, nil
 }

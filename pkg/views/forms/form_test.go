@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/nrc-no/notcore/internal/utils/pointers"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -27,7 +28,7 @@ func formWithFields(fields ...Field) *Form {
 	return &Form{
 		Sections: []*FormSection{
 			{
-				Fields: NewFieldDefinitions(fields...),
+				Fields: fields,
 			},
 		},
 	}
@@ -73,19 +74,6 @@ func selectField(name, value string, options []SelectInputFieldOption) *SelectIn
 
 func TestFormInto(t *testing.T) {
 
-	strPtr := func(s string) *string {
-		return &s
-	}
-	boolPtr := func(b bool) *bool {
-		return &b
-	}
-	timePtr := func(t time.Time) *time.Time {
-		return &t
-	}
-	intPtr := func(i int) *int {
-		return &i
-	}
-
 	selectFieldOptions := []SelectInputFieldOption{
 		{Value: "foo", Label: "Foo"},
 		{Value: "bar", Label: "Bar"},
@@ -104,11 +92,11 @@ func TestFormInto(t *testing.T) {
 		}, {
 			name: "textField_pointer",
 			form: formWithFields(textField("textFieldPtr", "foo")),
-			want: DummyStruct{TextFieldPtr: strPtr("foo")},
+			want: DummyStruct{TextFieldPtr: pointers.String("foo")},
 		}, {
 			name: "textField_pointer_empty",
 			form: formWithFields(textField("textFieldPtr", "")),
-			want: DummyStruct{TextFieldPtr: strPtr("")},
+			want: DummyStruct{TextFieldPtr: pointers.String("")},
 		}, {
 			name: "numberField",
 			form: formWithFields(numberField("numberField", "123")),
@@ -116,7 +104,7 @@ func TestFormInto(t *testing.T) {
 		}, {
 			name: "numberField_pointer",
 			form: formWithFields(numberField("numberFieldPtr", "123")),
-			want: DummyStruct{NumberFieldPtr: intPtr(123)},
+			want: DummyStruct{NumberFieldPtr: pointers.Int(123)},
 		}, {
 			name:    "numberField_invalid",
 			form:    formWithFields(numberField("numberField", "abc")),
@@ -136,11 +124,11 @@ func TestFormInto(t *testing.T) {
 		}, {
 			name: "textAreaField_pointer",
 			form: formWithFields(textAreaField("textAreaFieldPtr", "abc\ndef")),
-			want: DummyStruct{TextAreaFieldPtr: strPtr("abc\ndef")},
+			want: DummyStruct{TextAreaFieldPtr: pointers.String("abc\ndef")},
 		}, {
 			name: "textAreaField_pointer_empty",
 			form: formWithFields(textAreaField("textAreaFieldPtr", "")),
-			want: DummyStruct{TextAreaFieldPtr: strPtr("")},
+			want: DummyStruct{TextAreaFieldPtr: pointers.String("")},
 		}, {
 			name: "checkboxField",
 			form: formWithFields(checkboxField("checkboxField", "true")),
@@ -148,11 +136,11 @@ func TestFormInto(t *testing.T) {
 		}, {
 			name: "checkboxField_pointer",
 			form: formWithFields(checkboxField("checkboxFieldPtr", "true")),
-			want: DummyStruct{CheckboxFieldPtr: boolPtr(true)},
+			want: DummyStruct{CheckboxFieldPtr: pointers.Bool(true)},
 		}, {
 			name: "checkboxField_pointer_empty",
 			form: formWithFields(checkboxField("checkboxFieldPtr", "")),
-			want: DummyStruct{CheckboxFieldPtr: boolPtr(false)},
+			want: DummyStruct{CheckboxFieldPtr: (*bool)(nil)},
 		}, {
 			name: "dateField",
 			form: formWithFields(dateField("dateField", "2020-01-01")),
@@ -160,7 +148,7 @@ func TestFormInto(t *testing.T) {
 		}, {
 			name: "dateField_pointer",
 			form: formWithFields(dateField("dateFieldPtr", "2020-01-01")),
-			want: DummyStruct{DateFieldPtr: timePtr(time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC))},
+			want: DummyStruct{DateFieldPtr: pointers.Time(time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC))},
 		}, {
 			name: "dateField_pointer_empty",
 			form: formWithFields(dateField("dateFieldPtr", "")),
@@ -180,11 +168,11 @@ func TestFormInto(t *testing.T) {
 		}, {
 			name: "selectField_pointer",
 			form: formWithFields(selectField("selectFieldPtr", "foo", selectFieldOptions)),
-			want: DummyStruct{SelectFieldPtr: strPtr("foo")},
+			want: DummyStruct{SelectFieldPtr: pointers.String("foo")},
 		}, {
 			name: "selectField_pointer_empty",
 			form: formWithFields(selectField("selectFieldPtr", "", selectFieldOptions)),
-			want: DummyStruct{SelectFieldPtr: strPtr("")},
+			want: DummyStruct{SelectFieldPtr: pointers.String("")},
 		}, {
 			name:    "unknownField",
 			form:    formWithFields(selectField("invalid", "", selectFieldOptions)),

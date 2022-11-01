@@ -14,6 +14,8 @@ type TextInputField struct {
 	Help string `json:"help"`
 	// Errors are the errors of the field.
 	Errors []string `json:"errors"`
+	// Codec
+	Codec Codec `json:"-"`
 }
 
 // Ensure TextInputField implements InputField
@@ -24,14 +26,30 @@ func (f *TextInputField) GetName() string {
 	return f.Name
 }
 
-// GetValue implements FieldDefinition.GetValue
-func (f *TextInputField) GetValue() string {
+// GetStringValue implements FieldDefinition.GetStringValue
+func (f *TextInputField) GetStringValue() string {
 	return f.Value
 }
 
-// SetValue implements FieldDefinition.SetValue
-func (f *TextInputField) SetValue(value string) {
+// SetStringValue implements FieldDefinition.SetStringValue
+func (f *TextInputField) SetStringValue(value string) {
 	f.Value = value
+}
+
+// GetValue implements InputField.GetValue
+func (f *TextInputField) GetValue() (interface{}, error) {
+	return f.getCodecOrDefault().Decode(f.Value)
+}
+
+// SetValue implements InputField.SetValue
+func (f *TextInputField) SetValue(value interface{}) error {
+	codec := f.getCodecOrDefault()
+	val, err := codec.Encode(value)
+	if err != nil {
+		return err
+	}
+	f.Value = val
+	return nil
 }
 
 // SetErrors implements FieldDefinition.SetErrors
@@ -52,4 +70,12 @@ func (f *TextInputField) GetErrors() []string {
 // GetKind implements FieldDefinition.GetKind
 func (f *TextInputField) GetKind() FieldKind {
 	return FieldKindTextInput
+}
+
+func (f *TextInputField) getCodecOrDefault() Codec {
+	codec := f.Codec
+	if codec == nil {
+		codec = &StringCodec{}
+	}
+	return codec
 }

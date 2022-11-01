@@ -7,7 +7,7 @@ import (
 )
 
 func TestAllFieldKinds(t *testing.T) {
-	assert.Equal(t, []FieldKind{
+	assert.ElementsMatch(t, []FieldKind{
 		FieldKindUnknown,
 		FieldKindID,
 		FieldKindTextInput,
@@ -21,7 +21,7 @@ func TestAllFieldKinds(t *testing.T) {
 }
 
 func TestKnownFieldKinds(t *testing.T) {
-	assert.Equal(t, []FieldKind{
+	assert.ElementsMatch(t, []FieldKind{
 		FieldKindID,
 		FieldKindTextInput,
 		FieldKindNumberInput,
