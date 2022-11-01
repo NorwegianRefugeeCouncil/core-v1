@@ -19,8 +19,6 @@ type FormSection struct {
 }
 
 type Form struct {
-	Action   string
-	Method   string
 	Sections []*FormSection
 }
 

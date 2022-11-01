@@ -262,10 +262,8 @@
             display: inline-block;
         }
     </style>
-    <form id="form" action="{{.Action}}" method="{{.Method}}" novalidate>
-        {{ range $sectionIndex, $section := .Sections }}
-            {{$args := dict "Section" $section "SectionIndex" $sectionIndex "Form" $}}
-            {{ template "section" $args }}
-        {{end}}
-    </form>
+    {{ range $sectionIndex, $section := .Sections }}
+        {{$args := dict "Section" $section "SectionIndex" $sectionIndex "Form" $}}
+        {{ template "section" $args }}
+    {{end}}
 {{end}}

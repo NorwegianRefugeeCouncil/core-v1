@@ -246,8 +246,6 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 		action += "new"
 	}
 	f := forms.Form{
-		Action:   action,
-		Method:   "post",
 		Sections: formSections,
 	}
 
