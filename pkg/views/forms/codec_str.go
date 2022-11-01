@@ -8,6 +8,8 @@ import (
 // StringCodec is a codec for string values
 type StringCodec struct{}
 
+var _ Codec = &StringCodec{}
+
 func NewStringCodec() Codec {
 	return &StringCodec{}
 }

@@ -10,6 +10,8 @@ type TimeCodec struct {
 	format string
 }
 
+var _ Codec = &TimeCodec{}
+
 func NewTimeCodec(format string) Codec {
 	return &TimeCodec{format: format}
 }

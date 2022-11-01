@@ -8,6 +8,8 @@ import (
 // IntCodec is a codec for integer values
 type IntCodec struct{}
 
+var _ Codec = &IntCodec{}
+
 func NewIntCodec() Codec {
 	return &IntCodec{}
 }

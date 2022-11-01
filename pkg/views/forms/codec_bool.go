@@ -8,6 +8,8 @@ import (
 // BoolCodec is a codec for boolean values
 type BoolCodec struct{}
 
+var _ Codec = &BoolCodec{}
+
 func NewBoolCodec() Codec {
 	return &BoolCodec{}
 }
