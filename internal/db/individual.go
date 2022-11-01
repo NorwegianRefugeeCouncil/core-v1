@@ -10,7 +10,6 @@ import (
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/logging"
-	"github.com/nrc-no/notcore/internal/utils"
 	"github.com/rs/xid"
 	"go.uber.org/zap"
 )
@@ -220,16 +219,8 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 	fieldsSet.Add("id")
 	fields = fieldsSet.Items()
 
-	fieldCount := len(fields)
-	individualCount := len(individuals)
-	// this is the maximum number of arguments that can be passed to a postgres query
-	maxParams := 65535
-	individualPerBatch := maxParams / fieldCount
-	ret := make([]*api.Individual, 0, individualCount)
-	for batch := 0; batch < individualCount; batch += individualPerBatch {
-
-		var individualsInBatch = individuals[batch:utils.Min(batch+individualPerBatch, individualCount)]
-
+	ret := make([]*api.Individual, 0, len(individuals))
+	if err := batch(maxParams/len(fields), individuals, func(individualsInBatch []*api.Individual) error {
 		args := make([]interface{}, 0)
 		b := &strings.Builder{}
 		b.WriteString("INSERT INTO individuals (" + strings.Join(fields, ",") + ",created_at,updated_at) VALUES ")
@@ -248,7 +239,7 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 				}
 				fieldValue, err := individual.GetFieldValue(field)
 				if err != nil {
-					return nil, err
+					return err
 				}
 				args = append(args, fieldValue)
 				b.WriteString(fmt.Sprintf("$%d", len(args)))
@@ -274,10 +265,14 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 		qry := b.String()
 		err := tx.SelectContext(ctx, &out, qry, args...)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		ret = append(ret, out...)
+		return nil
+	}); err != nil {
+		return nil, err
 	}
+
 	return ret, nil
 
 }
