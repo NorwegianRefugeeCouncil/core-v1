@@ -272,6 +272,16 @@ table {
     tr {
         border-bottom-width: 1px;
     }
+    th.sticky-column, td.sticky-column {
+        position: sticky;
+        left: 0;
+    }
+    th.sticky-column {
+        background-color: $neutral200;
+    }
+    td.sticky-column {
+        background-color: $neutral100;
+    }
 }
 
 .alert {

@@ -105,10 +105,10 @@
                                 <div class="form-group mb-3 col-6">
                                     <label class="form-label" for="ID">IDs</label>
                                     <input id="ID"
-                                            name="id"
-                                            type="text"
-                                            placeholder="Search by ID"
-                                            class="form-control"
+                                           name="id"
+                                           type="text"
+                                           placeholder="Search by ID"
+                                           class="form-control"
                                            value="{{if .Options.IDs}}{{joinStrings .Options.IDs ","}}{{end}}">
                                 </div>
                                 <!-- End ID -->
@@ -117,11 +117,11 @@
                                 <div class="form-group mb-3 col-6">
                                     <label class="form-label" for="Name">Name</label>
                                     <input id="Name"
-                                            name="name"
-                                            type="text"
-                                            placeholder="Search by name"
-                                            class="form-control"
-                                            value="{{.Options.FullName}}">
+                                           name="name"
+                                           type="text"
+                                           placeholder="Search by name"
+                                           class="form-control"
+                                           value="{{.Options.FullName}}">
                                 </div>
                                 <!-- End Full Name -->
                             </div>
@@ -133,24 +133,24 @@
                                     <div>
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" value="" id="IsMinorAll"
-                                                    name="is_minor"
-                                                    {{if eq .Options.IsMinor nil }}checked="checked"{{end}}>
+                                                   name="is_minor"
+                                                   {{if eq .Options.IsMinor nil }}checked="checked"{{end}}>
                                             <label class="form-check-label" for="IsMinorAll">
                                                 All
                                             </label>
                                         </div>
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" value="true" id="IsMinorYes"
-                                                    name="is_minor"
-                                                    {{if .Options.IsMinorSelected }}checked="checked"{{end}}>
+                                                   name="is_minor"
+                                                   {{if .Options.IsMinorSelected }}checked="checked"{{end}}>
                                             <label class="form-check-label" for="IsMinorYes">
                                                 Yes
                                             </label>
                                         </div>
                                         <div class="form-check form-check-inline mb-3">
                                             <input class="form-check-input" type="radio" value="false" id="IsMinorNo"
-                                                    name="is_minor"
-                                                    {{if .Options.IsNotMinorSelected }}checked="checked"{{end}}>
+                                                   name="is_minor"
+                                                   {{if .Options.IsNotMinorSelected }}checked="checked"{{end}}>
                                             <label class="form-check-label" for="IsMinorNo">
                                                 No
                                             </label>
@@ -165,24 +165,24 @@
                                     <div>
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" value="" id="PresentsProtectionConcernsAll"
-                                                    name="presents_protection_concerns"
-                                                    {{if eq .Options.PresentsProtectionConcerns nil }}checked="checked"{{end}}>
+                                                   name="presents_protection_concerns"
+                                                   {{if eq .Options.PresentsProtectionConcerns nil }}checked="checked"{{end}}>
                                             <label class="form-check-label" for="PresentsProtectionConcernsAll">
                                                 All
                                             </label>
                                         </div>
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" value="true" id="PresentsProtectionConcernsYes"
-                                                    name="presents_protection_concerns"
-                                                    {{if .Options.IsPresentsProtectionConcernsSelected }}checked="checked"{{end}}>
+                                                   name="presents_protection_concerns"
+                                                   {{if .Options.IsPresentsProtectionConcernsSelected }}checked="checked"{{end}}>
                                             <label class="form-check-label" for="PresentsProtectionConcernsYes">
                                                 Yes
                                             </label>
                                         </div>
                                         <div class="form-check form-check-inline mb-3">
                                             <input class="form-check-input" type="radio" value="false" id="PresentsProtectionConcernsNo"
-                                                    name="presents_protection_concerns"
-                                                    {{if .Options.IsNotPresentsProtectionConcernsSelected }}checked="checked"{{end}}>
+                                                   name="presents_protection_concerns"
+                                                   {{if .Options.IsNotPresentsProtectionConcernsSelected }}checked="checked"{{end}}>
                                             <label class="form-check-label" for="PresentsProtectionConcernsNo">
                                                 No
                                             </label>
@@ -197,24 +197,24 @@
                                     <div>
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" value="" id="GenderAll"
-                                                    name="gender"
-                                                    {{if not .Options.Genders }}checked="checked"{{end}}>
+                                                   name="gender"
+                                                   {{if not .Options.Genders }}checked="checked"{{end}}>
                                             <label class="form-check-label" for="GenderAll">
                                                 All
                                             </label>
                                         </div>
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" value="male" id="GenderMale"
-                                                    name="gender"
-                                                    {{if contains .Options.Genders "male"}}checked="checked"{{end}}>
+                                                   name="gender"
+                                                   {{if contains .Options.Genders "male"}}checked="checked"{{end}}>
                                             <label class="form-check-label" for="GenderMale">
                                                 Male
                                             </label>
                                         </div>
                                         <div class="form-check form-check-inline mb-3">
                                             <input class="form-check-input" type="radio" value="female" id="GenderFemale"
-                                                    name="gender"
-                                                    {{if contains .Options.Genders "female"}}checked="checked"{{end}}>
+                                                   name="gender"
+                                                   {{if contains .Options.Genders "female"}}checked="checked"{{end}}>
                                             <label class="form-check-label" for="GenderFemale">
                                                 Female
                                             </label>
@@ -249,11 +249,11 @@
                                 <div class="form-group mb-3 col-6">
                                     <label class="form-label" for="Address">Address</label>
                                     <input id="Address"
-                                            name="address"
-                                            type="text"
-                                            class="form-control"
-                                            placeholder="Search by address"
-                                            value="{{.Options.Address}}">
+                                           name="address"
+                                           type="text"
+                                           class="form-control"
+                                           placeholder="Search by address"
+                                           value="{{.Options.Address}}">
                                 </div>
                                 <!-- End Address -->
                             </div>
@@ -263,11 +263,11 @@
                                 <div class="form-group mb-3 col-6">
                                     <label class="form-label" for="Email">Email</label>
                                     <input id="Email"
-                                            name="email"
-                                            type="text"
-                                            class="form-control"
-                                            placeholder="Search by email"
-                                            value="{{.Options.Email}}">
+                                           name="email"
+                                           type="text"
+                                           class="form-control"
+                                           placeholder="Search by email"
+                                           value="{{.Options.Email}}">
                                 </div>
                                 <!-- End Email -->
 
@@ -275,11 +275,11 @@
                                 <div class="form-group mb-3 col-6">
                                     <label class="form-label" for="PhoneNumber">Phone Number</label>
                                     <input id="PhoneNumber"
-                                            name="phone_number"
-                                            type="text"
-                                            class="form-control"
-                                            placeholder="Search by phone number"
-                                            value="{{.Options.PhoneNumber}}">
+                                           name="phone_number"
+                                           type="text"
+                                           class="form-control"
+                                           placeholder="Search by phone number"
+                                           value="{{.Options.PhoneNumber}}">
                                 </div>
                                 <!-- End Phone -->
                             </div>
@@ -293,7 +293,7 @@
                                             <div class="input-group-text">From</div>
                                         </div>
                                         <input type="number" name="age_from" class="form-control" id="AgeFrom"
-                                                value="{{if not (eq .Options.AgeFrom 0)}}{{.Options.AgeFrom}}{{end}}">
+                                               value="{{if not (eq .Options.AgeFrom 0)}}{{.Options.AgeFrom}}{{end}}">
                                     </div>
 
                                     <div class="col-3 input-group mb-2 w-50">
@@ -301,7 +301,7 @@
                                             <div class="input-group-text">To</div>
                                         </div>
                                         <input type="number" name="age_to" class="form-control" id="AgeTo"
-                                                value="{{if not (eq .Options.AgeTo 0)}}{{.Options.AgeTo}}{{end}}">
+                                               value="{{if not (eq .Options.AgeTo 0)}}{{.Options.AgeTo}}{{end}}">
                                     </div>
                                 </div>
                                 <!-- End Age -->
@@ -321,8 +321,8 @@
                 <table class="table">
                     <thead>
                     <tr>
-                        <th>Select</th>
-                        <th style="min-width:12rem">Name</th>
+                        <th scope="col" class="sticky-column">Select</th>
+                        <th scope="col" class="sticky-column border-end" style="min-width:12rem; left: 60px;">Name</th>
                         <th>
                             <span class="" title="Age">A</span>
                         </th>
@@ -341,8 +341,8 @@
                     {{ if .Individuals }}
                         {{range .Individuals}}
                             <tr>
-                                <td><input class="form-check-input" type="checkbox" value="{{.ID}}" name="individual_id"></td>
-                                <td>
+                                <td class="sticky-column"><input class="form-check-input" type="checkbox" value="{{.ID}}" name="individual_id"></td>
+                                <td class="sticky-column border-end" style="left: 60px;">
                                     <a href="/countries/{{.CountryID}}/individuals/{{.ID}}">
                                         {{if .FullName}}
                                             {{.FullName}}
@@ -371,7 +371,7 @@
                                 <td>
                                     {{if .PhoneNumber}}
                                         <a class="font-monospace"
-                                            href="tel:{{.PhoneNumber}}">{{.PhoneNumber}}</a>
+                                           href="tel:{{.PhoneNumber}}">{{.PhoneNumber}}</a>
                                     {{end}}
                                 </td>
                             </tr>
