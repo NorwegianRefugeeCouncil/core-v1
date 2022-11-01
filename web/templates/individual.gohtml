@@ -3,6 +3,25 @@
     <script type="application/javascript" src="/static/rxjs.js"></script>
     <script type="application/javascript" src="/static/country_selector.js"></script>
     <script type="application/javascript" src="/static/qrcode.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function (event) {
+            const form = document.getElementById("individualForm")
+            const submitButton = document.getElementById("submitButton")
+            const deleteButton = document.getElementById("deleteButton")
+            const confirmDeleteButton = document.getElementById("confirmDeleteButton")
+            submitButton.addEventListener("click", function (event) {
+                submitButton.disabled = true
+                deleteButton.disabled = true
+                confirmDeleteButton.disabled = true
+                form.submit()
+            })
+            confirmDeleteButton.addEventListener("click", function (event) {
+                confirmDeleteButton.disabled = true
+                deleteButton.disabled = true
+                submitButton.disabled = true
+            })
+        });
+    </script>
 {{end}}
 {{define "body"}}
     <header class="sticky-top">
@@ -11,7 +30,77 @@
     <main>
         <div class="mt-4">
             <div class="container">
-                {{.form.HTML}}
+                <form id="individualForm" action="/countries/{{.Individual.CountryID}}/individuals/{{.ID}}">
+                    {{.form.HTML}}
+                </form>
+                <div class="row">
+                    <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto">
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- SAVE BUTTON -->
+                                <button id="submitButton" class="btn btn-primary">Save</button>
+                                <!-- END SAVE BUTTON -->
+
+                                <!-- DELETE BUTTON -->
+                                <button class="btn btn-danger"
+                                        id="deleteButton"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#action-confirm-modal-0"
+                                        title="This will delete the individual and all associated data.">
+
+                                    <i class="bi bi-trash me-2"></i>
+
+                                    Delete Individual
+                                </button>
+                                <!-- END DELETE BUTTON -->
+
+                                <!-- DELETE MODAL -->
+                                <div class="modal modal-lg" tabindex="-1" id="action-confirm-modal-0">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">
+
+                                                    <i class="bi bi-exclamation-circle me-2 text-danger"></i>
+
+                                                    Delete Individual
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>
+                                                    Are you sure you want to delete this individual?
+                                                    <span class="fw-bold text-danger">This action cannot be undone.</span>
+                                                </p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form action="/countries/{{.Individual.CountryID}}/individuals/{{.Individual.ID}}/delete"
+                                                      method="post">
+                                                    <button type="button" class="btn btn-outline-secondary"
+                                                            data-bs-dismiss="modal">Cancel
+                                                    </button>
+                                                    <button type="submit"
+                                                            id="confirmDeleteButton"
+                                                            class="btn btn-danger"
+                                                            title="This will delete the individual and all associated data.">
+
+                                                        <i class="bi bi-trash me-2"></i>
+
+                                                        Delete Individual
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- END DELETE MODAL -->
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>

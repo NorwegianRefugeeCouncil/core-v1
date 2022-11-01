@@ -207,8 +207,9 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 	}
 
 	personalInfoSection := &forms.FormSection{
-		Title:  "Personal Information",
-		Fields: personalInfoFields,
+		Title:       "Personal Information",
+		Fields:      personalInfoFields,
+		Collapsible: true,
 	}
 
 	contactInfoSection := &forms.FormSection{
