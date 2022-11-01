@@ -3,6 +3,7 @@ package forms
 import (
 	"encoding"
 	"fmt"
+	"reflect"
 )
 
 // StringCodec is a codec for string values
@@ -18,6 +19,9 @@ func NewStringCodec() Codec {
 func (c *StringCodec) Encode(value interface{}) (string, error) {
 	switch v := value.(type) {
 	case encoding.TextMarshaler:
+		if reflect.ValueOf(v).IsNil() {
+			return "", nil
+		}
 		bytes, err := v.MarshalText()
 		if err != nil {
 			return "", err

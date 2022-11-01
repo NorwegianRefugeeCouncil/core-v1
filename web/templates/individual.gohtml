@@ -4,18 +4,18 @@
     <script type="application/javascript" src="/static/country_selector.js"></script>
     <script type="application/javascript" src="/static/qrcode.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function (event) {
+        document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("individualForm")
             const submitButton = document.getElementById("submitButton")
             const deleteButton = document.getElementById("deleteButton")
             const confirmDeleteButton = document.getElementById("confirmDeleteButton")
-            submitButton.addEventListener("click", function (event) {
+            submitButton.addEventListener("click", function () {
                 submitButton.disabled = true
                 deleteButton.disabled = true
                 confirmDeleteButton.disabled = true
                 form.submit()
             })
-            confirmDeleteButton.addEventListener("click", function (event) {
+            confirmDeleteButton.addEventListener("click", function () {
                 confirmDeleteButton.disabled = true
                 deleteButton.disabled = true
                 submitButton.disabled = true
@@ -30,7 +30,9 @@
     <main>
         <div class="mt-4">
             <div class="container">
-                <form id="individualForm" action="/countries/{{.Individual.CountryID}}/individuals/{{.ID}}">
+                <form id="individualForm"
+                      method="post"
+                      action="/countries/{{.Individual.CountryID}}/individuals/{{if .Individual.ID}}{{.Individual.ID}}{{else}}new{{end}}">
                     {{.form.HTML}}
                 </form>
                 <div class="row">

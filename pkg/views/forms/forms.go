@@ -50,6 +50,9 @@ func (f *Form) ParseURLValues(v url.Values) {
 			if fieldName == "" {
 				return
 			}
+			if !v.Has(fieldName) {
+				continue
+			}
 			urlValueForField := v.Get(fieldName)
 			inputField.SetStringValue(urlValueForField)
 		}
@@ -113,6 +116,9 @@ func (f *Form) Into(i interface{}) error {
 				ptrValue.Elem().Set(fieldValue)
 				fieldValue = ptrValue
 			} else if !propIsPointer && fieldValueIsPointer {
+				if fieldValue.IsNil() {
+					continue
+				}
 				fieldValue = fieldValue.Elem()
 			}
 			propValue.Set(fieldValue)
