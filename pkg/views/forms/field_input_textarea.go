@@ -3,19 +3,19 @@ package forms
 // TextAreaInputField represents a text area input field.
 type TextAreaInputField struct {
 	// Name is the name of the field.
-	Name string `json:"name"`
+	Name string
 	// DisplayName is the display name of the field.
-	DisplayName string `json:"displayName"`
+	DisplayName string
 	// Required is true if the field is required.
-	Required bool `json:"required"`
+	Required bool
 	// Value is the string value of the field.
-	Value string `json:"value"`
+	Value string
 	// Help is the help text of the field.
-	Help string `json:"help"`
+	Help string
 	// Errors are the errors of the field.
-	Errors []string `json:"errors"`
+	Errors []string
 	// Codec is the codec of the field.
-	Codec Codec `json:"-"`
+	Codec Codec
 }
 
 // Ensure TextAreaInputField implements InputField

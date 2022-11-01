@@ -109,11 +109,12 @@
             id="{{$field.Name}}"
             name="{{$field.Name}}"
             aria-labelledby="{{$field.Name}}--label"
+            {{if .AllowMultiple}}multiple="multiple"{{end}}
             aria-describedby="{{$field.Name}}--help {{if $field.Errors}}{{$field.Name}}--errors{{end}}"
             {{if $field.Errors}}required{{end}}>
         {{range $optionIndex, $option := $field.Options}}
             <option value="{{$option.Value}}"
-                    {{if eq $option.Value $field.Value}}selected{{end}}>
+                    {{if $field.IsSelected $option.Value}}selected{{end}}>
                 {{$option.Label}}
             </option>
         {{end}}

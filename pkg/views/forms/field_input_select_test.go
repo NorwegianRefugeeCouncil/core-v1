@@ -29,6 +29,18 @@ func TestSelectInputField_GetValue(t *testing.T) {
 			name:  "string",
 			field: &SelectInputField{Value: "foo"},
 			want:  "foo",
+		}, {
+			name:  "[multiple] empty",
+			field: &SelectInputField{AllowMultiple: true, Value: ""},
+			want:  []string{},
+		}, {
+			name:  "[multiple] string",
+			field: &SelectInputField{AllowMultiple: true, Value: "foo"},
+			want:  []string{"foo"},
+		}, {
+			name:  "[multiple] multiple strings",
+			field: &SelectInputField{AllowMultiple: true, Value: "foo,bar"},
+			want:  []string{"foo", "bar"},
 		},
 	}
 	for _, tt := range tests {
@@ -69,6 +81,26 @@ func TestSelectInputField_SetValue(t *testing.T) {
 			value:   123,
 			want:    SelectInputField{},
 			wantErr: assert.Error,
+		}, {
+			name:  "[multiple] nil",
+			field: SelectInputField{AllowMultiple: true},
+			value: ([]string)(nil),
+			want:  SelectInputField{AllowMultiple: true, Value: ""},
+		}, {
+			name:  "[multiple] empty",
+			field: SelectInputField{AllowMultiple: true},
+			value: []string{},
+			want:  SelectInputField{AllowMultiple: true, Value: ""},
+		}, {
+			name:  "[multiple] string",
+			field: SelectInputField{AllowMultiple: true},
+			value: []string{"abc"},
+			want:  SelectInputField{AllowMultiple: true, Value: "abc"},
+		}, {
+			name:  "[multiple] multiple strings",
+			field: SelectInputField{AllowMultiple: true},
+			value: []string{"abc", "def"},
+			want:  SelectInputField{AllowMultiple: true, Value: "abc,def"},
 		},
 	}
 	for _, tt := range tests {

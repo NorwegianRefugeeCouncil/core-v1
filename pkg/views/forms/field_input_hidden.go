@@ -3,11 +3,11 @@ package forms
 // HiddenInputField represents a hidden input field.
 type HiddenInputField struct {
 	// Name is the name of the field.
-	Name string `json:"name"`
+	Name string
 	// Value is the string value of the field.
-	Value string `json:"value"`
+	Value string
 	// Codec is the codec of the field.
-	Codec Codec `json:"-"`
+	Codec Codec
 }
 
 // Ensure HiddenInputField implements InputField

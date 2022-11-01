@@ -1,23 +1,27 @@
 package forms
 
+import "strings"
+
 // SelectInputField represents a select input field.
 type SelectInputField struct {
 	// Name is the name of the field.
-	Name string `json:"name"`
+	Name string
 	// DisplayName is the display name of the field.
-	DisplayName string `json:"displayName"`
+	DisplayName string
 	// Required is true if the field is required.
-	Required bool `json:"required"`
+	Required bool
 	// Value is the string value of the field.
-	Value string `json:"value"`
+	Value string
 	// Help is the help text of the field.
-	Help string `json:"help"`
+	Help string
 	// Options are the options of the field.
-	Errors []string `json:"errors"`
+	Errors []string
+	// AllowMultiple is true if the field allows multiple values.
+	AllowMultiple bool
 	// Options are the options of the field.
-	Options []SelectInputFieldOption `json:"options"`
+	Options []SelectInputFieldOption
 	// Codec is the codec of the field.
-	Codec Codec `json:"-"`
+	Codec Codec
 }
 
 // Ensure SelectInputField implements InputField
@@ -74,6 +78,19 @@ func (f *SelectInputField) GetKind() FieldKind {
 	return FieldKindSelect
 }
 
+func (f *SelectInputField) IsSelected(value string) bool {
+	if f.AllowMultiple {
+		values := strings.Split(f.Value, ",")
+		for _, v := range values {
+			if v == value {
+				return true
+			}
+		}
+		return false
+	}
+	return f.Value == value
+}
+
 // SelectInputFieldOption represents an option of a select input field.
 type SelectInputFieldOption struct {
 	// Value is the value of the option.
@@ -83,9 +100,11 @@ type SelectInputFieldOption struct {
 }
 
 func (f *SelectInputField) getCodecOrDefault() Codec {
-	codec := f.Codec
-	if codec == nil {
-		codec = &StringCodec{}
+	if f.Codec != nil {
+		return f.Codec
 	}
-	return codec
+	if f.AllowMultiple {
+		return &StringListCodec{}
+	}
+	return &StringCodec{}
 }
