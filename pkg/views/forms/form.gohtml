@@ -1,0 +1,269 @@
+{{define "inputLabel"}}
+    {{$field := .Field}}
+    <label id="{{$field.Name}}--label"
+           class="form-label {{if $field.Required}}fw-bold{{end}}"
+           for="{{$field.Name}}">
+        {{$field.DisplayName}}{{if $field.Required}}<span class="text-danger"> *</span>{{end}}
+    </label>
+{{end}}
+
+{{define "inputError"}}
+    {{$field := .Field}}
+    {{if $field.Errors}}
+        <div class="invalid-feedback" id="{{$field.Name}}--errors">
+            {{range $errorIndex, $error := $field.Errors}}
+                {{if $errorIndex}}<br/>{{end}}
+                {{$error}}
+            {{end}}
+        </div>
+    {{end}}
+{{end}}
+
+{{define "inputHelp"}}
+    {{$field := .Field}}
+    {{if $field.Help}}
+        <small id="{{$field.Name}}--help" class="form-text text-muted">{{$field.Help}}</small>
+    {{end}}
+{{end}}
+
+{{define "idField"}}
+    {{$field := .Field}}
+    <script type="application/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            new QRCode("{{$field.Name}}--qrcode", {
+                text: window.location.protocol + "//" + window.location.host + "{{$field.QRCodeURL}}",
+                width: 128,
+                height: 128,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        })
+    </script>
+    <div class="d-flex flex-row w-100 align-items-center"
+         {{if $field.QRCodeURL}}style="height:128px"{{end}}>
+        <div class="flex-grow-1 me-2">
+            <div class="input-group">
+                <span class="input-group-text">ID</span>
+                <input type="text"
+                       class="form-control font-monospace {{if $field.Errors}}is-invalid{{end}}"
+                       id="{{$field.Name}}"
+                       name="{{$field.Name}}"
+                       disabled="disabled"
+                       value="{{$field.Value}}">
+            </div>
+        </div>
+        <div id="{{$field.Name}}--qrcode"></div>
+    </div>
+{{end}}
+
+{{define "textField"}}
+    {{$field := .Field}}
+    {{template "inputLabel" .}}
+    <input type="text"
+           class="form-control {{if $field.Errors}}is-invalid{{end}}"
+           id="{{$field.Name}}"
+           name="{{$field.Name}}"
+           value="{{$field.Value}}"
+           aria-labelledby="{{$field.Name}}--label"
+           aria-describedby="{{$field.Name}}--help {{if $field.Errors}}{{$field.Name}}--errors{{end}}"
+           {{if $field.Errors}}required{{end}}>
+    {{template "inputHelp" .}}
+    {{template "inputError" .}}
+{{end}}
+
+{{define "numberField"}}
+    {{$field := .Field}}
+    {{template "inputLabel" .}}
+    <input type="number"
+           class="form-control {{if .Errors}}is-invalid{{end}}"
+           id="{{$field.Name}}"
+           name="{{$field.Name}}"
+           value="{{$field.Value}}"
+           aria-labelledby="{{$field.Name}}--label"
+           aria-describedby="{{$field.Name}}--help {{if $field.Errors}}{{$field.Name}}--errors{{end}}"
+           {{if $field.Errors}}required{{end}}>
+    {{template "inputHelp" .}}
+    {{template "inputError" .}}
+{{end}}
+
+{{define "dateField"}}
+    {{$field := .Field}}
+    {{template "inputLabel" .}}
+    <input type="date"
+           class="form-control {{if $field.Errors}}is-invalid{{end}}"
+           id="{{$field.Name}}"
+           name="{{$field.Name}}"
+           value="{{$field.Value}}"
+           aria-labelledby="{{$field.Name}}--label"
+           aria-describedby="{{$field.Name}}--help {{if $field.Errors}}{{$field.Name}}--errors{{end}}"
+           {{if $field.Errors}}required{{end}}>
+    {{template "inputHelp" .}}
+    {{template "inputError" .}}
+{{end}}
+
+{{define "selectField"}}
+    {{$field := .Field}}
+    {{template "inputLabel" .}}
+    <select class="form-select {{if $field.Errors}}is-invalid{{end}}"
+            id="{{$field.Name}}"
+            name="{{$field.Name}}"
+            aria-labelledby="{{$field.Name}}--label"
+            {{if .AllowMultiple}}multiple="multiple"{{end}}
+            aria-describedby="{{$field.Name}}--help {{if $field.Errors}}{{$field.Name}}--errors{{end}}"
+            {{if $field.Errors}}required{{end}}>
+        {{range $optionIndex, $option := $field.Options}}
+            <option value="{{$option.Value}}"
+                    {{if $field.IsSelected $option.Value}}selected{{end}}>
+                {{$option.Label}}
+            </option>
+        {{end}}
+    </select>
+    {{template "inputHelp" .}}
+    {{template "inputError" .}}
+{{end}}
+
+{{define "checkboxField"}}
+    {{$field := .Field}}
+    <div class="form-check">
+        <input class="form-check-input {{if $field.Errors}}is-invalid{{end}}"
+               type="checkbox"
+               value="true"
+               id="{{$field.Name}}"
+               name="{{$field.Name}}"
+               {{if eq $field.Value "true"}}checked{{end}}
+               aria-labelledby="{{$field.Name}}--label"
+               aria-describedby="{{$field.Name}}--help {{if $field.Errors}}{{$field.Name}}--errors{{end}}"
+                {{if $field.Errors}}required{{end}}>
+        <label class="form-check-label"
+               for="{{$field.Name}}"
+               id="{{$field.Name}}--label">
+            {{$field.DisplayName}}{{if $field.Required}}<span class="text-danger">*</span>{{end}}
+        </label>
+    </div>
+    {{template "inputHelp" .}}
+    {{template "inputError" .}}
+{{end}}
+
+{{define "textAreaField"}}
+    {{$field := .Field}}
+    {{template "inputLabel" .}}
+    <textarea class="form-control {{if $field.Errors}}is-invalid{{end}}"
+              id="{{$field.Name}}"
+              name="{{$field.Name}}"
+              aria-labelledby="{{$field.Name}}--label"
+              aria-describedby="{{$field.Name}}--help {{if $field.Errors}}{{$field.Name}}--errors{{end}}"
+              {{if $field.Errors}}required{{end}}>{{$field.Value}}</textarea>
+    {{template "inputHelp" .}}
+    {{template "inputError" .}}
+{{end}}
+
+{{define "field"}}
+    {{$kind := .Field.GetKind}}
+    {{if eq $kind "id" }}
+        {{template "idField" .}}
+    {{else if eq $kind "text" }}
+        {{template "textField" .}}
+    {{else if eq $kind "number" }}
+        {{template "numberField" .}}
+    {{else if eq $kind "date"}}
+        {{template "dateField" .}}
+    {{else if eq $kind "select"}}
+        {{template "selectField" .}}
+    {{else if eq $kind "checkbox"}}
+        {{template "checkboxField" .}}
+    {{else if eq $kind "textarea"}}
+        {{template "textAreaField" .}}
+    {{end}}
+{{end}}
+
+{{define "section"}}
+    {{$section := .Section}}
+    {{$sectionIndex := .SectionIndex}}
+    {{$form := .Form}}
+    <div class="row mb-3">
+        {{ if $section.Collapsible}}
+            <input type="hidden"
+                   id="__form__section-{{$sectionIndex}}-collapsed"
+                   name="__form__section-{{$sectionIndex}}-collapsed"
+                   value="{{if $section.Collapsed}}true{{else}}false{{end}}"/>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const collapse = document.getElementById("section-{{$sectionIndex}}-body");
+                    const input = document.getElementById("__form__section-{{$sectionIndex}}-collapsed");
+                    collapse.addEventListener("hidden.bs.collapse", function () {
+                        input.value = "true"
+                    })
+                    collapse.addEventListener("shown.bs.collapse", function () {
+                        input.value = "false"
+                    })
+                })
+            </script>
+        {{end}}
+        <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto">
+            <div class="card">
+                {{ if $section.Title }}
+                    {{ if $section.Collapsible}}
+                        <a class="d-flex card-header {{ if $section.Collapsed }}collapsed{{end}}"
+                           data-bs-toggle="collapse"
+                           href="#section-{{$sectionIndex}}-body"
+                           aria-expanded="{{ if $section.Collapsed }}false{{else}}true{{end}}"
+                           aria-controls="section-{{$sectionIndex}}-body">
+                            <span class="flex-grow-1">{{$section.Title}}</span>
+                            <span class="collapsed">
+                                <i class="bi bi-chevron-down"></i>
+                            </span>
+                            <span class="expanded">
+                                <i class="bi bi-chevron-up"></i>
+                            </span>
+                        </a>
+                    {{else}}
+                        <div class="card-header">
+                            {{$section.Title}}
+                        </div>
+                    {{end}}
+                {{ end }}
+                <div class="{{ if and $section.Collapsible $section.Collapsed }}collapse{{end}} {{ if and $section.Collapsible (not $section.Collapsed) }}show{{end}}"
+                     id="section-{{$sectionIndex}}-body">
+                    <div class="card-body w-100">
+                        {{ range $fieldIndex, $field := $section.Fields }}
+                            <div class="{{ if not (isLast $fieldIndex $section.Fields) }}mb-3{{end}}">
+                                {{$args := dict "Field" $field "FieldIndex" $fieldIndex "Form" $form "Section" $section "SectionIndex" $sectionIndex}}
+                                {{template "field" $args}}
+                            </div>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{end}}
+
+{{define "form"}}
+    <!--suppress CssUnusedSymbol -->
+    <style>
+        .card-header {
+            text-decoration: none;
+        }
+
+        .card-header[aria-expanded="true"] > .expanded {
+            display: inline-block;
+        }
+
+        .card-header[aria-expanded="true"] > .collapsed {
+            display: none;
+        }
+
+        .card-header[aria-expanded="false"] > .expanded {
+            display: none;
+        }
+
+        .card-header[aria-expanded="false"] > .collapsed {
+            display: inline-block;
+        }
+    </style>
+    {{ range $sectionIndex, $section := .Sections }}
+        {{$args := dict "Section" $section "SectionIndex" $sectionIndex "Form" $}}
+        {{ template "section" $args }}
+    {{end}}
+{{end}}
