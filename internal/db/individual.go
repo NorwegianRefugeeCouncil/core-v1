@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/lib/pq"
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/logging"
@@ -20,7 +19,6 @@ import (
 type IndividualRepo interface {
 	GetAll(ctx context.Context, options api.GetAllOptions) ([]*api.Individual, error)
 	GetByID(ctx context.Context, id string) (*api.Individual, error)
-	ListByID(ctx context.Context, ids []string) ([]*api.Individual, error)
 	Put(ctx context.Context, individual *api.Individual, fields []string) (*api.Individual, error)
 	PutMany(ctx context.Context, individuals []*api.Individual, fields []string) ([]*api.Individual, error)
 	SoftDelete(ctx context.Context, id string) error
@@ -71,6 +69,18 @@ func (i individualRepo) getAllInternal(ctx context.Context, tx *sqlx.Tx, options
 
 	// we do not want to return deleted individuals
 	whereClauses = append(whereClauses, "deleted_at IS NULL")
+
+	if len(options.IDs) > 0 {
+		whereClause := "id IN ("
+		for i, g := range options.IDs {
+			if i != 0 {
+				whereClause += ","
+			}
+			whereClause += nextArg(g)
+		}
+		whereClause += ")"
+		whereClauses = append(whereClauses, whereClause)
+	}
 
 	if len(options.FullName) != 0 {
 		if i.driverName() == "sqlite" {
@@ -195,33 +205,6 @@ func (i individualRepo) getByIdInternal(ctx context.Context, tx *sqlx.Tx, id str
 		return nil, err
 	}
 	return &ret, nil
-}
-
-func (i individualRepo) ListByID(ctx context.Context, ids []string) ([]*api.Individual, error) {
-	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		return i.listByIDInternal(ctx, tx, ids)
-	})
-	if err != nil {
-		return nil, err
-	}
-	return ret.([]*api.Individual), nil
-}
-
-func (i individualRepo) listByIDInternal(ctx context.Context, tx *sqlx.Tx, ids []string) ([]*api.Individual, error) {
-	l := logging.NewLogger(ctx)
-	l.Debug("getting individuals by id")
-	var ret []*api.Individual
-	if len(ids) == 0 {
-		return ret, nil
-	}
-
-	const query = "SELECT * FROM individuals WHERE id IN ($1) and deleted_at IS NULL"
-	var args = []interface{}{pq.Array(ids)}
-	err := tx.SelectContext(ctx, &ret, query, args...)
-	if err != nil {
-		return nil, err
-	}
-	return ret, nil
 }
 
 func (i individualRepo) PutMany(ctx context.Context, individuals []*api.Individual, fields []string) ([]*api.Individual, error) {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
@@ -38,23 +39,27 @@ func HandleIndividualsDelete(repo db.IndividualRepo) http.Handler {
 		}
 		individualIds := r.Form[formParamField]
 
-		individuals, err := repo.ListByID(ctx, individualIds)
+		individuals, err := repo.GetAll(ctx, api.GetAllOptions{IDs: individualIds})
 		if err != nil {
 			l.Error("failed to list individuals", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
+		var invalidIndividualIds []string
 		for _, individual := range individuals {
 			if individual.CountryID != countryID {
-				l.Error("individual does not belong to selected country", zap.String("individual_id", individual.ID), zap.String("country_id", countryID))
-				http.Error(w, fmt.Sprintf("individual %s does not belong to selected country", individual.ID), http.StatusBadRequest)
-				return
+				invalidIndividualIds = append(invalidIndividualIds, individual.ID)
 			}
+		}
+		if len(invalidIndividualIds) > 0 {
+			l.Error("individuals do not belong to selected country", zap.Strings("individual_ids", invalidIndividualIds))
+			http.Error(w, fmt.Sprintf("individuals not found: %v", invalidIndividualIds), http.StatusNotFound)
+			return
 		}
 
 		if err := repo.SoftDeleteMany(ctx, individualIds); err != nil {
-			l.Error("failed to delete individual", zap.Error(err))
+			l.Error("failed to delete individuals", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
