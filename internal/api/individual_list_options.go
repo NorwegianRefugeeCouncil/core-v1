@@ -26,17 +26,17 @@ type GetAllOptions struct {
 	Sort                       SortOptions
 }
 
-type SortOrder string
+type SortDirection string
 
 const (
-	SortOrderNone       SortOrder = "none"
-	SortOrderAscending  SortOrder = "ascending"
-	SortOrderDescending SortOrder = "descending"
+	SortDirectionNone       SortDirection = "none"
+	SortDirectionAscending  SortDirection = "ascending"
+	SortDirectionDescending SortDirection = "descending"
 )
 
 type SortOption struct {
-	Field string
-	Order SortOrder
+	Field     string
+	Direction SortDirection
 }
 
 type SortOptions []SortOption
@@ -103,21 +103,21 @@ func (o GetAllOptions) QueryParams() template.HTML {
 	return template.HTML(u.String())
 }
 
-func (o GetAllOptions) GetSortURLForField(field string, direction SortOrder) template.HTML {
+func (o GetAllOptions) GetSortURLForField(field string, direction SortDirection) template.HTML {
 	newOptions := o
 	newOptions.Sort = []SortOption{
-		{Field: field, Order: direction},
+		{Field: field, Direction: direction},
 	}
 	return newOptions.QueryParams()
 }
 
-func (o GetAllOptions) GetSortOrderForField(field string) SortOrder {
+func (o GetAllOptions) GetSortDirectionForField(field string) SortDirection {
 	for _, o := range o.Sort {
 		if o.Field == field {
-			return o.Order
+			return o.Direction
 		}
 	}
-	return SortOrderNone
+	return SortDirectionNone
 }
 
 func (o GetAllOptions) buildUrlValues() *url.Values {
@@ -172,7 +172,7 @@ func (o GetAllOptions) buildUrlValues() *url.Values {
 	if len(o.Sort) != 0 {
 		for _, s := range o.Sort {
 			params.Add("sort_by", s.Field)
-			params.Add("sort_order", string(s.Order))
+			params.Add("sort_direction", string(s.Direction))
 		}
 	}
 	return params

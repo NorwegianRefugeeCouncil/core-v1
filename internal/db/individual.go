@@ -173,10 +173,10 @@ func (i individualRepo) getAllInternal(ctx context.Context, tx *sqlx.Tx, options
 				colName = constants.DBColumnIndividualNormalizedPhoneNumber
 			}
 			query = query + colName
-			switch sort.Order {
-			case api.SortOrderAscending:
+			switch sort.Direction {
+			case api.SortDirectionAscending:
 				query = query + " ASC"
-			case api.SortOrderDescending:
+			case api.SortDirectionDescending:
 				query = query + " DESC"
 			default:
 				query = query + " ASC"

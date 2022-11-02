@@ -149,8 +149,8 @@ func parseGetAllOptions(r *http.Request, out *api.GetAllOptions) error {
 	}
 	if r.FormValue("sort_by") != "" && r.FormValue("sort_order") != "" {
 		out.Sort = append(out.Sort, api.SortOption{
-			Field: r.FormValue("sort_by"),
-			Order: api.SortOrder(r.FormValue("sort_order")),
+			Field:     r.FormValue("sort_by"),
+			Direction: api.SortDirection(r.FormValue("sort_order")),
 		})
 	}
 	return nil

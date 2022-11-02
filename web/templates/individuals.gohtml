@@ -153,11 +153,11 @@
 
                                     {{ if .Options.Sort}}
                                         <input type="hidden" name="sort_by" value="{{(index .Options.Sort 0).Field}}">
-                                        <input type="hidden" name="sort_order"
-                                               value="{{(index .Options.Sort 0).Order}}">
+                                        <input type="hidden" name="sort_direction"
+                                               value="{{(index .Options.Sort 0).Direction}}">
                                     {{else}}
                                         <input type="hidden" name="sort_by" value="">
-                                        <input type="hidden" name="sort_order" value="">
+                                        <input type="hidden" name="sort_direction" value="">
                                     {{end}}
 
                                     <div class="row">
@@ -515,7 +515,7 @@
     {{$width := .Width}}
     {{$minWidth := .MinWidth}}
     {{$maxWidth := .MaxWidth}}
-    {{$sortOrder := $options.GetSortOrderForField $fieldName}}
+    {{$sortDirection := $options.GetSortDirectionForField $fieldName}}
     {{$ascSortUrl := $options.GetSortURLForField $fieldName "ascending"}}
     {{$descSortUrl := $options.GetSortURLForField $fieldName "descending"}}
 
@@ -537,13 +537,13 @@
             {{$style = concat $style "max-width: " $maxWidth ";" }}
         {{end}}
         {{$style = concat $style "\"" }}
-        <th aria-sort="{{$sortOrder}}"
+        <th aria-sort="{{$sortDirection}}"
             {{$style | attr}}
             class="sortable p-0 m-0">
             <a
                     class="d-block text-decoration-none"
                     style="padding:0.5rem;"
-                    {{if eq $sortOrder "ascending"}}
+                    {{if eq $sortDirection "ascending"}}
                         href="{{$descSortUrl}}"
                     {{else}}
                         href="{{$ascSortUrl}}"
