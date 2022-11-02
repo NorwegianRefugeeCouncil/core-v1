@@ -9,43 +9,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type CountryBuilder struct {
-	country *api.Country
-}
-
-func ValidCountry() *CountryBuilder {
-	return &CountryBuilder{
-		country: &api.Country{
-			ID:       "id",
-			Code:     "code",
-			Name:     "name",
-			JwtGroup: "jwt_group",
-		},
-	}
-}
-
-func (b *CountryBuilder) Build() *api.Country {
-	return b.country
-}
-
-func (b *CountryBuilder) WithName(name string) *CountryBuilder {
-	b.country.Name = name
-	return b
-}
-
-func (b *CountryBuilder) WithCode(code string) *CountryBuilder {
-	b.country.Code = code
-	return b
-}
-
-func (b *CountryBuilder) WithJwtGroup(jwtGroup string) *CountryBuilder {
-	b.country.JwtGroup = jwtGroup
-	return b
-}
-
-func (b *CountryBuilder) WithID(id string) *CountryBuilder {
-	b.country.ID = id
-	return b
+func ValidCountry() *api.Country_Builder {
+	return api.New_Country_Builder().
+		WithID("id").
+		WithCode("code").
+		WithJwtGroup("jwt_group").
+		WithName("name")
 }
 
 func TestValidateCountry(t *testing.T) {

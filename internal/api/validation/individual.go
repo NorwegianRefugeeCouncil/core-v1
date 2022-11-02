@@ -24,11 +24,11 @@ func ValidateIndividualList(i *api.IndividualList) validation.ErrorList {
 
 func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
-	allErrs = append(allErrs, validateIndividualCountryID(i.CountryID, p.Child("countryId"))...)
-	allErrs = append(allErrs, validateBirthDate(i.BirthDate, p.Child("birthDate"))...)
-	allErrs = append(allErrs, validateIndividualDisplacementStatus(i.DisplacementStatus, p.Child("displacementStatus"))...)
-	allErrs = append(allErrs, validateIndividualGender(i.Gender, p.Child("gender"))...)
-	allErrs = append(allErrs, validateIndividualEmail(i.Email, p.Child("email"))...)
+	allErrs = append(allErrs, validateIndividualCountryID(i.CountryID, p.Child(api.Individual_Field_CountryID.String()))...)
+	allErrs = append(allErrs, validateBirthDate(i.BirthDate, p.Child(api.Individual_Field_BirthDate.String()))...)
+	allErrs = append(allErrs, validateIndividualDisplacementStatus(i.DisplacementStatus, p.Child(api.Individual_Field_DisplacementStatus.String()))...)
+	allErrs = append(allErrs, validateIndividualGender(i.Gender, p.Child(api.Individual_Field_Gender.String()))...)
+	allErrs = append(allErrs, validateIndividualEmail(i.Email, p.Child(api.Individual_Field_Email.String()))...)
 	return allErrs
 }
 

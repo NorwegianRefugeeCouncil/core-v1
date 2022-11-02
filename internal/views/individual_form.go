@@ -39,20 +39,20 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 	}
 
 	idField := &forms.IDField{
-		Name:        "id",
+		Name:        api.Individual_Field_ID.String(),
 		DisplayName: "ID",
 		Value:       i.ID,
 		QRCodeURL:   path.Join("/countries", i.CountryID, "individuals", i.ID),
 	}
 
 	fullNameField := &forms.TextInputField{
-		Name:        "fullName",
+		Name:        api.Individual_Field_FullName.String(),
 		DisplayName: "Full Name",
 		Value:       i.FullName,
 	}
 
 	preferredNameField := &forms.TextInputField{
-		Name:        "preferredName",
+		Name:        api.Individual_Field_PreferredName.String(),
 		DisplayName: "Preferred Name",
 		Value:       i.PreferredName,
 	}
@@ -83,7 +83,7 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 	}
 
 	genderField := &forms.SelectInputField{
-		Name:        "gender",
+		Name:        api.Individual_Field_Gender.String(),
 		DisplayName: "Gender",
 		Value:       i.Gender,
 		Required:    true,
@@ -91,13 +91,13 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 	}
 
 	birthDateField := &forms.DateInputField{
-		Name:        "birthDate",
+		Name:        api.Individual_Field_BirthDate.String(),
 		DisplayName: "Birth Date",
 		Value:       birthDate,
 	}
 
 	isMinorField := &forms.CheckboxInputField{
-		Name:        "isMinor",
+		Name:        api.Individual_Field_IsMinor.String(),
 		DisplayName: "Is Minor",
 		Value:       strconv.FormatBool(i.IsMinor),
 	}
@@ -126,45 +126,45 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 
 	displacementStatusField := &forms.SelectInputField{
 		Options:     displacementStatusOptions,
-		Name:        "displacementStatus",
+		Name:        api.Individual_Field_DisplacementStatus.String(),
 		DisplayName: "Displacement Status",
 		Value:       i.DisplacementStatus,
 	}
 
 	emailField := &forms.TextInputField{
-		Name:        "email",
+		Name:        api.Individual_Field_Email.String(),
 		DisplayName: "Email",
 		Value:       i.Email,
 		Required:    true,
 	}
 
 	phoneNumberField := &forms.TextInputField{
-		Name:        "phoneNumber",
+		Name:        api.Individual_Field_PhoneNumber.String(),
 		DisplayName: "Phone",
 		Value:       i.PhoneNumber,
 	}
 
 	addressField := &forms.TextAreaInputField{
-		Name:        "address",
+		Name:        api.Individual_Field_Address.String(),
 		DisplayName: "Address",
 		Value:       i.Address,
 	}
 
 	presentsProtectionConcernsField := &forms.CheckboxInputField{
-		Name:        "presentsProtectionConcerns",
+		Name:        api.Individual_Field_PresentsProtectionConcerns.String(),
 		DisplayName: "Presents Protection Concerns",
 		Value:       strconv.FormatBool(i.PresentsProtectionConcerns),
 	}
 
 	physicalImpairmentField := &forms.SelectInputField{
-		Name:        "physicalImpairment",
+		Name:        api.Individual_Field_PhysicalImpairment.String(),
 		DisplayName: "Physical Impairment",
 		Value:       i.PhysicalImpairment,
 		Options:     impairmentOptions,
 	}
 
 	mentalImpairmentField := &forms.SelectInputField{
-		Name:        "mentalImpairment",
+		Name:        api.Individual_Field_MentalImpairment.String(),
 		DisplayName: "Mental Impairment",
 		Value:       i.MentalImpairment,
 		Required:    false,
@@ -172,7 +172,7 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 	}
 
 	sensoryImpairmentField := &forms.SelectInputField{
-		Name:        "sensoryImpairment",
+		Name:        api.Individual_Field_SensoryImpairment.String(),
 		DisplayName: "Sensory Impairment",
 		Value:       i.SensoryImpairment,
 		Required:    false,

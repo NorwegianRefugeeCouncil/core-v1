@@ -22,9 +22,9 @@ func ValidateCountryList(countryList *api.CountryList) validation.ErrorList {
 
 func validateCountry(path *validation.Path, country *api.Country) validation.ErrorList {
 	allErrs := validation.ErrorList{}
-	allErrs = append(allErrs, validateCountryName(country.Name, path.Child("name"))...)
-	allErrs = append(allErrs, validateCountryCode(country.Code, path.Child("code"))...)
-	allErrs = append(allErrs, validateCountryJWTGroup(country.JwtGroup, path.Child("jwtGroup"))...)
+	allErrs = append(allErrs, validateCountryName(country.Name, path.Child(api.Country_Field_Name.String()))...)
+	allErrs = append(allErrs, validateCountryCode(country.Code, path.Child(api.Country_Field_Code.String()))...)
+	allErrs = append(allErrs, validateCountryJWTGroup(country.JwtGroup, path.Child(api.Country_Field_JwtGroup.String()))...)
 	return allErrs
 }
 

@@ -8,13 +8,13 @@ import (
 
 func ValidateListIndividualsOptions(opts *api.GetAllOptions) validation.ErrorList {
 	allErrs := validation.ErrorList{}
-	allErrs = append(allErrs, validateListIndividualsCountryID(opts.CountryID, validation.NewPath("countryId"))...)
-	allErrs = append(allErrs, validateListIndividualsOptionsSkip(opts.Skip, validation.NewPath("skip"))...)
-	allErrs = append(allErrs, validateListIndividualsOptionsTake(opts.Take, validation.NewPath("take"))...)
-	allErrs = append(allErrs, validateListIndividualsOptionsGenders(opts.Genders, validation.NewPath("genders"))...)
-	allErrs = append(allErrs, validateListIndividualsOptionsDisplacementStatuses(opts.DisplacementStatuses, validation.NewPath("displacementStatuses"))...)
+	allErrs = append(allErrs, validateListIndividualsCountryID(opts.CountryID, validation.NewPath(api.GetAllOptions_Field_CountryID.String()))...)
+	allErrs = append(allErrs, validateListIndividualsOptionsSkip(opts.Skip, validation.NewPath(api.GetAllOptions_Field_Skip.String()))...)
+	allErrs = append(allErrs, validateListIndividualsOptionsTake(opts.Take, validation.NewPath(api.GetAllOptions_Field_Take.String()))...)
+	allErrs = append(allErrs, validateListIndividualsOptionsGenders(opts.Genders, validation.NewPath(api.GetAllOptions_Field_Genders.String()))...)
+	allErrs = append(allErrs, validateListIndividualsOptionsDisplacementStatuses(opts.DisplacementStatuses, validation.NewPath(api.GetAllOptions_Field_DisplacementStatuses.String()))...)
 	if opts.BirthDateFrom != nil && opts.BirthDateTo != nil && opts.BirthDateFrom.After(*opts.BirthDateTo) {
-		allErrs = append(allErrs, validation.Invalid(validation.NewPath("birthDateFrom"), opts.BirthDateFrom, "birthDateFrom must be before birthDateTo"))
+		allErrs = append(allErrs, validation.Invalid(validation.NewPath(api.GetAllOptions_Field_BirthDateFrom.String()), opts.BirthDateFrom, "birthDateFrom must be before birthDateTo"))
 	}
 	return allErrs
 }
