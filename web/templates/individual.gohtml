@@ -7,18 +7,27 @@
         document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("individualForm")
             const submitButton = document.getElementById("submitButton")
+            const submitAndContinueButton = document.getElementById("submitAndContinueButton")
             const deleteButton = document.getElementById("deleteButton")
             const confirmDeleteButton = document.getElementById("confirmDeleteButton")
             submitButton.addEventListener("click", function () {
                 submitButton.disabled = true
                 deleteButton.disabled = true
+                submitAndContinueButton.disabled = true
                 confirmDeleteButton.disabled = true
                 form.submit()
+            })
+            submitAndContinueButton.addEventListener("click", function () {
+                form.submit()
+                setTimeout(function () {
+                    window.location.assign(window.location.protocol + "//" + window.location.host + "/countries/" + {{.RequestContext.SelectedCountryID}} + "/individuals/new")
+                }, 0)
             })
             confirmDeleteButton.addEventListener("click", function () {
                 confirmDeleteButton.disabled = true
                 deleteButton.disabled = true
                 submitButton.disabled = true
+                submitAndContinueButton.disabled = true
             })
         });
     </script>
@@ -35,7 +44,7 @@
                 </h1>
                 <form id="individualForm"
                       method="post"
-                      action="/countries/{{.Individual.CountryID}}/individuals/{{if .Individual.ID}}{{.Individual.ID}}{{else}}new{{end}}">
+                      action="/countries/{{.RequestContext.SelectedCountryID}}/individuals/{{if .Individual.ID}}{{.Individual.ID}}{{else}}new{{end}}">
                     {{.form.HTML}}
                 </form>
                 <div class="row mb-5">
@@ -56,9 +65,15 @@
                             </button>
                             <!-- END DELETE BUTTON -->
 
-                            <!-- SAVE BUTTON -->
-                            <button id="submitButton" class="btn btn-primary">Save</button>
-                            <!-- END SAVE BUTTON -->
+                            <div>
+                                <!-- SAVE & CONTINUE BUTTON -->
+                                <button id="submitAndContinueButton" form="individualForm" type="submit" class="btn btn-outline-primary">Save & Continue</button>
+                                <!-- END SAVE & CONTINUE  BUTTON -->
+
+                                <!-- SAVE BUTTON -->
+                                <button id="submitButton" form="individualForm" type="submit" class="btn btn-primary">Save</button>
+                                <!-- END SAVE BUTTON -->
+                            </div>
 
                         </div>
                     </div>
@@ -90,9 +105,9 @@
                 </div>
                 <div class="modal-footer">
                     <form
-                        class="w-100"
-                        action="/countries/{{.Individual.CountryID}}/individuals/{{.Individual.ID}}/delete"
-                        method="post"
+                            class="w-100"
+                            action="/countries/{{.Individual.CountryID}}/individuals/{{.Individual.ID}}/delete"
+                            method="post"
                     >
                         <div class="d-flex flex-row justify-content-between">
                             <button type="button" class="btn btn-outline-secondary"
