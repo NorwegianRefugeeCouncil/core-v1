@@ -147,10 +147,10 @@ func parseGetAllOptions(r *http.Request, out *api.GetAllOptions) error {
 		displacementStatusMap[s] = true
 		out.DisplacementStatuses = append(out.DisplacementStatuses, s)
 	}
-	if r.FormValue("sort_by") != "" && r.FormValue("sort_order") != "" {
+	if r.FormValue("sort_by") != "" && r.FormValue("sort_direction") != "" {
 		out.Sort = append(out.Sort, api.SortOption{
 			Field:     r.FormValue("sort_by"),
-			Direction: api.SortDirection(r.FormValue("sort_order")),
+			Direction: api.SortDirection(r.FormValue("sort_direction")),
 		})
 	}
 	return nil
