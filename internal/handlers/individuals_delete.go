@@ -48,7 +48,7 @@ func HandleIndividualsDelete(repo db.IndividualRepo) http.Handler {
 
 		invalidIndividualIds := validateIndividualsExistInCountry(individualIds, individuals, countryID)
 		if len(invalidIndividualIds) > 0 {
-			l.Error("user trying to delete individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
+			l.Warn("user trying to delete individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
 			http.Error(w, fmt.Sprintf("individuals not found: %v", invalidIndividualIds), http.StatusNotFound)
 			return
 		}
