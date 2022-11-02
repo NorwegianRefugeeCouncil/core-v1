@@ -64,8 +64,8 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			}
 
 			if individual.CountryID != selectedCountryID {
-				l.Error("individual does not belong to selected country", zap.Error(err))
-				http.Error(w, "individual does not belong to selected country", http.StatusForbidden)
+				l.Error("user trying to access individual with the wrong country id", zap.String("individual_id", individual.ID))
+				http.Error(w, fmt.Sprintf("individual not found: %v", individual.ID), http.StatusNotFound)
 				return
 			}
 		}

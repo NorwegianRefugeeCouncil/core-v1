@@ -46,24 +46,11 @@ func HandleIndividualsDelete(repo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		var invalidIndividualIds []string
-		for _, individual := range individuals {
-			if individual.CountryID != countryID {
-				invalidIndividualIds = append(invalidIndividualIds, individual.ID)
-			}
-		}
+		invalidIndividualIds := validateIndividualsExistInCountry(individualIds, individuals, countryID)
 		if len(invalidIndividualIds) > 0 {
-			l.Error("individuals do not belong to selected country", zap.Strings("individual_ids", invalidIndividualIds))
+			l.Error("user trying to delete individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
 			http.Error(w, fmt.Sprintf("individuals not found: %v", invalidIndividualIds), http.StatusNotFound)
 			return
-		}
-
-		for _, individual := range individuals {
-			if individual.CountryID != countryID {
-				l.Error("individual does not belong to selected country", zap.String("individual_id", individual.ID), zap.String("country_id", countryID))
-				http.Error(w, fmt.Sprintf("individual %s does not belong to selected country", individual.ID), http.StatusBadRequest)
-				return
-			}
 		}
 
 		if err := repo.SoftDeleteMany(ctx, individualIds); err != nil {

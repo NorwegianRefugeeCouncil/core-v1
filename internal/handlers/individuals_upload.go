@@ -91,12 +91,11 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		for _, individual := range existingIndividuals {
-			if individual.CountryID != selectedCountryID {
-				l.Error("trying to update individuals that do not belong to the selected country", zap.Error(err))
-				http.Error(w, "trying to update individuals that do not belong to the selected country", http.StatusBadRequest)
-				return
-			}
+		invalidIndividualIds := validateIndividualsExistInCountry(individualIds, existingIndividuals, selectedCountryID)
+		if len(invalidIndividualIds) > 0 {
+			l.Error("user trying to update individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
+			http.Error(w, fmt.Sprintf("individuals not found: %v", invalidIndividualIds), http.StatusNotFound)
+			return
 		}
 
 		_, err = individualRepo.PutMany(r.Context(), individuals, fields)
