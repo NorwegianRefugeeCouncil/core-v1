@@ -75,6 +75,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 	var err error
 	for field, idx := range colMapping {
 		switch field {
+		case constants.FileColumnIndividualID:
+			i.ID = cols[idx]
 		case constants.FileColumnIndividualAddress:
 			i.Address = cols[idx]
 		case constants.FileColumnIndividualBirthDate:
