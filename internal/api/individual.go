@@ -11,7 +11,7 @@ import (
 	"github.com/nrc-no/notcore/internal/constants"
 )
 
-//go:generate go run ../../tools/codegen/main.go --type=Individual --output=individual_fields.go
+//go:generate go run ../../tools/codegen/main.go --type=Individual --output=zzz_generated_individual_fields.go
 type Individual struct {
 	ID                         string     `json:"id" db:"id"`
 	CountryID                  string     `json:"countryId" db:"country_id"`
@@ -109,7 +109,7 @@ func (i *Individual) Normalize() {
 	i.SensoryImpairment = trimString(i.SensoryImpairment)
 }
 
-//go:generate go run ../../tools/codegen/main.go --type=GetAllOptions --output=get_all_options_fields.go
+//go:generate go run ../../tools/codegen/main.go --type=GetAllOptions --output=zzz_generated_get_all_options_fields.go
 type GetAllOptions struct {
 	Address                    string     `json:"address"`
 	IDs                        []string   `json:"ids"`

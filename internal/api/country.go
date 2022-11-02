@@ -1,6 +1,6 @@
 package api
 
-//go:generate go run ../../tools/codegen/main.go --type=Country --output=country_fields.go
+//go:generate go run ../../tools/codegen/main.go --type=Country --output=zzz_generated_country_fields.go
 type Country struct {
 	ID       string `json:"id" db:"id"`
 	Code     string `json:"code" db:"code"`
