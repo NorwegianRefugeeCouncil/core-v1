@@ -42,7 +42,7 @@ func (i individualRepo) driverName() string {
 
 func (i individualRepo) GetAll(ctx context.Context, options api.GetAllOptions) ([]*api.Individual, error) {
 	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		return i.getAllInternal(ctx, tx, options)
+		return i.batchedGetAllInternal(ctx, tx, options)
 	})
 	if err != nil {
 
@@ -51,157 +51,161 @@ func (i individualRepo) GetAll(ctx context.Context, options api.GetAllOptions) (
 	return ret.([]*api.Individual), nil
 }
 
-func (i individualRepo) getAllInternal(ctx context.Context, tx *sqlx.Tx, options api.GetAllOptions) ([]*api.Individual, error) {
+func (i individualRepo) batchedGetAllInternal(ctx context.Context, tx *sqlx.Tx, options api.GetAllOptions) ([]*api.Individual, error) {
+	if len(options.IDs) > 0 {
+		var ret []*api.Individual
+		err := batch(maxParams/len(options.IDs), options.IDs, func(idsInBatch []string) error {
+			optionsForBatch := options
+			optionsForBatch.IDs = idsInBatch
+			individualsInBatch, err := i.unbatchedGetAllInternal(ctx, tx, optionsForBatch)
+			if err != nil {
+				return err
+			}
+			ret = append(ret, individualsInBatch...)
+			return nil
+		})
+		if err != nil {
+			return nil, err
+		}
+		return ret, nil
+	}
+	return i.unbatchedGetAllInternal(ctx, tx, options)
+}
+
+func (i individualRepo) unbatchedGetAllInternal(ctx context.Context, tx *sqlx.Tx, options api.GetAllOptions) ([]*api.Individual, error) {
 
 	l := logging.NewLogger(ctx)
 	l.Debug("getting all individuals", zap.Any("options", options))
 
-	var allRet []*api.Individual
+	var ret []*api.Individual
+	args := []interface{}{}
+	query := "SELECT * FROM individuals"
 
-	var batchSize int
-	if len(options.IDs) <= 0 {
-		batchSize = maxParams
-	} else {
-		batchSize = maxParams / len(options.IDs)
+	var whereClauses []string
+
+	var nextArg = func(arg interface{}) string {
+		args = append(args, arg)
+		return fmt.Sprintf("$%d", len(args))
 	}
 
-	if err := batch(batchSize, options.IDs, func(idsInBatch []string) error {
-		l.Debug("getting batch of individuals", zap.Any("ids", idsInBatch))
-		var ret []*api.Individual
-		args := []interface{}{}
-		query := "SELECT * FROM individuals"
+	// we do not want to return deleted individuals
+	whereClauses = append(whereClauses, "deleted_at IS NULL")
 
-		var whereClauses []string
-
-		var nextArg = func(arg interface{}) string {
-			args = append(args, arg)
-			return fmt.Sprintf("$%d", len(args))
-		}
-
-		// we do not want to return deleted individuals
-		whereClauses = append(whereClauses, "deleted_at IS NULL")
-
-		if len(idsInBatch) > 0 {
-			whereClause := "id IN ("
-			for i, g := range options.IDs {
-				if i != 0 {
-					whereClause += ","
-				}
-				whereClause += nextArg(g)
+	if len(options.IDs) > 0 {
+		whereClause := "id IN ("
+		for i, g := range options.IDs {
+			if i != 0 {
+				whereClause += ","
 			}
-			whereClause += ")"
-			whereClauses = append(whereClauses, whereClause)
+			whereClause += nextArg(g)
 		}
-
-		if len(options.FullName) != 0 {
-			if i.driverName() == "sqlite" {
-				whereClauses = append(whereClauses, "full_name LIKE "+nextArg("%"+options.FullName+"%")+" OR preferred_name LIKE "+nextArg("%"+options.FullName+"%"))
-			} else if i.driverName() == "postgres" {
-				whereClauses = append(whereClauses, "full_name ILIKE "+nextArg("%"+options.FullName+"%")+" OR preferred_name ILIKE "+nextArg("%"+options.FullName+"%"))
-			}
-		}
-
-		if len(options.Address) != 0 {
-			if i.driverName() == "sqlite" {
-				whereClause := "address LIKE " + nextArg("%"+options.Address+"%")
-				whereClauses = append(whereClauses, whereClause)
-			} else if i.driverName() == "postgres" {
-				whereClause := "address ILIKE " + nextArg("%"+options.Address+"%")
-				whereClauses = append(whereClauses, whereClause)
-			}
-		}
-
-		if len(options.Genders) != 0 {
-			whereClause := "gender in ("
-			for i, g := range options.Genders {
-				if i != 0 {
-					whereClause += ","
-				}
-				whereClause += nextArg(g)
-			}
-			whereClause += ")"
-			whereClauses = append(whereClauses, whereClause)
-		}
-
-		if options.BirthDateFrom != nil {
-			whereClauses = append(whereClauses, "birth_date >= "+nextArg(options.BirthDateFrom))
-		}
-
-		if options.BirthDateTo != nil {
-			whereClauses = append(whereClauses, "birth_date <= "+nextArg(options.BirthDateTo))
-		}
-
-		if len(options.PhoneNumber) != 0 {
-			normalizedPhoneNumber := api.NormalizePhoneNumber(options.PhoneNumber)
-			whereClauses = append(whereClauses, "normalized_phone_number LIKE "+nextArg("%"+normalizedPhoneNumber+"%"))
-		}
-
-		if len(options.Email) != 0 {
-			normalizedEmail := strings.ToLower(options.Email)
-			whereClauses = append(whereClauses, "email = "+nextArg(normalizedEmail))
-		}
-
-		if options.IsMinor != nil {
-			if options.IsMinorSelected() {
-				whereClauses = append(whereClauses, "is_minor = "+nextArg(true))
-			} else if options.IsNotMinorSelected() {
-				whereClauses = append(whereClauses, "is_minor = "+nextArg(false))
-			}
-		}
-
-		if options.PresentsProtectionConcerns != nil {
-			if options.IsPresentsProtectionConcernsSelected() {
-				whereClauses = append(whereClauses, "presents_protection_concerns = "+nextArg(true))
-			} else if options.IsNotPresentsProtectionConcernsSelected() {
-				whereClauses = append(whereClauses, "presents_protection_concerns = "+nextArg(false))
-			}
-		}
-
-		if len(options.CountryID) != 0 {
-			whereClauses = append(whereClauses, "country_id = "+nextArg(options.CountryID))
-		}
-
-		if len(options.DisplacementStatuses) != 0 {
-			qry := "displacement_status in ("
-			for _, ds := range options.DisplacementStatuses {
-				args = append(args, ds)
-				qry += fmt.Sprintf("$%d,", len(args))
-			}
-			qry = qry[:len(qry)-1]
-			qry += ")"
-			whereClauses = append(whereClauses, qry)
-		}
-
-		if len(whereClauses) != 0 {
-			query = query + " WHERE "
-			for i, whereClause := range whereClauses {
-				if i != 0 {
-					query = query + " AND "
-				}
-				query = query + "( " + whereClause + " )"
-			}
-		}
-
-		query = query + " ORDER BY ID"
-		if options.Take != 0 {
-			query += fmt.Sprintf(" LIMIT %d", options.Take)
-		}
-		if options.Skip != 0 {
-			query += fmt.Sprintf(fmt.Sprintf(" OFFSET %d", options.Skip))
-		}
-		err := tx.SelectContext(ctx, &ret, query, args...)
-		if err != nil {
-			l.Error("failed to get all individuals", zap.Error(err))
-			return err
-		}
-
-		allRet = append(allRet, ret...)
-		return err
-	}); err != nil {
-		return nil, err
+		whereClause += ")"
+		whereClauses = append(whereClauses, whereClause)
 	}
 
-	return allRet, nil
+	if len(options.FullName) != 0 {
+		if i.driverName() == "sqlite" {
+			whereClauses = append(whereClauses, "full_name LIKE "+nextArg("%"+options.FullName+"%")+" OR preferred_name LIKE "+nextArg("%"+options.FullName+"%"))
+		} else if i.driverName() == "postgres" {
+			whereClauses = append(whereClauses, "full_name ILIKE "+nextArg("%"+options.FullName+"%")+" OR preferred_name ILIKE "+nextArg("%"+options.FullName+"%"))
+		}
+	}
+
+	if len(options.Address) != 0 {
+		if i.driverName() == "sqlite" {
+			whereClause := "address LIKE " + nextArg("%"+options.Address+"%")
+			whereClauses = append(whereClauses, whereClause)
+		} else if i.driverName() == "postgres" {
+			whereClause := "address ILIKE " + nextArg("%"+options.Address+"%")
+			whereClauses = append(whereClauses, whereClause)
+		}
+	}
+
+	if len(options.Genders) != 0 {
+		whereClause := "gender in ("
+		for i, g := range options.Genders {
+			if i != 0 {
+				whereClause += ","
+			}
+			whereClause += nextArg(g)
+		}
+		whereClause += ")"
+		whereClauses = append(whereClauses, whereClause)
+	}
+
+	if options.BirthDateFrom != nil {
+		whereClauses = append(whereClauses, "birth_date >= "+nextArg(options.BirthDateFrom))
+	}
+
+	if options.BirthDateTo != nil {
+		whereClauses = append(whereClauses, "birth_date <= "+nextArg(options.BirthDateTo))
+	}
+
+	if len(options.PhoneNumber) != 0 {
+		normalizedPhoneNumber := api.NormalizePhoneNumber(options.PhoneNumber)
+		whereClauses = append(whereClauses, "normalized_phone_number LIKE "+nextArg("%"+normalizedPhoneNumber+"%"))
+	}
+
+	if len(options.Email) != 0 {
+		normalizedEmail := strings.ToLower(options.Email)
+		whereClauses = append(whereClauses, "email = "+nextArg(normalizedEmail))
+	}
+
+	if options.IsMinor != nil {
+		if options.IsMinorSelected() {
+			whereClauses = append(whereClauses, "is_minor = "+nextArg(true))
+		} else if options.IsNotMinorSelected() {
+			whereClauses = append(whereClauses, "is_minor = "+nextArg(false))
+		}
+	}
+
+	if options.PresentsProtectionConcerns != nil {
+		if options.IsPresentsProtectionConcernsSelected() {
+			whereClauses = append(whereClauses, "presents_protection_concerns = "+nextArg(true))
+		} else if options.IsNotPresentsProtectionConcernsSelected() {
+			whereClauses = append(whereClauses, "presents_protection_concerns = "+nextArg(false))
+		}
+	}
+
+	if len(options.CountryID) != 0 {
+		whereClauses = append(whereClauses, "country_id = "+nextArg(options.CountryID))
+	}
+
+	if len(options.DisplacementStatuses) != 0 {
+		qry := "displacement_status in ("
+		for _, ds := range options.DisplacementStatuses {
+			args = append(args, ds)
+			qry += fmt.Sprintf("$%d,", len(args))
+		}
+		qry = qry[:len(qry)-1]
+		qry += ")"
+		whereClauses = append(whereClauses, qry)
+	}
+
+	if len(whereClauses) != 0 {
+		query = query + " WHERE "
+		for i, whereClause := range whereClauses {
+			if i != 0 {
+				query = query + " AND "
+			}
+			query = query + "( " + whereClause + " )"
+		}
+	}
+
+	query = query + " ORDER BY ID"
+	if options.Take != 0 {
+		query += fmt.Sprintf(" LIMIT %d", options.Take)
+	}
+	if options.Skip != 0 {
+		query += fmt.Sprintf(fmt.Sprintf(" OFFSET %d", options.Skip))
+	}
+	err := tx.SelectContext(ctx, &ret, query, args...)
+	if err != nil {
+		l.Error("failed to get all individuals", zap.Error(err))
+	}
+
+	return ret, nil
+
 }
 
 func (i individualRepo) GetByID(ctx context.Context, id string) (*api.Individual, error) {
