@@ -351,8 +351,16 @@ func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx,
 	l := logging.NewLogger(ctx).With(zap.Strings("individual_ids", ids))
 	l.Debug("deleting individuals")
 
-	const query = "UPDATE individuals SET deleted_at = $1 WHERE id IN ($2) and deleted_at IS NULL"
-	var args = []interface{}{time.Now().UTC(), pq.Array(ids)}
+	var query = "UPDATE individuals SET deleted_at = $1 WHERE id IN ("
+	var args = []interface{}{time.Now().UTC().Format(time.RFC3339)}
+	for i, id := range ids {
+		if i != 0 {
+			query += ","
+		}
+		query += fmt.Sprintf("$%d", i+2)
+		args = append(args, id)
+	}
+	query += ") and deleted_at IS NULL"
 
 	result, err := tx.ExecContext(ctx, query, args...)
 	if err != nil {
