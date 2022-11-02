@@ -10,7 +10,7 @@ import (
 
 type GetAllOptions struct {
 	Address                    string
-	ID                         string
+	IDs                        []string
 	BirthDateFrom              *time.Time
 	BirthDateTo                *time.Time
 	CountryID                  string
@@ -125,8 +125,8 @@ func (o GetAllOptions) buildUrlValues() *url.Values {
 	if len(o.FullName) != 0 {
 		params.Add("full_name", o.FullName)
 	}
-	if len(o.ID) != 0 {
-		params.Add("id", o.ID)
+	if len(o.IDs) != 0 {
+		params.Add("ids", strings.Join(o.IDs, ","))
 	}
 	if len(o.Address) != 0 {
 		params.Add("address", o.Address)
