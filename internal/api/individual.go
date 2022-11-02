@@ -11,6 +11,7 @@ import (
 	"github.com/nrc-no/notcore/internal/constants"
 )
 
+//go:generate go run ../../tools/codegen/main.go --type=Individual --output=individual_fields.go
 type Individual struct {
 	ID                         string     `json:"id" db:"id"`
 	CountryID                  string     `json:"countryId" db:"country_id"`
@@ -108,21 +109,22 @@ func (i *Individual) Normalize() {
 	i.SensoryImpairment = trimString(i.SensoryImpairment)
 }
 
+//go:generate go run ../../tools/codegen/main.go --type=GetAllOptions --output=get_all_options_fields.go
 type GetAllOptions struct {
-	Address                    string
-	IDs                        []string
-	BirthDateFrom              *time.Time
-	BirthDateTo                *time.Time
-	CountryID                  string
-	DisplacementStatuses       []string
-	Email                      string
-	FullName                   string
-	Genders                    []string
-	IsMinor                    *bool
-	PhoneNumber                string
-	PresentsProtectionConcerns *bool
-	Skip                       int
-	Take                       int
+	Address                    string     `json:"address"`
+	IDs                        []string   `json:"ids"`
+	BirthDateFrom              *time.Time `json:"birthDateFrom"`
+	BirthDateTo                *time.Time `json:"birthDateTo"`
+	CountryID                  string     `json:"countryId"`
+	DisplacementStatuses       []string   `json:"displacementStatuses"`
+	Email                      string     `json:"email"`
+	FullName                   string     `json:"fullName"`
+	Genders                    []string   `json:"genders"`
+	IsMinor                    *bool      `json:"isMinor"`
+	PhoneNumber                string     `json:"phoneNumber"`
+	PresentsProtectionConcerns *bool      `json:"presentsProtectionConcerns"`
+	Skip                       int        `json:"skip"`
+	Take                       int        `json:"take"`
 }
 
 func (o GetAllOptions) IsMinorSelected() bool {

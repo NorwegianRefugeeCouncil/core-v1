@@ -1,10 +1,11 @@
 package api
 
+//go:generate go run ../../tools/codegen/main.go --type=Country --output=country_fields.go
 type Country struct {
-	ID       string `db:"id"`
-	Code     string `db:"code"`
-	Name     string `db:"name"`
-	JwtGroup string `db:"jwt_group"`
+	ID       string `json:"id" db:"id"`
+	Code     string `json:"code" db:"code"`
+	Name     string `json:"name" db:"name"`
+	JwtGroup string `json:"jwtGroup" db:"jwt_group"`
 }
 
 type CountryList struct {
