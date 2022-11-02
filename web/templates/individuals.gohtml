@@ -1,3 +1,5 @@
+
+
 {{define "head"}}
     <script type="application/javascript" src="/static/autocomplete.js"></script>
     <script type="application/javascript" src="/static/rxjs.js"></script>
@@ -20,9 +22,14 @@
 
         function submitActionForm(action) {
             const form = document.getElementById('individuals-action-form');
-            form.action = "{{.CurrentUrl}}/" + action;
-            console.log("submitting form with action " + form.action);
+            form.action = "/countries/{{.Options.CountryID}}/individuals/" + action;
             form.submit();
+        }
+
+        function setTake(take) {
+            var href = new URL(window.location);
+            href.searchParams.set('take', take);
+            window.location = href;
         }
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -59,6 +66,9 @@
 
                 <div class="d-flex justify-content-end align-items-center">
                     {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
+                        <button type="button" class="btn btn-outline-primary me-2" onclick="submitActionForm('delete')">
+                            Batch delete 
+                        </button>
                         <a href="/countries/{{.Options.CountryID}}/individuals/new" class="btn btn-outline-primary me-2">
                             Create new Individual
                         </a>
@@ -69,12 +79,12 @@
                     {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
                         <form id="individual-upload--form" action="/countries/{{.Options.CountryID}}/individuals/upload" enctype="multipart/form-data" method="post" class="ms-2">
                             <input
-                                hidden
-                                id="individual-upload--file"
-                                name="file"
-                                type="file"
-                                class="form-control"
-                                accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                    hidden
+                                    id="individual-upload--file"
+                                    name="file"
+                                    type="file"
+                                    class="form-control"
+                                    accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                             >
                             <button id="individual-upload--button" type="button" class="btn btn-outline-primary">Upload</button>
                         </form>
@@ -82,8 +92,9 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-12 my-4">
+            <!-- SEARCH FILTERS -->
+            <div class="row mb-5">
+                <div class="col-12">
                     <div class="card">
                         <div class="card-header" id="searchFormAccordion">
                             <button class="btn btn-link d-flex w-100 justify-content-between px-0 no-text-decoration" data-bs-toggle="collapse" data-bs-target="#search-form" aria-expanded="true" aria-controls="search-form">
@@ -100,13 +111,13 @@
                                     <div class="row">
                                         <!-- ID -->
                                         <div class="form-group mb-3 col-6">
-                                            <label class="form-label" for="ID">ID</label>
+                                            <label class="form-label" for="ID">IDs</label>
                                             <input id="ID"
                                                    name="id"
                                                    type="text"
                                                    placeholder="Search by ID"
                                                    class="form-control"
-                                                   value="{{.Options.ID}}">
+                                                   value="{{.Options.IDs}}">
                                         </div>
                                         <!-- End ID -->
 
@@ -312,9 +323,11 @@
                         </div>
                     </div>
                 </div>
+                <!-- END SEARCH FILTERS -->
 
-                <div class="col-12">
-                    <div class="mb-5">
+                <!-- INDIVIDUALS TABLE -->
+                <div class="row mb-5">
+                    <div class="col-12">
                         <form id="individuals-action-form" class="table-responsive mb-3" method="post">
                             <table class="table">
                                 <thead>
@@ -382,7 +395,14 @@
                                 </tbody>
                             </table>
                         </form>
-                        <nav class="card-footer" aria-label="Page navigation example">
+                    </div>
+                </div>
+                <!-- END INDIVIDUALS TABLE -->
+
+                <!-- PAGE FOOTER -->
+                <div class="row mb-5">
+                    <div class="col-3">
+                        <nav aria-label="Page navigation">
                             <ul class="pagination">
                                 <li class="page-item">
                                     <a class="page-link" href="{{.Options.FirstPage.QueryParams}}">First</a>
@@ -398,7 +418,24 @@
                             </ul>
                         </nav>
                     </div>
+                    <div class="col-3 offset-6 d-flex align-items-center">
+                        Results:
+                        <nav aria-label="pick amount of results" class="ms-2">
+                            <ul class="pagination mb-0">
+                                <li class="page-item">
+                                    <a onclick="setTake(20)" class="page-link">20</a>
+                                </li>
+                                <li class="page-item">
+                                    <a onclick="setTake(50)" class="page-link">50</a>
+                                </li>
+                                <li class="page-item">
+                                    <a onclick="setTake(100)" class="page-link">100</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
+                <!-- END PAGE FOOTER -->
             </div>
         </div>
     </main>
