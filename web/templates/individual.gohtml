@@ -30,6 +30,9 @@
     <main>
         <div class="mt-4">
             <div class="container">
+                <h1 class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto my-4">
+                    {{.form.Title}}
+                </h1>
                 <form id="individualForm"
                       method="post"
                       action="/countries/{{.Individual.CountryID}}/individuals/{{if .Individual.ID}}{{.Individual.ID}}{{else}}new{{end}}">
