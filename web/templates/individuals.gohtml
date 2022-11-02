@@ -21,8 +21,7 @@
 
         function submitActionForm(action) {
             const form = document.getElementById('individuals-action-form');
-            form.action = "{{.CurrentUrl}}/" + action;
-            console.log("submitting form with action " + form.action);
+            form.action = "/countries/{{.Options.CountryID}}/individuals/" + action;
             form.submit();
         }
 
@@ -105,8 +104,10 @@
 
                 <div class="d-flex justify-content-end align-items-center">
                     {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                        <a href="/countries/{{.Options.CountryID}}/individuals/new"
-                           class="btn btn-outline-primary me-2">
+                        <button type="button" class="btn btn-outline-primary me-2" onclick="submitActionForm('delete')">
+                            Batch delete
+                        </button>
+                        <a href="/countries/{{.Options.CountryID}}/individuals/new" class="btn btn-outline-primary me-2">
                             Create new Individual
                         </a>
                     {{end}}
@@ -139,7 +140,9 @@
                     <div class="card">
                         <div class="card-header" id="searchFormAccordion">
                             <button class="btn btn-link d-flex w-100 justify-content-between px-0 no-text-decoration"
-                                    data-bs-toggle="collapse" data-bs-target="#search-form" aria-expanded="true"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#search-form"
+                                    aria-expanded="true"
                                     aria-controls="search-form">
                                 Filter
                                 <i class="bi-caret-down-fill" title="NavbarToggle"></i>
@@ -163,19 +166,22 @@
                                     <div class="row">
                                         <!-- ID -->
                                         <div class="form-group mb-3 col-6">
-                                            <label class="form-label" for="ID">ID</label>
+                                            <label class="form-label" for="ID">IDs</label>
                                             <input id="ID"
                                                    name="id"
                                                    type="text"
                                                    placeholder="Search by ID"
                                                    class="form-control"
-                                                   value="{{.Options.ID}}">
+                                                   value="{{.Options.IDs}}">
                                         </div>
                                         <!-- End ID -->
 
                                         <!-- Full Name -->
                                         <div class="form-group mb-3 col-6">
-                                            <label class="form-label" for="Name">Name</label>
+                                            <label class="form-label"
+                                                   for="Name">
+                                                Name
+                                            </label>
                                             <input id="Name"
                                                    name="name"
                                                    type="text"
@@ -192,29 +198,35 @@
                                             <label class="form-text">Is Minor</label>
                                             <div>
                                                 <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" value=""
+                                                    <input class="form-check-input"
+                                                           type="radio" value=""
                                                            id="IsMinorAll"
                                                            name="is_minor"
                                                            {{if eq .Options.IsMinor nil }}checked="checked"{{end}}>
-                                                    <label class="form-check-label" for="IsMinorAll">
+                                                    <label class="form-check-label"
+                                                           for="IsMinorAll">
                                                         All
                                                     </label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" value="true"
+                                                    <input class="form-check-input"
+                                                           type="radio" value="true"
                                                            id="IsMinorYes"
                                                            name="is_minor"
                                                            {{if .Options.IsMinorSelected }}checked="checked"{{end}}>
-                                                    <label class="form-check-label" for="IsMinorYes">
+                                                    <label class="form-check-label"
+                                                           for="IsMinorYes">
                                                         Yes
                                                     </label>
                                                 </div>
                                                 <div class="form-check form-check-inline mb-3">
-                                                    <input class="form-check-input" type="radio" value="false"
+                                                    <input class="form-check-input"
+                                                           type="radio" value="false"
                                                            id="IsMinorNo"
                                                            name="is_minor"
                                                            {{if .Options.IsNotMinorSelected }}checked="checked"{{end}}>
-                                                    <label class="form-check-label" for="IsMinorNo">
+                                                    <label class="form-check-label"
+                                                           for="IsMinorNo">
                                                         No
                                                     </label>
                                                 </div>
@@ -227,7 +239,9 @@
                                             <label class="form-text">Presents Protection Concerns</label>
                                             <div>
                                                 <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" value=""
+                                                    <input class="form-check-input"
+                                                           type="radio"
+                                                           value=""
                                                            id="PresentsProtectionConcernsAll"
                                                            name="presents_protection_concerns"
                                                            {{if eq .Options.PresentsProtectionConcerns nil }}checked="checked"{{end}}>
@@ -236,7 +250,9 @@
                                                     </label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" value="true"
+                                                    <input class="form-check-input"
+                                                           type="radio"
+                                                           value="true"
                                                            id="PresentsProtectionConcernsYes"
                                                            name="presents_protection_concerns"
                                                            {{if .Options.IsPresentsProtectionConcernsSelected }}checked="checked"{{end}}>
@@ -245,7 +261,9 @@
                                                     </label>
                                                 </div>
                                                 <div class="form-check form-check-inline mb-3">
-                                                    <input class="form-check-input" type="radio" value="false"
+                                                    <input class="form-check-input"
+                                                           type="radio"
+                                                           value="false"
                                                            id="PresentsProtectionConcernsNo"
                                                            name="presents_protection_concerns"
                                                            {{if .Options.IsNotPresentsProtectionConcernsSelected }}checked="checked"{{end}}>
@@ -270,7 +288,9 @@
                                                     </label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" value="male"
+                                                    <input class="form-check-input"
+                                                           type="radio"
+                                                           value="male"
                                                            id="GenderMale"
                                                            name="gender"
                                                            {{if contains .Options.Genders "male"}}checked="checked"{{end}}>
@@ -279,7 +299,9 @@
                                                     </label>
                                                 </div>
                                                 <div class="form-check form-check-inline mb-3">
-                                                    <input class="form-check-input" type="radio" value="female"
+                                                    <input class="form-check-input"
+                                                           type="radio"
+                                                           value="female"
                                                            id="GenderFemale"
                                                            name="gender"
                                                            {{if contains .Options.Genders "female"}}checked="checked"{{end}}>
@@ -295,8 +317,9 @@
                                     <div class="row">
                                         <!-- Displacement Status -->
                                         <div class="col-6">
-                                            <label class="form-label" for="DisplacementStatus">Displacement
-                                                Status</label>
+                                            <label class="form-label" for="DisplacementStatus">
+                                                Displacement Status
+                                            </label>
                                             <select id="DisplacementStatus" name="displacement_status"
                                                     class="form-control">
                                                 <option value=""
