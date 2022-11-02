@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-type Individual_Field uint8
+type Individual_Field uint
 
 const (
 	Individual_Field_ID Individual_Field = iota
@@ -35,7 +35,7 @@ const (
 
 const _Individual_Field_name = "idcountryIdfullNamephoneNumbernormalizedPhoneNumberemailaddressbirthDategenderdisplacementStatuspreferredNameisMinorpresentsProtectionConcernsphysicalImpairmentsensoryImpairmentmentalImpairmentcreatedAtupdatedAtdeletedAt"
 
-var _Individual_Field_index = [...]uint8{0, 2, 11, 19, 30, 51, 56, 63, 72, 78, 96, 109, 116, 142, 160, 177, 193, 202, 211, 220}
+var _Individual_Field_index = [...]uint{0, 2, 11, 19, 30, 51, 56, 63, 72, 78, 96, 109, 116, 142, 160, 177, 193, 202, 211, 220}
 
 func (i Individual_Field) String() string {
 	if i >= Individual_Field(len(_Individual_Field_index)-1) {

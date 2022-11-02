@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-type GetAllOptions_Field uint8
+type GetAllOptions_Field uint
 
 const (
 	GetAllOptions_Field_Address GetAllOptions_Field = iota
@@ -30,7 +30,7 @@ const (
 
 const _GetAllOptions_Field_name = "addressidsbirthDateFrombirthDateTocountryIddisplacementStatusesemailfullNamegendersisMinorphoneNumberpresentsProtectionConcernsskiptake"
 
-var _GetAllOptions_Field_index = [...]uint8{0, 7, 10, 23, 34, 43, 63, 68, 76, 83, 90, 101, 127, 131, 135}
+var _GetAllOptions_Field_index = [...]uint{0, 7, 10, 23, 34, 43, 63, 68, 76, 83, 90, 101, 127, 131, 135}
 
 func (i GetAllOptions_Field) String() string {
 	if i >= GetAllOptions_Field(len(_GetAllOptions_Field_index)-1) {

@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type Country_Field uint8
+type Country_Field uint
 
 const (
 	Country_Field_ID Country_Field = iota
@@ -18,7 +18,7 @@ const (
 
 const _Country_Field_name = "idcodenamejwtGroup"
 
-var _Country_Field_index = [...]uint8{0, 2, 6, 10, 18}
+var _Country_Field_index = [...]uint{0, 2, 6, 10, 18}
 
 func (i Country_Field) String() string {
 	if i >= Country_Field(len(_Country_Field_index)-1) {

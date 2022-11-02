@@ -152,7 +152,7 @@ import (
 {{- end }}
 )
 
-type {{.StructName}}_Field uint8
+type {{.StructName}}_Field uint
 
 const (
 	{{- range $index, $fieldName := .FieldNames}}
@@ -162,7 +162,7 @@ const (
 
 const _{{.StructName}}_Field_name = "{{range $index, $fieldName := .FieldTags}}{{$fieldName}}{{end}}"
 
-var _{{.StructName}}_Field_index = [...]uint8{{"{"}}{{range $index, $offset := .Offsets}}{{if $index}},{{end}}{{$offset}}{{end}}}
+var _{{.StructName}}_Field_index = [...]uint{{"{"}}{{range $index, $offset := .Offsets}}{{if $index}},{{end}}{{$offset}}{{end}}}
 
 func (i {{.StructName}}_Field) String() string {
 	if i >= {{.StructName}}_Field(len(_{{.StructName}}_Field_index)-1) {
