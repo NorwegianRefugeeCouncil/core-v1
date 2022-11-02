@@ -11,7 +11,6 @@ import (
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/logging"
-	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
 )
 
