@@ -11,15 +11,6 @@ import (
 	"github.com/nrc-no/notcore/internal/constants"
 )
 
-type DisabilityLevel uint8
-
-const (
-	DisabilityLevelNone DisabilityLevel = iota
-	DisabilityLevelMild
-	DisabilityLevelModerate
-	DisabilityLevelSevere
-)
-
 type Individual struct {
 	// Address is the residence address of the individual
 	Address string `json:"address" db:"address"`
