@@ -40,8 +40,8 @@ func HandleIndividualDelete(repo db.IndividualRepo) http.Handler {
 		}
 
 		if individual.CountryID != countryID {
-			l.Error("individual does not belong to selected country", zap.Error(err))
-			http.Error(w, fmt.Sprintf("individual does not belong to selected country"), http.StatusBadRequest)
+			l.Error("user trying to delete individual with the wrong country id", zap.String("individual_id", individual.ID))
+			http.Error(w, fmt.Sprintf("individual not found: %v", individual.ID), http.StatusNotFound)
 			return
 		}
 
