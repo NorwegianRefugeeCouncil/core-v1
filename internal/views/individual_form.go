@@ -222,14 +222,12 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 		Title:       "Protection Concerns",
 		Fields:      protectionFields,
 		Collapsible: true,
-		Collapsed:   true,
 	}
 
 	disabilitySection := &forms.FormSection{
 		Title:       "Disability",
 		Fields:      disabilityFields,
 		Collapsible: true,
-		Collapsed:   true,
 	}
 
 	formSections := []*forms.FormSection{
