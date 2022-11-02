@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"html/template"
 	"strings"
 	"time"
@@ -51,6 +52,9 @@ func parseTemplates(
 				}
 				return false
 			},
+			"concat": func(strs ...string) string {
+				return strings.Join(strs, "")
+			},
 			"logoutURL": func() string {
 				return logoutURL
 			},
@@ -65,6 +69,26 @@ func parseTemplates(
 			},
 			"time": func() TimeFunctions {
 				return TimeFunctions{}
+			},
+			"attr": func(val string) template.HTMLAttr {
+				return template.HTMLAttr(val)
+			},
+			"safe": func(val string) template.HTML {
+				return template.HTML(val)
+			},
+			"dict": func(values ...interface{}) (map[string]interface{}, error) {
+				if len(values)%2 != 0 {
+					return nil, errors.New("dict must have an even number of arguments")
+				}
+				dict := make(map[string]interface{})
+				for i := 0; i < len(values); i += 2 {
+					key, ok := values[i].(string)
+					if !ok {
+						return nil, errors.New("dict keys must be strings")
+					}
+					dict[key] = values[i+1]
+				}
+				return dict, nil
 			},
 		})
 		t[name], err = tpl.ParseFS(web.Content, "templates/nav.gohtml", "templates/base.gohtml", "templates/"+name)

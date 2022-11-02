@@ -8,6 +8,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/rs/xid"
@@ -158,7 +159,33 @@ func (i individualRepo) getAllInternal(ctx context.Context, tx *sqlx.Tx, options
 		}
 	}
 
-	query = query + " ORDER BY ID"
+	if len(options.Sort) > 0 {
+		query = query + " ORDER BY "
+		for i, sort := range options.Sort {
+			if i != 0 {
+				query = query + ", "
+			}
+			colName, err := getColumnNameFromFieldName(sort.Field)
+			if err != nil {
+				return nil, err
+			}
+			if colName == constants.DBColumnIndividualPhoneNumber {
+				colName = constants.DBColumnIndividualNormalizedPhoneNumber
+			}
+			query = query + colName
+			switch sort.Order {
+			case api.SortOrderAscending:
+				query = query + " ASC"
+			case api.SortOrderDescending:
+				query = query + " DESC"
+			default:
+				query = query + " ASC"
+			}
+		}
+	} else {
+		query = query + " ORDER BY created_at DESC"
+	}
+
 	if options.Take != 0 {
 		query += fmt.Sprintf(" LIMIT %d", options.Take)
 	}
@@ -322,4 +349,29 @@ func (i individualRepo) softDeleteInternal(ctx context.Context, tx *sqlx.Tx, id 
 
 func NewIndividualRepo(db *sqlx.DB) IndividualRepo {
 	return &individualRepo{db: db}
+}
+
+// getColumnNameFromFieldName returns the DB column name from the `json` tag of an individual
+// TODO: move Database-related constants to the `db` package
+// TODO: create a db-only model of the Individual
+// TODO: create mapping between api.individual <-> db.individual
+func getColumnNameFromFieldName(fieldName string) (string, error) {
+	switch fieldName {
+	case "id":
+		return constants.DBColumnIndividualID, nil
+	case "fullName":
+		return constants.DBColumnIndividualFullName, nil
+	case "phoneNumber":
+		return constants.DBColumnIndividualPhoneNumber, nil
+	case "normalizedPhoneNumber":
+		return constants.DBColumnIndividualNormalizedPhoneNumber, nil
+	case "age":
+		return constants.DBColumnIndividualBirthDate, nil
+	case "gender":
+		return constants.DBColumnIndividualGender, nil
+	case "email":
+		return constants.DBColumnIndividualEmail, nil
+	default:
+		return "", fmt.Errorf("unknown field name: %s", fieldName)
+	}
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"math/rand"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/manveru/faker"
@@ -41,7 +42,9 @@ func Generate(count uint) error {
 	}
 	for i := 0; i < int(count); i++ {
 
-		var name = f.Name()
+		var name = strings.ToUpper(f.LastName())
+		name += ", "
+		name += f.FirstName()
 		var preferredName = name
 		if randBool(5) {
 			preferredName = f.Name()
