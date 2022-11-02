@@ -261,6 +261,8 @@ nav.navbar {
 }
 
 table {
+    border-collapse: separate;
+    border-spacing: 0;
     thead {
         border-color: $neutral200;
         background-color: $neutral200;
@@ -268,6 +270,7 @@ table {
     }
     td {
         border-bottom-width: 0;
+        background-color: $white;
     }
     tr {
         border-bottom-width: 1px;
@@ -280,7 +283,7 @@ table {
         background-color: $neutral200;
     }
     td.sticky-column {
-        background-color: $neutral100;
+        background-color: $white;
     }
 }
 
