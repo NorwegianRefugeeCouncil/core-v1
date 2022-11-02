@@ -334,32 +334,37 @@ func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx,
 	l := logging.NewLogger(ctx).With(zap.Strings("individual_ids", ids))
 	l.Debug("deleting individuals")
 
-	var query = "UPDATE individuals SET deleted_at = $1 WHERE id IN ("
-	var args = []interface{}{time.Now().UTC().Format(time.RFC3339)}
-	for i, id := range ids {
-		if i != 0 {
-			query += ","
+	if err := batch(maxParams/len(ids), ids, func(idsInBatch []string) error {
+		var query = "UPDATE individuals SET deleted_at = $1 WHERE id IN ("
+		var args = []interface{}{time.Now().UTC().Format(time.RFC3339)}
+		for i, id := range idsInBatch {
+			if i != 0 {
+				query += ","
+			}
+			query += fmt.Sprintf("$%d", i+2)
+			args = append(args, id)
 		}
-		query += fmt.Sprintf("$%d", i+2)
-		args = append(args, id)
-	}
-	query += ") and deleted_at IS NULL"
+		query += ") and deleted_at IS NULL"
 
-	result, err := tx.ExecContext(ctx, query, args...)
-	if err != nil {
-		l.Error("failed to delete individuals", zap.Error(err))
+		result, err := tx.ExecContext(ctx, query, args...)
+		if err != nil {
+			l.Error("failed to delete individuals", zap.Error(err))
+			return err
+		}
+
+		rowsAffected, err := result.RowsAffected()
+		if err != nil {
+			l.Error("failed to get rows affected", zap.Error(err))
+			return err
+		} else if rowsAffected != int64(len(idsInBatch)) {
+			l.Error("failed to delete all individuals", zap.Int64("rows_affected", rowsAffected))
+			return fmt.Errorf("failed to delete all individuals")
+		}
+
+		return nil
+	}); err != nil {
 		return err
 	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		l.Error("failed to get rows affected", zap.Error(err))
-		return err
-	} else if rowsAffected != int64(len(ids)) {
-		l.Error("failed to delete all individuals", zap.Int64("rows_affected", rowsAffected))
-		return fmt.Errorf("failed to delete all individuals")
-	}
-
 	return nil
 }
 
