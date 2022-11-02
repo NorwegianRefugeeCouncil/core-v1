@@ -84,7 +84,7 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 			}
 		}
 
-		existingIndividuals, err := individualRepo.ListByID(ctx, individualIds)
+		existingIndividuals, err := individualRepo.GetAll(ctx, api.GetAllOptions{IDs: individualIds})
 		if err != nil {
 			l.Error("failed to get existing individuals", zap.Error(err))
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
