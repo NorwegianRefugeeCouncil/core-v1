@@ -34,20 +34,6 @@ func (m *MockInterface) EXPECT() *MockInterfaceMockRecorder {
 	return m.recorder
 }
 
-// CanReadWriteToCountryID mocks base method.
-func (m *MockInterface) CanReadWriteToCountryID(arg0 string) bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CanReadWriteToCountryID", arg0)
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// CanReadWriteToCountryID indicates an expected call of CanReadWriteToCountryID.
-func (mr *MockInterfaceMockRecorder) CanReadWriteToCountryID(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CanReadWriteToCountryID", reflect.TypeOf((*MockInterface)(nil).CanReadWriteToCountryID), arg0)
-}
-
 // GetCountryIDsWithReadWritePermissions mocks base method.
 func (m *MockInterface) GetCountryIDsWithReadWritePermissions() containers.Set[string] {
 	m.ctrl.T.Helper()
@@ -60,6 +46,20 @@ func (m *MockInterface) GetCountryIDsWithReadWritePermissions() containers.Set[s
 func (mr *MockInterfaceMockRecorder) GetCountryIDsWithReadWritePermissions() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCountryIDsWithReadWritePermissions", reflect.TypeOf((*MockInterface)(nil).GetCountryIDsWithReadWritePermissions))
+}
+
+// HasCountryLevelPermission mocks base method.
+func (m *MockInterface) HasCountryLevelPermission(arg0 string, arg1 Permission) bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HasCountryLevelPermission", arg0, arg1)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// HasCountryLevelPermission indicates an expected call of HasCountryLevelPermission.
+func (mr *MockInterfaceMockRecorder) HasCountryLevelPermission(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasCountryLevelPermission", reflect.TypeOf((*MockInterface)(nil).HasCountryLevelPermission), arg0, arg1)
 }
 
 // IsGlobalAdmin mocks base method.
