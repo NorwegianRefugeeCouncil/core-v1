@@ -27,12 +27,6 @@
             form.submit();
         }
 
-        function setTake(take) {
-            var href = new URL(window.location);
-            href.searchParams.set('take', take);
-            window.location = href;
-        }
-
         document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("searchForm")
             form.onsubmit = function () {
@@ -421,13 +415,13 @@
                         <nav aria-label="pick amount of results" class="ms-2">
                             <ul class="pagination mb-0">
                                 <li class="page-item">
-                                    <a onclick="setTake(20)" class="page-link">20</a>
+                                    <a href="{{(.Options.WithTake 20).QueryParams}}" class="page-link">20</a>
                                 </li>
                                 <li class="page-item">
-                                    <a onclick="setTake(50)" class="page-link">50</a>
+                                    <a onclick="{{(.Options.WithTake 50).QueryParams}}" href="#" class="page-link">50</a>
                                 </li>
                                 <li class="page-item">
-                                    <a onclick="setTake(100)" class="page-link">100</a>
+                                    <a onclick="{{(.Options.WithTake 100).QueryParams}}" href="#" class="page-link">100</a>
                                 </li>
                             </ul>
                         </nav>
