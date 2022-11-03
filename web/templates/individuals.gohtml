@@ -394,8 +394,24 @@
                 <!-- END INDIVIDUALS TABLE -->
 
                 <!-- PAGE FOOTER -->
-                <div class="row mb-5">
-                    <div class="col-3">
+                <div class="d-flex align-items-start mb-5">
+                    <div class="d-flex align-items-center">
+                        Results:
+                        <nav aria-label="pick amount of results" class="ms-2">
+                            <ul class="pagination mb-0">
+                                <li class="page-item {{if eq .Options.Take 20}}active{{end}}">
+                                    <a href="{{(.Options.WithTake 20).QueryParams}}" class="page-link">20</a>
+                                </li>
+                                <li class="page-item {{if eq .Options.Take 50}}active{{end}}">
+                                    <a href="{{(.Options.WithTake 50).QueryParams}}" class="page-link">50</a>
+                                </li>
+                                <li class="page-item {{if eq .Options.Take 100}}active{{end}}">
+                                    <a href="{{(.Options.WithTake 100).QueryParams}}" class="page-link">100</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="ms-3">
                         <nav aria-label="Page navigation">
                             <ul class="pagination">
                                 <li class="page-item">
@@ -408,22 +424,6 @@
                                 <li class="page-item">
                                     <a class="page-link"
                                        href="{{.Options.NextPage.QueryParams}}">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                    <div class="col-3 offset-6 d-flex align-items-center">
-                        Results:
-                        <nav aria-label="pick amount of results" class="ms-2">
-                            <ul class="pagination mb-0">
-                                <li class="page-item {{if eq .Options.Take 20}}active{{end}}">
-                                    <a href="{{(.Options.WithTake 20).QueryParams}}" class="page-link">20</a>
-                                </li>
-                                <li class="page-item {{if eq .Options.Take 50}}active{{end}}">
-                                    <a href="{{(.Options.WithTake 50).QueryParams}}" class="page-link">50</a>
-                                </li>
-                                <li class="page-item {{if eq .Options.Take 100}}active{{end}}">
-                                    <a href="{{(.Options.WithTake 100).QueryParams}}" class="page-link">100</a>
                                 </li>
                             </ul>
                         </nav>
