@@ -110,7 +110,7 @@ func (i *Individual) Normalize() {
 
 type GetAllOptions struct {
 	Address                    string
-	ID                         string
+	IDs                        []string
 	BirthDateFrom              *time.Time
 	BirthDateTo                *time.Time
 	CountryID                  string
@@ -178,13 +178,21 @@ func (o GetAllOptions) FirstPage() GetAllOptions {
 	return ret
 }
 
+func (o GetAllOptions) WithTake(take int) GetAllOptions {
+	ret := o
+	ret.Take = take
+	return ret
+}
+
 func (o GetAllOptions) QueryParams() template.HTML {
 	var params = &url.Values{}
 	if len(o.FullName) != 0 {
 		params.Add("full_name", o.FullName)
 	}
-	if len(o.ID) != 0 {
-		params.Add("id", o.ID)
+	if len(o.IDs) != 0 {
+		for _, id := range o.IDs {
+			params.Add("id", id)
+		}
 	}
 	if len(o.Address) != 0 {
 		params.Add("address", o.Address)

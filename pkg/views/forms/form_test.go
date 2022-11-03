@@ -119,12 +119,12 @@ func TestFormInto(t *testing.T) {
 			want: DummyStruct{NumberFieldPtr: nil},
 		}, {
 			name: "textAreaField",
-			form: formWithFields(textAreaField("textAreaField", "abc\ndef")),
-			want: DummyStruct{TextAreaField: "abc\ndef"},
+			form: formWithFields(textAreaField("textAreaField", "foo\nbar")),
+			want: DummyStruct{TextAreaField: "foo\nbar"},
 		}, {
 			name: "textAreaField_pointer",
-			form: formWithFields(textAreaField("textAreaFieldPtr", "abc\ndef")),
-			want: DummyStruct{TextAreaFieldPtr: pointers.String("abc\ndef")},
+			form: formWithFields(textAreaField("textAreaFieldPtr", "buzz\nbar")),
+			want: DummyStruct{TextAreaFieldPtr: pointers.String("buzz\nbar")},
 		}, {
 			name: "textAreaField_pointer_empty",
 			form: formWithFields(textAreaField("textAreaFieldPtr", "")),
