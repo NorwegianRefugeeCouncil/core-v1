@@ -149,6 +149,7 @@ func parseGetAllOptions(r *http.Request, out *api.GetAllOptions) error {
 		displacementStatusMap[s] = true
 		out.DisplacementStatuses = append(out.DisplacementStatuses, s)
 	}
+	
 	idValues := r.Form[constants.FormParamGetIndividualsID]
 	idSet := containers.NewStringSet()
 	for _, v := range idValues {
