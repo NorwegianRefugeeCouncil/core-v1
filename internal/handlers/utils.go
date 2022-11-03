@@ -7,11 +7,23 @@ import (
 
 func validateIndividualsExistInCountry(individualIds []string, existingIndividuals []*api.Individual, expectedCountryId string) []string {
 	individualIdsSet := containers.NewStringSet(individualIds...)
-	invalidIndividualIds := containers.NewStringSet()
+
+	existingIndividualIdMap := map[string]*api.Individual{}
 	for _, individual := range existingIndividuals {
-		if individual.CountryID != expectedCountryId || !individualIdsSet.Contains(individual.ID) {
-			invalidIndividualIds.Add(individual.ID)
+		existingIndividualIdMap[individual.ID] = individual
+	}
+
+	invalidIndividualIds := containers.NewStringSet()
+	for _, individualId := range individualIdsSet.Items() {
+		existingIndividual, ok := existingIndividualIdMap[individualId]
+		if !ok {
+			invalidIndividualIds.Add(individualId)
+			continue
+		}
+		if existingIndividual.CountryID != expectedCountryId {
+			invalidIndividualIds.Add(individualId)
 		}
 	}
+
 	return invalidIndividualIds.Items()
 }
