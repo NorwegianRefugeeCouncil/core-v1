@@ -199,11 +199,17 @@ func (g *getAllIndividualsSQLQuery) withOrderBy(field string) *getAllIndividuals
 }
 
 func (g *getAllIndividualsSQLQuery) withLimit(limit int) *getAllIndividualsSQLQuery {
+	if limit == 0 {
+		return g
+	}
 	g.writeString(fmt.Sprintf(" LIMIT %d", limit))
 	return g
 }
 
 func (g *getAllIndividualsSQLQuery) withOffset(offset int) *getAllIndividualsSQLQuery {
+	if offset == 0 {
+		return g
+	}
 	g.writeString(fmt.Sprintf(" OFFSET %d", offset))
 	return g
 }
