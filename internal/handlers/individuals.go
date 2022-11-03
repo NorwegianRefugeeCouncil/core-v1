@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/constants"
+	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
@@ -147,5 +149,17 @@ func parseGetAllOptions(r *http.Request, out *api.GetAllOptions) error {
 		displacementStatusMap[s] = true
 		out.DisplacementStatuses = append(out.DisplacementStatuses, s)
 	}
+	idValues := r.Form[constants.FormParamGetIndividualsID]
+	idSet := containers.NewStringSet()
+	for _, v := range idValues {
+		parts := strings.Split(v, ",")
+		for _, p := range parts {
+			if len(p) == 0 {
+				continue
+			}
+			idSet.Add(p)
+		}
+	}
+	out.IDs = idSet.Items()
 	return nil
 }

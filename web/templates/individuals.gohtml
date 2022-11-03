@@ -111,7 +111,7 @@
                                                    type="text"
                                                    placeholder="Search by ID"
                                                    class="form-control"
-                                                   value="{{.Options.IDs}}">
+                                                   value="{{if .Options.IDs}}{{joinStrings .Options.IDs ","}}{{end}}">
                                         </div>
                                         <!-- End ID -->
 

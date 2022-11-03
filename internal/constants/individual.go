@@ -16,6 +16,7 @@ const (
 	FormParamIndividualPresentsProtectionConcerns = "PresentsProtectionConcerns"
 	FormParamIndividualSensoryImpairment          = "SensoryImpairment"
 
+	FormParamGetIndividualsID                  = "id"
 	FormParamGetIndividualsEmail               = "email"
 	FormParamGetIndividualsName                = "name"
 	FormParamGetIndividualsPhoneNumber         = "phone_number"
