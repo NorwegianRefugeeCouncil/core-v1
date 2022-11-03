@@ -542,24 +542,24 @@
     {{$ascSortUrl := $options.GetSortURLForField $fieldName "ascending"}}
     {{$descSortUrl := $options.GetSortURLForField $fieldName "descending"}}
 
+
+    {{$style := "style=\""}}
+    {{if $width}}
+        {{$style = concat $style "width: " $width ";" }}
+    {{end}}
+    {{if $minWidth}}
+        {{$style = concat $style "min-width: " $minWidth ";" }}
+    {{end}}
+    {{if $maxWidth}}
+        {{$style = concat $style "max-width: " $maxWidth ";" }}
+    {{end}}
+    {{$style = concat $style "\"" }}
+
     {{ if not $sortable}}
-        <th style="min-width: 5rem">
-            <a class="d-inline-block text-decoration-none text-black">
-                {{$label}}
-            </a>
+        <th  {{$style | attr}}>
+            {{$label}}
         </th>
     {{else}}
-        {{$style := "style=\""}}
-        {{if $width}}
-            {{$style = concat $style "width: " $width ";" }}
-        {{end}}
-        {{if $minWidth}}
-            {{$style = concat $style "min-width: " $minWidth ";" }}
-        {{end}}
-        {{if $maxWidth}}
-            {{$style = concat $style "max-width: " $maxWidth ";" }}
-        {{end}}
-        {{$style = concat $style "\"" }}
         <th aria-sort="{{$sortDirection}}"
             {{$style | attr}}
             class="sortable p-0 m-0">
