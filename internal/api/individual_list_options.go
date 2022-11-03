@@ -111,6 +111,11 @@ func (o GetAllOptions) GetSortURLForField(field string, direction SortDirection)
 	return newOptions.QueryParams()
 }
 
+func (o GetAllOptions) WithTake(take int) GetAllOptions {
+	o.Take = take
+	return o
+}
+
 func (o GetAllOptions) GetSortDirectionForField(field string) SortDirection {
 	for _, o := range o.Sort {
 		if o.Field == field {
