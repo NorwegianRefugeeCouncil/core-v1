@@ -81,7 +81,7 @@ func (g *getAllIndividualsSQLQuery) withFullName(name string) *getAllIndividuals
 		g.writeArg("%" + name + "%")
 		g.writeString(")")
 	} else if g.driverName == "postgres" {
-		g.writeString(" AND (full_name LIKE ")
+		g.writeString(" AND (full_name ILIKE ")
 		g.writeArg("%" + name + "%")
 		g.writeString(" OR preferred_name ILIKE ")
 		g.writeArg("%" + name + "%")
@@ -95,9 +95,9 @@ func (g *getAllIndividualsSQLQuery) withAddress(address string) *getAllIndividua
 		return g
 	}
 	if g.driverName == "sqlite" {
-		g.writeString(" AND (address LIKE ").writeArg("%" + address + "%").writeString(")")
+		g.writeString(" AND address LIKE ").writeArg("%" + address + "%")
 	} else if g.driverName == "postgres" {
-		g.writeString(" AND (address ILIKE ").writeArg("%" + address + "%").writeString(")")
+		g.writeString(" AND address ILIKE ").writeArg("%" + address + "%")
 	}
 	return g
 }
@@ -106,7 +106,7 @@ func (g *getAllIndividualsSQLQuery) withGenders(genders []string) *getAllIndivid
 	if len(genders) == 0 {
 		return g
 	}
-	g.writeString(" AND gender in (").writeStringArgs(",", genders...).writeString(")")
+	g.writeString(" AND gender IN (").writeStringArgs(",", genders...).writeString(")")
 	return g
 }
 
@@ -137,7 +137,11 @@ func (g *getAllIndividualsSQLQuery) withPhoneNumber(phoneNumber string) *getAllI
 		return g
 	}
 	normalizedPhoneNumber := api.NormalizePhoneNumber(phoneNumber)
-	g.writeString(" AND normalized_phone_number LIKE ").writeArg("%" + normalizedPhoneNumber + "%")
+	if g.driverName == "sqlite" {
+		g.writeString(" AND normalized_phone_number LIKE ").writeArg("%" + normalizedPhoneNumber + "%")
+	} else if g.driverName == "postgres" {
+		g.writeString(" AND normalized_phone_number ILIKE ").writeArg("%" + normalizedPhoneNumber + "%")
+	}
 	return g
 }
 
@@ -186,7 +190,7 @@ func (g *getAllIndividualsSQLQuery) withDisplacementStatuses(displacementStatuse
 	if len(displacementStatuses) == 0 {
 		return g
 	}
-	g.writeString(" AND displacement_status IN(").writeStringArgs(",", displacementStatuses...).writeString(")")
+	g.writeString(" AND displacement_status IN (").writeStringArgs(",", displacementStatuses...).writeString(")")
 	return g
 }
 
