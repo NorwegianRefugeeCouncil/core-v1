@@ -422,13 +422,13 @@
                         Results:
                         <nav aria-label="pick amount of results" class="ms-2">
                             <ul class="pagination mb-0">
-                                <li class="page-item">
+                                <li class="page-item {{if eq .Options.Take 20}}active{{end}}">
                                     <a onclick="setTake(20)" class="page-link">20</a>
                                 </li>
-                                <li class="page-item">
+                                <li class="page-item {{if eq .Options.Take 50}}active{{end}}">
                                     <a onclick="setTake(50)" class="page-link">50</a>
                                 </li>
-                                <li class="page-item">
+                                <li class="page-item {{if eq .Options.Take 100}}active{{end}}">
                                     <a onclick="setTake(100)" class="page-link">100</a>
                                 </li>
                             </ul>
