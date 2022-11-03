@@ -253,6 +253,11 @@ nav.navbar {
         float: right;
         background-color: $white;
     }
+    .nrc-accordion-body {
+        .card-footer {
+            background-color: $card-bg;
+        }
+    }
 }
 
 table {
@@ -296,14 +301,6 @@ a.home-link {
 
 .no-text-decoration {
     text-decoration: none;
-}
-
-.card {
-    .nrc-accordion-body {
-        .card-footer {
-            background-color: $card-bg;
-        }
-    }
 }
 
 .nrc-individual-delete-btn {
