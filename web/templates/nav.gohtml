@@ -11,7 +11,10 @@
             <div id="navbarContent">
                 <div class="me-auto mb-2 mb-lg-0 w-100">
                     <div class="d-flex flex-row w-100">
-                        <a class="nav-link" href="/countries">
+                        <a href="/static/nrc_grf_template.xlsx" download="nrc-grf-template" class="nav-link">
+                            Download template
+                        </a>
+                        <a class="nav-link ms-5" href="/countries">
                             {{ if $.RequestContext.SelectedCountry }}
                                 Change Country
                             {{else}}
@@ -19,7 +22,7 @@
                             {{end}}
                         </a>
                         {{ if logoutURL}}
-                            <a title="Logout" class="nav-link order-last ms-5 ms-0" href="{{logoutURL}}">
+                            <a title="Logout" class="nav-link order-last ms-5" href="{{logoutURL}}">
                                 <div class="nav-item d-inline-block">Logout</div>
                                 <i class="bi bi-box-arrow-right d-lg-inline-block"></i>
                             </a>
