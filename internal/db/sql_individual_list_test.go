@@ -90,9 +90,10 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND is_minor = $1 ORDER BY created_at`,
 			wantArgs: []interface{}{true},
 		}, {
-			name:    "is not minor",
-			args:    api.GetAllOptions{IsMinor: pointers.Bool(false)},
-			wantSql: `SELECT * FROM individuals WHERE deleted_at IS NULL AND is_minor = $1 ORDER BY created_at`,
+			name:     "is not minor",
+			args:     api.GetAllOptions{IsMinor: pointers.Bool(false)},
+			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND is_minor = $1 ORDER BY created_at`,
+			wantArgs: []interface{}{false},
 		}, {
 			name:     "country_id",
 			args:     api.GetAllOptions{CountryID: "1"},

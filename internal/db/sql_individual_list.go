@@ -157,7 +157,7 @@ func (g *getAllIndividualsSQLQuery) withIsMinor(isMinor *bool) *getAllIndividual
 	if *isMinor {
 		g.writeString(" AND is_minor = ").writeArg(true)
 	} else {
-		g.writeString(" AND birth_date = ").writeArg(false)
+		g.writeString(" AND is_minor = ").writeArg(false)
 	}
 	return g
 }
