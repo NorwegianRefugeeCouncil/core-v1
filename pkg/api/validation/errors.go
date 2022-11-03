@@ -321,21 +321,8 @@ func (agg aggregate) Error() string {
 
 func (agg aggregate) visit(f func(err error) bool) bool {
 	for _, err := range agg {
-		switch err := err.(type) {
-		case aggregate:
-			if match := err.visit(f); match {
-				return true
-			}
-		case Aggregate:
-			for _, nestedErr := range err.Errors() {
-				if match := f(nestedErr); match {
-					return true
-				}
-			}
-		default:
-			if match := f(err); match {
-				return true
-			}
+		if visitErr(err, f) {
+			return true
 		}
 	}
 	return false
@@ -343,4 +330,32 @@ func (agg aggregate) visit(f func(err error) bool) bool {
 
 func (agg aggregate) Errors() []error {
 	return agg
+}
+
+func visitErr(err error, f func(err error) bool) bool {
+	switch err := err.(type) {
+	case aggregate:
+		return visitAggregateErr(err, f)
+	case Aggregate:
+		return visitAggregateIntfErr(err, f)
+	default:
+		return visitBasicErr(err, f)
+	}
+}
+
+func visitBasicErr(err error, f func(err error) bool) bool {
+	return f(err)
+}
+
+func visitAggregateErr(err aggregate, f func(err error) bool) bool {
+	return err.visit(f)
+}
+
+func visitAggregateIntfErr(err Aggregate, f func(err error) bool) bool {
+	for _, nestedErr := range err.Errors() {
+		if visitErr(nestedErr, f) {
+			return true
+		}
+	}
+	return false
 }

@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type DummyStringer interface {
@@ -126,24 +128,24 @@ func TestError_ErrorBody(t *testing.T) {
 			want: "root: Invalid value type: 3: detail",
 		}, {
 			name: "IntValue",
-			err:  TypeInvalid(NewPath("root"), 3, "detail"),
-			want: "root: Invalid value type: 3: detail",
+			err:  TypeInvalid(NewPath("root"), 4, "detail"),
+			want: "root: Invalid value type: 4: detail",
 		}, {
 			name: "Int32Value",
-			err:  TypeInvalid(NewPath("root"), int32(3), "detail"),
-			want: "root: Invalid value type: 3: detail",
+			err:  TypeInvalid(NewPath("root"), int32(5), "detail"),
+			want: "root: Invalid value type: 5: detail",
 		}, {
 			name: "Int64Value",
-			err:  TypeInvalid(NewPath("root"), int64(3), "detail"),
-			want: "root: Invalid value type: 3: detail",
+			err:  TypeInvalid(NewPath("root"), int64(6), "detail"),
+			want: "root: Invalid value type: 6: detail",
 		}, {
 			name: "Float32Value",
-			err:  TypeInvalid(NewPath("root"), float32(3), "detail"),
-			want: "root: Invalid value type: 3: detail",
+			err:  TypeInvalid(NewPath("root"), float32(7), "detail"),
+			want: "root: Invalid value type: 7: detail",
 		}, {
 			name: "Float64Value",
-			err:  TypeInvalid(NewPath("root"), float64(3), "detail"),
-			want: "root: Invalid value type: 3: detail",
+			err:  TypeInvalid(NewPath("root"), float64(8), "detail"),
+			want: "root: Invalid value type: 8: detail",
 		}, {
 			name: "StringValue",
 			err:  TypeInvalid(NewPath("root"), "3", "detail"),
@@ -154,16 +156,16 @@ func TestError_ErrorBody(t *testing.T) {
 			want: "root: Invalid value type: true: detail",
 		}, {
 			name: "Stringer",
-			err:  TypeInvalid(NewPath("root"), dummyStringer{s: "3"}, "detail"),
-			want: "root: Invalid value type: \"3\": detail",
+			err:  TypeInvalid(NewPath("root"), dummyStringer{s: "4"}, "detail"),
+			want: "root: Invalid value type: \"4\": detail",
 		}, {
 			name: "StringerPointer",
-			err:  TypeInvalid(NewPath("root"), &dummyStringer{s: "3"}, "detail"),
-			want: "root: Invalid value type: \"3\": detail",
+			err:  TypeInvalid(NewPath("root"), &dummyStringer{s: "5"}, "detail"),
+			want: "root: Invalid value type: \"5\": detail",
 		}, {
 			name: "StringerInterface",
-			err:  TypeInvalid(NewPath("root"), DummyStringer(&dummyStringer{s: "3"}), "detail"),
-			want: "root: Invalid value type: \"3\": detail",
+			err:  TypeInvalid(NewPath("root"), DummyStringer(&dummyStringer{s: "6"}), "detail"),
+			want: "root: Invalid value type: \"6\": detail",
 		}, {
 			name: "NilInterface",
 			err:  TypeInvalid(NewPath("root"), DummyStringer(nil), "detail"),
@@ -296,4 +298,64 @@ func TestAggregate_Is(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestVisit(t *testing.T) {
+	tests := []struct {
+		name string
+		errs []error
+		want []error
+	}{
+		{
+			name: "single",
+			errs: []error{errors.New("single")},
+			want: []error{errors.New("single")},
+		}, {
+			name: "multiple",
+			errs: []error{errors.New("first"), errors.New("second")},
+			want: []error{errors.New("first"), errors.New("second")},
+		}, {
+			name: "nested",
+			errs: []error{
+				errors.New("first"),
+				NewAggregate([]error{
+					errors.New("second"),
+					errors.New("third"),
+				}),
+			},
+			want: []error{
+				errors.New("first"),
+				errors.New("second"),
+				errors.New("third"),
+			},
+		}, {
+			name: "nested aggregate",
+			errs: []error{
+				errors.New("first"),
+				NewAggregate([]error{
+					errors.New("second"),
+					NewAggregate([]error{
+						errors.New("third"),
+					}),
+				}),
+			},
+			want: []error{
+				errors.New("first"),
+				errors.New("second"),
+				errors.New("third"),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var got []error
+			agg := aggregate(tt.errs)
+			agg.visit(func(err error) bool {
+				got = append(got, err)
+				return false
+			})
+			assert.Equal(t, tt.want, got)
+		})
+	}
+
 }
