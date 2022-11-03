@@ -76,8 +76,26 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 		fieldSet.Add("country_id")
 		fields = fieldSet.Items()
 
+		var individualIds []string
 		for _, individual := range individuals {
 			individual.CountryID = selectedCountryID
+			if len(individual.ID) > 0 {
+				individualIds = append(individualIds, individual.ID)
+			}
+		}
+
+		existingIndividuals, err := individualRepo.GetAll(ctx, api.GetAllOptions{IDs: individualIds})
+		if err != nil {
+			l.Error("failed to get existing individuals", zap.Error(err))
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		invalidIndividualIds := validateIndividualsExistInCountry(individualIds, existingIndividuals, selectedCountryID)
+		if len(invalidIndividualIds) > 0 {
+			l.Warn("user trying to update individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
+			http.Error(w, fmt.Sprintf("individuals not found: %v", invalidIndividualIds), http.StatusNotFound)
+			return
 		}
 
 		_, err = individualRepo.PutMany(r.Context(), individuals, fields)
