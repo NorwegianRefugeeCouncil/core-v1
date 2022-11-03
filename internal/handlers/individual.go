@@ -75,15 +75,6 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			}
 		}
 
-		// Get the currently selected Country ID
-		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
-		if err != nil {
-			l.Error("failed to get selected country id", zap.Error(err))
-			err = apierrs.ErrorFrom(err)
-			render()
-			return
-		}
-
 		individual.CountryID = selectedCountryID
 		individualForm, err = views.NewIndividualForm(individual)
 		if err != nil {
