@@ -409,7 +409,7 @@
                                     <a class="page-link"
                                        href="{{.Options.PreviousPage.QueryParams}}">Previous</a>
                                 </li>
-                                <li class="page-item {{if not .Individuals}}disabled{{end}}">
+                                <li class="page-item {{if lt (len .Individuals) .Options.Take}}disabled{{end}}">
                                     <a class="page-link"
                                        href="{{.Options.NextPage.QueryParams}}">Next</a>
                                 </li>
