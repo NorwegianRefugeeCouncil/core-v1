@@ -54,9 +54,9 @@ func TestBatch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var got = make([][]string, 0)
-			err := batch(tt.batchSize, tt.all, func(batch []string) error {
+			err := batch(tt.batchSize, tt.all, func(batch []string) (bool, error) {
 				got = append(got, batch)
-				return nil
+				return false, nil
 			})
 
 			if tt.wantErr {
