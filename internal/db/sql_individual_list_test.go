@@ -14,6 +14,8 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	zeroTime := time.Time{}
+	const defaultQuery = `SELECT * FROM individuals WHERE deleted_at IS NULL ORDER BY created_at`
 	tests := []struct {
 		name     string
 		args     api.GetAllOptions
@@ -23,7 +25,7 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 		{
 			name:    "empty",
 			args:    api.GetAllOptions{},
-			wantSql: `SELECT * FROM individuals WHERE deleted_at IS NULL ORDER BY created_at`,
+			wantSql: defaultQuery,
 		}, {
 			name:     "ids",
 			args:     api.GetAllOptions{IDs: []string{"1", "2"}},
@@ -50,10 +52,18 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND birth_date >= $1 ORDER BY created_at`,
 			wantArgs: []interface{}{&someDate},
 		}, {
+			name:    "zero birth date from",
+			args:    api.GetAllOptions{BirthDateFrom: &zeroTime},
+			wantSql: defaultQuery,
+		}, {
 			name:     "birth date to",
 			args:     api.GetAllOptions{BirthDateTo: &someDate},
 			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND birth_date <= $1 ORDER BY created_at`,
 			wantArgs: []interface{}{&someDate},
+		}, {
+			name:    "zero birth date to",
+			args:    api.GetAllOptions{BirthDateFrom: &zeroTime},
+			wantSql: defaultQuery,
 		}, {
 			name:     "phone number",
 			args:     api.GetAllOptions{PhoneNumber: "1234567890"},
@@ -70,10 +80,19 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND presents_protection_concerns = $1 ORDER BY created_at`,
 			wantArgs: []interface{}{true},
 		}, {
+			name:     "does not presents protection concerns",
+			args:     api.GetAllOptions{PresentsProtectionConcerns: pointers.Bool(false)},
+			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND presents_protection_concerns = $1 ORDER BY created_at`,
+			wantArgs: []interface{}{false},
+		}, {
 			name:     "is minor",
 			args:     api.GetAllOptions{IsMinor: pointers.Bool(true)},
 			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND is_minor = $1 ORDER BY created_at`,
 			wantArgs: []interface{}{true},
+		}, {
+			name:    "is not minor",
+			args:    api.GetAllOptions{IsMinor: pointers.Bool(false)},
+			wantSql: `SELECT * FROM individuals WHERE deleted_at IS NULL AND is_minor = $1 ORDER BY created_at`,
 		}, {
 			name:     "country_id",
 			args:     api.GetAllOptions{CountryID: "1"},

@@ -111,10 +111,8 @@ func (g *getAllIndividualsSQLQuery) withGenders(genders []string) *getAllIndivid
 }
 
 func (g *getAllIndividualsSQLQuery) withBirthDateFrom(from *time.Time) *getAllIndividualsSQLQuery {
-	if from == nil {
-		return g
-	}
-	if from.IsZero() {
+	zero := &time.Time{}
+	if from == nil || from.IsZero() || from == zero {
 		return g
 	}
 	g.writeString(" AND birth_date >= ").writeArg(from)
@@ -122,10 +120,8 @@ func (g *getAllIndividualsSQLQuery) withBirthDateFrom(from *time.Time) *getAllIn
 }
 
 func (g *getAllIndividualsSQLQuery) withBirthDateTo(to *time.Time) *getAllIndividualsSQLQuery {
-	if to == nil {
-		return g
-	}
-	if to.IsZero() {
+	zero := &time.Time{}
+	if to == nil || to.IsZero() || to == zero {
 		return g
 	}
 	g.writeString(" AND birth_date <= ").writeArg(to)
