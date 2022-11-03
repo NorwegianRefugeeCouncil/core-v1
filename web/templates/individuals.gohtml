@@ -26,12 +26,6 @@
             form.submit();
         }
 
-        function setTake(take) {
-            var href = new URL(window.location);
-            href.searchParams.set('take', take);
-            window.location = href;
-        }
-
         document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("searchForm")
             form.onsubmit = function () {
@@ -67,7 +61,7 @@
                 <div class="d-flex justify-content-end align-items-center">
                     {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
                         <button type="button" class="btn btn-outline-primary me-2" onclick="submitActionForm('delete')">
-                            Batch delete 
+                            Batch delete
                         </button>
                         <a href="/countries/{{.Options.CountryID}}/individuals/new" class="btn btn-outline-primary me-2">
                             Create new Individual
@@ -423,13 +417,13 @@
                         <nav aria-label="pick amount of results" class="ms-2">
                             <ul class="pagination mb-0">
                                 <li class="page-item {{if eq .Options.Take 20}}active{{end}}">
-                                    <a onclick="setTake(20)" class="page-link">20</a>
+                                    <a href="{{(.Options.WithTake 20).QueryParams}}" class="page-link">20</a>
                                 </li>
                                 <li class="page-item {{if eq .Options.Take 50}}active{{end}}">
-                                    <a onclick="setTake(50)" class="page-link">50</a>
+                                    <a href="{{(.Options.WithTake 50).QueryParams}}" class="page-link">50</a>
                                 </li>
                                 <li class="page-item {{if eq .Options.Take 100}}active{{end}}">
-                                    <a onclick="setTake(100)" class="page-link">100</a>
+                                    <a href="{{(.Options.WithTake 100).QueryParams}}" class="page-link">100</a>
                                 </li>
                             </ul>
                         </nav>

@@ -178,6 +178,12 @@ func (o GetAllOptions) FirstPage() GetAllOptions {
 	return ret
 }
 
+func (o GetAllOptions) WithTake(take int) GetAllOptions {
+	ret := o
+	ret.Take = take
+	return ret
+}
+
 func (o GetAllOptions) QueryParams() template.HTML {
 	var params = &url.Values{}
 	if len(o.FullName) != 0 {
