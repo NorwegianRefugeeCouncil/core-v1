@@ -1,3 +1,5 @@
+
+
 {{define "head"}}
     <script type="application/javascript" src="/static/autocomplete.js"></script>
     <script type="application/javascript" src="/static/rxjs.js"></script>
@@ -13,7 +15,6 @@
         function openDialog() {
             document.getElementById('individual-upload--file').click();
         }
-
         function submitForm() {
             document.getElementById('individual-upload--button').disabled = true;
             document.getElementById('individual-upload--form').submit();
@@ -23,12 +24,6 @@
             const form = document.getElementById('individuals-action-form');
             form.action = "/countries/{{.Options.CountryID}}/individuals/" + action;
             form.submit();
-        }
-
-        function setTake(take) {
-            var href = new URL(window.location);
-            href.searchParams.set('take', take);
-            window.location = href;
         }
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -512,14 +507,14 @@
                     Results:
                     <nav aria-label="pick amount of results" class="ms-2">
                         <ul class="pagination mb-0">
-                            <li class="page-item">
-                                <a onclick="setTake(20)" class="page-link">20</a>
+                            <li class="page-item {{if eq .Options.Take 20}}active{{end}}">
+                                <a href="{{(.Options.WithTake 20).QueryParams}}" class="page-link">20</a>
                             </li>
-                            <li class="page-item">
-                                <a onclick="setTake(50)" class="page-link">50</a>
+                            <li class="page-item {{if eq .Options.Take 50}}active{{end}}">
+                                <a href="{{(.Options.WithTake 50).QueryParams}}" class="page-link">50</a>
                             </li>
-                            <li class="page-item">
-                                <a onclick="setTake(100)" class="page-link">100</a>
+                            <li class="page-item {{if eq .Options.Take 100}}active{{end}}">
+                                <a href="{{(.Options.WithTake 100).QueryParams}}" class="page-link">100</a>
                             </li>
                         </ul>
                     </nav>
