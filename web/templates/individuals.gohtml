@@ -22,8 +22,7 @@
 
         function submitActionForm(action) {
             const form = document.getElementById('individuals-action-form');
-            form.action = "{{.CurrentUrl}}/" + action;
-            console.log("submitting form with action " + form.action);
+            form.action = "/countries/{{.Options.CountryID}}/individuals/" + action;
             form.submit();
         }
 
@@ -61,6 +60,9 @@
 
                 <div class="d-flex justify-content-end align-items-center">
                     {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
+                        <button type="button" class="btn btn-outline-primary me-2" onclick="submitActionForm('delete')">
+                            Batch delete
+                        </button>
                         <a href="/countries/{{.Options.CountryID}}/individuals/new" class="btn btn-outline-primary me-2">
                             Create new Individual
                         </a>
@@ -103,13 +105,13 @@
                                     <div class="row">
                                         <!-- ID -->
                                         <div class="form-group mb-3 col-6">
-                                            <label class="form-label" for="ID">ID</label>
+                                            <label class="form-label" for="ID">IDs</label>
                                             <input id="ID"
                                                    name="id"
                                                    type="text"
                                                    placeholder="Search by ID"
                                                    class="form-control"
-                                                   value="{{.Options.ID}}">
+                                                   value="{{.Options.IDs}}">
                                         </div>
                                         <!-- End ID -->
 
@@ -414,13 +416,13 @@
                         Results:
                         <nav aria-label="pick amount of results" class="ms-2">
                             <ul class="pagination mb-0">
-                                <li class="page-item">
+                                <li class="page-item {{if eq .Options.Take 20}}active{{end}}">
                                     <a href="{{(.Options.WithTake 20).QueryParams}}" class="page-link">20</a>
                                 </li>
-                                <li class="page-item">
+                                <li class="page-item {{if eq .Options.Take 50}}active{{end}}">
                                     <a href="{{(.Options.WithTake 50).QueryParams}}" class="page-link">50</a>
                                 </li>
-                                <li class="page-item">
+                                <li class="page-item {{if eq .Options.Take 100}}active{{end}}">
                                     <a href="{{(.Options.WithTake 100).QueryParams}}" class="page-link">100</a>
                                 </li>
                             </ul>

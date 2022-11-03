@@ -10,7 +10,9 @@ import (
 )
 
 func nextHandler() http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
+	return func(w http.ResponseWriter, r *http.Request) {
+		// noop
+	}
 }
 
 func configureDummyContextMiddleware(
