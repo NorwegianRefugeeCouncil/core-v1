@@ -285,7 +285,7 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 		b.WriteString(" ON CONFLICT (id) DO UPDATE SET ")
 		isFirst := true
 		for _, field := range fields {
-			if field == "id" {
+			if field == "id" || field == "country_id" {
 				continue
 			}
 			if !isFirst {
@@ -387,6 +387,7 @@ func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx,
 	}); err != nil {
 		return err
 	}
+
 	return nil
 }
 
