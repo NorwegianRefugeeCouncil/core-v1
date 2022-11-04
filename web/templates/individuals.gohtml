@@ -4,6 +4,7 @@
     <script type="application/javascript" src="/static/autocomplete.js"></script>
     <script type="application/javascript" src="/static/rxjs.js"></script>
     <script type="application/javascript" src="/static/country_selector.js"></script>
+
     <script type="application/javascript">
         function goToIndividual() {
             const id = document.getElementById("goToIndividualId").value;
@@ -26,16 +27,27 @@
             form.submit();
         }
 
+        function updateDeleteButton() {
+            const batchDeleteButton = document.getElementById('batch-delete')
+            batchDeleteButton.classList.add('disabled')
+            document.getElementsByName('individual_id').forEach(function (box) {
+                if (box.checked) {
+                    batchDeleteButton.classList.remove('disabled')
+                    return;
+                }
+            });
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
-            const form = document.getElementById("searchForm")
-            form.onsubmit = function () {
+            const searchForm = document.getElementById("searchForm")
+            searchForm.onsubmit = function () {
                 let inputs, index;
                 inputs = [
                     ...document.getElementsByTagName('input'),
                     ...document.getElementsByTagName('select'),
                 ];
                 for (index = 0; index < inputs.length; ++index) {
-                    if (!form.contains(inputs[index])) {
+                    if (!searchForm.contains(inputs[index])) {
                         continue
                     }
                     if (inputs[index].value === "") {
@@ -43,7 +55,6 @@
                     }
                 }
             }
-
             document.getElementById('individual-upload--button').addEventListener('click', openDialog);
             document.getElementById('individual-upload--file').addEventListener('change', submitForm);
         });
@@ -59,14 +70,6 @@
                 <h1 class="my-4">{{ $.RequestContext.SelectedCountry.Name }}</h1>
 
                 <div class="d-flex justify-content-end align-items-center">
-                    {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                        <button type="button" class="btn btn-outline-primary me-2" onclick="submitActionForm('delete')">
-                            Batch delete
-                        </button>
-                        <a href="/countries/{{.Options.CountryID}}/individuals/new" class="btn btn-outline-primary me-2">
-                            Create new Individual
-                        </a>
-                    {{end}}
                     <a href="/countries/{{.Options.CountryID}}/individuals/download" target="_blank" class="btn btn-outline-primary">
                         Download
                     </a>
@@ -316,8 +319,21 @@
             </div>
             <!-- END SEARCH FILTERS -->
 
+            <!-- INDIVIDUAL ACTIONS -->
+            <div class="mb-3 d-flex justify-content-between">
+                {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
+                    <button type="button" class="btn btn-outline-danger me-2 disabled" id="batch-delete" onclick="submitActionForm('delete')">
+                        Batch delete
+                    </button>
+                    <a href="/countries/{{.Options.CountryID}}/individuals/new" class="btn btn-outline-primary me-2">
+                        Create new Individual
+                    </a>
+                {{end}}
+            </div>
+            <!-- END INDIVIDUAL ACTIONS -->
+
             <!-- INDIVIDUALS TABLE -->
-            <form id="individuals-action-form" class="table-responsive mb-3" method="post">
+            <form id="individuals-action-form" class="table-responsive mb-3" method="post" onchange="updateDeleteButton()">
                 <table class="table">
                     <thead>
                     <tr>

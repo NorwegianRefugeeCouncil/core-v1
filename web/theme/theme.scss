@@ -212,6 +212,35 @@ button, .btn {
             border-color: $blue-200;
         }
     }
+
+    &.btn-danger {
+        &:active, &:focus-visible, &:focus {
+            background-color: $red-500;
+            border-color: $red-500;
+        }
+        &:hover {
+            background-color: $red-400;
+            border-color: $red-400;
+        }
+    }
+    &.btn-outline-danger {
+        background-color: $white;
+        color: $red-500;
+        &:hover {
+            background-color: $red-100;
+            color: $red-500;
+        }
+        &:active, &:focus-visible, &:focus {
+            background-color: $red-200;
+            border-color: $red-200;
+        }
+    }
+    &:disabled, &.disabled {
+        border-color: $gray-600;
+        color: $gray-600;
+        background-color: $white;
+    }
+
 }
 
 nav.navbar {
