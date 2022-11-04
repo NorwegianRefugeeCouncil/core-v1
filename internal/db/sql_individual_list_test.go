@@ -48,6 +48,11 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND gender IN ($1,$2) ORDER BY created_at`,
 			wantArgs: []interface{}{"female", "male"},
 		}, {
+			name:     "all genders",
+			args:     api.ListIndividualsOptions{Genders: api.AllGenders()},
+			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND gender IN ($1,$2,$3,$4) ORDER BY created_at`,
+			wantArgs: []interface{}{"female", "male", "other", "prefers_not_to_say"},
+		}, {
 			name:     "birth date from",
 			args:     api.ListIndividualsOptions{BirthDateFrom: &someDate},
 			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND birth_date >= $1 ORDER BY created_at`,
@@ -105,6 +110,11 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			args:     api.ListIndividualsOptions{DisplacementStatuses: containers.NewSet[api.DisplacementStatus](api.DisplacementStatusIDP, api.DisplacementStatusRefugee)},
 			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND displacement_status IN ($1,$2) ORDER BY created_at`,
 			wantArgs: []interface{}{"idp", "refugee"},
+		}, {
+			name:     "all displacement_statuses",
+			args:     api.ListIndividualsOptions{DisplacementStatuses: api.AllDisplacementStatuses()},
+			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND displacement_status IN ($1,$2,$3) ORDER BY created_at`,
+			wantArgs: []interface{}{"host_community", "idp", "refugee"},
 		}, {
 			name:     "skip",
 			args:     api.ListIndividualsOptions{Skip: 10},
