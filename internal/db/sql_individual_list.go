@@ -14,7 +14,7 @@ type getAllIndividualsSQLQuery struct {
 	a          []interface{}
 }
 
-func newGetAllIndividualsSQLQuery(driverName string, options api.GetAllOptions) *getAllIndividualsSQLQuery {
+func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividualsOptions) *getAllIndividualsSQLQuery {
 	qry := &getAllIndividualsSQLQuery{
 		Builder:    &strings.Builder{},
 		driverName: driverName,
