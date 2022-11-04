@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
@@ -37,7 +38,7 @@ func HandleIndividualsDelete(repo db.IndividualRepo) http.Handler {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		individualIds := r.Form[formParamField]
+		individualIds := containers.NewStringSet(r.Form[formParamField]...)
 
 		individuals, err := repo.GetAll(ctx, api.ListIndividualsOptions{IDs: individualIds})
 		if err != nil {

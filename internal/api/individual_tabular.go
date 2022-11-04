@@ -81,7 +81,11 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualPreferredName:
 			i.PreferredName = cols[idx]
 		case constants.FileColumnIndividualDisplacementStatus:
-			i.DisplacementStatus = cols[idx]
+			ds, err := ParseDisplacementStatus(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.DisplacementStatus = ds
 		case constants.FileColumnIndividualPhoneNumber:
 			i.PhoneNumber = cols[idx]
 		case constants.FileColumnIndividualEmail:
@@ -89,7 +93,11 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualAddress:
 			i.Address = cols[idx]
 		case constants.FileColumnIndividualGender:
-			i.Gender = cols[idx]
+			g, err := ParseGender(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.Gender = g
 		case constants.FileColumnIndividualBirthDate:
 			i.BirthDate, err = ParseDate(cols[idx])
 			if err != nil {

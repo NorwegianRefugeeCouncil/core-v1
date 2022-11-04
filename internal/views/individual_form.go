@@ -85,7 +85,7 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 	genderField := &forms.SelectInputField{
 		Name:        "gender",
 		DisplayName: "Gender",
-		Value:       i.Gender,
+		Value:       string(i.Gender),
 		Required:    true,
 		Options:     genderOptions,
 	}
@@ -128,7 +128,7 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 		Options:     displacementStatusOptions,
 		Name:        "displacementStatus",
 		DisplayName: "Displacement Status",
-		Value:       i.DisplacementStatus,
+		Value:       string(i.DisplacementStatus),
 	}
 
 	emailField := &forms.TextInputField{

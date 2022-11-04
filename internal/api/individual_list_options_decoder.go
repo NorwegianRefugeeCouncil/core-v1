@@ -98,27 +98,33 @@ func (p *listIndividualsOptionsDecoder) parseIDs() error {
 	if idSet.IsEmpty() {
 		return nil
 	}
-	p.out.IDs = idSet.Items()
+	p.out.IDs = idSet
 	return nil
 }
 
 func (p *listIndividualsOptionsDecoder) parseGenders() error {
-	genderSet := containers.NewStringSet()
-	genderSet.Add(p.values[constants.FormParamsGetIndividualsGender]...)
-	if genderSet.IsEmpty() {
-		return nil
+	genderSet := containers.NewSet[Gender]()
+	for _, g := range p.values[constants.FormParamsGetIndividualsGender] {
+		gender, err := ParseGender(g)
+		if err != nil {
+			return err
+		}
+		genderSet.Add(gender)
 	}
-	p.out.Genders = genderSet.Items()
+	p.out.Genders = genderSet
 	return nil
 }
 
 func (p *listIndividualsOptionsDecoder) parseDisplacementStatuses() error {
-	dsSet := containers.NewStringSet()
-	dsSet.Add(p.values[constants.FormParamsGetIndividualsDisplacementStatus]...)
-	if dsSet.IsEmpty() {
-		return nil
+	dsSet := containers.NewSet[DisplacementStatus]()
+	for _, ds := range p.values[constants.FormParamsGetIndividualsDisplacementStatus] {
+		parsedDs, err := ParseDisplacementStatus(ds)
+		if err != nil {
+			return err
+		}
+		dsSet.Add(parsedDs)
 	}
-	p.out.DisplacementStatuses = dsSet.Items()
+	p.out.DisplacementStatuses = dsSet
 	return nil
 }
 

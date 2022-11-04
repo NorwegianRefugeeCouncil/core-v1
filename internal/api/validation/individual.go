@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/nrc-no/notcore/internal/api"
-	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/api/validation"
 )
 
@@ -54,29 +53,25 @@ func validateIndividualCountryID(countryID string, path *validation.Path) valida
 	return allErrs
 }
 
-var allowedDisplacementStatuses = containers.NewStringSet("idp", "refugee", "host_community")
-
-func validateIndividualDisplacementStatus(ds string, path *validation.Path) validation.ErrorList {
+func validateIndividualDisplacementStatus(ds api.DisplacementStatus, path *validation.Path) validation.ErrorList {
 	switch {
 	case allowedDisplacementStatuses.Contains(ds):
 		return validation.ErrorList{}
 	case len(ds) == 0:
 		return validation.ErrorList{validation.Required(path, "displacement status is required")}
 	default:
-		return validation.ErrorList{validation.NotSupported(path, ds, allowedDisplacementStatuses.Items())}
+		return validation.ErrorList{validation.NotSupported(path, ds, allowedDisplacementStatusesStr)}
 	}
 }
 
-var allowedGenders = containers.NewStringSet("male", "female", "other", "prefers_not_to_say")
-
-func validateIndividualGender(gender string, path *validation.Path) validation.ErrorList {
+func validateIndividualGender(gender api.Gender, path *validation.Path) validation.ErrorList {
 	switch {
 	case allowedGenders.Contains(gender):
 		return validation.ErrorList{}
 	case len(gender) == 0:
 		return validation.ErrorList{validation.Required(path, "gender is required")}
 	default:
-		return validation.ErrorList{validation.NotSupported(path, gender, allowedGenders.Items())}
+		return validation.ErrorList{validation.NotSupported(path, gender, allowedGendersStr)}
 	}
 }
 

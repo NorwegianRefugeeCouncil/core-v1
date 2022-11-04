@@ -20,10 +20,10 @@ import (
 type IndividualRepo interface {
 	GetAll(ctx context.Context, options api.ListIndividualsOptions) ([]*api.Individual, error)
 	GetByID(ctx context.Context, id string) (*api.Individual, error)
-	Put(ctx context.Context, individual *api.Individual, fields []string) (*api.Individual, error)
-	PutMany(ctx context.Context, individuals []*api.Individual, fields []string) ([]*api.Individual, error)
+	Put(ctx context.Context, individual *api.Individual, fields containers.StringSet) (*api.Individual, error)
+	PutMany(ctx context.Context, individuals []*api.Individual, fields containers.StringSet) ([]*api.Individual, error)
 	SoftDelete(ctx context.Context, id string) error
-	SoftDeleteMany(ctx context.Context, ids []string) error
+	SoftDeleteMany(ctx context.Context, ids containers.StringSet) error
 }
 
 type individualRepo struct {
@@ -55,13 +55,13 @@ func (i individualRepo) GetAll(ctx context.Context, options api.ListIndividualsO
 func (i individualRepo) batchedGetAllInternal(ctx context.Context, tx *sqlx.Tx, options api.ListIndividualsOptions) ([]*api.Individual, error) {
 	if len(options.IDs) > 0 {
 		var ret []*api.Individual
-		err := batch(maxParams/len(options.IDs), options.IDs, func(idsInBatch []string) (stop bool, err error) {
+		err := batch(maxParams/len(options.IDs), options.IDs.Items(), func(idsInBatch []string) (stop bool, err error) {
 			// check if we already reached the limit. If so, exit early
 			if options.Take != 0 && len(ret) >= options.Take {
 				return true, nil
 			}
 			optionsForBatch := options
-			optionsForBatch.IDs = idsInBatch
+			optionsForBatch.IDs = containers.NewStringSet(idsInBatch...)
 			optionsForBatch.Take = utils.Max(0, options.Take-len(ret))
 			individualsInBatch, err := i.unbatchedGetAllInternal(ctx, tx, optionsForBatch)
 			if err != nil {
@@ -126,7 +126,7 @@ func (i individualRepo) getByIdInternal(ctx context.Context, tx *sqlx.Tx, id str
 	return &ret, nil
 }
 
-func (i individualRepo) PutMany(ctx context.Context, individuals []*api.Individual, fields []string) ([]*api.Individual, error) {
+func (i individualRepo) PutMany(ctx context.Context, individuals []*api.Individual, fields containers.StringSet) ([]*api.Individual, error) {
 	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		return i.putManyInternal(ctx, tx, individuals, fields)
 	})
@@ -136,12 +136,12 @@ func (i individualRepo) PutMany(ctx context.Context, individuals []*api.Individu
 	return ret.([]*api.Individual), nil
 }
 
-func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, individuals []*api.Individual, fields []string) ([]*api.Individual, error) {
+func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, individuals []*api.Individual, fields containers.StringSet) ([]*api.Individual, error) {
 
 	now := time.Now().UTC()
 	nowStr := now.Format(time.RFC3339)
 
-	fieldsSet := containers.NewStringSet(fields...)
+	fieldsSet := fields.Clone()
 	if fieldsSet.Contains("phone_number") {
 		fieldsSet.Add("normalized_phone_number")
 	}
@@ -149,13 +149,14 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 	fieldsSet.Remove("created_at")
 	fieldsSet.Remove("updated_at")
 	fieldsSet.Add("id")
-	fields = fieldsSet.Items()
+
+	fieldSlice := fieldsSet.Items()
 
 	ret := make([]*api.Individual, 0, len(individuals))
 	if err := batch(maxParams/len(fields), individuals, func(individualsInBatch []*api.Individual) (bool, error) {
 		args := make([]interface{}, 0)
 		b := &strings.Builder{}
-		b.WriteString("INSERT INTO individuals (" + strings.Join(fields, ",") + ",created_at,updated_at) VALUES ")
+		b.WriteString("INSERT INTO individuals (" + strings.Join(fieldSlice, ",") + ",created_at,updated_at) VALUES ")
 
 		for i, individual := range individualsInBatch {
 			if individual.ID == "" {
@@ -165,7 +166,7 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 				b.WriteString(",")
 			}
 			b.WriteString("(")
-			for j, field := range fields {
+			for j, field := range fieldSlice {
 				if j != 0 {
 					b.WriteString(",")
 				}
@@ -180,7 +181,7 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 		}
 		b.WriteString(" ON CONFLICT (id) DO UPDATE SET ")
 		isFirst := true
-		for _, field := range fields {
+		for _, field := range fields.Items() {
 			if field == "id" || field == "country_id" {
 				continue
 			}
@@ -208,7 +209,7 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 	return ret, nil
 }
 
-func (i individualRepo) Put(ctx context.Context, individual *api.Individual, fields []string) (*api.Individual, error) {
+func (i individualRepo) Put(ctx context.Context, individual *api.Individual, fields containers.StringSet) (*api.Individual, error) {
 	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		return i.putInternal(ctx, tx, individual, fields)
 	})
@@ -218,7 +219,7 @@ func (i individualRepo) Put(ctx context.Context, individual *api.Individual, fie
 	return ret.(*api.Individual), nil
 }
 
-func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual *api.Individual, fields []string) (*api.Individual, error) {
+func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual *api.Individual, fields containers.StringSet) (*api.Individual, error) {
 	ret, err := i.putManyInternal(ctx, tx, []*api.Individual{individual}, fields)
 	if err != nil {
 		return nil, err
@@ -231,13 +232,13 @@ func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual
 
 func (i individualRepo) SoftDelete(ctx context.Context, id string) error {
 	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		err := i.softDeleteManyInternal(ctx, tx, []string{id})
+		err := i.softDeleteManyInternal(ctx, tx, containers.NewStringSet(id))
 		return nil, err
 	})
 	return err
 }
 
-func (i individualRepo) SoftDeleteMany(ctx context.Context, ids []string) error {
+func (i individualRepo) SoftDeleteMany(ctx context.Context, ids containers.StringSet) error {
 	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		err := i.softDeleteManyInternal(ctx, tx, ids)
 		return nil, err
@@ -245,14 +246,11 @@ func (i individualRepo) SoftDeleteMany(ctx context.Context, ids []string) error 
 	return err
 }
 
-func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx, ids []string) error {
-	idSet := containers.NewStringSet(ids...)
-	ids = idSet.Items()
-
-	l := logging.NewLogger(ctx).With(zap.Strings("individual_ids", ids))
+func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx, ids containers.StringSet) error {
+	l := logging.NewLogger(ctx).With(zap.Strings("individual_ids", ids.Items()))
 	l.Debug("deleting individuals")
 
-	if err := batch(maxParams/len(ids), ids, func(idsInBatch []string) (bool, error) {
+	if err := batch(maxParams/len(ids), ids.Items(), func(idsInBatch []string) (bool, error) {
 		var query = "UPDATE individuals SET deleted_at = $1 WHERE id IN ("
 		var args = []interface{}{time.Now().UTC().Format(time.RFC3339)}
 		for i, id := range idsInBatch {

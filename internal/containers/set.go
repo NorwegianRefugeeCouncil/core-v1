@@ -173,3 +173,11 @@ func (s Set[T]) IteratorWithLimit(limit int) <-chan T {
 	}()
 	return ch
 }
+
+func (s Set[T]) Clone() Set[T] {
+	var out = NewSet[T]()
+	for item := range s {
+		out.Add(item)
+	}
+	return out
+}

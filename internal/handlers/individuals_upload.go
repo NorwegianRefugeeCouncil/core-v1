@@ -74,13 +74,12 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 
 		fieldSet := containers.NewStringSet(fields...)
 		fieldSet.Add("country_id")
-		fields = fieldSet.Items()
 
-		var individualIds []string
+		var individualIds = containers.NewStringSet()
 		for _, individual := range individuals {
 			individual.CountryID = selectedCountryID
 			if len(individual.ID) > 0 {
-				individualIds = append(individualIds, individual.ID)
+				individualIds.Add(individual.ID)
 			}
 		}
 
@@ -98,7 +97,7 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		_, err = individualRepo.PutMany(r.Context(), individuals, fields)
+		_, err = individualRepo.PutMany(r.Context(), individuals, fieldSet)
 		if err != nil {
 			l.Error("failed to put individuals", zap.Error(err))
 			http.Error(w, "failed to put records: "+err.Error(), http.StatusInternalServerError)

@@ -9,25 +9,25 @@ import (
 )
 
 type Individual struct {
-	ID                         string     `json:"id" db:"id"`
-	CountryID                  string     `json:"countryId" db:"country_id"`
-	FullName                   string     `json:"fullName" db:"full_name"`
-	PhoneNumber                string     `json:"phoneNumber" db:"phone_number"`
-	NormalizedPhoneNumber      string     `json:"normalizedPhoneNumber" db:"normalized_phone_number"`
-	Email                      string     `json:"email" db:"email"`
-	Address                    string     `json:"address" db:"address"`
-	BirthDate                  *time.Time `json:"birthDate" db:"birth_date"`
-	Gender                     string     `json:"gender" db:"gender"`
-	DisplacementStatus         string     `json:"displacementStatus" db:"displacement_status"`
-	PreferredName              string     `json:"preferredName" db:"preferred_name"`
-	IsMinor                    bool       `json:"isMinor" db:"is_minor"`
-	PresentsProtectionConcerns bool       `json:"presentsProtectionConcerns" db:"presents_protection_concerns"`
-	PhysicalImpairment         string     `json:"physicalImpairment" db:"physical_impairment"`
-	SensoryImpairment          string     `json:"sensoryImpairment" db:"sensory_impairment"`
-	MentalImpairment           string     `json:"mentalImpairment" db:"mental_impairment"`
-	CreatedAt                  time.Time  `json:"createdAt" db:"created_at"`
-	UpdatedAt                  time.Time  `json:"updatedAt" db:"updated_at"`
-	DeletedAt                  *time.Time `json:"deletedAt" db:"deleted_at"`
+	ID                         string             `json:"id" db:"id"`
+	CountryID                  string             `json:"countryId" db:"country_id"`
+	FullName                   string             `json:"fullName" db:"full_name"`
+	PhoneNumber                string             `json:"phoneNumber" db:"phone_number"`
+	NormalizedPhoneNumber      string             `json:"normalizedPhoneNumber" db:"normalized_phone_number"`
+	Email                      string             `json:"email" db:"email"`
+	Address                    string             `json:"address" db:"address"`
+	BirthDate                  *time.Time         `json:"birthDate" db:"birth_date"`
+	Gender                     Gender             `json:"gender" db:"gender"`
+	DisplacementStatus         DisplacementStatus `json:"displacementStatus" db:"displacement_status"`
+	PreferredName              string             `json:"preferredName" db:"preferred_name"`
+	IsMinor                    bool               `json:"isMinor" db:"is_minor"`
+	PresentsProtectionConcerns bool               `json:"presentsProtectionConcerns" db:"presents_protection_concerns"`
+	PhysicalImpairment         string             `json:"physicalImpairment" db:"physical_impairment"`
+	SensoryImpairment          string             `json:"sensoryImpairment" db:"sensory_impairment"`
+	MentalImpairment           string             `json:"mentalImpairment" db:"mental_impairment"`
+	CreatedAt                  time.Time          `json:"createdAt" db:"created_at"`
+	UpdatedAt                  time.Time          `json:"updatedAt" db:"updated_at"`
+	DeletedAt                  *time.Time         `json:"deletedAt" db:"deleted_at"`
 }
 
 type IndividualList struct {
@@ -94,11 +94,9 @@ func (i *Individual) Normalize() {
 	if i.PreferredName == "" {
 		i.PreferredName = i.FullName
 	}
-	i.DisplacementStatus = trimString(i.DisplacementStatus)
 	i.Email = trimString(normalizeEmail(i.Email))
 	i.PhoneNumber = trimString(i.PhoneNumber)
 	i.Address = trimString(i.Address)
-	i.Gender = trimString(i.Gender)
 	i.NormalizedPhoneNumber = NormalizePhoneNumber(i.PhoneNumber)
 	i.PhysicalImpairment = trimString(i.PhysicalImpairment)
 	i.MentalImpairment = trimString(i.MentalImpairment)

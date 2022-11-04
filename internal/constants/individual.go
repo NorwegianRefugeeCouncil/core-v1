@@ -1,5 +1,7 @@
 package constants
 
+import "github.com/nrc-no/notcore/internal/containers"
+
 const (
 	FormParamIndividualAddress                        = "Address"
 	FormParamIndividualBirthDate                      = "BirthDate"
@@ -252,7 +254,7 @@ const (
 	FileColumnIndividualMentalImpairment   = "mental_impairment"
 )
 
-var IndividualDBColumns = []string{
+var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualAddress,
 	DBColumnIndividualBirthDate,
 	DBColumnIndividualCognitiveDisabilityLevel,
@@ -313,7 +315,7 @@ var IndividualDBColumns = []string{
 	DBColumnIndividualSpokenLanguage3,
 	DBColumnIndividualUpdatedAt,
 	DBColumnIndividualVisionDisabilityLevel,
-}
+)
 
 var IndividualFileColumns = []string{
 	FileColumnIndividualAddress,

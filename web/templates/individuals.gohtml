@@ -109,7 +109,7 @@
                                            type="text"
                                            placeholder="Search by ID"
                                            class="form-control"
-                                           value="{{if .Options.IDs}}{{joinStrings .Options.IDs ","}}{{end}}">
+                                           value="{{if not .Options.IDs.IsEmpty }}{{joinStrings .Options.IDs.Items ","}}{{end}}">
                                 </div>
                                 <!-- End ID -->
 
@@ -198,7 +198,7 @@
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" value="" id="GenderAll"
                                                    name="gender"
-                                                   {{if not .Options.Genders }}checked="checked"{{end}}>
+                                                   {{if .Options.Genders.IsEmpty }}checked="checked"{{end}}>
                                             <label class="form-check-label" for="GenderAll">
                                                 All
                                             </label>
@@ -206,7 +206,7 @@
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" value="male" id="GenderMale"
                                                    name="gender"
-                                                   {{if contains .Options.Genders "male"}}checked="checked"{{end}}>
+                                                   {{if .Options.Genders.Contains "male"}}checked="checked"{{end}}>
                                             <label class="form-check-label" for="GenderMale">
                                                 Male
                                             </label>
@@ -214,7 +214,7 @@
                                         <div class="form-check form-check-inline mb-3">
                                             <input class="form-check-input" type="radio" value="female" id="GenderFemale"
                                                    name="gender"
-                                                   {{if contains .Options.Genders "female"}}checked="checked"{{end}}>
+                                                   {{if .Options.Genders.Contains "female"}}checked="checked"{{end}}>
                                             <label class="form-check-label" for="GenderFemale">
                                                 Female
                                             </label>
@@ -229,16 +229,16 @@
                                 <div class="col-6">
                                     <label class="form-label" for="DisplacementStatus">Displacement Status</label>
                                     <select id="DisplacementStatus" name="displacement_status" class="form-control">
-                                        <option value="" {{if contains .Options.DisplacementStatuses "" }}selected{{end}}>
+                                        <option value="" {{if .Options.DisplacementStatuses.IsEmpty }}selected{{end}}>
 
                                         </option>
-                                        <option value="idp" {{if contains .Options.DisplacementStatuses "idp" }}selected{{end}}>
+                                        <option value="idp" {{if .Options.DisplacementStatuses.Contains "idp" }}selected{{end}}>
                                             Internally Displaced Person
                                         </option>
-                                        <option value="refugee" {{if contains .Options.DisplacementStatuses "refugee" }}selected{{end}}>
+                                        <option value="refugee" {{if .Options.DisplacementStatuses.Contains "refugee" }}selected{{end}}>
                                             Refugee
                                         </option>
-                                        <option value="host_community" {{if contains .Options.DisplacementStatuses "host_community" }}selected{{end}}>
+                                        <option value="host_community" {{if .Options.DisplacementStatuses.Contains "host_community" }}selected{{end}}>
                                             Host Community
                                         </option>
                                     </select>

@@ -53,7 +53,7 @@ func (p *listIndividualsOptionsEncoder) encodeFullName() {
 
 func (p *listIndividualsOptionsEncoder) encodeIDs() {
 	if len(p.values.IDs) != 0 {
-		for _, id := range p.values.IDs {
+		for _, id := range p.values.IDs.Items() {
 			p.out.Add(constants.FormParamsGetIndividualsID, id)
 		}
 	}
@@ -91,8 +91,8 @@ func (p *listIndividualsOptionsEncoder) encodeSkip() {
 
 func (p *listIndividualsOptionsEncoder) encodeGenders() {
 	if len(p.values.Genders) > 0 {
-		for _, g := range p.values.Genders {
-			p.out.Add(constants.FormParamsGetIndividualsGender, g)
+		for _, g := range p.values.Genders.Items() {
+			p.out.Add(constants.FormParamsGetIndividualsGender, string(g))
 		}
 	}
 }
@@ -123,8 +123,8 @@ func (p *listIndividualsOptionsEncoder) encodePresentsProtectionConcerns() {
 
 func (p *listIndividualsOptionsEncoder) encodeDisplacementStatuses() {
 	if len(p.values.DisplacementStatuses) > 0 {
-		for _, s := range p.values.DisplacementStatuses {
-			p.out.Add(constants.FormParamsGetIndividualsDisplacementStatus, s)
+		for _, ds := range p.values.DisplacementStatuses.Items() {
+			p.out.Add(constants.FormParamsGetIndividualsDisplacementStatus, string(ds))
 		}
 	}
 }
