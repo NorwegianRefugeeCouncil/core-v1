@@ -83,6 +83,26 @@ func (i *IndividualBuilder) WithPresentsProtectionConcerns(presentsProtectionCon
 	return i
 }
 
+func (i *IndividualBuilder) WithPreferredContactMethod(preferredContactMethod string) *IndividualBuilder {
+	i.individual.PreferredContactMethod = preferredContactMethod
+	return i
+}
+
+func (i *IndividualBuilder) WithCollectionAgentName(collectionAgentName string) *IndividualBuilder {
+	i.individual.CollectionAgentName = collectionAgentName
+	return i
+}
+
+func (i *IndividualBuilder) WithCollectionAgentTitle(collectionAgentTitle string) *IndividualBuilder {
+	i.individual.CollectionAgentTitle = collectionAgentTitle
+	return i
+}
+
+func (i *IndividualBuilder) WithCollectionDate(collectionDate time.Time) *IndividualBuilder {
+	i.individual.CollectionTime = collectionDate
+	return i
+}
+
 func ValidIndividual() *IndividualBuilder {
 	bd := time.Now().AddDate(-10, 0, 0)
 	return NewIndividualBuilder().
@@ -93,7 +113,11 @@ func ValidIndividual() *IndividualBuilder {
 		WithBirthDate(&bd).
 		WithCountryID("countryID").
 		WithPreferredName("John").
-		WithGender("male")
+		WithGender("male").
+		WithCollectionAgentTitle("Collection Agent Title").
+		WithCollectionAgentName("Collection Agent Name").
+		WithCollectionDate(time.Now()).
+		WithPreferredContactMethod("email")
 }
 
 func TestValidateIndividual(t *testing.T) {

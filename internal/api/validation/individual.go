@@ -24,14 +24,18 @@ func ValidateIndividualList(i *api.IndividualList) validation.ErrorList {
 func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
 	allErrs = append(allErrs, validateIndividualCountryID(i.CountryID, p.Child("countryId"))...)
-	allErrs = append(allErrs, validateBirthDate(i.BirthDate, p.Child("birthDate"))...)
+	allErrs = append(allErrs, validateIndividualBirthDate(i.BirthDate, p.Child("birthDate"))...)
 	allErrs = append(allErrs, validateIndividualDisplacementStatus(i.DisplacementStatus, p.Child("displacementStatus"))...)
 	allErrs = append(allErrs, validateIndividualGender(i.Gender, p.Child("gender"))...)
 	allErrs = append(allErrs, validateIndividualEmail(i.Email, p.Child("email"))...)
+	allErrs = append(allErrs, validateIndividualPreferredContactMethod(i.PreferredContactMethod, p.Child("preferredContactMethod"))...)
+	allErrs = append(allErrs, validateIndividualCollectionAgentName(i.CollectionAgentName, p.Child("collectionAgentName"))...)
+	allErrs = append(allErrs, validateIndividualCollectionAgentTitle(i.CollectionAgentTitle, p.Child("collectionAgentTitle"))...)
+	allErrs = append(allErrs, validateIndividualDateOfRegistration(i.CollectionTime, p.Child("collectionTime"))...)
 	return allErrs
 }
 
-func validateBirthDate(birthDate *time.Time, path *validation.Path) validation.ErrorList {
+func validateIndividualBirthDate(birthDate *time.Time, path *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
 	// birthDate is optional
 	if birthDate != nil {
@@ -75,6 +79,14 @@ func validateIndividualGender(gender api.Gender, path *validation.Path) validati
 	}
 }
 
+func validateIndividualPreferredContactMethod(pcm string, path *validation.Path) validation.ErrorList {
+	allErrs := validation.ErrorList{}
+	if len(pcm) == 0 {
+		allErrs = append(allErrs, validation.Required(path, "preferred contact method is required"))
+	}
+	return allErrs
+}
+
 func validateIndividualEmail(email string, path *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
 	// email is optional
@@ -82,6 +94,30 @@ func validateIndividualEmail(email string, path *validation.Path) validation.Err
 		if _, err := mail.ParseAddress(email); err != nil {
 			allErrs = append(allErrs, validation.Invalid(path, email, "invalid email address"))
 		}
+	}
+	return allErrs
+}
+
+func validateIndividualCollectionAgentName(name string, path *validation.Path) validation.ErrorList {
+	allErrs := validation.ErrorList{}
+	if len(name) == 0 {
+		allErrs = append(allErrs, validation.Required(path, "collection agent name is required"))
+	}
+	return allErrs
+}
+
+func validateIndividualCollectionAgentTitle(name string, path *validation.Path) validation.ErrorList {
+	allErrs := validation.ErrorList{}
+	if len(name) == 0 {
+		allErrs = append(allErrs, validation.Required(path, "collection agent title is required"))
+	}
+	return allErrs
+}
+
+func validateIndividualDateOfRegistration(dateOfRegistration time.Time, path *validation.Path) validation.ErrorList {
+	allErrs := validation.ErrorList{}
+	if dateOfRegistration.IsZero() {
+		allErrs = append(allErrs, validation.Required(path, "date of registration is required"))
 	}
 	return allErrs
 }
