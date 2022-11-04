@@ -39,7 +39,7 @@ func HandleIndividualsDelete(repo db.IndividualRepo) http.Handler {
 		}
 		individualIds := r.Form[formParamField]
 
-		individuals, err := repo.GetAll(ctx, api.GetAllOptions{IDs: individualIds})
+		individuals, err := repo.GetAll(ctx, api.IndividualListOptions{IDs: individualIds})
 		if err != nil {
 			l.Error("failed to list individuals", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)

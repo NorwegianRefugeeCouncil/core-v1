@@ -6,7 +6,7 @@ import (
 	"github.com/nrc-no/notcore/pkg/api/validation"
 )
 
-func ValidateListIndividualsOptions(opts *api.GetAllOptions) validation.ErrorList {
+func ValidateListIndividualsOptions(opts *api.IndividualListOptions) validation.ErrorList {
 	allErrs := validation.ErrorList{}
 	allErrs = append(allErrs, validateListIndividualsCountryID(opts.CountryID, validation.NewPath("countryId"))...)
 	allErrs = append(allErrs, validateListIndividualsOptionsSkip(opts.Skip, validation.NewPath("skip"))...)

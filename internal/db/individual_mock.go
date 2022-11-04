@@ -36,7 +36,7 @@ func (m *MockIndividualRepo) EXPECT() *MockIndividualRepoMockRecorder {
 }
 
 // GetAll mocks base method.
-func (m *MockIndividualRepo) GetAll(arg0 context.Context, arg1 api.GetAllOptions) ([]*api.Individual, error) {
+func (m *MockIndividualRepo) GetAll(arg0 context.Context, arg1 api.IndividualListOptions) ([]*api.Individual, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll", arg0, arg1)
 	ret0, _ := ret[0].([]*api.Individual)
