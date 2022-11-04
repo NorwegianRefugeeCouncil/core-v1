@@ -366,22 +366,22 @@
                     <thead>
                     <tr>
                         <th style="width:2rem">Select</th>
-                        {{template "columnHeader" (dict "Width" "18rem" "Label" "ID" "Scope" "col" "Class" "sticky-column" "Title" "ID" "Style" "left: 4rem")}}
-                        {{template "columnHeader" (dict "MinWidth" "10rem" "Label" "Name" "Scope" "col" "Class" "sticky-column border-end"  "Style" "left: 24rem" "Title" "Full Name")}}
+                        {{template "columnHeader" (dict "Width" "18rem" "Label" "ID" "Scope" "col" "Class" "sticky-column" "Title" "ID" "Style" "left: 3.85rem")}}
+                        {{template "columnHeader" (dict "MinWidth" "10rem" "Label" "Name" "Scope" "col" "Class" "sticky-column border-end"  "Style" "left: 23.62rem" "Title" "Full Name")}}
                         {{template "columnHeader" (dict "Width" "4rem" "Label" "G" "Title" "Gender" )}}
                         {{template "columnHeader" (dict "Width" "4rem" "Label" "A" "Scope" "col" "Title" "Age")}}
                         {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "HID" "Title" "Household ID")}}
-                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "HOC" "Title" "Head of Household" )}}
+                        {{template "columnHeader" (dict "MinWidth" "4rem" "Label" "HoH" "Title" "Head of Household" )}}
                         {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "CID" "Title" "Community ID" )}}
-                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "CR" "Title" "Community Representative" )}}
+                        {{template "columnHeader" (dict "MinWidth" "4rem" "Label" "CR" "Title" "Community Representative" )}}
                         {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Phone Number" "Title" "Phone Number")}}
                         {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Email" "Title" "Email Address" )}}
                         {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Reg" "Title" "Registration Date" )}}
                         {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Area1" "Title" "Collection Administrative Area 1" )}}
                         {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Area2" "Title" "Collection Administrative Area 2" )}}
                         {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Area3" "Title" "Collection Administrative Area 3" )}}
-                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Created" "Title" "Date Created")}}
-                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Updated" "Title" "Date Updated")}}
+                        {{template "columnHeader" (dict "MinWidth" "10rem" "Label" "Created" "Title" "Date Created")}}
+                        {{template "columnHeader" (dict "MinWidth" "10rem" "Label" "Updated" "Title" "Date Updated")}}
 
                         <th><!--filler--></th>
                     </tr>
@@ -394,15 +394,14 @@
                                     <input class="form-check-input"
                                            type="checkbox"
                                            value="{{.ID}}"
-                                           name="individual_id">
+                                           name="individual_id"/>
                                 </td>
-                                <td class="sticky-column" style="left: 4rem">
+                                <td class="sticky-column" style="left:3.85rem">
                                     <a href="/countries/{{.CountryID}}/individuals/{{.ID}}">
                                         {{.ID}}
                                     </a>
                                 </td>
-                                <td class="sticky-column border-end"
-                                    style="left: 24rem">
+                                <td class="sticky-column border-end" style="left: 23.62rem">
                                     {{if .FullName}}
                                         {{.FullName}}
                                     {{else}}
@@ -425,7 +424,7 @@
                                         <input class="form-check-input"
                                                type="checkbox"
                                                checked="checked"
-                                               disabled="disabled">
+                                               disabled="disabled"/>
                                     {{end}}
                                 </td>
                                 <td>
