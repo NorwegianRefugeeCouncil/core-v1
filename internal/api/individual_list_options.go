@@ -146,106 +146,179 @@ func (o ListIndividualsOptions) QueryParams() template.HTML {
 	return template.HTML(u.String())
 }
 
-func parseQryParamInt(strValue string) (int, error) {
-	if len(strValue) != 0 {
-		intValue, err := strconv.Atoi(strValue)
-		if err != nil {
-			return 0, err
-		}
-		return intValue, nil
+func NewIndividualListFromURLValues(values url.Values, out *ListIndividualsOptions) error {
+	parser := listIndividualsOptionsParser{
+		out:    out,
+		values: values,
+		now:    time.Now(),
 	}
-	return 0, nil
+	return parser.parse()
 }
 
-func NewIndividualListFromURLValues(values url.Values, out *ListIndividualsOptions) error {
+type listIndividualsOptionsParser struct {
+	out    *ListIndividualsOptions
+	values url.Values
+	now    time.Time
+}
 
-	var err error
-	out.Take, err = parseQryParamInt(values.Get(constants.FormParamsGetIndividualsTake))
-	if err != nil {
-		return err
+func (p *listIndividualsOptionsParser) parse() error {
+	fns := []func() error{
+		p.parseSkip,
+		p.parseTake,
+		p.parseCountryID,
+		p.parseFullName,
+		p.parseEmail,
+		p.parsePhoneNumber,
+		p.parseAddress,
+		p.parseIDs,
+		p.parseGenders,
+		p.parseDisplacementStatuses,
+		p.parseBirthDateFrom,
+		p.parseBirthDateTo,
+		p.parseIsMinor,
+		p.parsePresentsProtectionConcerns,
 	}
-	if out.Take < 0 {
-		return fmt.Errorf("take must be greater than 0")
-	}
-
-	out.Skip, err = parseQryParamInt(values.Get(constants.FormParamsGetIndividualsSkip))
-	if err != nil {
-		return err
-	}
-	if out.Skip < 0 {
-		return fmt.Errorf("skip must be greater than 0")
-	}
-
-	out.Email = values.Get(constants.FormParamsGetIndividualsEmail)
-	out.FullName = values.Get(constants.FormParamsGetIndividualsFullName)
-	out.PhoneNumber = values.Get(constants.FormParamsGetIndividualsPhoneNumber)
-	out.Address = values.Get(constants.FormParamsGetIndividualsAddress)
-	out.Genders = values[constants.FormParamsGetIndividualsGender]
-
-	switch values.Get(constants.FormParamsGetIndividualsIsMinor) {
-	case strconv.FormatBool(true):
-		isMinor := true
-		out.IsMinor = &isMinor
-	case strconv.FormatBool(false):
-		isMinor := false
-		out.IsMinor = &isMinor
-	}
-
-	switch values.Get(constants.FormParamsGetIndividualsPresentsProtectionConcerns) {
-	case strconv.FormatBool(true):
-		presentsProtectionConcerns := true
-		out.PresentsProtectionConcerns = &presentsProtectionConcerns
-	case strconv.FormatBool(false):
-		presentsProtectionConcerns := false
-		out.PresentsProtectionConcerns = &presentsProtectionConcerns
-	}
-
-	now := time.Now()
-
-	ageFromStr := values.Get(constants.FormParamsGetIndividualsAgeFrom)
-	if len(ageFromStr) != 0 {
-		ageFrom, err := parseQryParamInt(values.Get(constants.FormParamsGetIndividualsAgeFrom))
-		if err != nil {
+	for _, fn := range fns {
+		if err := fn(); err != nil {
 			return err
 		}
-		yearsAgo := calculateBirthDateFromAge(ageFrom, now)
-		out.BirthDateTo = &yearsAgo
 	}
-	ageToStr := values.Get(constants.FormParamsGetIndividualsAgeTo)
-	if len(ageToStr) != 0 {
-		ageTo, err := parseQryParamInt(values.Get(constants.FormParamsGetIndividualsAgeTo))
-		if err != nil {
-			return err
-		}
-		yearsAgo := calculateBirthDateFromAge(ageTo, now)
-		out.BirthDateFrom = &yearsAgo
-	}
-	out.CountryID = values.Get(constants.FormParamsGetIndividualsCountryID)
-	displacementStatuses := values[constants.FormParamsGetIndividualsDisplacementStatus]
-	var displacementStatusMap = map[string]bool{}
-	for _, s := range displacementStatuses {
-		if displacementStatusMap[s] {
-			continue
-		}
-		displacementStatusMap[s] = true
-		out.DisplacementStatuses = append(out.DisplacementStatuses, s)
-	}
-
-	idValues := values[constants.FormParamsGetIndividualsID]
-	idSet := containers.NewStringSet()
-	for _, v := range idValues {
-		parts := strings.Split(v, ",")
-		for _, p := range parts {
-			idSet.Add(p)
-		}
-	}
-	if !idSet.IsEmpty() {
-		out.IDs = idSet.Items()
-	}
-
 	return nil
+}
+
+func (p *listIndividualsOptionsParser) parseSkip() (err error) {
+	var skip *int
+	skip, err = parseOptionalInt(p.values.Get(constants.FormParamsGetIndividualsSkip))
+	if err != nil || skip == nil {
+		return err
+	}
+	p.out.Skip = *skip
+	if p.out.Skip < 0 {
+		return fmt.Errorf("skip must be greater or equal to 0")
+	}
+	return nil
+}
+
+func (p *listIndividualsOptionsParser) parseTake() (err error) {
+	var take *int
+	take, err = parseOptionalInt(p.values.Get(constants.FormParamsGetIndividualsTake))
+	if err != nil || take == nil {
+		return err
+	}
+	p.out.Take = *take
+	if p.out.Take < 0 {
+		return fmt.Errorf("take must be greater or equal to 0")
+	}
+	return nil
+}
+
+func (p *listIndividualsOptionsParser) parseFullName() error {
+	p.out.FullName = p.values.Get(constants.FormParamsGetIndividualsFullName)
+	return nil
+}
+
+func (p *listIndividualsOptionsParser) parseCountryID() error {
+	p.out.CountryID = p.values.Get(constants.FormParamsGetIndividualsCountryID)
+	return nil
+}
+
+func (p *listIndividualsOptionsParser) parseEmail() error {
+	p.out.Email = p.values.Get(constants.FormParamsGetIndividualsEmail)
+	return nil
+}
+
+func (p *listIndividualsOptionsParser) parsePhoneNumber() error {
+	p.out.PhoneNumber = p.values.Get(constants.FormParamsGetIndividualsPhoneNumber)
+	return nil
+}
+
+func (p *listIndividualsOptionsParser) parseAddress() error {
+	p.out.Address = p.values.Get(constants.FormParamsGetIndividualsAddress)
+	return nil
+}
+
+func (p *listIndividualsOptionsParser) parseIDs() error {
+	idSet := containers.NewStringSet()
+	idSet.Add(p.values[constants.FormParamsGetIndividualsID]...)
+	if idSet.IsEmpty() {
+		return nil
+	}
+	p.out.IDs = idSet.Items()
+	return nil
+}
+
+func (p *listIndividualsOptionsParser) parseGenders() error {
+	genderSet := containers.NewStringSet()
+	genderSet.Add(p.values[constants.FormParamsGetIndividualsGender]...)
+	if genderSet.IsEmpty() {
+		return nil
+	}
+	p.out.Genders = genderSet.Items()
+	return nil
+}
+
+func (p *listIndividualsOptionsParser) parseDisplacementStatuses() error {
+	dsSet := containers.NewStringSet()
+	dsSet.Add(p.values[constants.FormParamsGetIndividualsDisplacementStatus]...)
+	if dsSet.IsEmpty() {
+		return nil
+	}
+	p.out.DisplacementStatuses = dsSet.Items()
+	return nil
+}
+
+func (p *listIndividualsOptionsParser) parseBirthDateFrom() error {
+	ageFrom, err := parseOptionalInt(p.values.Get(constants.FormParamsGetIndividualsAgeTo))
+	if err != nil || ageFrom == nil {
+		return err
+	}
+	yearsAgo := calculateBirthDateFromAge(*ageFrom, p.now)
+	p.out.BirthDateFrom = &yearsAgo
+	return nil
+}
+
+func (p *listIndividualsOptionsParser) parseBirthDateTo() error {
+	ageTo, err := parseOptionalInt(p.values.Get(constants.FormParamsGetIndividualsAgeFrom))
+	if err != nil || ageTo == nil {
+		return err
+	}
+	yearsAgo := calculateBirthDateFromAge(*ageTo, p.now)
+	p.out.BirthDateTo = &yearsAgo
+	return nil
+}
+
+func (p *listIndividualsOptionsParser) parseIsMinor() (err error) {
+	p.out.IsMinor, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsIsMinor))
+	return err
+}
+
+func (p *listIndividualsOptionsParser) parsePresentsProtectionConcerns() (err error) {
+	p.out.PresentsProtectionConcerns, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsPresentsProtectionConcerns))
+	return err
 }
 
 func calculateBirthDateFromAge(age int, now time.Time) time.Time {
 	return now.AddDate(0, 0, -(age+1)*365).Truncate(24 * time.Hour)
+}
+
+func parseOptionalInt(strValue string) (*int, error) {
+	if len(strValue) == 0 {
+		return nil, nil
+	}
+	intValue, err := strconv.Atoi(strValue)
+	if err != nil {
+		return nil, err
+	}
+	return &intValue, nil
+}
+
+func parseOptionalBool(val string) (*bool, error) {
+	if len(val) == 0 {
+		return nil, nil
+	}
+	boolVal, err := strconv.ParseBool(val)
+	if err != nil {
+		return nil, err
+	}
+	return &boolVal, nil
 }
