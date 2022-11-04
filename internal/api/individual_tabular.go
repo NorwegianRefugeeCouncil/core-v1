@@ -102,9 +102,10 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualCollectionTime:
 			var collectionTime *time.Time
 			collectionTime, err = ParseDate(cols[idx])
-			if err != nil && collectionTime != nil {
-				i.CollectionTime = *collectionTime
+			if err != nil {
+				return err
 			}
+			i.CollectionTime = *collectionTime
 		case constants.FileColumnIndividualCommunicationDisabilityLevel:
 			i.CommunicationDisabilityLevel, err = ParseDisabilityLevel(cols[idx])
 		case constants.FileColumnIndividualCommunityID:
