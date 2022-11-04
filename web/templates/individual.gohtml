@@ -48,33 +48,26 @@
                     {{.Form.HTML}}
                 </form>
                 <div class="row">
-                    <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto">
-                        <div class="card">
-                            <div class="card-body">
+                    <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto mb-5">
+                        <div class="d-flex flex-row justify-content-between mb-5">
 
-                                <div class="d-flex flex-row justify-content-between">
+                            <!-- DELETE BUTTON -->
+                            <button class="btn btn-danger"
+                                    id="deleteButton"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#action-confirm-modal-0"
+                                    title="This will delete the individual and all associated data.">
 
-                                    <!-- SAVE BUTTON -->
-                                    <button id="submitButton" class="btn btn-primary">Save</button>
-                                    <!-- END SAVE BUTTON -->
+                                <i class="bi bi-trash me-2"></i>
 
-                                    <!-- DELETE BUTTON -->
-                                    <button class="btn btn-danger"
-                                            id="deleteButton"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#action-confirm-modal-0"
-                                            title="This will delete the individual and all associated data.">
+                                Delete Individual
+                            </button>
+                            <!-- END DELETE BUTTON -->
 
-                                        <i class="bi bi-trash me-2"></i>
+                            <!-- SAVE BUTTON -->
+                            <button id="submitButton" class="btn btn-primary">Save</button>
+                            <!-- END SAVE BUTTON -->
 
-                                        Delete Individual
-                                    </button>
-                                    <!-- END DELETE BUTTON -->
-
-                                </div>
-
-
-                            </div>
                         </div>
                     </div>
                 </div>
