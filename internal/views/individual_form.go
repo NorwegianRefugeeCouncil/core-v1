@@ -188,7 +188,7 @@ func (f *IndividualForm) buildIdField() error {
 		idField := &forms.IDField{
 			Name:        "id",
 			DisplayName: "ID",
-			QRCodeURL:   fmt.Sprintf("/countries/%s/individuals/%s/qr", f.individual.CountryID, f.individual.ID),
+			QRCodeURL:   fmt.Sprintf("/countries/%s/individuals/%s", f.individual.CountryID, f.individual.ID),
 		}
 		if err := idField.SetValue(f.individual.ID); err != nil {
 			return err
