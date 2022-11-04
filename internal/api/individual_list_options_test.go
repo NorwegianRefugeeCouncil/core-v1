@@ -169,7 +169,7 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 		}, {
 			name: "fullName",
 			o:    ListIndividualsOptions{CountryID: countryId, FullName: "fullName"},
-			want: "/countries/usa/individuals?name=fullName",
+			want: "/countries/usa/individuals?full_name=fullName",
 		}, {
 			name: "address",
 			o:    ListIndividualsOptions{CountryID: countryId, Address: "address"},
