@@ -52,6 +52,7 @@ func (f *IndividualForm) build() error {
 	}
 
 	builders := []builderFuncs{
+		f.buildTitle,
 		f.buildIdField,
 		f.buildFullName,
 		f.buildPreferredName,
@@ -120,6 +121,17 @@ func (f *IndividualForm) build() error {
 		if err := builder(); err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+func (f *IndividualForm) buildTitle() error {
+	if f.isNew() {
+		f.Form.Title = "New Individual"
+	} else if f.individual.FullName == "" {
+		f.Form.Title = "Anonymous Individual"
+	} else {
+		f.Form.Title = f.individual.FullName
 	}
 	return nil
 }

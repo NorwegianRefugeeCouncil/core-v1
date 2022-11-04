@@ -30,6 +30,9 @@
     <main>
         <div class="mt-4">
             <div class="container">
+                <h1 id="form-title" class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto my-4">
+                    {{.Form.Title}}
+                </h1>
                 {{ if .Alerts}}
                     {{range .Alerts}}
                         <div class="row">

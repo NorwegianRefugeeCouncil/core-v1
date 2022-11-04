@@ -19,6 +19,7 @@ type FormSection struct {
 }
 
 type Form struct {
+	Title    string
 	Sections []*FormSection
 }
 

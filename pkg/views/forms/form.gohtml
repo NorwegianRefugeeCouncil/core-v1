@@ -298,11 +298,11 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             const invalid = document.querySelector('.form-control.is-invalid');
-            const first = document.querySelector('.form-control:not([disabled])');
+            const title = document.getElementById('form-title');
             if (invalid) {
                 scrollTo(invalid);
-            } else if (first) {
-                scrollTo(first);
+            } else if (title) {
+                scrollTo(title);
             }
         })
     </script>
