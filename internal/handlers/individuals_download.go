@@ -30,8 +30,14 @@ func HandleDownload(
 			return
 		}
 
+		if err := r.ParseForm(); err != nil {
+			l.Error("failed to parse form", zap.Error(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		var getAllOptions api.ListIndividualsOptions
-		if err := parseGetAllOptions(r, &getAllOptions); err != nil {
+		if err := api.NewIndividualListFromURLValues(r.Form, &getAllOptions); err != nil {
 			l.Error("failed to parse options", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
