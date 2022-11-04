@@ -164,8 +164,8 @@ func NewIndividualListFromURLValues(values url.Values, out *ListIndividualsOptio
 	if err != nil {
 		return err
 	}
-	if out.Take <= 0 || out.Take > 100 {
-		out.Take = 20
+	if out.Take < 0 {
+		return fmt.Errorf("take must be greater than 0")
 	}
 
 	out.Skip, err = parseQryParamInt(values.Get(constants.FormParamsGetIndividualsSkip))
@@ -173,7 +173,7 @@ func NewIndividualListFromURLValues(values url.Values, out *ListIndividualsOptio
 		return err
 	}
 	if out.Skip < 0 {
-		out.Skip = 0
+		return fmt.Errorf("skip must be greater than 0")
 	}
 
 	out.Email = values.Get(constants.FormParamsGetIndividualsEmail)
@@ -200,13 +200,15 @@ func NewIndividualListFromURLValues(values url.Values, out *ListIndividualsOptio
 		out.PresentsProtectionConcerns = &presentsProtectionConcerns
 	}
 
+	now := time.Now()
+
 	ageFromStr := values.Get(constants.FormParamsGetIndividualsAgeFrom)
 	if len(ageFromStr) != 0 {
 		ageFrom, err := parseQryParamInt(values.Get(constants.FormParamsGetIndividualsAgeFrom))
 		if err != nil {
 			return err
 		}
-		yearsAgo := time.Now().AddDate(0, 0, -(ageFrom+1)*365)
+		yearsAgo := calculateBirthDateFromAge(ageFrom, now)
 		out.BirthDateTo = &yearsAgo
 	}
 	ageToStr := values.Get(constants.FormParamsGetIndividualsAgeTo)
@@ -215,7 +217,7 @@ func NewIndividualListFromURLValues(values url.Values, out *ListIndividualsOptio
 		if err != nil {
 			return err
 		}
-		yearsAgo := time.Now().AddDate(0, 0, -(ageTo+1)*365)
+		yearsAgo := calculateBirthDateFromAge(ageTo, now)
 		out.BirthDateFrom = &yearsAgo
 	}
 	out.CountryID = values.Get(constants.FormParamsGetIndividualsCountryID)
@@ -234,12 +236,16 @@ func NewIndividualListFromURLValues(values url.Values, out *ListIndividualsOptio
 	for _, v := range idValues {
 		parts := strings.Split(v, ",")
 		for _, p := range parts {
-			if len(p) == 0 {
-				continue
-			}
 			idSet.Add(p)
 		}
 	}
-	out.IDs = idSet.Items()
+	if !idSet.IsEmpty() {
+		out.IDs = idSet.Items()
+	}
+
 	return nil
+}
+
+func calculateBirthDateFromAge(age int, now time.Time) time.Time {
+	return now.AddDate(0, 0, -(age+1)*365).Truncate(24 * time.Hour)
 }

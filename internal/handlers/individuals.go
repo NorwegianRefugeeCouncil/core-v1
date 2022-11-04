@@ -67,6 +67,10 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			return
 		}
 
+		if getAllOptions.Take <= 0 || getAllOptions.Take > 100 {
+			getAllOptions.Take = 20
+		}
+
 		getAllOptions.CountryID = selectedCountryID
 		individuals, err = repo.GetAll(ctx, getAllOptions)
 		if err != nil {
