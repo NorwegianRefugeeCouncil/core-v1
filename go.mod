@@ -12,7 +12,6 @@ require (
 	github.com/lib/pq v1.10.7
 	github.com/manveru/faker v0.0.0-20171103152722-9fbc68a78c4d
 	github.com/mattn/go-sqlite3 v1.14.16
-	github.com/rs/xid v1.4.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
 	github.com/xuri/excelize/v2 v2.6.1

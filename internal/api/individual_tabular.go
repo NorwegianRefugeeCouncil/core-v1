@@ -7,6 +7,7 @@ import (
 	"io"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/pkg/logutils"
@@ -82,44 +83,122 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		switch field {
 		case constants.FileColumnIndividualID:
 			i.ID = cols[idx]
-		case constants.FileColumnIndividualFullName:
-			i.FullName = cols[idx]
-		case constants.FileColumnIndividualPreferredName:
-			i.PreferredName = cols[idx]
-		case constants.FileColumnIndividualDisplacementStatus:
-			ds, err := ParseDisplacementStatus(cols[idx])
-			if err != nil {
-				return err
-			}
-			i.DisplacementStatus = ds
-		case constants.FileColumnIndividualPhoneNumber:
-			i.PhoneNumber = cols[idx]
-		case constants.FileColumnIndividualEmail:
-			i.Email = cols[idx]
 		case constants.FileColumnIndividualAddress:
 			i.Address = cols[idx]
-		case constants.FileColumnIndividualGender:
-			g, err := ParseGender(cols[idx])
-			if err != nil {
-				return err
-			}
-			i.Gender = g
 		case constants.FileColumnIndividualBirthDate:
 			i.BirthDate, err = ParseDate(cols[idx])
-			if err != nil {
-				return err
+		case constants.FileColumnIndividualCognitiveDisabilityLevel:
+			i.CognitiveDisabilityLevel, err = ParseDisabilityLevel(cols[idx])
+		case constants.FileColumnIndividualCollectionAdministrativeArea1:
+			i.CollectionAdministrativeArea1 = cols[idx]
+		case constants.FileColumnIndividualCollectionAdministrativeArea2:
+			i.CollectionAdministrativeArea2 = cols[idx]
+		case constants.FileColumnIndividualCollectionAdministrativeArea3:
+			i.CollectionAdministrativeArea3 = cols[idx]
+		case constants.FileColumnIndividualCollectionAgentName:
+			i.CollectionAgentName = cols[idx]
+		case constants.FileColumnIndividualCollectionAgentTitle:
+			i.CollectionAgentTitle = cols[idx]
+		case constants.FileColumnIndividualCollectionTime:
+			var collectionTime *time.Time
+			collectionTime, err = ParseDate(cols[idx])
+			if err != nil && collectionTime != nil {
+				i.CollectionTime = *collectionTime
 			}
+		case constants.FileColumnIndividualCommunicationDisabilityLevel:
+			i.CommunicationDisabilityLevel, err = ParseDisabilityLevel(cols[idx])
+		case constants.FileColumnIndividualCommunityID:
+			i.CommunityID = cols[idx]
+		case constants.FileColumnIndividualDisplacementStatus:
+			i.DisplacementStatus = DisplacementStatus(cols[idx])
+		case constants.FileColumnIndividualEmail:
+			i.Email = cols[idx]
+		case constants.FileColumnIndividualFullName:
+			i.FullName = cols[idx]
+		case constants.FileColumnIndividualGender:
+			i.Gender = Gender(cols[idx])
+		case constants.FileColumnIndividualHasCognitiveDisability:
+			i.HasCognitiveDisability = isTrue(cols[idx])
+		case constants.FileColumnIndividualHasCommunicationDisability:
+			i.HasCommunicationDisability = isTrue(cols[idx])
+		case constants.FileColumnIndividualHasConsentedToRGPD:
+			i.HasConsentedToRGPD = isTrue(cols[idx])
+		case constants.FileColumnIndividualHasConsentedToReferral:
+			i.HasConsentedToReferral = isTrue(cols[idx])
+		case constants.FileColumnIndividualHasHearingDisability:
+			i.HasHearingDisability = isTrue(cols[idx])
+		case constants.FileColumnIndividualHasMobilityDisability:
+			i.HasMobilityDisability = isTrue(cols[idx])
+		case constants.FileColumnIndividualHasSelfCareDisability:
+			i.HasSelfCareDisability = isTrue(cols[idx])
+		case constants.FileColumnIndividualHasVisionDisability:
+			i.HasVisionDisability = isTrue(cols[idx])
+		case constants.FileColumnIndividualHearingDisabilityLevel:
+			i.HearingDisabilityLevel, err = ParseDisabilityLevel(cols[idx])
+		case constants.FileColumnIndividualHouseholdID:
+			i.HouseholdID = cols[idx]
+		case constants.FileColumnIndividualIdentificationType1:
+			i.IdentificationType1 = cols[idx]
+		case constants.FileColumnIndividualIdentificationTypeExplanation1:
+			i.IdentificationTypeExplanation1 = cols[idx]
+		case constants.FileColumnIndividualIdentificationNumber1:
+			i.IdentificationNumber1 = cols[idx]
+		case constants.FileColumnIndividualIdentificationType2:
+			i.IdentificationType2 = cols[idx]
+		case constants.FileColumnIndividualIdentificationTypeExplanation2:
+			i.IdentificationTypeExplanation2 = cols[idx]
+		case constants.FileColumnIndividualIdentificationNumber2:
+			i.IdentificationNumber2 = cols[idx]
+		case constants.FileColumnIndividualIdentificationType3:
+			i.IdentificationType3 = cols[idx]
+		case constants.FileColumnIndividualIdentificationTypeExplanation3:
+			i.IdentificationTypeExplanation3 = cols[idx]
+		case constants.FileColumnIndividualIdentificationNumber3:
+			i.IdentificationNumber3 = cols[idx]
+		case constants.FileColumnIndividualIdentificationContext:
+			i.IdentificationContext = cols[idx]
+		case constants.FileColumnIndividualInternalID:
+			i.InternalID = cols[idx]
+		case constants.FileColumnIndividualIsHeadOfCommunity:
+			i.IsHeadOfCommunity = isTrue(cols[idx])
+		case constants.FileColumnIndividualIsHeadOfHousehold:
+			i.IsHeadOfHousehold = isTrue(cols[idx])
 		case constants.FileColumnIndividualIsMinor:
 			i.IsMinor = isTrue(cols[idx])
+		case constants.FileColumnIndividualMobilityDisabilityLevel:
+			i.MobilityDisabilityLevel, err = ParseDisabilityLevel(cols[idx])
+		case constants.FileColumnIndividualNationality1:
+			i.Nationality1 = cols[idx]
+		case constants.FileColumnIndividualNationality2:
+			i.Nationality2 = cols[idx]
+		case constants.FileColumnIndividualPhoneNumber:
+			i.PhoneNumber = cols[idx]
+		case constants.FileColumnIndividualPreferredContactMethod:
+			i.PreferredContactMethod = cols[idx]
+		case constants.FileColumnIndividualPreferredContactMethodComments:
+			i.PreferredContactMethodComments = cols[idx]
+		case constants.FileColumnIndividualPreferredName:
+			i.PreferredName = cols[idx]
+		case constants.FileColumnIndividualPreferredCommunicationLanguage:
+			i.PreferredCommunicationLanguage = cols[idx]
+		case constants.FileColumnIndividualPrefersToRemainAnonymous:
+			i.PrefersToRemainAnonymous = isTrue(cols[idx])
 		case constants.FileColumnIndividualPresentsProtectionConcerns:
 			i.PresentsProtectionConcerns = isTrue(cols[idx])
-		case constants.FileColumnIndividualPhysicalImpairment:
-			i.PhysicalImpairment = cols[idx]
-		case constants.FileColumnIndividualSensoryImpairment:
-			i.SensoryImpairment = cols[idx]
-		case constants.FileColumnIndividualMentalImpairment:
-			i.MentalImpairment = cols[idx]
+		case constants.FileColumnIndividualSelfCareDisabilityLevel:
+			i.SelfCareDisabilityLevel, err = ParseDisabilityLevel(cols[idx])
+		case constants.FileColumnIndividualSpokenLanguage1:
+			i.SpokenLanguage1 = cols[idx]
+		case constants.FileColumnIndividualSpokenLanguage2:
+			i.SpokenLanguage2 = cols[idx]
+		case constants.FileColumnIndividualSpokenLanguage3:
+			i.SpokenLanguage3 = cols[idx]
+		case constants.FileColumnIndividualVisionDisabilityLevel:
+			i.VisionDisabilityLevel, err = ParseDisabilityLevel(cols[idx])
 		}
+	}
+	if err != nil {
+		return err
 	}
 	i.Normalize()
 	return nil

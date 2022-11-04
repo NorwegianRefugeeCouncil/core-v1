@@ -21,7 +21,7 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		driverName: driverName,
 	}
 	qry = qry.
-		writeString("SELECT * FROM individuals WHERE deleted_at IS NULL").
+		writeString("SELECT * FROM individual_registrations WHERE deleted_at IS NULL").
 		withIds(options.IDs).
 		withFullName(options.FullName).
 		withAddress(options.Address).

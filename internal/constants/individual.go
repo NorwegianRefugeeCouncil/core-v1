@@ -60,11 +60,6 @@ const (
 	FormParamIndividualSpokenLanguage3                = "SpokenLanguage3"
 	FormParamIndividualVisionDisabilityLevel          = "VisionDisabilityLevel"
 
-	// TODO: Delete when new individual is implemented
-	FormParamIndividualSensoryImpairment  = "SensoryImpairment"
-	FormParamIndividualPhysicalImpairment = "PhysicalImpairment"
-	FormParamIndividualMentalImpairment   = "MentalImpairment"
-
 	FormParamsGetIndividualCognitiveDisabilityLevel        = "cognitive_disability_level"
 	FormParamsGetIndividualCollectionAdministrativeArea1   = "collection_administrative_area_1"
 	FormParamsGetIndividualCollectionAdministrativeArea2   = "collection_administrative_area_2"
@@ -186,11 +181,6 @@ const (
 	DBColumnIndividualUpdatedAt                      = "updated_at"
 	DBColumnIndividualVisionDisabilityLevel          = "vision_disability_level"
 
-	// TODO: delete when new individual is implemented
-	DBColumnIndividualMentalImpairment   = "mental_impairment"
-	DBColumnIndividualSensoryImpairment  = "sensory_impairment"
-	DBColumnIndividualPhysicalImpairment = "physical_impairment"
-
 	FileColumnIndividualAddress                        = "address"
 	FileColumnIndividualBirthDate                      = "birth_date"
 	FileColumnIndividualCognitiveDisabilityLevel       = "cognitive_disability_level"
@@ -247,25 +237,20 @@ const (
 	FileColumnIndividualSpokenLanguage2                = "spoken_language_2"
 	FileColumnIndividualSpokenLanguage3                = "spoken_language_3"
 	FileColumnIndividualVisionDisabilityLevel          = "vision_disability_level"
-
-	// TODO: delete when new individual is implemented
-	FileColumnIndividualSensoryImpairment  = "sensory_impairment"
-	FileColumnIndividualPhysicalImpairment = "physical_impairment"
-	FileColumnIndividualMentalImpairment   = "mental_impairment"
 )
 
 var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualAddress,
 	DBColumnIndividualBirthDate,
-	// DBColumnIndividualCognitiveDisabilityLevel,
-	// DBColumnIndividualCollectionAdministrativeArea1,
-	// DBColumnIndividualCollectionAdministrativeArea2,
-	// DBColumnIndividualCollectionAdministrativeArea3,
-	// DBColumnIndividualCollectionAgentName,
-	// DBColumnIndividualCollectionAgentTitle,
-	// DBColumnIndividualCollectionTime,
-	// DBColumnIndividualCommunicationDisabilityLevel,
-	// DBColumnIndividualCommunityID,
+	DBColumnIndividualCognitiveDisabilityLevel,
+	DBColumnIndividualCollectionAdministrativeArea1,
+	DBColumnIndividualCollectionAdministrativeArea2,
+	DBColumnIndividualCollectionAdministrativeArea3,
+	DBColumnIndividualCollectionAgentName,
+	DBColumnIndividualCollectionAgentTitle,
+	DBColumnIndividualCollectionTime,
+	DBColumnIndividualCommunicationDisabilityLevel,
+	DBColumnIndividualCommunityID,
 	DBColumnIndividualCountryID,
 	DBColumnIndividualCreatedAt,
 	DBColumnIndividualDeletedAt,
@@ -273,53 +258,48 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualEmail,
 	DBColumnIndividualFullName,
 	DBColumnIndividualGender,
-	// DBColumnIndividualHasCognitiveDisability,
-	// DBColumnIndividualHasCommunicationDisability,
-	// DBColumnIndividualHasConsentedToRGPD,
-	// DBColumnIndividualHasConsentedToReferral,
-	// DBColumnIndividualHasHearingDisability,
-	// DBColumnIndividualHasMobilityDisability,
-	// DBColumnIndividualHasSelfCareDisability,
-	// DBColumnIndividualHasVisionDisability,
-	// DBColumnIndividualHearingDisabilityLevel,
-	// DBColumnIndividualHouseholdID,
+	DBColumnIndividualHasCognitiveDisability,
+	DBColumnIndividualHasCommunicationDisability,
+	DBColumnIndividualHasConsentedToRGPD,
+	DBColumnIndividualHasConsentedToReferral,
+	DBColumnIndividualHasHearingDisability,
+	DBColumnIndividualHasMobilityDisability,
+	DBColumnIndividualHasSelfCareDisability,
+	DBColumnIndividualHasVisionDisability,
+	DBColumnIndividualHearingDisabilityLevel,
+	DBColumnIndividualHouseholdID,
 	DBColumnIndividualID,
-	// DBColumnIndividualIdentificationContext,
-	// DBColumnIndividualIdentificationNumber1,
-	// DBColumnIndividualIdentificationNumber2,
-	// DBColumnIndividualIdentificationNumber3,
-	// DBColumnIndividualIdentificationType1,
-	// DBColumnIndividualIdentificationType2,
-	// DBColumnIndividualIdentificationType3,
-	// DBColumnIndividualIdentificationTypeExplanation1,
-	// DBColumnIndividualIdentificationTypeExplanation2,
-	// DBColumnIndividualIdentificationTypeExplanation3,
-	// DBColumnIndividualInternalID,
-	// DBColumnIndividualIsHeadOfCommunity,
-	// DBColumnIndividualIsHeadOfHousehold,
+	DBColumnIndividualIdentificationContext,
+	DBColumnIndividualIdentificationNumber1,
+	DBColumnIndividualIdentificationNumber2,
+	DBColumnIndividualIdentificationNumber3,
+	DBColumnIndividualIdentificationType1,
+	DBColumnIndividualIdentificationType2,
+	DBColumnIndividualIdentificationType3,
+	DBColumnIndividualIdentificationTypeExplanation1,
+	DBColumnIndividualIdentificationTypeExplanation2,
+	DBColumnIndividualIdentificationTypeExplanation3,
+	DBColumnIndividualInternalID,
+	DBColumnIndividualIsHeadOfCommunity,
+	DBColumnIndividualIsHeadOfHousehold,
 	DBColumnIndividualIsMinor,
-	// DBColumnIndividualMobilityDisabilityLevel,
-	// DBColumnIndividualNationality1,
-	// DBColumnIndividualNationality2,
+	DBColumnIndividualMobilityDisabilityLevel,
+	DBColumnIndividualNationality1,
+	DBColumnIndividualNationality2,
 	DBColumnIndividualNormalizedPhoneNumber,
 	DBColumnIndividualPhoneNumber,
-	// DBColumnIndividualPreferredCommunicationLanguage,
-	// DBColumnIndividualPreferredContactMethod,
-	// DBColumnIndividualPreferredContactMethodComments,
+	DBColumnIndividualPreferredCommunicationLanguage,
+	DBColumnIndividualPreferredContactMethod,
+	DBColumnIndividualPreferredContactMethodComments,
 	DBColumnIndividualPreferredName,
-	// DBColumnIndividualPrefersToRemainAnonymous,
+	DBColumnIndividualPrefersToRemainAnonymous,
 	DBColumnIndividualPresentsProtectionConcerns,
-	// DBColumnIndividualSelfCareDisabilityLevel,
-	// DBColumnIndividualSpokenLanguage1,
-	// DBColumnIndividualSpokenLanguage2,
-	// DBColumnIndividualSpokenLanguage3,
+	DBColumnIndividualSelfCareDisabilityLevel,
+	DBColumnIndividualSpokenLanguage1,
+	DBColumnIndividualSpokenLanguage2,
+	DBColumnIndividualSpokenLanguage3,
 	DBColumnIndividualUpdatedAt,
-	// DBColumnIndividualVisionDisabilityLevel,
-
-	// todo: Remove once new individual is implemented
-	DBColumnIndividualMentalImpairment,
-	DBColumnIndividualSensoryImpairment,
-	DBColumnIndividualPhysicalImpairment,
+	DBColumnIndividualVisionDisabilityLevel,
 )
 
 var IndividualFileColumns = []string{
@@ -438,11 +418,6 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualSpokenLanguage2:                FileColumnIndividualSpokenLanguage2,
 	DBColumnIndividualSpokenLanguage3:                FileColumnIndividualSpokenLanguage3,
 	DBColumnIndividualVisionDisabilityLevel:          FileColumnIndividualVisionDisabilityLevel,
-
-	// todo: delete once individual is merged
-	DBColumnIndividualPhysicalImpairment: FileColumnIndividualPhysicalImpairment,
-	DBColumnIndividualMentalImpairment:   FileColumnIndividualMentalImpairment,
-	DBColumnIndividualSensoryImpairment:  FileColumnIndividualSensoryImpairment,
 }
 
 var IndividualFileToDBMap = map[string]string{
@@ -502,9 +477,4 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualSpokenLanguage2:                DBColumnIndividualSpokenLanguage2,
 	FileColumnIndividualSpokenLanguage3:                DBColumnIndividualSpokenLanguage3,
 	FileColumnIndividualVisionDisabilityLevel:          DBColumnIndividualVisionDisabilityLevel,
-
-	// todo: delete once individual is merged
-	FileColumnIndividualPhysicalImpairment: DBColumnIndividualPhysicalImpairment,
-	FileColumnIndividualMentalImpairment:   DBColumnIndividualMentalImpairment,
-	FileColumnIndividualSensoryImpairment:  DBColumnIndividualSensoryImpairment,
 }

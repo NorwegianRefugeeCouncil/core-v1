@@ -73,7 +73,12 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			individual.CountryID = selectedCountryID
 		}
 
-		individualForm = views.NewIndividualForm(individual)
+		individualForm, err = views.NewIndividualForm(individual)
+		if err != nil {
+			l.Error("failed to create individual form", zap.Error(err))
+			http.Error(w, "internal server error", http.StatusInternalServerError)
+			return
+		}
 
 		// Render the form if GET
 		if r.Method == http.MethodGet {

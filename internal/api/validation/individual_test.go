@@ -83,21 +83,6 @@ func (i *IndividualBuilder) WithPresentsProtectionConcerns(presentsProtectionCon
 	return i
 }
 
-func (i *IndividualBuilder) WithPhysicalImpairment(physicalImpairment string) *IndividualBuilder {
-	i.individual.PhysicalImpairment = physicalImpairment
-	return i
-}
-
-func (i *IndividualBuilder) WithSensoryImpairment(sensoryImpairment string) *IndividualBuilder {
-	i.individual.SensoryImpairment = sensoryImpairment
-	return i
-}
-
-func (i *IndividualBuilder) WithMentalImpairment(metalImpairment string) *IndividualBuilder {
-	i.individual.MentalImpairment = metalImpairment
-	return i
-}
-
 func ValidIndividual() *IndividualBuilder {
 	bd := time.Now().AddDate(-10, 0, 0)
 	return NewIndividualBuilder().
