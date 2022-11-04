@@ -429,6 +429,11 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualSpokenLanguage2:                FileColumnIndividualSpokenLanguage2,
 	DBColumnIndividualSpokenLanguage3:                FileColumnIndividualSpokenLanguage3,
 	DBColumnIndividualVisionDisabilityLevel:          FileColumnIndividualVisionDisabilityLevel,
+
+	// todo: delete once individual is merged
+	DBColumnIndividualPhysicalImpairment: FileColumnIndividualPhysicalImpairment,
+	DBColumnIndividualMentalImpairment:   FileColumnIndividualMentalImpairment,
+	DBColumnIndividualSensoryImpairment:  FileColumnIndividualSensoryImpairment,
 }
 
 var IndividualFileToDBMap = map[string]string{
@@ -488,4 +493,9 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualSpokenLanguage2:                DBColumnIndividualSpokenLanguage2,
 	FileColumnIndividualSpokenLanguage3:                DBColumnIndividualSpokenLanguage3,
 	FileColumnIndividualVisionDisabilityLevel:          DBColumnIndividualVisionDisabilityLevel,
+
+	// todo: delete once individual is merged
+	FileColumnIndividualPhysicalImpairment: DBColumnIndividualPhysicalImpairment,
+	FileColumnIndividualMentalImpairment:   DBColumnIndividualMentalImpairment,
+	FileColumnIndividualSensoryImpairment:  DBColumnIndividualSensoryImpairment,
 }
