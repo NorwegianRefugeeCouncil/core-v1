@@ -18,7 +18,7 @@ import (
 //go:generate mockgen -destination=./individual_mock.go -package=db . IndividualRepo
 
 type IndividualRepo interface {
-	GetAll(ctx context.Context, options api.GetAllOptions) ([]*api.Individual, error)
+	GetAll(ctx context.Context, options api.ListIndividualsOptions) ([]*api.Individual, error)
 	GetByID(ctx context.Context, id string) (*api.Individual, error)
 	Put(ctx context.Context, individual *api.Individual, fields []string) (*api.Individual, error)
 	PutMany(ctx context.Context, individuals []*api.Individual, fields []string) ([]*api.Individual, error)
@@ -41,7 +41,7 @@ func (i individualRepo) driverName() string {
 	}
 }
 
-func (i individualRepo) GetAll(ctx context.Context, options api.GetAllOptions) ([]*api.Individual, error) {
+func (i individualRepo) GetAll(ctx context.Context, options api.ListIndividualsOptions) ([]*api.Individual, error) {
 	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		return i.batchedGetAllInternal(ctx, tx, options)
 	})
@@ -52,7 +52,7 @@ func (i individualRepo) GetAll(ctx context.Context, options api.GetAllOptions) (
 	return ret.([]*api.Individual), nil
 }
 
-func (i individualRepo) batchedGetAllInternal(ctx context.Context, tx *sqlx.Tx, options api.GetAllOptions) ([]*api.Individual, error) {
+func (i individualRepo) batchedGetAllInternal(ctx context.Context, tx *sqlx.Tx, options api.ListIndividualsOptions) ([]*api.Individual, error) {
 	if len(options.IDs) > 0 {
 		var ret []*api.Individual
 		err := batch(maxParams/len(options.IDs), options.IDs, func(idsInBatch []string) (stop bool, err error) {
@@ -93,7 +93,7 @@ func (i individualRepo) batchedGetAllInternal(ctx context.Context, tx *sqlx.Tx, 
 	return i.unbatchedGetAllInternal(ctx, tx, options)
 }
 
-func (i individualRepo) unbatchedGetAllInternal(ctx context.Context, tx *sqlx.Tx, options api.GetAllOptions) ([]*api.Individual, error) {
+func (i individualRepo) unbatchedGetAllInternal(ctx context.Context, tx *sqlx.Tx, options api.ListIndividualsOptions) ([]*api.Individual, error) {
 
 	l := logging.NewLogger(ctx)
 	l.Debug("getting all individuals", zap.Any("options", options))

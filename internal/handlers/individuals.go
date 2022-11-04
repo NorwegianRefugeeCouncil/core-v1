@@ -26,7 +26,7 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 		var (
 			individuals   []*api.Individual
-			getAllOptions api.GetAllOptions
+			getAllOptions api.ListIndividualsOptions
 			ctx           = r.Context()
 			err           error
 			l             = logging.NewLogger(ctx)
@@ -84,7 +84,7 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 	})
 }
 
-func parseGetAllOptions(r *http.Request, out *api.GetAllOptions) error {
+func parseGetAllOptions(r *http.Request, out *api.ListIndividualsOptions) error {
 	var err error
 	out.Take, err = parseQryParamInt(r, "take")
 	if err != nil {
