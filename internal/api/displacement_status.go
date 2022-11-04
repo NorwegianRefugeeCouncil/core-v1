@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/nrc-no/notcore/internal/containers"
-	"github.com/nrc-no/notcore/internal/utils"
+	"github.com/nrc-no/notcore/pkg/logutils"
 )
 
 type DisplacementStatus string
@@ -46,7 +46,7 @@ func ParseDisplacementStatus(str string) (DisplacementStatus, error) {
 	case string(DisplacementStatusHostCommunity):
 		return DisplacementStatusHostCommunity, nil
 	default:
-		return "", fmt.Errorf("unknown displacement status type: %v", utils.LogEscape(str))
+		return "", fmt.Errorf("unknown displacement status type: %v", logutils.Escape(str))
 	}
 }
 

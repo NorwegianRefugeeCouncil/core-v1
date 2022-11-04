@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/nrc-no/notcore/internal/constants"
+	"github.com/nrc-no/notcore/pkg/logutils"
 )
 
 type Individual struct {
@@ -75,7 +76,7 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 	case constants.DBColumnIndividualDeletedAt:
 		return i.DeletedAt, nil
 	default:
-		return nil, fmt.Errorf("unknown field: %s", field)
+		return nil, fmt.Errorf("unknown field: %s", logutils.Escape(field))
 	}
 }
 

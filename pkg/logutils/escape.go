@@ -1,8 +1,8 @@
-package utils
+package logutils
 
 import "strings"
 
-func LogEscape(s string) string {
+func Escape(s string) string {
 	var out = strings.Builder{}
 	for _, r := range s {
 		switch r {
