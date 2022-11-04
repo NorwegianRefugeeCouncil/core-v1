@@ -43,33 +43,21 @@ func validateListIndividualsOptionsTake(take int, p *validation.Path) validation
 	return allErrs
 }
 
-func validateListIndividualsOptionsGenders(genders []string, p *validation.Path) validation.ErrorList {
+func validateListIndividualsOptionsGenders(genders containers.Set[api.Gender], p *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
-	seenGenders := containers.NewStringSet()
-	for i, g := range genders {
+	for i, g := range genders.Items() {
 		if !allowedGenders.Contains(g) {
-			allErrs = append(allErrs, validation.NotSupported(p.Index(i), g, allowedGenders.Items()))
-		} else {
-			if seenGenders.Contains(g) {
-				allErrs = append(allErrs, validation.Duplicate(p.Index(i), g, "gender specified multiple times in options"))
-			}
-			seenGenders.Add(g)
+			allErrs = append(allErrs, validation.NotSupported(p.Index(i), g, allowedGendersStr))
 		}
 	}
 	return allErrs
 }
 
-func validateListIndividualsOptionsDisplacementStatuses(displacementStatuses []string, p *validation.Path) validation.ErrorList {
+func validateListIndividualsOptionsDisplacementStatuses(displacementStatuses containers.Set[api.DisplacementStatus], p *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
-	seenDisplacementStatuses := containers.NewStringSet()
-	for i, g := range displacementStatuses {
+	for i, g := range displacementStatuses.Items() {
 		if !allowedDisplacementStatuses.Contains(g) {
-			allErrs = append(allErrs, validation.NotSupported(p.Index(i), g, allowedDisplacementStatuses.Items()))
-		} else {
-			if seenDisplacementStatuses.Contains(g) {
-				allErrs = append(allErrs, validation.Duplicate(p.Index(i), g, "displacement status specified multiple times in options"))
-			}
-			seenDisplacementStatuses.Add(g)
+			allErrs = append(allErrs, validation.NotSupported(p.Index(i), g, allowedDisplacementStatusesStr))
 		}
 	}
 	return allErrs

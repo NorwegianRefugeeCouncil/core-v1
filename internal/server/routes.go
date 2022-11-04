@@ -25,7 +25,7 @@ func buildRouter(
 
 	r := mux.NewRouter()
 	r.Use(
-		gorillahandlers.RecoveryHandler(),
+		gorillahandlers.RecoveryHandler(gorillahandlers.PrintRecoveryStack(true)),
 		gorillahandlers.CompressHandler,
 		middleware.RequestId,
 	)

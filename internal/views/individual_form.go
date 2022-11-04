@@ -1,6 +1,7 @@
 package views
 
 import (
+	"fmt"
 	"path"
 	"strconv"
 
@@ -85,9 +86,10 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 	genderField := &forms.SelectInputField{
 		Name:        "gender",
 		DisplayName: "Gender",
-		Value:       i.Gender,
+		Value:       string(i.Gender),
 		Required:    true,
 		Options:     genderOptions,
+		Codec:       &genderCodec{},
 	}
 
 	birthDateField := &forms.DateInputField{
@@ -128,7 +130,8 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 		Options:     displacementStatusOptions,
 		Name:        "displacementStatus",
 		DisplayName: "Displacement Status",
-		Value:       i.DisplacementStatus,
+		Value:       string(i.DisplacementStatus),
+		Codec:       &displacementStatusCodec{},
 	}
 
 	emailField := &forms.TextInputField{
@@ -261,4 +264,34 @@ func NewIndividualForm(i *api.Individual) *IndividualForm {
 		Title: title,
 		Form:  &f,
 	}
+}
+
+type genderCodec struct{}
+
+func (c genderCodec) Encode(v interface{}) (string, error) {
+	switch t := v.(type) {
+	case api.Gender:
+		return string(t), nil
+	default:
+		return "", fmt.Errorf("invalid type %T", t)
+	}
+}
+
+func (c genderCodec) Decode(v string) (interface{}, error) {
+	return api.ParseGender(v)
+}
+
+type displacementStatusCodec struct{}
+
+func (c displacementStatusCodec) Encode(v interface{}) (string, error) {
+	switch t := v.(type) {
+	case api.DisplacementStatus:
+		return string(t), nil
+	default:
+		return "", fmt.Errorf("invalid type %T", t)
+	}
+}
+
+func (c displacementStatusCodec) Decode(v string) (interface{}, error) {
+	return api.ParseDisplacementStatus(v)
 }

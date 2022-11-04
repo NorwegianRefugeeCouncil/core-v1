@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/nrc-no/notcore/internal/containers"
+	"github.com/nrc-no/notcore/pkg/logutils"
 )
 
 type DisabilityLevel string
@@ -51,7 +52,7 @@ func ParseDisabilityLevel(str string) (DisabilityLevel, error) {
 	case string(DisabilityLevelSevere):
 		return DisabilityLevelSevere, nil
 	default:
-		return "", fmt.Errorf("unknown disability level: %v", str)
+		return "", fmt.Errorf("unknown disability level: %v", logutils.Escape(str))
 	}
 }
 

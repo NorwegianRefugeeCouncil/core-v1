@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/nrc-no/notcore/internal/containers"
+	"github.com/nrc-no/notcore/pkg/logutils"
 )
 
 type Gender string
@@ -51,7 +52,7 @@ func ParseGender(str string) (Gender, error) {
 	case string(GenderPreferNotToSay):
 		return GenderPreferNotToSay, nil
 	default:
-		return "", fmt.Errorf("unknown gender type: %v", str)
+		return "", fmt.Errorf("unknown gender type: %v", logutils.Escape(str))
 	}
 }
 

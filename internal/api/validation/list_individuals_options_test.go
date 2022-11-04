@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/api/validation"
 	"github.com/stretchr/testify/assert"
 )
@@ -22,8 +23,8 @@ func TestValidateListIndividualsOptions(t *testing.T) {
 			opts: api.ListIndividualsOptions{
 				Take:                 10,
 				Skip:                 10,
-				Genders:              []string{"female", "male", "other", "prefers_not_to_say"},
-				DisplacementStatuses: []string{"idp", "refugee", "host_community"},
+				Genders:              containers.NewSet[api.Gender](api.GenderFemale, api.GenderMale, api.GenderOther, api.GenderPreferNotToSay),
+				DisplacementStatuses: containers.NewSet[api.DisplacementStatus](api.DisplacementStatusIDP, api.DisplacementStatusRefugee, api.DisplacementStatusHostCommunity),
 				BirthDateFrom:        &fromDate,
 				BirthDateTo:          &toDate,
 				CountryID:            "countryId",
@@ -51,37 +52,19 @@ func TestValidateListIndividualsOptions(t *testing.T) {
 			name: "invalid gender",
 			opts: api.ListIndividualsOptions{
 				CountryID: "countryId",
-				Genders:   []string{"invalid"},
+				Genders:   containers.NewSet[api.Gender]("invalid"),
 			},
 			want: validation.ErrorList{
-				validation.NotSupported(validation.NewPath("genders").Index(0), "invalid", allowedGenders.Items()),
-			},
-		}, {
-			name: "duplicate gender",
-			opts: api.ListIndividualsOptions{
-				CountryID: "countryId",
-				Genders:   []string{"male", "male"},
-			},
-			want: validation.ErrorList{
-				validation.Duplicate(validation.NewPath("genders").Index(1), "male", "gender specified multiple times in options"),
+				validation.NotSupported(validation.NewPath("genders").Index(0), api.Gender("invalid"), allowedGendersStr),
 			},
 		}, {
 			name: "invalid displacement status",
 			opts: api.ListIndividualsOptions{
 				CountryID:            "countryId",
-				DisplacementStatuses: []string{"invalid"},
+				DisplacementStatuses: containers.NewSet[api.DisplacementStatus]("invalid"),
 			},
 			want: validation.ErrorList{
-				validation.NotSupported(validation.NewPath("displacementStatuses").Index(0), "invalid", allowedDisplacementStatuses.Items()),
-			},
-		}, {
-			name: "duplicate displacement status",
-			opts: api.ListIndividualsOptions{
-				CountryID:            "countryId",
-				DisplacementStatuses: []string{"refugee", "refugee"},
-			},
-			want: validation.ErrorList{
-				validation.Duplicate(validation.NewPath("displacementStatuses").Index(1), "refugee", "displacement status specified multiple times in options"),
+				validation.NotSupported(validation.NewPath("displacementStatuses").Index(0), api.DisplacementStatus("invalid"), allowedDisplacementStatusesStr),
 			},
 		}, {
 			name: "from birthdate after to birthdate",

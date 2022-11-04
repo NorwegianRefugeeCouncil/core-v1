@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/nrc-no/notcore/internal/constants"
+	"github.com/nrc-no/notcore/pkg/logutils"
 	"github.com/xuri/excelize/v2"
 	"golang.org/x/exp/slices"
 )
@@ -54,7 +55,12 @@ func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual
 	colMapping := map[string]int{}
 	headerRow := data[0]
 	for i, col := range headerRow {
-		*fields = append(*fields, constants.IndividualFileToDBMap[trimString(col)])
+		col = trimString(col)
+		field, ok := constants.IndividualFileToDBMap[col]
+		if !ok {
+			return fmt.Errorf("unknown column: %s", logutils.Escape(col))
+		}
+		*fields = append(*fields, field)
 		col = trimString(col)
 		colMapping[strings.Trim(col, " \n\t\r")] = i
 	}
@@ -81,7 +87,11 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualPreferredName:
 			i.PreferredName = cols[idx]
 		case constants.FileColumnIndividualDisplacementStatus:
-			i.DisplacementStatus = cols[idx]
+			ds, err := ParseDisplacementStatus(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.DisplacementStatus = ds
 		case constants.FileColumnIndividualPhoneNumber:
 			i.PhoneNumber = cols[idx]
 		case constants.FileColumnIndividualEmail:
@@ -89,7 +99,11 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualAddress:
 			i.Address = cols[idx]
 		case constants.FileColumnIndividualGender:
-			i.Gender = cols[idx]
+			g, err := ParseGender(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.Gender = g
 		case constants.FileColumnIndividualBirthDate:
 			i.BirthDate, err = ParseDate(cols[idx])
 			if err != nil {

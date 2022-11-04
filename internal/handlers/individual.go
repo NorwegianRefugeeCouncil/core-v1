@@ -42,7 +42,8 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 		render := func() {
 			individualForm.SetErrors(validationErrors)
 			renderView(templates, templateName, w, r, viewParams{
-				"form": individualForm,
+				"form":       individualForm,
+				"Individual": individual,
 			})
 			return
 		}
@@ -68,6 +69,8 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 				http.Error(w, fmt.Sprintf("individual not found: %v", individual.ID), http.StatusNotFound)
 				return
 			}
+		} else {
+			individual.CountryID = selectedCountryID
 		}
 
 		individualForm = views.NewIndividualForm(individual)

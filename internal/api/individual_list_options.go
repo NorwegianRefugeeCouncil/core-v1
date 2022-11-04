@@ -4,18 +4,20 @@ import (
 	"html/template"
 	"net/url"
 	"time"
+
+	"github.com/nrc-no/notcore/internal/containers"
 )
 
 type ListIndividualsOptions struct {
 	Address                    string
-	IDs                        []string
+	IDs                        containers.StringSet
 	BirthDateFrom              *time.Time
 	BirthDateTo                *time.Time
 	CountryID                  string
-	DisplacementStatuses       []string
+	DisplacementStatuses       containers.Set[DisplacementStatus]
 	Email                      string
 	FullName                   string
-	Genders                    []string
+	Genders                    containers.Set[Gender]
 	IsMinor                    *bool
 	PhoneNumber                string
 	PresentsProtectionConcerns *bool
