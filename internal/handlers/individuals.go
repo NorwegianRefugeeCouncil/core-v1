@@ -2,12 +2,8 @@ package handlers
 
 import (
 	"net/http"
-	"strings"
-	"time"
 
 	"github.com/nrc-no/notcore/internal/api"
-	"github.com/nrc-no/notcore/internal/constants"
-	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
@@ -65,10 +61,14 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		if err := parseGetAllOptions(r, &getAllOptions); err != nil {
+		if err := api.NewIndividualListFromURLValues(r.Form, &getAllOptions); err != nil {
 			l.Error("failed to parse options", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
+		}
+
+		if getAllOptions.Take <= 0 || getAllOptions.Take > 100 {
+			getAllOptions.Take = 20
 		}
 
 		getAllOptions.CountryID = selectedCountryID
@@ -82,85 +82,4 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 		render()
 
 	})
-}
-
-func parseGetAllOptions(r *http.Request, out *api.ListIndividualsOptions) error {
-	var err error
-	out.Take, err = parseQryParamInt(r, "take")
-	if err != nil {
-		return err
-	}
-	if out.Take <= 0 || out.Take > 100 {
-		out.Take = 20
-	}
-
-	out.Skip, err = parseQryParamInt(r, "skip")
-	if err != nil {
-		return err
-	}
-	if out.Skip < 0 {
-		out.Skip = 0
-	}
-
-	out.Email = r.FormValue(constants.FormParamsGetIndividualsEmail)
-	out.FullName = r.FormValue(constants.FormParamsGetIndividualsFullName)
-	out.PhoneNumber = r.FormValue(constants.FormParamsGetIndividualsPhoneNumber)
-	out.Address = r.FormValue(constants.FormParamsGetIndividualsAddress)
-	out.Genders = r.Form[constants.FormParamsGetIndividualsGender]
-	if r.FormValue(constants.FormParamsGetIndividualsIsMinor) == "true" {
-		isMinor := true
-		out.IsMinor = &isMinor
-	} else if r.FormValue(constants.FormParamsGetIndividualsIsMinor) == "false" {
-		isMinor := false
-		out.IsMinor = &isMinor
-	}
-	if r.FormValue(constants.FormParamsGetIndividualsProtectionConcerns) == "true" {
-		presentsProtectionConcerns := true
-		out.PresentsProtectionConcerns = &presentsProtectionConcerns
-	} else if r.FormValue(constants.FormParamsGetIndividualsProtectionConcerns) == "false" {
-		presentsProtectionConcerns := false
-		out.PresentsProtectionConcerns = &presentsProtectionConcerns
-	}
-	ageFromStr := r.FormValue(constants.FormParamsGetIndividualsAgeFrom)
-	if len(ageFromStr) != 0 {
-		ageFrom, err := parseQryParamInt(r, constants.FormParamsGetIndividualsAgeFrom)
-		if err != nil {
-			return err
-		}
-		yearsAgo := time.Now().AddDate(0, 0, -(ageFrom+1)*365)
-		out.BirthDateTo = &yearsAgo
-	}
-	ageToStr := r.FormValue(constants.FormParamsGetIndividualsAgeTo)
-	if len(ageToStr) != 0 {
-		ageTo, err := parseQryParamInt(r, constants.FormParamsGetIndividualsAgeTo)
-		if err != nil {
-			return err
-		}
-		yearsAgo := time.Now().AddDate(0, 0, -(ageTo+1)*365)
-		out.BirthDateFrom = &yearsAgo
-	}
-	out.CountryID = r.FormValue(constants.FormParamsGetIndividualsCountryID)
-	displacementStatuses := r.Form[constants.FormParamsGetIndividualsDisplacementStatus]
-	var displacementStatusMap = map[string]bool{}
-	for _, s := range displacementStatuses {
-		if displacementStatusMap[s] {
-			continue
-		}
-		displacementStatusMap[s] = true
-		out.DisplacementStatuses = append(out.DisplacementStatuses, s)
-	}
-
-	idValues := r.Form[constants.FormParamsGetIndividualsID]
-	idSet := containers.NewStringSet()
-	for _, v := range idValues {
-		parts := strings.Split(v, ",")
-		for _, p := range parts {
-			if len(p) == 0 {
-				continue
-			}
-			idSet.Add(p)
-		}
-	}
-	out.IDs = idSet.Items()
-	return nil
 }

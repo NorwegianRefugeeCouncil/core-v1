@@ -1,10 +1,8 @@
 package api
 
 import (
-	"fmt"
 	"html/template"
 	"net/url"
-	"strings"
 	"time"
 )
 
@@ -85,59 +83,17 @@ func (o ListIndividualsOptions) WithTake(take int) ListIndividualsOptions {
 }
 
 func (o ListIndividualsOptions) QueryParams() template.HTML {
-	var params = &url.Values{}
-	if len(o.FullName) != 0 {
-		params.Add("full_name", o.FullName)
-	}
-	if len(o.IDs) != 0 {
-		for _, id := range o.IDs {
-			params.Add("id", id)
-		}
-	}
-	if len(o.Address) != 0 {
-		params.Add("address", o.Address)
-	}
-	if len(o.Email) != 0 {
-		params.Add("email", o.Email)
-	}
-	if len(o.PhoneNumber) != 0 {
-		params.Add("phone_number", o.PhoneNumber)
-	}
-	if o.Take != 0 {
-		params.Add("take", fmt.Sprintf("%d", o.Take))
-	}
-	if o.Skip != 0 {
-		params.Add("skip", fmt.Sprintf("%d", o.Skip))
-	}
-	if len(o.Genders) != 0 {
-		for _, g := range o.Genders {
-			params.Add("gender", g)
-		}
-	}
-	if o.BirthDateFrom != nil {
-		params.Add("age_from", fmt.Sprintf("%d", o.AgeTo()))
-	}
-	if o.BirthDateTo != nil {
-		params.Add("age_to", fmt.Sprintf("%d", o.AgeFrom()))
-	}
-
-	if o.IsMinorSelected() {
-		params.Add("is_minor", "true")
-	} else if o.IsNotMinorSelected() {
-		params.Add("is_minor", "false")
-	}
-
-	if o.IsPresentsProtectionConcernsSelected() {
-		params.Add("presents_protection_concerns", "true")
-	} else if o.IsNotPresentsProtectionConcernsSelected() {
-		params.Add("presents_protection_concerns", "false")
-	}
-	if len(o.DisplacementStatuses) != 0 {
-		params.Add("displacement_status", strings.Join(o.DisplacementStatuses, ","))
-	}
-	u := url.URL{
-		Path: "/countries/" + o.CountryID + "/individuals",
-	}
+	params := newListIndividualsOptionsEncoder(o, time.Now()).encode()
+	u := url.URL{Path: "/countries/" + o.CountryID + "/individuals"}
 	u.RawQuery = params.Encode()
 	return template.HTML(u.String())
+}
+
+func NewIndividualListFromURLValues(values url.Values, into *ListIndividualsOptions) error {
+	parser := listIndividualsOptionsDecoder{
+		out:    into,
+		values: values,
+		now:    time.Now(),
+	}
+	return parser.parse()
 }
