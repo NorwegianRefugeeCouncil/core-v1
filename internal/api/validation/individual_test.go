@@ -63,12 +63,12 @@ func (i *IndividualBuilder) WithPhoneNumber(phoneNumber string) *IndividualBuild
 	return i
 }
 
-func (i *IndividualBuilder) WithDisplacementStatus(displacementStatus string) *IndividualBuilder {
+func (i *IndividualBuilder) WithDisplacementStatus(displacementStatus api.DisplacementStatus) *IndividualBuilder {
 	i.individual.DisplacementStatus = displacementStatus
 	return i
 }
 
-func (i *IndividualBuilder) WithGender(gender string) *IndividualBuilder {
+func (i *IndividualBuilder) WithGender(gender api.Gender) *IndividualBuilder {
 	i.individual.Gender = gender
 	return i
 }
@@ -151,7 +151,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "invalid displacement status",
 			i:    ValidIndividual().WithDisplacementStatus("bla").Build(),
-			want: validation.ErrorList{validation.NotSupported(displacementStatusPath, "bla", []string{"host_community", "idp", "refugee"})},
+			want: validation.ErrorList{validation.NotSupported(displacementStatusPath, api.DisplacementStatus("bla"), []string{"host_community", "idp", "refugee"})},
 		}, {
 			name: "empty gender",
 			i:    ValidIndividual().WithGender("").Build(),
@@ -159,7 +159,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "invalid gender",
 			i:    ValidIndividual().WithGender("bla").Build(),
-			want: validation.ErrorList{validation.NotSupported(genderPath, "bla", []string{"female", "male", "other", "prefers_not_to_say"})},
+			want: validation.ErrorList{validation.NotSupported(genderPath, api.Gender("bla"), []string{"female", "male", "other", "prefers_not_to_say"})},
 		},
 	}
 	for _, tt := range tests {
@@ -190,7 +190,7 @@ func TestValidateIndividualList(t *testing.T) {
 			want: validation.ErrorList{
 				validation.NotSupported(
 					validation.NewPath("items[0].displacementStatus"),
-					"bla",
+					api.DisplacementStatus("bla"),
 					[]string{"host_community", "idp", "refugee"})},
 		},
 	}

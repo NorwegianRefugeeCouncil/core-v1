@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/nrc-no/notcore/internal/constants"
+	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/utils/pointers"
 	"github.com/stretchr/testify/assert"
 )
@@ -115,15 +116,15 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 		}, {
 			name: constants.FormParamsGetIndividualsID,
 			args: url.Values{constants.FormParamsGetIndividualsID: []string{"1"}},
-			want: ListIndividualsOptions{IDs: []string{"1"}},
+			want: ListIndividualsOptions{IDs: containers.NewStringSet("1")},
 		}, {
 			name: "multiple ids",
 			args: url.Values{constants.FormParamsGetIndividualsID: []string{"1", "2", "2", "3"}},
-			want: ListIndividualsOptions{IDs: []string{"1", "2", "3"}},
+			want: ListIndividualsOptions{IDs: containers.NewStringSet("1", "2", "3")},
 		}, {
 			name: constants.FormParamsGetIndividualsDisplacementStatus,
 			args: url.Values{constants.FormParamsGetIndividualsDisplacementStatus: []string{"idp", "idp", "refugee"}},
-			want: ListIndividualsOptions{DisplacementStatuses: []string{"idp", "refugee"}},
+			want: ListIndividualsOptions{DisplacementStatuses: containers.NewSet[DisplacementStatus](DisplacementStatusIDP, DisplacementStatusRefugee)},
 		},
 	}
 	for _, tt := range tests {
@@ -184,20 +185,20 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			want: "/countries/usa/individuals?age_from=20",
 		}, {
 			name: "displacement status",
-			o:    ListIndividualsOptions{CountryID: countryId, DisplacementStatuses: []string{"status"}},
-			want: "/countries/usa/individuals?displacement_status=status",
+			o:    ListIndividualsOptions{CountryID: countryId, DisplacementStatuses: containers.NewSet[DisplacementStatus](DisplacementStatusIDP)},
+			want: "/countries/usa/individuals?displacement_status=idp",
 		}, {
 			name: "displacement status multiple",
-			o:    ListIndividualsOptions{CountryID: countryId, DisplacementStatuses: []string{"status1", "status2"}},
-			want: "/countries/usa/individuals?displacement_status=status1&displacement_status=status2",
+			o:    ListIndividualsOptions{CountryID: countryId, DisplacementStatuses: containers.NewSet[DisplacementStatus](DisplacementStatusIDP, DisplacementStatusRefugee)},
+			want: "/countries/usa/individuals?displacement_status=idp&displacement_status=refugee",
 		}, {
 			name: "gender",
-			o:    ListIndividualsOptions{CountryID: countryId, Genders: []string{"male"}},
+			o:    ListIndividualsOptions{CountryID: countryId, Genders: containers.NewSet[Gender]("male")},
 			want: "/countries/usa/individuals?gender=male",
 		}, {
 			name: "gender multiple",
-			o:    ListIndividualsOptions{CountryID: countryId, Genders: []string{"male", "female"}},
-			want: "/countries/usa/individuals?gender=male&gender=female",
+			o:    ListIndividualsOptions{CountryID: countryId, Genders: containers.NewSet[Gender](GenderMale, GenderFemale)},
+			want: "/countries/usa/individuals?gender=female&gender=male",
 		}, {
 			name: "isMinor",
 			o:    ListIndividualsOptions{CountryID: countryId, IsMinor: &[]bool{true}[0]},
@@ -228,7 +229,7 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			want: "/countries/usa/individuals?address=address",
 		}, {
 			name: "ids",
-			o:    ListIndividualsOptions{CountryID: countryId, IDs: []string{"id1", "id2"}},
+			o:    ListIndividualsOptions{CountryID: countryId, IDs: containers.NewStringSet("id1", "id2")},
 			want: "/countries/usa/individuals?id=id1&id=id2",
 		},
 	}
