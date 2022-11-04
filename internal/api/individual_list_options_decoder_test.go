@@ -96,6 +96,10 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 			args: url.Values{constants.FormParamsGetIndividualsIsMinor: []string{"false"}},
 			want: ListIndividualsOptions{IsMinor: pointers.Bool(false)},
 		}, {
+			name:    "invalid isMinor",
+			args:    url.Values{constants.FormParamsGetIndividualsIsMinor: []string{"invalid"}},
+			wantErr: true,
+		}, {
 			name: constants.FormParamsGetIndividualsPresentsProtectionConcerns,
 			args: url.Values{constants.FormParamsGetIndividualsPresentsProtectionConcerns: []string{"true"}},
 			want: ListIndividualsOptions{PresentsProtectionConcerns: pointers.Bool(true)},
@@ -103,6 +107,10 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 			name: constants.FormParamsGetIndividualsPresentsProtectionConcerns,
 			args: url.Values{constants.FormParamsGetIndividualsPresentsProtectionConcerns: []string{"false"}},
 			want: ListIndividualsOptions{PresentsProtectionConcerns: pointers.Bool(false)},
+		}, {
+			name:    "invalid presentsProtectionConcerns",
+			args:    url.Values{constants.FormParamsGetIndividualsPresentsProtectionConcerns: []string{"invalid"}},
+			wantErr: true,
 		}, {
 			name: constants.FormParamsGetIndividualsID,
 			args: url.Values{constants.FormParamsGetIndividualsID: []string{"1"}},
