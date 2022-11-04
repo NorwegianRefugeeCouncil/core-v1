@@ -16,7 +16,7 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 		t.Fatal(err)
 	}
 	zeroTime := time.Time{}
-	const defaultQuery = `SELECT * FROM individuals WHERE deleted_at IS NULL ORDER BY created_at`
+	const defaultQuery = `SELECT * FROM individual_registrations WHERE deleted_at IS NULL ORDER BY created_at`
 	tests := []struct {
 		name     string
 		args     api.ListIndividualsOptions
@@ -30,32 +30,32 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 		}, {
 			name:     "ids",
 			args:     api.ListIndividualsOptions{IDs: containers.NewStringSet("1", "2")},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND id IN ($1,$2) ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND id IN ($1,$2) ORDER BY created_at`,
 			wantArgs: []interface{}{"1", "2"},
 		}, {
 			name:     "full name",
 			args:     api.ListIndividualsOptions{FullName: "John"},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND (full_name ILIKE $1 OR preferred_name ILIKE $2) ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND (full_name ILIKE $1 OR preferred_name ILIKE $2) ORDER BY created_at`,
 			wantArgs: []interface{}{"%John%", "%John%"},
 		}, {
 			name:     "address",
 			args:     api.ListIndividualsOptions{Address: "123 Main St"},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND address ILIKE $1 ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND address ILIKE $1 ORDER BY created_at`,
 			wantArgs: []interface{}{"%123 Main St%"},
 		}, {
 			name:     "genders",
 			args:     api.ListIndividualsOptions{Genders: containers.NewSet[api.Gender](api.GenderMale, api.GenderFemale)},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND gender IN ($1,$2) ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND gender IN ($1,$2) ORDER BY created_at`,
 			wantArgs: []interface{}{"female", "male"},
 		}, {
 			name:     "all genders",
 			args:     api.ListIndividualsOptions{Genders: api.AllGenders()},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND gender IN ($1,$2,$3,$4) ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND gender IN ($1,$2,$3,$4) ORDER BY created_at`,
 			wantArgs: []interface{}{"female", "male", "other", "prefers_not_to_say"},
 		}, {
 			name:     "birth date from",
 			args:     api.ListIndividualsOptions{BirthDateFrom: &someDate},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND birth_date >= $1 ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND birth_date >= $1 ORDER BY created_at`,
 			wantArgs: []interface{}{&someDate},
 		}, {
 			name:    "zero birth date from",
@@ -64,7 +64,7 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 		}, {
 			name:     "birth date to",
 			args:     api.ListIndividualsOptions{BirthDateTo: &someDate},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND birth_date <= $1 ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND birth_date <= $1 ORDER BY created_at`,
 			wantArgs: []interface{}{&someDate},
 		}, {
 			name:    "zero birth date to",
@@ -73,57 +73,57 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 		}, {
 			name:     "phone number",
 			args:     api.ListIndividualsOptions{PhoneNumber: "1234567890"},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND normalized_phone_number ILIKE $1 ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND normalized_phone_number ILIKE $1 ORDER BY created_at`,
 			wantArgs: []interface{}{"%1234567890%"},
 		}, {
 			name:     "email",
 			args:     api.ListIndividualsOptions{Email: "info@email.com"},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND email = $1 ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND email = $1 ORDER BY created_at`,
 			wantArgs: []interface{}{"info@email.com"},
 		}, {
 			name:     "presents protection concerns",
 			args:     api.ListIndividualsOptions{PresentsProtectionConcerns: pointers.Bool(true)},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND presents_protection_concerns = $1 ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND presents_protection_concerns = $1 ORDER BY created_at`,
 			wantArgs: []interface{}{true},
 		}, {
 			name:     "does not presents protection concerns",
 			args:     api.ListIndividualsOptions{PresentsProtectionConcerns: pointers.Bool(false)},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND presents_protection_concerns = $1 ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND presents_protection_concerns = $1 ORDER BY created_at`,
 			wantArgs: []interface{}{false},
 		}, {
 			name:     "is minor",
 			args:     api.ListIndividualsOptions{IsMinor: pointers.Bool(true)},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND is_minor = $1 ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND is_minor = $1 ORDER BY created_at`,
 			wantArgs: []interface{}{true},
 		}, {
 			name:     "is not minor",
 			args:     api.ListIndividualsOptions{IsMinor: pointers.Bool(false)},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND is_minor = $1 ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND is_minor = $1 ORDER BY created_at`,
 			wantArgs: []interface{}{false},
 		}, {
 			name:     "country_id",
 			args:     api.ListIndividualsOptions{CountryID: "1"},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND country_id = $1 ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND country_id = $1 ORDER BY created_at`,
 			wantArgs: []interface{}{"1"},
 		}, {
 			name:     "displacement_statuses",
 			args:     api.ListIndividualsOptions{DisplacementStatuses: containers.NewSet[api.DisplacementStatus](api.DisplacementStatusIDP, api.DisplacementStatusRefugee)},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND displacement_status IN ($1,$2) ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND displacement_status IN ($1,$2) ORDER BY created_at`,
 			wantArgs: []interface{}{"idp", "refugee"},
 		}, {
 			name:     "all displacement_statuses",
 			args:     api.ListIndividualsOptions{DisplacementStatuses: api.AllDisplacementStatuses()},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND displacement_status IN ($1,$2,$3) ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND displacement_status IN ($1,$2,$3) ORDER BY created_at`,
 			wantArgs: []interface{}{"host_community", "idp", "refugee"},
 		}, {
 			name:     "skip",
 			args:     api.ListIndividualsOptions{Skip: 10},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL ORDER BY created_at OFFSET 10`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL ORDER BY created_at OFFSET 10`,
 			wantArgs: nil,
 		}, {
 			name:     "take",
 			args:     api.ListIndividualsOptions{Take: 10},
-			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL ORDER BY created_at LIMIT 10`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL ORDER BY created_at LIMIT 10`,
 			wantArgs: nil,
 		},
 	}
