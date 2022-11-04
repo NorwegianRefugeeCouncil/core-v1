@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/nrc-no/notcore/internal/constants"
+	"github.com/nrc-no/notcore/internal/utils"
 	"github.com/xuri/excelize/v2"
 	"golang.org/x/exp/slices"
 )
@@ -54,7 +55,12 @@ func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual
 	colMapping := map[string]int{}
 	headerRow := data[0]
 	for i, col := range headerRow {
-		*fields = append(*fields, constants.IndividualFileToDBMap[trimString(col)])
+		col = trimString(col)
+		field, ok := constants.IndividualFileToDBMap[col]
+		if !ok {
+			return fmt.Errorf("unknown column: %s", utils.LogEscape(col))
+		}
+		*fields = append(*fields, field)
 		col = trimString(col)
 		colMapping[strings.Trim(col, " \n\t\r")] = i
 	}
