@@ -1,5 +1,3 @@
-
-
 {{define "head"}}
     <script type="application/javascript" src="/static/autocomplete.js"></script>
     <script type="application/javascript" src="/static/rxjs.js"></script>
@@ -15,6 +13,7 @@
         function openDialog() {
             document.getElementById('individual-upload--file').click();
         }
+
         function submitForm() {
             document.getElementById('individual-upload--button').disabled = true;
             document.getElementById('individual-upload--form').submit();
@@ -48,6 +47,19 @@
             document.getElementById('individual-upload--file').addEventListener('change', submitForm);
         });
     </script>
+    <style>
+        td {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            background: white;
+            border-spacing: 0;
+        }
+
+        tbody tr {
+            background: white;
+        }
+    </style>
 {{end}}
 {{define "body"}}
     <header class="sticky-top">
@@ -63,15 +75,18 @@
                         <button type="button" class="btn btn-outline-primary me-2" onclick="submitActionForm('delete')">
                             Batch delete
                         </button>
-                        <a href="/countries/{{.Options.CountryID}}/individuals/new" class="btn btn-outline-primary me-2">
+                        <a href="/countries/{{.Options.CountryID}}/individuals/new"
+                           class="btn btn-outline-primary me-2">
                             Create new Individual
                         </a>
                     {{end}}
-                    <a href="/countries/{{.Options.CountryID}}/individuals/download" target="_blank" class="btn btn-outline-primary">
+                    <a href="/countries/{{.Options.CountryID}}/individuals/download" target="_blank"
+                       class="btn btn-outline-primary">
                         Download
                     </a>
                     {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                        <form id="individual-upload--form" action="/countries/{{.Options.CountryID}}/individuals/upload" enctype="multipart/form-data" method="post" class="ms-2">
+                        <form id="individual-upload--form" action="/countries/{{.Options.CountryID}}/individuals/upload"
+                              enctype="multipart/form-data" method="post" class="ms-2">
                             <input
                                     hidden
                                     id="individual-upload--file"
@@ -80,7 +95,9 @@
                                     class="form-control"
                                     accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                             >
-                            <button id="individual-upload--button" type="button" class="btn btn-outline-primary">Upload</button>
+                            <button id="individual-upload--button" type="button" class="btn btn-outline-primary">
+                                Upload
+                            </button>
                         </form>
                     {{end}}
                 </div>
@@ -89,7 +106,9 @@
             <!-- SEARCH FILTERS -->
             <div class="card mb-3">
                 <div class="card-header" id="searchFormAccordion">
-                    <button class="btn btn-link d-flex w-100 justify-content-between px-0 no-text-decoration" data-bs-toggle="collapse" data-bs-target="#search-form" aria-expanded="true" aria-controls="search-form">
+                    <button class="btn btn-link d-flex w-100 justify-content-between px-0 no-text-decoration"
+                            data-bs-toggle="collapse" data-bs-target="#search-form" aria-expanded="true"
+                            aria-controls="search-form">
                         Filter
                         <i class="bi-caret-down-fill" title="NavbarToggle"></i>
                     </button>
@@ -164,7 +183,8 @@
                                     <label class="form-text">Presents Protection Concerns</label>
                                     <div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" value="" id="PresentsProtectionConcernsAll"
+                                            <input class="form-check-input" type="radio" value=""
+                                                   id="PresentsProtectionConcernsAll"
                                                    name="presents_protection_concerns"
                                                    {{if eq .Options.PresentsProtectionConcerns nil }}checked="checked"{{end}}>
                                             <label class="form-check-label" for="PresentsProtectionConcernsAll">
@@ -172,7 +192,8 @@
                                             </label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" value="true" id="PresentsProtectionConcernsYes"
+                                            <input class="form-check-input" type="radio" value="true"
+                                                   id="PresentsProtectionConcernsYes"
                                                    name="presents_protection_concerns"
                                                    {{if .Options.IsPresentsProtectionConcernsSelected }}checked="checked"{{end}}>
                                             <label class="form-check-label" for="PresentsProtectionConcernsYes">
@@ -180,7 +201,8 @@
                                             </label>
                                         </div>
                                         <div class="form-check form-check-inline mb-3">
-                                            <input class="form-check-input" type="radio" value="false" id="PresentsProtectionConcernsNo"
+                                            <input class="form-check-input" type="radio" value="false"
+                                                   id="PresentsProtectionConcernsNo"
                                                    name="presents_protection_concerns"
                                                    {{if .Options.IsNotPresentsProtectionConcernsSelected }}checked="checked"{{end}}>
                                             <label class="form-check-label" for="PresentsProtectionConcernsNo">
@@ -212,7 +234,8 @@
                                             </label>
                                         </div>
                                         <div class="form-check form-check-inline mb-3">
-                                            <input class="form-check-input" type="radio" value="female" id="GenderFemale"
+                                            <input class="form-check-input" type="radio" value="female"
+                                                   id="GenderFemale"
                                                    name="gender"
                                                    {{if .Options.Genders.Contains "female"}}checked="checked"{{end}}>
                                             <label class="form-check-label" for="GenderFemale">
@@ -220,7 +243,8 @@
                                             </label>
                                         </div>
                                         <div class="form-check form-check-inline mb-3">
-                                            <input class="form-check-input" type="radio" value="prefers_not_to_say" id="GenderPrefersNotToSay"
+                                            <input class="form-check-input" type="radio" value="prefers_not_to_say"
+                                                   id="GenderPrefersNotToSay"
                                                    name="gender"
                                                    {{if .Options.Genders.Contains "prefers_not_to_say"}}checked="checked"{{end}}>
                                             <label class="form-check-label" for="GenderPrefersNotToSay">
@@ -248,13 +272,16 @@
                                         <option value="" {{if .Options.DisplacementStatuses.IsEmpty }}selected{{end}}>
 
                                         </option>
-                                        <option value="idp" {{if .Options.DisplacementStatuses.Contains "idp" }}selected{{end}}>
+                                        <option value="idp"
+                                                {{if .Options.DisplacementStatuses.Contains "idp" }}selected{{end}}>
                                             Internally Displaced Person
                                         </option>
-                                        <option value="refugee" {{if .Options.DisplacementStatuses.Contains "refugee" }}selected{{end}}>
+                                        <option value="refugee"
+                                                {{if .Options.DisplacementStatuses.Contains "refugee" }}selected{{end}}>
                                             Refugee
                                         </option>
-                                        <option value="host_community" {{if .Options.DisplacementStatuses.Contains "host_community" }}selected{{end}}>
+                                        <option value="host_community"
+                                                {{if .Options.DisplacementStatuses.Contains "host_community" }}selected{{end}}>
                                             Host Community
                                         </option>
                                     </select>
@@ -325,7 +352,8 @@
                         </div>
                     </form>
                     <div class="card-footer">
-                        <a href="/countries/{{.Options.CountryID}}/individuals" class="btn btn-outline-primary">Clear</a>
+                        <a href="/countries/{{.Options.CountryID}}/individuals"
+                           class="btn btn-outline-primary">Clear</a>
                         <button class="btn btn-primary" type="submit" form="searchForm">Search</button>
                     </div>
                 </div>
@@ -337,35 +365,52 @@
                 <table class="table">
                     <thead>
                     <tr>
-                        <th scope="col" class="sticky-column">Select</th>
-                        <th scope="col" class="sticky-column border-end" style="min-width:12rem; left: 60px;">Name</th>
-                        <th>
-                            <span class="" title="Age">A</span>
-                        </th>
-                        <th>
-                            <span class="" title="Gender">G</span>
-                        </th>
-                        <th>
-                            Email
-                        </th>
-                        <th style="min-width:12rem">
-                            Phone Number
-                        </th>
+                        <th style="width:2rem">Select</th>
+                        {{template "columnHeader" (dict "Width" "18rem" "Label" "ID" "Scope" "col" "Class" "sticky-column" "Title" "ID" "Style" "left: 4rem")}}
+                        {{template "columnHeader" (dict "MinWidth" "10rem" "Label" "Name" "Scope" "col" "Class" "sticky-column border-end"  "Style" "left: 24rem" "Title" "Full Name")}}
+                        {{template "columnHeader" (dict "Width" "4rem" "Label" "G" "Title" "Gender" )}}
+                        {{template "columnHeader" (dict "Width" "4rem" "Label" "A" "Scope" "col" "Title" "Age")}}
+                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "HID" "Title" "Household ID")}}
+                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "HOC" "Title" "Head of Household" )}}
+                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "CID" "Title" "Community ID" )}}
+                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "CR" "Title" "Community Representative" )}}
+                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Phone Number" "Title" "Phone Number")}}
+                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Email" "Title" "Email Address" )}}
+                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Reg" "Title" "Registration Date" )}}
+                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Area1" "Title" "Collection Administrative Area 1" )}}
+                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Area2" "Title" "Collection Administrative Area 2" )}}
+                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Area3" "Title" "Collection Administrative Area 3" )}}
+                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Created" "Title" "Date Created")}}
+                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Updated" "Title" "Date Updated")}}
+
+                        <th><!--filler--></th>
                     </tr>
                     </thead>
                     <tbody>
                     {{ if .Individuals }}
                         {{range .Individuals}}
                             <tr>
-                                <td class="sticky-column"><input class="form-check-input" type="checkbox" value="{{.ID}}" name="individual_id"></td>
-                                <td class="sticky-column border-end" style="left: 60px;">
+                                <td class="sticky-column">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           value="{{.ID}}"
+                                           name="individual_id">
+                                </td>
+                                <td class="sticky-column" style="left: 4rem">
                                     <a href="/countries/{{.CountryID}}/individuals/{{.ID}}">
-                                        {{if .FullName}}
-                                            {{.FullName}}
-                                        {{else}}
-                                            <span class="text-muted"><em>anonymous</em></span>
-                                        {{end}}
+                                        {{.ID}}
                                     </a>
+                                </td>
+                                <td class="sticky-column border-end"
+                                    style="left: 24rem">
+                                    {{if .FullName}}
+                                        {{.FullName}}
+                                    {{else}}
+                                        <span class="text-muted"><em>anonymous</em></span>
+                                    {{end}}
+                                </td>
+                                <td>
+                                    {{.Gender}}
                                 </td>
                                 <td>
                                     {{if .BirthDate}}
@@ -373,15 +418,25 @@
                                     {{end}}
                                 </td>
                                 <td>
-                                    {{if eq .Gender "male"}}
-                                        <i class="bi bi-gender-male" title="Male"></i>
-                                    {{else if eq .Gender "female"}}
-                                        <i class="bi bi-gender-female" title="Female"></i>
+                                    {{.HouseholdID}}
+                                </td>
+                                <td>
+                                    {{if .IsHeadOfHousehold}}
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               checked="checked"
+                                               disabled="disabled">
                                     {{end}}
                                 </td>
                                 <td>
-                                    {{if .Email}}
-                                        <a href="mailto:{{.Email}}">{{.Email}}</a>
+                                    {{.CommunityID}}
+                                </td>
+                                <td>
+                                    {{if .IsHeadOfCommunity}}
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               checked="checked"
+                                               disabled="disabled">
                                     {{end}}
                                 </td>
                                 <td>
@@ -390,6 +445,32 @@
                                            href="tel:{{.PhoneNumber}}">{{.PhoneNumber}}</a>
                                     {{end}}
                                 </td>
+                                <td>
+                                    {{if .Email}}
+                                        <a href="mailto:{{.Email}}">{{.Email}}</a>
+                                    {{end}}
+                                </td>
+                                <td>
+                                    {{if .CollectionTime}}
+                                        {{.CollectionTime.Format "2006-01-02"}}
+                                    {{end}}
+                                </td>
+                                <td>
+                                    {{.CollectionAdministrativeArea1}}
+                                </td>
+                                <td>
+                                    {{.CollectionAdministrativeArea2}}
+                                </td>
+                                <td>
+                                    {{.CollectionAdministrativeArea3}}
+                                </td>
+                                <td>
+                                    {{.CreatedAt.Format "2006-01-02 15:04:05"}}
+                                </td>
+                                <td>
+                                    {{.UpdatedAt.Format "2006-01-02 15:04:05"}}
+                                </td>
+
                             </tr>
                         {{end}}
                     {{else}}
@@ -441,4 +522,34 @@
             <!-- END PAGE FOOTER -->
         </div>
     </main>
+{{end}}
+
+{{define "columnHeader"}}
+    {{$label := .Label}}
+    {{$width := .Width}}
+    {{$minWidth := .MinWidth}}
+    {{$maxWidth := .MaxWidth}}
+
+
+    {{$style := "style=\""}}
+    {{if .Style}}{{$style = concat $style .Style}}{{end}}
+    {{if $width}}
+        {{$style = concat $style "width: " $width ";" }}
+    {{end}}
+    {{if $minWidth}}
+        {{$style = concat $style "min-width: " $minWidth ";" }}
+    {{end}}
+    {{if $maxWidth}}
+        {{$style = concat $style "max-width: " $maxWidth ";" }}
+    {{end}}
+    {{$style = concat $style "\"" }}
+
+    <th {{$style | attr}}
+            class="{{.Class}}"
+            {{if .Scope}}scope="{{.Scope}}"{{end}}
+            {{if .Title}}title="{{.Title}}"{{end}}
+    >
+        {{$label}}
+    </th>
+
 {{end}}
