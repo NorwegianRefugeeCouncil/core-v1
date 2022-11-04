@@ -30,7 +30,7 @@ func HandleDownload(
 			return
 		}
 
-		var getAllOptions api.IndividualListOptions
+		var getAllOptions api.ListIndividualsOptions
 		if err := parseGetAllOptions(r, &getAllOptions); err != nil {
 			l.Error("failed to parse options", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -46,7 +46,7 @@ func HandleDownload(
 			format = "xlsx"
 		}
 
-		ret, err := userRepo.GetAll(ctx, api.IndividualListOptions{})
+		ret, err := userRepo.GetAll(ctx, api.ListIndividualsOptions{})
 		if err != nil {
 			l.Error("failed to get individuals", zap.Error(err))
 			http.Error(w, "failed to get records: "+err.Error(), http.StatusInternalServerError)

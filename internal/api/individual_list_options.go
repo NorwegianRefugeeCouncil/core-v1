@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type IndividualListOptions struct {
+type ListIndividualsOptions struct {
 	Address                    string
 	IDs                        []string
 	BirthDateFrom              *time.Time
@@ -25,23 +25,23 @@ type IndividualListOptions struct {
 	Take                       int
 }
 
-func (o IndividualListOptions) IsMinorSelected() bool {
+func (o ListIndividualsOptions) IsMinorSelected() bool {
 	return o.IsMinor != nil && *o.IsMinor
 }
 
-func (o IndividualListOptions) IsNotMinorSelected() bool {
+func (o ListIndividualsOptions) IsNotMinorSelected() bool {
 	return o.IsMinor != nil && !*o.IsMinor
 }
 
-func (o IndividualListOptions) IsPresentsProtectionConcernsSelected() bool {
+func (o ListIndividualsOptions) IsPresentsProtectionConcernsSelected() bool {
 	return o.PresentsProtectionConcerns != nil && *o.PresentsProtectionConcerns
 }
 
-func (o IndividualListOptions) IsNotPresentsProtectionConcernsSelected() bool {
+func (o ListIndividualsOptions) IsNotPresentsProtectionConcernsSelected() bool {
 	return o.PresentsProtectionConcerns != nil && !*o.PresentsProtectionConcerns
 }
 
-func (o IndividualListOptions) AgeFrom() int {
+func (o ListIndividualsOptions) AgeFrom() int {
 	if o.BirthDateTo == nil {
 		return 0
 	}
@@ -49,7 +49,7 @@ func (o IndividualListOptions) AgeFrom() int {
 	return now.Year() - o.BirthDateTo.Year() - 1
 }
 
-func (o IndividualListOptions) AgeTo() int {
+func (o ListIndividualsOptions) AgeTo() int {
 	if o.BirthDateFrom == nil {
 		return 0
 	}
@@ -57,13 +57,13 @@ func (o IndividualListOptions) AgeTo() int {
 	return now.Year() - o.BirthDateFrom.Year() - 1
 }
 
-func (o IndividualListOptions) NextPage() IndividualListOptions {
+func (o ListIndividualsOptions) NextPage() ListIndividualsOptions {
 	ret := o
 	ret.Skip += ret.Take
 	return ret
 }
 
-func (o IndividualListOptions) PreviousPage() IndividualListOptions {
+func (o ListIndividualsOptions) PreviousPage() ListIndividualsOptions {
 	ret := o
 	ret.Skip -= ret.Take
 	if ret.Skip < 0 {
@@ -72,19 +72,19 @@ func (o IndividualListOptions) PreviousPage() IndividualListOptions {
 	return ret
 }
 
-func (o IndividualListOptions) FirstPage() IndividualListOptions {
+func (o ListIndividualsOptions) FirstPage() ListIndividualsOptions {
 	ret := o
 	ret.Skip = 0
 	return ret
 }
 
-func (o IndividualListOptions) WithTake(take int) IndividualListOptions {
+func (o ListIndividualsOptions) WithTake(take int) ListIndividualsOptions {
 	ret := o
 	ret.Take = take
 	return ret
 }
 
-func (o IndividualListOptions) QueryParams() template.HTML {
+func (o ListIndividualsOptions) QueryParams() template.HTML {
 	var params = &url.Values{}
 	if len(o.FullName) != 0 {
 		params.Add("full_name", o.FullName)

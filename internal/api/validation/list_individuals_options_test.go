@@ -14,12 +14,12 @@ func TestValidateListIndividualsOptions(t *testing.T) {
 	toDate := time.Now().AddDate(-5, 0, 0)
 	tests := []struct {
 		name string
-		opts api.IndividualListOptions
+		opts api.ListIndividualsOptions
 		want validation.ErrorList
 	}{
 		{
 			name: "valid",
-			opts: api.IndividualListOptions{
+			opts: api.ListIndividualsOptions{
 				Take:                 10,
 				Skip:                 10,
 				Genders:              []string{"female", "male", "other", "prefers_not_to_say"},
@@ -31,7 +31,7 @@ func TestValidateListIndividualsOptions(t *testing.T) {
 			want: validation.ErrorList{},
 		}, {
 			name: "invalid skip",
-			opts: api.IndividualListOptions{
+			opts: api.ListIndividualsOptions{
 				CountryID: "countryId",
 				Skip:      -1,
 			},
@@ -40,7 +40,7 @@ func TestValidateListIndividualsOptions(t *testing.T) {
 			},
 		}, {
 			name: "invalid take",
-			opts: api.IndividualListOptions{
+			opts: api.ListIndividualsOptions{
 				CountryID: "countryId",
 				Take:      -1,
 			},
@@ -49,7 +49,7 @@ func TestValidateListIndividualsOptions(t *testing.T) {
 			},
 		}, {
 			name: "invalid gender",
-			opts: api.IndividualListOptions{
+			opts: api.ListIndividualsOptions{
 				CountryID: "countryId",
 				Genders:   []string{"invalid"},
 			},
@@ -58,7 +58,7 @@ func TestValidateListIndividualsOptions(t *testing.T) {
 			},
 		}, {
 			name: "duplicate gender",
-			opts: api.IndividualListOptions{
+			opts: api.ListIndividualsOptions{
 				CountryID: "countryId",
 				Genders:   []string{"male", "male"},
 			},
@@ -67,7 +67,7 @@ func TestValidateListIndividualsOptions(t *testing.T) {
 			},
 		}, {
 			name: "invalid displacement status",
-			opts: api.IndividualListOptions{
+			opts: api.ListIndividualsOptions{
 				CountryID:            "countryId",
 				DisplacementStatuses: []string{"invalid"},
 			},
@@ -76,7 +76,7 @@ func TestValidateListIndividualsOptions(t *testing.T) {
 			},
 		}, {
 			name: "duplicate displacement status",
-			opts: api.IndividualListOptions{
+			opts: api.ListIndividualsOptions{
 				CountryID:            "countryId",
 				DisplacementStatuses: []string{"refugee", "refugee"},
 			},
@@ -85,7 +85,7 @@ func TestValidateListIndividualsOptions(t *testing.T) {
 			},
 		}, {
 			name: "from birthdate after to birthdate",
-			opts: api.IndividualListOptions{
+			opts: api.ListIndividualsOptions{
 				CountryID:     "countryId",
 				BirthDateFrom: &toDate,
 				BirthDateTo:   &fromDate,
@@ -95,7 +95,7 @@ func TestValidateListIndividualsOptions(t *testing.T) {
 			},
 		}, {
 			name: "missing country ID",
-			opts: api.IndividualListOptions{
+			opts: api.ListIndividualsOptions{
 				CountryID: "",
 			},
 			want: validation.ErrorList{
