@@ -365,7 +365,7 @@
                 <table class="table">
                     <thead>
                     <tr>
-                        <th style="width:2rem">Select</th>
+                        <th class="sticky-column" style="width:2rem">Select</th>
                         {{template "columnHeader" (dict "Width" "18rem" "Label" "ID" "Scope" "col" "Class" "sticky-column" "Title" "ID" "Style" "left: 3.85rem")}}
                         {{template "columnHeader" (dict "MinWidth" "10rem" "Label" "Name" "Scope" "col" "Class" "sticky-column border-end"  "Style" "left: 23.62rem" "Title" "Full Name")}}
                         {{template "columnHeader" (dict "Width" "4rem" "Label" "G" "Title" "Gender" )}}
@@ -532,6 +532,7 @@
 
     {{$style := "style=\""}}
     {{if .Style}}{{$style = concat $style .Style}}{{end}}
+    {{$style = concat $style ";" }}
     {{if $width}}
         {{$style = concat $style "width: " $width ";" }}
     {{end}}
