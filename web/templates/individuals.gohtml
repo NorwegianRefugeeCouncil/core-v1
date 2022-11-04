@@ -373,13 +373,13 @@
                     <tr>
                         <th class="sticky-column" style="width:2rem">Select</th>
                         {{template "columnHeader" (dict "Width" "18rem" "Label" "ID" "Scope" "col" "Class" "sticky-column" "Title" "ID" "Style" "left: 3.85rem")}}
-                        {{template "columnHeader" (dict "MinWidth" "10rem" "Label" "Name" "Scope" "col" "Class" "sticky-column border-end"  "Style" "left: 23.62rem" "Title" "Full Name")}}
-                        {{template "columnHeader" (dict "Width" "4rem" "Label" "G" "Title" "Gender" )}}
-                        {{template "columnHeader" (dict "Width" "4rem" "Label" "A" "Scope" "col" "Title" "Age")}}
-                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "HID" "Title" "Household ID")}}
-                        {{template "columnHeader" (dict "MinWidth" "4rem" "Label" "HoH" "Title" "Head of Household" )}}
-                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "CID" "Title" "Community ID" )}}
-                        {{template "columnHeader" (dict "MinWidth" "4rem" "Label" "CR" "Title" "Community Representative" )}}
+                        {{template "columnHeader" (dict "Width" "10rem" "Label" "Name" "Scope" "col" "Class" "sticky-column border-end"  "Style" "left: 23.62rem" "Title" "Full Name")}}
+                        {{template "columnHeader" (dict "MinWidth" "6rem" "Label" "Gender" "Title" "Gender" )}}
+                        {{template "columnHeader" (dict "MinWidth" "4rem" "Label" "Age" "Scope" "col" "Title" "Age")}}
+                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Household ID" "Title" "Household ID")}}
+                        {{template "columnHeader" (dict "MinWidth" "4rem" "Label" "HoH" "Title" "Head of Household" "Class" "text-center")}}
+                        {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Community ID" "Title" "Community ID" )}}
+                        {{template "columnHeader" (dict "MinWidth" "4rem" "Label" "CR" "Title" "Community Representative" "Class" "text-center")}}
                         {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Phone Number" "Title" "Phone Number")}}
                         {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Email" "Title" "Email Address" )}}
                         {{template "columnHeader" (dict "MinWidth" "12rem" "Label" "Reg" "Title" "Registration Date" )}}
@@ -425,7 +425,7 @@
                                 <td>
                                     {{.HouseholdID}}
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     {{if .IsHeadOfHousehold}}
                                         <input class="form-check-input marker-only"
                                                type="checkbox"
@@ -436,7 +436,7 @@
                                 <td>
                                     {{.CommunityID}}
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     {{if .IsHeadOfCommunity}}
                                         <input class="form-check-input marker-only"
                                                type="checkbox"
