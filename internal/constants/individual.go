@@ -113,7 +113,7 @@ const (
 	FormParamsGetIndividualsPreferredContactMethod         = "preferred_contact_method"
 	FormParamsGetIndividualsPrefersToRemainAnonymous       = "prefers_to_remain_anonymous"
 	FormParamsGetIndividualsPresentsProtectionConcerns     = "presents_protection_concerns"
-	FormParamsGetIndividualsSelfCareDisabilityLevel        = "self_care_disability_level"
+	FormParamsGetIndividualsSelfCareDisabilityLevel        = "selfcare_disability_level"
 	FormParamsGetIndividualsSkip                           = "skip"
 	FormParamsGetIndividualsSpokenLanguage1                = "spoken_language_1"
 	FormParamsGetIndividualsSpokenLanguage2                = "spoken_language_2"
