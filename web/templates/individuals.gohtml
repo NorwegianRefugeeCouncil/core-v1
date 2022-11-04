@@ -219,6 +219,22 @@
                                                 Female
                                             </label>
                                         </div>
+                                        <div class="form-check form-check-inline mb-3">
+                                            <input class="form-check-input" type="radio" value="prefers_not_to_say" id="GenderPrefersNotToSay"
+                                                   name="gender"
+                                                   {{if .Options.Genders.Contains "prefers_not_to_say"}}checked="checked"{{end}}>
+                                            <label class="form-check-label" for="GenderPrefersNotToSay">
+                                                Prefers not to say
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline mb-3">
+                                            <input class="form-check-input" type="radio" value="other" id="GenderOther"
+                                                   name="gender"
+                                                   {{if .Options.Genders.Contains "other"}}checked="checked"{{end}}>
+                                            <label class="form-check-label" for="GenderOther">
+                                                Other
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- End Gender -->
