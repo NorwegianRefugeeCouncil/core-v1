@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/containers"
 )
 
 type getAllIndividualsSQLQuery struct {
@@ -60,12 +61,17 @@ func (g *getAllIndividualsSQLQuery) writeStringArgs(sep string, args ...string) 
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withIds(ids []string) *getAllIndividualsSQLQuery {
+func (g *getAllIndividualsSQLQuery) withIds(ids containers.StringSet) *getAllIndividualsSQLQuery {
 	if len(ids) == 0 {
 		return g
 	}
 	g.writeString(" AND id IN (")
-	g.writeStringArgs(",", ids...)
+	for i, id := range ids.Items() {
+		if i != 0 {
+			g.writeString(",")
+		}
+		g.writeArg(id)
+	}
 	g.writeString(")")
 	return g
 }
@@ -102,11 +108,18 @@ func (g *getAllIndividualsSQLQuery) withAddress(address string) *getAllIndividua
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withGenders(genders []string) *getAllIndividualsSQLQuery {
+func (g *getAllIndividualsSQLQuery) withGenders(genders containers.Set[api.Gender]) *getAllIndividualsSQLQuery {
 	if len(genders) == 0 {
 		return g
 	}
-	g.writeString(" AND gender IN (").writeStringArgs(",", genders...).writeString(")")
+	g.writeString(" AND gender IN (")
+	for i, gender := range genders.Items() {
+		if i != 0 {
+			g.writeString(",")
+		}
+		g.writeArg(string(gender))
+	}
+	g.writeString(")")
 	return g
 }
 
@@ -182,11 +195,18 @@ func (g *getAllIndividualsSQLQuery) withCountryID(countryID string) *getAllIndiv
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withDisplacementStatuses(displacementStatuses []string) *getAllIndividualsSQLQuery {
+func (g *getAllIndividualsSQLQuery) withDisplacementStatuses(displacementStatuses containers.Set[api.DisplacementStatus]) *getAllIndividualsSQLQuery {
 	if len(displacementStatuses) == 0 {
 		return g
 	}
-	g.writeString(" AND displacement_status IN (").writeStringArgs(",", displacementStatuses...).writeString(")")
+	g.writeString(" AND gender IN (")
+	for i, ds := range displacementStatuses.Items() {
+		if i != 0 {
+			g.writeString(",")
+		}
+		g.writeArg(string(ds))
+	}
+	g.writeString(")")
 	return g
 }
 
