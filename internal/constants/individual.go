@@ -81,7 +81,7 @@ const (
 	FormParamsGetIndividualsCreatedAtTo                    = "created_at_to"
 	FormParamsGetIndividualsDisplacementStatus             = "displacement_status"
 	FormParamsGetIndividualsEmail                          = "email"
-	FormParamsGetIndividualsFullName                       = "name"
+	FormParamsGetIndividualsFullName                       = "full_name"
 	FormParamsGetIndividualsGender                         = "gender"
 	FormParamsGetIndividualsHasCognitiveDisability         = "has_cognitive_disability"
 	FormParamsGetIndividualsHasCommunicationDisability     = "has_communication_disability"
