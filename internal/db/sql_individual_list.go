@@ -199,7 +199,7 @@ func (g *getAllIndividualsSQLQuery) withDisplacementStatuses(displacementStatuse
 	if len(displacementStatuses) == 0 {
 		return g
 	}
-	g.writeString(" AND gender IN (")
+	g.writeString(" AND displacement_status IN (")
 	for i, ds := range displacementStatuses.Items() {
 		if i != 0 {
 			g.writeString(",")

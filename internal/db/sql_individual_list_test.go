@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/utils/pointers"
 	"github.com/stretchr/testify/assert"
 )
@@ -28,7 +29,7 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantSql: defaultQuery,
 		}, {
 			name:     "ids",
-			args:     api.ListIndividualsOptions{IDs: []string{"1", "2"}},
+			args:     api.ListIndividualsOptions{IDs: containers.NewStringSet("1", "2")},
 			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND id IN ($1,$2) ORDER BY created_at`,
 			wantArgs: []interface{}{"1", "2"},
 		}, {
@@ -43,9 +44,9 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantArgs: []interface{}{"%123 Main St%"},
 		}, {
 			name:     "genders",
-			args:     api.ListIndividualsOptions{Genders: []string{"male", "female"}},
+			args:     api.ListIndividualsOptions{Genders: containers.NewSet[api.Gender](api.GenderMale, api.GenderFemale)},
 			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND gender IN ($1,$2) ORDER BY created_at`,
-			wantArgs: []interface{}{"male", "female"},
+			wantArgs: []interface{}{"female", "male"},
 		}, {
 			name:     "birth date from",
 			args:     api.ListIndividualsOptions{BirthDateFrom: &someDate},
@@ -101,9 +102,9 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantArgs: []interface{}{"1"},
 		}, {
 			name:     "displacement_statuses",
-			args:     api.ListIndividualsOptions{DisplacementStatuses: []string{"1", "2"}},
+			args:     api.ListIndividualsOptions{DisplacementStatuses: containers.NewSet[api.DisplacementStatus](api.DisplacementStatusIDP, api.DisplacementStatusRefugee)},
 			wantSql:  `SELECT * FROM individuals WHERE deleted_at IS NULL AND displacement_status IN ($1,$2) ORDER BY created_at`,
-			wantArgs: []interface{}{"1", "2"},
+			wantArgs: []interface{}{"idp", "refugee"},
 		}, {
 			name:     "skip",
 			args:     api.ListIndividualsOptions{Skip: 10},
