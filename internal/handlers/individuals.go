@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/constants"
+	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
@@ -24,7 +26,7 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 		var (
 			individuals   []*api.Individual
-			getAllOptions api.GetAllOptions
+			getAllOptions api.ListIndividualsOptions
 			ctx           = r.Context()
 			err           error
 			l             = logging.NewLogger(ctx)
@@ -82,7 +84,7 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 	})
 }
 
-func parseGetAllOptions(r *http.Request, out *api.GetAllOptions) error {
+func parseGetAllOptions(r *http.Request, out *api.ListIndividualsOptions) error {
 	var err error
 	out.Take, err = parseQryParamInt(r, "take")
 	if err != nil {
@@ -100,9 +102,9 @@ func parseGetAllOptions(r *http.Request, out *api.GetAllOptions) error {
 		out.Skip = 0
 	}
 
-	out.Email = r.FormValue(constants.FormParamGetIndividualsEmail)
-	out.FullName = r.FormValue(constants.FormParamGetIndividualsName)
-	out.PhoneNumber = r.FormValue(constants.FormParamGetIndividualsPhoneNumber)
+	out.Email = r.FormValue(constants.FormParamsGetIndividualsEmail)
+	out.FullName = r.FormValue(constants.FormParamsGetIndividualsFullName)
+	out.PhoneNumber = r.FormValue(constants.FormParamsGetIndividualsPhoneNumber)
 	out.Address = r.FormValue(constants.FormParamsGetIndividualsAddress)
 	out.Genders = r.Form[constants.FormParamsGetIndividualsGender]
 	if r.FormValue(constants.FormParamsGetIndividualsIsMinor) == "true" {
@@ -137,7 +139,7 @@ func parseGetAllOptions(r *http.Request, out *api.GetAllOptions) error {
 		yearsAgo := time.Now().AddDate(0, 0, -(ageTo+1)*365)
 		out.BirthDateFrom = &yearsAgo
 	}
-	out.CountryID = r.FormValue(constants.FormParamGetIndividualsCountryID)
+	out.CountryID = r.FormValue(constants.FormParamsGetIndividualsCountryID)
 	displacementStatuses := r.Form[constants.FormParamsGetIndividualsDisplacementStatus]
 	var displacementStatusMap = map[string]bool{}
 	for _, s := range displacementStatuses {
@@ -147,5 +149,18 @@ func parseGetAllOptions(r *http.Request, out *api.GetAllOptions) error {
 		displacementStatusMap[s] = true
 		out.DisplacementStatuses = append(out.DisplacementStatuses, s)
 	}
+
+	idValues := r.Form[constants.FormParamsGetIndividualsID]
+	idSet := containers.NewStringSet()
+	for _, v := range idValues {
+		parts := strings.Split(v, ",")
+		for _, p := range parts {
+			if len(p) == 0 {
+				continue
+			}
+			idSet.Add(p)
+		}
+	}
+	out.IDs = idSet.Items()
 	return nil
 }

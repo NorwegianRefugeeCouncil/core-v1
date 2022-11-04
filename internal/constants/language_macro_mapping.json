@@ -1,0 +1,2272 @@
+[
+  {
+    "macroLanguageId": "aka",
+    "individualLanguageId": "fat",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "aka",
+    "individualLanguageId": "twi",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "aao",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "abh",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "abv",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "acm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "acq",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "acw",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "acx",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "acy",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "adf",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "aeb",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "aec",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "afb",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "ajp",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "apc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "apd",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "arb",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "arq",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "ars",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "ary",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "arz",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "auz",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "avl",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "ayh",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "ayl",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "ayn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "ayp",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "bbz",
+    "individualLanguageStatus": "R"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "pga",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "shu",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ara",
+    "individualLanguageId": "ssh",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "aym",
+    "individualLanguageId": "ayc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "aym",
+    "individualLanguageId": "ayr",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "aze",
+    "individualLanguageId": "azb",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "aze",
+    "individualLanguageId": "azj",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bal",
+    "individualLanguageId": "bcc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bal",
+    "individualLanguageId": "bgn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bal",
+    "individualLanguageId": "bgp",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bik",
+    "individualLanguageId": "bcl",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bik",
+    "individualLanguageId": "bhk",
+    "individualLanguageStatus": "R"
+  },
+  {
+    "macroLanguageId": "bik",
+    "individualLanguageId": "bln",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bik",
+    "individualLanguageId": "bto",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bik",
+    "individualLanguageId": "cts",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bik",
+    "individualLanguageId": "fbl",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bik",
+    "individualLanguageId": "lbl",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bik",
+    "individualLanguageId": "rbl",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bik",
+    "individualLanguageId": "ubl",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bnc",
+    "individualLanguageId": "ebk",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bnc",
+    "individualLanguageId": "lbk",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bnc",
+    "individualLanguageId": "obk",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bnc",
+    "individualLanguageId": "rbk",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bnc",
+    "individualLanguageId": "vbk",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bua",
+    "individualLanguageId": "bxm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bua",
+    "individualLanguageId": "bxr",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "bua",
+    "individualLanguageId": "bxu",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "chm",
+    "individualLanguageId": "mhr",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "chm",
+    "individualLanguageId": "mrj",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "cre",
+    "individualLanguageId": "crj",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "cre",
+    "individualLanguageId": "crk",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "cre",
+    "individualLanguageId": "crl",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "cre",
+    "individualLanguageId": "crm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "cre",
+    "individualLanguageId": "csw",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "cre",
+    "individualLanguageId": "cwd",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "del",
+    "individualLanguageId": "umu",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "del",
+    "individualLanguageId": "unm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "den",
+    "individualLanguageId": "scs",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "den",
+    "individualLanguageId": "xsl",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "din",
+    "individualLanguageId": "dib",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "din",
+    "individualLanguageId": "dik",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "din",
+    "individualLanguageId": "dip",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "din",
+    "individualLanguageId": "diw",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "din",
+    "individualLanguageId": "dks",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "doi",
+    "individualLanguageId": "dgo",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "doi",
+    "individualLanguageId": "xnr",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "est",
+    "individualLanguageId": "ekk",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "est",
+    "individualLanguageId": "vro",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "fas",
+    "individualLanguageId": "pes",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "fas",
+    "individualLanguageId": "prs",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ful",
+    "individualLanguageId": "ffm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ful",
+    "individualLanguageId": "fub",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ful",
+    "individualLanguageId": "fuc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ful",
+    "individualLanguageId": "fue",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ful",
+    "individualLanguageId": "fuf",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ful",
+    "individualLanguageId": "fuh",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ful",
+    "individualLanguageId": "fui",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ful",
+    "individualLanguageId": "fuq",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ful",
+    "individualLanguageId": "fuv",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "gba",
+    "individualLanguageId": "bdt",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "gba",
+    "individualLanguageId": "gbp",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "gba",
+    "individualLanguageId": "gbq",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "gba",
+    "individualLanguageId": "gmm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "gba",
+    "individualLanguageId": "gso",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "gba",
+    "individualLanguageId": "gya",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "gba",
+    "individualLanguageId": "mdo",
+    "individualLanguageStatus": "R"
+  },
+  {
+    "macroLanguageId": "gon",
+    "individualLanguageId": "esg",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "gon",
+    "individualLanguageId": "ggo",
+    "individualLanguageStatus": "R"
+  },
+  {
+    "macroLanguageId": "gon",
+    "individualLanguageId": "gno",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "gon",
+    "individualLanguageId": "wsg",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "grb",
+    "individualLanguageId": "gbo",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "grb",
+    "individualLanguageId": "gec",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "grb",
+    "individualLanguageId": "grj",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "grb",
+    "individualLanguageId": "grv",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "grb",
+    "individualLanguageId": "gry",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "grn",
+    "individualLanguageId": "gnw",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "grn",
+    "individualLanguageId": "gug",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "grn",
+    "individualLanguageId": "gui",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "grn",
+    "individualLanguageId": "gun",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "grn",
+    "individualLanguageId": "nhd",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hai",
+    "individualLanguageId": "hax",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hai",
+    "individualLanguageId": "hdn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hbs",
+    "individualLanguageId": "bos",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hbs",
+    "individualLanguageId": "cnr",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hbs",
+    "individualLanguageId": "hrv",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hbs",
+    "individualLanguageId": "srp",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "blu",
+    "individualLanguageStatus": "R"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "cqd",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hea",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hma",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hmc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hmd",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hme",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hmg",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hmh",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hmi",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hmj",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hml",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hmm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hmp",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hmq",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hms",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hmw",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hmy",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hmz",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hnj",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "hrm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "huj",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "mmr",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "muq",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "mww",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "hmn",
+    "individualLanguageId": "sfm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "iku",
+    "individualLanguageId": "ike",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "iku",
+    "individualLanguageId": "ikt",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ipk",
+    "individualLanguageId": "esi",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ipk",
+    "individualLanguageId": "esk",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "jrb",
+    "individualLanguageId": "ajt",
+    "individualLanguageStatus": "R"
+  },
+  {
+    "macroLanguageId": "jrb",
+    "individualLanguageId": "aju",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "jrb",
+    "individualLanguageId": "jye",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "jrb",
+    "individualLanguageId": "yhd",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "jrb",
+    "individualLanguageId": "yud",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kau",
+    "individualLanguageId": "kby",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kau",
+    "individualLanguageId": "knc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kau",
+    "individualLanguageId": "krt",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kln",
+    "individualLanguageId": "enb",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kln",
+    "individualLanguageId": "eyo",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kln",
+    "individualLanguageId": "niq",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kln",
+    "individualLanguageId": "oki",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kln",
+    "individualLanguageId": "pko",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kln",
+    "individualLanguageId": "sgc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kln",
+    "individualLanguageId": "spy",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kln",
+    "individualLanguageId": "tec",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kln",
+    "individualLanguageId": "tuy",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kok",
+    "individualLanguageId": "gom",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kok",
+    "individualLanguageId": "knn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kom",
+    "individualLanguageId": "koi",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kom",
+    "individualLanguageId": "kpv",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kon",
+    "individualLanguageId": "kng",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kon",
+    "individualLanguageId": "kwy",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kon",
+    "individualLanguageId": "ldi",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kpe",
+    "individualLanguageId": "gkp",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kpe",
+    "individualLanguageId": "xpe",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kur",
+    "individualLanguageId": "ckb",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kur",
+    "individualLanguageId": "kmr",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "kur",
+    "individualLanguageId": "sdh",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "lah",
+    "individualLanguageId": "hnd",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "lah",
+    "individualLanguageId": "hno",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "lah",
+    "individualLanguageId": "jat",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "lah",
+    "individualLanguageId": "phr",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "lah",
+    "individualLanguageId": "pmu",
+    "individualLanguageStatus": "R"
+  },
+  {
+    "macroLanguageId": "lah",
+    "individualLanguageId": "pnb",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "lah",
+    "individualLanguageId": "skr",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "lah",
+    "individualLanguageId": "xhe",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "lav",
+    "individualLanguageId": "ltg",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "lav",
+    "individualLanguageId": "lvs",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "luy",
+    "individualLanguageId": "bxk",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "luy",
+    "individualLanguageId": "ida",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "luy",
+    "individualLanguageId": "lkb",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "luy",
+    "individualLanguageId": "lko",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "luy",
+    "individualLanguageId": "lks",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "luy",
+    "individualLanguageId": "lri",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "luy",
+    "individualLanguageId": "lrm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "luy",
+    "individualLanguageId": "lsm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "luy",
+    "individualLanguageId": "lto",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "luy",
+    "individualLanguageId": "lts",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "luy",
+    "individualLanguageId": "lwg",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "luy",
+    "individualLanguageId": "nle",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "luy",
+    "individualLanguageId": "nyd",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "luy",
+    "individualLanguageId": "rag",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "man",
+    "individualLanguageId": "emk",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "man",
+    "individualLanguageId": "mku",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "man",
+    "individualLanguageId": "mlq",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "man",
+    "individualLanguageId": "mnk",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "man",
+    "individualLanguageId": "msc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "man",
+    "individualLanguageId": "mwk",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "man",
+    "individualLanguageId": "myq",
+    "individualLanguageStatus": "R"
+  },
+  {
+    "macroLanguageId": "mlg",
+    "individualLanguageId": "bhr",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mlg",
+    "individualLanguageId": "bjq",
+    "individualLanguageStatus": "R"
+  },
+  {
+    "macroLanguageId": "mlg",
+    "individualLanguageId": "bmm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mlg",
+    "individualLanguageId": "bzc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mlg",
+    "individualLanguageId": "msh",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mlg",
+    "individualLanguageId": "plt",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mlg",
+    "individualLanguageId": "skg",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mlg",
+    "individualLanguageId": "tdx",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mlg",
+    "individualLanguageId": "tkg",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mlg",
+    "individualLanguageId": "txy",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mlg",
+    "individualLanguageId": "xmv",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mlg",
+    "individualLanguageId": "xmw",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mon",
+    "individualLanguageId": "khk",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mon",
+    "individualLanguageId": "mvf",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "bjn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "btj",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "bve",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "bvu",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "coa",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "dup",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "hji",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "ind",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "jak",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "jax",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "kvb",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "kvr",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "kxd",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "lce",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "lcf",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "liw",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "max",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "meo",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "mfa",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "mfb",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "min",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "mly",
+    "individualLanguageStatus": "R"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "mqg",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "msi",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "mui",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "orn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "ors",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "pel",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "pse",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "tmw",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "urk",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "vkk",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "vkt",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "xmm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "zlm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "zmi",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "msa",
+    "individualLanguageId": "zsm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mwr",
+    "individualLanguageId": "dhd",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mwr",
+    "individualLanguageId": "mtr",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mwr",
+    "individualLanguageId": "mve",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mwr",
+    "individualLanguageId": "rwr",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mwr",
+    "individualLanguageId": "swv",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "mwr",
+    "individualLanguageId": "wry",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "nep",
+    "individualLanguageId": "dty",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "nep",
+    "individualLanguageId": "npi",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "nor",
+    "individualLanguageId": "nno",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "nor",
+    "individualLanguageId": "nob",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "oji",
+    "individualLanguageId": "ciw",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "oji",
+    "individualLanguageId": "ojb",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "oji",
+    "individualLanguageId": "ojc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "oji",
+    "individualLanguageId": "ojg",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "oji",
+    "individualLanguageId": "ojs",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "oji",
+    "individualLanguageId": "ojw",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "oji",
+    "individualLanguageId": "otw",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ori",
+    "individualLanguageId": "ory",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "ori",
+    "individualLanguageId": "spv",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "orm",
+    "individualLanguageId": "gax",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "orm",
+    "individualLanguageId": "gaz",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "orm",
+    "individualLanguageId": "hae",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "orm",
+    "individualLanguageId": "orc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "pus",
+    "individualLanguageId": "pbt",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "pus",
+    "individualLanguageId": "pbu",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "pus",
+    "individualLanguageId": "pst",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "cqu",
+    "individualLanguageStatus": "R"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qub",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qud",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "quf",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qug",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "quh",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "quk",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qul",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qup",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qur",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qus",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "quw",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qux",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "quy",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "quz",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qva",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qvc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qve",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qvh",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qvi",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qvj",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qvl",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qvm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qvn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qvo",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qvp",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qvs",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qvw",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qvz",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qwa",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qwc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qwh",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qws",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qxa",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qxc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qxh",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qxl",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qxn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qxo",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qxp",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qxr",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qxt",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qxu",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "que",
+    "individualLanguageId": "qxw",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "raj",
+    "individualLanguageId": "bgq",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "raj",
+    "individualLanguageId": "gda",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "raj",
+    "individualLanguageId": "gju",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "raj",
+    "individualLanguageId": "hoj",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "raj",
+    "individualLanguageId": "mup",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "raj",
+    "individualLanguageId": "wbr",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "rom",
+    "individualLanguageId": "rmc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "rom",
+    "individualLanguageId": "rmf",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "rom",
+    "individualLanguageId": "rml",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "rom",
+    "individualLanguageId": "rmn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "rom",
+    "individualLanguageId": "rmo",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "rom",
+    "individualLanguageId": "rmw",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "rom",
+    "individualLanguageId": "rmy",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "sqi",
+    "individualLanguageId": "aae",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "sqi",
+    "individualLanguageId": "aat",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "sqi",
+    "individualLanguageId": "aln",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "sqi",
+    "individualLanguageId": "als",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "srd",
+    "individualLanguageId": "sdc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "srd",
+    "individualLanguageId": "sdn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "srd",
+    "individualLanguageId": "src",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "srd",
+    "individualLanguageId": "sro",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "swa",
+    "individualLanguageId": "swc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "swa",
+    "individualLanguageId": "swh",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "syr",
+    "individualLanguageId": "aii",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "syr",
+    "individualLanguageId": "cld",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "tmh",
+    "individualLanguageId": "taq",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "tmh",
+    "individualLanguageId": "thv",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "tmh",
+    "individualLanguageId": "thz",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "tmh",
+    "individualLanguageId": "ttq",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "uzb",
+    "individualLanguageId": "uzn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "uzb",
+    "individualLanguageId": "uzs",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "yid",
+    "individualLanguageId": "ydd",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "yid",
+    "individualLanguageId": "yih",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zaa",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zab",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zac",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zad",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zae",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zaf",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zai",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zam",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zao",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zaq",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zar",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zas",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zat",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zav",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zaw",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zax",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zca",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zcd",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zoo",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpa",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpb",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpc",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpd",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpe",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpf",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpg",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zph",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpi",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpj",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpk",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpl",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpo",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpp",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpq",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpr",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zps",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpt",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpu",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpv",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpw",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpx",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpy",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zpz",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zsr",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "ztc",
+    "individualLanguageStatus": "R"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zte",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "ztg",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "ztl",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "ztm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "ztn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "ztp",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "ztq",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zts",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "ztt",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "ztu",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "ztx",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zap",
+    "individualLanguageId": "zty",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "ccx",
+    "individualLanguageStatus": "R"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "ccy",
+    "individualLanguageStatus": "R"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "zch",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "zeh",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "zgb",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "zgm",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "zgn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "zhd",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "zhn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "zlj",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "zln",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "zlq",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "zqe",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "zyb",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "zyg",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "zyj",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "zyn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zha",
+    "individualLanguageId": "zzj",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zho",
+    "individualLanguageId": "cdo",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zho",
+    "individualLanguageId": "cjy",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zho",
+    "individualLanguageId": "cmn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zho",
+    "individualLanguageId": "cnp",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zho",
+    "individualLanguageId": "cpx",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zho",
+    "individualLanguageId": "csp",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zho",
+    "individualLanguageId": "czh",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zho",
+    "individualLanguageId": "czo",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zho",
+    "individualLanguageId": "gan",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zho",
+    "individualLanguageId": "hak",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zho",
+    "individualLanguageId": "hsn",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zho",
+    "individualLanguageId": "lzh",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zho",
+    "individualLanguageId": "mnp",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zho",
+    "individualLanguageId": "nan",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zho",
+    "individualLanguageId": "wuu",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zho",
+    "individualLanguageId": "yue",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zza",
+    "individualLanguageId": "diq",
+    "individualLanguageStatus": "A"
+  },
+  {
+    "macroLanguageId": "zza",
+    "individualLanguageId": "kiu",
+    "individualLanguageStatus": "A"
+  }
+]

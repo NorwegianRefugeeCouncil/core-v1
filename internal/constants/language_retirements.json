@@ -1,0 +1,2535 @@
+[
+  {
+    "id": "fri",
+    "name": "Western Frisian",
+    "retirementReason": "C",
+    "changeTo": "fry",
+    "effectiveDate": "2007-02-01"
+  },
+  {
+    "id": "auv",
+    "name": "Auvergnat",
+    "retirementReason": "M",
+    "changeTo": "oci",
+    "effectiveDate": "2007-03-14"
+  },
+  {
+    "id": "gsc",
+    "name": "Gascon",
+    "retirementReason": "M",
+    "changeTo": "oci",
+    "effectiveDate": "2007-03-14"
+  },
+  {
+    "id": "lms",
+    "name": "Limousin",
+    "retirementReason": "M",
+    "changeTo": "oci",
+    "effectiveDate": "2007-03-14"
+  },
+  {
+    "id": "lnc",
+    "name": "Languedocien",
+    "retirementReason": "M",
+    "changeTo": "oci",
+    "effectiveDate": "2007-03-14"
+  },
+  {
+    "id": "prv",
+    "name": "Provençal",
+    "retirementReason": "M",
+    "changeTo": "oci",
+    "effectiveDate": "2007-03-14"
+  },
+  {
+    "id": "amd",
+    "name": "Amapá Creole",
+    "retirementReason": "N",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "bgh",
+    "name": "Bogan",
+    "retirementReason": "D",
+    "changeTo": "bbh",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "bnh",
+    "name": "Banawá",
+    "retirementReason": "M",
+    "changeTo": "jaa",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "bvs",
+    "name": "Belgian Sign Language",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Langue des signes de Belgique Francophone [sfb], and Vlaamse Gebarentaal [vgt]",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "ccy",
+    "name": "Southern Zhuang",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into five languages: Nong Zhuang [zhn];  Yang Zhuang [zyg]; Yongnan Zhuang [zyn]; Zuojiang Zhuang [zzj]; Dai Zhuang [zhd].",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "cit",
+    "name": "Chittagonian",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Rohingya [rhg], and Chittagonian (new identifier [ctg])",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "flm",
+    "name": "Falam Chin",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Ranglong [rnl], and Falam Chin (new identifier [cfm]).",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "jap",
+    "name": "Jaruára",
+    "retirementReason": "M",
+    "changeTo": "jaa",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "kob",
+    "name": "Kohoroxitari",
+    "retirementReason": "M",
+    "changeTo": "xsu",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "mob",
+    "name": "Moinba",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into five languages: Chug [cvg]; Lish [lsh];  Kalaktang Monpa [kkf]; Tawang Monpa [twm]; Sartang [onp]",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "mzf",
+    "name": "Aiku",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into four languages: Ambrak [aag]; Yangum Dey [yde]; Yangum Gel [ygl]; Yangum Mon [ymo]",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "nhj",
+    "name": "Tlalitzlipa Nahuatl",
+    "retirementReason": "M",
+    "changeTo": "nhi",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "nhs",
+    "name": "Southeastern Puebla Nahuatl",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Sierra Negra Nahuatl [nsu] and Southeastern Puebla Nahuatl [npl]",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "occ",
+    "name": "Occidental",
+    "retirementReason": "D",
+    "changeTo": "ile",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "tmx",
+    "name": "Tomyang",
+    "retirementReason": "M",
+    "changeTo": "ybi",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "tot",
+    "name": "Patla-Chicontla Totonac",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Upper Necaxa Totonac [tku] and Tecpatlán Totonac [tcw]",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "xmi",
+    "name": "Miarrã",
+    "retirementReason": "N",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "yib",
+    "name": "Yinglish",
+    "retirementReason": "M",
+    "changeTo": "eng",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "ztc",
+    "name": "Lachirioag Zapotec",
+    "retirementReason": "M",
+    "changeTo": "zty",
+    "effectiveDate": "2007-07-18"
+  },
+  {
+    "id": "atf",
+    "name": "Atuence",
+    "retirementReason": "N",
+    "effectiveDate": "2007-08-10"
+  },
+  {
+    "id": "bqe",
+    "name": "Navarro-Labourdin Basque",
+    "retirementReason": "M",
+    "changeTo": "eus",
+    "effectiveDate": "2007-08-10"
+  },
+  {
+    "id": "bsz",
+    "name": "Souletin Basque",
+    "retirementReason": "M",
+    "changeTo": "eus",
+    "effectiveDate": "2007-08-10"
+  },
+  {
+    "id": "aex",
+    "name": "Amerax",
+    "retirementReason": "M",
+    "changeTo": "eng",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "ahe",
+    "name": "Ahe",
+    "retirementReason": "M",
+    "changeTo": "knx",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "aiz",
+    "name": "Aari",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Aari [aiw] (new identifier) and Gayil [gyl]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "akn",
+    "name": "Amikoana",
+    "retirementReason": "N",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "arf",
+    "name": "Arafundi",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into three languages: Andai [afd]; Nanubae [afk]; Tapei [afp]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "azr",
+    "name": "Adzera",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into three languages: Adzera [adz] (new identifier), Sukurum [zsu] and Sarasira [zsa]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "bcx",
+    "name": "Pamona",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Pamona [pmf] (new identifier) and Batui [zbt]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "bii",
+    "name": "Bisu",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Bisu [bzi] (new identifier) and Laomian [lwm]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "bke",
+    "name": "Bengkulu",
+    "retirementReason": "M",
+    "changeTo": "pse",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "blu",
+    "name": "Hmong Njua",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into four languages: Hmong Njua [hnj] (new identifier); Chuanqiandian Cluster Miao [cqd]; Horned Miao [hrm]; Small Flowery Miao [sfm]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "boc",
+    "name": "Bakung Kenyah",
+    "retirementReason": "M",
+    "changeTo": "xkl",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "bsd",
+    "name": "Sarawak Bisaya",
+    "retirementReason": "M",
+    "changeTo": "bsb",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "bwv",
+    "name": "Bahau River Kenyah",
+    "retirementReason": "N",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "bxt",
+    "name": "Buxinhua",
+    "retirementReason": "D",
+    "changeTo": "bgk",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "byu",
+    "name": "Buyang",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into three languages: E'ma Buyang [yzg]; Langnian Buyang [yln]; Baha Buyang [yha]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "ccx",
+    "name": "Northern Zhuang",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into ten languages: Guibian Zh [zgn]; Liujiang Zh [zlj]; Qiubei Zh [zqe]; Guibei Zh [zgb]; Youjiang Zh [zyj]; Central Hongshuihe Zh [zch]; Eastern Hongshuihe Zh [zeh]; Liuqian Zh [zlq]; Yongbei Zh [zyb]; Lianshan Zh [zln].",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "cru",
+    "name": "Carútana",
+    "retirementReason": "M",
+    "changeTo": "bwi",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "dat",
+    "name": "Darang Deng",
+    "retirementReason": "D",
+    "changeTo": "mhu",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "dyk",
+    "name": "Land Dayak",
+    "retirementReason": "N",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "eni",
+    "name": "Enim",
+    "retirementReason": "M",
+    "changeTo": "pse",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "fiz",
+    "name": "Izere",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Ganang [gne] and Izere [izr] (new identifier)",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "gen",
+    "name": "Geman Deng",
+    "retirementReason": "D",
+    "changeTo": "mxj",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "ggh",
+    "name": "Garreh-Ajuran",
+    "retirementReason": "S",
+    "retirementRemedy": "Split between Borana [gax] and Somali [som]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "itu",
+    "name": "Itutang",
+    "retirementReason": "M",
+    "changeTo": "mzu",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "kds",
+    "name": "Lahu Shi",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Kucong [lkc] and Lahu Shi [lhi] (new identifier)",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "knh",
+    "name": "Kayan River Kenyah",
+    "retirementReason": "N",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "krg",
+    "name": "North Korowai",
+    "retirementReason": "M",
+    "changeTo": "khe",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "krq",
+    "name": "Krui",
+    "retirementReason": "M",
+    "changeTo": "ljp",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "kxg",
+    "name": "Katingan",
+    "retirementReason": "M",
+    "changeTo": "nij",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "lmt",
+    "name": "Lematang",
+    "retirementReason": "M",
+    "changeTo": "mui",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "lnt",
+    "name": "Lintang",
+    "retirementReason": "M",
+    "changeTo": "pse",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "lod",
+    "name": "Berawan",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into three languages: West Berawan [zbw], Central Berawan [zbc], and East Berawan [zbe]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "mbg",
+    "name": "Northern Nambikuára",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into six languages: Alapmunte [apv]; Lakondê [lkd]; Latundê [ltn]; Mamaindé [wmd]; Tawandê [xtw]; Yalakalore [xyl]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "mdo",
+    "name": "Southwest Gbaya",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Southwest Gbaya [gso] (new identifier) and Gbaya-Mbodomo [gmm]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "mhv",
+    "name": "Arakanese",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Marma [rmz] and Rakhine [rki]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "miv",
+    "name": "Mimi",
+    "retirementReason": "M",
+    "changeTo": "amj",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "mqd",
+    "name": "Madang",
+    "retirementReason": "M",
+    "changeTo": "xkl",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "nky",
+    "name": "Khiamniungan Naga",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into three languages: Khiamniungan Naga [kix] (new identifier); Para Naga [pzn]; Makuri Naga [jmn]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "nxj",
+    "name": "Nyadu",
+    "retirementReason": "M",
+    "changeTo": "byd",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "ogn",
+    "name": "Ogan",
+    "retirementReason": "M",
+    "changeTo": "pse",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "ork",
+    "name": "Orokaiva",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Orokaiva [okv] (new identifier), Aeka [aez] and Hunjara-Kaina Ke [hkk]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "paj",
+    "name": "Ipeka-Tapuia",
+    "retirementReason": "M",
+    "changeTo": "kpc",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "pec",
+    "name": "Southern Pesisir",
+    "retirementReason": "M",
+    "changeTo": "ljp",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "pen",
+    "name": "Penesak",
+    "retirementReason": "M",
+    "changeTo": "mui",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "plm",
+    "name": "Palembang",
+    "retirementReason": "M",
+    "changeTo": "mui",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "poj",
+    "name": "Lower Pokomo",
+    "retirementReason": "M",
+    "changeTo": "pkb",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "pun",
+    "name": "Pubian",
+    "retirementReason": "M",
+    "changeTo": "ljp",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "rae",
+    "name": "Ranau",
+    "retirementReason": "M",
+    "changeTo": "ljp",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "rjb",
+    "name": "Rajbanshi",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Kamta (India) / Rangpuri (Bangladesh) [rkt] and Rajbanshi (Nepal) [rjs]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "rws",
+    "name": "Rawas",
+    "retirementReason": "M",
+    "changeTo": "mui",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "sdd",
+    "name": "Semendo",
+    "retirementReason": "M",
+    "changeTo": "pse",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "sdi",
+    "name": "Sindang Kelingi",
+    "retirementReason": "M",
+    "changeTo": "liw",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "skl",
+    "name": "Selako",
+    "retirementReason": "M",
+    "changeTo": "knx",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "slb",
+    "name": "Kahumamahon Saluan",
+    "retirementReason": "M",
+    "changeTo": "loe",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "srj",
+    "name": "Serawai",
+    "retirementReason": "M",
+    "changeTo": "pse",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "suf",
+    "name": "Tarpia",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Tarpia [tpf] (new identifier) and Kaptiau [kbi]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "suh",
+    "name": "Suba",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Suba [sxb] (Kenya) and Suba-Simbita [ssc] (Tanzania)",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "suu",
+    "name": "Sungkai",
+    "retirementReason": "M",
+    "changeTo": "ljp",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "szk",
+    "name": "Sizaki",
+    "retirementReason": "M",
+    "changeTo": "ikz",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "tle",
+    "name": "Southern Marakwet",
+    "retirementReason": "M",
+    "changeTo": "enb",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "tnj",
+    "name": "Tanjong",
+    "retirementReason": "M",
+    "changeTo": "kxn",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "ttx",
+    "name": "Tutong 1",
+    "retirementReason": "M",
+    "changeTo": "bsb",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "ubm",
+    "name": "Upper Baram Kenyah",
+    "retirementReason": "N",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "vky",
+    "name": "Kayu Agung",
+    "retirementReason": "M",
+    "changeTo": "kge",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "vmo",
+    "name": "Muko-Muko",
+    "retirementReason": "M",
+    "changeTo": "min",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "wre",
+    "name": "Ware",
+    "retirementReason": "N",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "xah",
+    "name": "Kahayan",
+    "retirementReason": "M",
+    "changeTo": "nij",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "xkm",
+    "name": "Mahakam Kenyah",
+    "retirementReason": "N",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "xuf",
+    "name": "Kunfal",
+    "retirementReason": "M",
+    "changeTo": "awn",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "yio",
+    "name": "Dayao Yi",
+    "retirementReason": "M",
+    "changeTo": "lpo",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "ymj",
+    "name": "Muji Yi",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into five languages: Muji, Southern [ymc], Mojii [ymi], Qila Muji [ymq], Northern Muji [ymx], and Muzi [ymz]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "ypl",
+    "name": "Pula Yi",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into three languages: Phola [ypg], Phala [ypa] and Alo Phola [ypo]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "ypw",
+    "name": "Puwa Yi",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into three languages: Hlepho Phowa [yhl], Labo Phowa [ypb], and Ani Phowa [ypn]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "ywm",
+    "name": "Wumeng Yi",
+    "retirementReason": "M",
+    "changeTo": "ywu",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "yym",
+    "name": "Yuanjiang-Mojiang Yi",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Southern Nisu [nsd] and Southwestern Nisu [nsv]",
+    "effectiveDate": "2008-01-14"
+  },
+  {
+    "id": "mly",
+    "name": "Malay (individual language)",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into four languages: Standard Malay [zsm], Haji [hji], Papuan Malay [pmy] and Malay (individual language) [zlm]",
+    "effectiveDate": "2008-02-18"
+  },
+  {
+    "id": "muw",
+    "name": "Mundari",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Munda [unx] and Mundari [unr] (new identifier)",
+    "effectiveDate": "2008-02-18"
+  },
+  {
+    "id": "xst",
+    "name": "Silt'e",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Wolane [wle] and Silt'e [stv] (new identifier)",
+    "effectiveDate": "2008-02-28"
+  },
+  {
+    "id": "ope",
+    "name": "Old Persian",
+    "retirementReason": "D",
+    "changeTo": "peo",
+    "effectiveDate": "2008-04-18"
+  },
+  {
+    "id": "scc",
+    "name": "Serbian",
+    "retirementReason": "D",
+    "changeTo": "srp",
+    "effectiveDate": "2008-06-28"
+  },
+  {
+    "id": "scr",
+    "name": "Croatian",
+    "retirementReason": "D",
+    "changeTo": "hrv",
+    "effectiveDate": "2008-06-28"
+  },
+  {
+    "id": "xsk",
+    "name": "Sakan",
+    "retirementReason": "D",
+    "changeTo": "kho",
+    "effectiveDate": "2008-10-23"
+  },
+  {
+    "id": "mol",
+    "name": "Moldavian",
+    "retirementReason": "M",
+    "changeTo": "ron",
+    "effectiveDate": "2008-11-03"
+  },
+  {
+    "id": "aay",
+    "name": "Aariya",
+    "retirementReason": "N",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "acc",
+    "name": "Cubulco Achí",
+    "retirementReason": "M",
+    "changeTo": "acr",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "cbm",
+    "name": "Yepocapa Southwestern Cakchiquel",
+    "retirementReason": "M",
+    "changeTo": "cak",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "chs",
+    "name": "Chumash",
+    "retirementReason": "N",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "ckc",
+    "name": "Northern Cakchiquel",
+    "retirementReason": "M",
+    "changeTo": "cak",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "ckd",
+    "name": "South Central Cakchiquel",
+    "retirementReason": "M",
+    "changeTo": "cak",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "cke",
+    "name": "Eastern Cakchiquel",
+    "retirementReason": "M",
+    "changeTo": "cak",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "ckf",
+    "name": "Southern Cakchiquel",
+    "retirementReason": "M",
+    "changeTo": "cak",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "cki",
+    "name": "Santa María De Jesús Cakchiquel",
+    "retirementReason": "M",
+    "changeTo": "cak",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "ckj",
+    "name": "Santo Domingo Xenacoj Cakchiquel",
+    "retirementReason": "M",
+    "changeTo": "cak",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "ckk",
+    "name": "Acatenango Southwestern Cakchiquel",
+    "retirementReason": "M",
+    "changeTo": "cak",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "ckw",
+    "name": "Western Cakchiquel",
+    "retirementReason": "M",
+    "changeTo": "cak",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "cnm",
+    "name": "Ixtatán Chuj",
+    "retirementReason": "M",
+    "changeTo": "cac",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "cti",
+    "name": "Tila Chol",
+    "retirementReason": "M",
+    "changeTo": "ctu",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "cun",
+    "name": "Cunén Quiché",
+    "retirementReason": "M",
+    "changeTo": "quc",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "eml",
+    "name": "Emiliano-Romagnolo",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Emilian [egl] and Romagnol [rgn]",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "eur",
+    "name": "Europanto",
+    "retirementReason": "N",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "gmo",
+    "name": "Gamo-Gofa-Dawro",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into three languages: Gamo [gmv], Gofa [gof], and Dawro [dwr]",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "hsf",
+    "name": "Southeastern Huastec",
+    "retirementReason": "M",
+    "changeTo": "hus",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "hva",
+    "name": "San Luís Potosí Huastec",
+    "retirementReason": "M",
+    "changeTo": "hus",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "ixi",
+    "name": "Nebaj Ixil",
+    "retirementReason": "M",
+    "changeTo": "ixl",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "ixj",
+    "name": "Chajul Ixil",
+    "retirementReason": "M",
+    "changeTo": "ixl",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "jai",
+    "name": "Western Jacalteco",
+    "retirementReason": "M",
+    "changeTo": "jac",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "mms",
+    "name": "Southern Mam",
+    "retirementReason": "M",
+    "changeTo": "mam",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "mpf",
+    "name": "Tajumulco Mam",
+    "retirementReason": "M",
+    "changeTo": "mam",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "mtz",
+    "name": "Tacanec",
+    "retirementReason": "M",
+    "changeTo": "mam",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "mvc",
+    "name": "Central Mam",
+    "retirementReason": "M",
+    "changeTo": "mam",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "mvj",
+    "name": "Todos Santos Cuchumatán Mam",
+    "retirementReason": "M",
+    "changeTo": "mam",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "poa",
+    "name": "Eastern Pokomam",
+    "retirementReason": "M",
+    "changeTo": "poc",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "pob",
+    "name": "Western Pokomchí",
+    "retirementReason": "M",
+    "changeTo": "poh",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "pou",
+    "name": "Southern Pokomam",
+    "retirementReason": "M",
+    "changeTo": "poc",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "ppv",
+    "name": "Papavô",
+    "retirementReason": "N",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "quj",
+    "name": "Joyabaj Quiché",
+    "retirementReason": "M",
+    "changeTo": "quc",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "qut",
+    "name": "West Central Quiché",
+    "retirementReason": "M",
+    "changeTo": "quc",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "quu",
+    "name": "Eastern Quiché",
+    "retirementReason": "M",
+    "changeTo": "quc",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "qxi",
+    "name": "San Andrés Quiché",
+    "retirementReason": "M",
+    "changeTo": "quc",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "sic",
+    "name": "Malinguat",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Keak [keh] and Sos Kundi [sdk]",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "stc",
+    "name": "Santa Cruz",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Natügu [ntu] and Nalögo [nlz]",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "tlz",
+    "name": "Toala'",
+    "retirementReason": "M",
+    "changeTo": "rob",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "tzb",
+    "name": "Bachajón Tzeltal",
+    "retirementReason": "M",
+    "changeTo": "tzh",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "tzc",
+    "name": "Chamula Tzotzil",
+    "retirementReason": "M",
+    "changeTo": "tzo",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "tze",
+    "name": "Chenalhó Tzotzil",
+    "retirementReason": "M",
+    "changeTo": "tzo",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "tzs",
+    "name": "San Andrés Larrainzar Tzotzil",
+    "retirementReason": "M",
+    "changeTo": "tzo",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "tzt",
+    "name": "Western Tzutujil",
+    "retirementReason": "M",
+    "changeTo": "tzj",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "tzu",
+    "name": "Huixtán Tzotzil",
+    "retirementReason": "M",
+    "changeTo": "tzo",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "tzz",
+    "name": "Zinacantán Tzotzil",
+    "retirementReason": "M",
+    "changeTo": "tzo",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "vlr",
+    "name": "Vatrata",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Vera'a [vra] and Lemerig [lrz]",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "yus",
+    "name": "Chan Santa Cruz Maya",
+    "retirementReason": "M",
+    "changeTo": "yua",
+    "effectiveDate": "2009-01-16"
+  },
+  {
+    "id": "nfg",
+    "name": "Nyeng",
+    "retirementReason": "M",
+    "changeTo": "nfd",
+    "effectiveDate": "2009-01-26"
+  },
+  {
+    "id": "nfk",
+    "name": "Shakara",
+    "retirementReason": "M",
+    "changeTo": "nfd",
+    "effectiveDate": "2009-01-26"
+  },
+  {
+    "id": "agp",
+    "name": "Paranan",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Pahanan Agta [apf] and Paranan [prf] (new identifier)",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "bhk",
+    "name": "Albay Bicolano",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Buhi'non Bikol [ubl]; Libon Bikol [lbl]; Miraya Bikol [rbl]; West Albay Bikol [fbl]",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "bkb",
+    "name": "Finallig",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Eastern Bontok [ebk] and Southern Bontok [obk]",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "btb",
+    "name": "Beti (Cameroon)",
+    "retirementReason": "S",
+    "retirementRemedy": "Beti is a group name, not an individual language name. Member languages are Bebele [beb], Bebil [bxp], Bulu [bum], Eton [eto], Ewondo [ewo], Fang [fan], and Mengisa [mct], all of which already have their own code elements.",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "cjr",
+    "name": "Chorotega",
+    "retirementReason": "M",
+    "changeTo": "mom",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "cmk",
+    "name": "Chimakum",
+    "retirementReason": "D",
+    "changeTo": "xch",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "drh",
+    "name": "Darkhat",
+    "retirementReason": "M",
+    "changeTo": "khk",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "drw",
+    "name": "Darwazi",
+    "retirementReason": "M",
+    "changeTo": "prs",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "gav",
+    "name": "Gabutamon",
+    "retirementReason": "M",
+    "changeTo": "dev",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "mof",
+    "name": "Mohegan-Montauk-Narragansett",
+    "retirementReason": "S",
+    "retirementRemedy": "split into Mohegan-Pequot [xpq] and Narragansett [xnt]",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "mst",
+    "name": "Cataelano Mandaya",
+    "retirementReason": "M",
+    "changeTo": "mry",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "myt",
+    "name": "Sangab Mandaya",
+    "retirementReason": "M",
+    "changeTo": "mry",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "rmr",
+    "name": "Caló",
+    "retirementReason": "S",
+    "retirementRemedy": "split into Caló [rmq] and Erromintxela [emx]",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "sgl",
+    "name": "Sanglechi-Ishkashimi",
+    "retirementReason": "S",
+    "retirementRemedy": "split into Sanglechi [sgy] and Ishkashimi [isk]",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "sul",
+    "name": "Surigaonon",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Tandaganon [tgn] and Surigaonon [sgd] (new identifier)",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "sum",
+    "name": "Sumo-Mayangna",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Mayangna [yan] and Ulwa [ulw]",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "tnf",
+    "name": "Tangshewi",
+    "retirementReason": "M",
+    "changeTo": "prs",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "wgw",
+    "name": "Wagawaga",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Yaleba [ylb] and Wagawaga [wgb] (new identifier)",
+    "effectiveDate": "2010-01-18"
+  },
+  {
+    "id": "ayx",
+    "name": "Ayi (China)",
+    "retirementReason": "D",
+    "changeTo": "nun",
+    "effectiveDate": "2011-05-18"
+  },
+  {
+    "id": "bjq",
+    "name": "Southern Betsimisaraka Malagasy",
+    "retirementReason": "S",
+    "retirementRemedy": "split into Southern Betsimisaraka [bzc] and Tesaka Malagasy [tkg]",
+    "effectiveDate": "2011-05-18"
+  },
+  {
+    "id": "dha",
+    "name": "Dhanwar (India)",
+    "retirementReason": "N",
+    "effectiveDate": "2011-05-18"
+  },
+  {
+    "id": "dkl",
+    "name": "Kolum So Dogon",
+    "retirementReason": "S",
+    "retirementRemedy": "split into Ampari Dogon [aqd] and Mombo Dogon [dmb]",
+    "effectiveDate": "2011-05-18"
+  },
+  {
+    "id": "mja",
+    "name": "Mahei",
+    "retirementReason": "N",
+    "effectiveDate": "2011-05-18"
+  },
+  {
+    "id": "nbf",
+    "name": "Naxi",
+    "retirementReason": "S",
+    "retirementRemedy": "split into Naxi [nxq] and Narua [nru]",
+    "effectiveDate": "2011-05-18"
+  },
+  {
+    "id": "noo",
+    "name": "Nootka",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into [dtd] Ditidaht and [nuk] Nuu-chah-nulth",
+    "effectiveDate": "2011-05-18"
+  },
+  {
+    "id": "tie",
+    "name": "Tingal",
+    "retirementReason": "M",
+    "changeTo": "ras",
+    "effectiveDate": "2011-05-18"
+  },
+  {
+    "id": "tkk",
+    "name": "Takpa",
+    "retirementReason": "D",
+    "changeTo": "twm",
+    "effectiveDate": "2011-05-18"
+  },
+  {
+    "id": "baz",
+    "name": "Tunen",
+    "retirementReason": "S",
+    "retirementRemedy": "Split Tunen [baz]  into Tunen [tvu] and Nyokon [nvo]",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "bjd",
+    "name": "Bandjigali",
+    "retirementReason": "M",
+    "changeTo": "drl",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "ccq",
+    "name": "Chaungtha",
+    "retirementReason": "M",
+    "changeTo": "rki",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "cka",
+    "name": "Khumi Awa Chin",
+    "retirementReason": "M",
+    "changeTo": "cmr",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "dap",
+    "name": "Nisi (India)",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Nyishi [njz] and Tagin [tgj]",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "dwl",
+    "name": "Walo Kumbe Dogon",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Dogon, Bankan Tey (Walo) [dbw]  and Dogon, Ben Tey (Beni) [dbt]",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "elp",
+    "name": "Elpaputih",
+    "retirementReason": "N",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "gbc",
+    "name": "Garawa",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Garrwa [wrk] and Wanyi [wny]",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "gio",
+    "name": "Gelao",
+    "retirementReason": "S",
+    "retirementRemedy": "split into Qau [gqu] and A'ou [aou] with some going to Green Gelao [gig], some to Red Gelao [gir], and some to White Gelao [giw]",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "hrr",
+    "name": "Horuru",
+    "retirementReason": "M",
+    "changeTo": "jal",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "ibi",
+    "name": "Ibilo",
+    "retirementReason": "M",
+    "changeTo": "opa",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "jar",
+    "name": "Jarawa (Nigeria)",
+    "retirementReason": "S",
+    "retirementRemedy": "split into Gwak [jgk] and Bankal [jjr]",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "kdv",
+    "name": "Kado",
+    "retirementReason": "S",
+    "retirementRemedy": "split into Kadu [zkd] and Kanan [zkn]",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "kgh",
+    "name": "Upper Tanudan Kalinga",
+    "retirementReason": "M",
+    "changeTo": "kml",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "kpp",
+    "name": "Paku Karen",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Paku Karen [jkp] and Mobwa Karen [jkm]",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "kzh",
+    "name": "Kenuzi-Dongola",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Andaandi (Dongolawi) [dgl] and Kenzi (Mattoki) [xnz]",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "lcq",
+    "name": "Luhu",
+    "retirementReason": "M",
+    "changeTo": "ppr",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "mgx",
+    "name": "Omati",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Barikewa [jbk] and Mouwase [jmw]",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "nln",
+    "name": "Durango Nahuatl",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Eastern Durango Nahuatl [azd] and Western Durango Nahuatl [azn]",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "pbz",
+    "name": "Palu",
+    "retirementReason": "N",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "pgy",
+    "name": "Pongyong",
+    "retirementReason": "N",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "sca",
+    "name": "Sansu",
+    "retirementReason": "M",
+    "changeTo": "hle",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "tlw",
+    "name": "South Wemale",
+    "retirementReason": "M",
+    "changeTo": "weo",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "unp",
+    "name": "Worora",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Worrorra [wro] and Unggumi [xgu].",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "wiw",
+    "name": "Wirangu",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Wirangu [wgu] and Nauo [nwo]",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "ybd",
+    "name": "Yangbye",
+    "retirementReason": "M",
+    "changeTo": "rki",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "yen",
+    "name": "Yendang",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Yendang [ynq] and Yotti [yot]",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "yma",
+    "name": "Yamphe",
+    "retirementReason": "M",
+    "changeTo": "lrr",
+    "effectiveDate": "2012-02-03"
+  },
+  {
+    "id": "daf",
+    "name": "Dan",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Dan [dnj] and Kla-Dan [lda]",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "djl",
+    "name": "Djiwarli",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Djiwarli [dze] and Thiin [iin]",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "ggr",
+    "name": "Aghu Tharnggalu",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Aghu-Tharnggala [gtu], Gugu-Mini [ggm], and Ikarranggal [ikr]",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "ilw",
+    "name": "Talur",
+    "retirementReason": "M",
+    "changeTo": "gal",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "izi",
+    "name": "Izi-Ezaa-Ikwo-Mgbo",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Izii [izz], Ezaa [eza], Ikwo [iqw], Mgbolizhia [gmz]",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "meg",
+    "name": "Mea",
+    "retirementReason": "M",
+    "changeTo": "cir",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "mld",
+    "name": "Malakhel",
+    "retirementReason": "N",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "mnt",
+    "name": "Maykulan",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Mayi-Kulan [xyk], Mayi-Thakurti [xyt], Mayi-Yapi [xyj], and Wunumara [wnn]",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "mwd",
+    "name": "Mudbura",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Karranga [xrq] and Mudburra [dmw]",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "myq",
+    "name": "Forest Maninka",
+    "retirementReason": "N",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "nbx",
+    "name": "Ngura",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Eastern Karnic [ekc], Garlali [gll], Punthamara [xpt], Wangkumara [xwk], and Badjiri [jbi]",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "nlr",
+    "name": "Ngarla",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Ngarla [nrk] and Yinhawangka [ywg]",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "pcr",
+    "name": "Panang",
+    "retirementReason": "M",
+    "changeTo": "adx",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "ppr",
+    "name": "Piru",
+    "retirementReason": "M",
+    "changeTo": "lcq",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "tgg",
+    "name": "Tangga",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Fanamaket [bjp], Niwer Mil [hrc], and Warwar Feni [hrw]",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "wit",
+    "name": "Wintu",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Wintu [wnw], Nomlaki [nol], and Patwin [pwi]",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "xia",
+    "name": "Xiandao",
+    "retirementReason": "M",
+    "changeTo": "acn",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "yiy",
+    "name": "Yir Yoront",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Yir Yoront [yyr] and Yirrk-Mel [yrm]",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "yos",
+    "name": "Yos",
+    "retirementReason": "M",
+    "changeTo": "zom",
+    "effectiveDate": "2013-01-23"
+  },
+  {
+    "id": "emo",
+    "name": "Emok",
+    "retirementReason": "N",
+    "effectiveDate": "2014-02-03"
+  },
+  {
+    "id": "ggm",
+    "name": "Gugu Mini",
+    "retirementReason": "N",
+    "effectiveDate": "2014-02-03"
+  },
+  {
+    "id": "leg",
+    "name": "Lengua",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Enlhet [enl] and Enxet [enx]",
+    "effectiveDate": "2014-02-03"
+  },
+  {
+    "id": "lmm",
+    "name": "Lamam",
+    "retirementReason": "M",
+    "changeTo": "rmx",
+    "effectiveDate": "2014-02-03"
+  },
+  {
+    "id": "mhh",
+    "name": "Maskoy Pidgin",
+    "retirementReason": "N",
+    "effectiveDate": "2014-02-03"
+  },
+  {
+    "id": "puz",
+    "name": "Purum Naga",
+    "retirementReason": "M",
+    "changeTo": "pub",
+    "effectiveDate": "2014-02-03"
+  },
+  {
+    "id": "sap",
+    "name": "Sanapaná",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Sanapaná [spn] and Angaité [aqt]",
+    "effectiveDate": "2014-02-03"
+  },
+  {
+    "id": "yuu",
+    "name": "Yugh",
+    "retirementReason": "M",
+    "changeTo": "yug",
+    "effectiveDate": "2014-02-03"
+  },
+  {
+    "id": "aam",
+    "name": "Aramanik",
+    "retirementReason": "M",
+    "changeTo": "aas",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "adp",
+    "name": "Adap",
+    "retirementReason": "M",
+    "changeTo": "dzo",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "aue",
+    "name": "ǂKxʼauǁʼein",
+    "retirementReason": "D",
+    "changeTo": "ktz",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "bmy",
+    "name": "Bemba (Democratic Republic of Congo)",
+    "retirementReason": "N",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "bxx",
+    "name": "Borna (Democratic Republic of Congo)",
+    "retirementReason": "N",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "byy",
+    "name": "Buya",
+    "retirementReason": "N",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "dzd",
+    "name": "Daza",
+    "retirementReason": "N",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "gfx",
+    "name": "Mangetti Dune ǃXung",
+    "retirementReason": "M",
+    "changeTo": "vaj",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "gti",
+    "name": "Gbati-ri",
+    "retirementReason": "M",
+    "changeTo": "nyc",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "ime",
+    "name": "Imeraguen",
+    "retirementReason": "N",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "kbf",
+    "name": "Kakauhua",
+    "retirementReason": "N",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "koj",
+    "name": "Sara Dunjo",
+    "retirementReason": "M",
+    "changeTo": "kwv",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "kwq",
+    "name": "Kwak",
+    "retirementReason": "M",
+    "changeTo": "yam",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "kxe",
+    "name": "Kakihum",
+    "retirementReason": "M",
+    "changeTo": "tvd",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "lii",
+    "name": "Lingkhim",
+    "retirementReason": "M",
+    "changeTo": "raq",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "mwj",
+    "name": "Maligo",
+    "retirementReason": "M",
+    "changeTo": "vaj",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "nnx",
+    "name": "Ngong",
+    "retirementReason": "M",
+    "changeTo": "ngv",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "oun",
+    "name": "ǃOǃung",
+    "retirementReason": "M",
+    "changeTo": "vaj",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "pmu",
+    "name": "Mirpur Panjabi",
+    "retirementReason": "M",
+    "changeTo": "phr",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "sgo",
+    "name": "Songa",
+    "retirementReason": "N",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "thx",
+    "name": "The",
+    "retirementReason": "D",
+    "changeTo": "oyb",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "tsf",
+    "name": "Southwestern Tamang",
+    "retirementReason": "M",
+    "changeTo": "taj",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "uok",
+    "name": "Uokha",
+    "retirementReason": "M",
+    "changeTo": "ema",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "xsj",
+    "name": "Subi",
+    "retirementReason": "D",
+    "changeTo": "suj",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "yds",
+    "name": "Yiddish Sign Language",
+    "retirementReason": "N",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "ymt",
+    "name": "Mator-Taygi-Karagas",
+    "retirementReason": "D",
+    "changeTo": "ymt",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "ynh",
+    "name": "Yangho",
+    "retirementReason": "N",
+    "effectiveDate": "2015-01-12"
+  },
+  {
+    "id": "bgm",
+    "name": "Baga Mboteni",
+    "retirementReason": "D",
+    "changeTo": "bcg",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "btl",
+    "name": "Bhatola",
+    "retirementReason": "N",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "cbe",
+    "name": "Chipiajes",
+    "retirementReason": "N",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "cbh",
+    "name": "Cagua",
+    "retirementReason": "N",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "coy",
+    "name": "Coyaima",
+    "retirementReason": "M",
+    "changeTo": "pij",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "cqu",
+    "name": "Chilean Quechua",
+    "retirementReason": "M",
+    "changeTo": "quh",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "cum",
+    "name": "Cumeral",
+    "retirementReason": "N",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "duj",
+    "name": "Dhuwal",
+    "retirementReason": "S",
+    "retirementRemedy": "split into [dwu] Dhuwal and [dwy] Dhuwaya",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "ggn",
+    "name": "Eastern Gurung",
+    "retirementReason": "M",
+    "changeTo": "gvr",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "ggo",
+    "name": "Southern Gondi",
+    "retirementReason": "S",
+    "retirementRemedy": "split into [esg] Aheri Gondi and [wsg] Adilabad Gondi",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "guv",
+    "name": "Gey",
+    "retirementReason": "M",
+    "changeTo": "guv",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "iap",
+    "name": "Iapama",
+    "retirementReason": "N",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "ill",
+    "name": "Iranun",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Iranun (Philippines) [ilp] and Iranun (Malaysia) [ilm]",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "kgc",
+    "name": "Kasseng",
+    "retirementReason": "D",
+    "changeTo": "tdf",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "kox",
+    "name": "Coxima",
+    "retirementReason": "N",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "ktr",
+    "name": "Kota Marudu Tinagas",
+    "retirementReason": "M",
+    "changeTo": "dtp",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "kvs",
+    "name": "Kunggara",
+    "retirementReason": "D",
+    "changeTo": "gdj",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "kzj",
+    "name": "Coastal Kadazan",
+    "retirementReason": "M",
+    "changeTo": "dtp",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "kzt",
+    "name": "Tambunan Dusun",
+    "retirementReason": "M",
+    "changeTo": "dtp",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "nad",
+    "name": "Nijadali",
+    "retirementReason": "D",
+    "changeTo": "xny",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "nts",
+    "name": "Natagaimas",
+    "retirementReason": "M",
+    "changeTo": "pij",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "ome",
+    "name": "Omejes",
+    "retirementReason": "N",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "pmc",
+    "name": "Palumata",
+    "retirementReason": "D",
+    "changeTo": "huw",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "pod",
+    "name": "Ponares",
+    "retirementReason": "N",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "ppa",
+    "name": "Pao",
+    "retirementReason": "M",
+    "changeTo": "bfy",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "pry",
+    "name": "Pray 3",
+    "retirementReason": "D",
+    "changeTo": "prt",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "rna",
+    "name": "Runa",
+    "retirementReason": "N",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "svr",
+    "name": "Savara",
+    "retirementReason": "N",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "tdu",
+    "name": "Tempasuk Dusun",
+    "retirementReason": "M",
+    "changeTo": "dtp",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "thc",
+    "name": "Tai Hang Tong",
+    "retirementReason": "M",
+    "changeTo": "tpo",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "tid",
+    "name": "Tidong",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Northern Tidung [ntd] and Southern Tidung [itd]",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "tmp",
+    "name": "Tai Mène",
+    "retirementReason": "M",
+    "changeTo": "tyj",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "tne",
+    "name": "Tinoc Kallahan",
+    "retirementReason": "M",
+    "changeTo": "kak",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "toe",
+    "name": "Tomedes",
+    "retirementReason": "N",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "xba",
+    "name": "Kamba (Brazil)",
+    "retirementReason": "D",
+    "changeTo": "cax",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "xbx",
+    "name": "Kabixí",
+    "retirementReason": "N",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "xip",
+    "name": "Xipináwa",
+    "retirementReason": "N",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "xkh",
+    "name": "Karahawyana",
+    "retirementReason": "D",
+    "changeTo": "waw",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "yri",
+    "name": "Yarí",
+    "retirementReason": "N",
+    "effectiveDate": "2016-01-15"
+  },
+  {
+    "id": "jeg",
+    "name": "Jeng",
+    "retirementReason": "M",
+    "changeTo": "oyb",
+    "effectiveDate": "2017-01-31"
+  },
+  {
+    "id": "kgd",
+    "name": "Kataang",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into [ncq] Northern Katang and [sct] Southern Katang",
+    "effectiveDate": "2017-01-31"
+  },
+  {
+    "id": "krm",
+    "name": "Krim",
+    "retirementReason": "M",
+    "changeTo": "bmf",
+    "effectiveDate": "2017-01-31"
+  },
+  {
+    "id": "prb",
+    "name": "Lua'",
+    "retirementReason": "N",
+    "effectiveDate": "2017-01-31"
+  },
+  {
+    "id": "puk",
+    "name": "Pu Ko",
+    "retirementReason": "N",
+    "effectiveDate": "2017-01-31"
+  },
+  {
+    "id": "rie",
+    "name": "Rien",
+    "retirementReason": "N",
+    "effectiveDate": "2017-01-31"
+  },
+  {
+    "id": "rsi",
+    "name": "Rennellese Sign Language",
+    "retirementReason": "N",
+    "effectiveDate": "2017-01-31"
+  },
+  {
+    "id": "skk",
+    "name": "Sok",
+    "retirementReason": "M",
+    "changeTo": "oyb",
+    "effectiveDate": "2017-01-31"
+  },
+  {
+    "id": "snh",
+    "name": "Shinabo",
+    "retirementReason": "N",
+    "effectiveDate": "2017-01-31"
+  },
+  {
+    "id": "lsg",
+    "name": "Lyons Sign Language",
+    "retirementReason": "N",
+    "effectiveDate": "2018-01-23"
+  },
+  {
+    "id": "mwx",
+    "name": "Mediak",
+    "retirementReason": "N",
+    "effectiveDate": "2018-01-23"
+  },
+  {
+    "id": "mwy",
+    "name": "Mosiro",
+    "retirementReason": "N",
+    "effectiveDate": "2018-01-23"
+  },
+  {
+    "id": "ncp",
+    "name": "Ndaktup",
+    "retirementReason": "M",
+    "changeTo": "kdz",
+    "effectiveDate": "2018-01-23"
+  },
+  {
+    "id": "ais",
+    "name": "Nataoran Amis",
+    "retirementReason": "S",
+    "retirementRemedy": "Split by part going to Amis [ami] and creating Sakizaya [szy] with the remaining part",
+    "effectiveDate": "2019-01-25"
+  },
+  {
+    "id": "asd",
+    "name": "Asas",
+    "retirementReason": "M",
+    "changeTo": "snz",
+    "effectiveDate": "2019-01-25"
+  },
+  {
+    "id": "dit",
+    "name": "Dirari",
+    "retirementReason": "M",
+    "changeTo": "dif",
+    "effectiveDate": "2019-01-25"
+  },
+  {
+    "id": "dud",
+    "name": "Hun-Saare",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into ut-Hun [uth] and us-Saare [uss]",
+    "effectiveDate": "2019-01-25"
+  },
+  {
+    "id": "lba",
+    "name": "Lui",
+    "retirementReason": "N",
+    "effectiveDate": "2019-01-25"
+  },
+  {
+    "id": "llo",
+    "name": "Khlor",
+    "retirementReason": "D",
+    "changeTo": "ngt",
+    "effectiveDate": "2019-01-25"
+  },
+  {
+    "id": "myd",
+    "name": "Maramba",
+    "retirementReason": "M",
+    "changeTo": "aog",
+    "effectiveDate": "2019-01-25"
+  },
+  {
+    "id": "myi",
+    "name": "Mina (India)",
+    "retirementReason": "N",
+    "effectiveDate": "2019-01-25"
+  },
+  {
+    "id": "nns",
+    "name": "Ningye",
+    "retirementReason": "M",
+    "changeTo": "nbr",
+    "effectiveDate": "2019-01-25"
+  },
+  {
+    "id": "aoh",
+    "name": "Arma",
+    "retirementReason": "N",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "ayy",
+    "name": "Tayabas Ayta",
+    "retirementReason": "N",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "bbz",
+    "name": "Babalia Creole Arabic",
+    "retirementReason": "N",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "bpb",
+    "name": "Barbacoas",
+    "retirementReason": "N",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "cca",
+    "name": "Cauca",
+    "retirementReason": "N",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "cdg",
+    "name": "Chamari",
+    "retirementReason": "N",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "dgu",
+    "name": "Degaru",
+    "retirementReason": "N",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "drr",
+    "name": "Dororo",
+    "retirementReason": "M",
+    "changeTo": "kzk",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "ekc",
+    "name": "Eastern Karnic",
+    "retirementReason": "N",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "gli",
+    "name": "Guliguli",
+    "retirementReason": "M",
+    "changeTo": "kzk",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "kjf",
+    "name": "Khalaj",
+    "retirementReason": "N",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "kxl",
+    "name": "Nepali Kurux",
+    "retirementReason": "M",
+    "changeTo": "kru",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "kxu",
+    "name": "Kui (India)",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into [dwk] Dawik Kui and [uki] Kui (India)",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "lmz",
+    "name": "Lumbee",
+    "retirementReason": "N",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "nxu",
+    "name": "Narau",
+    "retirementReason": "M",
+    "changeTo": "bpp",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "plp",
+    "name": "Palpa",
+    "retirementReason": "N",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "sdm",
+    "name": "Semandang",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Semandang [sdq], Beginci [ebc] and Gerai [gef]",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "tbb",
+    "name": "Tapeba",
+    "retirementReason": "N",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "xrq",
+    "name": "Karranga",
+    "retirementReason": "M",
+    "changeTo": "dmw",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "xtz",
+    "name": "Tasmanian",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into [xpv] Northern Tasman,  [xph] North Midlands Tasman, [xpb] Northeastern Tasman, [xpd] Oyster Bay Tasmanian, [xpf] Southeast Tasma, [xpx] Southwestern Tasman, [xpw] Northwestern Tasman., [xpl] Port Sorell Tasman. and [xpz] Bruny Island Tasman.",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "zir",
+    "name": "Ziriya",
+    "retirementReason": "D",
+    "changeTo": "scv",
+    "effectiveDate": "2020-01-23"
+  },
+  {
+    "id": "thw",
+    "name": "Thudam",
+    "retirementReason": "M",
+    "changeTo": "ola",
+    "effectiveDate": "2020-03-19"
+  },
+  {
+    "id": "bic",
+    "name": "Bikaru",
+    "retirementReason": "M",
+    "changeTo": "bir",
+    "effectiveDate": "2021-01-15"
+  },
+  {
+    "id": "bij",
+    "name": "Vaghat-Ya-Bijim-Legeri",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Tiyaa [tyy], Bijim [jbm] and Kadung [dkg].",
+    "effectiveDate": "2021-01-15"
+  },
+  {
+    "id": "blg",
+    "name": "Balau",
+    "retirementReason": "M",
+    "changeTo": "iba",
+    "effectiveDate": "2021-01-15"
+  },
+  {
+    "id": "gji",
+    "name": "Geji",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Gyaazi [gyz], and Bu (Bauchi State) [zbu]",
+    "effectiveDate": "2021-01-15"
+  },
+  {
+    "id": "mvm",
+    "name": "Muya",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Eastern Minyag [emq] and Western Minyag [wmg]",
+    "effectiveDate": "2021-01-15"
+  },
+  {
+    "id": "ngo",
+    "name": "Ngoni",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Ngoni (Tanzania) [xnj] and Ngoni (Mozambique) [xnq]",
+    "effectiveDate": "2021-01-15"
+  },
+  {
+    "id": "pat",
+    "name": "Papitalai",
+    "retirementReason": "M",
+    "changeTo": "kxr",
+    "effectiveDate": "2021-01-15"
+  },
+  {
+    "id": "vki",
+    "name": "Ija-Zuba",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Koro Nulu [vkn] and Koro Zuba [vkz]",
+    "effectiveDate": "2021-01-15"
+  },
+  {
+    "id": "wra",
+    "name": "Warapu",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Bauni [bpe], Uni [uni] and Bouni [suo]",
+    "effectiveDate": "2021-01-15"
+  },
+  {
+    "id": "ajt",
+    "name": "Judeo-Tunisian Arabic",
+    "retirementReason": "D",
+    "changeTo": "aeb",
+    "effectiveDate": "2022-01-20"
+  },
+  {
+    "id": "cug",
+    "name": "Chungmboko",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Chung [cnq] and Mbuk [bpc]",
+    "effectiveDate": "2022-01-20"
+  },
+  {
+    "id": "lak",
+    "name": "Laka (Nigeria)",
+    "retirementReason": "M",
+    "changeTo": "ksp",
+    "effectiveDate": "2022-01-20"
+  },
+  {
+    "id": "lno",
+    "name": "Lango (South Sudan)",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Lango [lgo], Imotong [imt], Logir [lqr] and Okolie [oie]",
+    "effectiveDate": "2022-01-20"
+  },
+  {
+    "id": "pii",
+    "name": "Pini",
+    "retirementReason": "N",
+    "effectiveDate": "2022-01-20"
+  },
+  {
+    "id": "smd",
+    "name": "Sama",
+    "retirementReason": "M",
+    "changeTo": "kmb",
+    "effectiveDate": "2022-01-20"
+  },
+  {
+    "id": "snb",
+    "name": "Sebuyau",
+    "retirementReason": "M",
+    "changeTo": "iba",
+    "effectiveDate": "2022-01-20"
+  },
+  {
+    "id": "uun",
+    "name": "Kulon-Pazeh",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Kulon [uon] and Pazeh [pzh]",
+    "effectiveDate": "2022-01-20"
+  },
+  {
+    "id": "wrd",
+    "name": "Warduji",
+    "retirementReason": "N",
+    "effectiveDate": "2022-01-20"
+  },
+  {
+    "id": "wya",
+    "name": "Wyandot",
+    "retirementReason": "S",
+    "retirementRemedy": "Split into Wyandot [wyn] and Wendat [wdt]",
+    "effectiveDate": "2022-01-20"
+  }
+]

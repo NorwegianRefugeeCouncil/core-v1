@@ -10,6 +10,7 @@ import (
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/logging"
+	"github.com/nrc-no/notcore/internal/utils"
 	"github.com/rs/xid"
 	"go.uber.org/zap"
 )
@@ -17,7 +18,7 @@ import (
 //go:generate mockgen -destination=./individual_mock.go -package=db . IndividualRepo
 
 type IndividualRepo interface {
-	GetAll(ctx context.Context, options api.GetAllOptions) ([]*api.Individual, error)
+	GetAll(ctx context.Context, options api.ListIndividualsOptions) ([]*api.Individual, error)
 	GetByID(ctx context.Context, id string) (*api.Individual, error)
 	Put(ctx context.Context, individual *api.Individual, fields []string) (*api.Individual, error)
 	PutMany(ctx context.Context, individuals []*api.Individual, fields []string) ([]*api.Individual, error)
@@ -40,7 +41,7 @@ func (i individualRepo) driverName() string {
 	}
 }
 
-func (i individualRepo) GetAll(ctx context.Context, options api.GetAllOptions) ([]*api.Individual, error) {
+func (i individualRepo) GetAll(ctx context.Context, options api.ListIndividualsOptions) ([]*api.Individual, error) {
 	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		return i.batchedGetAllInternal(ctx, tx, options)
 	})
@@ -51,28 +52,48 @@ func (i individualRepo) GetAll(ctx context.Context, options api.GetAllOptions) (
 	return ret.([]*api.Individual), nil
 }
 
-func (i individualRepo) batchedGetAllInternal(ctx context.Context, tx *sqlx.Tx, options api.GetAllOptions) ([]*api.Individual, error) {
+func (i individualRepo) batchedGetAllInternal(ctx context.Context, tx *sqlx.Tx, options api.ListIndividualsOptions) ([]*api.Individual, error) {
 	if len(options.IDs) > 0 {
 		var ret []*api.Individual
-		err := batch(maxParams/len(options.IDs), options.IDs, func(idsInBatch []string) error {
+		err := batch(maxParams/len(options.IDs), options.IDs, func(idsInBatch []string) (stop bool, err error) {
+			// check if we already reached the limit. If so, exit early
+			if options.Take != 0 && len(ret) >= options.Take {
+				return true, nil
+			}
 			optionsForBatch := options
 			optionsForBatch.IDs = idsInBatch
+			optionsForBatch.Take = utils.Max(0, options.Take-len(ret))
 			individualsInBatch, err := i.unbatchedGetAllInternal(ctx, tx, optionsForBatch)
 			if err != nil {
-				return err
+				return false, err
 			}
 			ret = append(ret, individualsInBatch...)
-			return nil
+			return false, nil
 		})
 		if err != nil {
 			return nil, err
 		}
+		// todo: batch sorting. Because we're batching, we can't rely on the database to do the sorting between batches.
+		// The records within a batch are sorted, but they need to be sorted across batches.
+		//
+		// When performing a query, the max number of parameters for postgres is 65535. If we only filter by
+		// ids, we can have up to ~65535 ids per batch. This is unlikely to
+		// happen for the webserver usecase. Though, when integrations or internal services will use this API,
+		// this could be a problem.
+		//
+		// Option 1: sort in-memory:
+		//   we need to assemble the batches in-memory first, then sort them with the same sorting
+		//   algorithms as the database.
+		//
+		// Option 2: temporary table:
+		//   copy the batch results into a temporary table, then query this temporary table. This is probably
+		//   the best and simplest option, as we don't need to implement the sorting algorithm in go.
 		return ret, nil
 	}
 	return i.unbatchedGetAllInternal(ctx, tx, options)
 }
 
-func (i individualRepo) unbatchedGetAllInternal(ctx context.Context, tx *sqlx.Tx, options api.GetAllOptions) ([]*api.Individual, error) {
+func (i individualRepo) unbatchedGetAllInternal(ctx context.Context, tx *sqlx.Tx, options api.ListIndividualsOptions) ([]*api.Individual, error) {
 	l := logging.NewLogger(ctx)
 	l.Debug("getting list individuals", zap.Any("options", options))
 	var ret []*api.Individual
@@ -131,7 +152,7 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 	fields = fieldsSet.Items()
 
 	ret := make([]*api.Individual, 0, len(individuals))
-	if err := batch(maxParams/len(fields), individuals, func(individualsInBatch []*api.Individual) error {
+	if err := batch(maxParams/len(fields), individuals, func(individualsInBatch []*api.Individual) (bool, error) {
 		args := make([]interface{}, 0)
 		b := &strings.Builder{}
 		b.WriteString("INSERT INTO individuals (" + strings.Join(fields, ",") + ",created_at,updated_at) VALUES ")
@@ -150,7 +171,7 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 				}
 				fieldValue, err := individual.GetFieldValue(field)
 				if err != nil {
-					return err
+					return false, err
 				}
 				args = append(args, fieldValue)
 				b.WriteString(fmt.Sprintf("$%d", len(args)))
@@ -176,10 +197,10 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 		qry := b.String()
 		err := tx.SelectContext(ctx, &out, qry, args...)
 		if err != nil {
-			return err
+			return false, err
 		}
 		ret = append(ret, out...)
-		return nil
+		return false, nil
 	}); err != nil {
 		return nil, err
 	}
@@ -231,7 +252,7 @@ func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx,
 	l := logging.NewLogger(ctx).With(zap.Strings("individual_ids", ids))
 	l.Debug("deleting individuals")
 
-	if err := batch(maxParams/len(ids), ids, func(idsInBatch []string) error {
+	if err := batch(maxParams/len(ids), ids, func(idsInBatch []string) (bool, error) {
 		var query = "UPDATE individuals SET deleted_at = $1 WHERE id IN ("
 		var args = []interface{}{time.Now().UTC().Format(time.RFC3339)}
 		for i, id := range idsInBatch {
@@ -246,19 +267,19 @@ func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx,
 		result, err := tx.ExecContext(ctx, query, args...)
 		if err != nil {
 			l.Error("failed to delete individuals", zap.Error(err))
-			return err
+			return false, err
 		}
 
 		rowsAffected, err := result.RowsAffected()
 		if err != nil {
 			l.Error("failed to get rows affected", zap.Error(err))
-			return err
+			return false, err
 		} else if rowsAffected != int64(len(idsInBatch)) {
 			l.Error("failed to delete all individuals", zap.Int64("rows_affected", rowsAffected))
-			return fmt.Errorf("failed to delete all individuals")
+			return false, fmt.Errorf("failed to delete all individuals")
 		}
 
-		return nil
+		return false, nil
 	}); err != nil {
 		return err
 	}
