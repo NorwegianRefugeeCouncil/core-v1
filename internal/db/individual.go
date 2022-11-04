@@ -153,7 +153,7 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 	fieldSlice := fieldsSet.Items()
 
 	ret := make([]*api.Individual, 0, len(individuals))
-	if err := batch(maxParams/len(fields), individuals, func(individualsInBatch []*api.Individual) (bool, error) {
+	if err := batch(maxParams/len(fieldSlice), individuals, func(individualsInBatch []*api.Individual) (bool, error) {
 		args := make([]interface{}, 0)
 		b := &strings.Builder{}
 		b.WriteString("INSERT INTO individuals (" + strings.Join(fieldSlice, ",") + ",created_at,updated_at) VALUES ")
@@ -181,7 +181,7 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 		}
 		b.WriteString(" ON CONFLICT (id) DO UPDATE SET ")
 		isFirst := true
-		for _, field := range fields.Items() {
+		for _, field := range fieldSlice {
 			if field == "id" || field == "country_id" {
 				continue
 			}
