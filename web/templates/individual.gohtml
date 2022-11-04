@@ -90,13 +90,17 @@
                 </div>
                 <div class="modal-body">
                     <p>
-                        Are you sure you want to delete this individual?
+                        <span>Are you sure you want to delete this individual?</span>
+                        <br/>
                         <span class="fw-bold text-danger">This action cannot be undone.</span>
                     </p>
                 </div>
                 <div class="modal-footer">
-                    <form action="/countries/{{.Individual.CountryID}}/individuals/{{.Individual.ID}}/delete"
-                          method="post">
+                    <form
+                        class="d-flex flex-row justify-content-between w-100"
+                        action="/countries/{{.Individual.CountryID}}/individuals/{{.Individual.ID}}/delete"
+                        method="post"
+                    >
                         <button type="button" class="btn btn-outline-secondary"
                                 data-bs-dismiss="modal">Cancel
                         </button>
