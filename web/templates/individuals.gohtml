@@ -144,6 +144,7 @@
                 const row = document.getElementById(getRowIdForIndividualId(id));
                 const checkbox = document.getElementById(getSelectCheckboxIdForIndividualId(id));
                 if (checkbox.checked) {
+                    // row is selected
                     for (const activeAttribute in selectedRowAttributes) {
                         row.setAttribute(activeAttribute, selectedRowAttributes[activeAttribute])
                     }
@@ -151,6 +152,7 @@
                         row.classList.add(activeClass)
                     }
                 } else {
+                    // row is not selected
                     for (const activeAttribute in selectedRowAttributes) {
                         row.removeAttribute(activeAttribute)
                     }
