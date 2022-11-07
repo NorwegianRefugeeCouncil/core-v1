@@ -4,7 +4,6 @@
     <script type="application/javascript" src="/static/country_selector.js"></script>
     <script type="application/javascript">
 
-        const goToIndividualIdInputId = "goToIndividualId";
         const uploadIndividualFileInputId = "individual-upload--file"
         const uploadIndividualFileButtonId = "individual-upload--button"
         const uploadIndividualFileFormId = "individual-upload--form"
@@ -50,16 +49,6 @@
          */
         function getSelectCheckboxIdForIndividualId(individualId) {
             return "individual-checkbox-" + individualId;
-        }
-
-        /**
-         * redirects to an individual page
-         */
-        function goToIndividual() {
-            const id = document.getElementById(goToIndividualIdInputId).value;
-            if (id !== "") {
-                window.location.href = "/countries/{{.Options.CountryID}}/individuals/" + id;
-            }
         }
 
         /**
