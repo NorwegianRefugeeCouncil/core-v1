@@ -108,6 +108,11 @@ func Generate(count uint) error {
 		householdIds = append(householdIds, uuid.New().String())
 	}
 
+	var communityIds []string
+	for i := 0; i < int(count)/100; i++ {
+		communityIds = append(communityIds, uuid.New().String())
+	}
+
 	f, err := faker.New("en")
 	if err != nil {
 		return err
@@ -198,8 +203,8 @@ func Generate(count uint) error {
 		collectionTime := randomDate()
 
 		communityId := ""
-		if randBool(20) {
-			communityId = uuid.New().String()
+		if randBool(80) {
+			communityId = pick(communityIds...)
 		}
 		displacementStatus := randomDisplacementStatus()
 		var email string
@@ -284,7 +289,11 @@ func Generate(count uint) error {
 
 		identificationContext := randomIdentificationContext()
 		internalId := strconv.Itoa(rand.Intn(1000000000))
-		isHeadOfCommunity := randomBool()
+		isHeadOfCommunity := "false"
+		if communityId != "" && randBool(5) {
+			isHeadOfCommunity = "true"
+		}
+
 		isHeadOfHousehold := "false"
 		if householdId != "" {
 			isHeadOfHousehold = randomBool()
