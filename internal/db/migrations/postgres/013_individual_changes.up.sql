@@ -34,6 +34,10 @@ UPDATE individual_registrations
 SET displacement_status = 'returnee'
 WHERE displacement_status = 'stateless';
 
+UPDATE individual_registrations
+SET age = EXTRACT(YEAR FROM AGE(NOW(), birth_date))
+WHERE birth_date IS NOT NULL;
+
 -- delete phone number column
 ALTER TABLE individual_registrations
     DROP COLUMN phone_number,

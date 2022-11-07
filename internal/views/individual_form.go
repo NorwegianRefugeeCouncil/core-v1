@@ -57,6 +57,7 @@ func (f *IndividualForm) build() error {
 		f.buildPrefersToRemainAnonymous,
 		f.buildGender,
 		f.buildBirthDate,
+		f.buildAge,
 		f.buildIsMinor,
 		f.buildNationality1,
 		f.buildNationality2,
