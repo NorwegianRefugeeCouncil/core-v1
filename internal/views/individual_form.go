@@ -188,7 +188,7 @@ func (f *IndividualForm) buildIdField() error {
 		return buildField(&forms.IDField{
 			Name:        "id",
 			DisplayName: "ID",
-      QRCodeURL:   fmt.Sprintf("/countries/%s/individuals/%s", f.individual.CountryID, f.individual.ID),
+			QRCodeURL:   fmt.Sprintf("/countries/%s/individuals/%s", f.individual.CountryID, f.individual.ID),
 		}, f.personalInfoSection, f.individual.ID)
 	}
 	return nil
@@ -740,6 +740,8 @@ func (d *displacementStatusCodec) Encode(v interface{}) (string, error) {
 			return string(api.DisplacementStatusStateless), nil
 		case api.DisplacementStatusNonDisplaced:
 			return string(api.DisplacementStatusNonDisplaced), nil
+		case api.DisplacementStatusUnspecified:
+			return string(api.DisplacementStatusUnspecified), nil
 		default:
 			return "", fmt.Errorf("invalid displacement status: %v", v)
 		}
@@ -760,6 +762,8 @@ func (d *displacementStatusCodec) Decode(v string) (interface{}, error) {
 		return api.DisplacementStatusStateless, nil
 	case string(api.DisplacementStatusNonDisplaced):
 		return api.DisplacementStatusNonDisplaced, nil
+	case string(api.DisplacementStatusUnspecified):
+		return api.DisplacementStatusUnspecified, nil
 	default:
 		return nil, fmt.Errorf("invalid displacement status: %v", v)
 	}
@@ -779,6 +783,8 @@ func (d disabilityLevelCodec) Encode(value interface{}) (string, error) {
 			return "2", nil
 		case api.DisabilityLevelSevere:
 			return "3", nil
+		case api.DisabilityLevelUnspecified:
+			return "", nil
 		default:
 			return "", fmt.Errorf("unknown disability level: %v", v)
 		}
@@ -797,6 +803,8 @@ func (d disabilityLevelCodec) Decode(value string) (interface{}, error) {
 		return api.DisabilityLevelModerate, nil
 	case "3":
 		return api.DisabilityLevelSevere, nil
+	case "":
+		return api.DisabilityLevelUnspecified, nil
 	default:
 		return nil, fmt.Errorf("unknown disability level: %v", value)
 	}
@@ -818,6 +826,8 @@ func (g genderCodec) Encode(value interface{}) (string, error) {
 			return string(api.GenderOther), nil
 		case api.GenderPreferNotToSay:
 			return string(api.GenderPreferNotToSay), nil
+		case api.GenderUnspecified:
+			return string(api.GenderUnspecified), nil
 		default:
 			return "", fmt.Errorf("unknown gender: %v", v)
 		}
@@ -836,6 +846,8 @@ func (g genderCodec) Decode(value string) (interface{}, error) {
 		return api.GenderOther, nil
 	case string(api.GenderPreferNotToSay):
 		return api.GenderPreferNotToSay, nil
+	case string(api.GenderUnspecified):
+		return api.GenderUnspecified, nil
 	default:
 		return nil, fmt.Errorf("unknown gender: %v", value)
 	}

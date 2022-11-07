@@ -15,6 +15,8 @@ const (
 	GenderFemale         Gender = "female"
 	GenderOther          Gender = "other"
 	GenderPreferNotToSay Gender = "prefers_not_to_say"
+
+	GenderUnspecified Gender = ""
 )
 
 func AllGenders() containers.Set[Gender] {
@@ -36,6 +38,8 @@ func (g Gender) String() string {
 		return "Other"
 	case GenderPreferNotToSay:
 		return "Prefer not to say"
+	case GenderUnspecified:
+		return "Unspecified"
 	default:
 		return ""
 	}
@@ -51,6 +55,8 @@ func ParseGender(str string) (Gender, error) {
 		return GenderOther, nil
 	case string(GenderPreferNotToSay):
 		return GenderPreferNotToSay, nil
+	case string(GenderUnspecified):
+		return GenderUnspecified, nil
 	default:
 		return "", fmt.Errorf("unknown gender type: %v", logutils.Escape(str))
 	}
