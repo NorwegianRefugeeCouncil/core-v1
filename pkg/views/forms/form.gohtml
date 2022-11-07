@@ -125,6 +125,22 @@
 
 {{define "checkboxField"}}
     {{$field := .Field}}
+    <input
+            type="hidden"
+            name="{{$field.Name}}"
+            id="{{$field.Name}}--checkbox-hidden"
+            value="false"
+            {{if eq $field.Value "true"}}disabled="disabled"{{end}}
+    />
+    <script type="application/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            const checkbox = document.getElementById("{{$field.Name}}");
+            const hiddenInput = document.getElementById("{{$field.Name}}--checkbox-hidden");
+            checkbox.addEventListener("change", function () {
+                hiddenInput.disabled = checkbox.checked;
+            });
+        });
+    </script>
     <div class="form-check">
         <input class="form-check-input {{if $field.Errors}}is-invalid{{end}}"
                type="checkbox"
