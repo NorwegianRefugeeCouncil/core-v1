@@ -144,7 +144,7 @@ func (f *IndividualForm) buildContactInfoSection() error {
 		Title:       "Contact Information",
 		Fields:      []forms.Field{},
 		Collapsible: true,
-		Collapsed:   false,
+		Collapsed:   !f.isNew(),
 	}
 	f.Form.Sections = append(f.Form.Sections, f.contactInfoSection)
 	return nil
@@ -155,7 +155,7 @@ func (f *IndividualForm) buildProtectionSection() error {
 		Title:       "Protection",
 		Fields:      []forms.Field{},
 		Collapsible: true,
-		Collapsed:   false,
+		Collapsed:   !f.isNew(),
 	}
 	f.Form.Sections = append(f.Form.Sections, f.protectionSection)
 	return nil
@@ -166,7 +166,7 @@ func (f *IndividualForm) buildDisabilitiesSection() error {
 		Title:       "Disabilities",
 		Fields:      []forms.Field{},
 		Collapsible: true,
-		Collapsed:   false,
+		Collapsed:   !f.isNew(),
 	}
 	f.Form.Sections = append(f.Form.Sections, f.disabilitiesSection)
 	return nil
@@ -177,7 +177,7 @@ func (f *IndividualForm) buildDataColletionSection() error {
 		Title:       "Data Collection",
 		Fields:      []forms.Field{},
 		Collapsible: true,
-		Collapsed:   false,
+		Collapsed:   !f.isNew(),
 	}
 	f.Form.Sections = append(f.Form.Sections, f.dataCollectionSection)
 	return nil
