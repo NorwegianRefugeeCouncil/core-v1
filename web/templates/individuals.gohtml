@@ -3,38 +3,185 @@
     <script type="application/javascript" src="/static/rxjs.js"></script>
     <script type="application/javascript" src="/static/country_selector.js"></script>
     <script type="application/javascript">
+
+        const goToIndividualIdInputId = "goToIndividualId";
+        const uploadIndividualFileInputId = "individual-upload--file"
+        const uploadIndividualFileButtonId = "individual-upload--button"
+        const uploadIndividualFileFormId = "individual-upload--form"
+        const individualActionFormId = "individuals-action-form"
+        const deleteIndividualsButtonId = "deleteIndividualsButton"
+        const deleteIndividualsButtonContentId = "deleteIndividualsButtonContent"
+        const searchFormId = "searchForm"
+        const selectIndividualCheckboxClass = "select-row-checkbox"
+        const selectAllIndividualsCheckboxId = "selectAllCheckbox"
+        const selectedRowAttributes = {"aria-selected": "true"}
+        const selectedRowClasses = ["table-active"]
+        const dataIndividualIdAttribute = "data-individual-id"
+        const activeDeleteButtonClasses = ["btn-danger"]
+        const inactiveDeleteButtonClasses = ["btn-outline-secondary", "disabled"]
+        const inactiveDeleteButtonText = "Delete individuals"
+
+        /**
+         * Gets the text for the delete button based on the number of selected individuals.
+         * @param count The number of selected individuals.
+         * @returns {string} The text for the delete button.
+         */
+        function getDeleteButtonText(count) {
+            if (count === 0) {
+                return inactiveDeleteButtonText
+            } else {
+                return "Delete " + count + " individual" + (count > 1 ? "s" : "")
+            }
+        }
+
+        /**
+         * Gets the row id for the given individual id.
+         * @param individualId The individual id.
+         * @returns {string} The row id.
+         */
+        function getRowIdForIndividualId(individualId) {
+            return "individual-row-" + individualId;
+        }
+
+        /**
+         * Gets the checkbox id for the given individual id.
+         * @param individualId The individual id.
+         * @returns {string} The checkbox id.
+         */
+        function getSelectCheckboxIdForIndividualId(individualId) {
+            return "individual-checkbox-" + individualId;
+        }
+
+        /**
+         * redirects to an individual page
+         */
         function goToIndividual() {
-            const id = document.getElementById("goToIndividualId").value;
+            const id = document.getElementById(goToIndividualIdInputId).value;
             if (id !== "") {
                 window.location.href = "/countries/{{.Options.CountryID}}/individuals/" + id;
             }
         }
 
-        function openDialog() {
-            document.getElementById('individual-upload--file').click();
+        /**
+         * opens the upload modal
+         */
+        function openUploadDialog() {
+            document.getElementById(uploadIndividualFileInputId).click();
         }
 
-        function submitForm() {
-            document.getElementById('individual-upload--button').disabled = true;
-            document.getElementById('individual-upload--form').submit();
+        /**
+         * submits the upload form
+         */
+        function submitUploadForm() {
+            document.getElementById(uploadIndividualFileButtonId).disabled = true;
+            document.getElementById(uploadIndividualFileFormId).submit();
         }
 
+        /**
+         * submits the action for the selected individuals
+         * @param {string} action
+         */
         function submitActionForm(action) {
-            const form = document.getElementById('individuals-action-form');
+            const form = document.getElementById(individualActionFormId);
             form.action = "/countries/{{.Options.CountryID}}/individuals/" + action;
             form.submit();
         }
 
+        /**
+         * returns the id of the individual associated with the given checkbox
+         * @param checkbox
+         * @returns string
+         */
+        function getIndividualIdFromSelectCheckbox(checkbox) {
+            const row = checkbox.closest('tr');
+            return row.getAttribute(dataIndividualIdAttribute)
+        }
+
+
+        // Do not send the default parameters when searching for individuals
         document.addEventListener("DOMContentLoaded", function () {
-            const form = document.getElementById("searchForm")
-            form.onsubmit = function () {
+
+            const searchForm = document.getElementById(searchFormId)
+            const uploadButton = document.getElementById(uploadIndividualFileButtonId)
+            const deleteButton = document.getElementById(deleteIndividualsButtonId)
+            const deleteButtonContent = document.getElementById(deleteIndividualsButtonContentId)
+            const uploadFileInput = document.getElementById(uploadIndividualFileInputId)
+            const selectCheckboxes = Array.from(document.getElementsByClassName(selectIndividualCheckboxClass))
+            const selectAllCheckbox = document.getElementById(selectAllIndividualsCheckboxId);
+
+            uploadButton.addEventListener('click', openUploadDialog);
+            uploadFileInput.addEventListener('change', submitUploadForm);
+
+            /**
+             * Refreshes the disabled state of the delete button as well as the text of the button
+             */
+            function refreshDeleteButton() {
+                const checkedCount = selectCheckboxes.filter(checkbox => checkbox.checked).length;
+                deleteButtonContent.innerText = getDeleteButtonText(checkedCount);
+                if (checkedCount > 0) {
+                    for (const className of inactiveDeleteButtonClasses) {
+                        deleteButton.classList.remove(className)
+                    }
+                    for (const className of activeDeleteButtonClasses) {
+                        deleteButton.classList.add(className)
+                    }
+                } else {
+                    for (const className of activeDeleteButtonClasses) {
+                        deleteButton.classList.remove(className)
+                    }
+                    for (const className of inactiveDeleteButtonClasses) {
+                        deleteButton.classList.add(className)
+                    }
+                    deleteButtonContent.innerHTML = inactiveDeleteButtonText
+                }
+            }
+
+            /**
+             * Refreshes the style of the selected rows
+             * @param {string} id of the individual
+             */
+            function refreshIndividualRow(id) {
+                const row = document.getElementById(getRowIdForIndividualId(id));
+                const checkbox = document.getElementById(getSelectCheckboxIdForIndividualId(id));
+                if (checkbox.checked) {
+                    for (const activeAttribute in selectedRowAttributes) {
+                        row.setAttribute(activeAttribute, selectedRowAttributes[activeAttribute])
+                    }
+                    for (const activeClass of selectedRowClasses) {
+                        row.classList.add(activeClass)
+                    }
+                } else {
+                    for (const activeAttribute in selectedRowAttributes) {
+                        row.removeAttribute(activeAttribute)
+                    }
+                    for (const activeClass of selectedRowClasses) {
+                        row.classList.remove(activeClass)
+                    }
+                }
+            }
+
+            /**
+             * Refreshes the style of the select all checkbox
+             */
+            function refreshSelectAllCheckbox() {
+                // update the select all checkbox
+                const allChecked = selectCheckboxes.every(checkbox => checkbox.checked);
+                const someChecked = selectCheckboxes.some(checkbox => checkbox.checked);
+                selectAllCheckbox.checked = allChecked && someChecked
+                selectAllCheckbox.indeterminate = someChecked && !allChecked
+            }
+
+            // Disable sending empty parameters to the search endpoint.
+            // Otherwise, the URL would be huge with all the default query
+            // parameters included.
+            searchForm.onsubmit = function () {
                 let inputs, index;
                 inputs = [
                     ...document.getElementsByTagName('input'),
                     ...document.getElementsByTagName('select'),
                 ];
                 for (index = 0; index < inputs.length; ++index) {
-                    if (!form.contains(inputs[index])) {
+                    if (!searchForm.contains(inputs[index])) {
                         continue
                     }
                     if (inputs[index].value === "") {
@@ -43,8 +190,31 @@
                 }
             }
 
-            document.getElementById('individual-upload--button').addEventListener('click', openDialog);
-            document.getElementById('individual-upload--file').addEventListener('change', submitForm);
+            // Handles the change of the select all checkbox
+            // Checks or unchecks all checkboxes when the select all checkbox is clicked
+            selectAllCheckbox.addEventListener("change", function (event) {
+                const isChecked = event.target.checked;
+                for (let i = 0; i < selectCheckboxes.length; i++) {
+                    selectCheckboxes[i].checked = isChecked
+                    refreshIndividualRow(getIndividualIdFromSelectCheckbox(selectCheckboxes[i]))
+                }
+                refreshDeleteButton()
+                refreshSelectAllCheckbox()
+            });
+
+            // Handles the change of a single individual select checkbox
+            // Selects or unselects a single row
+            for (const selectCheckbox of selectCheckboxes) {
+                selectCheckbox.addEventListener("change", function (event) {
+                    refreshIndividualRow(getIndividualIdFromSelectCheckbox(event.target))
+                    refreshSelectAllCheckbox()
+                    refreshDeleteButton()
+                })
+            }
+
+            // Refresh the text and style of the delete button when the page is loaded
+            refreshDeleteButton()
+
         });
     </script>
 {{end}}
@@ -59,8 +229,13 @@
 
                 <div class="d-flex justify-content-end align-items-center">
                     {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                        <button type="button" class="btn btn-outline-primary me-2" onclick="submitActionForm('delete')">
-                            Batch delete
+                        <button type="button"
+                                id="deleteIndividualsButton"
+                                style="width: 20rem"
+                                class="btn disabled btn-outline-secondary me-2 individual-action-button"
+                                onclick="submitActionForm('delete')">
+                            <i class="bi bi-trash"></i>
+                            <span id="deleteIndividualsButtonContent">Delete individuals</span>
                         </button>
                         <a href="/countries/{{.Options.CountryID}}/individuals/new"
                            class="btn btn-outline-primary me-2">
@@ -352,7 +527,9 @@
                 <table class="table table-individuals">
                     <thead>
                     <tr>
-                        <th class="sticky-column" style="width:2rem">Select</th>
+                        <th class="sticky-column" style="width:2rem">
+                            <input class="form-check-input" type="checkbox" id="selectAllCheckbox"/>
+                        </th>
                         {{template "columnHeader" (dict "Width" "18rem" "Label" "ID" "Scope" "col" "Class" "sticky-column" "Title" "ID" "Style" "left: 3.85rem")}}
                         {{template "columnHeader" (dict "Width" "10rem" "Label" "Name" "Scope" "col" "Class" "sticky-column border-end"  "Style" "left: 23.62rem" "Title" "Full Name")}}
                         {{template "columnHeader" (dict "Width" "6rem" "Label" "Gender" "Title" "Gender" )}}
@@ -363,7 +540,7 @@
                         {{template "columnHeader" (dict "Width" "4rem" "Label" "CR" "Title" "Community Representative" "Class" "text-center")}}
                         {{template "columnHeader" (dict "Width" "12rem" "Label" "Phone Number" "Title" "Phone Number")}}
                         {{template "columnHeader" (dict "Width" "12rem" "Label" "Email" "Title" "Email Address" )}}
-                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Registration Date" "Title" "Registration Date" )}}
+                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Reg" "Title" "Registration Date" )}}
                         {{template "columnHeader" (dict "Width" "12rem" "Label" "Area1" "Title" "Collection Administrative Area 1" )}}
                         {{template "columnHeader" (dict "Width" "12rem" "Label" "Area2" "Title" "Collection Administrative Area 2" )}}
                         {{template "columnHeader" (dict "Width" "12rem" "Label" "Area3" "Title" "Collection Administrative Area 3" )}}
@@ -376,19 +553,21 @@
                     <tbody>
                     {{ if .Individuals }}
                         {{range .Individuals}}
-                            <tr>
+                            <tr aria-selected="false" id="individual-row-{{.ID}}" class="individual-row"
+                                data-individual-id="{{.ID}}">
                                 <td class="sticky-column">
-                                    <input class="form-check-input"
+                                    <input class="form-check-input select-row-checkbox"
                                            type="checkbox"
+                                           id="individual-checkbox-{{.ID}}"
                                            value="{{.ID}}"
                                            name="individual_id"/>
                                 </td>
-                                <td class="sticky-column" style="left:3.85rem">
+                                <td class="sticky-column" style="left: 2rem">
                                     <a href="/countries/{{.CountryID}}/individuals/{{.ID}}">
                                         {{.ID}}
                                     </a>
                                 </td>
-                                <td class="sticky-column border-end" style="left: 23.62rem">
+                                <td class="sticky-column border-end" style="left: 21.75rem">
                                     {{if .FullName}}
                                         {{.FullName}}
                                     {{else}}
