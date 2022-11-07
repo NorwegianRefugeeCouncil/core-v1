@@ -185,15 +185,11 @@ func (f *IndividualForm) buildDataColletionSection() error {
 
 func (f *IndividualForm) buildIdField() error {
 	if !f.isNew() {
-		idField := &forms.IDField{
+		return buildField(&forms.IDField{
 			Name:        "id",
 			DisplayName: "ID",
 			QRCodeURL:   fmt.Sprintf("/countries/%s/individuals/%s/qr", f.individual.CountryID, f.individual.ID),
-		}
-		if err := idField.SetValue(f.individual.ID); err != nil {
-			return err
-		}
-		f.personalInfoSection.Fields = append(f.personalInfoSection.Fields, idField)
+		}, f.personalInfoSection, f.individual.ID)
 	}
 	return nil
 }
@@ -598,6 +594,7 @@ func (f *IndividualForm) buildIdentificationContext() error {
 			{Label: "Field Activity", Value: "fieldActivity"},
 			{Label: "In-Office", Value: "inOffice"},
 			{Label: "Remote Channels", Value: "remoteChannels"},
+			{Label: "Referred", Value: "referred"},
 			{Label: "Other", Value: "other"},
 		},
 	}, f.dataCollectionSection, f.individual.IdentificationContext)
@@ -739,6 +736,10 @@ func (d *displacementStatusCodec) Encode(v interface{}) (string, error) {
 			return string(api.DisplacementStatusRefugee), nil
 		case api.DisplacementStatusHostCommunity:
 			return string(api.DisplacementStatusHostCommunity), nil
+		case api.DisplacementStatusStateless:
+			return string(api.DisplacementStatusStateless), nil
+		case api.DisplacementStatusNonDisplaced:
+			return string(api.DisplacementStatusNonDisplaced), nil
 		default:
 			return "", fmt.Errorf("invalid displacement status: %v", v)
 		}
@@ -755,6 +756,10 @@ func (d *displacementStatusCodec) Decode(v string) (interface{}, error) {
 		return api.DisplacementStatusRefugee, nil
 	case string(api.DisplacementStatusHostCommunity):
 		return api.DisplacementStatusHostCommunity, nil
+	case string(api.DisplacementStatusStateless):
+		return api.DisplacementStatusStateless, nil
+	case string(api.DisplacementStatusNonDisplaced):
+		return api.DisplacementStatusNonDisplaced, nil
 	default:
 		return nil, fmt.Errorf("invalid displacement status: %v", v)
 	}

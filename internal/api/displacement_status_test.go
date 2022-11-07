@@ -71,6 +71,8 @@ func TestDisplacementStatus_String(t *testing.T) {
 		{"refugee", DisplacementStatusRefugee, "Refugee"},
 		{"idp", DisplacementStatusIDP, "IDP"},
 		{"host_community", DisplacementStatusHostCommunity, "Host Community"},
+		{"stateless", DisplacementStatusStateless, "Stateless"},
+		{"non_displaced", DisplacementStatusNonDisplaced, "Non-Displaced"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -95,6 +97,16 @@ func TestDisplacementStatus_MarshalText(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, "host_community", string(got))
 	}
+	{
+		got, err := DisplacementStatusStateless.MarshalText()
+		assert.NoError(t, err)
+		assert.Equal(t, "stateless", string(got))
+	}
+	{
+		got, err := DisplacementStatusNonDisplaced.MarshalText()
+		assert.NoError(t, err)
+		assert.Equal(t, "non_displaced", string(got))
+	}
 }
 
 func TestDisplacementStatus_UnmarshalText(t *testing.T) {
@@ -115,8 +127,19 @@ func TestDisplacementStatus_UnmarshalText(t *testing.T) {
 	}
 	{
 		var g = new(DisplacementStatus)
+		assert.NoError(t, g.UnmarshalText([]byte("non_displaced")))
+		assert.Equal(t, DisplacementStatusNonDisplaced, *g)
+	}
+	{
+		var g = new(DisplacementStatus)
+		assert.NoError(t, g.UnmarshalText([]byte("stateless")))
+		assert.Equal(t, DisplacementStatusStateless, *g)
+	}
+	{
+		var g = new(DisplacementStatus)
 		assert.Error(t, g.UnmarshalText([]byte("invalid")))
 	}
+
 }
 
 func TestParseDisplacementStatus(t *testing.T) {
@@ -129,6 +152,8 @@ func TestParseDisplacementStatus(t *testing.T) {
 		{"refugee", "refugee", DisplacementStatusRefugee, false},
 		{"idp", "idp", DisplacementStatusIDP, false},
 		{"host_community", "host_community", DisplacementStatusHostCommunity, false},
+		{"non_displaced", "non_displaced", DisplacementStatusNonDisplaced, false},
+		{"stateless", "stateless", DisplacementStatusStateless, false},
 		{"invalid", "invalid", "", true},
 	}
 	for _, tt := range tests {
@@ -149,5 +174,7 @@ func TestAllDisplacementStatuss(t *testing.T) {
 		DisplacementStatusIDP,
 		DisplacementStatusHostCommunity,
 		DisplacementStatusRefugee,
+		DisplacementStatusStateless,
+		DisplacementStatusNonDisplaced,
 	}, AllDisplacementStatuses().Items())
 }
