@@ -118,6 +118,7 @@
                 const checkedCount = selectCheckboxes.filter(checkbox => checkbox.checked).length;
                 deleteButtonContent.innerText = getDeleteButtonText(checkedCount);
                 if (checkedCount > 0) {
+                    // button is active
                     for (const className of inactiveDeleteButtonClasses) {
                         deleteButton.classList.remove(className)
                     }
@@ -125,13 +126,13 @@
                         deleteButton.classList.add(className)
                     }
                 } else {
+                    // button is inactive
                     for (const className of activeDeleteButtonClasses) {
                         deleteButton.classList.remove(className)
                     }
                     for (const className of inactiveDeleteButtonClasses) {
                         deleteButton.classList.add(className)
                     }
-                    deleteButtonContent.innerHTML = inactiveDeleteButtonText
                 }
             }
 
