@@ -32,7 +32,7 @@ func NewIndividualForm(i *api.Individual) (*IndividualForm, error) {
 func (f *IndividualForm) build() error {
 	type builderFuncs func() error
 
-	runBuilders := func(builders ...builderFuncs) error {
+	runBuilderFunctions := func(builders ...builderFuncs) error {
 		for _, builder := range builders {
 			if err := builder(); err != nil {
 				return err
@@ -41,17 +41,15 @@ func (f *IndividualForm) build() error {
 		return nil
 	}
 
-	if err := runBuilders(
+	sectionBuilders := []builderFuncs{
 		f.buildPersonalInfoSection,
 		f.buildContactInfoSection,
 		f.buildProtectionSection,
 		f.buildDisabilitiesSection,
 		f.buildDataColletionSection,
-	); err != nil {
-		return err
 	}
 
-	builders := []builderFuncs{
+	fieldBuilders := []builderFuncs{
 		f.buildTitle,
 		f.buildIdField,
 		f.buildFullName,
@@ -109,11 +107,15 @@ func (f *IndividualForm) build() error {
 		f.buildCollectionLocation2,
 		f.buildCollectionLocation3,
 	}
-	for _, builder := range builders {
-		if err := builder(); err != nil {
-			return err
-		}
+
+	if err := runBuilderFunctions(sectionBuilders...); err != nil {
+		return err
 	}
+
+	if err := runBuilderFunctions(fieldBuilders...); err != nil {
+		return err
+	}
+
 	return nil
 }
 
