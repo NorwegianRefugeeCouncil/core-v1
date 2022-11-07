@@ -47,25 +47,6 @@
             document.getElementById('individual-upload--file').addEventListener('change', submitForm);
         });
     </script>
-    <style>
-        td {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            background: white;
-            border-spacing: 0;
-        }
-
-        tbody tr {
-            background: white;
-        }
-
-        input[type="checkbox"].marker-only {
-            background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23000000' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e")!important;
-            border: none!important;
-            opacity: 0.5!important
-        }
-    </style>
 {{end}}
 {{define "body"}}
     <header class="sticky-top">
@@ -368,7 +349,7 @@
 
             <!-- INDIVIDUALS TABLE -->
             <form id="individuals-action-form" class="table-responsive mb-3" method="post">
-                <table class="table">
+                <table class="table table-individuals">
                     <thead>
                     <tr>
                         <th class="sticky-column" style="width:2rem">Select</th>
