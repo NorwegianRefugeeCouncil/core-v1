@@ -33,6 +33,7 @@ var migrations = []migration{
 	migrationFromFile("009_remove_permissions"),
 	migrationFromFile("010_country_jwt_group"),
 	migrationFromFile("011_individual_soft_delete"),
+	migrationFromFile("012_new_individual"),
 }
 
 // Migrate runs the migrations on the database.

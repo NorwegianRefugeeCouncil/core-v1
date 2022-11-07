@@ -3,10 +3,10 @@ package db
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/logging"
-	"github.com/rs/xid"
 	"go.uber.org/zap"
 )
 
@@ -88,7 +88,7 @@ func (c countryRepo) updateCountry(ctx context.Context, country *api.Country) (*
 func (c countryRepo) createCountry(ctx context.Context, country *api.Country) (*api.Country, error) {
 	l := c.logger(ctx)
 	l.Debug("creating new country")
-	country.ID = xid.New().String()
+	country.ID = uuid.New().String()
 
 	const query = `INSERT INTO countries (id, code, name, jwt_group) VALUES ($1, $2, $3, $4)`
 

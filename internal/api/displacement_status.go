@@ -14,6 +14,10 @@ const (
 	DisplacementStatusRefugee       DisplacementStatus = "refugee"
 	DisplacementStatusIDP           DisplacementStatus = "idp"
 	DisplacementStatusHostCommunity DisplacementStatus = "host_community"
+	DisplacementStatusStateless     DisplacementStatus = "stateless"
+	DisplacementStatusNonDisplaced  DisplacementStatus = "non_displaced"
+
+	DisplacementStatusUnspecified DisplacementStatus = ""
 )
 
 func AllDisplacementStatuses() containers.Set[DisplacementStatus] {
@@ -21,6 +25,8 @@ func AllDisplacementStatuses() containers.Set[DisplacementStatus] {
 		DisplacementStatusRefugee,
 		DisplacementStatusIDP,
 		DisplacementStatusHostCommunity,
+		DisplacementStatusStateless,
+		DisplacementStatusNonDisplaced,
 	)
 }
 
@@ -32,6 +38,12 @@ func (g DisplacementStatus) String() string {
 		return "IDP"
 	case DisplacementStatusHostCommunity:
 		return "Host Community"
+	case DisplacementStatusStateless:
+		return "Stateless"
+	case DisplacementStatusNonDisplaced:
+		return "Non-Displaced"
+	case DisplacementStatusUnspecified:
+		return "Unspecified"
 	default:
 		return ""
 	}
@@ -45,6 +57,12 @@ func ParseDisplacementStatus(str string) (DisplacementStatus, error) {
 		return DisplacementStatusIDP, nil
 	case string(DisplacementStatusHostCommunity):
 		return DisplacementStatusHostCommunity, nil
+	case string(DisplacementStatusStateless):
+		return DisplacementStatusStateless, nil
+	case string(DisplacementStatusNonDisplaced):
+		return DisplacementStatusNonDisplaced, nil
+	case string(DisplacementStatusUnspecified):
+		return DisplacementStatusUnspecified, nil
 	default:
 		return "", fmt.Errorf("unknown displacement status type: %v", logutils.Escape(str))
 	}

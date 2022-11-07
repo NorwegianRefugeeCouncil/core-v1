@@ -278,6 +278,7 @@ table {
     th.sticky-column, td.sticky-column {
         position: sticky;
         left: 0;
+        z-index: 10
     }
     th.sticky-column {
         background-color: $neutral200;
@@ -319,4 +320,26 @@ a.home-link {
 .nrc-individual-delete-btn {
     position: relative;
     top: -67px;
+}
+
+table.table-individuals {
+
+    td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        background: white;
+        border-spacing: 0;
+    }
+
+    tbody tr {
+        background: white;
+    }
+
+    input[type="checkbox"].marker-only {
+        background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23000000' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e")!important;
+        border: none!important;
+        opacity: 0.5!important
+    }
+
 }

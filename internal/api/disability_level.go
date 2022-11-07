@@ -15,6 +15,8 @@ const (
 	DisabilityLevelMild     DisabilityLevel = "mild"
 	DisabilityLevelModerate DisabilityLevel = "moderate"
 	DisabilityLevelSevere   DisabilityLevel = "severe"
+
+	DisabilityLevelUnspecified DisabilityLevel = ""
 )
 
 func AllDisabilityLevels() containers.Set[DisabilityLevel] {
@@ -36,6 +38,8 @@ func (g DisabilityLevel) String() string {
 		return "Moderate"
 	case DisabilityLevelSevere:
 		return "Severe"
+	case DisabilityLevelUnspecified:
+		return "Unspecified"
 	default:
 		return ""
 	}
@@ -51,6 +55,8 @@ func ParseDisabilityLevel(str string) (DisabilityLevel, error) {
 		return DisabilityLevelModerate, nil
 	case string(DisabilityLevelSevere):
 		return DisabilityLevelSevere, nil
+	case string(DisabilityLevelUnspecified):
+		return DisabilityLevelUnspecified, nil
 	default:
 		return "", fmt.Errorf("unknown disability level: %v", logutils.Escape(str))
 	}

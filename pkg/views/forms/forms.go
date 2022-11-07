@@ -20,6 +20,7 @@ type FormSection struct {
 
 type Form struct {
 	Sections []*FormSection
+	Title    string
 }
 
 func (f *Form) HTML() (template.HTML, error) {

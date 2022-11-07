@@ -83,18 +83,23 @@ func (i *IndividualBuilder) WithPresentsProtectionConcerns(presentsProtectionCon
 	return i
 }
 
-func (i *IndividualBuilder) WithPhysicalImpairment(physicalImpairment string) *IndividualBuilder {
-	i.individual.PhysicalImpairment = physicalImpairment
+func (i *IndividualBuilder) WithPreferredContactMethod(preferredContactMethod string) *IndividualBuilder {
+	i.individual.PreferredContactMethod = preferredContactMethod
 	return i
 }
 
-func (i *IndividualBuilder) WithSensoryImpairment(sensoryImpairment string) *IndividualBuilder {
-	i.individual.SensoryImpairment = sensoryImpairment
+func (i *IndividualBuilder) WithCollectionAgentName(collectionAgentName string) *IndividualBuilder {
+	i.individual.CollectionAgentName = collectionAgentName
 	return i
 }
 
-func (i *IndividualBuilder) WithMentalImpairment(metalImpairment string) *IndividualBuilder {
-	i.individual.MentalImpairment = metalImpairment
+func (i *IndividualBuilder) WithCollectionAgentTitle(collectionAgentTitle string) *IndividualBuilder {
+	i.individual.CollectionAgentTitle = collectionAgentTitle
+	return i
+}
+
+func (i *IndividualBuilder) WithCollectionDate(collectionDate time.Time) *IndividualBuilder {
+	i.individual.CollectionTime = collectionDate
 	return i
 }
 
@@ -108,7 +113,11 @@ func ValidIndividual() *IndividualBuilder {
 		WithBirthDate(&bd).
 		WithCountryID("countryID").
 		WithPreferredName("John").
-		WithGender("male")
+		WithGender("male").
+		WithCollectionAgentTitle("Collection Agent Title").
+		WithCollectionAgentName("Collection Agent Name").
+		WithCollectionDate(time.Now()).
+		WithPreferredContactMethod("email")
 }
 
 func TestValidateIndividual(t *testing.T) {
@@ -151,7 +160,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "invalid displacement status",
 			i:    ValidIndividual().WithDisplacementStatus("bla").Build(),
-			want: validation.ErrorList{validation.NotSupported(displacementStatusPath, api.DisplacementStatus("bla"), []string{"host_community", "idp", "refugee"})},
+			want: validation.ErrorList{validation.NotSupported(displacementStatusPath, api.DisplacementStatus("bla"), allowedDisplacementStatusesStr)},
 		}, {
 			name: "empty gender",
 			i:    ValidIndividual().WithGender("").Build(),
@@ -159,7 +168,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "invalid gender",
 			i:    ValidIndividual().WithGender("bla").Build(),
-			want: validation.ErrorList{validation.NotSupported(genderPath, api.Gender("bla"), []string{"female", "male", "other", "prefers_not_to_say"})},
+			want: validation.ErrorList{validation.NotSupported(genderPath, api.Gender("bla"), allowedGendersStr)},
 		},
 	}
 	for _, tt := range tests {
@@ -191,7 +200,7 @@ func TestValidateIndividualList(t *testing.T) {
 				validation.NotSupported(
 					validation.NewPath("items[0].displacementStatus"),
 					api.DisplacementStatus("bla"),
-					[]string{"host_community", "idp", "refugee"})},
+					allowedDisplacementStatusesStr)},
 		},
 	}
 	for _, tt := range tests {

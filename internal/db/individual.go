@@ -6,12 +6,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
-	"github.com/rs/xid"
 	"go.uber.org/zap"
 )
 
@@ -119,7 +119,7 @@ func (i individualRepo) getByIdInternal(ctx context.Context, tx *sqlx.Tx, id str
 	l := logging.NewLogger(ctx).With(zap.String("individual_id", id))
 	l.Debug("getting individual by id")
 	var ret = api.Individual{}
-	err := tx.GetContext(ctx, &ret, "SELECT * FROM individuals WHERE id = $1 and deleted_at IS NULL", id)
+	err := tx.GetContext(ctx, &ret, "SELECT * FROM individual_registrations WHERE id = $1 and deleted_at IS NULL", id)
 	if err != nil {
 		return nil, err
 	}
@@ -156,11 +156,11 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 	if err := batch(maxParams/len(fieldSlice), individuals, func(individualsInBatch []*api.Individual) (bool, error) {
 		args := make([]interface{}, 0)
 		b := &strings.Builder{}
-		b.WriteString("INSERT INTO individuals (" + strings.Join(fieldSlice, ",") + ",created_at,updated_at) VALUES ")
+		b.WriteString("INSERT INTO individual_registrations (" + strings.Join(fieldSlice, ",") + ",created_at,updated_at) VALUES ")
 
 		for i, individual := range individualsInBatch {
 			if individual.ID == "" {
-				individual.ID = xid.New().String()
+				individual.ID = uuid.New().String()
 			}
 			if i != 0 {
 				b.WriteString(",")
@@ -251,7 +251,7 @@ func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx,
 	l.Debug("deleting individuals")
 
 	if err := batch(maxParams/len(ids), ids.Items(), func(idsInBatch []string) (bool, error) {
-		var query = "UPDATE individuals SET deleted_at = $1 WHERE id IN ("
+		var query = "UPDATE individual_registrations SET deleted_at = $1 WHERE id IN ("
 		var args = []interface{}{time.Now().UTC().Format(time.RFC3339)}
 		for i, id := range idsInBatch {
 			if i != 0 {

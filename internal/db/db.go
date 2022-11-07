@@ -16,7 +16,7 @@ func doInTransaction(ctx context.Context, db *sqlx.DB, f func(ctx context.Contex
 		l.Error("failed to begin transaction", zap.Error(err))
 		return nil, err
 	}
-	var retError *error
+	retError := new(error)
 	rollback := true
 	defer func() {
 		if rollback {
