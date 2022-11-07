@@ -19,6 +19,20 @@
         const activeDeleteButtonClasses = ["btn-danger"]
         const inactiveDeleteButtonClasses = ["btn-outline-secondary", "disabled"]
         const inactiveDeleteButtonText = "Delete individuals"
+        const deleteIndividualsConfirmationModalId = "deleteIndividualsConfirmationModal"
+        const deleteIndividualsConfirmationModalContentId = "deleteIndividualsConfirmationModalContent"
+        const deleteIndividualsConfirmationModalConfirmButtonId = "deleteIndividualsConfirmationModalConfirmButton"
+
+
+        /**
+         * Gets the number of selected individuals.
+         * @returns {number}
+         */
+        function getSelectedIndividualCount(){
+            return Array.from(document.getElementsByClassName(selectIndividualCheckboxClass))
+                .filter(checkbox => checkbox.checked)
+                .length
+        }
 
         /**
          * Gets the text for the delete button based on the number of selected individuals.
@@ -56,6 +70,17 @@
          */
         function openUploadDialog() {
             document.getElementById(uploadIndividualFileInputId).click();
+        }
+
+        /**
+         * Opens the individual deletion confirmation modal
+         */
+        function refreshDeleteConfirmationModal() {
+            const count = getSelectedIndividualCount()
+            const modalContent = document.getElementById(deleteIndividualsConfirmationModalContentId)
+            const confirmButton = document.getElementById(deleteIndividualsConfirmationModalConfirmButtonId)
+            modalContent.innerHTML = "Are you sure you want to delete " + count + " individual" + (count > 1 ? "s" : "") + "?"
+            confirmButton.innerText = "Delete " + count + " individual" + (count > 1 ? "s" : "")
         }
 
         /**
@@ -104,7 +129,7 @@
              * Refreshes the disabled state of the delete button as well as the text of the button
              */
             function refreshDeleteButton() {
-                const checkedCount = selectCheckboxes.filter(checkbox => checkbox.checked).length;
+                const checkedCount = getSelectedIndividualCount()
                 deleteButtonContent.innerText = getDeleteButtonText(checkedCount);
                 if (checkedCount > 0) {
                     // button is active
@@ -224,7 +249,9 @@
                                 id="deleteIndividualsButton"
                                 style="width: 20rem"
                                 class="btn disabled btn-outline-secondary me-2 individual-action-button"
-                                onclick="submitActionForm('delete')">
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteIndividualsConfirmationModal"
+                                onclick="refreshDeleteConfirmationModal()">
                             <i class="bi bi-trash"></i>
                             <span id="deleteIndividualsButtonContent">Delete individuals</span>
                         </button>
@@ -678,6 +705,31 @@
             <!-- END PAGE FOOTER -->
         </div>
     </main>
+
+    <div class="modal" tabindex="-1" id="deleteIndividualsConfirmationModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Individuals</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="deleteIndividualsConfirmationModalContent">Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button"
+                            class="btn btn-danger"
+                            id="deleteIndividualsConfirmationModalConfirmButton"
+                            onclick="submitActionForm('delete')">
+                        Delete Individuals
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 {{end}}
 
 {{define "columnHeader"}}
