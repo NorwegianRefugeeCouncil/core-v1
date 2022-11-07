@@ -39,9 +39,9 @@ func randomIdentificationType() string {
 func randomDisabilityLevel() string {
 	switch rand.Intn(3) {
 	case 0:
-		return string(api.DisabilityLevelMild)
+		return string(api.DisabilityLevelNone)
 	case 1:
-		return string(api.DisabilityLevelModerate)
+		return string(api.DisabilityLevelMild)
 	case 2:
 		return string(api.DisabilityLevelModerate)
 	case 3:
@@ -67,13 +67,17 @@ func randomGender() string {
 }
 
 func randomDisplacementStatus() string {
-	switch rand.Intn(2) {
+	switch rand.Intn(4) {
 	case 0:
 		return string(api.DisplacementStatusRefugee)
 	case 1:
 		return string(api.DisplacementStatusHostCommunity)
 	case 2:
 		return string(api.DisplacementStatusIDP)
+	case 3:
+		return string(api.DisplacementStatusStateless)
+	case 4:
+		return string(api.DisplacementStatusNonDisplaced)
 	default:
 		panic("unreachable")
 	}
