@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/manveru/faker"
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/constants"
@@ -105,12 +104,12 @@ func Generate(count uint) error {
 
 	var householdIds []string
 	for i := 0; i < int(count)/5; i++ {
-		householdIds = append(householdIds, uuid.New().String())
+		householdIds = append(householdIds, strconv.Itoa(rand.Intn(1000000)))
 	}
 
 	var communityIds []string
 	for i := 0; i < int(count)/100; i++ {
-		communityIds = append(communityIds, uuid.New().String())
+		communityIds = append(communityIds, strconv.Itoa(rand.Intn(1000000)))
 	}
 
 	f, err := faker.New("en")
