@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -24,63 +25,36 @@ func randomLanguage() string {
 }
 
 func randomIdentificationType() string {
-	switch rand.Intn(3) {
-	case 0:
-		return "national_id"
-	case 1:
-		return "passport"
-	case 2:
-		return "other"
-	default:
-		panic("unreachable")
-	}
+	return pick(
+		"",
+		"passport",
+		"nationalId",
+		"other",
+	)
 }
 
 func randomDisabilityLevel() string {
-	switch rand.Intn(3) {
-	case 0:
-		return string(api.DisabilityLevelNone)
-	case 1:
-		return string(api.DisabilityLevelMild)
-	case 2:
-		return string(api.DisabilityLevelModerate)
-	case 3:
-		return string(api.DisabilityLevelSevere)
-	default:
-		panic("unreachable")
+	var g []string
+	for _, d := range api.AllDisabilityLevels().Items() {
+		g = append(g, string(d))
 	}
+	return pick(g...)
 }
 
 func randomGender() string {
-	switch rand.Intn(3) {
-	case 0:
-		return string(api.GenderMale)
-	case 1:
-		return string(api.GenderFemale)
-	case 2:
-		return string(api.GenderOther)
-	case 3:
-		return string(api.GenderPreferNotToSay)
-	default:
-		panic("unreachable")
+	var g []string
+	for _, d := range api.AllGenders().Items() {
+		g = append(g, string(d))
 	}
+	return pick(g...)
 }
 
 func randomDisplacementStatus() string {
-	switch rand.Intn(4) {
-	case 0:
-		return string(api.DisplacementStatusRefugee)
-	case 1:
-		return string(api.DisplacementStatusHostCommunity)
-	case 2:
-		return string(api.DisplacementStatusIDP)
-	case 3:
-		return string(api.DisplacementStatusStateless)
-	case 4:
-		return string(api.DisplacementStatusNonDisplaced)
-	default:
-		panic("unreachable")
+	var ds []string
+	for _, d := range api.AllDisplacementStatuses().Items() {
+		ds = append(ds, string(d))
 	}
+	return pick(ds...)
 }
 
 func randomDate() string {
@@ -95,6 +69,10 @@ func randomDate() string {
 	return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC).Format("2006-01-02")
 }
 
+func pick(items ...string) string {
+	return items[rand.Intn(len(items))]
+}
+
 func randomBool() string {
 	if randBool(50) {
 		return "true"
@@ -103,37 +81,24 @@ func randomBool() string {
 }
 
 func randomIdentificationContext() string {
-	switch rand.Intn(4) {
-	case 0:
-		return "houseVisit"
-	case 1:
-		return "fieldActivity"
-	case 2:
-		return "inOffice"
-	case 3:
-		return "remoteChannels"
-	case 4:
-		return "other"
-	default:
-		panic("unreachable")
-	}
+	return pick(
+		"",
+		"houseVisit",
+		"fieldActivity",
+		"inOffice",
+		"remoteChannels",
+		"other",
+	)
 }
 
 func randomContactMethod() string {
-	switch rand.Intn(5) {
-	case 0:
-		return "phone"
-	case 1:
-		return "email"
-	case 2:
-		return "sms"
-	case 3:
-		return "whatsapp"
-	case 4:
-		return "other"
-	default:
-		panic("unreachable")
-	}
+	return pick(
+		"phone",
+		"email",
+		"whatsapp",
+		"sms",
+		"other",
+	)
 }
 
 func Generate(count uint) error {
@@ -237,7 +202,7 @@ func Generate(count uint) error {
 		if randBool(80) {
 			email = f.Email()
 		}
-		var fullName = f.Name()
+		var fullName = strings.ToUpper(f.LastName()) + ", " + f.FirstName()
 		var preferredName = fullName
 		if randBool(5) {
 			preferredName = f.Name()
@@ -258,13 +223,36 @@ func Generate(count uint) error {
 		}
 		identificationType1 := randomIdentificationType()
 		identificationTypeExplanation1 := ""
-		identificationNumber1 := strconv.Itoa(rand.Intn(1000000000))
+		var identificationNumber1 string
+		if len(identificationType1) != 0 {
+			identificationNumber1 = strconv.Itoa(rand.Intn(1000000000))
+		}
+		if identificationType1 == "other" {
+			identificationTypeExplanation1 = randomText(f)
+		}
+
 		identificationType2 := randomIdentificationType()
 		identificationTypeExplanation2 := ""
-		identificationNumber2 := strconv.Itoa(rand.Intn(1000000000))
+
+		var identificationNumber2 string
+		if len(identificationType2) != 0 {
+			identificationNumber2 = strconv.Itoa(rand.Intn(1000000000))
+		}
+		if identificationType2 == "other" {
+			identificationTypeExplanation2 = strings.Join(f.Paragraphs(rand.Intn(3)+1, false), "\n\n")
+		}
+
 		identificationType3 := randomIdentificationType()
 		identificationTypeExplanation3 := ""
-		identificationNumber3 := strconv.Itoa(rand.Intn(1000000000))
+
+		var identificationNumber3 string
+		if len(identificationType3) != 0 {
+			identificationNumber3 = strconv.Itoa(rand.Intn(1000000000))
+		}
+		if identificationType3 == "other" {
+			identificationTypeExplanation3 = strings.Join(f.Paragraphs(rand.Intn(3)+1, false), "\n\n")
+		}
+
 		identificationContext := randomIdentificationContext()
 		internalId := strconv.Itoa(rand.Intn(1000000000))
 		isHeadOfCommunity := randomBool()
@@ -352,6 +340,10 @@ func Generate(count uint) error {
 	writer.Flush()
 	return nil
 
+}
+
+func randomText(f *faker.Faker) string {
+	return strings.Join(f.Paragraphs(rand.Intn(3)+1, false), "\n\n")
 }
 
 func randBool(probability int) bool {

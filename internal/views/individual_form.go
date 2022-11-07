@@ -296,7 +296,7 @@ func (f *IndividualForm) buildIdentification2Type() error {
 		Name:        "identificationType2",
 		DisplayName: "Identification Type 2",
 		Options:     getIdentificationTypeOptions(),
-	}, f.personalInfoSection, f.individual.IdentificationType1)
+	}, f.personalInfoSection, f.individual.IdentificationType2)
 }
 
 func (f *IndividualForm) buildIdentification2Other() error {
@@ -317,7 +317,7 @@ func (f *IndividualForm) buildIdentification3Type() error {
 		Name:        "identificationType3",
 		DisplayName: "Identification Type 3",
 		Options:     getIdentificationTypeOptions(),
-	}, f.personalInfoSection, f.individual.IdentificationType1)
+	}, f.personalInfoSection, f.individual.IdentificationType3)
 }
 
 func (f *IndividualForm) buildIdentification3Other() error {
