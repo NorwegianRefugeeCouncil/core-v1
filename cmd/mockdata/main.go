@@ -292,7 +292,11 @@ func Generate(count uint) error {
 		preferredContactMethod := randomContactMethod()
 		preferredContactMethodComments := ""
 		preferredCommunicationLanguage := randomLanguage()
-		prefersToRemainAnonymous := randomBool()
+		prefersToRemainAnonymous := randBool(5)
+		if prefersToRemainAnonymous {
+			fullName = ""
+			preferredName = ""
+		}
 		presentsProtectionConcerns := randomBool()
 
 		spokenLanguage1 := randomLanguage()
@@ -347,7 +351,7 @@ func Generate(count uint) error {
 			preferredContactMethodComments,
 			preferredName,
 			preferredCommunicationLanguage,
-			prefersToRemainAnonymous,
+			strconv.FormatBool(prefersToRemainAnonymous),
 			presentsProtectionConcerns,
 			selfCareDisabilityLevel,
 			spokenLanguage1,
