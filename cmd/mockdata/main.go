@@ -185,14 +185,13 @@ func Generate(count uint) error {
 			birthDate = start.Add(time.Duration(rand.Int63n(end.Unix()-start.Unix())) * time.Second).Format("2006-01-02")
 		}
 
-		cognitiveDisabilityLevel := randomDisabilityLevel()
 		collectionAdministrativeArea1 := f.Country()
 		collectionAdministrativeArea2 := f.State()
 		collectionAdministrativeArea3 := f.City()
 		collectionAgentName := f.Name()
 		collectionAgentTitle := f.JobTitle()
 		collectionTime := randomDate()
-		communicationDisabilityLevel := randomDisabilityLevel()
+
 		communityId := ""
 		if randBool(20) {
 			communityId = uuid.New().String()
@@ -216,7 +215,32 @@ func Generate(count uint) error {
 		hasMobilityDisability := randomBool()
 		hasSelfCareDisability := randomBool()
 		hasVisionDisability := randomBool()
+
 		hearingDisabilityLevel := randomDisabilityLevel()
+		if hasHearingDisability == "false" {
+			hearingDisabilityLevel = "none"
+		}
+		cognitiveDisabilityLevel := randomDisabilityLevel()
+		if hasCognitiveDisability == "false" {
+			cognitiveDisabilityLevel = "none"
+		}
+		communicationDisabilityLevel := randomDisabilityLevel()
+		if hasCommunicationDisability == "false" {
+			communicationDisabilityLevel = "none"
+		}
+		mobilityDisabilityLevel := randomDisabilityLevel()
+		if hasMobilityDisability == "false" {
+			mobilityDisabilityLevel = "none"
+		}
+		selfCareDisabilityLevel := randomDisabilityLevel()
+		if hasSelfCareDisability == "false" {
+			selfCareDisabilityLevel = "none"
+		}
+		visionDisabilityLevel := randomDisabilityLevel()
+		if hasVisionDisability == "false" {
+			visionDisabilityLevel = "none"
+		}
+
 		householdId := ""
 		if randBool(20) {
 			householdId = uuid.New().String()
@@ -258,7 +282,7 @@ func Generate(count uint) error {
 		isHeadOfCommunity := randomBool()
 		isHeadOfHousehold := randomBool()
 		isMinor := randomBool()
-		mobilityDisabilityLevel := randomDisabilityLevel()
+
 		nationality1 := randomCountry()
 		nationality2 := randomCountry()
 		var phoneNumber string
@@ -270,11 +294,10 @@ func Generate(count uint) error {
 		preferredCommunicationLanguage := randomLanguage()
 		prefersToRemainAnonymous := randomBool()
 		presentsProtectionConcerns := randomBool()
-		selfCareDisabilityLevel := randomDisabilityLevel()
+
 		spokenLanguage1 := randomLanguage()
 		spokenLanguage2 := randomLanguage()
 		spokenLanguage3 := randomLanguage()
-		visionDisabilityLevel := randomDisabilityLevel()
 
 		if err := writer.Write([]string{
 			address,
