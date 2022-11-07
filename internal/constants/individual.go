@@ -4,6 +4,7 @@ import "github.com/nrc-no/notcore/internal/containers"
 
 const (
 	FormParamIndividualAddress                        = "Address"
+	FormParamIndividualAge                            = "Age"
 	FormParamIndividualBirthDate                      = "BirthDate"
 	FormParamIndividualCognitiveDisabilityLevel       = "CognitiveDisabilityLevel"
 	FormParamIndividualCollectionAdministrativeArea1  = "CollectionAdministrativeArea1"
@@ -15,7 +16,9 @@ const (
 	FormParamIndividualCommunityID                    = "CommunityID"
 	FormParamIndividualCountryID                      = "Country"
 	FormParamIndividualDisplacementStatus             = "DisplacementStatus"
-	FormParamIndividualEmail                          = "Email"
+	FormParamIndividualEmail1                         = "Email1"
+	FormParamIndividualEmail2                         = "Email2"
+	FormParamIndividualEmail3                         = "Email3"
 	FormParamIndividualFullName                       = "FullName"
 	FormParamIndividualGender                         = "Gender"
 	FormParamIndividualHasCognitiveDisability         = "HasCognitiveDisability"
@@ -47,7 +50,7 @@ const (
 	FormParamIndividualMobilityDisabilityLevel        = "MobilityDisabilityLevel"
 	FormParamIndividualNationality1                   = "Nationality1"
 	FormParamIndividualNationality2                   = "Nationality2"
-	FormParamIndividualPhoneNumber                    = "PhoneNumber"
+	FormParamIndividualPhoneNumber                    = "PhoneNumber1"
 	FormParamIndividualPreferredCommunicationLanguage = "PreferredCommunicationLanguage"
 	FormParamIndividualPreferredContactMethod         = "PreferredContactMethod"
 	FormParamIndividualPreferredContactMethodComments = "PreferredContactMethodComments"
@@ -121,6 +124,7 @@ const (
 	FormParamsGetIndividualsVisionDisabilityLevel          = "vision_disability_level"
 
 	DBColumnIndividualAddress                        = "address"
+	DBColumnIndividualAge                            = "age"
 	DBColumnIndividualBirthDate                      = "birth_date"
 	DBColumnIndividualCognitiveDisabilityLevel       = "cognitive_disability_level"
 	DBColumnIndividualCollectionAdministrativeArea1  = "collection_administrative_area_1"
@@ -129,14 +133,22 @@ const (
 	DBColumnIndividualCollectionAgentName            = "collection_agent_name"
 	DBColumnIndividualCollectionAgentTitle           = "collection_agent_title"
 	DBColumnIndividualCollectionTime                 = "collection_time"
+	DBColumnIndividualComments                       = "comments"
 	DBColumnIndividualCommunicationDisabilityLevel   = "communication_disability_level"
 	DBColumnIndividualCommunityID                    = "community_id"
 	DBColumnIndividualCountryID                      = "country_id"
 	DBColumnIndividualCreatedAt                      = "created_at"
 	DBColumnIndividualDeletedAt                      = "deleted_at"
 	DBColumnIndividualDisplacementStatus             = "displacement_status"
-	DBColumnIndividualEmail                          = "email"
+	DBColumnIndividualEmail1                         = "email_1"
+	DBColumnIndividualEmail2                         = "email_2"
+	DBColumnIndividualEmail3                         = "email_3"
 	DBColumnIndividualFullName                       = "full_name"
+	DBColumnIndividualFreeField1                     = "free_field_1"
+	DBColumnIndividualFreeField2                     = "free_field_2"
+	DBColumnIndividualFreeField3                     = "free_field_3"
+	DBColumnIndividualFreeField4                     = "free_field_4"
+	DBColumnIndividualFreeField5                     = "free_field_5"
 	DBColumnIndividualGender                         = "gender"
 	DBColumnIndividualHasCognitiveDisability         = "has_cognitive_disability"
 	DBColumnIndividualHasCommunicationDisability     = "has_communication_disability"
@@ -166,8 +178,12 @@ const (
 	DBColumnIndividualMobilityDisabilityLevel        = "mobility_disability_level"
 	DBColumnIndividualNationality1                   = "nationality_1"
 	DBColumnIndividualNationality2                   = "nationality_2"
-	DBColumnIndividualNormalizedPhoneNumber          = "normalized_phone_number"
-	DBColumnIndividualPhoneNumber                    = "phone_number"
+	DBColumnIndividualNormalizedPhoneNumber1         = "normalized_phone_number_1"
+	DBColumnIndividualNormalizedPhoneNumber2         = "normalized_phone_number_2"
+	DBColumnIndividualNormalizedPhoneNumber3         = "normalized_phone_number_3"
+	DBColumnIndividualPhoneNumber1                   = "phone_number_1"
+	DBColumnIndividualPhoneNumber2                   = "phone_number_2"
+	DBColumnIndividualPhoneNumber3                   = "phone_number_3"
 	DBColumnIndividualPreferredCommunicationLanguage = "preferred_communication_language"
 	DBColumnIndividualPreferredContactMethod         = "preferred_contact_method"
 	DBColumnIndividualPreferredContactMethodComments = "preferred_contact_method_comments"
@@ -182,6 +198,7 @@ const (
 	DBColumnIndividualVisionDisabilityLevel          = "vision_disability_level"
 
 	FileColumnIndividualAddress                        = "address"
+	FileColumnIndividualAge                            = "age"
 	FileColumnIndividualBirthDate                      = "birth_date"
 	FileColumnIndividualCognitiveDisabilityLevel       = "cognitive_disability_level"
 	FileColumnIndividualCollectionAdministrativeArea1  = "collection_administrative_area_1"
@@ -190,12 +207,20 @@ const (
 	FileColumnIndividualCollectionAgentName            = "collection_agent_name"
 	FileColumnIndividualCollectionAgentTitle           = "collection_agent_title"
 	FileColumnIndividualCollectionTime                 = "collection_time"
+	FileColumnIndividualComments                       = "comments"
 	FileColumnIndividualCommunicationDisabilityLevel   = "communication_disability_level"
 	FileColumnIndividualCommunityID                    = "community_id"
 	FileColumnIndividualCountryID                      = "country_id"
 	FileColumnIndividualDisplacementStatus             = "displacement_status"
-	FileColumnIndividualEmail                          = "email"
+	FileColumnIndividualEmail1                         = "email_1"
+	FileColumnIndividualEmail2                         = "email_2"
+	FileColumnIndividualEmail3                         = "email_3"
 	FileColumnIndividualFullName                       = "full_name"
+	FileColumnIndividualFreeField1                     = "free_field_1"
+	FileColumnIndividualFreeField2                     = "free_field_2"
+	FileColumnIndividualFreeField3                     = "free_field_3"
+	FileColumnIndividualFreeField4                     = "free_field_4"
+	FileColumnIndividualFreeField5                     = "free_field_5"
 	FileColumnIndividualGender                         = "gender"
 	FileColumnIndividualHasCognitiveDisability         = "has_cognitive_disability"
 	FileColumnIndividualHasCommunicationDisability     = "has_communication_disability"
@@ -225,7 +250,9 @@ const (
 	FileColumnIndividualMobilityDisabilityLevel        = "mobility_disability_level"
 	FileColumnIndividualNationality1                   = "nationality_1"
 	FileColumnIndividualNationality2                   = "nationality_2"
-	FileColumnIndividualPhoneNumber                    = "phone_number"
+	FileColumnIndividualPhoneNumber1                   = "phone_number_1"
+	FileColumnIndividualPhoneNumber2                   = "phone_number_2"
+	FileColumnIndividualPhoneNumber3                   = "phone_number_3"
 	FileColumnIndividualPreferredCommunicationLanguage = "preferred_communication_language"
 	FileColumnIndividualPreferredContactMethod         = "preferred_contact_method"
 	FileColumnIndividualPreferredContactMethodComments = "preferred_contact_method_comments"
@@ -241,6 +268,7 @@ const (
 
 var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualAddress,
+	DBColumnIndividualAge,
 	DBColumnIndividualBirthDate,
 	DBColumnIndividualCognitiveDisabilityLevel,
 	DBColumnIndividualCollectionAdministrativeArea1,
@@ -249,14 +277,22 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualCollectionAgentName,
 	DBColumnIndividualCollectionAgentTitle,
 	DBColumnIndividualCollectionTime,
+	DBColumnIndividualComments,
 	DBColumnIndividualCommunicationDisabilityLevel,
 	DBColumnIndividualCommunityID,
 	DBColumnIndividualCountryID,
 	DBColumnIndividualCreatedAt,
 	DBColumnIndividualDeletedAt,
 	DBColumnIndividualDisplacementStatus,
-	DBColumnIndividualEmail,
+	DBColumnIndividualEmail1,
+	DBColumnIndividualEmail2,
+	DBColumnIndividualEmail3,
 	DBColumnIndividualFullName,
+	DBColumnIndividualFreeField1,
+	DBColumnIndividualFreeField2,
+	DBColumnIndividualFreeField3,
+	DBColumnIndividualFreeField4,
+	DBColumnIndividualFreeField5,
 	DBColumnIndividualGender,
 	DBColumnIndividualHasCognitiveDisability,
 	DBColumnIndividualHasCommunicationDisability,
@@ -286,8 +322,12 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualMobilityDisabilityLevel,
 	DBColumnIndividualNationality1,
 	DBColumnIndividualNationality2,
-	DBColumnIndividualNormalizedPhoneNumber,
-	DBColumnIndividualPhoneNumber,
+	DBColumnIndividualNormalizedPhoneNumber1,
+	DBColumnIndividualNormalizedPhoneNumber2,
+	DBColumnIndividualNormalizedPhoneNumber3,
+	DBColumnIndividualPhoneNumber1,
+	DBColumnIndividualPhoneNumber2,
+	DBColumnIndividualPhoneNumber3,
 	DBColumnIndividualPreferredCommunicationLanguage,
 	DBColumnIndividualPreferredContactMethod,
 	DBColumnIndividualPreferredContactMethodComments,
@@ -304,6 +344,7 @@ var IndividualDBColumns = containers.NewStringSet(
 
 var IndividualFileColumns = []string{
 	FileColumnIndividualAddress,
+	FileColumnIndividualAge,
 	FileColumnIndividualBirthDate,
 	FileColumnIndividualCognitiveDisabilityLevel,
 	FileColumnIndividualCollectionAdministrativeArea1,
@@ -312,12 +353,20 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualCollectionAgentName,
 	FileColumnIndividualCollectionAgentTitle,
 	FileColumnIndividualCollectionTime,
+	FileColumnIndividualComments,
 	FileColumnIndividualCommunicationDisabilityLevel,
 	FileColumnIndividualCommunityID,
 	FileColumnIndividualCountryID,
 	FileColumnIndividualDisplacementStatus,
-	FileColumnIndividualEmail,
+	FileColumnIndividualEmail1,
+	FileColumnIndividualEmail2,
+	FileColumnIndividualEmail3,
 	FileColumnIndividualFullName,
+	FileColumnIndividualFreeField1,
+	FileColumnIndividualFreeField2,
+	FileColumnIndividualFreeField3,
+	FileColumnIndividualFreeField4,
+	FileColumnIndividualFreeField5,
 	FileColumnIndividualGender,
 	FileColumnIndividualHasCognitiveDisability,
 	FileColumnIndividualHasCommunicationDisability,
@@ -347,7 +396,9 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualMobilityDisabilityLevel,
 	FileColumnIndividualNationality1,
 	FileColumnIndividualNationality2,
-	FileColumnIndividualPhoneNumber,
+	FileColumnIndividualPhoneNumber1,
+	FileColumnIndividualPhoneNumber2,
+	FileColumnIndividualPhoneNumber3,
 	FileColumnIndividualPreferredCommunicationLanguage,
 	FileColumnIndividualPreferredContactMethod,
 	FileColumnIndividualPreferredContactMethodComments,
@@ -363,6 +414,7 @@ var IndividualFileColumns = []string{
 
 var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualAddress:                        FileColumnIndividualAddress,
+	DBColumnIndividualAge:                            FileColumnIndividualAge,
 	DBColumnIndividualBirthDate:                      FileColumnIndividualBirthDate,
 	DBColumnIndividualCognitiveDisabilityLevel:       FileColumnIndividualCognitiveDisabilityLevel,
 	DBColumnIndividualCollectionAdministrativeArea1:  FileColumnIndividualCollectionAdministrativeArea1,
@@ -371,12 +423,20 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualCollectionAgentName:            FileColumnIndividualCollectionAgentName,
 	DBColumnIndividualCollectionAgentTitle:           FileColumnIndividualCollectionAgentTitle,
 	DBColumnIndividualCollectionTime:                 FileColumnIndividualCollectionTime,
+	DBColumnIndividualComments:                       FileColumnIndividualComments,
 	DBColumnIndividualCommunicationDisabilityLevel:   FileColumnIndividualCommunicationDisabilityLevel,
 	DBColumnIndividualCommunityID:                    FileColumnIndividualCommunityID,
 	DBColumnIndividualCountryID:                      FileColumnIndividualCountryID,
 	DBColumnIndividualDisplacementStatus:             FileColumnIndividualDisplacementStatus,
-	DBColumnIndividualEmail:                          FileColumnIndividualEmail,
+	DBColumnIndividualEmail1:                         FileColumnIndividualEmail1,
+	DBColumnIndividualEmail2:                         FileColumnIndividualEmail2,
+	DBColumnIndividualEmail3:                         FileColumnIndividualEmail3,
 	DBColumnIndividualFullName:                       FileColumnIndividualFullName,
+	DBColumnIndividualFreeField1:                     FileColumnIndividualFreeField1,
+	DBColumnIndividualFreeField2:                     FileColumnIndividualFreeField2,
+	DBColumnIndividualFreeField3:                     FileColumnIndividualFreeField3,
+	DBColumnIndividualFreeField4:                     FileColumnIndividualFreeField4,
+	DBColumnIndividualFreeField5:                     FileColumnIndividualFreeField5,
 	DBColumnIndividualGender:                         FileColumnIndividualGender,
 	DBColumnIndividualHasCognitiveDisability:         FileColumnIndividualHasCognitiveDisability,
 	DBColumnIndividualHasCommunicationDisability:     FileColumnIndividualHasCommunicationDisability,
@@ -406,7 +466,9 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualMobilityDisabilityLevel:        FileColumnIndividualMobilityDisabilityLevel,
 	DBColumnIndividualNationality1:                   FileColumnIndividualNationality1,
 	DBColumnIndividualNationality2:                   FileColumnIndividualNationality2,
-	DBColumnIndividualPhoneNumber:                    FileColumnIndividualPhoneNumber,
+	DBColumnIndividualPhoneNumber1:                   FileColumnIndividualPhoneNumber1,
+	DBColumnIndividualPhoneNumber2:                   FileColumnIndividualPhoneNumber2,
+	DBColumnIndividualPhoneNumber3:                   FileColumnIndividualPhoneNumber3,
 	DBColumnIndividualPreferredCommunicationLanguage: FileColumnIndividualPreferredCommunicationLanguage,
 	DBColumnIndividualPreferredContactMethod:         FileColumnIndividualPreferredContactMethod,
 	DBColumnIndividualPreferredContactMethodComments: FileColumnIndividualPreferredContactMethodComments,
@@ -422,6 +484,7 @@ var IndividualDBToFileMap = map[string]string{
 
 var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualAddress:                        DBColumnIndividualAddress,
+	FileColumnIndividualAge:                            DBColumnIndividualAge,
 	FileColumnIndividualBirthDate:                      DBColumnIndividualBirthDate,
 	FileColumnIndividualCognitiveDisabilityLevel:       DBColumnIndividualCognitiveDisabilityLevel,
 	FileColumnIndividualCollectionAdministrativeArea1:  DBColumnIndividualCollectionAdministrativeArea1,
@@ -430,12 +493,20 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualCollectionAgentName:            DBColumnIndividualCollectionAgentName,
 	FileColumnIndividualCollectionAgentTitle:           DBColumnIndividualCollectionAgentTitle,
 	FileColumnIndividualCollectionTime:                 DBColumnIndividualCollectionTime,
+	FileColumnIndividualComments:                       DBColumnIndividualComments,
 	FileColumnIndividualCommunicationDisabilityLevel:   DBColumnIndividualCommunicationDisabilityLevel,
 	FileColumnIndividualCommunityID:                    DBColumnIndividualCommunityID,
 	FileColumnIndividualCountryID:                      DBColumnIndividualCountryID,
 	FileColumnIndividualDisplacementStatus:             DBColumnIndividualDisplacementStatus,
-	FileColumnIndividualEmail:                          DBColumnIndividualEmail,
+	FileColumnIndividualEmail1:                         DBColumnIndividualEmail1,
+	FileColumnIndividualEmail2:                         DBColumnIndividualEmail2,
+	FileColumnIndividualEmail3:                         DBColumnIndividualEmail3,
 	FileColumnIndividualFullName:                       DBColumnIndividualFullName,
+	FileColumnIndividualFreeField1:                     DBColumnIndividualFreeField1,
+	FileColumnIndividualFreeField2:                     DBColumnIndividualFreeField2,
+	FileColumnIndividualFreeField3:                     DBColumnIndividualFreeField3,
+	FileColumnIndividualFreeField4:                     DBColumnIndividualFreeField4,
+	FileColumnIndividualFreeField5:                     DBColumnIndividualFreeField5,
 	FileColumnIndividualGender:                         DBColumnIndividualGender,
 	FileColumnIndividualHasCognitiveDisability:         DBColumnIndividualHasCognitiveDisability,
 	FileColumnIndividualHasCommunicationDisability:     DBColumnIndividualHasCommunicationDisability,
@@ -465,7 +536,9 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualMobilityDisabilityLevel:        DBColumnIndividualMobilityDisabilityLevel,
 	FileColumnIndividualNationality1:                   DBColumnIndividualNationality1,
 	FileColumnIndividualNationality2:                   DBColumnIndividualNationality2,
-	FileColumnIndividualPhoneNumber:                    DBColumnIndividualPhoneNumber,
+	FileColumnIndividualPhoneNumber1:                   DBColumnIndividualPhoneNumber1,
+	FileColumnIndividualPhoneNumber2:                   DBColumnIndividualPhoneNumber2,
+	FileColumnIndividualPhoneNumber3:                   DBColumnIndividualPhoneNumber3,
 	FileColumnIndividualPreferredCommunicationLanguage: DBColumnIndividualPreferredCommunicationLanguage,
 	FileColumnIndividualPreferredContactMethod:         DBColumnIndividualPreferredContactMethod,
 	FileColumnIndividualPreferredContactMethodComments: DBColumnIndividualPreferredContactMethodComments,

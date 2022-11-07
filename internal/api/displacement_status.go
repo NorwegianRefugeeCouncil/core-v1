@@ -14,8 +14,9 @@ const (
 	DisplacementStatusRefugee       DisplacementStatus = "refugee"
 	DisplacementStatusIDP           DisplacementStatus = "idp"
 	DisplacementStatusHostCommunity DisplacementStatus = "host_community"
-	DisplacementStatusStateless     DisplacementStatus = "stateless"
+	DisplacementStatusReturnee      DisplacementStatus = "returnee"
 	DisplacementStatusNonDisplaced  DisplacementStatus = "non_displaced"
+	DisplacementStatusOther         DisplacementStatus = "other"
 
 	DisplacementStatusUnspecified DisplacementStatus = ""
 )
@@ -25,10 +26,15 @@ func AllDisplacementStatuses() containers.Set[DisplacementStatus] {
 		DisplacementStatusRefugee,
 		DisplacementStatusIDP,
 		DisplacementStatusHostCommunity,
-		DisplacementStatusStateless,
+		DisplacementStatusReturnee,
 		DisplacementStatusNonDisplaced,
+		DisplacementStatusOther,
 	)
 }
+
+/**
+List is : IDP, Refugee, Host Community, Returnee, Non-Displaced, Other
+*/
 
 func (g DisplacementStatus) String() string {
 	switch g {
@@ -38,10 +44,12 @@ func (g DisplacementStatus) String() string {
 		return "IDP"
 	case DisplacementStatusHostCommunity:
 		return "Host Community"
-	case DisplacementStatusStateless:
-		return "Stateless"
+	case DisplacementStatusReturnee:
+		return "Returnee"
 	case DisplacementStatusNonDisplaced:
 		return "Non-Displaced"
+	case DisplacementStatusOther:
+		return "Other"
 	case DisplacementStatusUnspecified:
 		return "Unspecified"
 	default:
@@ -57,12 +65,14 @@ func ParseDisplacementStatus(str string) (DisplacementStatus, error) {
 		return DisplacementStatusIDP, nil
 	case string(DisplacementStatusHostCommunity):
 		return DisplacementStatusHostCommunity, nil
-	case string(DisplacementStatusStateless):
-		return DisplacementStatusStateless, nil
+	case string(DisplacementStatusReturnee):
+		return DisplacementStatusReturnee, nil
 	case string(DisplacementStatusNonDisplaced):
 		return DisplacementStatusNonDisplaced, nil
 	case string(DisplacementStatusUnspecified):
 		return DisplacementStatusUnspecified, nil
+	case string(DisplacementStatusOther):
+		return DisplacementStatusOther, nil
 	default:
 		return "", fmt.Errorf("unknown displacement status type: %v", logutils.Escape(str))
 	}

@@ -11,6 +11,7 @@ import (
 	"github.com/manveru/faker"
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/constants"
+	"github.com/nrc-no/notcore/internal/utils"
 )
 
 func randomCountry() string {
@@ -103,12 +104,14 @@ func randomContactMethod() string {
 func Generate(count uint) error {
 
 	var householdIds []string
-	for i := 0; i < int(count)/5; i++ {
+	var householdCount = utils.Max(2, int(count)/5)
+	for i := 0; i < householdCount; i++ {
 		householdIds = append(householdIds, strconv.Itoa(rand.Intn(1000000)))
 	}
 
 	var communityIds []string
-	for i := 0; i < int(count)/100; i++ {
+	var communityIdCount = utils.Max(2, int(count)/100)
+	for i := 0; i < communityIdCount; i++ {
 		communityIds = append(communityIds, strconv.Itoa(rand.Intn(1000000)))
 	}
 
@@ -125,6 +128,7 @@ func Generate(count uint) error {
 	writer := csv.NewWriter(file)
 	if err := writer.Write([]string{
 		constants.FileColumnIndividualAddress,
+		constants.FileColumnIndividualAge,
 		constants.FileColumnIndividualBirthDate,
 		constants.FileColumnIndividualCognitiveDisabilityLevel,
 		constants.FileColumnIndividualCollectionAdministrativeArea1,
@@ -133,11 +137,19 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualCollectionAgentName,
 		constants.FileColumnIndividualCollectionAgentTitle,
 		constants.FileColumnIndividualCollectionTime,
+		constants.FileColumnIndividualComments,
 		constants.FileColumnIndividualCommunicationDisabilityLevel,
 		constants.FileColumnIndividualCommunityID,
 		constants.FileColumnIndividualDisplacementStatus,
-		constants.FileColumnIndividualEmail,
+		constants.FileColumnIndividualEmail1,
+		constants.FileColumnIndividualEmail2,
+		constants.FileColumnIndividualEmail3,
 		constants.FileColumnIndividualFullName,
+		constants.FileColumnIndividualFreeField1,
+		constants.FileColumnIndividualFreeField2,
+		constants.FileColumnIndividualFreeField3,
+		constants.FileColumnIndividualFreeField4,
+		constants.FileColumnIndividualFreeField5,
 		constants.FileColumnIndividualGender,
 		constants.FileColumnIndividualHasCognitiveDisability,
 		constants.FileColumnIndividualHasCommunicationDisability,
@@ -166,7 +178,9 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualMobilityDisabilityLevel,
 		constants.FileColumnIndividualNationality1,
 		constants.FileColumnIndividualNationality2,
-		constants.FileColumnIndividualPhoneNumber,
+		constants.FileColumnIndividualPhoneNumber1,
+		constants.FileColumnIndividualPhoneNumber2,
+		constants.FileColumnIndividualPhoneNumber3,
 		constants.FileColumnIndividualPreferredContactMethod,
 		constants.FileColumnIndividualPreferredContactMethodComments,
 		constants.FileColumnIndividualPreferredName,
@@ -194,6 +208,11 @@ func Generate(count uint) error {
 			birthDate = start.Add(time.Duration(rand.Int63n(end.Unix()-start.Unix())) * time.Second).Format("2006-01-02")
 		}
 
+		var age string
+		if randBool(80) {
+			age = strconv.Itoa(rand.Intn(100))
+		}
+
 		collectionAdministrativeArea1 := f.Country()
 		collectionAdministrativeArea2 := f.State()
 		collectionAdministrativeArea3 := f.City()
@@ -201,20 +220,57 @@ func Generate(count uint) error {
 		collectionAgentTitle := f.JobTitle()
 		collectionTime := randomDate()
 
+		var comments string
+		if randBool(50) {
+			comments = randomText(f)
+		}
+
 		communityId := ""
 		if randBool(80) {
 			communityId = pick(communityIds...)
 		}
 		displacementStatus := randomDisplacementStatus()
-		var email string
+
+		var email1 string
 		if randBool(80) {
-			email = f.Email()
+			email1 = f.Email()
 		}
+		var email2 string
+		if email1 != "" && randBool(40) {
+			email2 = f.Email()
+		}
+		var email3 string
+		if email2 != "" && randBool(40) {
+			email3 = f.Email()
+		}
+
 		var fullName = strings.ToUpper(f.LastName()) + ", " + f.FirstName()
 		var preferredName = fullName
 		if randBool(5) {
 			preferredName = f.Name()
 		}
+
+		var freeField1 string
+		if randBool(30) {
+			freeField1 = strconv.Itoa(rand.Intn(1000000))
+		}
+		var freeField2 string
+		if randBool(30) {
+			freeField2 = strconv.Itoa(rand.Intn(1000000))
+		}
+		var freeField3 string
+		if randBool(30) {
+			freeField3 = strconv.Itoa(rand.Intn(1000000))
+		}
+		var freeField4 string
+		if randBool(30) {
+			freeField4 = strconv.Itoa(rand.Intn(1000000))
+		}
+		var freeField5 string
+		if randBool(30) {
+			freeField5 = strconv.Itoa(rand.Intn(1000000))
+		}
+
 		gender := randomGender()
 		hasCognitiveDisability := randomBool()
 		hasCommunicationDisability := randomBool()
@@ -302,9 +358,17 @@ func Generate(count uint) error {
 
 		nationality1 := randomCountry()
 		nationality2 := randomCountry()
-		var phoneNumber string
+		var phoneNumber1 string
 		if randBool(80) {
-			phoneNumber = f.PhoneNumber()
+			phoneNumber1 = f.PhoneNumber()
+		}
+		var phoneNumber2 string
+		if phoneNumber1 != "" && randBool(40) {
+			phoneNumber2 = f.PhoneNumber()
+		}
+		var phoneNumber3 string
+		if phoneNumber2 != "" && randBool(40) {
+			phoneNumber3 = f.PhoneNumber()
 		}
 		preferredContactMethod := randomContactMethod()
 		preferredContactMethodComments := ""
@@ -322,6 +386,7 @@ func Generate(count uint) error {
 
 		if err := writer.Write([]string{
 			address,
+			age,
 			birthDate,
 			cognitiveDisabilityLevel,
 			collectionAdministrativeArea1,
@@ -330,11 +395,19 @@ func Generate(count uint) error {
 			collectionAgentName,
 			collectionAgentTitle,
 			collectionTime,
+			comments,
 			communicationDisabilityLevel,
 			communityId,
 			displacementStatus,
-			email,
+			email1,
+			email2,
+			email3,
 			fullName,
+			freeField1,
+			freeField2,
+			freeField3,
+			freeField4,
+			freeField5,
 			gender,
 			hasCognitiveDisability,
 			hasCommunicationDisability,
@@ -363,7 +436,9 @@ func Generate(count uint) error {
 			mobilityDisabilityLevel,
 			nationality1,
 			nationality2,
-			phoneNumber,
+			phoneNumber1,
+			phoneNumber2,
+			phoneNumber3,
 			preferredContactMethod,
 			preferredContactMethodComments,
 			preferredName,
