@@ -103,6 +103,11 @@ func randomContactMethod() string {
 
 func Generate(count uint) error {
 
+	var householdIds []string
+	for i := 0; i < int(count)/5; i++ {
+		householdIds = append(householdIds, uuid.New().String())
+	}
+
 	f, err := faker.New("en")
 	if err != nil {
 		return err
@@ -242,8 +247,8 @@ func Generate(count uint) error {
 		}
 
 		householdId := ""
-		if randBool(20) {
-			householdId = uuid.New().String()
+		if randBool(80) {
+			householdId = pick(householdIds...)
 		}
 		identificationType1 := randomIdentificationType()
 		identificationTypeExplanation1 := ""
@@ -280,7 +285,11 @@ func Generate(count uint) error {
 		identificationContext := randomIdentificationContext()
 		internalId := strconv.Itoa(rand.Intn(1000000000))
 		isHeadOfCommunity := randomBool()
-		isHeadOfHousehold := randomBool()
+		isHeadOfHousehold := "false"
+		if householdId != "" {
+			isHeadOfHousehold = randomBool()
+		}
+
 		isMinor := randomBool()
 
 		nationality1 := randomCountry()
