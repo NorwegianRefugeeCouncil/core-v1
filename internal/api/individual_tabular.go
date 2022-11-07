@@ -85,6 +85,16 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.ID = cols[idx]
 		case constants.FileColumnIndividualAddress:
 			i.Address = cols[idx]
+		case constants.FileColumnIndividualAge:
+			var ageStr = cols[idx]
+			if ageStr == "" {
+				continue
+			}
+			age, err := strconv.Atoi(ageStr)
+			if err != nil {
+				return err
+			}
+			i.Age = &age
 		case constants.FileColumnIndividualBirthDate:
 			i.BirthDate, err = ParseDate(cols[idx])
 		case constants.FileColumnIndividualCognitiveDisabilityLevel:
@@ -99,6 +109,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.CollectionAgentName = cols[idx]
 		case constants.FileColumnIndividualCollectionAgentTitle:
 			i.CollectionAgentTitle = cols[idx]
+		case constants.FileColumnIndividualComments:
+			i.Comments = cols[idx]
 		case constants.FileColumnIndividualCollectionTime:
 			var collectionTime *time.Time
 			collectionTime, err = ParseDate(cols[idx])
@@ -112,10 +124,24 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.CommunityID = cols[idx]
 		case constants.FileColumnIndividualDisplacementStatus:
 			i.DisplacementStatus = DisplacementStatus(cols[idx])
-		case constants.FileColumnIndividualEmail:
-			i.Email = cols[idx]
+		case constants.FileColumnIndividualEmail1:
+			i.Email1 = cols[idx]
+		case constants.FileColumnIndividualEmail2:
+			i.Email2 = cols[idx]
+		case constants.FileColumnIndividualEmail3:
+			i.Email3 = cols[idx]
 		case constants.FileColumnIndividualFullName:
 			i.FullName = cols[idx]
+		case constants.FileColumnIndividualFreeField1:
+			i.FreeField1 = cols[idx]
+		case constants.FileColumnIndividualFreeField2:
+			i.FreeField2 = cols[idx]
+		case constants.FileColumnIndividualFreeField3:
+			i.FreeField3 = cols[idx]
+		case constants.FileColumnIndividualFreeField4:
+			i.FreeField4 = cols[idx]
+		case constants.FileColumnIndividualFreeField5:
+			i.FreeField5 = cols[idx]
 		case constants.FileColumnIndividualGender:
 			i.Gender = Gender(cols[idx])
 		case constants.FileColumnIndividualHasCognitiveDisability:
@@ -172,8 +198,12 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.Nationality1 = cols[idx]
 		case constants.FileColumnIndividualNationality2:
 			i.Nationality2 = cols[idx]
-		case constants.FileColumnIndividualPhoneNumber:
-			i.PhoneNumber = cols[idx]
+		case constants.FileColumnIndividualPhoneNumber1:
+			i.PhoneNumber1 = cols[idx]
+		case constants.FileColumnIndividualPhoneNumber2:
+			i.PhoneNumber2 = cols[idx]
+		case constants.FileColumnIndividualPhoneNumber3:
+			i.PhoneNumber3 = cols[idx]
 		case constants.FileColumnIndividualPreferredContactMethod:
 			i.PreferredContactMethod = cols[idx]
 		case constants.FileColumnIndividualPreferredContactMethodComments:
