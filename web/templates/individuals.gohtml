@@ -28,7 +28,7 @@
          * Gets the number of selected individuals.
          * @returns {number}
          */
-        function getSelectedIndividualCount(){
+        function getSelectedIndividualCount() {
             return Array.from(document.getElementsByClassName(selectIndividualCheckboxClass))
                 .filter(checkbox => checkbox.checked)
                 .length
@@ -714,7 +714,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p id="deleteIndividualsConfirmationModalContent">Modal body text goes here.</p>
+                    <p id="deleteIndividualsConfirmationModalContent">
+                        <!-- Content is filled in by JavaScript -->
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
@@ -722,7 +724,7 @@
                             class="btn btn-danger"
                             id="deleteIndividualsConfirmationModalConfirmButton"
                             onclick="submitActionForm('delete')">
-                        Delete Individuals
+                        <!-- Content is filled in by JavaScript -->
                     </button>
                 </div>
             </div>
