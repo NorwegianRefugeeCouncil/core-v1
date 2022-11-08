@@ -25,26 +25,62 @@ type listIndividualsOptionsEncoder struct {
 func (p *listIndividualsOptionsEncoder) encode() url.Values {
 	p.out = url.Values{}
 	fns := []func(){
-		p.encodeFullName,
 		p.encodeAddress,
-		p.encodeIDs,
-		p.encodeEmail,
-		p.encodePhoneNumber,
-		p.encodeSkip,
-		p.encodeTake,
-		p.encodeGenders,
-		p.encodeBirthDateFrom,
-		p.encodeBirthDateTo,
 		p.encodeAgeFrom,
 		p.encodeAgeTo,
-		p.encodeIsMinor,
-		p.encodePresentsProtectionConcerns,
+		p.encodeBirthDateFrom,
+		p.encodeBirthDateTo,
+		p.encodeCognitiveDisabilityLevel,
+		p.encodeCollectionAdministrativeArea1,
+		p.encodeCollectionAdministrativeArea2,
+		p.encodeCollectionAdministrativeArea3,
+		p.encodeCollectionAgentName,
+		p.encodeCollectionAgentTitle,
+		p.encodeCollectionTimeFrom,
+		p.encodeCollectionTimeTo,
+		p.encodeCommunityID,
+		p.encodeCreatedAtFrom,
+		p.encodeCreatedAtTo,
 		p.encodeDisplacementStatuses,
+		p.encodeEmail,
 		p.encodeFreeField1,
 		p.encodeFreeField2,
 		p.encodeFreeField3,
 		p.encodeFreeField4,
 		p.encodeFreeField5,
+		p.encodeFullName,
+		p.encodeGenders,
+		p.encodeHasCognitiveDisability,
+		p.encodeHasCommunicationDisability,
+		p.encodeHasConsentedToRGPD,
+		p.encodeHasConsentedToReferral,
+		p.encodeHasHearingDisability,
+		p.encodeHasMobilityDisability,
+		p.encodeHasSelfCareDisability,
+		p.encodeHasVisionDisability,
+		p.encodeHearingDisabilityLevel,
+		p.encodeHouseholdID,
+		p.encodeID,
+		p.encodeIdentificationNumber,
+		p.encodeIdentificationContext,
+		p.encodeInternalID,
+		p.encodeIsHeadOfCommunity,
+		p.encodeIsHeadOfHousehold,
+		p.encodeIsMinor,
+		p.encodeMobilityDisabilityLevel,
+		p.encodeNationality,
+		p.encodePhoneNumber,
+		p.encodePreferredContactMethod,
+		p.encodePreferredCommunicationLanguage,
+		p.encodePrefersToRemainAnonymous,
+		p.encodePresentsProtectionConcerns,
+		p.encodeSelfCareDisabilityLevel,
+		p.encodeSpokenLanguage,
+		p.encodeUpdatedAtFrom,
+		p.encodeUpdatedAtTo,
+		p.encodeSkip,
+		p.encodeTake,
+		p.encodeVisionDisabilityLevel,
 	}
 	for _, fn := range fns {
 		fn()
@@ -52,67 +88,9 @@ func (p *listIndividualsOptionsEncoder) encode() url.Values {
 	return p.out
 }
 
-func (p *listIndividualsOptionsEncoder) encodeFullName() {
-	if len(p.values.FullName) != 0 {
-		p.out.Add(constants.FormParamsGetIndividualsFullName, p.values.FullName)
-	}
-}
-
-func (p *listIndividualsOptionsEncoder) encodeIDs() {
-	if len(p.values.IDs) != 0 {
-		for _, id := range p.values.IDs.Items() {
-			p.out.Add(constants.FormParamsGetIndividualsID, id)
-		}
-	}
-}
-
 func (p *listIndividualsOptionsEncoder) encodeAddress() {
 	if len(p.values.Address) != 0 {
 		p.out.Add(constants.FormParamsGetIndividualsAddress, p.values.Address)
-	}
-}
-
-func (p *listIndividualsOptionsEncoder) encodeEmail() {
-	if len(p.values.Email) != 0 {
-		p.out.Add(constants.FormParamsGetIndividualsEmail, p.values.Email)
-	}
-}
-
-func (p *listIndividualsOptionsEncoder) encodePhoneNumber() {
-	if len(p.values.PhoneNumber) != 0 {
-		p.out.Add(constants.FormParamsGetIndividualsPhoneNumber, p.values.PhoneNumber)
-	}
-}
-
-func (p *listIndividualsOptionsEncoder) encodeTake() {
-	if p.values.Take != 0 {
-		p.out.Add(constants.FormParamsGetIndividualsTake, fmt.Sprintf("%d", p.values.Take))
-	}
-}
-
-func (p *listIndividualsOptionsEncoder) encodeSkip() {
-	if p.values.Skip != 0 {
-		p.out.Add(constants.FormParamsGetIndividualsSkip, fmt.Sprintf("%d", p.values.Skip))
-	}
-}
-
-func (p *listIndividualsOptionsEncoder) encodeGenders() {
-	if len(p.values.Genders) > 0 {
-		for _, g := range p.values.Genders.Items() {
-			p.out.Add(constants.FormParamsGetIndividualsGender, string(g))
-		}
-	}
-}
-
-func (p *listIndividualsOptionsEncoder) encodeBirthDateFrom() {
-	if p.values.BirthDateFrom != nil {
-		p.out.Add(constants.FormParamsGetIndividualsBirthDateFrom, p.values.BirthDateFrom.Format("2006-01-02"))
-	}
-}
-
-func (p *listIndividualsOptionsEncoder) encodeBirthDateTo() {
-	if p.values.BirthDateTo != nil {
-		p.out.Add(constants.FormParamsGetIndividualsBirthDateTo, p.values.BirthDateTo.Format("2006-01-02"))
 	}
 }
 
@@ -128,15 +106,81 @@ func (p *listIndividualsOptionsEncoder) encodeAgeTo() {
 	}
 }
 
-func (p *listIndividualsOptionsEncoder) encodeIsMinor() {
-	if p.values.IsMinor != nil {
-		p.out.Add(constants.FormParamsGetIndividualsIsMinor, strconv.FormatBool(*p.values.IsMinor))
+func (p *listIndividualsOptionsEncoder) encodeBirthDateFrom() {
+	if p.values.BirthDateFrom != nil {
+		p.out.Add(constants.FormParamsGetIndividualsBirthDateFrom, p.values.BirthDateFrom.Format("2006-01-02"))
 	}
 }
 
-func (p *listIndividualsOptionsEncoder) encodePresentsProtectionConcerns() {
-	if p.values.PresentsProtectionConcerns != nil {
-		p.out.Add(constants.FormParamsGetIndividualsPresentsProtectionConcerns, strconv.FormatBool(*p.values.PresentsProtectionConcerns))
+func (p *listIndividualsOptionsEncoder) encodeBirthDateTo() {
+	if p.values.BirthDateTo != nil {
+		p.out.Add(constants.FormParamsGetIndividualsBirthDateTo, p.values.BirthDateTo.Format("2006-01-02"))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeCognitiveDisabilityLevel() {
+	if p.values.CognitiveDisabilityLevel != DisabilityLevelUnspecified {
+		p.out.Add(constants.FormParamsGetIndividualsCognitiveDisabilityLevel, string(p.values.CognitiveDisabilityLevel))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeCollectionAdministrativeArea1() {
+	if len(p.values.CollectionAdministrativeArea1) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsCollectionAdministrativeArea1, p.values.CollectionAdministrativeArea1)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeCollectionAdministrativeArea2() {
+	if len(p.values.CollectionAdministrativeArea2) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsCollectionAdministrativeArea2, p.values.CollectionAdministrativeArea2)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeCollectionAdministrativeArea3() {
+	if len(p.values.CollectionAdministrativeArea3) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsCollectionAdministrativeArea3, p.values.CollectionAdministrativeArea3)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeCollectionAgentName() {
+	if len(p.values.CollectionAgentName) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsCollectionAgentName, p.values.CollectionAgentName)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeCollectionAgentTitle() {
+	if len(p.values.CollectionAgentTitle) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsCollectionAgentTitle, p.values.CollectionAgentTitle)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeCollectionTimeFrom() {
+	if p.values.CollectionTimeFrom != nil {
+		p.out.Add(constants.FormParamsGetIndividualsCollectionTimeFrom, p.values.CollectionTimeFrom.Format(time.RFC3339))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeCollectionTimeTo() {
+	if p.values.CollectionTimeTo != nil {
+		p.out.Add(constants.FormParamsGetIndividualsCollectionTimeTo, p.values.CollectionTimeTo.Format(time.RFC3339))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeCommunityID() {
+	if len(p.values.CommunityID) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsCommunityID, p.values.CommunityID)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeCreatedAtFrom() {
+	if p.values.CreatedAtFrom != nil {
+		p.out.Add(constants.FormParamsGetIndividualsCreatedAtFrom, p.values.CreatedAtFrom.Format(time.RFC3339))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeCreatedAtTo() {
+	if p.values.CreatedAtTo != nil {
+		p.out.Add(constants.FormParamsGetIndividualsCreatedAtTo, p.values.CreatedAtTo.Format(time.RFC3339))
 	}
 }
 
@@ -145,6 +189,12 @@ func (p *listIndividualsOptionsEncoder) encodeDisplacementStatuses() {
 		for _, ds := range p.values.DisplacementStatuses.Items() {
 			p.out.Add(constants.FormParamsGetIndividualsDisplacementStatus, string(ds))
 		}
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeEmail() {
+	if len(p.values.Email) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsEmail, p.values.Email)
 	}
 }
 
@@ -175,5 +225,207 @@ func (p *listIndividualsOptionsEncoder) encodeFreeField4() {
 func (p *listIndividualsOptionsEncoder) encodeFreeField5() {
 	if len(p.values.FreeField5) != 0 {
 		p.out.Add(constants.FormParamsGetIndividualsFreeField5, p.values.FreeField5)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeFullName() {
+	if len(p.values.FullName) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsFullName, p.values.FullName)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeGenders() {
+	if len(p.values.Genders) > 0 {
+		for _, g := range p.values.Genders.Items() {
+			p.out.Add(constants.FormParamsGetIndividualsGender, string(g))
+		}
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeHasCognitiveDisability() {
+	if p.values.HasCognitiveDisability != nil {
+		p.out.Add(constants.FormParamsGetIndividualsHasCognitiveDisability, strconv.FormatBool(*p.values.HasCognitiveDisability))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeHasCommunicationDisability() {
+	if p.values.HasCommunicationDisability != nil {
+		p.out.Add(constants.FormParamsGetIndividualsHasCommunicationDisability, strconv.FormatBool(*p.values.HasCommunicationDisability))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeHasConsentedToRGPD() {
+	if p.values.HasConsentedToRGPD != nil {
+		p.out.Add(constants.FormParamsGetIndividualsHasConsentedToRgpd, strconv.FormatBool(*p.values.HasConsentedToRGPD))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeHasConsentedToReferral() {
+	if p.values.HasConsentedToReferral != nil {
+		p.out.Add(constants.FormParamsGetIndividualsHasConsentedToReferral, strconv.FormatBool(*p.values.HasConsentedToReferral))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeHasHearingDisability() {
+	if p.values.HasHearingDisability != nil {
+		p.out.Add(constants.FormParamsGetIndividualsHasHearingDisability, strconv.FormatBool(*p.values.HasHearingDisability))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeHasMobilityDisability() {
+	if p.values.HasMobilityDisability != nil {
+		p.out.Add(constants.FormParamsGetIndividualsHasMobilityDisability, strconv.FormatBool(*p.values.HasMobilityDisability))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeHasSelfCareDisability() {
+	if p.values.HasSelfCareDisability != nil {
+		p.out.Add(constants.FormParamsGetIndividualsHasSelfCareDisability, strconv.FormatBool(*p.values.HasSelfCareDisability))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeHasVisionDisability() {
+	if p.values.HasVisionDisability != nil {
+		p.out.Add(constants.FormParamsGetIndividualsHasVisionDisability, strconv.FormatBool(*p.values.HasVisionDisability))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeHearingDisabilityLevel() {
+	if p.values.HearingDisabilityLevel != DisabilityLevelUnspecified {
+		p.out.Add(constants.FormParamsGetIndividualsHearingDisabilityLevel, string(p.values.HearingDisabilityLevel))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeHouseholdID() {
+	if len(p.values.HouseholdID) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsHouseholdID, p.values.HouseholdID)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeID() {
+	if len(p.values.IDs) != 0 {
+		for _, id := range p.values.IDs.Items() {
+			p.out.Add(constants.FormParamsGetIndividualsID, id)
+		}
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeIdentificationNumber() {
+	if len(p.values.IdentificationNumber) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsIdentificationNumber, p.values.IdentificationNumber)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeIdentificationContext() {
+	if len(p.values.IdentificationContext) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsIdentificationContext, p.values.IdentificationContext)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeInternalID() {
+	if len(p.values.InternalID) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsInternalID, p.values.InternalID)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeIsHeadOfCommunity() {
+	if p.values.IsHeadOfCommunity != nil {
+		p.out.Add(constants.FormParamsGetIndividualsIsHeadOfCommunity, strconv.FormatBool(*p.values.IsHeadOfCommunity))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeIsHeadOfHousehold() {
+	if p.values.IsHeadOfHousehold != nil {
+		p.out.Add(constants.FormParamsGetIndividualsIsHeadOfHousehold, strconv.FormatBool(*p.values.IsHeadOfHousehold))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeIsMinor() {
+	if p.values.IsMinor != nil {
+		p.out.Add(constants.FormParamsGetIndividualsIsMinor, strconv.FormatBool(*p.values.IsMinor))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeMobilityDisabilityLevel() {
+	if p.values.MobilityDisabilityLevel != DisabilityLevelUnspecified {
+		p.out.Add(constants.FormParamsGetIndividualsMobilityDisabilityLevel, string(p.values.MobilityDisabilityLevel))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeNationality() {
+	if len(p.values.Nationality) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsNationality, p.values.Nationality)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodePhoneNumber() {
+	if len(p.values.PhoneNumber) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsPhoneNumber, p.values.PhoneNumber)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodePreferredContactMethod() {
+	if len(p.values.PreferredContactMethod) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsPreferredContactMethod, p.values.PreferredContactMethod)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodePreferredCommunicationLanguage() {
+	if len(p.values.PreferredCommunicationLanguage) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsPreferredCommunicationLanguage, p.values.PreferredCommunicationLanguage)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodePrefersToRemainAnonymous() {
+	if p.values.PrefersToRemainAnonymous != nil {
+		p.out.Add(constants.FormParamsGetIndividualsPrefersToRemainAnonymous, strconv.FormatBool(*p.values.PrefersToRemainAnonymous))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodePresentsProtectionConcerns() {
+	if p.values.PresentsProtectionConcerns != nil {
+		p.out.Add(constants.FormParamsGetIndividualsPresentsProtectionConcerns, strconv.FormatBool(*p.values.PresentsProtectionConcerns))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeSelfCareDisabilityLevel() {
+	if p.values.SelfCareDisabilityLevel != DisabilityLevelUnspecified {
+		p.out.Add(constants.FormParamsGetIndividualsSelfCareDisabilityLevel, string(p.values.SelfCareDisabilityLevel))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeSpokenLanguage() {
+	if len(p.values.SpokenLanguage) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsSpokenLanguage, p.values.SpokenLanguage)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeUpdatedAtFrom() {
+	if p.values.UpdatedAtFrom != nil {
+		p.out.Add(constants.FormParamsGetIndividualsUpdatedAtFrom, p.values.UpdatedAtFrom.Format(time.RFC3339))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeUpdatedAtTo() {
+	if p.values.UpdatedAtTo != nil {
+		p.out.Add(constants.FormParamsGetIndividualsUpdatedAtTo, p.values.UpdatedAtTo.Format(time.RFC3339))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeSkip() {
+	if p.values.Skip != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsSkip, fmt.Sprintf("%d", p.values.Skip))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeTake() {
+	if p.values.Take != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsTake, fmt.Sprintf("%d", p.values.Take))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeVisionDisabilityLevel() {
+	if p.values.VisionDisabilityLevel != DisabilityLevelUnspecified {
+		p.out.Add(constants.FormParamsGetIndividualsVisionDisabilityLevel, string(p.values.VisionDisabilityLevel))
 	}
 }
