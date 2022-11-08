@@ -28,6 +28,8 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withGenders(options.Genders).
 		withBirthDateFrom(options.BirthDateFrom).
 		withBirthDateTo(options.BirthDateTo).
+		withAgeFrom(options.AgeFrom).
+		withAgeTo(options.AgeTo).
 		withPhoneNumber(options.PhoneNumber).
 		withEmail(options.Email).
 		withIsMinor(options.IsMinor).
@@ -132,6 +134,22 @@ func (g *getAllIndividualsSQLQuery) withBirthDateFrom(from *time.Time) *getAllIn
 	return g
 }
 
+func (g *getAllIndividualsSQLQuery) withAgeFrom(from *int) *getAllIndividualsSQLQuery {
+	if from == nil {
+		return g
+	}
+	g.writeString(" AND age >= ").writeArg(from)
+	return g
+}
+
+func (g *getAllIndividualsSQLQuery) withAgeTo(to *int) *getAllIndividualsSQLQuery {
+	if to == nil {
+		return g
+	}
+	g.writeString(" AND age <= ").writeArg(to)
+	return g
+}
+
 func (g *getAllIndividualsSQLQuery) withBirthDateTo(to *time.Time) *getAllIndividualsSQLQuery {
 	zero := &time.Time{}
 	if to == nil || to.IsZero() || to == zero {
@@ -147,9 +165,17 @@ func (g *getAllIndividualsSQLQuery) withPhoneNumber(phoneNumber string) *getAllI
 	}
 	normalizedPhoneNumber := api.NormalizePhoneNumber(phoneNumber)
 	if g.driverName == "sqlite" {
-		g.writeString(" AND normalized_phone_number LIKE ").writeArg("%" + normalizedPhoneNumber + "%")
+		g.writeString(" AND (")
+		g.writeString(" normalized_phone_number_1 LIKE ").writeArg("%" + normalizedPhoneNumber + "%").writeString(" OR ")
+		g.writeString(" normalized_phone_number_2 LIKE ").writeArg("%" + normalizedPhoneNumber + "%").writeString(" OR ")
+		g.writeString(" normalized_phone_number_3 LIKE ").writeArg("%" + normalizedPhoneNumber + "%")
+		g.writeString(")")
 	} else if g.driverName == "postgres" {
-		g.writeString(" AND normalized_phone_number ILIKE ").writeArg("%" + normalizedPhoneNumber + "%")
+		g.writeString(" AND (")
+		g.writeString("normalized_phone_number_1 ILIKE ").writeArg("%" + normalizedPhoneNumber + "%").writeString(" OR ")
+		g.writeString("normalized_phone_number_2 ILIKE ").writeArg("%" + normalizedPhoneNumber + "%").writeString(" OR ")
+		g.writeString("normalized_phone_number_3 ILIKE ").writeArg("%" + normalizedPhoneNumber + "%")
+		g.writeString(")")
 	}
 	return g
 }
@@ -159,7 +185,11 @@ func (g *getAllIndividualsSQLQuery) withEmail(email string) *getAllIndividualsSQ
 		return g
 	}
 	normalizedEmail := strings.ToLower(email)
-	g.writeString(" AND email = ").writeArg(normalizedEmail)
+	g.writeString(" AND (")
+	g.writeString("email_1 = ").writeArg(normalizedEmail).writeString(" OR ")
+	g.writeString("email_2 = ").writeArg(normalizedEmail).writeString(" OR ")
+	g.writeString("email_3 = ").writeArg(normalizedEmail)
+	g.writeString(")")
 	return g
 }
 

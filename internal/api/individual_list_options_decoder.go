@@ -30,6 +30,8 @@ func (p *listIndividualsOptionsDecoder) parse() error {
 		p.parseDisplacementStatuses,
 		p.parseBirthDateFrom,
 		p.parseBirthDateTo,
+		p.parseAgeFrom,
+		p.parseAgeTo,
 		p.parseIsMinor,
 		p.parsePresentsProtectionConcerns,
 	}
@@ -138,22 +140,38 @@ func (p *listIndividualsOptionsDecoder) parseDisplacementStatuses() error {
 }
 
 func (p *listIndividualsOptionsDecoder) parseBirthDateFrom() error {
-	ageFrom, err := parseOptionalInt(p.values.Get(constants.FormParamsGetIndividualsAgeTo))
-	if err != nil || ageFrom == nil {
+	birthDateFrom, err := parseOptionalDate(p.values.Get(constants.FormParamsGetIndividualsBirthDateFrom))
+	if err != nil || birthDateFrom == nil {
 		return err
 	}
-	yearsAgo := calculateBirthDateFromAge(*ageFrom, p.now)
-	p.out.BirthDateFrom = &yearsAgo
+	p.out.BirthDateFrom = birthDateFrom
 	return nil
 }
 
 func (p *listIndividualsOptionsDecoder) parseBirthDateTo() error {
-	ageTo, err := parseOptionalInt(p.values.Get(constants.FormParamsGetIndividualsAgeFrom))
+	birthDateTo, err := parseOptionalDate(p.values.Get(constants.FormParamsGetIndividualsBirthDateTo))
+	if err != nil || birthDateTo == nil {
+		return err
+	}
+	p.out.BirthDateTo = birthDateTo
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseAgeFrom() error {
+	ageFrom, err := parseOptionalInt(p.values.Get(constants.FormParamsGetIndividualsAgeFrom))
+	if err != nil || ageFrom == nil {
+		return err
+	}
+	p.out.AgeFrom = ageFrom
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseAgeTo() error {
+	ageTo, err := parseOptionalInt(p.values.Get(constants.FormParamsGetIndividualsAgeTo))
 	if err != nil || ageTo == nil {
 		return err
 	}
-	yearsAgo := calculateBirthDateFromAge(*ageTo, p.now)
-	p.out.BirthDateTo = &yearsAgo
+	p.out.AgeTo = ageTo
 	return nil
 }
 
@@ -167,14 +185,6 @@ func (p *listIndividualsOptionsDecoder) parsePresentsProtectionConcerns() (err e
 	return err
 }
 
-func calculateBirthDateFromAge(age int, now time.Time) time.Time {
-	return now.AddDate(0, 0, -(age+1)*365).Truncate(24 * time.Hour)
-}
-
-func calculateAgeFromBirthDate(birthDate time.Time, now time.Time) int {
-	return now.Year() - birthDate.Year() - 1 // -1 because we want to round down
-}
-
 func parseOptionalInt(strValue string) (*int, error) {
 	if len(strValue) == 0 {
 		return nil, nil
@@ -184,6 +194,17 @@ func parseOptionalInt(strValue string) (*int, error) {
 		return nil, err
 	}
 	return &intValue, nil
+}
+
+func parseOptionalDate(strValue string) (*time.Time, error) {
+	if len(strValue) == 0 {
+		return nil, nil
+	}
+	dateValue, err := time.Parse("2006-01-02", strValue)
+	if err != nil {
+		return nil, err
+	}
+	return &dateValue, nil
 }
 
 func parseOptionalBool(val string) (*bool, error) {
