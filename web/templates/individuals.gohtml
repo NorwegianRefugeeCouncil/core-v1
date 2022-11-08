@@ -507,51 +507,124 @@
                                 <!-- End Phone -->
                             </div>
 
-                            <!-- Age -->
-                            <div class="col-6">
-                                <label class="form-label">Age</label>
-                                <div class="row">
-                                    <div class="col-3 input-group mb-2 w-50">
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">From</div>
+                            <div class="row">
+                                <!-- Age -->
+                                <div class="col-6">
+                                    <label class="form-label">Age</label>
+                                    <div class="row">
+                                        <div class="col-3 input-group mb-2 w-50">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">From</div>
+                                            </div>
+                                            <input type="number" name="age_from" class="form-control" id="AgeFrom"
+                                                   value="{{if .Options.AgeFrom}}{{.Options.AgeFrom}}{{end}}">
                                         </div>
-                                        <input type="number" name="age_from" class="form-control" id="AgeFrom"
-                                               value="{{if .Options.AgeFrom}}{{.Options.AgeFrom}}{{end}}">
-                                    </div>
 
-                                    <div class="col-3 input-group mb-2 w-50">
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">To</div>
+                                        <div class="col-3 input-group mb-2 w-50">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">To</div>
+                                            </div>
+                                            <input type="number" name="age_to" class="form-control" id="AgeTo"
+                                                   value="{{if .Options.AgeTo}}{{.Options.AgeTo}}{{end}}">
                                         </div>
-                                        <input type="number" name="age_to" class="form-control" id="AgeTo"
-                                               value="{{if .Options.AgeTo}}{{.Options.AgeTo}}{{end}}">
                                     </div>
                                 </div>
-                            </div>
-                            <!-- End Age -->
+                                <!-- End Age -->
 
-                            <!-- Birth Date -->
-                            <div class="col-6">
-                                <label class="form-label">Birth Date</label>
-                                <div class="row">
-                                    <div class="col-3 input-group mb-2 w-50">
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">From</div>
+                                <!-- Birth Date -->
+                                <div class="col-6">
+                                    <label class="form-label">Birth Date</label>
+                                    <div class="row">
+                                        <div class="col-3 input-group mb-2 w-50">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">From</div>
+                                            </div>
+                                            <input type="date" name="birth_date_from" class="form-control"
+                                                   id="BirthDateFrom"
+                                                   value="{{if .Options.BirthDateFrom}}{{.Options.BirthDateFrom.Format "2006-01-02"}}{{end}}">
                                         </div>
-                                        <input type="date" name="birth_date_from" class="form-control" id="BirthDateFrom"
-                                               value="{{if .Options.BirthDateFrom}}{{.Options.BirthDateFrom.Format "2006-01-02"}}{{end}}">
-                                    </div>
 
-                                    <div class="col-3 input-group mb-2 w-50">
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">To</div>
+                                        <div class="col-3 input-group mb-2 w-50">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">To</div>
+                                            </div>
+                                            <input type="date" name="birth_date_to" class="form-control"
+                                                   id="BirthDateTo"
+                                                   value="{{if .Options.BirthDateTo}}{{.Options.BirthDateTo}}{{end}}">
                                         </div>
-                                        <input type="date" name="birth_date_to" class="form-control" id="BirthDateTo"
-                                               value="{{if .Options.BirthDateTo}}{{.Options.BirthDateTo}}{{end}}">
                                     </div>
                                 </div>
+                                <!-- End Birth Date -->
                             </div>
-                            <!-- End Birth Date -->
+
+                            <div class="row">
+                                <!-- Free Field 1-->
+                                <div class="col">
+                                    <div class="form-group mb-3">
+                                        <label class="form-label" for="FreeField1">Free Field 1</label>
+                                        <input id="FreeField1"
+                                               name="free_field_1"
+                                               type="text"
+                                               placeholder="Free Field 1"
+                                               class="form-control"
+                                               value="{{.Options.FreeField1}}">
+                                    </div>
+                                </div>
+                                <!-- End Free Field 1-->
+                                <!-- Free Field 2-->
+                                <div class="col">
+                                    <div class="form-group mb-3">
+                                        <label class="form-label" for="FreeField2">Free Field 2</label>
+                                        <input id="FreeField2"
+                                               name="free_field_2"
+                                               type="text"
+                                               placeholder="Free Field 2"
+                                               class="form-control"
+                                               value="{{.Options.FreeField2}}">
+                                    </div>
+                                </div>
+                                <!-- End Free Field 1-->
+                                <!-- Free Field 3-->
+                                <div class="col">
+                                    <div class="form-group mb-3">
+                                        <label class="form-label" for="FreeField3">Free Field 3</label>
+                                        <input id="FreeField3"
+                                               name="free_field_3"
+                                               type="text"
+                                               placeholder="Free Field 3"
+                                               class="form-control"
+                                               value="{{.Options.FreeField3}}">
+                                    </div>
+                                </div>
+                                <!-- End Free Field 3-->
+                                <!-- Free Field 4-->
+                                <div class="col">
+                                    <div class="form-group mb-3">
+                                        <label class="form-label" for="FreeField4">Free Field 4</label>
+                                        <input id="FreeField4"
+                                               name="free_field_4"
+                                               type="text"
+                                               placeholder="Free Field 4"
+                                               class="form-control"
+                                               value="{{.Options.FreeField4}}">
+                                    </div>
+                                </div>
+                                <!-- End Free Field 4-->
+                                <!-- Free Field 5-->
+                                <div class="col">
+                                    <div class="form-group mb-3">
+                                        <label class="form-label" for="FreeField5">Free Field 5</label>
+                                        <input id="FreeField5"
+                                               name="free_field_5"
+                                               type="text"
+                                               placeholder="Free Field 5"
+                                               class="form-control"
+                                               value="{{.Options.FreeField5}}">
+                                    </div>
+                                </div>
+                                <!-- End Free Field 5-->
+
+                            </div>
 
                         </div>
                     </form>

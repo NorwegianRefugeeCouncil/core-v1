@@ -40,6 +40,11 @@ func (p *listIndividualsOptionsEncoder) encode() url.Values {
 		p.encodeIsMinor,
 		p.encodePresentsProtectionConcerns,
 		p.encodeDisplacementStatuses,
+		p.encodeFreeField1,
+		p.encodeFreeField2,
+		p.encodeFreeField3,
+		p.encodeFreeField4,
+		p.encodeFreeField5,
 	}
 	for _, fn := range fns {
 		fn()
@@ -140,5 +145,35 @@ func (p *listIndividualsOptionsEncoder) encodeDisplacementStatuses() {
 		for _, ds := range p.values.DisplacementStatuses.Items() {
 			p.out.Add(constants.FormParamsGetIndividualsDisplacementStatus, string(ds))
 		}
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeFreeField1() {
+	if len(p.values.FreeField1) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsFreeField1, p.values.FreeField1)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeFreeField2() {
+	if len(p.values.FreeField2) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsFreeField2, p.values.FreeField2)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeFreeField3() {
+	if len(p.values.FreeField3) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsFreeField3, p.values.FreeField3)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeFreeField4() {
+	if len(p.values.FreeField4) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsFreeField4, p.values.FreeField4)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeFreeField5() {
+	if len(p.values.FreeField5) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsFreeField5, p.values.FreeField5)
 	}
 }

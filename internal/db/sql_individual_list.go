@@ -36,6 +36,11 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withPresentsProtectionConcerns(options.PresentsProtectionConcerns).
 		withCountryID(options.CountryID).
 		withDisplacementStatuses(options.DisplacementStatuses).
+		withFreeField1(options.FreeField1).
+		withFreeField2(options.FreeField2).
+		withFreeField3(options.FreeField3).
+		withFreeField4(options.FreeField4).
+		withFreeField5(options.FreeField5).
 		withOrderBy("created_at").
 		withLimit(options.Take).
 		withOffset(options.Skip)
@@ -237,6 +242,46 @@ func (g *getAllIndividualsSQLQuery) withDisplacementStatuses(displacementStatuse
 		g.writeArg(string(ds))
 	}
 	g.writeString(")")
+	return g
+}
+
+func (g *getAllIndividualsSQLQuery) withFreeField1(freeField1 string) *getAllIndividualsSQLQuery {
+	if len(freeField1) == 0 {
+		return g
+	}
+	g.writeString(" AND free_field_1 = ").writeArg(freeField1)
+	return g
+}
+
+func (g *getAllIndividualsSQLQuery) withFreeField2(freeField2 string) *getAllIndividualsSQLQuery {
+	if len(freeField2) == 0 {
+		return g
+	}
+	g.writeString(" AND free_field_2 = ").writeArg(freeField2)
+	return g
+}
+
+func (g *getAllIndividualsSQLQuery) withFreeField3(freeField3 string) *getAllIndividualsSQLQuery {
+	if len(freeField3) == 0 {
+		return g
+	}
+	g.writeString(" AND free_field_3 = ").writeArg(freeField3)
+	return g
+}
+
+func (g *getAllIndividualsSQLQuery) withFreeField4(freeField4 string) *getAllIndividualsSQLQuery {
+	if len(freeField4) == 0 {
+		return g
+	}
+	g.writeString(" AND free_field_4 = ").writeArg(freeField4)
+	return g
+}
+
+func (g *getAllIndividualsSQLQuery) withFreeField5(freeField5 string) *getAllIndividualsSQLQuery {
+	if len(freeField5) == 0 {
+		return g
+	}
+	g.writeString(" AND free_field_5 = ").writeArg(freeField5)
 	return g
 }
 
