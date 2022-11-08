@@ -65,6 +65,7 @@ type ListIndividualsOptions struct {
 	UpdatedAtTo                    *time.Time
 	Skip                           int
 	Take                           int
+	VisionDisabilityLevel          DisabilityLevel
 }
 
 func (o ListIndividualsOptions) IsMinorSelected() bool {
