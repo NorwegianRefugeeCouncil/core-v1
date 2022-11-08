@@ -13,6 +13,8 @@ type ListIndividualsOptions struct {
 	IDs                        containers.StringSet
 	BirthDateFrom              *time.Time
 	BirthDateTo                *time.Time
+	AgeFrom                    *int
+	AgeTo                      *int
 	CountryID                  string
 	DisplacementStatuses       containers.Set[DisplacementStatus]
 	Email                      string
@@ -39,22 +41,6 @@ func (o ListIndividualsOptions) IsPresentsProtectionConcernsSelected() bool {
 
 func (o ListIndividualsOptions) IsNotPresentsProtectionConcernsSelected() bool {
 	return o.PresentsProtectionConcerns != nil && !*o.PresentsProtectionConcerns
-}
-
-func (o ListIndividualsOptions) AgeFrom() int {
-	if o.BirthDateTo == nil {
-		return 0
-	}
-	now := time.Now()
-	return now.Year() - o.BirthDateTo.Year() - 1
-}
-
-func (o ListIndividualsOptions) AgeTo() int {
-	if o.BirthDateFrom == nil {
-		return 0
-	}
-	now := time.Now()
-	return now.Year() - o.BirthDateFrom.Year() - 1
 }
 
 func (o ListIndividualsOptions) NextPage() ListIndividualsOptions {

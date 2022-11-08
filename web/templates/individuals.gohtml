@@ -323,7 +323,7 @@
                                             <div class="input-group-text">From</div>
                                         </div>
                                         <input type="number" name="age_from" class="form-control" id="AgeFrom"
-                                               value="{{if not (eq .Options.AgeFrom 0)}}{{.Options.AgeFrom}}{{end}}">
+                                               value="{{if .Options.AgeFrom}}{{.Options.AgeFrom}}{{end}}">
                                     </div>
 
                                     <div class="col-3 input-group mb-2 w-50">
@@ -331,11 +331,35 @@
                                             <div class="input-group-text">To</div>
                                         </div>
                                         <input type="number" name="age_to" class="form-control" id="AgeTo"
-                                               value="{{if not (eq .Options.AgeTo 0)}}{{.Options.AgeTo}}{{end}}">
+                                               value="{{if .Options.AgeTo}}{{.Options.AgeTo}}{{end}}">
                                     </div>
                                 </div>
-                                <!-- End Age -->
                             </div>
+                            <!-- End Age -->
+
+                            <!-- Birth Date -->
+                            <div class="col-6">
+                                <label class="form-label">Birth Date</label>
+                                <div class="row">
+                                    <div class="col-3 input-group mb-2 w-50">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">From</div>
+                                        </div>
+                                        <input type="date" name="birth_date_from" class="form-control" id="BirthDateFrom"
+                                               value="{{if .Options.BirthDateFrom}}{{.Options.BirthDateFrom.Format "2006-01-02"}}{{end}}">
+                                    </div>
+
+                                    <div class="col-3 input-group mb-2 w-50">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">To</div>
+                                        </div>
+                                        <input type="date" name="birth_date_to" class="form-control" id="BirthDateTo"
+                                               value="{{if .Options.BirthDateTo}}{{.Options.BirthDateTo}}{{end}}">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Birth Date -->
+
                         </div>
                     </form>
                     <div class="card-footer">
@@ -356,7 +380,8 @@
                         {{template "columnHeader" (dict "Width" "18rem" "Label" "ID" "Scope" "col" "Class" "sticky-column" "Title" "ID" "Style" "left: 3.85rem")}}
                         {{template "columnHeader" (dict "Width" "10rem" "Label" "Name" "Scope" "col" "Class" "sticky-column border-end"  "Style" "left: 23.62rem" "Title" "Full Name")}}
                         {{template "columnHeader" (dict "Width" "6rem" "Label" "Gender" "Title" "Gender" )}}
-                        {{template "columnHeader" (dict "Width" "4rem" "Label" "Age" "Scope" "col" "Title" "Age")}}
+                        {{template "columnHeader" (dict "Width" "4rem" "Label" "Age" "Title" "Age")}}
+                        {{template "columnHeader" (dict "Width" "8rem" "Label" "Birth Date" "Title" "Birth Date")}}
                         {{template "columnHeader" (dict "Width" "12rem" "Label" "Household ID" "Title" "Household ID")}}
                         {{template "columnHeader" (dict "Width" "4rem" "Label" "HoH" "Title" "Head of Household" "Class" "text-center")}}
                         {{template "columnHeader" (dict "Width" "12rem" "Label" "Community ID" "Title" "Community ID" )}}
@@ -404,8 +429,13 @@
                                     {{.Gender}}
                                 </td>
                                 <td>
+                                    {{if .Age}}
+                                        {{.Age}}
+                                    {{end}}
+                                </td>
+                                <td>
                                     {{if .BirthDate}}
-                                        <span title="{{.BirthDate.Format "2006-01-02"}}">{{age .BirthDate}}</span>
+                                        <span title="{{.BirthDate.Format "2006-01-02"}}">{{.BirthDate.Format "2006-01-02"}}</span>
                                     {{end}}
                                 </td>
                                 <td>

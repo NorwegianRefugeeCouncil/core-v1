@@ -72,6 +72,8 @@ const (
 	FormParamsGetIndividualsAddress                        = "address"
 	FormParamsGetIndividualsAgeFrom                        = "age_from"
 	FormParamsGetIndividualsAgeTo                          = "age_to"
+	FormParamsGetIndividualsBirthDateFrom                  = "birth_date_from"
+	FormParamsGetIndividualsBirthDateTo                    = "birth_date_to"
 	FormParamsGetIndividualsCollectionTimeFrom             = "collection_time_from"
 	FormParamsGetIndividualsCollectionTimeTo               = "collection_time_to"
 	FormParamsGetIndividualsCommunicationDisabilityLevel   = "communication_disability_level "

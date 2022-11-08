@@ -35,6 +35,8 @@ func (p *listIndividualsOptionsEncoder) encode() url.Values {
 		p.encodeGenders,
 		p.encodeBirthDateFrom,
 		p.encodeBirthDateTo,
+		p.encodeAgeFrom,
+		p.encodeAgeTo,
 		p.encodeIsMinor,
 		p.encodePresentsProtectionConcerns,
 		p.encodeDisplacementStatuses,
@@ -99,13 +101,25 @@ func (p *listIndividualsOptionsEncoder) encodeGenders() {
 
 func (p *listIndividualsOptionsEncoder) encodeBirthDateFrom() {
 	if p.values.BirthDateFrom != nil {
-		p.out.Add(constants.FormParamsGetIndividualsAgeTo, strconv.Itoa(calculateAgeFromBirthDate(*p.values.BirthDateFrom, p.now)))
+		p.out.Add(constants.FormParamsGetIndividualsBirthDateFrom, p.values.BirthDateFrom.Format("2006-01-02"))
 	}
 }
 
 func (p *listIndividualsOptionsEncoder) encodeBirthDateTo() {
 	if p.values.BirthDateTo != nil {
-		p.out.Add(constants.FormParamsGetIndividualsAgeFrom, strconv.Itoa(calculateAgeFromBirthDate(*p.values.BirthDateTo, p.now)))
+		p.out.Add(constants.FormParamsGetIndividualsBirthDateTo, p.values.BirthDateTo.Format("2006-01-02"))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeAgeFrom() {
+	if p.values.AgeFrom != nil {
+		p.out.Add(constants.FormParamsGetIndividualsAgeFrom, strconv.Itoa(*p.values.AgeFrom))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeAgeTo() {
+	if p.values.AgeTo != nil {
+		p.out.Add(constants.FormParamsGetIndividualsAgeTo, strconv.Itoa(*p.values.AgeTo))
 	}
 }
 
