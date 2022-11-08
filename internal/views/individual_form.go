@@ -246,7 +246,6 @@ func (f *IndividualForm) buildGender() error {
 	return buildField(&forms.SelectInputField{
 		Name:        "gender",
 		DisplayName: "Sex",
-		Required:    true,
 		Options:     genderOptions,
 		Codec:       &genderCodec{},
 	}, f.personalInfoSection, f.individual.Gender)
@@ -485,7 +484,6 @@ func (f *IndividualForm) buildPreferredMeansOfContact() error {
 	return buildField(&forms.SelectInputField{
 		Name:        "preferredContactMethod",
 		DisplayName: "Preferred contact method",
-		Required:    true,
 		Options:     options,
 	}, f.contactInfoSection, f.individual.PreferredContactMethod)
 }
@@ -494,7 +492,6 @@ func (f *IndividualForm) buildContactInstructions() error {
 	return buildField(&forms.TextAreaInputField{
 		Name:        "preferredContactMethodComments",
 		DisplayName: "Instructions for contact or other comments",
-		Required:    true,
 	}, f.contactInfoSection, f.individual.PreferredContactMethodComments)
 }
 
@@ -502,7 +499,6 @@ func (f *IndividualForm) buildHasConsentedToRgpd() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "hasConsentedToRgpd",
 		DisplayName: "Has the person consented to NRC using their data?",
-		Required:    true,
 	}, f.protectionSection, f.individual.HasConsentedToRGPD)
 }
 
@@ -510,7 +506,6 @@ func (f *IndividualForm) buildHasConsentedToReferral() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "hasConsentedToReferral",
 		DisplayName: "Has the person consented to NRC referring them to other service providers within or outside of NRC",
-		Required:    true,
 	}, f.protectionSection, f.individual.HasConsentedToRGPD)
 }
 
@@ -518,7 +513,6 @@ func (f *IndividualForm) buildPresentsProtectionConcerns() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "presentsProtectionConcerns",
 		DisplayName: "Presents protection concerns",
-		Required:    true,
 	}, f.protectionSection, f.individual.PresentsProtectionConcerns)
 }
 
@@ -531,7 +525,6 @@ func (f *IndividualForm) buildDisplacementStatus() error {
 		Name:        "displacementStatus",
 		DisplayName: "Displacement Status",
 		Options:     options,
-		Required:    true,
 		Codec:       &displacementStatusCodec{},
 	}, f.protectionSection, f.individual.DisplacementStatus)
 }
@@ -652,7 +645,6 @@ func (f *IndividualForm) buildCollectionAgent() error {
 	return buildField(&forms.TextInputField{
 		Name:        "collectionAgentName",
 		DisplayName: "Collection Agent Name",
-		Required:    true,
 	}, f.dataCollectionSection, f.individual.CollectionAgentName)
 }
 
@@ -660,7 +652,6 @@ func (f *IndividualForm) buildCollectionAgentTitle() error {
 	return buildField(&forms.TextInputField{
 		Name:        "collectionAgentTitle",
 		DisplayName: "Collection Agent Title",
-		Required:    true,
 	}, f.dataCollectionSection, f.individual.CollectionAgentTitle)
 }
 
@@ -668,7 +659,6 @@ func (f *IndividualForm) buildCollectionDate() error {
 	return buildField(&forms.DateInputField{
 		Name:        "collectionTime",
 		DisplayName: "Collection Date",
-		Required:    true,
 	}, f.dataCollectionSection, f.individual.CollectionTime)
 }
 
