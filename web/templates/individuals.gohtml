@@ -271,6 +271,18 @@
                                                 {{if .Options.DisplacementStatuses.Contains "host_community" }}selected{{end}}>
                                             Host Community
                                         </option>
+                                        <option value="returnee"
+                                                {{if .Options.DisplacementStatuses.Contains "returnee" }}selected{{end}}>
+                                            Returnee
+                                        </option>
+                                        <option value="non_displaced"
+                                                {{if .Options.DisplacementStatuses.Contains "non_displaced" }}selected{{end}}>
+                                            Non Displaced
+                                        </option>
+                                        <option value="other"
+                                                {{if .Options.DisplacementStatuses.Contains "other" }}selected{{end}}>
+                                            Other
+                                        </option>
                                     </select>
                                 </div>
                                 <!-- End Displacement Status -->
