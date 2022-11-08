@@ -142,8 +142,14 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 	nowStr := now.Format(time.RFC3339)
 
 	fieldsSet := fields.Clone()
-	if fieldsSet.Contains("phone_number") {
-		fieldsSet.Add("normalized_phone_number")
+	if fieldsSet.Contains("phone_number_1") {
+		fieldsSet.Add("normalized_phone_number_1")
+	}
+	if fieldsSet.Contains("phone_number_2") {
+		fieldsSet.Add("normalized_phone_number_2")
+	}
+	if fieldsSet.Contains("phone_number_3") {
+		fieldsSet.Add("normalized_phone_number_3")
 	}
 	fieldsSet.Remove("deleted_at")
 	fieldsSet.Remove("created_at")
