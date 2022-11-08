@@ -53,9 +53,17 @@ func (g *getAllIndividualsSQLQuery) writeString(str string) *getAllIndividualsSQ
 }
 
 func (g *getAllIndividualsSQLQuery) writeArg(arg interface{}) *getAllIndividualsSQLQuery {
-	g.writeString(fmt.Sprintf("$%d", len(g.a)+1))
 	g.a = append(g.a, arg)
+	return g.writeLastArg()
+}
+
+func (g *getAllIndividualsSQLQuery) writeArgNum(i int) *getAllIndividualsSQLQuery {
+	g.writeString(fmt.Sprintf("$%d", i))
 	return g
+}
+
+func (g *getAllIndividualsSQLQuery) writeLastArg() *getAllIndividualsSQLQuery {
+	return g.writeArgNum(len(g.a))
 }
 
 func (g *getAllIndividualsSQLQuery) writeStringArgs(sep string, args ...string) *getAllIndividualsSQLQuery {
@@ -172,14 +180,14 @@ func (g *getAllIndividualsSQLQuery) withPhoneNumber(phoneNumber string) *getAllI
 	if g.driverName == "sqlite" {
 		g.writeString(" AND (")
 		g.writeString(" normalized_phone_number_1 LIKE ").writeArg("%" + normalizedPhoneNumber + "%").writeString(" OR ")
-		g.writeString(" normalized_phone_number_2 LIKE ").writeArg("%" + normalizedPhoneNumber + "%").writeString(" OR ")
-		g.writeString(" normalized_phone_number_3 LIKE ").writeArg("%" + normalizedPhoneNumber + "%")
+		g.writeString(" normalized_phone_number_2 LIKE ").writeLastArg().writeString(" OR ")
+		g.writeString(" normalized_phone_number_3 LIKE ").writeLastArg()
 		g.writeString(")")
 	} else if g.driverName == "postgres" {
 		g.writeString(" AND (")
 		g.writeString("normalized_phone_number_1 ILIKE ").writeArg("%" + normalizedPhoneNumber + "%").writeString(" OR ")
-		g.writeString("normalized_phone_number_2 ILIKE ").writeArg("%" + normalizedPhoneNumber + "%").writeString(" OR ")
-		g.writeString("normalized_phone_number_3 ILIKE ").writeArg("%" + normalizedPhoneNumber + "%")
+		g.writeString("normalized_phone_number_2 ILIKE ").writeLastArg().writeString(" OR ")
+		g.writeString("normalized_phone_number_3 ILIKE ").writeLastArg()
 		g.writeString(")")
 	}
 	return g
@@ -192,8 +200,8 @@ func (g *getAllIndividualsSQLQuery) withEmail(email string) *getAllIndividualsSQ
 	normalizedEmail := strings.ToLower(email)
 	g.writeString(" AND (")
 	g.writeString("email_1 = ").writeArg(normalizedEmail).writeString(" OR ")
-	g.writeString("email_2 = ").writeArg(normalizedEmail).writeString(" OR ")
-	g.writeString("email_3 = ").writeArg(normalizedEmail)
+	g.writeString("email_2 = ").writeLastArg().writeString(" OR ")
+	g.writeString("email_3 = ").writeLastArg()
 	g.writeString(")")
 	return g
 }
