@@ -73,12 +73,12 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 		}, {
 			name:     "phone number",
 			args:     api.ListIndividualsOptions{PhoneNumber: "1234567890"},
-			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND normalized_phone_number ILIKE $1 ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND (normalized_phone_number_1 ILIKE $1 OR normalized_phone_number_2 ILIKE $1 OR normalized_phone_number_3 ILIKE $1) ORDER BY created_at`,
 			wantArgs: []interface{}{"%1234567890%"},
 		}, {
 			name:     "email",
 			args:     api.ListIndividualsOptions{Email: "info@email.com"},
-			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND email = $1 ORDER BY created_at`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND (email_1 = $1 OR email_2 = $1 OR email_3 = $1) ORDER BY created_at`,
 			wantArgs: []interface{}{"info@email.com"},
 		}, {
 			name:     "presents protection concerns",

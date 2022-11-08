@@ -3,7 +3,6 @@ package api
 import (
 	"html/template"
 	"net/url"
-	"strconv"
 	"testing"
 	"time"
 
@@ -14,10 +13,6 @@ import (
 )
 
 func TestNewIndividualListFromURLValues(t *testing.T) {
-
-	now := time.Now()
-	birthDate10YearsOld := calculateBirthDateFromAge(10, now)
-	birthDate20YearsOld := calculateBirthDateFromAge(20, now)
 
 	tests := []struct {
 		name    string
@@ -74,20 +69,36 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 			args: url.Values{constants.FormParamsGetIndividualsCountryID: []string{"countryID"}},
 			want: ListIndividualsOptions{CountryID: "countryID"},
 		}, {
+			name: constants.FormParamsGetIndividualsBirthDateFrom,
+			args: url.Values{constants.FormParamsGetIndividualsBirthDateFrom: []string{"2009-01-01"}},
+			want: ListIndividualsOptions{BirthDateFrom: pointers.Time(time.Date(2009, 1, 1, 0, 0, 0, 0, time.UTC))},
+		}, {
+			name:    "invalid birth date from",
+			args:    url.Values{constants.FormParamsGetIndividualsBirthDateFrom: []string{"invalid"}},
+			wantErr: true,
+		}, {
+			name: constants.FormParamsGetIndividualsBirthDateTo,
+			args: url.Values{constants.FormParamsGetIndividualsBirthDateTo: []string{"2009-01-01"}},
+			want: ListIndividualsOptions{BirthDateTo: pointers.Time(time.Date(2009, 1, 1, 0, 0, 0, 0, time.UTC))},
+		}, {
+			name:    "invalid birth date to",
+			args:    url.Values{constants.FormParamsGetIndividualsBirthDateTo: []string{"invalid"}},
+			wantErr: true,
+		}, {
 			name: constants.FormParamsGetIndividualsAgeFrom,
-			args: url.Values{constants.FormParamsGetIndividualsAgeFrom: []string{strconv.Itoa(10)}},
-			want: ListIndividualsOptions{BirthDateTo: &birthDate10YearsOld},
+			args: url.Values{constants.FormParamsGetIndividualsAgeFrom: []string{"1"}},
+			want: ListIndividualsOptions{AgeFrom: pointers.Int(1)},
 		}, {
 			name:    "invalid age from",
-			args:    url.Values{constants.FormParamsGetIndividualsAgeFrom: []string{"invalid"}},
+			args:    url.Values{constants.FormParamsGetIndividualsAgeFrom: []string{"abc"}},
 			wantErr: true,
 		}, {
 			name: constants.FormParamsGetIndividualsAgeTo,
-			args: url.Values{constants.FormParamsGetIndividualsAgeTo: []string{strconv.Itoa(20)}},
-			want: ListIndividualsOptions{BirthDateFrom: &birthDate20YearsOld},
+			args: url.Values{constants.FormParamsGetIndividualsAgeTo: []string{"1"}},
+			want: ListIndividualsOptions{AgeTo: pointers.Int(1)},
 		}, {
 			name:    "invalid age to",
-			args:    url.Values{constants.FormParamsGetIndividualsAgeTo: []string{"invalid"}},
+			args:    url.Values{constants.FormParamsGetIndividualsAgeTo: []string{"abc"}},
 			wantErr: true,
 		}, {
 			name: constants.FormParamsGetIndividualsIsMinor,
@@ -125,6 +136,26 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 			name: constants.FormParamsGetIndividualsDisplacementStatus,
 			args: url.Values{constants.FormParamsGetIndividualsDisplacementStatus: []string{"idp", "idp", "refugee"}},
 			want: ListIndividualsOptions{DisplacementStatuses: containers.NewSet[DisplacementStatus](DisplacementStatusIDP, DisplacementStatusRefugee)},
+		}, {
+			name: constants.FormParamsGetIndividualsFreeField1,
+			args: url.Values{constants.FormParamsGetIndividualsFreeField1: []string{"freeField1"}},
+			want: ListIndividualsOptions{FreeField1: "freeField1"},
+		}, {
+			name: constants.FormParamsGetIndividualsFreeField2,
+			args: url.Values{constants.FormParamsGetIndividualsFreeField2: []string{"freeField2"}},
+			want: ListIndividualsOptions{FreeField2: "freeField2"},
+		}, {
+			name: constants.FormParamsGetIndividualsFreeField3,
+			args: url.Values{constants.FormParamsGetIndividualsFreeField3: []string{"freeField3"}},
+			want: ListIndividualsOptions{FreeField3: "freeField3"},
+		}, {
+			name: constants.FormParamsGetIndividualsFreeField4,
+			args: url.Values{constants.FormParamsGetIndividualsFreeField4: []string{"freeField4"}},
+			want: ListIndividualsOptions{FreeField4: "freeField4"},
+		}, {
+			name: constants.FormParamsGetIndividualsFreeField5,
+			args: url.Values{constants.FormParamsGetIndividualsFreeField5: []string{"freeField5"}},
+			want: ListIndividualsOptions{FreeField5: "freeField5"},
 		},
 	}
 	for _, tt := range tests {
@@ -145,9 +176,6 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 }
 
 func TestListIndividualsOptions_QueryParams(t *testing.T) {
-	now := time.Now()
-	birthDate10YearsOld := calculateBirthDateFromAge(10, now)
-	birthDate20YearsOld := calculateBirthDateFromAge(20, now)
 
 	const countryId = "usa"
 	tests := []struct {
@@ -176,13 +204,21 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			o:    ListIndividualsOptions{CountryID: countryId, Address: "address"},
 			want: "/countries/usa/individuals?address=address",
 		}, {
+			name: "ageFrom",
+			o:    ListIndividualsOptions{CountryID: countryId, AgeFrom: pointers.Int(1)},
+			want: "/countries/usa/individuals?age_from=1",
+		}, {
+			name: "ageTo",
+			o:    ListIndividualsOptions{CountryID: countryId, AgeTo: pointers.Int(1)},
+			want: "/countries/usa/individuals?age_to=1",
+		}, {
 			name: "birthDateFrom",
-			o:    ListIndividualsOptions{CountryID: countryId, BirthDateFrom: &birthDate10YearsOld},
-			want: "/countries/usa/individuals?age_to=10",
+			o:    ListIndividualsOptions{CountryID: countryId, BirthDateFrom: pointers.Time(time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC))},
+			want: "/countries/usa/individuals?birth_date_from=2000-01-01",
 		}, {
 			name: "birthDateTo",
-			o:    ListIndividualsOptions{CountryID: countryId, BirthDateTo: &birthDate20YearsOld},
-			want: "/countries/usa/individuals?age_from=20",
+			o:    ListIndividualsOptions{CountryID: countryId, BirthDateTo: pointers.Time(time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC))},
+			want: "/countries/usa/individuals?birth_date_to=2000-01-01",
 		}, {
 			name: "displacement status",
 			o:    ListIndividualsOptions{CountryID: countryId, DisplacementStatuses: containers.NewSet[DisplacementStatus](DisplacementStatusIDP)},
@@ -231,6 +267,26 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			name: "ids",
 			o:    ListIndividualsOptions{CountryID: countryId, IDs: containers.NewStringSet("id1", "id2")},
 			want: "/countries/usa/individuals?id=id1&id=id2",
+		}, {
+			name: "free field 1",
+			o:    ListIndividualsOptions{CountryID: countryId, FreeField1: "freeField1"},
+			want: "/countries/usa/individuals?free_field_1=freeField1",
+		}, {
+			name: "free field 2",
+			o:    ListIndividualsOptions{CountryID: countryId, FreeField2: "freeField2"},
+			want: "/countries/usa/individuals?free_field_2=freeField2",
+		}, {
+			name: "free field 3",
+			o:    ListIndividualsOptions{CountryID: countryId, FreeField3: "freeField3"},
+			want: "/countries/usa/individuals?free_field_3=freeField3",
+		}, {
+			name: "free field 4",
+			o:    ListIndividualsOptions{CountryID: countryId, FreeField4: "freeField4"},
+			want: "/countries/usa/individuals?free_field_4=freeField4",
+		}, {
+			name: "free field 5",
+			o:    ListIndividualsOptions{CountryID: countryId, FreeField5: "freeField5"},
+			want: "/countries/usa/individuals?free_field_5=freeField5",
 		},
 	}
 	for _, tt := range tests {
