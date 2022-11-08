@@ -245,7 +245,7 @@ func (f *IndividualForm) buildGender() error {
 	}
 	return buildField(&forms.SelectInputField{
 		Name:        "gender",
-		DisplayName: "Gender",
+		DisplayName: "Sex",
 		Required:    true,
 		Options:     genderOptions,
 		Codec:       &genderCodec{},
