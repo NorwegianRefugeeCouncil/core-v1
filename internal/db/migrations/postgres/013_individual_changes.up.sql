@@ -2,23 +2,36 @@
 ALTER TABLE individual_registrations
     DISABLE TRIGGER individual_registrations_prevent_deleted_update;
 
--- add phone number columns
+
 ALTER TABLE individual_registrations
+
+    -- change preferred contact method comments to text
+    ALTER COLUMN preferred_contact_method_comments TYPE text,
+
+    -- add age column
     ADD COLUMN age                       INT          NULL,
+
+    -- add phone number columns
     ADD COLUMN phone_number_1            VARCHAR(64)  NOT NULL DEFAULT '',
     ADD COLUMN phone_number_2            VARCHAR(64)  NOT NULL DEFAULT '',
     ADD COLUMN phone_number_3            VARCHAR(64)  NOT NULL DEFAULT '',
     ADD COLUMN normalized_phone_number_1 VARCHAR(64)  NOT NULL DEFAULT '',
     ADD COLUMN normalized_phone_number_2 VARCHAR(64)  NOT NULL DEFAULT '',
     ADD COLUMN normalized_phone_number_3 VARCHAR(64)  NOT NULL DEFAULT '',
+
+    -- add email columns
     ADD COLUMN email_1                   VARCHAR(255) NOT NULL DEFAULT '',
     ADD COLUMN email_2                   VARCHAR(255) NOT NULL DEFAULT '',
     ADD COLUMN email_3                   VARCHAR(255) NOT NULL DEFAULT '',
+
+    -- add free fields columns
     ADD COLUMN free_field_1              VARCHAR(255) NOT NULL DEFAULT '',
     ADD COLUMN free_field_2              VARCHAR(255) NOT NULL DEFAULT '',
     ADD COLUMN free_field_3              VARCHAR(255) NOT NULL DEFAULT '',
     ADD COLUMN free_field_4              VARCHAR(255) NOT NULL DEFAULT '',
     ADD COLUMN free_field_5              VARCHAR(255) NOT NULL DEFAULT '',
+
+    -- add comment column
     ADD COLUMN comments                  TEXT         NOT NULL DEFAULT '';
 
 -- copy over phone numbers and emails
