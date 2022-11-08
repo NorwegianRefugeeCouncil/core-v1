@@ -25,6 +25,11 @@ type ListIndividualsOptions struct {
 	PresentsProtectionConcerns *bool
 	Skip                       int
 	Take                       int
+	FreeField1                 string
+	FreeField2                 string
+	FreeField3                 string
+	FreeField4                 string
+	FreeField5                 string
 }
 
 func (o ListIndividualsOptions) IsMinorSelected() bool {

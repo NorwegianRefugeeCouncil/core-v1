@@ -34,6 +34,11 @@ func (p *listIndividualsOptionsDecoder) parse() error {
 		p.parseAgeTo,
 		p.parseIsMinor,
 		p.parsePresentsProtectionConcerns,
+		p.parseFreeField1,
+		p.parseFreeField2,
+		p.parseFreeField3,
+		p.parseFreeField4,
+		p.parseFreeField5,
 	}
 	for _, fn := range fns {
 		if err := fn(); err != nil {
@@ -71,6 +76,31 @@ func (p *listIndividualsOptionsDecoder) parseTake() (err error) {
 
 func (p *listIndividualsOptionsDecoder) parseFullName() error {
 	p.out.FullName = p.values.Get(constants.FormParamsGetIndividualsFullName)
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseFreeField1() error {
+	p.out.FreeField1 = p.values.Get(constants.FormParamsGetIndividualsFreeField1)
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseFreeField2() error {
+	p.out.FreeField2 = p.values.Get(constants.FormParamsGetIndividualsFreeField2)
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseFreeField3() error {
+	p.out.FreeField3 = p.values.Get(constants.FormParamsGetIndividualsFreeField3)
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseFreeField4() error {
+	p.out.FreeField4 = p.values.Get(constants.FormParamsGetIndividualsFreeField4)
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseFreeField5() error {
+	p.out.FreeField5 = p.values.Get(constants.FormParamsGetIndividualsFreeField5)
 	return nil
 }
 
