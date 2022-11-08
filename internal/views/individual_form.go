@@ -635,7 +635,7 @@ func (f *IndividualForm) buildCommunicationDisabilityLevel() error {
 func (f *IndividualForm) buildIdentificationContext() error {
 	return buildField(&forms.SelectInputField{
 		Name:        "identificationContext",
-		DisplayName: "Identification Context",
+		DisplayName: "Context of Engagement",
 		Options: []forms.SelectInputFieldOption{
 			{Label: "", Value: ""},
 			{Label: "House Visit", Value: "houseVisit"},
