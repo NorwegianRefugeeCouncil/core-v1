@@ -98,7 +98,11 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualBirthDate:
 			i.BirthDate, err = ParseDate(cols[idx])
 		case constants.FileColumnIndividualCognitiveDisabilityLevel:
-			i.CognitiveDisabilityLevel, err = ParseDisabilityLevel(cols[idx])
+			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.CognitiveDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualCollectionAdministrativeArea1:
 			i.CollectionAdministrativeArea1 = cols[idx]
 		case constants.FileColumnIndividualCollectionAdministrativeArea2:
@@ -119,11 +123,19 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			}
 			i.CollectionTime = *collectionTime
 		case constants.FileColumnIndividualCommunicationDisabilityLevel:
-			i.CommunicationDisabilityLevel, err = ParseDisabilityLevel(cols[idx])
+			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.CommunicationDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualCommunityID:
 			i.CommunityID = cols[idx]
 		case constants.FileColumnIndividualDisplacementStatus:
-			i.DisplacementStatus = DisplacementStatus(cols[idx])
+			displacementStatus, err := ParseDisplacementStatus(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.DisplacementStatus = displacementStatus
 		case constants.FileColumnIndividualEmail1:
 			i.Email1 = cols[idx]
 		case constants.FileColumnIndividualEmail2:
@@ -161,7 +173,11 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualHasVisionDisability:
 			i.HasVisionDisability = isTrue(cols[idx])
 		case constants.FileColumnIndividualHearingDisabilityLevel:
-			i.HearingDisabilityLevel, err = ParseDisabilityLevel(cols[idx])
+			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.HearingDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualHouseholdID:
 			i.HouseholdID = cols[idx]
 		case constants.FileColumnIndividualIdentificationType1:
@@ -193,7 +209,11 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualIsMinor:
 			i.IsMinor = isTrue(cols[idx])
 		case constants.FileColumnIndividualMobilityDisabilityLevel:
-			i.MobilityDisabilityLevel, err = ParseDisabilityLevel(cols[idx])
+			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.MobilityDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualNationality1:
 			i.Nationality1 = cols[idx]
 		case constants.FileColumnIndividualNationality2:
@@ -217,7 +237,11 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualPresentsProtectionConcerns:
 			i.PresentsProtectionConcerns = isTrue(cols[idx])
 		case constants.FileColumnIndividualSelfCareDisabilityLevel:
-			i.SelfCareDisabilityLevel, err = ParseDisabilityLevel(cols[idx])
+			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.SelfCareDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualSpokenLanguage1:
 			i.SpokenLanguage1 = cols[idx]
 		case constants.FileColumnIndividualSpokenLanguage2:
@@ -225,7 +249,11 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualSpokenLanguage3:
 			i.SpokenLanguage3 = cols[idx]
 		case constants.FileColumnIndividualVisionDisabilityLevel:
-			i.VisionDisabilityLevel, err = ParseDisabilityLevel(cols[idx])
+			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.VisionDisabilityLevel = disabilityLevel
 		}
 	}
 	if err != nil {
