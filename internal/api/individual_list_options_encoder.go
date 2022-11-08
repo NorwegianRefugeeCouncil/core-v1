@@ -80,6 +80,7 @@ func (p *listIndividualsOptionsEncoder) encode() url.Values {
 		p.encodeUpdatedAtTo,
 		p.encodeSkip,
 		p.encodeTake,
+		p.encodeVisionDisabilityLevel,
 	}
 	for _, fn := range fns {
 		fn()
@@ -420,5 +421,11 @@ func (p *listIndividualsOptionsEncoder) encodeSkip() {
 func (p *listIndividualsOptionsEncoder) encodeTake() {
 	if p.values.Take != 0 {
 		p.out.Add(constants.FormParamsGetIndividualsTake, fmt.Sprintf("%d", p.values.Take))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeVisionDisabilityLevel() {
+	if p.values.VisionDisabilityLevel != DisabilityLevelUnspecified {
+		p.out.Add(constants.FormParamsGetIndividualsVisionDisabilityLevel, string(p.values.VisionDisabilityLevel))
 	}
 }
