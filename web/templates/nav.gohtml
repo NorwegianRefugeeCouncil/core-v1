@@ -10,17 +10,24 @@
 
             <div id="navbarContent">
                 <div class="me-auto mb-2 mb-lg-0 w-100">
-                    <div class="d-flex flex-row w-100">
+                    <div class="d-flex flex-row w-100 align-items-center">
                         <a href="/static/nrc_grf_template.xlsx" download="nrc-grf-template" class="nav-link">
                             Download template
                         </a>
-                        <a class="nav-link ms-5" href="/countries">
-                            {{ if $.RequestContext.SelectedCountry }}
-                                Change Country
-                            {{else}}
-                                Select country
-                            {{end}}
-                        </a>
+
+                        <div class="btn-group ms-5">
+                            <button type="button" class="btn btn-link text-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{if .RequestContext.SelectedCountry}} {{.RequestContext.SelectedCountry.Name}} {{else}} Select Country {{end}}
+                            </button>
+                            <div class="dropdown-menu">
+                                {{range $countryIndex, $country := .RequestContext.Countries}}
+                                    <a class="dropdown-item" href="/countries/{{.ID}}/individuals">{{$country.Name}}</a>
+                                {{end}}
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/countries">Edit Country</a>
+                            </div>
+                        </div>
+
                         {{ if logoutURL}}
                             <a title="Logout" class="nav-link order-last ms-5" href="{{logoutURL}}">
                                 <div class="nav-item d-inline-block">Logout</div>
