@@ -363,12 +363,16 @@ func (i *Individual) Normalize() {
 	i.InternalID = trimString(i.InternalID)
 	i.Nationality1 = trimString(i.Nationality1)
 	i.Nationality2 = trimString(i.Nationality2)
-	i.NormalizedPhoneNumber1 = NormalizePhoneNumber(i.PhoneNumber1)
-	i.NormalizedPhoneNumber2 = NormalizePhoneNumber(i.PhoneNumber2)
-	i.NormalizedPhoneNumber3 = NormalizePhoneNumber(i.PhoneNumber3)
+
+	// not alphabetically sorted because phone numbers need to be trimmed
+	// before storing NormalizedPhoneNumbers
 	i.PhoneNumber1 = trimString(i.PhoneNumber1)
 	i.PhoneNumber2 = trimString(i.PhoneNumber2)
 	i.PhoneNumber3 = trimString(i.PhoneNumber3)
+
+	i.NormalizedPhoneNumber1 = NormalizePhoneNumber(i.PhoneNumber1)
+	i.NormalizedPhoneNumber2 = NormalizePhoneNumber(i.PhoneNumber2)
+	i.NormalizedPhoneNumber3 = NormalizePhoneNumber(i.PhoneNumber3)
 	i.PreferredContactMethod = trimString(i.PreferredContactMethod)
 	i.PreferredContactMethodComments = trimString(i.PreferredContactMethodComments)
 	i.PreferredName = trimString(i.PreferredName)
@@ -379,6 +383,7 @@ func (i *Individual) Normalize() {
 	i.SpokenLanguage1 = trimString(i.SpokenLanguage1)
 	i.SpokenLanguage2 = trimString(i.SpokenLanguage2)
 	i.SpokenLanguage3 = trimString(i.SpokenLanguage3)
+
 	if i.PrefersToRemainAnonymous {
 		i.FullName = ""
 		i.PreferredName = ""
