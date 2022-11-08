@@ -562,6 +562,11 @@
                         {{template "columnHeader" (dict "Width" "12rem" "Label" "Area1" "Title" "Collection Administrative Area 1" )}}
                         {{template "columnHeader" (dict "Width" "12rem" "Label" "Area2" "Title" "Collection Administrative Area 2" )}}
                         {{template "columnHeader" (dict "Width" "12rem" "Label" "Area3" "Title" "Collection Administrative Area 3" )}}
+                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Free Field 1" "Title" "Free Field 1" )}}
+                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Free Field 2" "Title" "Free Field 2" )}}
+                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Free Field 3" "Title" "Free Field 3" )}}
+                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Free Field 4" "Title" "Free Field 4" )}}
+                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Free Field 5" "Title" "Free Field 5" )}}
                         {{template "columnHeader" (dict "Width" "10rem" "Label" "Created" "Title" "Date Created")}}
                         {{template "columnHeader" (dict "Width" "10rem" "Label" "Updated" "Title" "Date Updated")}}
 
@@ -646,6 +651,21 @@
                                 </td>
                                 <td>
                                     {{.CollectionAdministrativeArea3}}
+                                </td>
+                                <td>
+                                    {{.FreeField1}}
+                                </td>
+                                <td>
+                                    {{.FreeField2}}
+                                </td>
+                                <td>
+                                    {{.FreeField3}}
+                                </td>
+                                <td>
+                                    {{.FreeField4}}
+                                </td>
+                                <td>
+                                    {{.FreeField5}}
                                 </td>
                                 <td>
                                     {{.CreatedAt.Format "2006-01-02 15:04:05"}}
