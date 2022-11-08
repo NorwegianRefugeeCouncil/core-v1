@@ -443,7 +443,7 @@ func (f *IndividualForm) buildPhoneNumber3() error {
 func (f *IndividualForm) buildEmailAddress1() error {
 	return buildField(&forms.TextInputField{
 		Name:        "email1",
-		DisplayName: "Email1 Address 1",
+		DisplayName: "Email Address 1",
 	}, f.contactInfoSection, f.individual.Email1)
 }
 
