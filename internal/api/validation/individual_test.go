@@ -154,17 +154,9 @@ func TestValidateIndividual(t *testing.T) {
 			i:    ValidIndividual().WithCountryID("").Build(),
 			want: validation.ErrorList{validation.Required(countryIDPath, "country id is required")},
 		}, {
-			name: "empty displacement status",
-			i:    ValidIndividual().WithDisplacementStatus("").Build(),
-			want: validation.ErrorList{validation.Required(displacementStatusPath, "displacement status is required")},
-		}, {
 			name: "invalid displacement status",
 			i:    ValidIndividual().WithDisplacementStatus("bla").Build(),
 			want: validation.ErrorList{validation.NotSupported(displacementStatusPath, api.DisplacementStatus("bla"), allowedDisplacementStatusesStr)},
-		}, {
-			name: "empty gender",
-			i:    ValidIndividual().WithGender("").Build(),
-			want: validation.ErrorList{validation.Required(genderPath, "gender is required")},
 		}, {
 			name: "invalid gender",
 			i:    ValidIndividual().WithGender("bla").Build(),
