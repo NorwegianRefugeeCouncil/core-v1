@@ -324,17 +324,35 @@ func (i *Individual) marshalTabularData() ([]string, error) {
 			return nil, err
 		}
 
-		switch col {
-		case constants.FileColumnIndividualBirthDate:
-			var birthDate string
-			if i.BirthDate != nil {
-				birthDate = i.BirthDate.Format("2006-01-02")
+		switch v := value.(type) {
+		case bool:
+			row[j] = strconv.FormatBool(v)
+		case *bool:
+			if v != nil {
+				row[j] = strconv.FormatBool(*v)
 			}
-			row[j] = birthDate
-		case constants.FileColumnIndividualIsMinor, constants.FileColumnIndividualPresentsProtectionConcerns:
-			row[j] = strconv.FormatBool(value.(bool))
+		case int:
+			row[j] = strconv.Itoa(v)
+		case *int:
+			if v != nil {
+				row[j] = strconv.Itoa(*value.(*int))
+			}
+		case string:
+			row[j] = v
+		case time.Time:
+			row[j] = v.Format("2006-01-02")
+		case *time.Time:
+			if v != nil {
+				row[j] = v.Format("2006-01-02")
+			}
+		case DisabilityLevel:
+			row[j] = string(v)
+		case DisplacementStatus:
+			row[j] = string(v)
+		case Gender:
+			row[j] = string(v)
 		default:
-			row[j] = value.(string)
+			row[j] = v.(string)
 		}
 	}
 	return row, nil
