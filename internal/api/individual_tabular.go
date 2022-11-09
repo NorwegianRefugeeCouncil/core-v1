@@ -332,7 +332,7 @@ func getTimeFormatForField(field string) string {
 func (i *Individual) marshalTabularData() ([]string, error) {
 	row := make([]string, len(constants.IndividualFileColumns))
 	for j, col := range constants.IndividualFileColumns {
-		field, ok := constants.IndividualFileToDBMap[col]
+		field, ok := constants.IndividualDBToFileMap[col]
 		if !ok {
 			return nil, fmt.Errorf("unknown column %s", col) // should not happen but we never know.
 		}

@@ -217,6 +217,7 @@ const (
 	FileColumnIndividualCommunicationDisabilityLevel   = "communication_disability_level"
 	FileColumnIndividualCommunityID                    = "community_id"
 	FileColumnIndividualCountryID                      = "country_id"
+	FileColumnIndividualCreatedAt                      = "created_at"
 	FileColumnIndividualDisplacementStatus             = "displacement_status"
 	FileColumnIndividualEmail1                         = "email_1"
 	FileColumnIndividualEmail2                         = "email_2"
@@ -269,6 +270,7 @@ const (
 	FileColumnIndividualSpokenLanguage1                = "spoken_language_1"
 	FileColumnIndividualSpokenLanguage2                = "spoken_language_2"
 	FileColumnIndividualSpokenLanguage3                = "spoken_language_3"
+	FileColumnIndividualUpdatedAt                      = "updated_at"
 	FileColumnIndividualVisionDisabilityLevel          = "vision_disability_level"
 )
 
@@ -363,6 +365,7 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualCommunicationDisabilityLevel,
 	FileColumnIndividualCommunityID,
 	FileColumnIndividualCountryID,
+	FileColumnIndividualCreatedAt,
 	FileColumnIndividualDisplacementStatus,
 	FileColumnIndividualEmail1,
 	FileColumnIndividualEmail2,
@@ -415,6 +418,7 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualSpokenLanguage1,
 	FileColumnIndividualSpokenLanguage2,
 	FileColumnIndividualSpokenLanguage3,
+	FileColumnIndividualUpdatedAt,
 	FileColumnIndividualVisionDisabilityLevel,
 }
 
@@ -433,6 +437,7 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualCommunicationDisabilityLevel:   FileColumnIndividualCommunicationDisabilityLevel,
 	DBColumnIndividualCommunityID:                    FileColumnIndividualCommunityID,
 	DBColumnIndividualCountryID:                      FileColumnIndividualCountryID,
+	DBColumnIndividualCreatedAt:                      FileColumnIndividualCreatedAt,
 	DBColumnIndividualDisplacementStatus:             FileColumnIndividualDisplacementStatus,
 	DBColumnIndividualEmail1:                         FileColumnIndividualEmail1,
 	DBColumnIndividualEmail2:                         FileColumnIndividualEmail2,
@@ -486,6 +491,7 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualSpokenLanguage2:                FileColumnIndividualSpokenLanguage2,
 	DBColumnIndividualSpokenLanguage3:                FileColumnIndividualSpokenLanguage3,
 	DBColumnIndividualVisionDisabilityLevel:          FileColumnIndividualVisionDisabilityLevel,
+	DBColumnIndividualUpdatedAt:                      FileColumnIndividualUpdatedAt,
 }
 
 var IndividualFileToDBMap = map[string]string{
