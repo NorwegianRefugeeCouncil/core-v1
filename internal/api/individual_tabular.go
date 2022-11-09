@@ -316,25 +316,60 @@ func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
 	return nil
 }
 
+func getTimeFormatForField(field string) string {
+	switch field {
+	case constants.DBColumnIndividualUpdatedAt:
+		return time.RFC3339
+	case constants.DBColumnIndividualCreatedAt:
+		return time.RFC3339
+	case constants.DBColumnIndividualDeletedAt:
+		return time.RFC3339
+	default:
+		return "2006-01-02"
+	}
+}
+
 func (i *Individual) marshalTabularData() ([]string, error) {
 	row := make([]string, len(constants.IndividualFileColumns))
 	for j, col := range constants.IndividualFileColumns {
-		value, err := i.GetFieldValue(constants.IndividualFileToDBMap[col])
+		field, ok := constants.IndividualDBToFileMap[col]
+		if !ok {
+			return nil, fmt.Errorf("unknown column %s", col) // should not happen but we never know.
+		}
+		value, err := i.GetFieldValue(field)
 		if err != nil {
 			return nil, err
 		}
 
-		switch col {
-		case constants.FileColumnIndividualBirthDate:
-			var birthDate string
-			if i.BirthDate != nil {
-				birthDate = i.BirthDate.Format("2006-01-02")
+		switch v := value.(type) {
+		case bool:
+			row[j] = strconv.FormatBool(v)
+		case *bool:
+			if v != nil {
+				row[j] = strconv.FormatBool(*v)
 			}
-			row[j] = birthDate
-		case constants.FileColumnIndividualIsMinor, constants.FileColumnIndividualPresentsProtectionConcerns:
-			row[j] = strconv.FormatBool(value.(bool))
+		case int:
+			row[j] = strconv.Itoa(v)
+		case *int:
+			if v != nil {
+				row[j] = strconv.Itoa(*value.(*int))
+			}
+		case string:
+			row[j] = v
+		case time.Time:
+			row[j] = v.Format(getTimeFormatForField(field))
+		case *time.Time:
+			if v != nil {
+				row[j] = v.Format(getTimeFormatForField(field))
+			}
+		case DisabilityLevel:
+			row[j] = string(v)
+		case DisplacementStatus:
+			row[j] = string(v)
+		case Gender:
+			row[j] = string(v)
 		default:
-			row[j] = value.(string)
+			row[j] = fmt.Sprintf("%v", v)
 		}
 	}
 	return row, nil
