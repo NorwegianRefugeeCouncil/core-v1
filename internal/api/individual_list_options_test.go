@@ -1,7 +1,6 @@
 package api
 
 import (
-	"html/template"
 	"net/url"
 	"testing"
 	"time"
@@ -790,7 +789,7 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.o.QueryParams()
-			want := template.HTML(tt.want)
+			want := tt.want
 			assert.Equal(t, want, got)
 		})
 	}
