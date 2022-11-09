@@ -256,7 +256,7 @@
                     {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
                         <button type="button"
                                 id="deleteIndividualsButton"
-                                style="width: 20rem"
+                                style="width: 21rem"
                                 class="btn disabled btn-outline-secondary me-2 individual-action-button"
                                 data-bs-toggle="modal"
                                 data-bs-target="#deleteIndividualsConfirmationModal"
@@ -1224,7 +1224,7 @@
         </div>
     </main>
 
-    <div class="modal" tabindex="-1" id="deleteIndividualsConfirmationModal">
+    <div class="modal modal-lg" tabindex="-1" id="deleteIndividualsConfirmationModal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
