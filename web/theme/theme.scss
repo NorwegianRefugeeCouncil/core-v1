@@ -326,6 +326,31 @@ a.home-link {
 
 table.table-individuals {
 
+    th {
+        // do not wrap text in table header
+        white-space: nowrap;
+    }
+
+    .sort-icon-current {
+        // show current sort icon in table header
+        display: inline-block;
+    }
+
+    .sort-icon-next {
+        // do not show next sort icon in table header
+        display: none;
+    }
+
+    th.cursor-pointer:hover .sort-icon-current {
+        // when hovering the table header, hide the current sort icon
+        display: none;
+    }
+
+    th.cursor-pointer:hover .sort-icon-next {
+        // when hovering the table header, show the next sort icon
+        display: inline-block;
+    }
+
     td {
         overflow: hidden;
         text-overflow: ellipsis;
