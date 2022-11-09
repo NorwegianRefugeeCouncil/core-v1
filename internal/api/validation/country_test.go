@@ -72,8 +72,8 @@ func TestValidateCountry(t *testing.T) {
 			want:    validation.ErrorList{validation.Required(namePath, "country name is required")},
 		}, {
 			name:    "name too long",
-			country: ValidCountry().WithName(longString(256)).Build(),
-			want:    validation.ErrorList{validation.TooLongMaxLength(namePath, longString(256), 255)},
+			country: ValidCountry().WithName(bigstr(256)).Build(),
+			want:    validation.ErrorList{validation.TooLongMaxLength(namePath, bigstr(256), 255)},
 		}, {
 			name:    "name too short",
 			country: ValidCountry().WithName("a").Build(),
@@ -92,8 +92,8 @@ func TestValidateCountry(t *testing.T) {
 			want:    validation.ErrorList{validation.TooShortMinLength(codePath, "a", 2)},
 		}, {
 			name:    "code too long",
-			country: ValidCountry().WithCode(longString(256)).Build(),
-			want:    validation.ErrorList{validation.TooLongMaxLength(codePath, longString(256), 255)},
+			country: ValidCountry().WithCode(bigstr(256)).Build(),
+			want:    validation.ErrorList{validation.TooLongMaxLength(codePath, bigstr(256), 255)},
 		}, {
 			name:    "missing jwt group",
 			country: ValidCountry().WithJwtGroup("").Build(),
@@ -104,8 +104,8 @@ func TestValidateCountry(t *testing.T) {
 			want:    validation.ErrorList{validation.Invalid(jwtGroupPath, "!!", "jwt group is invalid")},
 		}, {
 			name:    "jwt group too long",
-			country: ValidCountry().WithJwtGroup(longString(256)).Build(),
-			want:    validation.ErrorList{validation.TooLongMaxLength(jwtGroupPath, longString(256), 255)},
+			country: ValidCountry().WithJwtGroup(bigstr(256)).Build(),
+			want:    validation.ErrorList{validation.TooLongMaxLength(jwtGroupPath, bigstr(256), 255)},
 		},
 	}
 	for _, tt := range tests {
@@ -154,6 +154,6 @@ func TestValidateCountryList(t *testing.T) {
 	}
 }
 
-func longString(n int) string {
+func bigstr(n int) string {
 	return strings.Repeat("a", n)
 }
