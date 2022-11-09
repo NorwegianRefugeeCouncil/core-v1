@@ -329,36 +329,42 @@ table.table-individuals {
     $maxWidth : 25rem;
 
     th {
-        // do not wrap text in table header
         white-space: nowrap;
         max-width: $maxWidth;
     }
 
-    .sort-icon-current {
-        // show current sort icon in table header
+    th:hover {
+        background-color: var(--bs-gray-300);
+    }
+
+    th.sortable {
+        cursor: pointer;
+        @extend .pe-2;
+    }
+
+    th.sortable .sort-icon-next {
+        display: none;
+    }
+    th.sortable:hover .sort-icon-next {
+      display: inline-block;
+    }
+
+    th.sortable.sorted .sort-icon-sortable, th.sortable:hover .sort-icon-sortable {
+        display: none
+    }
+
+    th.sortable.sorted .sort-icon-current {
         display: inline-block;
     }
 
-    .sort-icon-next {
-        // do not show next sort icon in table header
+    th.sortable:not(.sorted) .sort-icon-current, th.sortable.sorted:hover .sort-icon-current {
         display: none;
-    }
-
-    th.cursor-pointer:hover .sort-icon-current {
-        // when hovering the table header, hide the current sort icon
-        display: none;
-    }
-
-    th.cursor-pointer:hover .sort-icon-next {
-        // when hovering the table header, show the next sort icon
-        display: inline-block;
     }
 
     td div{
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        background: white;
         border-spacing: 0;
         max-width: $maxWidth;
     }
