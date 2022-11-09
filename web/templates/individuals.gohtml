@@ -243,7 +243,6 @@
             // restore the horizontal scroll position
             const horizontalScrollStr = sessionStorage.getItem(individualTableHorizontalScrollKey)
             if (horizontalScrollStr) {
-                console.log("restoring horizontal scroll position", horizontalScrollStr)
                 tableContainer.scrollLeft = parseInt(horizontalScrollStr)
             }
             setTimeout(() => {
