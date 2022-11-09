@@ -333,7 +333,7 @@ table.table-individuals {
         max-width: $maxWidth;
     }
 
-    th:hover {
+    th.sortable:hover {
         background-color: var(--bs-gray-300);
     }
 
