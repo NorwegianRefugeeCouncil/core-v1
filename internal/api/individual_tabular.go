@@ -369,7 +369,7 @@ func (i *Individual) marshalTabularData() ([]string, error) {
 		case Gender:
 			row[j] = string(v)
 		default:
-			row[j] = v.(string)
+			row[j] = fmt.Sprintf("%v", v)
 		}
 	}
 	return row, nil
