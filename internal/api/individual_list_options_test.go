@@ -1,7 +1,6 @@
 package api
 
 import (
-	"html/template"
 	"net/url"
 	"testing"
 	"time"
@@ -416,6 +415,30 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 			args:    url.Values{"skip": []string{"invalid"}},
 			wantErr: true,
 		}, {
+			name: "sort (asc)",
+			args: url.Values{"sort": []string{"full_name"}},
+			want: ListIndividualsOptions{Sort: SortTerms{{Field: "full_name", Direction: SortDirectionAscending}}},
+		}, {
+			name: "sort (desc)",
+			args: url.Values{"sort": []string{"-age"}},
+			want: ListIndividualsOptions{Sort: SortTerms{{Field: "age", Direction: SortDirectionDescending}}},
+		}, {
+			name: "sort (multiple)",
+			args: url.Values{"sort": []string{"full_name,-age"}},
+			want: ListIndividualsOptions{Sort: SortTerms{{Field: "full_name", Direction: SortDirectionAscending}, {Field: "age", Direction: SortDirectionDescending}}},
+		}, {
+			name:    "sort (duplicate)",
+			args:    url.Values{"sort": []string{"full_name,-full_name"}},
+			wantErr: true,
+		}, {
+			name:    "sort (invalid)",
+			args:    url.Values{"sort": []string{"invalid"}},
+			wantErr: true,
+		}, {
+			name: "sort (empty)",
+			args: url.Values{"sort": []string{""}},
+			want: ListIndividualsOptions{},
+		}, {
 			name: "take",
 			args: url.Values{"take": []string{"1"}},
 			want: ListIndividualsOptions{Take: 1},
@@ -746,12 +769,27 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			name: "empty",
 			o:    ListIndividualsOptions{CountryID: countryId},
 			want: "/countries/usa/individuals",
+		}, {
+			name: "sort (asc)",
+			o:    ListIndividualsOptions{CountryID: countryId, Sort: SortTerms{{Field: "column", Direction: SortDirectionAscending}}},
+			want: "/countries/usa/individuals?sort=column",
+		}, {
+			name: "sort (desc)",
+			o:    ListIndividualsOptions{CountryID: countryId, Sort: SortTerms{{Field: "column", Direction: SortDirectionDescending}}},
+			want: "/countries/usa/individuals?sort=-column",
+		}, {
+			name: "sort (multiple)",
+			o: ListIndividualsOptions{CountryID: countryId, Sort: SortTerms{
+				{Field: "column", Direction: SortDirectionAscending},
+				{Field: "column2", Direction: SortDirectionDescending}},
+			},
+			want: "/countries/usa/individuals?sort=column%2C-column2",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.o.QueryParams()
-			want := template.HTML(tt.want)
+			want := tt.want
 			assert.Equal(t, want, got)
 		})
 	}

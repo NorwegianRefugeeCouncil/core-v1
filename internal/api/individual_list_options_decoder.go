@@ -75,6 +75,7 @@ func (p *listIndividualsOptionsDecoder) parse() error {
 		p.parseSkip,
 		p.parseTake,
 		p.parseVisionDisabilityLevel,
+		p.parseSort,
 	}
 	for _, fn := range fns {
 		if err := fn(); err != nil {
@@ -421,6 +422,11 @@ func (p *listIndividualsOptionsDecoder) parseUpdatedAtTo() error {
 	return err
 }
 
+func (p *listIndividualsOptionsDecoder) parseVisionDisabilityLevel() (err error) {
+	p.out.VisionDisabilityLevel, err = ParseDisabilityLevel(p.values.Get(constants.FormParamsGetIndividualsVisionDisabilityLevel))
+	return err
+}
+
 func (p *listIndividualsOptionsDecoder) parseSkip() (err error) {
 	var skip *int
 	skip, err = parseOptionalInt(p.values.Get(constants.FormParamsGetIndividualsSkip))
@@ -447,8 +453,16 @@ func (p *listIndividualsOptionsDecoder) parseTake() (err error) {
 	return nil
 }
 
-func (p *listIndividualsOptionsDecoder) parseVisionDisabilityLevel() (err error) {
-	p.out.VisionDisabilityLevel, err = ParseDisabilityLevel(p.values.Get(constants.FormParamsGetIndividualsVisionDisabilityLevel))
+func (p *listIndividualsOptionsDecoder) parseSort() (err error) {
+	var sort = p.values.Get(constants.FormParamsGetIndividualsSort)
+	if len(sort) == 0 {
+		return nil
+	}
+	var out = &SortTerms{}
+	if err := out.UnmarshalQuery(sort); err != nil {
+		return err
+	}
+	p.out.Sort = *out
 	return err
 }
 
