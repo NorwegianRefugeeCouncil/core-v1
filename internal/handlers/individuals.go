@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
@@ -69,6 +70,13 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 		if getAllOptions.Take <= 0 || getAllOptions.Take > 100 {
 			getAllOptions.Take = 20
+		}
+
+		if len(getAllOptions.Sort) == 0 {
+			getAllOptions.Sort = append(getAllOptions.Sort, api.SortTerm{
+				Field:     constants.DBColumnIndividualCreatedAt,
+				Direction: api.SortDirectionDescending,
+			})
 		}
 
 		getAllOptions.CountryID = selectedCountryID

@@ -71,8 +71,9 @@ func TestDisplacementStatus_String(t *testing.T) {
 		{"refugee", DisplacementStatusRefugee, "Refugee"},
 		{"idp", DisplacementStatusIDP, "IDP"},
 		{"host_community", DisplacementStatusHostCommunity, "Host Community"},
-		{"stateless", DisplacementStatusStateless, "Stateless"},
+		{"returnee", DisplacementStatusReturnee, "Returnee"},
 		{"non_displaced", DisplacementStatusNonDisplaced, "Non-Displaced"},
+		{"other", DisplacementStatusOther, "Other"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -98,14 +99,19 @@ func TestDisplacementStatus_MarshalText(t *testing.T) {
 		assert.Equal(t, "host_community", string(got))
 	}
 	{
-		got, err := DisplacementStatusStateless.MarshalText()
+		got, err := DisplacementStatusReturnee.MarshalText()
 		assert.NoError(t, err)
-		assert.Equal(t, "stateless", string(got))
+		assert.Equal(t, "returnee", string(got))
 	}
 	{
 		got, err := DisplacementStatusNonDisplaced.MarshalText()
 		assert.NoError(t, err)
 		assert.Equal(t, "non_displaced", string(got))
+	}
+	{
+		got, err := DisplacementStatusOther.MarshalText()
+		assert.NoError(t, err)
+		assert.Equal(t, "other", string(got))
 	}
 }
 
@@ -132,8 +138,13 @@ func TestDisplacementStatus_UnmarshalText(t *testing.T) {
 	}
 	{
 		var g = new(DisplacementStatus)
-		assert.NoError(t, g.UnmarshalText([]byte("stateless")))
-		assert.Equal(t, DisplacementStatusStateless, *g)
+		assert.NoError(t, g.UnmarshalText([]byte("returnee")))
+		assert.Equal(t, DisplacementStatusReturnee, *g)
+	}
+	{
+		var g = new(DisplacementStatus)
+		assert.NoError(t, g.UnmarshalText([]byte("other")))
+		assert.Equal(t, DisplacementStatusOther, *g)
 	}
 	{
 		var g = new(DisplacementStatus)
@@ -153,7 +164,7 @@ func TestParseDisplacementStatus(t *testing.T) {
 		{"idp", "idp", DisplacementStatusIDP, false},
 		{"host_community", "host_community", DisplacementStatusHostCommunity, false},
 		{"non_displaced", "non_displaced", DisplacementStatusNonDisplaced, false},
-		{"stateless", "stateless", DisplacementStatusStateless, false},
+		{"returnee", "returnee", DisplacementStatusReturnee, false},
 		{"invalid", "invalid", "", true},
 	}
 	for _, tt := range tests {
@@ -174,7 +185,8 @@ func TestAllDisplacementStatuss(t *testing.T) {
 		DisplacementStatusIDP,
 		DisplacementStatusHostCommunity,
 		DisplacementStatusRefugee,
-		DisplacementStatusStateless,
+		DisplacementStatusReturnee,
 		DisplacementStatusNonDisplaced,
+		DisplacementStatusOther,
 	}, AllDisplacementStatuses().Items())
 }

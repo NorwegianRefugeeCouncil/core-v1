@@ -43,8 +43,8 @@ func (i *IndividualBuilder) WithPreferredName(preferredName string) *IndividualB
 	return i
 }
 
-func (i *IndividualBuilder) WithEmail(email string) *IndividualBuilder {
-	i.individual.Email = email
+func (i *IndividualBuilder) WithEmail1(email string) *IndividualBuilder {
+	i.individual.Email1 = email
 	return i
 }
 
@@ -58,8 +58,8 @@ func (i *IndividualBuilder) WithBirthDate(birthDate *time.Time) *IndividualBuild
 	return i
 }
 
-func (i *IndividualBuilder) WithPhoneNumber(phoneNumber string) *IndividualBuilder {
-	i.individual.PhoneNumber = phoneNumber
+func (i *IndividualBuilder) WithPhoneNumber1(phoneNumber string) *IndividualBuilder {
+	i.individual.PhoneNumber1 = phoneNumber
 	return i
 }
 
@@ -106,8 +106,8 @@ func (i *IndividualBuilder) WithCollectionDate(collectionDate time.Time) *Indivi
 func ValidIndividual() *IndividualBuilder {
 	bd := time.Now().AddDate(-10, 0, 0)
 	return NewIndividualBuilder().
-		WithEmail("email@email.com").
-		WithPhoneNumber("1234567890").
+		WithEmail1("email@email.com").
+		WithPhoneNumber1("1234567890").
 		WithFullName("John Doe").
 		WithDisplacementStatus("idp").
 		WithBirthDate(&bd).
@@ -123,7 +123,7 @@ func ValidIndividual() *IndividualBuilder {
 func TestValidateIndividual(t *testing.T) {
 	futureDate := time.Now().AddDate(1, 0, 0)
 	emptyDate := time.Time{}
-	emailPath := validation.NewPath("email")
+	email1Path := validation.NewPath("email1")
 	birthDatePath := validation.NewPath("birthDate")
 	countryIDPath := validation.NewPath("countryId")
 	displacementStatusPath := validation.NewPath("displacementStatus")
@@ -138,9 +138,9 @@ func TestValidateIndividual(t *testing.T) {
 			i:    ValidIndividual().Build(),
 			want: validation.ErrorList{},
 		}, {
-			name: "invalid email",
-			i:    ValidIndividual().WithEmail("invalid").Build(),
-			want: validation.ErrorList{validation.Invalid(emailPath, "invalid", "invalid email address")},
+			name: "invalid email 1",
+			i:    ValidIndividual().WithEmail1("invalid").Build(),
+			want: validation.ErrorList{validation.Invalid(email1Path, "invalid", "invalid email address")},
 		}, {
 			name: "birth date in future",
 			i:    ValidIndividual().WithBirthDate(&futureDate).Build(),
@@ -154,17 +154,9 @@ func TestValidateIndividual(t *testing.T) {
 			i:    ValidIndividual().WithCountryID("").Build(),
 			want: validation.ErrorList{validation.Required(countryIDPath, "country id is required")},
 		}, {
-			name: "empty displacement status",
-			i:    ValidIndividual().WithDisplacementStatus("").Build(),
-			want: validation.ErrorList{validation.Required(displacementStatusPath, "displacement status is required")},
-		}, {
 			name: "invalid displacement status",
 			i:    ValidIndividual().WithDisplacementStatus("bla").Build(),
 			want: validation.ErrorList{validation.NotSupported(displacementStatusPath, api.DisplacementStatus("bla"), allowedDisplacementStatusesStr)},
-		}, {
-			name: "empty gender",
-			i:    ValidIndividual().WithGender("").Build(),
-			want: validation.ErrorList{validation.Required(genderPath, "gender is required")},
 		}, {
 			name: "invalid gender",
 			i:    ValidIndividual().WithGender("bla").Build(),

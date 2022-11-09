@@ -11,8 +11,9 @@ import (
 type Individual struct {
 	// Address is the residence address of the individual
 	Address string `json:"address" db:"address"`
-	// BirthDate is the date of birth of the individual. The Individual.RecordedAge field
-	// can also be used to store the age of the individual at the time of the interview.
+	// Age is the age of the individual
+	Age *int `json:"age" db:"age"`
+	// BirthDate is the date of birth of the individual.
 	BirthDate *time.Time `json:"birthDate" db:"birth_date"`
 	// CognitiveDisabilityLevel is the cognitive disability level of the individual
 	CognitiveDisabilityLevel DisabilityLevel `json:"cognitiveDisabilityLevel" db:"cognitive_disability_level"`
@@ -31,6 +32,8 @@ type Individual struct {
 	CollectionAgentTitle string `json:"collectionAgentTitle" db:"collection_agent_title"`
 	// CollectionTime is the date/time the data was collected
 	CollectionTime time.Time `json:"collectionTime" db:"collection_time"`
+	// Comments is a free text field for comments
+	Comments string `json:"comments" db:"comments"`
 	// CommunicationDisabilityLevel is the communication disability level of the individual
 	CommunicationDisabilityLevel DisabilityLevel `json:"communicationDisabilityLevel" db:"communication_disability_level"`
 	// CommunityID is the ID of the community the individual belongs to
@@ -43,10 +46,24 @@ type Individual struct {
 	DeletedAt *time.Time `json:"deletedAt" db:"deleted_at"`
 	// DisplacementStatus is the displacement status of the individual
 	DisplacementStatus DisplacementStatus `json:"displacementStatus" db:"displacement_status"`
-	// Email is the email address of the individual
-	Email string `json:"email" db:"email"`
+	// Email1 is the email address 1 of the individual
+	Email1 string `json:"email1" db:"email_1"`
+	// Email2 is the email address 2 of the individual
+	Email2 string `json:"email2" db:"email_2"`
+	// Email 3 is the email address 3 of the individual
+	Email3 string `json:"email3" db:"email_3"`
 	// FullName is the full name of the individual
 	FullName string `json:"fullName" db:"full_name"`
+	// FreeField1 is a free field for the individual
+	FreeField1 string `json:"freeField1" db:"free_field_1"`
+	// FreeField2 is a free field for the individual
+	FreeField2 string `json:"freeField2" db:"free_field_2"`
+	// FreeField3 is a free field for the individual
+	FreeField3 string `json:"freeField3" db:"free_field_3"`
+	// FreeField4 is a free field for the individual
+	FreeField4 string `json:"freeField4" db:"free_field_4"`
+	// FreeField5 is a free field for the individual
+	FreeField5 string `json:"freeField5" db:"free_field_5"`
 	// Gender is the gender of the individual
 	Gender Gender `json:"gender" db:"gender"`
 	// HasCognitiveDisability is true if the individual has a cognitive disability
@@ -111,12 +128,18 @@ type Individual struct {
 	Nationality1 string `json:"nationality1" db:"nationality_1"`
 	// Nationality2 is the secondary nationality of the individual
 	Nationality2 string `json:"nationality2" db:"nationality_2"`
-	// NormalizedPhoneNumber is the normalized phone number of the individual
+	// NormalizedPhoneNumber1 is the normalized phone number of the individual
 	// It is used for search purposes
 	// TODO: do not expose this field on the api. This is a database concern only
-	NormalizedPhoneNumber string `json:"-" db:"normalized_phone_number"`
-	// PhoneNumber is the phone number of the individual
-	PhoneNumber string `json:"phoneNumber" db:"phone_number"`
+	NormalizedPhoneNumber1 string `json:"-" db:"normalized_phone_number_1"`
+	NormalizedPhoneNumber2 string `json:"-" db:"normalized_phone_number_2"`
+	NormalizedPhoneNumber3 string `json:"-" db:"normalized_phone_number_3"`
+	// PhoneNumber1 is the phone number 1 of the individual
+	PhoneNumber1 string `json:"phoneNumber1" db:"phone_number_1"`
+	// PhoneNumber2 is the phone number 2 of the individual
+	PhoneNumber2 string `json:"phoneNumber2" db:"phone_number_2"`
+	// PhoneNumber3 is the phone number 3 of the individual
+	PhoneNumber3 string `json:"phoneNumber3" db:"phone_number_3"`
 	// PreferredContactMethod is the preferred contact method of the individual
 	PreferredContactMethod string `json:"preferredContactMethod" db:"preferred_contact_method"`
 	// PreferredContactMethodComments is the comments on the preferred contact method of the individual
@@ -151,6 +174,8 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 	switch field {
 	case constants.DBColumnIndividualAddress:
 		return i.Address, nil
+	case constants.DBColumnIndividualAge:
+		return i.Age, nil
 	case constants.DBColumnIndividualBirthDate:
 		return i.BirthDate, nil
 	case constants.DBColumnIndividualCollectionAdministrativeArea1:
@@ -165,6 +190,8 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.CollectionAgentTitle, nil
 	case constants.DBColumnIndividualCollectionTime:
 		return i.CollectionTime, nil
+	case constants.DBColumnIndividualComments:
+		return i.Comments, nil
 	case constants.DBColumnIndividualCommunityID:
 		return i.CommunityID, nil
 	case constants.DBColumnIndividualCountryID:
@@ -185,8 +212,12 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.VisionDisabilityLevel, nil
 	case constants.DBColumnIndividualDisplacementStatus:
 		return i.DisplacementStatus, nil
-	case constants.DBColumnIndividualEmail:
-		return i.Email, nil
+	case constants.DBColumnIndividualEmail1:
+		return i.Email1, nil
+	case constants.DBColumnIndividualEmail2:
+		return i.Email2, nil
+	case constants.DBColumnIndividualEmail3:
+		return i.Email3, nil
 	case constants.DBColumnIndividualFullName:
 		return i.FullName, nil
 	case constants.DBColumnIndividualGender:
@@ -243,10 +274,18 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.Nationality1, nil
 	case constants.DBColumnIndividualNationality2:
 		return i.Nationality2, nil
-	case constants.DBColumnIndividualNormalizedPhoneNumber:
-		return i.NormalizedPhoneNumber, nil
-	case constants.DBColumnIndividualPhoneNumber:
-		return i.PhoneNumber, nil
+	case constants.DBColumnIndividualNormalizedPhoneNumber1:
+		return i.NormalizedPhoneNumber1, nil
+	case constants.DBColumnIndividualPhoneNumber1:
+		return i.PhoneNumber1, nil
+	case constants.DBColumnIndividualNormalizedPhoneNumber2:
+		return i.NormalizedPhoneNumber2, nil
+	case constants.DBColumnIndividualPhoneNumber2:
+		return i.PhoneNumber2, nil
+	case constants.DBColumnIndividualNormalizedPhoneNumber3:
+		return i.NormalizedPhoneNumber3, nil
+	case constants.DBColumnIndividualPhoneNumber3:
+		return i.PhoneNumber3, nil
 	case constants.DBColumnIndividualPreferredContactMethod:
 		return i.PreferredContactMethod, nil
 	case constants.DBColumnIndividualPreferredContactMethodComments:
@@ -267,6 +306,16 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.SpokenLanguage3, nil
 	case constants.DBColumnIndividualUpdatedAt:
 		return i.UpdatedAt, nil
+	case constants.DBColumnIndividualFreeField1:
+		return i.FreeField1, nil
+	case constants.DBColumnIndividualFreeField2:
+		return i.FreeField2, nil
+	case constants.DBColumnIndividualFreeField3:
+		return i.FreeField3, nil
+	case constants.DBColumnIndividualFreeField4:
+		return i.FreeField4, nil
+	case constants.DBColumnIndividualFreeField5:
+		return i.FreeField5, nil
 	default:
 		return nil, fmt.Errorf("unknown field: %s", field)
 	}
@@ -286,28 +335,44 @@ func (i *Individual) Normalize() {
 	i.CollectionAdministrativeArea2 = trimString(i.CollectionAdministrativeArea2)
 	i.CollectionAdministrativeArea3 = trimString(i.CollectionAdministrativeArea3)
 	i.CollectionAgentName = trimString(i.CollectionAgentName)
+	i.Comments = trimString(i.Comments)
 	i.CommunityID = trimString(i.CommunityID)
 	i.CountryID = trimString(i.CountryID)
 	i.DisplacementStatus = DisplacementStatus(trimString(string(i.DisplacementStatus)))
-	i.Email = normalizeEmail(i.Email)
+	i.Email1 = normalizeEmail(i.Email1)
+	i.Email2 = normalizeEmail(i.Email2)
+	i.Email3 = normalizeEmail(i.Email3)
+	i.FreeField1 = trimString(i.FreeField1)
+	i.FreeField2 = trimString(i.FreeField2)
+	i.FreeField3 = trimString(i.FreeField3)
+	i.FreeField4 = trimString(i.FreeField4)
+	i.FreeField5 = trimString(i.FreeField5)
 	i.FullName = trimString(i.FullName)
 	i.HouseholdID = trimString(i.HouseholdID)
 	i.ID = trimString(i.ID)
-	i.IdentificationType1 = trimString(i.IdentificationType1)
-	i.IdentificationTypeExplanation1 = trimString(i.IdentificationTypeExplanation1)
-	i.IdentificationNumber1 = trimString(i.IdentificationNumber1)
-	i.IdentificationType2 = trimString(i.IdentificationType2)
-	i.IdentificationTypeExplanation2 = trimString(i.IdentificationTypeExplanation2)
-	i.IdentificationNumber2 = trimString(i.IdentificationNumber2)
-	i.IdentificationType3 = trimString(i.IdentificationType3)
-	i.IdentificationTypeExplanation3 = trimString(i.IdentificationTypeExplanation3)
-	i.IdentificationNumber3 = trimString(i.IdentificationNumber3)
 	i.IdentificationContext = trimString(i.IdentificationContext)
+	i.IdentificationNumber1 = trimString(i.IdentificationNumber1)
+	i.IdentificationNumber2 = trimString(i.IdentificationNumber2)
+	i.IdentificationNumber3 = trimString(i.IdentificationNumber3)
+	i.IdentificationType1 = trimString(i.IdentificationType1)
+	i.IdentificationType2 = trimString(i.IdentificationType2)
+	i.IdentificationType3 = trimString(i.IdentificationType3)
+	i.IdentificationTypeExplanation1 = trimString(i.IdentificationTypeExplanation1)
+	i.IdentificationTypeExplanation2 = trimString(i.IdentificationTypeExplanation2)
+	i.IdentificationTypeExplanation3 = trimString(i.IdentificationTypeExplanation3)
 	i.InternalID = trimString(i.InternalID)
 	i.Nationality1 = trimString(i.Nationality1)
 	i.Nationality2 = trimString(i.Nationality2)
-	i.NormalizedPhoneNumber = NormalizePhoneNumber(i.PhoneNumber)
-	i.PhoneNumber = trimString(i.PhoneNumber)
+
+	// not alphabetically sorted because phone numbers need to be trimmed
+	// before storing NormalizedPhoneNumbers
+	i.PhoneNumber1 = trimString(i.PhoneNumber1)
+	i.PhoneNumber2 = trimString(i.PhoneNumber2)
+	i.PhoneNumber3 = trimString(i.PhoneNumber3)
+
+	i.NormalizedPhoneNumber1 = NormalizePhoneNumber(i.PhoneNumber1)
+	i.NormalizedPhoneNumber2 = NormalizePhoneNumber(i.PhoneNumber2)
+	i.NormalizedPhoneNumber3 = NormalizePhoneNumber(i.PhoneNumber3)
 	i.PreferredContactMethod = trimString(i.PreferredContactMethod)
 	i.PreferredContactMethodComments = trimString(i.PreferredContactMethodComments)
 	i.PreferredName = trimString(i.PreferredName)
@@ -318,6 +383,7 @@ func (i *Individual) Normalize() {
 	i.SpokenLanguage1 = trimString(i.SpokenLanguage1)
 	i.SpokenLanguage2 = trimString(i.SpokenLanguage2)
 	i.SpokenLanguage3 = trimString(i.SpokenLanguage3)
+
 	if i.PrefersToRemainAnonymous {
 		i.FullName = ""
 		i.PreferredName = ""

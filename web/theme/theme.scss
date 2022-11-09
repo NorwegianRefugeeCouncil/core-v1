@@ -329,12 +329,47 @@ a.home-link {
 
 table.table-individuals {
 
-    td {
+    $maxWidth : 25rem;
+
+    th {
+        white-space: nowrap;
+        max-width: $maxWidth;
+    }
+
+    th.sortable:hover {
+        background-color: var(--bs-gray-300);
+    }
+
+    th.sortable {
+        cursor: pointer;
+        @extend .pe-2;
+    }
+
+    th.sortable .sort-icon-next {
+        display: none;
+    }
+    th.sortable:hover .sort-icon-next {
+      display: inline-block;
+    }
+
+    th.sortable.sorted .sort-icon-sortable, th.sortable:hover .sort-icon-sortable {
+        display: none
+    }
+
+    th.sortable.sorted .sort-icon-current {
+        display: inline-block;
+    }
+
+    th.sortable:not(.sorted) .sort-icon-current, th.sortable.sorted:hover .sort-icon-current {
+        display: none;
+    }
+
+    td div{
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        background: white;
         border-spacing: 0;
+        max-width: $maxWidth;
     }
 
     tbody tr {
@@ -347,4 +382,8 @@ table.table-individuals {
         opacity: 0.5!important
     }
 
+}
+
+.cursor-pointer {
+    cursor: pointer;
 }

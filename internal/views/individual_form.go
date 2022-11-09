@@ -57,6 +57,7 @@ func (f *IndividualForm) build() error {
 		f.buildPrefersToRemainAnonymous,
 		f.buildGender,
 		f.buildBirthDate,
+		f.buildAge,
 		f.buildIsMinor,
 		f.buildNationality1,
 		f.buildNationality2,
@@ -78,8 +79,12 @@ func (f *IndividualForm) build() error {
 		f.buildSpokenLanguage2,
 		f.buildSpokenLanguage3,
 		f.buildPreferredCommunicationLanguage,
-		f.buildPhoneNumber,
-		f.buildEmailAddress,
+		f.buildPhoneNumber1,
+		f.buildPhoneNumber2,
+		f.buildPhoneNumber3,
+		f.buildEmailAddress1,
+		f.buildEmailAddress2,
+		f.buildEmailAddress3,
 		f.buildAddress,
 		f.buildPreferredMeansOfContact,
 		f.buildContactInstructions,
@@ -100,6 +105,12 @@ func (f *IndividualForm) build() error {
 		f.buildHasCommunicationDisability,
 		f.buildCommunicationDisabilityLevel,
 		f.buildIdentificationContext,
+		f.buildComments,
+		f.buildFreeField1,
+		f.buildFreeField2,
+		f.buildFreeField3,
+		f.buildFreeField4,
+		f.buildFreeField5,
 		f.buildCollectionAgent,
 		f.buildCollectionAgentTitle,
 		f.buildCollectionDate,
@@ -234,8 +245,7 @@ func (f *IndividualForm) buildGender() error {
 	}
 	return buildField(&forms.SelectInputField{
 		Name:        "gender",
-		DisplayName: "Gender",
-		Required:    true,
+		DisplayName: "Sex",
 		Options:     genderOptions,
 		Codec:       &genderCodec{},
 	}, f.personalInfoSection, f.individual.Gender)
@@ -246,6 +256,13 @@ func (f *IndividualForm) buildBirthDate() error {
 		Name:        "birthDate",
 		DisplayName: "Birth Date",
 	}, f.personalInfoSection, f.individual.BirthDate)
+}
+
+func (f *IndividualForm) buildAge() error {
+	return buildField(&forms.NumberInputField{
+		Name:        "age",
+		DisplayName: "Age",
+	}, f.personalInfoSection, f.individual.Age)
 }
 
 func (f *IndividualForm) buildIsMinor() error {
@@ -402,18 +419,46 @@ func (f *IndividualForm) buildPreferredCommunicationLanguage() error {
 	}, f.personalInfoSection, f.individual.PreferredCommunicationLanguage)
 }
 
-func (f *IndividualForm) buildPhoneNumber() error {
+func (f *IndividualForm) buildPhoneNumber1() error {
 	return buildField(&forms.TextInputField{
-		Name:        "phoneNumber",
-		DisplayName: "Phone Number",
-	}, f.contactInfoSection, f.individual.PhoneNumber)
+		Name:        "phoneNumber1",
+		DisplayName: "Phone Number 1",
+	}, f.contactInfoSection, f.individual.PhoneNumber1)
 }
 
-func (f *IndividualForm) buildEmailAddress() error {
+func (f *IndividualForm) buildPhoneNumber2() error {
 	return buildField(&forms.TextInputField{
-		Name:        "email",
-		DisplayName: "Email Address",
-	}, f.contactInfoSection, f.individual.Email)
+		Name:        "phoneNumber2",
+		DisplayName: "Phone Number 2",
+	}, f.contactInfoSection, f.individual.PhoneNumber2)
+}
+
+func (f *IndividualForm) buildPhoneNumber3() error {
+	return buildField(&forms.TextInputField{
+		Name:        "phoneNumber3",
+		DisplayName: "Phone Number 3",
+	}, f.contactInfoSection, f.individual.PhoneNumber3)
+}
+
+func (f *IndividualForm) buildEmailAddress1() error {
+	return buildField(&forms.TextInputField{
+		Name:        "email1",
+		DisplayName: "Email Address 1",
+	}, f.contactInfoSection, f.individual.Email1)
+}
+
+func (f *IndividualForm) buildEmailAddress2() error {
+	return buildField(&forms.TextInputField{
+		Name:        "email2",
+		DisplayName: "Email Address 2",
+	}, f.contactInfoSection, f.individual.Email2)
+}
+
+func (f *IndividualForm) buildEmailAddress3() error {
+	return buildField(&forms.TextInputField{
+		Name:        "email3",
+		DisplayName: "Email Address 3",
+	}, f.contactInfoSection, f.individual.Email3)
 }
 
 func (f *IndividualForm) buildAddress() error {
@@ -425,10 +470,10 @@ func (f *IndividualForm) buildAddress() error {
 
 func (f *IndividualForm) buildPreferredMeansOfContact() error {
 	options := []forms.SelectInputFieldOption{
-		{Label: "WhatsApp", Value: "whatsapp"},
 		{Label: "Phone", Value: "phone"},
+		{Label: "WhatsApp", Value: "whatsapp"},
 		{Label: "Email", Value: "email"},
-		{Label: "SMS", Value: "sms"},
+		{Label: "Visit", Value: "visit"},
 		{Label: "Other", Value: "other"},
 	}
 	if f.isNew() {
@@ -439,7 +484,6 @@ func (f *IndividualForm) buildPreferredMeansOfContact() error {
 	return buildField(&forms.SelectInputField{
 		Name:        "preferredContactMethod",
 		DisplayName: "Preferred contact method",
-		Required:    true,
 		Options:     options,
 	}, f.contactInfoSection, f.individual.PreferredContactMethod)
 }
@@ -448,7 +492,6 @@ func (f *IndividualForm) buildContactInstructions() error {
 	return buildField(&forms.TextAreaInputField{
 		Name:        "preferredContactMethodComments",
 		DisplayName: "Instructions for contact or other comments",
-		Required:    true,
 	}, f.contactInfoSection, f.individual.PreferredContactMethodComments)
 }
 
@@ -456,7 +499,6 @@ func (f *IndividualForm) buildHasConsentedToRgpd() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "hasConsentedToRgpd",
 		DisplayName: "Has the person consented to NRC using their data?",
-		Required:    true,
 	}, f.protectionSection, f.individual.HasConsentedToRGPD)
 }
 
@@ -464,7 +506,6 @@ func (f *IndividualForm) buildHasConsentedToReferral() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "hasConsentedToReferral",
 		DisplayName: "Has the person consented to NRC referring them to other service providers within or outside of NRC",
-		Required:    true,
 	}, f.protectionSection, f.individual.HasConsentedToRGPD)
 }
 
@@ -472,7 +513,6 @@ func (f *IndividualForm) buildPresentsProtectionConcerns() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "presentsProtectionConcerns",
 		DisplayName: "Presents protection concerns",
-		Required:    true,
 	}, f.protectionSection, f.individual.PresentsProtectionConcerns)
 }
 
@@ -485,7 +525,6 @@ func (f *IndividualForm) buildDisplacementStatus() error {
 		Name:        "displacementStatus",
 		DisplayName: "Displacement Status",
 		Options:     options,
-		Required:    true,
 		Codec:       &displacementStatusCodec{},
 	}, f.protectionSection, f.individual.DisplacementStatus)
 }
@@ -589,7 +628,7 @@ func (f *IndividualForm) buildCommunicationDisabilityLevel() error {
 func (f *IndividualForm) buildIdentificationContext() error {
 	return buildField(&forms.SelectInputField{
 		Name:        "identificationContext",
-		DisplayName: "Identification Context",
+		DisplayName: "Context of Engagement",
 		Options: []forms.SelectInputFieldOption{
 			{Label: "", Value: ""},
 			{Label: "House Visit", Value: "houseVisit"},
@@ -606,7 +645,6 @@ func (f *IndividualForm) buildCollectionAgent() error {
 	return buildField(&forms.TextInputField{
 		Name:        "collectionAgentName",
 		DisplayName: "Collection Agent Name",
-		Required:    true,
 	}, f.dataCollectionSection, f.individual.CollectionAgentName)
 }
 
@@ -614,7 +652,6 @@ func (f *IndividualForm) buildCollectionAgentTitle() error {
 	return buildField(&forms.TextInputField{
 		Name:        "collectionAgentTitle",
 		DisplayName: "Collection Agent Title",
-		Required:    true,
 	}, f.dataCollectionSection, f.individual.CollectionAgentTitle)
 }
 
@@ -622,7 +659,6 @@ func (f *IndividualForm) buildCollectionDate() error {
 	return buildField(&forms.DateInputField{
 		Name:        "collectionTime",
 		DisplayName: "Collection Date",
-		Required:    true,
 	}, f.dataCollectionSection, f.individual.CollectionTime)
 }
 
@@ -647,6 +683,48 @@ func (f *IndividualForm) buildCollectionLocation3() error {
 	}, f.dataCollectionSection, f.individual.CollectionAdministrativeArea3)
 }
 
+func (f *IndividualForm) buildComments() error {
+	return buildField(&forms.TextAreaInputField{
+		Name:        "comments",
+		DisplayName: "Comments",
+	}, f.dataCollectionSection, f.individual.Comments)
+}
+
+func (f *IndividualForm) buildFreeField1() error {
+	return buildField(&forms.TextInputField{
+		Name:        "freeField1",
+		DisplayName: "Free Field 1",
+	}, f.dataCollectionSection, f.individual.FreeField1)
+}
+
+func (f *IndividualForm) buildFreeField2() error {
+	return buildField(&forms.TextInputField{
+		Name:        "freeField2",
+		DisplayName: "Free Field 2",
+	}, f.dataCollectionSection, f.individual.FreeField2)
+}
+
+func (f *IndividualForm) buildFreeField3() error {
+	return buildField(&forms.TextInputField{
+		Name:        "freeField3",
+		DisplayName: "Free Field 3",
+	}, f.dataCollectionSection, f.individual.FreeField3)
+}
+
+func (f *IndividualForm) buildFreeField4() error {
+	return buildField(&forms.TextInputField{
+		Name:        "freeField4",
+		DisplayName: "Free Field 4",
+	}, f.dataCollectionSection, f.individual.FreeField4)
+}
+
+func (f *IndividualForm) buildFreeField5() error {
+	return buildField(&forms.TextInputField{
+		Name:        "freeField5",
+		DisplayName: "Free Field 5",
+	}, f.dataCollectionSection, f.individual.FreeField5)
+}
+
 func buildField(field forms.InputField, section *forms.FormSection, value interface{}) error {
 	if err := field.SetValue(value); err != nil {
 		return err
@@ -668,8 +746,8 @@ func getIdentificationTypeOptions() []forms.SelectInputFieldOption {
 	return []forms.SelectInputFieldOption{
 		{Label: "", Value: ""},
 		{Label: "Passport", Value: "passport"},
+		{Label: "UNHCR ID", Value: "unhcr_id"},
 		{Label: "National ID", Value: "national_id"},
-		{Label: "Driver's License", Value: "drivers_license"},
 		{Label: "Other", Value: "other"},
 	}
 }
@@ -738,10 +816,12 @@ func (d *displacementStatusCodec) Encode(v interface{}) (string, error) {
 			return string(api.DisplacementStatusRefugee), nil
 		case api.DisplacementStatusHostCommunity:
 			return string(api.DisplacementStatusHostCommunity), nil
-		case api.DisplacementStatusStateless:
-			return string(api.DisplacementStatusStateless), nil
+		case api.DisplacementStatusReturnee:
+			return string(api.DisplacementStatusReturnee), nil
 		case api.DisplacementStatusNonDisplaced:
 			return string(api.DisplacementStatusNonDisplaced), nil
+		case api.DisplacementStatusOther:
+			return string(api.DisplacementStatusOther), nil
 		case api.DisplacementStatusUnspecified:
 			return string(api.DisplacementStatusUnspecified), nil
 		default:
@@ -760,10 +840,12 @@ func (d *displacementStatusCodec) Decode(v string) (interface{}, error) {
 		return api.DisplacementStatusRefugee, nil
 	case string(api.DisplacementStatusHostCommunity):
 		return api.DisplacementStatusHostCommunity, nil
-	case string(api.DisplacementStatusStateless):
-		return api.DisplacementStatusStateless, nil
+	case string(api.DisplacementStatusReturnee):
+		return api.DisplacementStatusReturnee, nil
 	case string(api.DisplacementStatusNonDisplaced):
 		return api.DisplacementStatusNonDisplaced, nil
+	case string(api.DisplacementStatusOther):
+		return api.DisplacementStatusOther, nil
 	case string(api.DisplacementStatusUnspecified):
 		return api.DisplacementStatusUnspecified, nil
 	default:

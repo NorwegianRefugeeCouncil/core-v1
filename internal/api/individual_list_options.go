@@ -1,28 +1,143 @@
 package api
 
 import (
-	"html/template"
+	"fmt"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/nrc-no/notcore/internal/containers"
 )
 
 type ListIndividualsOptions struct {
-	Address                    string
-	IDs                        containers.StringSet
-	BirthDateFrom              *time.Time
-	BirthDateTo                *time.Time
-	CountryID                  string
-	DisplacementStatuses       containers.Set[DisplacementStatus]
-	Email                      string
-	FullName                   string
-	Genders                    containers.Set[Gender]
-	IsMinor                    *bool
-	PhoneNumber                string
-	PresentsProtectionConcerns *bool
-	Skip                       int
-	Take                       int
+	Address                        string
+	AgeFrom                        *int
+	AgeTo                          *int
+	BirthDateFrom                  *time.Time
+	BirthDateTo                    *time.Time
+	CognitiveDisabilityLevel       DisabilityLevel
+	CollectionAdministrativeArea1  string
+	CollectionAdministrativeArea2  string
+	CollectionAdministrativeArea3  string
+	CollectionAgentName            string
+	CollectionAgentTitle           string
+	CollectionTimeFrom             *time.Time
+	CollectionTimeTo               *time.Time
+	CommunityID                    string
+	CountryID                      string
+	CreatedAtFrom                  *time.Time
+	CreatedAtTo                    *time.Time
+	DisplacementStatuses           containers.Set[DisplacementStatus]
+	Email                          string
+	FreeField1                     string
+	FreeField2                     string
+	FreeField3                     string
+	FreeField4                     string
+	FreeField5                     string
+	FullName                       string
+	Genders                        containers.Set[Gender]
+	HasCognitiveDisability         *bool
+	HasCommunicationDisability     *bool
+	HasConsentedToRGPD             *bool
+	HasConsentedToReferral         *bool
+	HasHearingDisability           *bool
+	HasMobilityDisability          *bool
+	HasSelfCareDisability          *bool
+	HasVisionDisability            *bool
+	HearingDisabilityLevel         DisabilityLevel
+	HouseholdID                    string
+	IDs                            containers.StringSet
+	IdentificationNumber           string
+	IdentificationContext          string
+	InternalID                     string
+	IsHeadOfCommunity              *bool
+	IsHeadOfHousehold              *bool
+	IsMinor                        *bool
+	MobilityDisabilityLevel        DisabilityLevel
+	Nationality                    string
+	PhoneNumber                    string
+	PreferredContactMethod         string
+	PreferredCommunicationLanguage string
+	PrefersToRemainAnonymous       *bool
+	PresentsProtectionConcerns     *bool
+	SelfCareDisabilityLevel        DisabilityLevel
+	SpokenLanguage                 string
+	UpdatedAtFrom                  *time.Time
+	UpdatedAtTo                    *time.Time
+	Skip                           int
+	Take                           int
+	Sort                           SortTerms
+	VisionDisabilityLevel          DisabilityLevel
+}
+
+type SortDirection string
+
+const (
+	SortDirectionNone       SortDirection = ""
+	SortDirectionAscending  SortDirection = "ascending"
+	SortDirectionDescending SortDirection = "descending"
+)
+
+type SortTerm struct {
+	Field     string
+	Direction SortDirection
+}
+
+type SortTerms []SortTerm
+
+func (s SortTerms) MarshalQuery() string {
+	var query string
+	for i, term := range s {
+		if i > 0 {
+			query += ","
+		}
+		if term.Direction == SortDirectionAscending {
+			query += term.Field
+		} else {
+			query += "-" + term.Field
+		}
+	}
+	return query
+}
+
+func (s *SortTerms) UnmarshalQuery(query string) error {
+	terms := make(SortTerms, 0)
+	parts := strings.Split(query, ",")
+	seenColumns := containers.NewStringSet()
+	for _, term := range parts {
+		column, direction, err := s.parseTerm(term)
+		if err != nil {
+			return err
+		}
+		if !sortableColumns.Contains(column) {
+			return fmt.Errorf("invalid sort column: %s", column)
+		}
+		if seenColumns.Contains(column) {
+			return fmt.Errorf("duplicate sort column: %s", column)
+		}
+		seenColumns.Add(column)
+		terms = append(terms, SortTerm{
+			Field:     column,
+			Direction: direction,
+		})
+	}
+	*s = terms
+	return nil
+}
+
+func (s *SortTerms) parseTerm(term string) (string, SortDirection, error) {
+	if term == "" {
+		return "", "", fmt.Errorf("empty term")
+	}
+	var direction = SortDirectionAscending
+	if term[0] == '-' {
+		direction = SortDirectionDescending
+		term = term[1:]
+	}
+	if len(term) == 0 {
+		return "", "", fmt.Errorf("invalid sort term: %s", term)
+	}
+	return term, direction, nil
 }
 
 func (o ListIndividualsOptions) IsMinorSelected() bool {
@@ -39,22 +154,6 @@ func (o ListIndividualsOptions) IsPresentsProtectionConcernsSelected() bool {
 
 func (o ListIndividualsOptions) IsNotPresentsProtectionConcernsSelected() bool {
 	return o.PresentsProtectionConcerns != nil && !*o.PresentsProtectionConcerns
-}
-
-func (o ListIndividualsOptions) AgeFrom() int {
-	if o.BirthDateTo == nil {
-		return 0
-	}
-	now := time.Now()
-	return now.Year() - o.BirthDateTo.Year() - 1
-}
-
-func (o ListIndividualsOptions) AgeTo() int {
-	if o.BirthDateFrom == nil {
-		return 0
-	}
-	now := time.Now()
-	return now.Year() - o.BirthDateFrom.Year() - 1
 }
 
 func (o ListIndividualsOptions) NextPage() ListIndividualsOptions {
@@ -84,11 +183,30 @@ func (o ListIndividualsOptions) WithTake(take int) ListIndividualsOptions {
 	return ret
 }
 
-func (o ListIndividualsOptions) QueryParams() template.HTML {
+func (o ListIndividualsOptions) WithSort(field string, direction string) ListIndividualsOptions {
+	o.Sort = SortTerms{
+		{
+			Field:     field,
+			Direction: SortDirection(direction),
+		},
+	}
+	return o
+}
+
+func (o ListIndividualsOptions) GetSortDirection(field string) SortDirection {
+	for _, term := range o.Sort {
+		if term.Field == field {
+			return term.Direction
+		}
+	}
+	return SortDirectionNone
+}
+
+func (o ListIndividualsOptions) QueryParams() string {
 	params := newListIndividualsOptionsEncoder(o, time.Now()).encode()
 	u := url.URL{Path: "/countries/" + o.CountryID + "/individuals"}
 	u.RawQuery = params.Encode()
-	return template.HTML(u.String())
+	return u.String()
 }
 
 func NewIndividualListFromURLValues(values url.Values, into *ListIndividualsOptions) error {

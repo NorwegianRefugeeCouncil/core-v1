@@ -34,6 +34,7 @@ var migrations = []migration{
 	migrationFromFile("010_country_jwt_group"),
 	migrationFromFile("011_individual_soft_delete"),
 	migrationFromFile("012_new_individual"),
+	migrationFromFile("013_individual_changes"),
 }
 
 // Migrate runs the migrations on the database.
