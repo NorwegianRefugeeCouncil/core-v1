@@ -23,6 +23,8 @@
         const deleteIndividualsConfirmationModalContentId = "deleteIndividualsConfirmationModalContent"
         const deleteIndividualsConfirmationModalConfirmButtonId = "deleteIndividualsConfirmationModalConfirmButton"
         const deleteIndividualsConfirmationModalConfirmButtonContentId = "deleteIndividualsConfirmationModalConfirmButtonContent"
+        const individualTableContainerId = individualActionFormId
+        const individualTableHorizontalScrollKey = "individualsTableHorizontalScroll"
 
         /**
          * Changes the URL
@@ -236,6 +238,25 @@
                 })
             }
 
+            const tableContainer = document.getElementById(individualTableContainerId)
+
+            // restore the horizontal scroll position
+            const horizontalScrollStr = sessionStorage.getItem(individualTableHorizontalScrollKey)
+            if (horizontalScrollStr) {
+                console.log("restoring horizontal scroll position", horizontalScrollStr)
+                tableContainer.scrollLeft = parseInt(horizontalScrollStr)
+            }
+            setTimeout(() => {
+                tableContainer.classList.remove("opacity-0")
+            }, 0)
+
+            // store the horizontal scroll position of the table
+            tableContainer.addEventListener("scroll", function (event) {
+                console.log("scroll", event.target.scrollLeft)
+                const scrollLeft = event.target.scrollLeft;
+                sessionStorage.setItem(individualTableHorizontalScrollKey, scrollLeft);
+            });
+
             // Refresh the text and style of the delete button when the page is loaded
             refreshDeleteButton()
 
@@ -275,6 +296,7 @@
                     </a>
                     {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
                         <form id="individual-upload--form" action="/countries/{{.Options.CountryID}}/individuals/upload"
+                              class="d-none"
                               enctype="multipart/form-data" method="post" class="ms-2">
                             <input
                                     hidden
@@ -690,8 +712,8 @@
             {{$updatedAtWidth := $dateTimeWidth}}
 
             <!-- INDIVIDUALS TABLE -->
-            <form id="individuals-action-form" class="table-responsive mb-3" method="post">
-                <table class="table table-individuals">
+            <form id="individuals-action-form" class="table-responsive mb-3 opacity-0" method="post">
+                <table class="table table-individuals" id="individualsTable">
                     <thead>
                     <tr>
                         <th class="sticky-column text-center" style="width: {{$selectWidth}}">
