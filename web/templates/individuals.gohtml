@@ -294,7 +294,6 @@
                     </a>
                     {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
                         <form id="individual-upload--form" action="/countries/{{.Options.CountryID}}/individuals/upload"
-                              class="d-none"
                               enctype="multipart/form-data" method="post" class="ms-2">
                             <input
                                     hidden
@@ -711,7 +710,7 @@
 
             <!-- INDIVIDUALS TABLE -->
             <form id="individuals-action-form" class="table-responsive mb-3 opacity-0" method="post">
-                <table class="table table-individuals" id="individualsTable">
+                <table class="table table-individuals">
                     <thead>
                     <tr>
                         <th class="sticky-column text-center" style="width: {{$selectWidth}}">
