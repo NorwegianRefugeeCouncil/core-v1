@@ -23,6 +23,8 @@
         const deleteIndividualsConfirmationModalContentId = "deleteIndividualsConfirmationModalContent"
         const deleteIndividualsConfirmationModalConfirmButtonId = "deleteIndividualsConfirmationModalConfirmButton"
         const deleteIndividualsConfirmationModalConfirmButtonContentId = "deleteIndividualsConfirmationModalConfirmButtonContent"
+        const individualTableContainerId = individualActionFormId
+        const individualTableHorizontalScrollKey = "individualsTableHorizontalScroll"
 
         /**
          * Changes the URL
@@ -235,6 +237,23 @@
                     refreshDeleteButton()
                 })
             }
+
+            const tableContainer = document.getElementById(individualTableContainerId)
+
+            // restore the horizontal scroll position
+            const horizontalScrollStr = sessionStorage.getItem(individualTableHorizontalScrollKey)
+            if (horizontalScrollStr) {
+                tableContainer.scrollLeft = parseInt(horizontalScrollStr)
+            }
+            setTimeout(() => {
+                tableContainer.classList.remove("opacity-0")
+            }, 0)
+
+            // store the horizontal scroll position of the table
+            tableContainer.addEventListener("scroll", function (event) {
+                const scrollLeft = event.target.scrollLeft;
+                sessionStorage.setItem(individualTableHorizontalScrollKey, scrollLeft);
+            });
 
             // Refresh the text and style of the delete button when the page is loaded
             refreshDeleteButton()
@@ -690,7 +709,7 @@
             {{$updatedAtWidth := $dateTimeWidth}}
 
             <!-- INDIVIDUALS TABLE -->
-            <form id="individuals-action-form" class="table-responsive mb-3" method="post">
+            <form id="individuals-action-form" class="table-responsive mb-3 opacity-0" method="post">
                 <table class="table table-individuals">
                     <thead>
                     <tr>
