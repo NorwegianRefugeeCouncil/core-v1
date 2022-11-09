@@ -326,9 +326,12 @@ a.home-link {
 
 table.table-individuals {
 
+    $maxWidth : 25rem;
+
     th {
         // do not wrap text in table header
         white-space: nowrap;
+        max-width: $maxWidth;
     }
 
     .sort-icon-current {
@@ -351,12 +354,13 @@ table.table-individuals {
         display: inline-block;
     }
 
-    td {
+    td div{
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         background: white;
         border-spacing: 0;
+        max-width: $maxWidth;
     }
 
     tbody tr {
