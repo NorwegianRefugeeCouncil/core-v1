@@ -120,6 +120,11 @@
             return row.getAttribute(dataIndividualIdAttribute)
         }
 
+        function downloadFunc() {
+            goToURL(
+                window.location.protocol +"//"+ window.location.host + window.location.pathname + "/download" + window.location.search
+            )
+        }
 
         document.addEventListener("DOMContentLoaded", function () {
 
@@ -267,10 +272,9 @@
                             Create new Individual
                         </a>
                     {{end}}
-                    <a href="/countries/{{.Options.CountryID}}/individuals/download" target="_blank"
-                       class="btn btn-outline-primary">
+                    <button onclick="downloadFunc()" class="btn btn-outline-primary">
                         Download
-                    </a>
+                    </button>
                     {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
                         <form id="individual-upload--form" action="/countries/{{.Options.CountryID}}/individuals/upload"
                               enctype="multipart/form-data" method="post" class="ms-2">

@@ -52,7 +52,7 @@ func HandleDownload(
 			format = "xlsx"
 		}
 
-		ret, err := userRepo.GetAll(ctx, api.ListIndividualsOptions{})
+		ret, err := userRepo.GetAll(ctx, getAllOptions)
 		if err != nil {
 			l.Error("failed to get individuals", zap.Error(err))
 			http.Error(w, "failed to get records: "+err.Error(), http.StatusInternalServerError)
