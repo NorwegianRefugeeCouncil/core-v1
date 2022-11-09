@@ -316,10 +316,27 @@ func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
 	return nil
 }
 
+func getTimeFormatForField(field string) string {
+	switch (field) {
+	case constants.DBColumnIndividualUpdatedAt:
+		return time.RFC3339
+	case constants.DBColumnIndividualCreatedAt:
+		return time.RFC3339
+	case constants.DBColumnIndividualDeletedAt:
+		return time.RFC3339
+	default:
+		return "2006-01-02"
+	}
+}
+
 func (i *Individual) marshalTabularData() ([]string, error) {
 	row := make([]string, len(constants.IndividualFileColumns))
 	for j, col := range constants.IndividualFileColumns {
-		value, err := i.GetFieldValue(constants.IndividualFileToDBMap[col])
+	        field, ok := constants.IndividualFileToDBMap[col]
+		if !ok {
+			return nil, fmt.Errof("unknown column %s", col) // should not happen but we never know.
+		}
+		value, err := i.GetFieldValue(field)
 		if err != nil {
 			return nil, err
 		}
@@ -340,10 +357,10 @@ func (i *Individual) marshalTabularData() ([]string, error) {
 		case string:
 			row[j] = v
 		case time.Time:
-			row[j] = v.Format("2006-01-02")
+			row[j] = v.Format(getTimeFormatForField(field))
 		case *time.Time:
 			if v != nil {
-				row[j] = v.Format("2006-01-02")
+				row[j] = v.Format(getTimeFormatForField(field))
 			}
 		case DisabilityLevel:
 			row[j] = string(v)
