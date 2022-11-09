@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/nrc-no/notcore/internal/constants"
+	"github.com/nrc-no/notcore/internal/containers"
 )
 
 func newListIndividualsOptionsEncoder(values ListIndividualsOptions, now time.Time) *listIndividualsOptionsEncoder {
@@ -81,6 +82,7 @@ func (p *listIndividualsOptionsEncoder) encode() url.Values {
 		p.encodeSkip,
 		p.encodeTake,
 		p.encodeVisionDisabilityLevel,
+		p.encodeSort,
 	}
 	for _, fn := range fns {
 		fn()
@@ -412,10 +414,23 @@ func (p *listIndividualsOptionsEncoder) encodeUpdatedAtTo() {
 	}
 }
 
+func (p *listIndividualsOptionsEncoder) encodeVisionDisabilityLevel() {
+	if p.values.VisionDisabilityLevel != DisabilityLevelUnspecified {
+		p.out.Add(constants.FormParamsGetIndividualsVisionDisabilityLevel, string(p.values.VisionDisabilityLevel))
+	}
+}
+
 func (p *listIndividualsOptionsEncoder) encodeSkip() {
 	if p.values.Skip != 0 {
 		p.out.Add(constants.FormParamsGetIndividualsSkip, fmt.Sprintf("%d", p.values.Skip))
 	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeSort() {
+	if len(p.values.Sort) == 0 {
+		return
+	}
+	p.out.Add(constants.FormParamsGetIndividualsSort, p.values.Sort.MarshalQuery())
 }
 
 func (p *listIndividualsOptionsEncoder) encodeTake() {
@@ -424,8 +439,67 @@ func (p *listIndividualsOptionsEncoder) encodeTake() {
 	}
 }
 
-func (p *listIndividualsOptionsEncoder) encodeVisionDisabilityLevel() {
-	if p.values.VisionDisabilityLevel != DisabilityLevelUnspecified {
-		p.out.Add(constants.FormParamsGetIndividualsVisionDisabilityLevel, string(p.values.VisionDisabilityLevel))
-	}
-}
+var sortableColumns = containers.NewStringSet(
+	constants.DBColumnIndividualAddress,
+	constants.DBColumnIndividualAge,
+	constants.DBColumnIndividualBirthDate,
+	constants.DBColumnIndividualCognitiveDisabilityLevel,
+	constants.DBColumnIndividualCollectionAdministrativeArea1,
+	constants.DBColumnIndividualCollectionAdministrativeArea2,
+	constants.DBColumnIndividualCollectionAdministrativeArea3,
+	constants.DBColumnIndividualCollectionAgentName,
+	constants.DBColumnIndividualCollectionAgentTitle,
+	constants.DBColumnIndividualCollectionTime,
+	constants.DBColumnIndividualCommunicationDisabilityLevel,
+	constants.DBColumnIndividualCommunityID,
+	constants.DBColumnIndividualCreatedAt,
+	constants.DBColumnIndividualDisplacementStatus,
+	constants.DBColumnIndividualEmail1,
+	constants.DBColumnIndividualEmail2,
+	constants.DBColumnIndividualEmail3,
+	constants.DBColumnIndividualFullName,
+	constants.DBColumnIndividualFreeField1,
+	constants.DBColumnIndividualFreeField2,
+	constants.DBColumnIndividualFreeField3,
+	constants.DBColumnIndividualFreeField4,
+	constants.DBColumnIndividualFreeField5,
+	constants.DBColumnIndividualGender,
+	constants.DBColumnIndividualHasCognitiveDisability,
+	constants.DBColumnIndividualHasCommunicationDisability,
+	constants.DBColumnIndividualHasConsentedToRGPD,
+	constants.DBColumnIndividualHasConsentedToReferral,
+	constants.DBColumnIndividualHasHearingDisability,
+	constants.DBColumnIndividualHasMobilityDisability,
+	constants.DBColumnIndividualHasSelfCareDisability,
+	constants.DBColumnIndividualHasVisionDisability,
+	constants.DBColumnIndividualHearingDisabilityLevel,
+	constants.DBColumnIndividualHouseholdID,
+	constants.DBColumnIndividualID,
+	constants.DBColumnIndividualIdentificationContext,
+	constants.DBColumnIndividualIdentificationNumber1,
+	constants.DBColumnIndividualIdentificationNumber2,
+	constants.DBColumnIndividualIdentificationNumber3,
+	constants.DBColumnIndividualIdentificationType1,
+	constants.DBColumnIndividualIdentificationType2,
+	constants.DBColumnIndividualIdentificationType3,
+	constants.DBColumnIndividualInternalID,
+	constants.DBColumnIndividualIsHeadOfCommunity,
+	constants.DBColumnIndividualIsHeadOfHousehold,
+	constants.DBColumnIndividualIsMinor,
+	constants.DBColumnIndividualMobilityDisabilityLevel,
+	constants.DBColumnIndividualNationality1,
+	constants.DBColumnIndividualNationality2,
+	constants.DBColumnIndividualPhoneNumber1,
+	constants.DBColumnIndividualPhoneNumber2,
+	constants.DBColumnIndividualPhoneNumber3,
+	constants.DBColumnIndividualPreferredCommunicationLanguage,
+	constants.DBColumnIndividualPreferredContactMethod,
+	constants.DBColumnIndividualPrefersToRemainAnonymous,
+	constants.DBColumnIndividualPresentsProtectionConcerns,
+	constants.DBColumnIndividualSelfCareDisabilityLevel,
+	constants.DBColumnIndividualSpokenLanguage1,
+	constants.DBColumnIndividualSpokenLanguage2,
+	constants.DBColumnIndividualSpokenLanguage3,
+	constants.DBColumnIndividualUpdatedAt,
+	constants.DBColumnIndividualVisionDisabilityLevel,
+)

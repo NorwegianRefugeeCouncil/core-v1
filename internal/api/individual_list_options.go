@@ -1,8 +1,9 @@
 package api
 
 import (
-	"html/template"
+	"fmt"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/nrc-no/notcore/internal/containers"
@@ -65,7 +66,78 @@ type ListIndividualsOptions struct {
 	UpdatedAtTo                    *time.Time
 	Skip                           int
 	Take                           int
+	Sort                           SortTerms
 	VisionDisabilityLevel          DisabilityLevel
+}
+
+type SortDirection string
+
+const (
+	SortDirectionNone       SortDirection = ""
+	SortDirectionAscending  SortDirection = "ascending"
+	SortDirectionDescending SortDirection = "descending"
+)
+
+type SortTerm struct {
+	Field     string
+	Direction SortDirection
+}
+
+type SortTerms []SortTerm
+
+func (s SortTerms) MarshalQuery() string {
+	var query string
+	for i, term := range s {
+		if i > 0 {
+			query += ","
+		}
+		if term.Direction == SortDirectionAscending {
+			query += term.Field
+		} else {
+			query += "-" + term.Field
+		}
+	}
+	return query
+}
+
+func (s *SortTerms) UnmarshalQuery(query string) error {
+	terms := make(SortTerms, 0)
+	parts := strings.Split(query, ",")
+	seenColumns := containers.NewStringSet()
+	for _, term := range parts {
+		column, direction, err := s.parseTerm(term)
+		if err != nil {
+			return err
+		}
+		if !sortableColumns.Contains(column) {
+			return fmt.Errorf("invalid sort column: %s", column)
+		}
+		if seenColumns.Contains(column) {
+			return fmt.Errorf("duplicate sort column: %s", column)
+		}
+		seenColumns.Add(column)
+		terms = append(terms, SortTerm{
+			Field:     column,
+			Direction: direction,
+		})
+	}
+	*s = terms
+	return nil
+}
+
+func (s *SortTerms) parseTerm(term string) (string, SortDirection, error) {
+	if term == "" {
+		return "", "", fmt.Errorf("empty term")
+	}
+	var direction = SortDirectionAscending
+	if term[0] == '-' {
+		direction = SortDirectionDescending
+		term = term[1:]
+	}
+	if len(term) == 0 {
+		return "", "", fmt.Errorf("invalid sort term: %s", term)
+	}
+	return term, direction, nil
 }
 
 func (o ListIndividualsOptions) IsMinorSelected() bool {
@@ -111,11 +183,30 @@ func (o ListIndividualsOptions) WithTake(take int) ListIndividualsOptions {
 	return ret
 }
 
-func (o ListIndividualsOptions) QueryParams() template.HTML {
+func (o ListIndividualsOptions) WithSort(field string, direction string) ListIndividualsOptions {
+	o.Sort = SortTerms{
+		{
+			Field:     field,
+			Direction: SortDirection(direction),
+		},
+	}
+	return o
+}
+
+func (o ListIndividualsOptions) GetSortDirection(field string) SortDirection {
+	for _, term := range o.Sort {
+		if term.Field == field {
+			return term.Direction
+		}
+	}
+	return SortDirectionNone
+}
+
+func (o ListIndividualsOptions) QueryParams() string {
 	params := newListIndividualsOptionsEncoder(o, time.Now()).encode()
 	u := url.URL{Path: "/countries/" + o.CountryID + "/individuals"}
 	u.RawQuery = params.Encode()
-	return template.HTML(u.String())
+	return u.String()
 }
 
 func NewIndividualListFromURLValues(values url.Values, into *ListIndividualsOptions) error {

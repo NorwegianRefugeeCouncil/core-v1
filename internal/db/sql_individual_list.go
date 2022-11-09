@@ -79,7 +79,7 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withVisionDisabilityLevel(options.VisionDisabilityLevel).
 
 		// these must be in that order
-		withOrderBy("created_at").
+		withSort(options.Sort).
 		withOffset(options.Skip).
 		withLimit(options.Take)
 
@@ -623,6 +623,25 @@ func (g *getAllIndividualsSQLQuery) withOffset(offset int) *getAllIndividualsSQL
 		return g
 	}
 	g.writeString(fmt.Sprintf(" OFFSET %d", offset))
+	return g
+}
+
+func (g *getAllIndividualsSQLQuery) withSort(sortTerms api.SortTerms) *getAllIndividualsSQLQuery {
+	if len(sortTerms) == 0 {
+		return g
+	}
+	g.writeString(" ORDER BY ")
+	for i, sortTerm := range sortTerms {
+		if i > 0 {
+			g.writeString(", ")
+		}
+		g.writeString(sortTerm.Field)
+		if sortTerm.Direction == api.SortDirectionDescending {
+			g.writeString(" DESC")
+		} else {
+			g.writeString(" ASC")
+		}
+	}
 	return g
 }
 

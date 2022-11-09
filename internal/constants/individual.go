@@ -127,6 +127,7 @@ const (
 	FormParamsGetIndividualsUpdatedAtFrom                  = "updated_at_from"
 	FormParamsGetIndividualsUpdatedAtTo                    = "updated_at_to"
 	FormParamsGetIndividualsVisionDisabilityLevel          = "vision_disability_level"
+	FormParamsGetIndividualsSort                           = "sort"
 
 	DBColumnIndividualAddress                        = "address"
 	DBColumnIndividualAge                            = "age"

@@ -23,6 +23,13 @@
         const deleteIndividualsConfirmationModalContentId = "deleteIndividualsConfirmationModalContent"
         const deleteIndividualsConfirmationModalConfirmButtonId = "deleteIndividualsConfirmationModalConfirmButton"
 
+        /**
+         * Changes the URL
+         * @param url
+         */
+        function goToURL(url) {
+            window.location.href = url
+        }
 
         /**
          * Gets the number of selected individuals.
@@ -233,6 +240,28 @@
 
         });
     </script>
+    <style>
+        th {
+            white-space: nowrap;
+        }
+
+        .sort-icon-current {
+            display: inline-block;
+        }
+
+        .sort-icon-next {
+            display: none;
+        }
+
+        th.cursor-pointer:hover .sort-icon-current {
+            display: none;
+        }
+
+        th.cursor-pointer:hover .sort-icon-next {
+            display: inline-block;
+        }
+    </style>
+
 {{end}}
 {{define "body"}}
     <header class="sticky-top">
@@ -657,28 +686,188 @@
                         <th class="sticky-column" style="width:2rem">
                             <input class="form-check-input" type="checkbox" id="selectAllCheckbox"/>
                         </th>
-                        {{template "columnHeader" (dict "Width" "18rem" "Label" "ID" "Scope" "col" "Class" "sticky-column" "Title" "ID" "Style" "left: 3.85rem")}}
-                        {{template "columnHeader" (dict "Width" "10rem" "Label" "Name" "Scope" "col" "Class" "sticky-column border-end"  "Style" "left: 23.62rem" "Title" "Full Name")}}
-                        {{template "columnHeader" (dict "Width" "6rem" "Label" "Sex" "Title" "Sex" )}}
-                        {{template "columnHeader" (dict "Width" "4rem" "Label" "Age" "Title" "Age")}}
-                        {{template "columnHeader" (dict "Width" "8rem" "Label" "Birth Date" "Title" "Birth Date")}}
-                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Household ID" "Title" "Household ID")}}
-                        {{template "columnHeader" (dict "Width" "4rem" "Label" "HoH" "Title" "Head of Household" "Class" "text-center")}}
-                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Community ID" "Title" "Community ID" )}}
-                        {{template "columnHeader" (dict "Width" "4rem" "Label" "CR" "Title" "Community Representative" "Class" "text-center")}}
-                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Phone Number" "Title" "Phone Number")}}
-                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Email" "Title" "Email Address" )}}
-                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Registration Date" "Title" "Registration Date" )}}
-                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Area1" "Title" "Collection Administrative Area 1" )}}
-                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Area2" "Title" "Collection Administrative Area 2" )}}
-                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Area3" "Title" "Collection Administrative Area 3" )}}
-                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Free Field 1" "Title" "Free Field 1" )}}
-                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Free Field 2" "Title" "Free Field 2" )}}
-                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Free Field 3" "Title" "Free Field 3" )}}
-                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Free Field 4" "Title" "Free Field 4" )}}
-                        {{template "columnHeader" (dict "Width" "12rem" "Label" "Free Field 5" "Title" "Free Field 5" )}}
-                        {{template "columnHeader" (dict "Width" "10rem" "Label" "Created" "Title" "Date Created")}}
-                        {{template "columnHeader" (dict "Width" "10rem" "Label" "Updated" "Title" "Date Updated")}}
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+
+                        "Label" "ID"
+                        "Scope" "col"
+                        "Class" "sticky-column"
+                        "Title" "ID"
+                        "Style" "left: 2rem"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "full_name"
+                        "Label" "Name"
+                        "Scope" "col"
+                        "Class" "sticky-column border-end"
+                        "Style" "left: 22rem"
+                        "Title" "Full Name"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "gender"
+                        "Label" "Sex"
+                        "Title" "Sex"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "age"
+                        "Label" "Age"
+                        "Title" "Age"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "birth_date"
+                        "Label" "Birth Date"
+                        "Title" "Birth Date"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "household_id"
+                        "Label" "Household ID"
+                        "Title" "Household ID"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "is_head_of_household"
+                        "Label" "HoH"
+                        "Title" "Head of Household"
+                        "Class" "text-center"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "community_id"
+                        "Label" "Community ID"
+                        "Title" "Community ID"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "is_head_of_community"
+                        "Label" "CR"
+                        "Title" "Community Representative"
+                        "Class" "text-center"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "phone_number_1"
+                        "Label" "Phone Number"
+                        "Title" "Phone Number"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "email_1"
+                        "Label" "Email"
+                        "Title" "Email Address"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "collection_time"
+                        "Label" "Registration Date"
+                        "Title" "Registration Date"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "collection_administrative_area_1"
+                        "Label" "Area1"
+                        "Title" "Collection Administrative Area 1"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "collection_administrative_area_2"
+                        "Label" "Area2"
+                        "Title" "Collection Administrative Area 2"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "collection_administrative_area_3"
+                        "Label" "Area3"
+                        "Title" "Collection Administrative Area 3"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "free_field_1"
+                        "Label" "Free Field 1"
+                        "Title" "Free Field 1"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "free_field_2"
+                        "Label" "Free Field 2"
+                        "Title" "Free Field 2"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "free_field_3"
+                        "Label" "Free Field 3"
+                        "Title" "Free Field 3"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "free_field_4"
+                        "Label" "Free Field 4"
+                        "Title" "Free Field 4"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "free_field_5"
+                        "Label" "Free Field 5"
+                        "Title" "Free Field 5"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "created_at"
+                        "Label" "Created"
+                        "Title" "Date Created"
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "updated_at"
+                        "Label" "Updated"
+                        "Title" "Date Updated"
+                        )}}
 
                         <th><!--filler--></th>
                     </tr>
@@ -700,7 +889,7 @@
                                         {{.ID}}
                                     </a>
                                 </td>
-                                <td class="sticky-column border-end" style="left: 21.75rem">
+                                <td class="sticky-column border-end" style="left: 22rem">
                                     {{if .FullName}}
                                         {{.FullName}}
                                     {{else}}
@@ -870,11 +1059,26 @@
 {{end}}
 
 {{define "columnHeader"}}
+    {{$options := .Options}}
+    {{$sortable := .Sortable}}
     {{$label := .Label}}
     {{$width := .Width}}
     {{$minWidth := .MinWidth}}
     {{$maxWidth := .MaxWidth}}
-
+    {{$sortKey := .SortKey}}
+    {{$sortOnClick := ""}}
+    {{$sortDirection := ""}}
+    {{$sortDirectionForLink := ""}}
+    {{if $sortable}}
+        {{$sortDirection = $options.GetSortDirection $sortKey}}
+        {{if eq $sortDirection "ascending"}}
+            {{$sortDirectionForLink = "descending"}}
+        {{else}}
+            {{$sortDirectionForLink = "ascending"}}
+        {{end}}
+        {{$sortLinkUrl := ($options.WithSort $sortKey $sortDirectionForLink).QueryParams }}
+        {{$sortOnClick = concat "onclick=\"goToURL('" $sortLinkUrl "')\"" }}
+    {{end}}
 
     {{$style := "style=\""}}
     {{if .Style}}{{$style = concat $style .Style}}{{end}}
@@ -891,11 +1095,44 @@
     {{$style = concat $style "\"" }}
 
     <th {{$style | attr}}
-            class="{{.Class}}"
+            class="{{.Class}} {{if $sortable}}cursor-pointer pe-4{{end}}"
             {{if .Scope}}scope="{{.Scope}}"{{end}}
             {{if .Title}}title="{{.Title}}"{{end}}
+            {{if $sortable}}{{$sortOnClick | attr}}{{end}}
+            {{if $sortable}}
+                {{if eq $sortDirection ""}}
+                    aria-sort="none"
+                {{ else if eq $sortDirection "ascending"}}
+                    aria-sort="ascending"
+                {{ else if eq $sortDirection "descending"}}
+                    aria-sort="descending"
+                {{end}}
+            {{end}}
     >
-        {{$label}}
+        <div class="d-flex flex-row">
+            <span class="flex-grow-1">{{$label}}</span>
+            <div style="min-width: 2rem;">
+                {{if $sortable}}
+                    <!-- print current sorting direction icon -->
+                    <span class="ms-1 sort-icon-current float-end">
+                {{if eq $sortDirection "ascending"}}
+                    <i class="bi bi-sort-up"></i>
+                {{else if eq $sortDirection "descending"}}
+                    <i class="bi bi-sort-down"></i>
+                {{end}}
+            </span>
+                    <!-- print next sorting direction icon -->
+                    <span class="ms-1 text-primary sort-icon-next float-end">
+                {{if eq $sortDirectionForLink "ascending"}}
+                    <i class="bi bi-sort-up"></i>
+                {{else if eq $sortDirectionForLink "descending"}}
+                    <i class="bi bi-sort-down"></i>
+                {{end}}
+            </span>
+                {{end}}
+            </div>
+        </div>
     </th>
+
 
 {{end}}
