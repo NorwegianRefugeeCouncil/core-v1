@@ -251,7 +251,6 @@
 
             // store the horizontal scroll position of the table
             tableContainer.addEventListener("scroll", function (event) {
-                console.log("scroll", event.target.scrollLeft)
                 const scrollLeft = event.target.scrollLeft;
                 sessionStorage.setItem(individualTableHorizontalScrollKey, scrollLeft);
             });
