@@ -317,7 +317,7 @@ func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
 }
 
 func getTimeFormatForField(field string) string {
-	switch (field) {
+	switch field {
 	case constants.DBColumnIndividualUpdatedAt:
 		return time.RFC3339
 	case constants.DBColumnIndividualCreatedAt:
@@ -332,9 +332,9 @@ func getTimeFormatForField(field string) string {
 func (i *Individual) marshalTabularData() ([]string, error) {
 	row := make([]string, len(constants.IndividualFileColumns))
 	for j, col := range constants.IndividualFileColumns {
-	        field, ok := constants.IndividualFileToDBMap[col]
+		field, ok := constants.IndividualFileToDBMap[col]
 		if !ok {
-			return nil, fmt.Errof("unknown column %s", col) // should not happen but we never know.
+			return nil, fmt.Errorf("unknown column %s", col) // should not happen but we never know.
 		}
 		value, err := i.GetFieldValue(field)
 		if err != nil {
