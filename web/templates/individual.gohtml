@@ -6,6 +6,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("individualForm")
+            const deletionForm = document.getElementById("delete-individual-form")
             const submitButton = document.getElementById("submitButton")
             const deleteButton = document.getElementById("deleteButton")
             const confirmDeleteButton = document.getElementById("confirmDeleteButton")
@@ -18,6 +19,8 @@
             confirmDeleteButton.addEventListener("click", function () {
                 deleteButton.disabled = true
                 submitButton.disabled = true
+                confirmDeleteButton.disabled = true
+                deletionForm.submit()
             })
         });
     </script>
@@ -72,9 +75,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-
                         <i class="bi bi-exclamation-circle me-2 text-danger"></i>
-
                         Delete Individual
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -95,17 +96,17 @@
                         method="post"
                     >
                         <div class="d-flex flex-row justify-content-between">
-                            <button type="button" class="btn btn-outline-secondary"
-                                    data-bs-dismiss="modal">Cancel
+                            <button type="button"
+                                    class="btn btn-outline-secondary"
+                                    data-bs-dismiss="modal">
+                                Cancel
                             </button>
-                            <button type="submit"
+                            <button type="button"
                                     form="delete-individual-form"
                                     id="confirmDeleteButton"
                                     class="btn btn-danger"
                                     title="This will delete the individual and all associated data.">
-
                                 <i class="bi bi-trash me-2"></i>
-
                                 Delete Individual
                             </button>
                         </div>
