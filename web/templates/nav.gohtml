@@ -1,4 +1,19 @@
 {{define "nav"}}
+    <script>
+        /**
+         * Changes the URL
+         * @param url
+         */
+        function goToURL(url) {
+            window.location.href = url
+        }
+
+        function downloadFunc() {
+            goToURL(
+                window.location.protocol +"//"+ window.location.host + window.location.pathname + "/download" + window.location.search
+            )
+        }
+    </script>
     <nav class="navbar p-5" style="z-index: 1">
         <div class="container-fluid" id="navbar-container">
             <a class="home-link me-0 me-lg-2" href="{{if eq "" .RequestContext.SelectedCountryID}}/{{else}}/countries/{{.RequestContext.SelectedCountryID}}/individuals{{end}}">
@@ -11,12 +26,8 @@
             <div id="navbarContent">
                 <div class="me-auto mb-2 mb-lg-0 w-100">
                     <div class="d-flex flex-row w-100 align-items-center">
-                        <a href="/static/nrc_grf_template.xlsx" download="nrc-grf-template" class="nav-link">
-                            Download template
-                        </a>
 
                         <div class="btn-group ms-5">
-
                             <button data-bs-toggle="collapse"
                                     data-bs-target="#filters"
                                     type="button"
@@ -34,6 +45,42 @@
                                     data-bs-toggle="dropdown"
                                     aria-haspopup="true"
                                     aria-expanded="false">
+                                Files
+                            </button>
+                            <div class="dropdown-menu">
+                                 <a href="/static/nrc_grf_template.xlsx"
+                                    download="nrc-grf-template"
+                                    class="dropdown-item"
+                                 >
+                                    Download template
+                                </a>
+                                <button onclick="downloadFunc()" class="dropdown-item">
+                                    Download data
+                                </button>
+                                {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
+                                    <form id="individual-upload--form"
+                                          action="/countries/{{.Options.CountryID}}/individuals/upload"
+                                          enctype="multipart/form-data"
+                                          method="post"
+                                    >
+                                        <input
+                                                hidden
+                                                id="individual-upload--file"
+                                                name="file"
+                                                type="file"
+                                                class="form-control"
+                                                accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                        >
+                                        <button id="individual-upload--button" type="button" class="dropdown-item">
+                                            Upload
+                                        </button>
+                                    </form>
+                                {{end}}
+                            </div>
+                        </div>
+
+                        <div class="btn-group ms-5">
+                            <button type="button" class="btn btn-link text-secondary dropdown-toggle px-2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 {{if .RequestContext.SelectedCountry}} {{.RequestContext.SelectedCountry.Name}} {{else}} Select Country {{end}}
                             </button>
                             <div class="dropdown-menu">
