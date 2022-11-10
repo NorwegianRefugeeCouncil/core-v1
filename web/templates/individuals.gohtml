@@ -121,9 +121,16 @@
         }
 
         function downloadFunc() {
-            goToURL(
-                window.location.protocol +"//"+ window.location.host + window.location.pathname + "/download" + window.location.search
-            )
+            const selectedIds = Array.from(document.getElementsByClassName(selectIndividualCheckboxClass))
+                .filter(checkbox => checkbox.checked)
+                    .map(function (item) {
+                        return item.id.split('individual-checkbox-')[1]
+                    })
+
+            const idSearchString = '?id=' + selectedIds.join('&id=')
+            const searchString = selectedIds.length ? idSearchString : window.location.search
+            let downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + searchString
+            goToURL(downloadURL)
         }
 
         document.addEventListener("DOMContentLoaded", function () {
