@@ -15,6 +15,8 @@ import (
 	"github.com/nrc-no/notcore/internal/views"
 	apierrs "github.com/nrc-no/notcore/pkg/api/errors"
 	"github.com/nrc-no/notcore/pkg/api/validation"
+	"github.com/nrc-no/notcore/pkg/views/alert"
+	"github.com/nrc-no/notcore/pkg/views/bootstrap"
 	"go.uber.org/zap"
 )
 
@@ -22,6 +24,7 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 
 	const (
 		templateName          = "individual.gohtml"
+		templateParamAlerts   = "Alerts"
 		pathParamIndividualID = "individual_id"
 		newID                 = "new"
 	)
@@ -37,13 +40,15 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 			individualId     = mux.Vars(r)[pathParamIndividualID]
 			isNew            = individualId == newID
 			individualForm   *views.IndividualForm
+			alerts           []alert.Alert
 		)
 
 		render := func() {
 			individualForm.SetErrors(validationErrors)
 			renderView(templates, templateName, w, r, viewParams{
-				"form":       individualForm,
-				"Individual": individual,
+				"form":              individualForm,
+				"Individual":        individual,
+				templateParamAlerts: alerts,
 			})
 			return
 		}
@@ -106,6 +111,13 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 		// Validate the individual
 		validationErrors = apivalidation.ValidateIndividual(individual)
 		if len(validationErrors) > 0 {
+			alerts = append(alerts, alert.Alert{
+				Type:        bootstrap.StyleDanger,
+				Title:       "Failed to save individual",
+				Icon:        "exclamation-triangle",
+				Content:     template.HTML("There were errors with your submission. Please correct them and try again."),
+				Dismissible: true,
+			})
 			render()
 			return
 		}
