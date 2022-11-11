@@ -234,7 +234,6 @@ nav.navbar {
     .card-header {
         background-color: $secondary;
         color: $white;
-        height: 50px;
         font-weight: bold;
         padding: 0 10px;
         line-height: 50px;
@@ -294,9 +293,7 @@ table {
 }
 
 .alert {
-    height: 50px;
-    line-height: 50px;
-    padding: 0 10px;
+    padding: 1rem;
 }
 
 .nav-link {
