@@ -24,10 +24,15 @@ const alertTemplate = `
 
 <div class="alert alert-{{ .Type }} {{ if .Dismissible }}alert-dismissible{{ end }}" role="alert">
 {{ if .Title }}
-	<h4 class="alert-heading">
-		{{ if .Icon }}<i class="bi bi-{{.Icon}}"></i>{{end}}
-		{{.Title}}
-	</h4>
+	<div class="d-flex justify-content-between">
+		<h4 class="alert-heading">
+			{{ if .Icon }}<i class="bi bi-{{.Icon}}"></i>{{end}}
+			{{.Title}}
+		</h4>
+		{{ if .Dismissible}}
+				<i class="bi bi-x h4" data-bs-dismiss="alert" aria-label="Close"></i>
+		{{end}}
+	</div>
 {{ end }}
 
 <div>
@@ -38,9 +43,6 @@ const alertTemplate = `
 {{end}}
 {{ .Content }}
 </div class="{{if and (.Icon) (not .Title)}}d-flex align-items-center{{end}}">
-{{ if .Dismissible}}
-	<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-{{end}}
 </div>
 `
 
