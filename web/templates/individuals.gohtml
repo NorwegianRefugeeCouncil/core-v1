@@ -9,7 +9,9 @@
         const uploadIndividualFileFormId = "individual-upload--form"
         const individualActionFormId = "individuals-action-form"
         const deleteIndividualsButtonId = "deleteIndividualsButton"
+        const downloadIndividualsButtonId = "downloadIndividualsButton"
         const deleteIndividualsButtonContentId = "deleteIndividualsButtonContent"
+        const downloadIndividualsButtonContentId = "downloadIndividualsButtonContent"
         const selectIndividualCheckboxClass = "select-row-checkbox"
         const selectAllIndividualsCheckboxId = "selectAllCheckbox"
         const selectedRowAttributes = {"aria-selected": "true"}
@@ -18,6 +20,7 @@
         const activeDeleteButtonClasses = ["btn-danger"]
         const inactiveDeleteButtonClasses = ["btn-outline-secondary", "disabled"]
         const inactiveDeleteButtonText = "Delete individuals"
+        const inactiveDownloadButtonText = "Download individuals"
         const deleteIndividualsConfirmationModalId = "deleteIndividualsConfirmationModal"
         const deleteIndividualsConfirmationModalContentId = "deleteIndividualsConfirmationModalContent"
         const deleteIndividualsConfirmationModalConfirmButtonId = "deleteIndividualsConfirmationModalConfirmButton"
@@ -53,6 +56,19 @@
                 return inactiveDeleteButtonText
             } else {
                 return "Delete " + count + " individual" + (count > 1 ? "s" : "")
+            }
+        }
+
+        /**
+         * Gets the text for the download button based on the number of selected individuals.
+         * @param count The number of selected individuals.
+         * @returns {string} The text for the download button.
+         */
+        function getDownloadButtonText(count) {
+            if (count === 0) {
+                return inactiveDownloadButtonText
+            } else {
+                return "Download selected individuals"
             }
         }
 
@@ -137,7 +153,9 @@
 
             const uploadButton = document.getElementById(uploadIndividualFileButtonId)
             const deleteButton = document.getElementById(deleteIndividualsButtonId)
+            const downloadButton = document.getElementById(downloadIndividualsButtonId)
             const deleteButtonContent = document.getElementById(deleteIndividualsButtonContentId)
+            const downloadButtonContent = document.getElementById(downloadIndividualsButtonContentId)
             const uploadFileInput = document.getElementById(uploadIndividualFileInputId)
             const selectCheckboxes = Array.from(document.getElementsByClassName(selectIndividualCheckboxClass))
             const selectAllCheckbox = document.getElementById(selectAllIndividualsCheckboxId);
@@ -168,6 +186,12 @@
                         deleteButton.classList.add(className)
                     }
                 }
+            }
+
+            function refreshDownloadButton() {
+                const checkedCount = getSelectedIndividualCount()
+                downloadButtonContent.innerText = getDownloadButtonText(checkedCount);
+                console.log('SDÖFKDS', checkedCount, getDownloadButtonText(checkedCount))
             }
 
             /**
@@ -217,6 +241,7 @@
                 }
                 refreshDeleteButton()
                 refreshSelectAllCheckbox()
+                refreshDownloadButton()
             });
 
             // Handles the change of a single individual select checkbox
@@ -226,6 +251,7 @@
                     refreshIndividualRow(getIndividualIdFromSelectCheckbox(event.target))
                     refreshSelectAllCheckbox()
                     refreshDeleteButton()
+                    refreshDownloadButton()
                 })
             }
 
@@ -279,8 +305,8 @@
                             Create new Individual
                         </a>
                     {{end}}
-                    <button onclick="downloadFunc()" class="btn btn-outline-primary">
-                        Download
+                    <button onclick="downloadFunc()" class="btn btn-outline-primary" id="downloadIndividualsButton">
+                        <span id="downloadIndividualsButtonContent">Download individuals</span>
                     </button>
                     {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
                         <form id="individual-upload--form" action="/countries/{{.Options.CountryID}}/individuals/upload"
