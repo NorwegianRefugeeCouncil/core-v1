@@ -46,6 +46,8 @@ type Individual struct {
 	DeletedAt *time.Time `json:"deletedAt" db:"deleted_at"`
 	// DisplacementStatus is the displacement status of the individual
 	DisplacementStatus DisplacementStatus `json:"displacementStatus" db:"displacement_status"`
+	// DisplacementStatusComment is a comment about the displacement status of the individual
+	DisplacementStatusComment string `json:"displacementStatusComment" db:"displacement_status_comment"`
 	// Email1 is the email address 1 of the individual
 	Email1 string `json:"email1" db:"email_1"`
 	// Email2 is the email address 2 of the individual
@@ -212,6 +214,8 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.VisionDisabilityLevel, nil
 	case constants.DBColumnIndividualDisplacementStatus:
 		return i.DisplacementStatus, nil
+	case constants.DBColumnIndividualDisplacementStatusComment:
+		return i.DisplacementStatusComment, nil
 	case constants.DBColumnIndividualEmail1:
 		return i.Email1, nil
 	case constants.DBColumnIndividualEmail2:
@@ -339,6 +343,7 @@ func (i *Individual) Normalize() {
 	i.CommunityID = trimString(i.CommunityID)
 	i.CountryID = trimString(i.CountryID)
 	i.DisplacementStatus = DisplacementStatus(trimString(string(i.DisplacementStatus)))
+	i.DisplacementStatusComment = trimString(i.DisplacementStatusComment)
 	i.Email1 = normalizeEmail(i.Email1)
 	i.Email2 = normalizeEmail(i.Email2)
 	i.Email3 = normalizeEmail(i.Email3)

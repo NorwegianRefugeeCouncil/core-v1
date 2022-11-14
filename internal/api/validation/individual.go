@@ -43,6 +43,7 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualDisabilityLevel(i.SelfCareDisabilityLevel, p.Child("selfCareDisabilityLevel"))...)
 	allErrs = append(allErrs, validateIndividualDisabilityLevel(i.VisionDisabilityLevel, p.Child("visionDisabilityLevel"))...)
 	allErrs = append(allErrs, validateIndividualDisplacementStatus(i.DisplacementStatus, p.Child("displacementStatus"))...)
+	allErrs = append(allErrs, validateIndividualDisplacementStatusComment(i.DisplacementStatusComment, p.Child("displacementStatusComment"))...)
 	allErrs = append(allErrs, validateIndividualEmail(i.Email1, p.Child("email1"))...)
 	allErrs = append(allErrs, validateIndividualEmail(i.Email2, p.Child("email2"))...)
 	allErrs = append(allErrs, validateIndividualEmail(i.Email3, p.Child("email3"))...)
@@ -208,6 +209,14 @@ func validateIndividualDisplacementStatus(ds api.DisplacementStatus, path *valid
 	default:
 		return validation.ErrorList{validation.NotSupported(path, ds, allowedDisplacementStatusesStr)}
 	}
+}
+
+func validateIndividualDisplacementStatusComment(dsc string, path *validation.Path) validation.ErrorList {
+	allErrs := validation.ErrorList{}
+	if len(dsc) > maxTextLength {
+		allErrs = append(allErrs, validation.TooLongMaxLength(path, dsc, maxTextLength))
+	}
+	return allErrs
 }
 
 func validateIndividualSex(sex api.Sex, path *validation.Path) validation.ErrorList {

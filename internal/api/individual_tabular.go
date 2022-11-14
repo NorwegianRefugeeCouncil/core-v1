@@ -136,6 +136,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				return err
 			}
 			i.DisplacementStatus = displacementStatus
+		case constants.FileColumnIndividualDisplacementStatusComment:
+			i.DisplacementStatusComment = cols[idx]
 		case constants.FileColumnIndividualEmail1:
 			i.Email1 = cols[idx]
 		case constants.FileColumnIndividualEmail2:
