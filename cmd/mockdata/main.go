@@ -43,7 +43,7 @@ func randomDisabilityLevel() string {
 
 func randomSex() string {
 	var g []string
-	for _, d := range api.AllSexs().Items() {
+	for _, d := range api.AllSexes().Items() {
 		g = append(g, string(d))
 	}
 	return pick(g...)

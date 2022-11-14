@@ -47,7 +47,7 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withFreeField4(options.FreeField4).
 		withFreeField5(options.FreeField5).
 		withFullName(options.FullName).
-		withSexs(options.Sexs).
+		withSexes(options.Sexes).
 		withHasCognitiveDisability(options.HasCognitiveDisability).
 		withHasCommunicationDisability(options.HasCommunicationDisability).
 		withHasConsentedToRgpd(options.HasConsentedToRGPD).
@@ -316,7 +316,7 @@ func (g *getAllIndividualsSQLQuery) withFullName(name string) *getAllIndividuals
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withSexs(sexs containers.Set[api.Sex]) *getAllIndividualsSQLQuery {
+func (g *getAllIndividualsSQLQuery) withSexes(sexs containers.Set[api.Sex]) *getAllIndividualsSQLQuery {
 	if len(sexs) == 0 {
 		return g
 	}

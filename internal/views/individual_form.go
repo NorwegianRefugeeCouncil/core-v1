@@ -754,7 +754,7 @@ func getIdentificationTypeOptions() []forms.SelectInputFieldOption {
 
 func getSexOptions() []forms.SelectInputFieldOption {
 	var ret []forms.SelectInputFieldOption
-	for _, g := range api.AllSexs().Items() {
+	for _, g := range api.AllSexes().Items() {
 		ret = append(ret, forms.SelectInputFieldOption{
 			Label: g.String(),
 			Value: string(g),

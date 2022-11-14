@@ -19,7 +19,7 @@ const (
 	SexUnspecified Sex = ""
 )
 
-func AllSexs() containers.Set[Sex] {
+func AllSexes() containers.Set[Sex] {
 	return containers.NewSet[Sex](
 		SexMale,
 		SexFemale,

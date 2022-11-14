@@ -161,11 +161,11 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 		}, {
 			name: "sex",
 			args: url.Values{"sex": []string{"female"}},
-			want: ListIndividualsOptions{Sexs: containers.NewSet[Sex](SexFemale)},
+			want: ListIndividualsOptions{Sexes: containers.NewSet[Sex](SexFemale)},
 		}, {
 			name: "sex (multiple)",
 			args: url.Values{"sex": []string{"female", "male"}},
-			want: ListIndividualsOptions{Sexs: containers.NewSet[Sex](SexFemale, SexMale)},
+			want: ListIndividualsOptions{Sexes: containers.NewSet[Sex](SexFemale, SexMale)},
 		}, {
 			name:    "sex (invalid)",
 			args:    url.Values{"sex": []string{"invalid"}},
@@ -583,11 +583,11 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			want: "/countries/usa/individuals?full_name=fullName",
 		}, {
 			name: "sex",
-			o:    ListIndividualsOptions{CountryID: countryId, Sexs: containers.NewSet[Sex]("male")},
+			o:    ListIndividualsOptions{CountryID: countryId, Sexes: containers.NewSet[Sex]("male")},
 			want: "/countries/usa/individuals?sex=male",
 		}, {
 			name: "sex (multiple)",
-			o:    ListIndividualsOptions{CountryID: countryId, Sexs: containers.NewSet[Sex](SexMale, SexFemale)},
+			o:    ListIndividualsOptions{CountryID: countryId, Sexes: containers.NewSet[Sex](SexMale, SexFemale)},
 			want: "/countries/usa/individuals?sex=female&sex=male",
 		}, {
 			name: "hasCognitiveDisability",

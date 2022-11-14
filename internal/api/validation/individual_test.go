@@ -530,7 +530,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "sex (invalid)",
 			i:    ValidIndividual().WithSex("bla").Build(),
-			want: validation.ErrorList{validation.NotSupported(sexPath, api.Sex("bla"), allowedSexsStr)},
+			want: validation.ErrorList{validation.NotSupported(sexPath, api.Sex("bla"), allowedSexesStr)},
 		}, {
 			name: "hearingDisabilityLevel (invalid)",
 			i:    ValidIndividual().WithHearingDisabilityLevel("invalid").Build(),

@@ -50,7 +50,7 @@ func (p *listIndividualsOptionsEncoder) encode() url.Values {
 		p.encodeFreeField4,
 		p.encodeFreeField5,
 		p.encodeFullName,
-		p.encodeSexs,
+		p.encodeSexes,
 		p.encodeHasCognitiveDisability,
 		p.encodeHasCommunicationDisability,
 		p.encodeHasConsentedToRGPD,
@@ -236,9 +236,9 @@ func (p *listIndividualsOptionsEncoder) encodeFullName() {
 	}
 }
 
-func (p *listIndividualsOptionsEncoder) encodeSexs() {
-	if len(p.values.Sexs) > 0 {
-		for _, g := range p.values.Sexs.Items() {
+func (p *listIndividualsOptionsEncoder) encodeSexes() {
+	if len(p.values.Sexes) > 0 {
+		for _, g := range p.values.Sexes.Items() {
 			p.out.Add(constants.FormParamsGetIndividualsSex, string(g))
 		}
 	}

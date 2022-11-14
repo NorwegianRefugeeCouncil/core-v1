@@ -212,12 +212,12 @@ func validateIndividualDisplacementStatus(ds api.DisplacementStatus, path *valid
 
 func validateIndividualSex(sex api.Sex, path *validation.Path) validation.ErrorList {
 	switch {
-	case allowedSexs.Contains(sex):
+	case allowedSexes.Contains(sex):
 		return validation.ErrorList{}
 	case sex == api.SexUnspecified:
 		return validation.ErrorList{}
 	default:
-		return validation.ErrorList{validation.NotSupported(path, sex, allowedSexsStr)}
+		return validation.ErrorList{validation.NotSupported(path, sex, allowedSexesStr)}
 	}
 }
 

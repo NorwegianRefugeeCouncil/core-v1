@@ -156,11 +156,11 @@ func TestParseSex(t *testing.T) {
 	}
 }
 
-func TestAllSexs(t *testing.T) {
+func TestAllSexes(t *testing.T) {
 	assert.ElementsMatch(t, []Sex{
 		SexMale,
 		SexFemale,
 		SexOther,
 		SexPreferNotToSay,
-	}, AllSexs().Items())
+	}, AllSexes().Items())
 }

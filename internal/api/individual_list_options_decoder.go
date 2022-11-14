@@ -43,7 +43,7 @@ func (p *listIndividualsOptionsDecoder) parse() error {
 		p.parseFreeField4,
 		p.parseFreeField5,
 		p.parseFullName,
-		p.parseSexs,
+		p.parseSexes,
 		p.parseHasCognitiveDisability,
 		p.parseHasCommunicationDisability,
 		p.parseHasConsentedToRgpd,
@@ -242,7 +242,7 @@ func (p *listIndividualsOptionsDecoder) parseFullName() error {
 	return nil
 }
 
-func (p *listIndividualsOptionsDecoder) parseSexs() error {
+func (p *listIndividualsOptionsDecoder) parseSexes() error {
 	if len(p.values[constants.FormParamsGetIndividualsSex]) == 0 {
 		return nil
 	}
@@ -254,7 +254,7 @@ func (p *listIndividualsOptionsDecoder) parseSexs() error {
 		}
 		sexSet.Add(sex)
 	}
-	p.out.Sexs = sexSet
+	p.out.Sexes = sexSet
 	return nil
 }
 
