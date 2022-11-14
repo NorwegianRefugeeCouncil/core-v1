@@ -64,8 +64,8 @@ type Individual struct {
 	FreeField4 string `json:"freeField4" db:"free_field_4"`
 	// FreeField5 is a free field for the individual
 	FreeField5 string `json:"freeField5" db:"free_field_5"`
-	// Gender is the gender of the individual
-	Gender Gender `json:"gender" db:"gender"`
+	// Sex is the sex of the individual
+	Sex Sex `json:"sex" db:"sex"`
 	// HasCognitiveDisability is true if the individual has a cognitive disability
 	HasCognitiveDisability bool `json:"hasCognitiveDisability" db:"has_cognitive_disability"`
 	// HasCommunicationDisability is true if the individual has a communication disability
@@ -220,8 +220,8 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.Email3, nil
 	case constants.DBColumnIndividualFullName:
 		return i.FullName, nil
-	case constants.DBColumnIndividualGender:
-		return i.Gender, nil
+	case constants.DBColumnIndividualSex:
+		return i.Sex, nil
 	case constants.DBColumnIndividualHasCognitiveDisability:
 		return i.HasCognitiveDisability, nil
 	case constants.DBColumnIndividualHasCommunicationDisability:

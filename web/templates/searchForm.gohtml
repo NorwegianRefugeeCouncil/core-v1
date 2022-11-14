@@ -20,23 +20,23 @@
             <!-- Sex -->
             <div class="form-group col-3">
                 <label class="form-text">Sex</label>
-                <select id="Genders" name="gender" class="form-control">
-                    <option value="" {{if .Options.Genders.IsEmpty }}selected{{end}}>
+                <select id="Sexes" name="sex" class="form-control">
+                    <option value="" {{if .Options.Sexes.IsEmpty }}selected{{end}}>
                     </option>
                     <option value="male"
-                            {{if .Options.Genders.Contains "male" }}selected{{end}}>
+                            {{if .Options.Sexes.Contains "male" }}selected{{end}}>
                         Male
                     </option>
                     <option value="female"
-                            {{if .Options.Genders.Contains "female" }}selected{{end}}>
+                            {{if .Options.Sexes.Contains "female" }}selected{{end}}>
                         Female
                     </option>
                     <option value="other"
-                            {{if .Options.Genders.Contains "other" }}selected{{end}}>
+                            {{if .Options.Sexes.Contains "other" }}selected{{end}}>
                         Other
                     </option>
                     <option value="prefers_not_to_say"
-                            {{if .Options.Genders.Contains "prefers_not_to_say" }}selected{{end}}>
+                            {{if .Options.Sexes.Contains "prefers_not_to_say" }}selected{{end}}>
                         Prefers not to say
                     </option>
                 </select>

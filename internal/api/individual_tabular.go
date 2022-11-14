@@ -154,8 +154,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.FreeField4 = cols[idx]
 		case constants.FileColumnIndividualFreeField5:
 			i.FreeField5 = cols[idx]
-		case constants.FileColumnIndividualGender:
-			i.Gender = Gender(cols[idx])
+		case constants.FileColumnIndividualSex:
+			i.Sex = Sex(cols[idx])
 		case constants.FileColumnIndividualHasCognitiveDisability:
 			i.HasCognitiveDisability = isTrue(cols[idx])
 		case constants.FileColumnIndividualHasCommunicationDisability:
@@ -366,7 +366,7 @@ func (i *Individual) marshalTabularData() ([]string, error) {
 			row[j] = string(v)
 		case DisplacementStatus:
 			row[j] = string(v)
-		case Gender:
+		case Sex:
 			row[j] = string(v)
 		default:
 			row[j] = fmt.Sprintf("%v", v)

@@ -47,7 +47,7 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withFreeField4(options.FreeField4).
 		withFreeField5(options.FreeField5).
 		withFullName(options.FullName).
-		withGenders(options.Genders).
+		withSexs(options.Sexs).
 		withHasCognitiveDisability(options.HasCognitiveDisability).
 		withHasCommunicationDisability(options.HasCommunicationDisability).
 		withHasConsentedToRgpd(options.HasConsentedToRGPD).
@@ -316,16 +316,16 @@ func (g *getAllIndividualsSQLQuery) withFullName(name string) *getAllIndividuals
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withGenders(genders containers.Set[api.Gender]) *getAllIndividualsSQLQuery {
-	if len(genders) == 0 {
+func (g *getAllIndividualsSQLQuery) withSexs(sexs containers.Set[api.Sex]) *getAllIndividualsSQLQuery {
+	if len(sexs) == 0 {
 		return g
 	}
-	g.writeString(" AND gender IN (")
-	for i, gender := range genders.Items() {
+	g.writeString(" AND sex IN (")
+	for i, sex := range sexs.Items() {
 		if i != 0 {
 			g.writeString(",")
 		}
-		g.writeArg(string(gender))
+		g.writeArg(string(sex))
 	}
 	g.writeString(")")
 	return g

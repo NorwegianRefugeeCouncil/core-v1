@@ -24,7 +24,7 @@ var paramaters = []struct {
 	{constants.FileColumnIndividualDisplacementStatus, "refugee", api.DisplacementStatusRefugee, false},
 	{constants.FileColumnIndividualEmail1, "person@not-nrc.no", "person@not-nrc.no", false},
 	{constants.FileColumnIndividualFullName, "Hugh Jazz", "Hugh Jazz", false},
-	{constants.FileColumnIndividualGender, "male", api.GenderMale, false},
+	{constants.FileColumnIndividualSex, "male", api.SexMale, false},
 	{constants.FileColumnIndividualIsMinor, "tRuE", true, false},
 	{constants.FileColumnIndividualIsMinor, "YeS", true, false},
 	{constants.FileColumnIndividualIsMinor, "1", true, false},

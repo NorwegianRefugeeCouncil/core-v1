@@ -298,7 +298,7 @@
             {{$selectWidth := "2rem"}}
             {{$idWidth := "20rem"}}
             {{$nameWidth := "10rem"}}
-            {{$genderWidth := "8rem"}}
+            {{$sexWidth := "8rem"}}
             {{$ageWidth := "4rem"}}
             {{$birthDateWidth := $dateWidth}}
             {{$householdIDWidth := $identWidth}}
@@ -361,12 +361,12 @@
                         {{template "columnHeader" (dict
                         "Options" .Options
                         "Sortable" true
-                        "SortKey" "gender"
+                        "SortKey" "sex"
                         "Label" "Sex"
                         "Title" "Sex"
-                        "Width" $genderWidth
-                        "MinWidth" $genderWidth
-                        "MaxWidth" $genderWidth
+                        "Width" $sexWidth
+                        "MinWidth" $sexWidth
+                        "MaxWidth" $sexWidth
                         )}}
 
                         {{template "columnHeader" (dict
@@ -623,13 +623,13 @@
                                 </td>
                                 <!-- End Name -->
 
-                                <!-- Gender -->
+                                <!-- Sex -->
                                 <td>
-                                    <div style="width: {{$genderWidth}}">
-                                        {{.Gender}}
+                                    <div style="width: {{$sexWidth}}">
+                                        {{.Sex}}
                                     </div>
                                 </td>
-                                <!-- End Gender -->
+                                <!-- End Sex -->
 
                                 <!-- Age -->
                                 <td>

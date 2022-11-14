@@ -7,24 +7,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func genderPtr(g Gender) *Gender {
+func sexPtr(g Sex) *Sex {
 	return &g
 }
 
-func TestGender_MarshalJSON(t *testing.T) {
+func TestSex_MarshalJSON(t *testing.T) {
 	type dummy struct {
-		Gender Gender `json:"g"`
+		Sex Sex `json:"g"`
 	}
 	type dummyPtr struct {
-		Gender *Gender `json:"g"`
+		Sex *Sex `json:"g"`
 	}
 	{
-		jsonBytes, err := json.Marshal(dummy{Gender: GenderMale})
+		jsonBytes, err := json.Marshal(dummy{Sex: SexMale})
 		assert.NoError(t, err)
 		assert.Equal(t, []byte(`{"g":"male"}`), jsonBytes)
 	}
 	{
-		jsonBytes, err := json.Marshal(dummyPtr{Gender: genderPtr(GenderMale)})
+		jsonBytes, err := json.Marshal(dummyPtr{Sex: sexPtr(SexMale)})
 		assert.NoError(t, err)
 		assert.Equal(t, []byte(`{"g":"male"}`), jsonBytes)
 	}
@@ -35,26 +35,26 @@ func TestGender_MarshalJSON(t *testing.T) {
 	}
 }
 
-func TestGender_UnmarshalJSON(t *testing.T) {
+func TestSex_UnmarshalJSON(t *testing.T) {
 	type dummy struct {
-		Gender Gender `json:"g"`
+		Sex Sex `json:"g"`
 	}
 	var d dummy
 	assert.NoError(t, json.Unmarshal([]byte(`{"g":"male"}`), &d))
-	assert.Equal(t, GenderMale, d.Gender)
+	assert.Equal(t, SexMale, d.Sex)
 
 	type dummyPtr struct {
-		Gender *Gender `json:"g"`
+		Sex *Sex `json:"g"`
 	}
 	{
 		var dPtr dummyPtr
 		assert.NoError(t, json.Unmarshal([]byte(`{"g":"male"}`), &dPtr))
-		assert.Equal(t, genderPtr(GenderMale), dPtr.Gender)
+		assert.Equal(t, sexPtr(SexMale), dPtr.Sex)
 	}
 	{
 		var dPtr dummyPtr
 		assert.NoError(t, json.Unmarshal([]byte(`{"g":null}`), &dPtr))
-		assert.Equal(t, (*Gender)(nil), dPtr.Gender)
+		assert.Equal(t, (*Sex)(nil), dPtr.Sex)
 	}
 	{
 		var dPtr dummyPtr
@@ -62,16 +62,16 @@ func TestGender_UnmarshalJSON(t *testing.T) {
 	}
 }
 
-func TestGender_String(t *testing.T) {
+func TestSex_String(t *testing.T) {
 	tests := []struct {
 		name string
-		g    Gender
+		g    Sex
 		want string
 	}{
-		{"male", GenderMale, "Male"},
-		{"female", GenderFemale, "Female"},
-		{"other", GenderOther, "Other"},
-		{"prefers_not_to_say", GenderPreferNotToSay, "Prefer not to say"},
+		{"male", SexMale, "Male"},
+		{"female", SexFemale, "Female"},
+		{"other", SexOther, "Other"},
+		{"prefers_not_to_say", SexPreferNotToSay, "Prefer not to say"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -80,72 +80,72 @@ func TestGender_String(t *testing.T) {
 	}
 }
 
-func TestGender_MarshalText(t *testing.T) {
+func TestSex_MarshalText(t *testing.T) {
 	{
-		got, err := GenderMale.MarshalText()
+		got, err := SexMale.MarshalText()
 		assert.NoError(t, err)
 		assert.Equal(t, "male", string(got))
 	}
 	{
-		got, err := GenderFemale.MarshalText()
+		got, err := SexFemale.MarshalText()
 		assert.NoError(t, err)
 		assert.Equal(t, "female", string(got))
 	}
 	{
-		got, err := GenderOther.MarshalText()
+		got, err := SexOther.MarshalText()
 		assert.NoError(t, err)
 		assert.Equal(t, "other", string(got))
 	}
 	{
-		got, err := GenderPreferNotToSay.MarshalText()
+		got, err := SexPreferNotToSay.MarshalText()
 		assert.NoError(t, err)
 		assert.Equal(t, "prefers_not_to_say", string(got))
 	}
 }
 
-func TestGender_UnmarshalText(t *testing.T) {
+func TestSex_UnmarshalText(t *testing.T) {
 	{
-		var g = new(Gender)
+		var g = new(Sex)
 		assert.NoError(t, g.UnmarshalText([]byte("male")))
-		assert.Equal(t, GenderMale, *g)
+		assert.Equal(t, SexMale, *g)
 	}
 	{
-		var g = new(Gender)
+		var g = new(Sex)
 		assert.NoError(t, g.UnmarshalText([]byte("female")))
-		assert.Equal(t, GenderFemale, *g)
+		assert.Equal(t, SexFemale, *g)
 	}
 	{
-		var g = new(Gender)
+		var g = new(Sex)
 		assert.NoError(t, g.UnmarshalText([]byte("other")))
-		assert.Equal(t, GenderOther, *g)
+		assert.Equal(t, SexOther, *g)
 	}
 	{
-		var g = new(Gender)
+		var g = new(Sex)
 		assert.NoError(t, g.UnmarshalText([]byte("prefers_not_to_say")))
-		assert.Equal(t, GenderPreferNotToSay, *g)
+		assert.Equal(t, SexPreferNotToSay, *g)
 	}
 	{
-		var g = new(Gender)
+		var g = new(Sex)
 		assert.Error(t, g.UnmarshalText([]byte("invalid")))
 	}
 }
 
-func TestParseGender(t *testing.T) {
+func TestParseSex(t *testing.T) {
 	tests := []struct {
 		name    string
 		str     string
-		want    Gender
+		want    Sex
 		wantErr bool
 	}{
-		{"male", "male", GenderMale, false},
-		{"female", "female", GenderFemale, false},
-		{"other", "other", GenderOther, false},
-		{"prefer_not_to_say", "prefers_not_to_say", GenderPreferNotToSay, false},
+		{"male", "male", SexMale, false},
+		{"female", "female", SexFemale, false},
+		{"other", "other", SexOther, false},
+		{"prefer_not_to_say", "prefers_not_to_say", SexPreferNotToSay, false},
 		{"invalid", "invalid", "", true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ParseGender(tt.str)
+			got, err := ParseSex(tt.str)
 			if tt.wantErr {
 				assert.Error(t, err)
 				return
@@ -156,11 +156,11 @@ func TestParseGender(t *testing.T) {
 	}
 }
 
-func TestAllGenders(t *testing.T) {
-	assert.ElementsMatch(t, []Gender{
-		GenderMale,
-		GenderFemale,
-		GenderOther,
-		GenderPreferNotToSay,
-	}, AllGenders().Items())
+func TestAllSexs(t *testing.T) {
+	assert.ElementsMatch(t, []Sex{
+		SexMale,
+		SexFemale,
+		SexOther,
+		SexPreferNotToSay,
+	}, AllSexs().Items())
 }

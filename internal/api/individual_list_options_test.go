@@ -159,16 +159,16 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 			args: url.Values{"full_name": []string{"name"}},
 			want: ListIndividualsOptions{FullName: "name"},
 		}, {
-			name: "gender",
-			args: url.Values{"gender": []string{"female"}},
-			want: ListIndividualsOptions{Genders: containers.NewSet[Gender](GenderFemale)},
+			name: "sex",
+			args: url.Values{"sex": []string{"female"}},
+			want: ListIndividualsOptions{Sexs: containers.NewSet[Sex](SexFemale)},
 		}, {
-			name: "gender (multiple)",
-			args: url.Values{"gender": []string{"female", "male"}},
-			want: ListIndividualsOptions{Genders: containers.NewSet[Gender](GenderFemale, GenderMale)},
+			name: "sex (multiple)",
+			args: url.Values{"sex": []string{"female", "male"}},
+			want: ListIndividualsOptions{Sexs: containers.NewSet[Sex](SexFemale, SexMale)},
 		}, {
-			name:    "gender (invalid)",
-			args:    url.Values{"gender": []string{"invalid"}},
+			name:    "sex (invalid)",
+			args:    url.Values{"sex": []string{"invalid"}},
 			wantErr: true,
 		}, {
 			name: "hasCognitiveDisability",
@@ -582,13 +582,13 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			o:    ListIndividualsOptions{CountryID: countryId, FullName: "fullName"},
 			want: "/countries/usa/individuals?full_name=fullName",
 		}, {
-			name: "gender",
-			o:    ListIndividualsOptions{CountryID: countryId, Genders: containers.NewSet[Gender]("male")},
-			want: "/countries/usa/individuals?gender=male",
+			name: "sex",
+			o:    ListIndividualsOptions{CountryID: countryId, Sexs: containers.NewSet[Sex]("male")},
+			want: "/countries/usa/individuals?sex=male",
 		}, {
-			name: "gender (multiple)",
-			o:    ListIndividualsOptions{CountryID: countryId, Genders: containers.NewSet[Gender](GenderMale, GenderFemale)},
-			want: "/countries/usa/individuals?gender=female&gender=male",
+			name: "sex (multiple)",
+			o:    ListIndividualsOptions{CountryID: countryId, Sexs: containers.NewSet[Sex](SexMale, SexFemale)},
+			want: "/countries/usa/individuals?sex=female&sex=male",
 		}, {
 			name: "hasCognitiveDisability",
 			o:    ListIndividualsOptions{CountryID: countryId, HasCognitiveDisability: pointers.Bool(true)},

@@ -55,7 +55,7 @@ func (f *IndividualForm) build() error {
 		f.buildFullName,
 		f.buildPreferredName,
 		f.buildPrefersToRemainAnonymous,
-		f.buildGender,
+		f.buildSex,
 		f.buildBirthDate,
 		f.buildAge,
 		f.buildIsMinor,
@@ -233,22 +233,22 @@ func (f *IndividualForm) buildPrefersToRemainAnonymous() error {
 	}, f.personalInfoSection, f.individual.PrefersToRemainAnonymous)
 }
 
-func (f *IndividualForm) buildGender() error {
-	genderOptions := getGenderOptions()
+func (f *IndividualForm) buildSex() error {
+	sexOptions := getSexOptions()
 	if f.isNew() {
-		genderOptions = append([]forms.SelectInputFieldOption{
+		sexOptions = append([]forms.SelectInputFieldOption{
 			{
 				Value: "",
 				Label: "",
 			},
-		}, genderOptions...)
+		}, sexOptions...)
 	}
 	return buildField(&forms.SelectInputField{
-		Name:        "gender",
+		Name:        "sex",
 		DisplayName: "Sex",
-		Options:     genderOptions,
-		Codec:       &genderCodec{},
-	}, f.personalInfoSection, f.individual.Gender)
+		Options:     sexOptions,
+		Codec:       &sexCodec{},
+	}, f.personalInfoSection, f.individual.Sex)
 }
 
 func (f *IndividualForm) buildBirthDate() error {
@@ -752,9 +752,9 @@ func getIdentificationTypeOptions() []forms.SelectInputFieldOption {
 	}
 }
 
-func getGenderOptions() []forms.SelectInputFieldOption {
+func getSexOptions() []forms.SelectInputFieldOption {
 	var ret []forms.SelectInputFieldOption
-	for _, g := range api.AllGenders().Items() {
+	for _, g := range api.AllSexs().Items() {
 		ret = append(ret, forms.SelectInputFieldOption{
 			Label: g.String(),
 			Value: string(g),
@@ -896,43 +896,43 @@ func (d disabilityLevelCodec) Decode(value string) (interface{}, error) {
 
 var _ forms.Codec = &disabilityLevelCodec{}
 
-type genderCodec struct{}
+type sexCodec struct{}
 
-func (g genderCodec) Encode(value interface{}) (string, error) {
+func (g sexCodec) Encode(value interface{}) (string, error) {
 	switch v := value.(type) {
-	case api.Gender:
+	case api.Sex:
 		switch v {
-		case api.GenderMale:
-			return string(api.GenderMale), nil
-		case api.GenderFemale:
-			return string(api.GenderFemale), nil
-		case api.GenderOther:
-			return string(api.GenderOther), nil
-		case api.GenderPreferNotToSay:
-			return string(api.GenderPreferNotToSay), nil
-		case api.GenderUnspecified:
-			return string(api.GenderUnspecified), nil
+		case api.SexMale:
+			return string(api.SexMale), nil
+		case api.SexFemale:
+			return string(api.SexFemale), nil
+		case api.SexOther:
+			return string(api.SexOther), nil
+		case api.SexPreferNotToSay:
+			return string(api.SexPreferNotToSay), nil
+		case api.SexUnspecified:
+			return string(api.SexUnspecified), nil
 		default:
-			return "", fmt.Errorf("unknown gender: %v", v)
+			return "", fmt.Errorf("unknown sex: %v", v)
 		}
 	default:
 		return "", fmt.Errorf("invalid type %T", value)
 	}
 }
 
-func (g genderCodec) Decode(value string) (interface{}, error) {
+func (g sexCodec) Decode(value string) (interface{}, error) {
 	switch value {
-	case string(api.GenderMale):
-		return api.GenderMale, nil
-	case string(api.GenderFemale):
-		return api.GenderFemale, nil
-	case string(api.GenderOther):
-		return api.GenderOther, nil
-	case string(api.GenderPreferNotToSay):
-		return api.GenderPreferNotToSay, nil
-	case string(api.GenderUnspecified):
-		return api.GenderUnspecified, nil
+	case string(api.SexMale):
+		return api.SexMale, nil
+	case string(api.SexFemale):
+		return api.SexFemale, nil
+	case string(api.SexOther):
+		return api.SexOther, nil
+	case string(api.SexPreferNotToSay):
+		return api.SexPreferNotToSay, nil
+	case string(api.SexUnspecified):
+		return api.SexUnspecified, nil
 	default:
-		return nil, fmt.Errorf("unknown gender: %v", value)
+		return nil, fmt.Errorf("unknown sex: %v", value)
 	}
 }

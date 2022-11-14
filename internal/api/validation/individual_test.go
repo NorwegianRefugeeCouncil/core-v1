@@ -154,8 +154,8 @@ func (i *IndividualBuilder) WithFreeField5(freeField string) *IndividualBuilder 
 	return i
 }
 
-func (i *IndividualBuilder) WithGender(gender api.Gender) *IndividualBuilder {
-	i.individual.Gender = gender
+func (i *IndividualBuilder) WithSex(sex api.Sex) *IndividualBuilder {
+	i.individual.Sex = sex
 	return i
 }
 
@@ -389,7 +389,7 @@ func ValidIndividual() *IndividualBuilder {
 		WithBirthDate(&bd).
 		WithCountryID(uuid.New().String()).
 		WithPreferredName("John").
-		WithGender("male").
+		WithSex("male").
 		WithCollectionAgentTitle("Collection Agent Title").
 		WithCollectionAgentName("Collection Agent Name").
 		WithCollectionTime(time.Now()).
@@ -405,7 +405,7 @@ func TestValidateIndividual(t *testing.T) {
 	birthDatePath := validation.NewPath("birthDate")
 	countryIDPath := validation.NewPath("countryId")
 	displacementStatusPath := validation.NewPath("displacementStatus")
-	genderPath := validation.NewPath("gender")
+	sexPath := validation.NewPath("sex")
 	tests := []struct {
 		name string
 		i    *api.Individual
@@ -528,9 +528,9 @@ func TestValidateIndividual(t *testing.T) {
 			i:    ValidIndividual().WithFreeField5(bigstr(individualFreeFieldMaxLength + 1)).Build(),
 			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("freeField5"), bigstr(individualFreeFieldMaxLength+1), individualFreeFieldMaxLength)},
 		}, {
-			name: "gender (invalid)",
-			i:    ValidIndividual().WithGender("bla").Build(),
-			want: validation.ErrorList{validation.NotSupported(genderPath, api.Gender("bla"), allowedGendersStr)},
+			name: "sex (invalid)",
+			i:    ValidIndividual().WithSex("bla").Build(),
+			want: validation.ErrorList{validation.NotSupported(sexPath, api.Sex("bla"), allowedSexsStr)},
 		}, {
 			name: "hearingDisabilityLevel (invalid)",
 			i:    ValidIndividual().WithHearingDisabilityLevel("invalid").Build(),

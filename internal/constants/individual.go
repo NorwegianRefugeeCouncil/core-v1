@@ -20,7 +20,7 @@ const (
 	FormParamIndividualEmail2                         = "Email2"
 	FormParamIndividualEmail3                         = "Email3"
 	FormParamIndividualFullName                       = "FullName"
-	FormParamIndividualGender                         = "Gender"
+	FormParamIndividualSex                            = "Sex"
 	FormParamIndividualHasCognitiveDisability         = "HasCognitiveDisability"
 	FormParamIndividualHasCommunicationDisability     = "HasCommunicationDisability"
 	FormParamIndividualHasConsentedToRGPD             = "HasConsentedToRGPD"
@@ -95,7 +95,7 @@ const (
 	FormParamsGetIndividualsFreeField3                     = "free_field_3"
 	FormParamsGetIndividualsFreeField4                     = "free_field_4"
 	FormParamsGetIndividualsFreeField5                     = "free_field_5"
-	FormParamsGetIndividualsGender                         = "gender"
+	FormParamsGetIndividualsSex                            = "sex"
 	FormParamsGetIndividualsHasCognitiveDisability         = "has_cognitive_disability"
 	FormParamsGetIndividualsHasCommunicationDisability     = "has_communication_disability"
 	FormParamsGetIndividualsHasConsentedToReferral         = "has_consented_to_referral"
@@ -155,7 +155,7 @@ const (
 	DBColumnIndividualFreeField3                     = "free_field_3"
 	DBColumnIndividualFreeField4                     = "free_field_4"
 	DBColumnIndividualFreeField5                     = "free_field_5"
-	DBColumnIndividualGender                         = "gender"
+	DBColumnIndividualSex                            = "sex"
 	DBColumnIndividualHasCognitiveDisability         = "has_cognitive_disability"
 	DBColumnIndividualHasCommunicationDisability     = "has_communication_disability"
 	DBColumnIndividualHasConsentedToRGPD             = "has_consented_to_rgpd"
@@ -228,7 +228,7 @@ const (
 	FileColumnIndividualFreeField3                     = "free_field_3"
 	FileColumnIndividualFreeField4                     = "free_field_4"
 	FileColumnIndividualFreeField5                     = "free_field_5"
-	FileColumnIndividualGender                         = "gender"
+	FileColumnIndividualSex                            = "sex"
 	FileColumnIndividualHasCognitiveDisability         = "has_cognitive_disability"
 	FileColumnIndividualHasCommunicationDisability     = "has_communication_disability"
 	FileColumnIndividualHasConsentedToRGPD             = "has_consented_to_rgpd"
@@ -301,7 +301,7 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualFreeField3,
 	DBColumnIndividualFreeField4,
 	DBColumnIndividualFreeField5,
-	DBColumnIndividualGender,
+	DBColumnIndividualSex,
 	DBColumnIndividualHasCognitiveDisability,
 	DBColumnIndividualHasCommunicationDisability,
 	DBColumnIndividualHasConsentedToRGPD,
@@ -376,7 +376,7 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualFreeField3,
 	FileColumnIndividualFreeField4,
 	FileColumnIndividualFreeField5,
-	FileColumnIndividualGender,
+	FileColumnIndividualSex,
 	FileColumnIndividualHasCognitiveDisability,
 	FileColumnIndividualHasCommunicationDisability,
 	FileColumnIndividualHasConsentedToRGPD,
@@ -448,7 +448,7 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualFreeField3:                     FileColumnIndividualFreeField3,
 	DBColumnIndividualFreeField4:                     FileColumnIndividualFreeField4,
 	DBColumnIndividualFreeField5:                     FileColumnIndividualFreeField5,
-	DBColumnIndividualGender:                         FileColumnIndividualGender,
+	DBColumnIndividualSex:                            FileColumnIndividualSex,
 	DBColumnIndividualHasCognitiveDisability:         FileColumnIndividualHasCognitiveDisability,
 	DBColumnIndividualHasCommunicationDisability:     FileColumnIndividualHasCommunicationDisability,
 	DBColumnIndividualHasConsentedToRGPD:             FileColumnIndividualHasConsentedToRGPD,
@@ -519,7 +519,7 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualFreeField3:                     DBColumnIndividualFreeField3,
 	FileColumnIndividualFreeField4:                     DBColumnIndividualFreeField4,
 	FileColumnIndividualFreeField5:                     DBColumnIndividualFreeField5,
-	FileColumnIndividualGender:                         DBColumnIndividualGender,
+	FileColumnIndividualSex:                            DBColumnIndividualSex,
 	FileColumnIndividualHasCognitiveDisability:         DBColumnIndividualHasCognitiveDisability,
 	FileColumnIndividualHasCommunicationDisability:     DBColumnIndividualHasCommunicationDisability,
 	FileColumnIndividualHasConsentedToRGPD:             DBColumnIndividualHasConsentedToRGPD,

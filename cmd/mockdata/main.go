@@ -41,9 +41,9 @@ func randomDisabilityLevel() string {
 	return pick(g...)
 }
 
-func randomGender() string {
+func randomSex() string {
 	var g []string
-	for _, d := range api.AllGenders().Items() {
+	for _, d := range api.AllSexs().Items() {
 		g = append(g, string(d))
 	}
 	return pick(g...)
@@ -150,7 +150,7 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualFreeField3,
 		constants.FileColumnIndividualFreeField4,
 		constants.FileColumnIndividualFreeField5,
-		constants.FileColumnIndividualGender,
+		constants.FileColumnIndividualSex,
 		constants.FileColumnIndividualHasCognitiveDisability,
 		constants.FileColumnIndividualHasCommunicationDisability,
 		constants.FileColumnIndividualHasConsentedToRGPD,
@@ -271,7 +271,7 @@ func Generate(count uint) error {
 			freeField5 = strconv.Itoa(rand.Intn(1000000))
 		}
 
-		gender := randomGender()
+		sex := randomSex()
 		hasCognitiveDisability := randomBool()
 		hasCommunicationDisability := randomBool()
 		hasConsentedToRgpd := randomBool()
@@ -408,7 +408,7 @@ func Generate(count uint) error {
 			freeField3,
 			freeField4,
 			freeField5,
-			gender,
+			sex,
 			hasCognitiveDisability,
 			hasCommunicationDisability,
 			hasConsentedToRgpd,

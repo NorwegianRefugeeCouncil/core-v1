@@ -23,7 +23,7 @@ func TestValidateListIndividualsOptions(t *testing.T) {
 			opts: api.ListIndividualsOptions{
 				Take:                 10,
 				Skip:                 10,
-				Genders:              containers.NewSet[api.Gender](api.GenderFemale, api.GenderMale, api.GenderOther, api.GenderPreferNotToSay),
+				Sexs:                 containers.NewSet[api.Sex](api.SexFemale, api.SexMale, api.SexOther, api.SexPreferNotToSay),
 				DisplacementStatuses: containers.NewSet[api.DisplacementStatus](api.DisplacementStatusIDP, api.DisplacementStatusRefugee, api.DisplacementStatusHostCommunity),
 				BirthDateFrom:        &fromDate,
 				BirthDateTo:          &toDate,
@@ -49,13 +49,13 @@ func TestValidateListIndividualsOptions(t *testing.T) {
 				validation.Invalid(validation.NewPath("take"), -1, "must be greater than or equal to 0"),
 			},
 		}, {
-			name: "invalid gender",
+			name: "invalid sex",
 			opts: api.ListIndividualsOptions{
 				CountryID: "countryId",
-				Genders:   containers.NewSet[api.Gender]("invalid"),
+				Sexs:      containers.NewSet[api.Sex]("invalid"),
 			},
 			want: validation.ErrorList{
-				validation.NotSupported(validation.NewPath("genders").Index(0), api.Gender("invalid"), allowedGendersStr),
+				validation.NotSupported(validation.NewPath("sexs").Index(0), api.Sex("invalid"), allowedSexsStr),
 			},
 		}, {
 			name: "invalid displacement status",

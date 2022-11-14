@@ -1365,10 +1365,10 @@ url("/static/bootstrap-icons.woff?08efbba7c53d8c5413793eecb19b20bb") format("wof
 .bi-file-earmark-pdf::before { content: "\f63e"; }
 .bi-file-pdf-fill::before { content: "\f63f"; }
 .bi-file-pdf::before { content: "\f640"; }
-.bi-gender-ambiguous::before { content: "\f641"; }
-.bi-gender-female::before { content: "\f642"; }
-.bi-gender-male::before { content: "\f643"; }
-.bi-gender-trans::before { content: "\f644"; }
+.bi-sex-ambiguous::before { content: "\f641"; }
+.bi-sex-female::before { content: "\f642"; }
+.bi-sex-male::before { content: "\f643"; }
+.bi-sex-trans::before { content: "\f644"; }
 .bi-headset-vr::before { content: "\f645"; }
 .bi-info-lg::before { content: "\f646"; }
 .bi-mastodon::before { content: "\f647"; }
