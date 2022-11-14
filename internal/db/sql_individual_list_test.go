@@ -285,8 +285,8 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND (identification_number_1 = $1 OR identification_number_2 = $1 OR identification_number_3 = $1)`,
 			wantArgs: []interface{}{"123456789"},
 		}, {
-			name:     "identificationContext",
-			args:     api.ListIndividualsOptions{IdentificationContext: "context"},
+			name:     "engagementContext",
+			args:     api.ListIndividualsOptions{EngagementContext: "context"},
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND identification_context = $1`,
 			wantArgs: []interface{}{"context"},
 		}, {

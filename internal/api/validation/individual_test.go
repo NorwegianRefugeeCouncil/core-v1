@@ -259,8 +259,8 @@ func (i *IndividualBuilder) WithIdentificationNumber3(identificationNumber strin
 	return i
 }
 
-func (i *IndividualBuilder) WithIdentificationContext(identificationContext string) *IndividualBuilder {
-	i.individual.IdentificationContext = identificationContext
+func (i *IndividualBuilder) WithEngagementContext(engagementContext string) *IndividualBuilder {
+	i.individual.EngagementContext = engagementContext
 	return i
 }
 
@@ -576,9 +576,9 @@ func TestValidateIndividual(t *testing.T) {
 			i:    ValidIndividual().WithIdentificationNumber3(bigstr(individualIdentificationNumberMaxLength + 1)).Build(),
 			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("identificationNumber3"), bigstr(individualIdentificationNumberMaxLength+1), individualIdentificationNumberMaxLength)},
 		}, {
-			name: "identificationContext (too long)",
-			i:    ValidIndividual().WithIdentificationContext(bigstr(individualIdentificationContextMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("identificationContext"), bigstr(individualIdentificationContextMaxLength+1), individualIdentificationContextMaxLength)},
+			name: "engagementContext (too long)",
+			i:    ValidIndividual().WithEngagementContext(bigstr(individualEngagementContextMaxLength + 1)).Build(),
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("engagementContext"), bigstr(individualEngagementContextMaxLength+1), individualEngagementContextMaxLength)},
 		}, {
 			name: "internalId (too long)",
 			i:    ValidIndividual().WithInternalID(bigstr(individualInternalIDMaxLength + 1)).Build(),

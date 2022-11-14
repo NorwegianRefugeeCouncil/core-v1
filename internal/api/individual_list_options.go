@@ -48,7 +48,7 @@ type ListIndividualsOptions struct {
 	HouseholdID                    string
 	IDs                            containers.StringSet
 	IdentificationNumber           string
-	IdentificationContext          string
+	EngagementContext              string
 	InternalID                     string
 	IsHeadOfCommunity              *bool
 	IsHeadOfHousehold              *bool
