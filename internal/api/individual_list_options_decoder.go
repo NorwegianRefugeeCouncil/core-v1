@@ -336,7 +336,18 @@ func (p *listIndividualsOptionsDecoder) parseIdentificationNumber() error {
 }
 
 func (p *listIndividualsOptionsDecoder) parseEngagementContext() error {
-	p.out.EngagementContext = p.values.Get(constants.FormParamsGetIndividualsEngagementContext)
+	if len(p.values[constants.FormParamsGetIndividualsEngagementContext]) == 0 {
+		return nil
+	}
+	ecSet := containers.NewSet[EngagementContext]()
+	for _, ec := range p.values[constants.FormParamsGetIndividualsEngagementContext] {
+		parsedEc, err := ParseEngagementContext(ec)
+		if err != nil {
+			return err
+		}
+		ecSet.Add(parsedEc)
+	}
+	p.out.EngagementContext = ecSet
 	return nil
 }
 

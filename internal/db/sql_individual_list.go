@@ -438,11 +438,18 @@ func (g *getAllIndividualsSQLQuery) withIdentificationNumber(identificationNumbe
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withEngagementContext(engagementContext string) *getAllIndividualsSQLQuery {
-	if len(engagementContext) == 0 {
+func (g *getAllIndividualsSQLQuery) withEngagementContext(engagementContext containers.Set[api.EngagementContext]) *getAllIndividualsSQLQuery {
+	if engagementContext.IsEmpty() {
 		return g
 	}
-	g.writeString(" AND identification_context = ").writeArg(engagementContext)
+	g.writeString(" AND engagement_context IN (")
+	for i, ds := range engagementContext.Items() {
+		if i != 0 {
+			g.writeString(",")
+		}
+		g.writeArg(string(ds))
+	}
+	g.writeString(")")
 	return g
 }
 
