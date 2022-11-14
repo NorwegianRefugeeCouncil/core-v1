@@ -91,7 +91,7 @@ func parseTemplates(
 				return dict, nil
 			},
 		})
-		t[name], err = tpl.ParseFS(web.Content, "templates/nav.gohtml", "templates/base.gohtml", "templates/"+name)
+		t[name], err = tpl.ParseFS(web.Content, "templates/nav.gohtml", "templates/base.gohtml", "templates/searchForm.gohtml", "templates/"+name)
 		if err != nil {
 			return nil, err
 		}
