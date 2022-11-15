@@ -231,8 +231,11 @@ func Generate(count uint) error {
 			communityId = pick(communityIds...)
 		}
 		displacementStatus := randomDisplacementStatus()
+		displacementStatusComment := ""
 
-		displacementStatusComment := randomText(f)
+		if displacementStatus == "other" {
+			displacementStatusComment = randomText(f)
+		}
 
 		var email1 string
 		if randBool(80) {
