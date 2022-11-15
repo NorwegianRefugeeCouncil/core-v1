@@ -50,7 +50,7 @@ func (p *listIndividualsOptionsEncoder) encode() url.Values {
 		p.encodeFreeField4,
 		p.encodeFreeField5,
 		p.encodeFullName,
-		p.encodeGenders,
+		p.encodeSexes,
 		p.encodeHasCognitiveDisability,
 		p.encodeHasCommunicationDisability,
 		p.encodeHasConsentedToRGPD,
@@ -236,10 +236,10 @@ func (p *listIndividualsOptionsEncoder) encodeFullName() {
 	}
 }
 
-func (p *listIndividualsOptionsEncoder) encodeGenders() {
-	if len(p.values.Genders) > 0 {
-		for _, g := range p.values.Genders.Items() {
-			p.out.Add(constants.FormParamsGetIndividualsGender, string(g))
+func (p *listIndividualsOptionsEncoder) encodeSexes() {
+	if len(p.values.Sexes) > 0 {
+		for _, g := range p.values.Sexes.Items() {
+			p.out.Add(constants.FormParamsGetIndividualsSex, string(g))
 		}
 	}
 }
@@ -465,7 +465,7 @@ var sortableColumns = containers.NewStringSet(
 	constants.DBColumnIndividualFreeField3,
 	constants.DBColumnIndividualFreeField4,
 	constants.DBColumnIndividualFreeField5,
-	constants.DBColumnIndividualGender,
+	constants.DBColumnIndividualSex,
 	constants.DBColumnIndividualHasCognitiveDisability,
 	constants.DBColumnIndividualHasCommunicationDisability,
 	constants.DBColumnIndividualHasConsentedToRGPD,

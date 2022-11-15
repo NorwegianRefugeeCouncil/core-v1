@@ -52,7 +52,7 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualFreeField(i.FreeField4, p.Child("freeField4"))...)
 	allErrs = append(allErrs, validateIndividualFreeField(i.FreeField5, p.Child("freeField5"))...)
 	allErrs = append(allErrs, validateIndividualFullName(i.FullName, p.Child("fullName"))...)
-	allErrs = append(allErrs, validateIndividualGender(i.Gender, p.Child("gender"))...)
+	allErrs = append(allErrs, validateIndividualSex(i.Sex, p.Child("sex"))...)
 	allErrs = append(allErrs, validateIndividualHouseholdID(i.HouseholdID, p.Child("householdId"))...)
 	allErrs = append(allErrs, validateIndividualEngagementContext(i.EngagementContext, p.Child("engagementContext"))...)
 	allErrs = append(allErrs, validateIndividualIdentificationNumber(i.IdentificationNumber1, p.Child("identificationNumber1"))...)
@@ -210,14 +210,14 @@ func validateIndividualDisplacementStatus(ds api.DisplacementStatus, path *valid
 	}
 }
 
-func validateIndividualGender(gender api.Gender, path *validation.Path) validation.ErrorList {
+func validateIndividualSex(sex api.Sex, path *validation.Path) validation.ErrorList {
 	switch {
-	case allowedGenders.Contains(gender):
+	case allowedSexes.Contains(sex):
 		return validation.ErrorList{}
-	case gender == api.GenderUnspecified:
+	case sex == api.SexUnspecified:
 		return validation.ErrorList{}
 	default:
-		return validation.ErrorList{validation.NotSupported(path, gender, allowedGendersStr)}
+		return validation.ErrorList{validation.NotSupported(path, sex, allowedSexesStr)}
 	}
 }
 

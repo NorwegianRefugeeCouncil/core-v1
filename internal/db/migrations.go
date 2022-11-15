@@ -36,6 +36,7 @@ var migrations = []migration{
 	migrationFromFile("012_new_individual"),
 	migrationFromFile("013_individual_changes"),
 	migrationFromFile("014_rename_identification_context"),
+	migrationFromFile("015_rename_gender"),
 }
 
 // Migrate runs the migrations on the database.

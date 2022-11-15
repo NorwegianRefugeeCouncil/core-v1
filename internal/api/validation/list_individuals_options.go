@@ -11,7 +11,7 @@ func ValidateListIndividualsOptions(opts *api.ListIndividualsOptions) validation
 	allErrs = append(allErrs, validateListIndividualsCountryID(opts.CountryID, validation.NewPath("countryId"))...)
 	allErrs = append(allErrs, validateListIndividualsOptionsSkip(opts.Skip, validation.NewPath("skip"))...)
 	allErrs = append(allErrs, validateListIndividualsOptionsTake(opts.Take, validation.NewPath("take"))...)
-	allErrs = append(allErrs, validateListIndividualsOptionsGenders(opts.Genders, validation.NewPath("genders"))...)
+	allErrs = append(allErrs, validateListIndividualsOptionsSexes(opts.Sexes, validation.NewPath("sexs"))...)
 	allErrs = append(allErrs, validateListIndividualsOptionsDisplacementStatuses(opts.DisplacementStatuses, validation.NewPath("displacementStatuses"))...)
 	if opts.BirthDateFrom != nil && opts.BirthDateTo != nil && opts.BirthDateFrom.After(*opts.BirthDateTo) {
 		allErrs = append(allErrs, validation.Invalid(validation.NewPath("birthDateFrom"), opts.BirthDateFrom, "birthDateFrom must be before birthDateTo"))
@@ -43,11 +43,11 @@ func validateListIndividualsOptionsTake(take int, p *validation.Path) validation
 	return allErrs
 }
 
-func validateListIndividualsOptionsGenders(genders containers.Set[api.Gender], p *validation.Path) validation.ErrorList {
+func validateListIndividualsOptionsSexes(sexs containers.Set[api.Sex], p *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
-	for i, g := range genders.Items() {
-		if !allowedGenders.Contains(g) {
-			allErrs = append(allErrs, validation.NotSupported(p.Index(i), g, allowedGendersStr))
+	for i, g := range sexs.Items() {
+		if !allowedSexes.Contains(g) {
+			allErrs = append(allErrs, validation.NotSupported(p.Index(i), g, allowedSexesStr))
 		}
 	}
 	return allErrs

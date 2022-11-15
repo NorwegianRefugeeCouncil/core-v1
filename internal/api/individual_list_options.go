@@ -35,7 +35,7 @@ type ListIndividualsOptions struct {
 	FreeField4                     string
 	FreeField5                     string
 	FullName                       string
-	Genders                        containers.Set[Gender]
+	Sexes                          containers.Set[Sex]
 	HasCognitiveDisability         *bool
 	HasCommunicationDisability     *bool
 	HasConsentedToRGPD             *bool

@@ -1,4 +1,4 @@
-id,full_name,phone_number,email            ,address,birth_date,gender
+id,full_name,phone_number,email            ,address,birth_date,sex
   ,John Doe,123-452-1234,johndoe@email.com,"123 Boulevard Drive
 70190 Stuttgart
 Germany",1987-10-01,male
