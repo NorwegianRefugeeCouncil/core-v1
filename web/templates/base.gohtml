@@ -69,6 +69,31 @@
     //     await pollRefreshToken();
     // })();
 
+    const searchFormId = "searchForm"
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const searchForm = document.getElementById(searchFormId)
+        // Disable sending empty parameters to the search endpoint.
+        // Otherwise, the URL would be huge with all the default query
+        // parameters included.
+        searchForm.onsubmit = function () {
+            let inputs, index;
+            inputs = [
+                ...document.getElementsByTagName('input'),
+                ...document.getElementsByTagName('select'),
+            ];
+            for (index = 0; index < inputs.length; ++index) {
+                if (!searchForm.contains(inputs[index])) {
+                    continue
+                }
+                if (inputs[index].value === "") {
+                    inputs[index].disabled = true;
+                }
+            }
+        }
+    })
+
 </script>
 
 

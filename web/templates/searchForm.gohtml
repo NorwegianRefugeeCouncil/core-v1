@@ -1,5 +1,5 @@
 {{define "searchForm"}}
-    <form method="get" action="/countries/{{.Options.CountryID}}/individuals" id="searchForm">
+    <form method="get" action="/countries/{{.RequestContext.SelectedCountry.ID}}/individuals" id="searchForm" class="m-5">
         <input type="hidden" name="take" value="">
         <input type="hidden" name="skip" value="">
 
@@ -640,8 +640,8 @@
             <!-- End Free Field 5-->
         </div>
     </form>
-    <div class="card-footer float-end">
-        <a href="/countries/{{.Options.CountryID}}/individuals"
+    <div class="card-footer sticky-bottom w-100 bg-white p-5">
+        <a href="/countries/{{.RequestContext.SelectedCountry.ID}}/individuals"
            class="btn btn-outline-primary">Clear</a>
         <button class="btn btn-primary" type="submit" form="searchForm">Search</button>
     </div>
