@@ -31,17 +31,16 @@
                             <button data-bs-toggle="collapse"
                                     data-bs-target="#filters"
                                     type="button"
-                                    class="btn btn-link text-secondary dropdown-toggle text-decoration-none"
+                                    class="btn btn-link text-secondary dropdown-toggle text-decoration-none px-2"
                                     aria-haspopup="true"
                                     aria-expanded="false">
-                                <i class="bi bi-search d-lg-inline-block"></i>
                                 Search
                             </button>
                         </div>
 
                         <div class="btn-group ms-5">
                             <button type="button"
-                                    class="btn btn-link text-secondary dropdown-toggle text-decoration-none"
+                                    class="btn btn-link text-secondary dropdown-toggle text-decoration-none px-2"
                                     data-bs-toggle="dropdown"
                                     aria-haspopup="true"
                                     aria-expanded="false">
@@ -82,7 +81,11 @@
                         </div>
 
                         <div class="btn-group ms-5">
-                            <button type="button" class="btn btn-link text-secondary dropdown-toggle px-2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button type="button"
+                                    class="btn btn-link text-secondary dropdown-toggle text-decoration-none px-2"
+                                    data-bs-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false">
                                 {{if .RequestContext.SelectedCountry}} {{.RequestContext.SelectedCountry.Name}} {{else}} Select Country {{end}}
                             </button>
                             <div class="dropdown-menu">
