@@ -10,7 +10,6 @@
         const individualActionFormId = "individuals-action-form"
         const deleteIndividualsButtonId = "deleteIndividualsButton"
         const deleteIndividualsButtonContentId = "deleteIndividualsButtonContent"
-        const searchFormId = "searchForm"
         const selectIndividualCheckboxClass = "select-row-checkbox"
         const selectAllIndividualsCheckboxId = "selectAllCheckbox"
         const selectedRowAttributes = {"aria-selected": "true"}
@@ -124,7 +123,6 @@
 
         document.addEventListener("DOMContentLoaded", function () {
 
-            const searchForm = document.getElementById(searchFormId)
             const uploadButton = document.getElementById(uploadIndividualFileButtonId)
             const deleteButton = document.getElementById(deleteIndividualsButtonId)
             const deleteButtonContent = document.getElementById(deleteIndividualsButtonContentId)
@@ -195,25 +193,6 @@
                 const someChecked = selectCheckboxes.some(checkbox => checkbox.checked);
                 selectAllCheckbox.checked = allChecked && someChecked
                 selectAllCheckbox.indeterminate = someChecked && !allChecked
-            }
-
-            // Disable sending empty parameters to the search endpoint.
-            // Otherwise, the URL would be huge with all the default query
-            // parameters included.
-            searchForm.onsubmit = function () {
-                let inputs, index;
-                inputs = [
-                    ...document.getElementsByTagName('input'),
-                    ...document.getElementsByTagName('select'),
-                ];
-                for (index = 0; index < inputs.length; ++index) {
-                    if (!searchForm.contains(inputs[index])) {
-                        continue
-                    }
-                    if (inputs[index].value === "") {
-                        inputs[index].disabled = true;
-                    }
-                }
             }
 
             // Handles the change of the select all checkbox
