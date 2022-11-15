@@ -286,9 +286,9 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantArgs: []interface{}{"123456789"},
 		}, {
 			name:     "engagementContext",
-			args:     api.ListIndividualsOptions{EngagementContext: "context"},
-			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND identification_context = $1`,
-			wantArgs: []interface{}{"context"},
+			args:     api.ListIndividualsOptions{EngagementContext: containers.NewSet[api.EngagementContext](api.EngagementContextInOffice)},
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND engagement_context IN ($1)`,
+			wantArgs: []interface{}{"inOffice"},
 		}, {
 			name:     "internalID",
 			args:     api.ListIndividualsOptions{InternalID: "internal-id"},

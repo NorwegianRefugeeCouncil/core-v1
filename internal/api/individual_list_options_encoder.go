@@ -319,8 +319,10 @@ func (p *listIndividualsOptionsEncoder) encodeIdentificationNumber() {
 }
 
 func (p *listIndividualsOptionsEncoder) encodeEngagementContext() {
-	if len(p.values.EngagementContext) != 0 {
-		p.out.Add(constants.FormParamsGetIndividualsEngagementContext, p.values.EngagementContext)
+	if len(p.values.EngagementContext) > 0 {
+		for _, ds := range p.values.EngagementContext.Items() {
+			p.out.Add(constants.FormParamsGetIndividualsEngagementContext, string(ds))
+		}
 	}
 }
 
