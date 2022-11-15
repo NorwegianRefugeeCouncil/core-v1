@@ -80,7 +80,7 @@ func randomBool() string {
 	return "false"
 }
 
-func randomIdentificationContext() string {
+func randomEngagementContext() string {
 	return pick(
 		"",
 		"houseVisit",
@@ -170,7 +170,7 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualIdentificationType3,
 		constants.FileColumnIndividualIdentificationTypeExplanation3,
 		constants.FileColumnIndividualIdentificationNumber3,
-		constants.FileColumnIndividualIdentificationContext,
+		constants.FileColumnIndividualEngagementContext,
 		constants.FileColumnIndividualInternalID,
 		constants.FileColumnIndividualIsHeadOfCommunity,
 		constants.FileColumnIndividualIsHeadOfHousehold,
@@ -342,7 +342,7 @@ func Generate(count uint) error {
 			identificationTypeExplanation3 = strings.Join(f.Paragraphs(rand.Intn(3)+1, false), "\n\n")
 		}
 
-		identificationContext := randomIdentificationContext()
+		engagementContext := randomEngagementContext()
 		internalId := strconv.Itoa(rand.Intn(1000000000))
 		isHeadOfCommunity := "false"
 		if communityId != "" && randBool(5) {
@@ -428,7 +428,7 @@ func Generate(count uint) error {
 			identificationType3,
 			identificationTypeExplanation3,
 			identificationNumber3,
-			identificationContext,
+			engagementContext,
 			internalId,
 			isHeadOfCommunity,
 			isHeadOfHousehold,

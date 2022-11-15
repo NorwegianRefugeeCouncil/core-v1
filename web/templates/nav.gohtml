@@ -1,5 +1,5 @@
 {{define "nav"}}
-    <nav class="navbar" style="z-index: 1">
+    <nav class="navbar p-5" style="z-index: 1">
         <div class="container-fluid" id="navbar-container">
             <a class="home-link me-0 me-lg-2" href="{{if eq "" .RequestContext.SelectedCountryID}}/{{else}}/countries/{{.RequestContext.SelectedCountryID}}/individuals{{end}}">
                 <div class="d-flex flex-row align-items-center me-5">
@@ -16,7 +16,24 @@
                         </a>
 
                         <div class="btn-group ms-5">
-                            <button type="button" class="btn btn-link text-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                            <button data-bs-toggle="collapse"
+                                    data-bs-target="#filters"
+                                    type="button"
+                                    class="btn btn-link text-secondary dropdown-toggle text-decoration-none"
+                                    aria-haspopup="true"
+                                    aria-expanded="false">
+                                <i class="bi bi-search d-lg-inline-block"></i>
+                                Search
+                            </button>
+                        </div>
+
+                        <div class="btn-group ms-5">
+                            <button type="button"
+                                    class="btn btn-link text-secondary dropdown-toggle text-decoration-none"
+                                    data-bs-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false">
                                 {{if .RequestContext.SelectedCountry}} {{.RequestContext.SelectedCountry.Name}} {{else}} Select Country {{end}}
                             </button>
                             <div class="dropdown-menu">
@@ -39,4 +56,7 @@
             </div>
         </div>
     </nav>
+    <div class="w-100 collapse position-absolute bg-white p-5 shadow" id="filters" style="top: 115px;">
+        {{template "searchForm" .}}
+    </div>
 {{end}}

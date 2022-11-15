@@ -56,7 +56,7 @@ func (p *listIndividualsOptionsDecoder) parse() error {
 		p.parseHouseholdID,
 		p.parseIDs,
 		p.parseIdentificationNumber,
-		p.parseIdentificationContext,
+		p.parseEngagementContext,
 		p.parseInternalID,
 		p.parseIsHeadOfCommunity,
 		p.parseIsHeadOfHousehold,
@@ -335,8 +335,19 @@ func (p *listIndividualsOptionsDecoder) parseIdentificationNumber() error {
 	return nil
 }
 
-func (p *listIndividualsOptionsDecoder) parseIdentificationContext() error {
-	p.out.IdentificationContext = p.values.Get(constants.FormParamsGetIndividualsIdentificationContext)
+func (p *listIndividualsOptionsDecoder) parseEngagementContext() error {
+	if len(p.values[constants.FormParamsGetIndividualsEngagementContext]) == 0 {
+		return nil
+	}
+	ecSet := containers.NewSet[EngagementContext]()
+	for _, ec := range p.values[constants.FormParamsGetIndividualsEngagementContext] {
+		parsedEc, err := ParseEngagementContext(ec)
+		if err != nil {
+			return err
+		}
+		ecSet.Add(parsedEc)
+	}
+	p.out.EngagementContext = ecSet
 	return nil
 }
 

@@ -111,8 +111,8 @@ type Individual struct {
 	IdentificationTypeExplanation3 string `json:"identificationTypeExplanation3" db:"identification_type_explanation_3"`
 	// IdentificationNumber3 is the tertiary identification number of the individual
 	IdentificationNumber3 string `json:"identificationNumber3" db:"identification_number_3"`
-	// IdentificationContext is the context of the identification of the individual
-	IdentificationContext string `json:"identificationContext" db:"identification_context"`
+	// EngagementContext is the context of the identification of the individual
+	EngagementContext string `json:"engagementContext" db:"engagement_context"`
 	// InternalID is the internal ID of the individual. This is used to link individuals across different
 	// systems.
 	InternalID string `json:"internalId" db:"internal_id"`
@@ -260,8 +260,8 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.IdentificationTypeExplanation3, nil
 	case constants.DBColumnIndividualIdentificationNumber3:
 		return i.IdentificationNumber3, nil
-	case constants.DBColumnIndividualIdentificationContext:
-		return i.IdentificationContext, nil
+	case constants.DBColumnIndividualEngagementContext:
+		return i.EngagementContext, nil
 	case constants.DBColumnIndividualInternalID:
 		return i.InternalID, nil
 	case constants.DBColumnIndividualIsHeadOfCommunity:
@@ -350,7 +350,7 @@ func (i *Individual) Normalize() {
 	i.FullName = trimString(i.FullName)
 	i.HouseholdID = trimString(i.HouseholdID)
 	i.ID = trimString(i.ID)
-	i.IdentificationContext = trimString(i.IdentificationContext)
+	i.EngagementContext = trimString(i.EngagementContext)
 	i.IdentificationNumber1 = trimString(i.IdentificationNumber1)
 	i.IdentificationNumber2 = trimString(i.IdentificationNumber2)
 	i.IdentificationNumber3 = trimString(i.IdentificationNumber3)

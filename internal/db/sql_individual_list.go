@@ -60,7 +60,7 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withHouseholdID(options.HouseholdID).
 		withIds(options.IDs).
 		withIdentificationNumber(options.IdentificationNumber).
-		withIdentificationContext(options.IdentificationContext).
+		withEngagementContext(options.EngagementContext).
 		withInternalID(options.InternalID).
 		withIsHeadOfCommunity(options.IsHeadOfCommunity).
 		withIsHeadOfHousehold(options.IsHeadOfHousehold).
@@ -438,11 +438,18 @@ func (g *getAllIndividualsSQLQuery) withIdentificationNumber(identificationNumbe
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withIdentificationContext(identificationContext string) *getAllIndividualsSQLQuery {
-	if len(identificationContext) == 0 {
+func (g *getAllIndividualsSQLQuery) withEngagementContext(engagementContext containers.Set[api.EngagementContext]) *getAllIndividualsSQLQuery {
+	if engagementContext.IsEmpty() {
 		return g
 	}
-	g.writeString(" AND identification_context = ").writeArg(identificationContext)
+	g.writeString(" AND engagement_context IN (")
+	for i, ds := range engagementContext.Items() {
+		if i != 0 {
+			g.writeString(",")
+		}
+		g.writeArg(string(ds))
+	}
+	g.writeString(")")
 	return g
 }
 

@@ -32,7 +32,7 @@ const (
 	FormParamIndividualHearingDisabilityLevel         = "HearingDisabilityLevel"
 	FormParamIndividualHouseholdID                    = "HouseholdID"
 	FormParamIndividualID                             = "ID"
-	FormParamIndividualIdentificationContext          = "IdentificationContext"
+	FormParamIndividualEngagementContext              = "EngagementContext"
 	FormParamIndividualIdentificationNumber1          = "IdentificationNumber1"
 	FormParamIndividualIdentificationNumber2          = "IdentificationNumber2"
 	FormParamIndividualIdentificationNumber3          = "IdentificationNumber3"
@@ -107,7 +107,7 @@ const (
 	FormParamsGetIndividualsHearingDisabilityLevel         = "hearing_disability_level"
 	FormParamsGetIndividualsHouseholdID                    = "household_id"
 	FormParamsGetIndividualsID                             = "id"
-	FormParamsGetIndividualsIdentificationContext          = "identification_context"
+	FormParamsGetIndividualsEngagementContext              = "engagement_context"
 	FormParamsGetIndividualsIdentificationNumber           = "identification_number"
 	FormParamsGetIndividualsInternalID                     = "internal_id"
 	FormParamsGetIndividualsIsHeadOfCommunity              = "is_head_of_community"
@@ -167,7 +167,7 @@ const (
 	DBColumnIndividualHearingDisabilityLevel         = "hearing_disability_level"
 	DBColumnIndividualHouseholdID                    = "household_id"
 	DBColumnIndividualID                             = "id"
-	DBColumnIndividualIdentificationContext          = "identification_context"
+	DBColumnIndividualEngagementContext              = "engagement_context"
 	DBColumnIndividualIdentificationNumber1          = "identification_number_1"
 	DBColumnIndividualIdentificationNumber2          = "identification_number_2"
 	DBColumnIndividualIdentificationNumber3          = "identification_number_3"
@@ -240,7 +240,7 @@ const (
 	FileColumnIndividualHearingDisabilityLevel         = "hearing_disability_level"
 	FileColumnIndividualHouseholdID                    = "household_id"
 	FileColumnIndividualID                             = "id"
-	FileColumnIndividualIdentificationContext          = "identification_context"
+	FileColumnIndividualEngagementContext              = "engagement_context"
 	FileColumnIndividualIdentificationNumber1          = "identification_number_1"
 	FileColumnIndividualIdentificationNumber2          = "identification_number_2"
 	FileColumnIndividualIdentificationNumber3          = "identification_number_3"
@@ -313,7 +313,7 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualHearingDisabilityLevel,
 	DBColumnIndividualHouseholdID,
 	DBColumnIndividualID,
-	DBColumnIndividualIdentificationContext,
+	DBColumnIndividualEngagementContext,
 	DBColumnIndividualIdentificationNumber1,
 	DBColumnIndividualIdentificationNumber2,
 	DBColumnIndividualIdentificationNumber3,
@@ -388,7 +388,7 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualHearingDisabilityLevel,
 	FileColumnIndividualHouseholdID,
 	FileColumnIndividualID,
-	FileColumnIndividualIdentificationContext,
+	FileColumnIndividualEngagementContext,
 	FileColumnIndividualIdentificationNumber1,
 	FileColumnIndividualIdentificationNumber2,
 	FileColumnIndividualIdentificationNumber3,
@@ -460,7 +460,7 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualHearingDisabilityLevel:         FileColumnIndividualHearingDisabilityLevel,
 	DBColumnIndividualHouseholdID:                    FileColumnIndividualHouseholdID,
 	DBColumnIndividualID:                             FileColumnIndividualID,
-	DBColumnIndividualIdentificationContext:          FileColumnIndividualIdentificationContext,
+	DBColumnIndividualEngagementContext:              FileColumnIndividualEngagementContext,
 	DBColumnIndividualIdentificationNumber1:          FileColumnIndividualIdentificationNumber1,
 	DBColumnIndividualIdentificationNumber2:          FileColumnIndividualIdentificationNumber2,
 	DBColumnIndividualIdentificationNumber3:          FileColumnIndividualIdentificationNumber3,
@@ -531,7 +531,7 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualHearingDisabilityLevel:         DBColumnIndividualHearingDisabilityLevel,
 	FileColumnIndividualHouseholdID:                    DBColumnIndividualHouseholdID,
 	FileColumnIndividualID:                             DBColumnIndividualID,
-	FileColumnIndividualIdentificationContext:          DBColumnIndividualIdentificationContext,
+	FileColumnIndividualEngagementContext:              DBColumnIndividualEngagementContext,
 	FileColumnIndividualIdentificationNumber1:          DBColumnIndividualIdentificationNumber1,
 	FileColumnIndividualIdentificationNumber2:          DBColumnIndividualIdentificationNumber2,
 	FileColumnIndividualIdentificationNumber3:          DBColumnIndividualIdentificationNumber3,

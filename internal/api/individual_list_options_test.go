@@ -287,9 +287,9 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 			args: url.Values{"identification_number": []string{"identification-number"}},
 			want: ListIndividualsOptions{IdentificationNumber: "identification-number"},
 		}, {
-			name: "identificationContext",
-			args: url.Values{"identification_context": []string{"identification-context"}},
-			want: ListIndividualsOptions{IdentificationContext: "identification-context"},
+			name: "engagementContext",
+			args: url.Values{"engagement_context": []string{"inOffice"}},
+			want: ListIndividualsOptions{EngagementContext: containers.NewSet[EngagementContext](EngagementContextInOffice)},
 		}, {
 			name: "internalId",
 			args: url.Values{"internal_id": []string{"internal-id"}},
@@ -670,9 +670,9 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			o:    ListIndividualsOptions{CountryID: countryId, IdentificationNumber: "identificationNumber"},
 			want: "/countries/usa/individuals?identification_number=identificationNumber",
 		}, {
-			name: "identificationContext",
-			o:    ListIndividualsOptions{CountryID: countryId, IdentificationContext: "identificationContext"},
-			want: "/countries/usa/individuals?identification_context=identificationContext",
+			name: "engagementContext",
+			o:    ListIndividualsOptions{CountryID: countryId, EngagementContext: containers.NewSet[EngagementContext](EngagementContextInOffice)},
+			want: "/countries/usa/individuals?engagement_context=inOffice",
 		}, {
 			name: "internalID",
 			o:    ListIndividualsOptions{CountryID: countryId, InternalID: "internalID"},

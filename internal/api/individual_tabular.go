@@ -198,8 +198,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.IdentificationTypeExplanation3 = cols[idx]
 		case constants.FileColumnIndividualIdentificationNumber3:
 			i.IdentificationNumber3 = cols[idx]
-		case constants.FileColumnIndividualIdentificationContext:
-			i.IdentificationContext = cols[idx]
+		case constants.FileColumnIndividualEngagementContext:
+			i.EngagementContext = cols[idx]
 		case constants.FileColumnIndividualInternalID:
 			i.InternalID = cols[idx]
 		case constants.FileColumnIndividualIsHeadOfCommunity:

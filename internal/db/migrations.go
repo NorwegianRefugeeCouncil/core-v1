@@ -35,6 +35,7 @@ var migrations = []migration{
 	migrationFromFile("011_individual_soft_delete"),
 	migrationFromFile("012_new_individual"),
 	migrationFromFile("013_individual_changes"),
+	migrationFromFile("014_rename_identification_context"),
 }
 
 // Migrate runs the migrations on the database.

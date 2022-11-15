@@ -104,7 +104,7 @@ func (f *IndividualForm) build() error {
 		f.buildSelfCareDisabilityLevel,
 		f.buildHasCommunicationDisability,
 		f.buildCommunicationDisabilityLevel,
-		f.buildIdentificationContext,
+		f.buildEngagementContext,
 		f.buildComments,
 		f.buildFreeField1,
 		f.buildFreeField2,
@@ -625,9 +625,9 @@ func (f *IndividualForm) buildCommunicationDisabilityLevel() error {
 	}, f.disabilitiesSection, f.individual.CommunicationDisabilityLevel)
 }
 
-func (f *IndividualForm) buildIdentificationContext() error {
+func (f *IndividualForm) buildEngagementContext() error {
 	return buildField(&forms.SelectInputField{
-		Name:        "identificationContext",
+		Name:        "engagementContext",
 		DisplayName: "Context of Engagement",
 		Options: []forms.SelectInputFieldOption{
 			{Label: "", Value: ""},
@@ -638,7 +638,7 @@ func (f *IndividualForm) buildIdentificationContext() error {
 			{Label: "Referred", Value: "referred"},
 			{Label: "Other", Value: "other"},
 		},
-	}, f.dataCollectionSection, f.individual.IdentificationContext)
+	}, f.dataCollectionSection, f.individual.EngagementContext)
 }
 
 func (f *IndividualForm) buildCollectionAgent() error {

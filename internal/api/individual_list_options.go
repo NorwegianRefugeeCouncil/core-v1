@@ -48,7 +48,7 @@ type ListIndividualsOptions struct {
 	HouseholdID                    string
 	IDs                            containers.StringSet
 	IdentificationNumber           string
-	IdentificationContext          string
+	EngagementContext              containers.Set[EngagementContext]
 	InternalID                     string
 	IsHeadOfCommunity              *bool
 	IsHeadOfHousehold              *bool
@@ -154,6 +154,54 @@ func (o ListIndividualsOptions) IsPresentsProtectionConcernsSelected() bool {
 
 func (o ListIndividualsOptions) IsNotPresentsProtectionConcernsSelected() bool {
 	return o.PresentsProtectionConcerns != nil && !*o.PresentsProtectionConcerns
+}
+
+func (o ListIndividualsOptions) IsHasVisionDisabilitySelected() bool {
+	return o.HasVisionDisability != nil && *o.HasVisionDisability
+}
+
+func (o ListIndividualsOptions) IsNotHasVisionDisabilitySelected() bool {
+	return o.HasVisionDisability != nil && !*o.HasVisionDisability
+}
+
+func (o ListIndividualsOptions) IsHasCognitiveDisabilitySelected() bool {
+	return o.HasCognitiveDisability != nil && *o.HasCognitiveDisability
+}
+
+func (o ListIndividualsOptions) IsNotHasCognitiveDisabilitySelected() bool {
+	return o.HasCognitiveDisability != nil && !*o.HasCognitiveDisability
+}
+
+func (o ListIndividualsOptions) IsHasCommunicationDisabilitySelected() bool {
+	return o.HasCommunicationDisability != nil && *o.HasCommunicationDisability
+}
+
+func (o ListIndividualsOptions) IsNotHasCommunicationDisabilitySelected() bool {
+	return o.HasCommunicationDisability != nil && !*o.HasCommunicationDisability
+}
+
+func (o ListIndividualsOptions) IsHasHearingDisabilitySelected() bool {
+	return o.HasHearingDisability != nil && *o.HasHearingDisability
+}
+
+func (o ListIndividualsOptions) IsNotHasHearingDisabilitySelected() bool {
+	return o.HasHearingDisability != nil && !*o.HasHearingDisability
+}
+
+func (o ListIndividualsOptions) IsHasMobilityDisabilitySelected() bool {
+	return o.HasMobilityDisability != nil && *o.HasMobilityDisability
+}
+
+func (o ListIndividualsOptions) IsNotHasMobilityDisabilitySelected() bool {
+	return o.HasMobilityDisability != nil && !*o.HasMobilityDisability
+}
+
+func (o ListIndividualsOptions) IsHasSelfCareDisabilitySelected() bool {
+	return o.HasSelfCareDisability != nil && *o.HasSelfCareDisability
+}
+
+func (o ListIndividualsOptions) IsNotHasSelfCareDisabilitySelected() bool {
+	return o.HasSelfCareDisability != nil && !*o.HasSelfCareDisability
 }
 
 func (o ListIndividualsOptions) NextPage() ListIndividualsOptions {

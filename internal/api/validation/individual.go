@@ -54,7 +54,7 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualFullName(i.FullName, p.Child("fullName"))...)
 	allErrs = append(allErrs, validateIndividualGender(i.Gender, p.Child("gender"))...)
 	allErrs = append(allErrs, validateIndividualHouseholdID(i.HouseholdID, p.Child("householdId"))...)
-	allErrs = append(allErrs, validateIndividualIdentificationContext(i.IdentificationContext, p.Child("identificationContext"))...)
+	allErrs = append(allErrs, validateIndividualEngagementContext(i.EngagementContext, p.Child("engagementContext"))...)
 	allErrs = append(allErrs, validateIndividualIdentificationNumber(i.IdentificationNumber1, p.Child("identificationNumber1"))...)
 	allErrs = append(allErrs, validateIndividualIdentificationNumber(i.IdentificationNumber2, p.Child("identificationNumber2"))...)
 	allErrs = append(allErrs, validateIndividualIdentificationNumber(i.IdentificationNumber3, p.Child("identificationNumber3"))...)
@@ -92,7 +92,7 @@ const (
 	individualHouseholdIDMaxLength                    = 64
 	individualIdentificationTypeMaxLength             = 64
 	individualIdentificationNumberMaxLength           = 64
-	individualIdentificationContextMaxLength          = 64
+	individualEngagementContextMaxLength              = 64
 	individualInternalIDMaxLength                     = 64
 	individualNationalityMaxLength                    = 64
 	individualPhoneNumberMaxLength                    = 64
@@ -297,10 +297,10 @@ func validateIndividualIdentificationNumber(number string, path *validation.Path
 	return allErrs
 }
 
-func validateIndividualIdentificationContext(context string, path *validation.Path) validation.ErrorList {
+func validateIndividualEngagementContext(context string, path *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
-	if len(context) > individualIdentificationContextMaxLength {
-		allErrs = append(allErrs, validation.TooLongMaxLength(path, context, individualIdentificationContextMaxLength))
+	if len(context) > individualEngagementContextMaxLength {
+		allErrs = append(allErrs, validation.TooLongMaxLength(path, context, individualEngagementContextMaxLength))
 	}
 	return allErrs
 }

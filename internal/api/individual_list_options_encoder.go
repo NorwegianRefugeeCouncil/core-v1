@@ -63,7 +63,7 @@ func (p *listIndividualsOptionsEncoder) encode() url.Values {
 		p.encodeHouseholdID,
 		p.encodeID,
 		p.encodeIdentificationNumber,
-		p.encodeIdentificationContext,
+		p.encodeEngagementContext,
 		p.encodeInternalID,
 		p.encodeIsHeadOfCommunity,
 		p.encodeIsHeadOfHousehold,
@@ -318,9 +318,11 @@ func (p *listIndividualsOptionsEncoder) encodeIdentificationNumber() {
 	}
 }
 
-func (p *listIndividualsOptionsEncoder) encodeIdentificationContext() {
-	if len(p.values.IdentificationContext) != 0 {
-		p.out.Add(constants.FormParamsGetIndividualsIdentificationContext, p.values.IdentificationContext)
+func (p *listIndividualsOptionsEncoder) encodeEngagementContext() {
+	if len(p.values.EngagementContext) > 0 {
+		for _, ds := range p.values.EngagementContext.Items() {
+			p.out.Add(constants.FormParamsGetIndividualsEngagementContext, string(ds))
+		}
 	}
 }
 
@@ -475,7 +477,7 @@ var sortableColumns = containers.NewStringSet(
 	constants.DBColumnIndividualHearingDisabilityLevel,
 	constants.DBColumnIndividualHouseholdID,
 	constants.DBColumnIndividualID,
-	constants.DBColumnIndividualIdentificationContext,
+	constants.DBColumnIndividualEngagementContext,
 	constants.DBColumnIndividualIdentificationNumber1,
 	constants.DBColumnIndividualIdentificationNumber2,
 	constants.DBColumnIndividualIdentificationNumber3,
