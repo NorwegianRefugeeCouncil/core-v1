@@ -151,6 +151,55 @@ $table-active-bg-factor:      .05;
 
 // Add custom styles here
 
+
+$header-height: 115px;
+$footer-height: 80px;
+
+html, body {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    height: $header-height;
+    width: 100%;
+    flex: none;
+}
+
+main {
+    flex: auto;
+    height: calc(100% - $header-height - $footer-height - 20px);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    form {
+        flex: auto;
+        overflow-y: auto;
+    }
+}
+
+footer {
+    height: $footer-height;
+    width: 100%;
+    padding: 0 25px;
+    margin: auto;
+    flex: none;
+};
+
+#filters {
+    z-index: 1000;
+    top: $header-height;
+    max-height: 70vh;
+}
+
 h1, h2 {
     font-weight: 700;
 }
@@ -221,6 +270,7 @@ button, .btn {
 
 nav.navbar {
     background-color: $white;
+    z-index: 1001;
 }
 
 .card {
@@ -396,50 +446,4 @@ table {
 
 .cursor-pointer {
     cursor: pointer;
-}
-
-$header-height: 115px;
-$footer-height: 80px;
-
-html, body {
-    height: 100%;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-}
-
-body {
-    display: flex;
-    flex-direction: column;
-}
-
-header {
-    height: $header-height;
-    width: 100%;
-    flex: none;
-}
-
-main {
-    flex: auto;
-    height: calc(100% - $header-height - $footer-height - 20px);
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-
-    form {
-        flex: auto;
-        overflow-y: auto;
-    }
-}
-
-footer {
-    height: $footer-height;
-    width: 100%;
-    padding: 0 25px;
-    margin: auto;
-    flex: none;
-};
-
-#filters {
-    z-index: 100;
 }
