@@ -27,6 +27,7 @@
                 <div class="me-auto mb-2 mb-lg-0 w-100">
                     <div class="d-flex flex-row w-100 align-items-center">
 
+                        {{if .RequestContext.SelectedCountry}}
                         <div class="btn-group ms-5">
                             <button data-bs-toggle="collapse"
                                     data-bs-target="#filters"
@@ -37,6 +38,7 @@
                                 Search
                             </button>
                         </div>
+                        {{end}}
 
                         <div class="btn-group ms-5">
                             <button type="button"
@@ -108,7 +110,9 @@
             </div>
         </div>
     </nav>
-    <div class="w-100 collapse position-absolute bg-white shadow overflow-scroll" id="filters" style="top: 115px; max-height: 70vh;">
+    {{if .RequestContext.SelectedCountry}}
+        <div class="w-100 collapse position-absolute bg-white shadow overflow-scroll" id="filters" style="top: 115px; max-height: 70vh;">
         {{template "searchForm" .}}
-    </div>
+        </div>
+    {{end}}
 {{end}}
