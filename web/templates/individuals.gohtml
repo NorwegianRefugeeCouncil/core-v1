@@ -139,9 +139,7 @@
         function downloadFunc() {
             const selectedIds = Array.from(document.getElementsByClassName(selectIndividualCheckboxClass))
                 .filter(checkbox => checkbox.checked)
-                    .map(function (item) {
-                        return item.id.split('individual-checkbox-')[1]
-                    })
+                    .map(getIndividualIdFromSelectCheckbox)
 
             const idSearchString = '?id=' + selectedIds.join('&id=')
             const searchString = selectedIds.length ? idSearchString : window.location.search
