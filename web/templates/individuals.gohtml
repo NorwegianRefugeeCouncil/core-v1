@@ -17,6 +17,8 @@
         const selectedRowAttributes = {"aria-selected": "true"}
         const selectedRowClasses = ["table-active"]
         const dataIndividualIdAttribute = "data-individual-id"
+        const activeDownloadButtonClasses = ["btn-outline-secondary"]
+        const inactiveDownloadButtonClasses = ["btn-outline-secondary", "disabled"]
         const activeDeleteButtonClasses = ["btn-danger"]
         const inactiveDeleteButtonClasses = ["btn-outline-secondary", "disabled"]
         const inactiveDeleteButtonText = "Delete individuals"
@@ -68,7 +70,7 @@
             if (count === 0) {
                 return inactiveDownloadButtonText
             } else {
-                return "Download selected individuals"
+                return "Download " + count + " individual" + (count > 1 ? "s" : "")
             }
         }
 
@@ -189,6 +191,23 @@
             function refreshDownloadButton() {
                 const checkedCount = getSelectedIndividualCount()
                 downloadButtonContent.innerText = getDownloadButtonText(checkedCount);
+                if (checkedCount > 0) {
+                    // button is active
+                    for (const className of inactiveDownloadButtonClasses) {
+                        downloadButton.classList.remove(className)
+                    }
+                    for (const className of activeDownloadButtonClasses) {
+                        downloadButton.classList.add(className)
+                    }
+                } else {
+                    // button is inactive
+                    for (const className of activeDownloadButtonClasses) {
+                        downloadButton.classList.remove(className)
+                    }
+                    for (const className of inactiveDownloadButtonClasses) {
+                        downloadButton.classList.add(className)
+                    }
+                }
             }
 
             /**
@@ -297,32 +316,21 @@
                             <i class="bi bi-trash"></i>
                             <span id="deleteIndividualsButtonContent">Delete individuals</span>
                         </button>
+
+                        <button onclick="downloadFunc()"
+                                style="width: 22rem"
+                                class="btn disabled btn-outline-secondary me-2 individual-action-button"
+                                id="downloadIndividualsButton">
+                            <i class="bi bi-download"></i>
+                            <span id="downloadIndividualsButtonContent">Download individuals</span>
+                        </button>
+
                         <a href="/countries/{{.Options.CountryID}}/individuals/new"
                            class="btn btn-outline-primary me-2">
+                            <i class="bi bi-plus"></i>
                             Create new Individual
                         </a>
                     {{end}}
-
-                    <button onclick="downloadFunc()" class="btn btn-outline-primary" id="downloadIndividualsButton">
-                        <span id="downloadIndividualsButtonContent">Download individuals</span>
-                    </button>
-                    {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                        <form id="individual-upload--form" action="/countries/{{.Options.CountryID}}/individuals/upload"
-                              enctype="multipart/form-data" method="post" class="ms-2">
-                            <input
-                                    hidden
-                                    id="individual-upload--file"
-                                    name="file"
-                                    type="file"
-                                    class="form-control"
-                                    accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                            >
-                            <button id="individual-upload--button" type="button" class="btn btn-outline-primary">
-                                Upload
-                            </button>
-                        </form>
-                    {{end}}
-
                 </div>
             </div>
 
