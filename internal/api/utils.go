@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"strings"
 	"time"
 )
@@ -9,11 +10,14 @@ var dateFormat = "2006-01-02"
 
 func ParseDate(s string) (*time.Time, error) {
 	if s != "" {
-		birthDate, err := time.Parse(dateFormat, s)
+		date, err := time.Parse(dateFormat, s)
+		if date.IsZero() {
+			return nil, fmt.Errorf("date is zero, %s", date)
+		}
 		if err != nil {
 			return nil, err
 		}
-		return &birthDate, nil
+		return &date, nil
 	}
 	return nil, nil
 }
