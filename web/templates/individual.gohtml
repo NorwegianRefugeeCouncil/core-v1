@@ -64,7 +64,7 @@
             </h1>
         </div>
         <form id="individualForm"
-              class="container-fluid"
+              class="container-fluid scroll-body"
               method="post"
               action="/countries/{{.Individual.CountryID}}/individuals/{{if .Individual.ID}}{{.Individual.ID}}{{else}}new{{end}}">
             {{.form.HTML}}

@@ -180,7 +180,7 @@ main {
     display: flex;
     flex-direction: column;
 
-    form {
+    .scroll-body {
         flex: auto;
         overflow-y: auto;
     }

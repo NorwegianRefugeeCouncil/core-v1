@@ -2,7 +2,7 @@
 {{end}}
 {{define "body"}}
     {{ $isGlobalAdmin := .RequestContext.Auth.IsGlobalAdmin }}
-    <header>
+    <header class="sticky-top">
         {{template "nav" .}}
     </header>
     <main>
