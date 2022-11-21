@@ -143,7 +143,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				if err != nil {
 					return err
 				}
-				i.Email1 = email.String()
+				i.Email1 = email.Address
 			}
 		case constants.FileColumnIndividualEmail2:
 			if cols[idx] != "" {
@@ -151,7 +151,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				if err != nil {
 					return err
 				}
-				i.Email2 = email.String()
+				i.Email2 = email.Address
 			}
 		case constants.FileColumnIndividualEmail3:
 			if cols[idx] != "" {
@@ -159,7 +159,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				if err != nil {
 					return err
 				}
-				i.Email3 = email.String()
+				i.Email3 = email.Address
 			}
 		case constants.FileColumnIndividualFullName:
 			i.FullName = cols[idx]
