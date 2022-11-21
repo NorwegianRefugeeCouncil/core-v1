@@ -141,6 +141,7 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualCommunicationDisabilityLevel,
 		constants.FileColumnIndividualCommunityID,
 		constants.FileColumnIndividualDisplacementStatus,
+		constants.FileColumnIndividualDisplacementStatusComment,
 		constants.FileColumnIndividualEmail1,
 		constants.FileColumnIndividualEmail2,
 		constants.FileColumnIndividualEmail3,
@@ -230,6 +231,11 @@ func Generate(count uint) error {
 			communityId = pick(communityIds...)
 		}
 		displacementStatus := randomDisplacementStatus()
+		displacementStatusComment := ""
+
+		if displacementStatus == "other" {
+			displacementStatusComment = randomText(f)
+		}
 
 		var email1 string
 		if randBool(80) {
@@ -399,6 +405,7 @@ func Generate(count uint) error {
 			communicationDisabilityLevel,
 			communityId,
 			displacementStatus,
+			displacementStatusComment,
 			email1,
 			email2,
 			email3,

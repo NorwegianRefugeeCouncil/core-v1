@@ -92,6 +92,7 @@ func (f *IndividualForm) build() error {
 		f.buildHasConsentedToReferral,
 		f.buildPresentsProtectionConcerns,
 		f.buildDisplacementStatus,
+		f.buildDisplacementStatusComment,
 		f.buildHasVisionDisability,
 		f.buildVisionDisabilityLevel,
 		f.buildHasHearingDisability,
@@ -527,6 +528,13 @@ func (f *IndividualForm) buildDisplacementStatus() error {
 		Options:     options,
 		Codec:       &displacementStatusCodec{},
 	}, f.protectionSection, f.individual.DisplacementStatus)
+}
+
+func (f *IndividualForm) buildDisplacementStatusComment() error {
+	return buildField(&forms.TextAreaInputField{
+		Name:        "displacementStatusComment",
+		DisplayName: "If Other, please explain",
+	}, f.protectionSection, f.individual.DisplacementStatusComment)
 }
 
 func (f *IndividualForm) buildHasVisionDisability() error {

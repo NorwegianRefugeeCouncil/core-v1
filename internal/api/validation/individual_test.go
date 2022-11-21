@@ -109,6 +109,11 @@ func (i *IndividualBuilder) WithDisplacementStatus(displacementStatus api.Displa
 	return i
 }
 
+func (i *IndividualBuilder) WithDisplacementStatusComment(displacementStatusComment string) *IndividualBuilder {
+	i.individual.DisplacementStatusComment = displacementStatusComment
+	return i
+}
+
 func (i *IndividualBuilder) WithEmail1(email string) *IndividualBuilder {
 	i.individual.Email1 = email
 	return i

@@ -16,6 +16,7 @@ const (
 	FormParamIndividualCommunityID                    = "CommunityID"
 	FormParamIndividualCountryID                      = "Country"
 	FormParamIndividualDisplacementStatus             = "DisplacementStatus"
+	FormParamIndividualDisplacementStatusComment      = "DisplacementStatusComment"
 	FormParamIndividualEmail1                         = "Email1"
 	FormParamIndividualEmail2                         = "Email2"
 	FormParamIndividualEmail3                         = "Email3"
@@ -88,6 +89,7 @@ const (
 	FormParamsGetIndividualsCreatedAtFrom                  = "created_at_from"
 	FormParamsGetIndividualsCreatedAtTo                    = "created_at_to"
 	FormParamsGetIndividualsDisplacementStatus             = "displacement_status"
+	FormParamsGetIndividualsDisplacementStatusComment      = "displacement_status_comment"
 	FormParamsGetIndividualsEmail                          = "email"
 	FormParamsGetIndividualsFullName                       = "full_name"
 	FormParamsGetIndividualsFreeField1                     = "free_field_1"
@@ -146,6 +148,7 @@ const (
 	DBColumnIndividualCreatedAt                      = "created_at"
 	DBColumnIndividualDeletedAt                      = "deleted_at"
 	DBColumnIndividualDisplacementStatus             = "displacement_status"
+	DBColumnIndividualDisplacementStatusComment      = "displacement_status_comment"
 	DBColumnIndividualEmail1                         = "email_1"
 	DBColumnIndividualEmail2                         = "email_2"
 	DBColumnIndividualEmail3                         = "email_3"
@@ -219,6 +222,7 @@ const (
 	FileColumnIndividualCountryID                      = "country_id"
 	FileColumnIndividualCreatedAt                      = "created_at"
 	FileColumnIndividualDisplacementStatus             = "displacement_status"
+	FileColumnIndividualDisplacementStatusComment      = "displacement_status_comment"
 	FileColumnIndividualEmail1                         = "email_1"
 	FileColumnIndividualEmail2                         = "email_2"
 	FileColumnIndividualEmail3                         = "email_3"
@@ -292,6 +296,7 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualCreatedAt,
 	DBColumnIndividualDeletedAt,
 	DBColumnIndividualDisplacementStatus,
+	DBColumnIndividualDisplacementStatusComment,
 	DBColumnIndividualEmail1,
 	DBColumnIndividualEmail2,
 	DBColumnIndividualEmail3,
@@ -367,6 +372,7 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualCountryID,
 	FileColumnIndividualCreatedAt,
 	FileColumnIndividualDisplacementStatus,
+	FileColumnIndividualDisplacementStatusComment,
 	FileColumnIndividualEmail1,
 	FileColumnIndividualEmail2,
 	FileColumnIndividualEmail3,
@@ -439,6 +445,7 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualCountryID:                      FileColumnIndividualCountryID,
 	DBColumnIndividualCreatedAt:                      FileColumnIndividualCreatedAt,
 	DBColumnIndividualDisplacementStatus:             FileColumnIndividualDisplacementStatus,
+	DBColumnIndividualDisplacementStatusComment:      FileColumnIndividualDisplacementStatusComment,
 	DBColumnIndividualEmail1:                         FileColumnIndividualEmail1,
 	DBColumnIndividualEmail2:                         FileColumnIndividualEmail2,
 	DBColumnIndividualEmail3:                         FileColumnIndividualEmail3,
@@ -510,6 +517,7 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualCommunityID:                    DBColumnIndividualCommunityID,
 	FileColumnIndividualCountryID:                      DBColumnIndividualCountryID,
 	FileColumnIndividualDisplacementStatus:             DBColumnIndividualDisplacementStatus,
+	FileColumnIndividualDisplacementStatusComment:      DBColumnIndividualDisplacementStatusComment,
 	FileColumnIndividualEmail1:                         DBColumnIndividualEmail1,
 	FileColumnIndividualEmail2:                         DBColumnIndividualEmail2,
 	FileColumnIndividualEmail3:                         DBColumnIndividualEmail3,
