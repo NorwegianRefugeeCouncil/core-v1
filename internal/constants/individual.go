@@ -10,6 +10,7 @@ const (
 	FormParamIndividualCollectionAdministrativeArea1  = "CollectionAdministrativeArea1"
 	FormParamIndividualCollectionAdministrativeArea2  = "CollectionAdministrativeArea2"
 	FormParamIndividualCollectionAdministrativeArea3  = "CollectionAdministrativeArea3 "
+	FormParamIndividualCollectionOffice               = "CollectionOffice "
 	FormParamIndividualCollectionAgentID              = "CollectionAgentName "
 	FormParamIndividualCollectionTime                 = "CollectionTime"
 	FormParamIndividualCommunicationDisabilityLevel   = "CommunicationDisabilityLevel"
@@ -68,6 +69,7 @@ const (
 	FormParamsGetIndividualCollectionAdministrativeArea1   = "collection_administrative_area_1"
 	FormParamsGetIndividualCollectionAdministrativeArea2   = "collection_administrative_area_2"
 	FormParamsGetIndividualCollectionAdministrativeArea3   = "collection_administrative_area_3"
+	FormParamsGetIndividualCollectionOffice                = "collection_office"
 	FormParamsGetIndividualCollectionAgentName             = "collection_agent_name"
 	FormParamsGetIndividualCollectionAgentTitle            = "collection_agent_title"
 	FormParamsGetIndividualsAddress                        = "address"
@@ -79,6 +81,7 @@ const (
 	FormParamsGetIndividualsCollectionAdministrativeArea1  = "collection_administrative_area_1"
 	FormParamsGetIndividualsCollectionAdministrativeArea2  = "collection_administrative_area_2"
 	FormParamsGetIndividualsCollectionAdministrativeArea3  = "collection_administrative_area_3"
+	FormParamsGetIndividualsCollectionOffice               = "collection_office"
 	FormParamsGetIndividualsCollectionAgentName            = "collection_agent_name"
 	FormParamsGetIndividualsCollectionAgentTitle           = "collection_agent_title"
 	FormParamsGetIndividualsCollectionTimeFrom             = "collection_time_from"
@@ -138,6 +141,7 @@ const (
 	DBColumnIndividualCollectionAdministrativeArea1  = "collection_administrative_area_1"
 	DBColumnIndividualCollectionAdministrativeArea2  = "collection_administrative_area_2"
 	DBColumnIndividualCollectionAdministrativeArea3  = "collection_administrative_area_3"
+	DBColumnIndividualCollectionOffice               = "collection_office"
 	DBColumnIndividualCollectionAgentName            = "collection_agent_name"
 	DBColumnIndividualCollectionAgentTitle           = "collection_agent_title"
 	DBColumnIndividualCollectionTime                 = "collection_time"
@@ -213,6 +217,7 @@ const (
 	FileColumnIndividualCollectionAdministrativeArea1  = "collection_administrative_area_1"
 	FileColumnIndividualCollectionAdministrativeArea2  = "collection_administrative_area_2"
 	FileColumnIndividualCollectionAdministrativeArea3  = "collection_administrative_area_3"
+	FileColumnIndividualCollectionOffice               = "collection_office"
 	FileColumnIndividualCollectionAgentName            = "collection_agent_name"
 	FileColumnIndividualCollectionAgentTitle           = "collection_agent_title"
 	FileColumnIndividualCollectionTime                 = "collection_time"
@@ -286,6 +291,7 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualCollectionAdministrativeArea1,
 	DBColumnIndividualCollectionAdministrativeArea2,
 	DBColumnIndividualCollectionAdministrativeArea3,
+	DBColumnIndividualCollectionOffice,
 	DBColumnIndividualCollectionAgentName,
 	DBColumnIndividualCollectionAgentTitle,
 	DBColumnIndividualCollectionTime,
@@ -363,6 +369,7 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualCollectionAdministrativeArea1,
 	FileColumnIndividualCollectionAdministrativeArea2,
 	FileColumnIndividualCollectionAdministrativeArea3,
+	FileColumnIndividualCollectionOffice,
 	FileColumnIndividualCollectionAgentName,
 	FileColumnIndividualCollectionAgentTitle,
 	FileColumnIndividualCollectionTime,
@@ -436,6 +443,7 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualCollectionAdministrativeArea1:  FileColumnIndividualCollectionAdministrativeArea1,
 	DBColumnIndividualCollectionAdministrativeArea2:  FileColumnIndividualCollectionAdministrativeArea2,
 	DBColumnIndividualCollectionAdministrativeArea3:  FileColumnIndividualCollectionAdministrativeArea3,
+	DBColumnIndividualCollectionOffice:               FileColumnIndividualCollectionOffice,
 	DBColumnIndividualCollectionAgentName:            FileColumnIndividualCollectionAgentName,
 	DBColumnIndividualCollectionAgentTitle:           FileColumnIndividualCollectionAgentTitle,
 	DBColumnIndividualCollectionTime:                 FileColumnIndividualCollectionTime,
@@ -509,6 +517,7 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualCollectionAdministrativeArea1:  DBColumnIndividualCollectionAdministrativeArea1,
 	FileColumnIndividualCollectionAdministrativeArea2:  DBColumnIndividualCollectionAdministrativeArea2,
 	FileColumnIndividualCollectionAdministrativeArea3:  DBColumnIndividualCollectionAdministrativeArea3,
+	FileColumnIndividualCollectionOffice:               DBColumnIndividualCollectionOffice,
 	FileColumnIndividualCollectionAgentName:            DBColumnIndividualCollectionAgentName,
 	FileColumnIndividualCollectionAgentTitle:           DBColumnIndividualCollectionAgentTitle,
 	FileColumnIndividualCollectionTime:                 DBColumnIndividualCollectionTime,

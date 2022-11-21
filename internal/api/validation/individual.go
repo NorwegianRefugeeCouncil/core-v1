@@ -32,6 +32,7 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualBirthDate(i.BirthDate, p.Child("birthDate"))...)
 	allErrs = append(allErrs, validateIndividualCollectionAgentName(i.CollectionAgentName, p.Child("collectionAgentName"))...)
 	allErrs = append(allErrs, validateIndividualCollectionAgentTitle(i.CollectionAgentTitle, p.Child("collectionAgentTitle"))...)
+	allErrs = append(allErrs, validateIndividualCollectionOffice(i.CollectionOffice, p.Child("collectionOffice"))...)
 	allErrs = append(allErrs, validateIndividualCollectionTime(i.CollectionTime, p.Child("collectionTime"))...)
 	allErrs = append(allErrs, validateIndividualComments(i.Comments, p.Child("comments"))...)
 	allErrs = append(allErrs, validateIndividualCommunityID(i.CommunityID, p.Child("communityId"))...)
@@ -84,6 +85,7 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 const (
 	individualAddressMaxLength                        = 512
 	individualAdministrativeAreaMaxLength             = 128
+	individualCollectionOfficeMaxLength               = 128
 	individualCollectionAgentNameMaxLength            = 64
 	individualCollectionAgentTitleMaxLength           = 64
 	individualCommunityIDMaxLength                    = 64
@@ -127,6 +129,14 @@ func validateIndividualAdministrativeArea(administrativeArea string, path *valid
 	allErrs := validation.ErrorList{}
 	if len(administrativeArea) > individualAdministrativeAreaMaxLength {
 		allErrs = append(allErrs, validation.TooLongMaxLength(path, administrativeArea, individualAdministrativeAreaMaxLength))
+	}
+	return allErrs
+}
+
+func validateIndividualCollectionOffice(collectionOffice string, path *validation.Path) validation.ErrorList {
+	allErrs := validation.ErrorList{}
+	if len(collectionOffice) > individualCollectionOfficeMaxLength {
+		allErrs = append(allErrs, validation.TooLongMaxLength(path, collectionOffice, individualCollectionOfficeMaxLength))
 	}
 	return allErrs
 }

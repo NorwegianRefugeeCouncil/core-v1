@@ -56,7 +56,9 @@
             </div>
         </div>
     </nav>
+    {{if .RequestContext.SelectedCountry}}
     <div class="w-100 collapse position-absolute bg-white shadow overflow-scroll" id="filters" style="top: 115px; max-height: 70vh;">
         {{template "searchForm" .}}
     </div>
+    {{end}}
 {{end}}

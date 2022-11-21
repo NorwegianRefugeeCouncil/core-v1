@@ -19,6 +19,7 @@ type ListIndividualsOptions struct {
 	CollectionAdministrativeArea1  string
 	CollectionAdministrativeArea2  string
 	CollectionAdministrativeArea3  string
+	CollectionOffice               string
 	CollectionAgentName            string
 	CollectionAgentTitle           string
 	CollectionTimeFrom             *time.Time

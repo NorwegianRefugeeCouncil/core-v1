@@ -118,6 +118,7 @@ func (f *IndividualForm) build() error {
 		f.buildCollectionLocation1,
 		f.buildCollectionLocation2,
 		f.buildCollectionLocation3,
+		f.buildCollectionOffice,
 	}
 
 	if err := runBuilderFunctions(sectionBuilders...); err != nil {
@@ -689,6 +690,13 @@ func (f *IndividualForm) buildCollectionLocation3() error {
 		Name:        "collectionAdministrativeArea3",
 		DisplayName: "Collection Location 3",
 	}, f.dataCollectionSection, f.individual.CollectionAdministrativeArea3)
+}
+
+func (f *IndividualForm) buildCollectionOffice() error {
+	return buildField(&forms.TextInputField{
+		Name:        "collectionOffice",
+		DisplayName: "Collection Office",
+	}, f.dataCollectionSection, f.individual.CollectionOffice)
 }
 
 func (f *IndividualForm) buildComments() error {
