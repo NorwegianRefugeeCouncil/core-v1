@@ -51,15 +51,23 @@
     <main>
         <div class="mt-4">
             <div class="container">
-                {{ if .Alerts}}
-                    <div class="row">
+                <div class="row">
+                    {{if .Individual.ID}}
+                    <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto my-4">
+                        <a href="/countries/{{.RequestContext.SelectedCountry.ID}}/individuals/new"
+                           class="btn btn-outline-primary float-end">
+                            Create new Individual
+                        </a>
+                    </div>
+                    {{end}}
+                    {{ if .Alerts}}
                         <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto my-4">
                             {{ range .Alerts}}
                                 {{.Render}}
                             {{end}}
                         </div>
-                    </div>
-                {{end}}
+                     {{end}}
+                </div>
                 <h1 class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto my-4">
                     {{.form.Title}}
                 </h1>
