@@ -25,6 +25,9 @@ func (c *TimeCodec) Encode(value interface{}) (string, error) {
 		}
 		return v.Format(c.format), nil
 	case time.Time:
+		if (v == time.Time{}) || v.IsZero() {
+			return "", nil
+		}
 		return v.Format(c.format), nil
 	}
 	return "", fmt.Errorf("invalid value type")
