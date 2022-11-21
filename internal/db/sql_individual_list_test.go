@@ -81,6 +81,11 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND collection_administrative_area_3 = $1`,
 			wantArgs: []interface{}{"area3"},
 		}, {
+			name:     "collectionOffice",
+			args:     api.ListIndividualsOptions{CollectionOffice: "office"},
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND collection_office = $1`,
+			wantArgs: []interface{}{"office"},
+		}, {
 			name:     "collectionAgentName",
 			args:     api.ListIndividualsOptions{CollectionAgentName: "agent"},
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND collection_agent_name = $1`,

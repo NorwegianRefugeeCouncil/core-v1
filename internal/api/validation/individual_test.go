@@ -59,6 +59,11 @@ func (i *IndividualBuilder) WithCollectionAdministrativeArea3(area string) *Indi
 	return i
 }
 
+func (i *IndividualBuilder) WithCollectionOffice(office string) *IndividualBuilder {
+	i.individual.CollectionOffice = office
+	return i
+}
+
 func (i *IndividualBuilder) WithCollectionAgentName(collectionAgentName string) *IndividualBuilder {
 	i.individual.CollectionAgentName = collectionAgentName
 	return i
@@ -448,6 +453,10 @@ func TestValidateIndividual(t *testing.T) {
 			name: "collectionAdministrativeArea3 (too long)",
 			i:    ValidIndividual().WithCollectionAdministrativeArea3(bigstr(individualAdministrativeAreaMaxLength + 1)).Build(),
 			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("collectionAdministrativeArea3"), bigstr(individualAdministrativeAreaMaxLength+1), individualAdministrativeAreaMaxLength)},
+		}, {
+			name: "collectionOffice (too long)",
+			i:    ValidIndividual().WithCollectionOffice(bigstr(individualCollectionOfficeMaxLength + 1)).Build(),
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("collectionOffice"), bigstr(individualCollectionOfficeMaxLength+1), individualCollectionOfficeMaxLength)},
 		}, {
 			name: "collectionAgentName (too long)",
 			i:    ValidIndividual().WithCollectionAgentName(bigstr(individualCollectionAgentNameMaxLength + 1)).Build(),

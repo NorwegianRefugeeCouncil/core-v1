@@ -312,6 +312,7 @@
             {{$collectionAdministrativeArea1Width := $collectionAdministrativeAreaWidth}}
             {{$collectionAdministrativeArea2Width := $collectionAdministrativeAreaWidth}}
             {{$collectionAdministrativeArea3Width := $collectionAdministrativeAreaWidth}}
+            {{$collectionOfficeWidth := $collectionAdministrativeAreaWidth}}
             {{$freeFieldWidth := "8rem"}}
             {{$freeField1Width := $freeFieldWidth}}
             {{$freeField2Width := $freeFieldWidth}}
@@ -501,6 +502,17 @@
                         "Width" $collectionAdministrativeArea3Width
                         "MinWidth" $collectionAdministrativeArea3Width
                         "MaxWidth" $collectionAdministrativeArea3Width
+                        )}}
+
+                        {{template "columnHeader" (dict
+                        "Options" .Options
+                        "Sortable" true
+                        "SortKey" "collection_office"
+                        "Label" "Office"
+                        "Title" "Collection Office"
+                        "Width" $collectionOfficeWidth
+                        "MinWidth" $collectionOfficeWidth
+                        "MaxWidth" $collectionOfficeWidth
                         )}}
 
                         {{template "columnHeader" (dict
@@ -747,6 +759,14 @@
                                     </div>
                                 </td>
                                 <!-- End CollectionAdministrativeArea3 -->
+
+                                <!-- CollectionOffice -->
+                                <td>
+                                    <div style="width: {{$collectionOfficeWidth}}">
+                                        {{.CollectionOffice}}
+                                    </div>
+                                </td>
+                                <!-- End CollectionOffice -->
 
                                 <!-- FreeField1 -->
                                 <td>

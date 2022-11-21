@@ -134,6 +134,7 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualCollectionAdministrativeArea1,
 		constants.FileColumnIndividualCollectionAdministrativeArea2,
 		constants.FileColumnIndividualCollectionAdministrativeArea3,
+		constants.FileColumnIndividualCollectionOffice,
 		constants.FileColumnIndividualCollectionAgentName,
 		constants.FileColumnIndividualCollectionAgentTitle,
 		constants.FileColumnIndividualCollectionTime,
@@ -217,6 +218,7 @@ func Generate(count uint) error {
 		collectionAdministrativeArea1 := f.Country()
 		collectionAdministrativeArea2 := f.State()
 		collectionAdministrativeArea3 := f.City()
+		collectionOffice := f.City() + " Office"
 		collectionAgentName := f.Name()
 		collectionAgentTitle := f.JobTitle()
 		collectionTime := randomDate()
@@ -398,6 +400,7 @@ func Generate(count uint) error {
 			collectionAdministrativeArea1,
 			collectionAdministrativeArea2,
 			collectionAdministrativeArea3,
+			collectionOffice,
 			collectionAgentName,
 			collectionAgentTitle,
 			collectionTime,

@@ -26,6 +26,8 @@ type Individual struct {
 	// CollectionAdministrativeArea3 is the third administrative area of the collection
 	// For example, in the case of a case in the Democratic Republic of Congo, this would be the commune
 	CollectionAdministrativeArea3 string `json:"collectionAdministrativeArea3" db:"collection_administrative_area_3"`
+	// CollectionOffice is the office of the collection
+	CollectionOffice string `json:"collectionOffice" db:"collection_office"`
 	// CollectionAgentName is the ID of the agent who collected the data
 	CollectionAgentName string `json:"collectionAgentName" db:"collection_agent_name"`
 	// CollectionAgentTitle is the title of the agent who collected the data
@@ -186,6 +188,8 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.CollectionAdministrativeArea2, nil
 	case constants.DBColumnIndividualCollectionAdministrativeArea3:
 		return i.CollectionAdministrativeArea3, nil
+	case constants.DBColumnIndividualCollectionOffice:
+		return i.CollectionOffice, nil
 	case constants.DBColumnIndividualCollectionAgentName:
 		return i.CollectionAgentName, nil
 	case constants.DBColumnIndividualCollectionAgentTitle:
@@ -338,6 +342,7 @@ func (i *Individual) Normalize() {
 	i.CollectionAdministrativeArea1 = trimString(i.CollectionAdministrativeArea1)
 	i.CollectionAdministrativeArea2 = trimString(i.CollectionAdministrativeArea2)
 	i.CollectionAdministrativeArea3 = trimString(i.CollectionAdministrativeArea3)
+	i.CollectionOffice = trimString(i.CollectionOffice)
 	i.CollectionAgentName = trimString(i.CollectionAgentName)
 	i.Comments = trimString(i.Comments)
 	i.CommunityID = trimString(i.CommunityID)

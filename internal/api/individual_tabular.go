@@ -109,6 +109,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.CollectionAdministrativeArea2 = cols[idx]
 		case constants.FileColumnIndividualCollectionAdministrativeArea3:
 			i.CollectionAdministrativeArea3 = cols[idx]
+		case constants.FileColumnIndividualCollectionOffice:
+			i.CollectionOffice = cols[idx]
 		case constants.FileColumnIndividualCollectionAgentName:
 			i.CollectionAgentName = cols[idx]
 		case constants.FileColumnIndividualCollectionAgentTitle:

@@ -27,6 +27,7 @@ func (p *listIndividualsOptionsDecoder) parse() error {
 		p.parseCollectionAdministrativeArea1,
 		p.parseCollectionAdministrativeArea2,
 		p.parseCollectionAdministrativeArea3,
+		p.parseCollectionOffice,
 		p.parseCollectionAgentName,
 		p.parseCollectionAgentTitle,
 		p.parseCollectionTimeFrom,
@@ -144,6 +145,11 @@ func (p *listIndividualsOptionsDecoder) parseCollectionAdministrativeArea2() err
 
 func (p *listIndividualsOptionsDecoder) parseCollectionAdministrativeArea3() error {
 	p.out.CollectionAdministrativeArea3 = p.values.Get(constants.FormParamsGetIndividualsCollectionAdministrativeArea3)
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseCollectionOffice() error {
+	p.out.CollectionOffice = p.values.Get(constants.FormParamsGetIndividualsCollectionOffice)
 	return nil
 }
 

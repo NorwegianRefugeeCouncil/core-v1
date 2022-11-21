@@ -31,6 +31,7 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withCollectionAdministrativeArea1(options.CollectionAdministrativeArea1).
 		withCollectionAdministrativeArea2(options.CollectionAdministrativeArea2).
 		withCollectionAdministrativeArea3(options.CollectionAdministrativeArea3).
+		withCollectionOffice(options.CollectionOffice).
 		withCollectionAgentName(options.CollectionAgentName).
 		withCollectionAgentTitle(options.CollectionAgentTitle).
 		withCollectionTimeFrom(options.CollectionTimeFrom).
@@ -161,6 +162,14 @@ func (g *getAllIndividualsSQLQuery) withCollectionAdministrativeArea3(area strin
 		return g
 	}
 	g.writeString(" AND collection_administrative_area_3 = ").writeArg(area)
+	return g
+}
+
+func (g *getAllIndividualsSQLQuery) withCollectionOffice(office string) *getAllIndividualsSQLQuery {
+	if len(office) == 0 {
+		return g
+	}
+	g.writeString(" AND collection_office = ").writeArg(office)
 	return g
 }
 

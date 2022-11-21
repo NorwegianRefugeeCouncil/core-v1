@@ -35,6 +35,7 @@ func (p *listIndividualsOptionsEncoder) encode() url.Values {
 		p.encodeCollectionAdministrativeArea1,
 		p.encodeCollectionAdministrativeArea2,
 		p.encodeCollectionAdministrativeArea3,
+		p.encodeCollectionOffice,
 		p.encodeCollectionAgentName,
 		p.encodeCollectionAgentTitle,
 		p.encodeCollectionTimeFrom,
@@ -141,6 +142,12 @@ func (p *listIndividualsOptionsEncoder) encodeCollectionAdministrativeArea2() {
 func (p *listIndividualsOptionsEncoder) encodeCollectionAdministrativeArea3() {
 	if len(p.values.CollectionAdministrativeArea3) != 0 {
 		p.out.Add(constants.FormParamsGetIndividualsCollectionAdministrativeArea3, p.values.CollectionAdministrativeArea3)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeCollectionOffice() {
+	if len(p.values.CollectionOffice) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsCollectionOffice, p.values.CollectionOffice)
 	}
 }
 
@@ -449,6 +456,7 @@ var sortableColumns = containers.NewStringSet(
 	constants.DBColumnIndividualCollectionAdministrativeArea1,
 	constants.DBColumnIndividualCollectionAdministrativeArea2,
 	constants.DBColumnIndividualCollectionAdministrativeArea3,
+	constants.DBColumnIndividualCollectionOffice,
 	constants.DBColumnIndividualCollectionAgentName,
 	constants.DBColumnIndividualCollectionAgentTitle,
 	constants.DBColumnIndividualCollectionTime,

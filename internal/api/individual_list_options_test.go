@@ -75,6 +75,10 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 			args: url.Values{"collection_administrative_area_3": []string{"area3"}},
 			want: ListIndividualsOptions{CollectionAdministrativeArea3: "area3"},
 		}, {
+			name: "collectionOffice",
+			args: url.Values{"collection_office": []string{"collection office"}},
+			want: ListIndividualsOptions{CollectionOffice: "collection office"},
+		}, {
 			name: "collectionAgentName",
 			args: url.Values{"collection_agent_name": []string{"amy"}},
 			want: ListIndividualsOptions{CollectionAgentName: "amy"},
@@ -517,6 +521,10 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			name: "collectionAdministrativeArea3",
 			o:    ListIndividualsOptions{CountryID: countryId, CollectionAdministrativeArea3: "collectionAdministrativeArea3"},
 			want: "/countries/usa/individuals?collection_administrative_area_3=collectionAdministrativeArea3",
+		}, {
+			name: "collectionOffice",
+			o:    ListIndividualsOptions{CountryID: countryId, CollectionOffice: "collectionOffice"},
+			want: "/countries/usa/individuals?collection_office=collectionOffice",
 		}, {
 			name: "collectionAgentName",
 			o:    ListIndividualsOptions{CountryID: countryId, CollectionAgentName: "collectionAgentName"},
