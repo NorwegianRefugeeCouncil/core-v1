@@ -271,6 +271,17 @@ button, .btn {
 nav.navbar {
     background-color: $white;
     z-index: 1001;
+
+    button:focus[data-bs-toggle="collapse"] {
+        &:not(.collapsed) {
+            background-color: $blue-100;
+        }
+    }
+    button:focus[data-bs-toggle="dropdown"] {
+        &.show {
+            background-color: $blue-100;
+        }
+    }
 }
 
 .card {

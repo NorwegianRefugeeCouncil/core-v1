@@ -31,6 +31,7 @@
                         <div class="btn-group ms-5">
                             <button data-bs-toggle="collapse"
                                     data-bs-target="#filters"
+                                    id="search-button"
                                     type="button"
                                     class="btn btn-link text-secondary dropdown-toggle text-decoration-none px-2"
                                     aria-haspopup="true"
@@ -56,28 +57,25 @@
                                     Download template
                                 </a>
                                 {{if .RequestContext.SelectedCountry}}
-                                    <button onclick="downloadFunc()" class="dropdown-item">
-                                        Download {{.RequestContext.SelectedCountry.Name}} data
-                                    </button>
-                                    {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                                        <form id="individual-upload--form"
-                                              action="/countries/{{.RequestContext.SelectedCountryID}}/individuals/upload"
-                                              enctype="multipart/form-data"
-                                              method="post"
+                                {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
+                                    <form id="individual-upload--form"
+                                          action="/countries/{{.RequestContext.SelectedCountryID}}/individuals/upload"
+                                          enctype="multipart/form-data"
+                                          method="post"
+                                    >
+                                        <input
+                                                hidden
+                                                id="individual-upload--file"
+                                                name="file"
+                                                type="file"
+                                                class="form-control"
+                                                accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                         >
-                                            <input
-                                                    hidden
-                                                    id="individual-upload--file"
-                                                    name="file"
-                                                    type="file"
-                                                    class="form-control"
-                                                    accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                            >
-                                            <button id="individual-upload--button" type="button" class="dropdown-item">
-                                                Upload {{.RequestContext.SelectedCountry.Name}} data
-                                            </button>
-                                        </form>
-                                    {{end}}
+                                        <button id="individual-upload--button" type="button" class="dropdown-item">
+                                            Upload {{.RequestContext.SelectedCountry.Name}} data
+                                        </button>
+                                    </form>
+                                {{end}}
                                 {{end}}
                             </div>
                         </div>

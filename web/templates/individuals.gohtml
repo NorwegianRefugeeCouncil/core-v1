@@ -17,8 +17,6 @@
         const selectedRowAttributes = {"aria-selected": "true"}
         const selectedRowClasses = ["table-active"]
         const dataIndividualIdAttribute = "data-individual-id"
-        const activeDownloadButtonClasses = ["btn-outline-secondary"]
-        const inactiveDownloadButtonClasses = ["btn-outline-secondary", "disabled"]
         const activeDeleteButtonClasses = ["btn-danger"]
         const inactiveDeleteButtonClasses = ["btn-outline-secondary", "disabled"]
         const inactiveDeleteButtonText = "Delete individuals"
@@ -191,23 +189,6 @@
             function refreshDownloadButton() {
                 const checkedCount = getSelectedIndividualCount()
                 downloadButtonContent.innerText = getDownloadButtonText(checkedCount);
-                if (checkedCount > 0) {
-                    // button is active
-                    for (const className of inactiveDownloadButtonClasses) {
-                        downloadButton.classList.remove(className)
-                    }
-                    for (const className of activeDownloadButtonClasses) {
-                        downloadButton.classList.add(className)
-                    }
-                } else {
-                    // button is inactive
-                    for (const className of activeDownloadButtonClasses) {
-                        downloadButton.classList.remove(className)
-                    }
-                    for (const className of inactiveDownloadButtonClasses) {
-                        downloadButton.classList.add(className)
-                    }
-                }
             }
 
             /**
