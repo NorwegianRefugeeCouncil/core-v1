@@ -62,7 +62,6 @@
                 {{.form.Title}}
             </h1>
         <div class="scroll-body">
-
             <form id="individualForm"
                   class="container-fluid"
                   method="post"
@@ -82,16 +81,18 @@
             <div class="flex-grow-1"></div>
 
             <div>
-                <!-- DELETE BUTTON -->
-                <button class="btn btn-danger"
-                        id="deleteButton"
-                        data-bs-toggle="modal"
-                        data-bs-target="#action-confirm-modal-0"
-                        title="This will open a confirmation modal to delete this individual.">
-                    <i class="bi bi-trash me-2"></i>
-                    Delete Individual
-                </button>
-                <!-- END DELETE BUTTON -->
+                {{if .Individual.ID}}
+                    <!-- DELETE BUTTON -->
+                    <button class="btn btn-danger"
+                            id="deleteButton"
+                            data-bs-toggle="modal"
+                            data-bs-target="#action-confirm-modal-0"
+                            title="This will open a confirmation modal to delete this individual.">
+                        <i class="bi bi-trash me-2"></i>
+                        Delete Individual
+                    </button>
+                    <!-- END DELETE BUTTON -->
+                {{end}}
                 <!-- SAVE BUTTON -->
                 <button id="submitButton" type="submit" class="btn btn-primary mx-4">Save</button>
                 <!-- END SAVE BUTTON -->

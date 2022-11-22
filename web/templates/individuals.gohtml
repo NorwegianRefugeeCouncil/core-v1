@@ -9,6 +9,7 @@
         const uploadIndividualFileFormId = "individual-upload--form"
         const individualActionFormId = "individuals-action-form"
         const deleteIndividualsButtonId = "deleteIndividualsButton"
+        const createIndividualsButtonId = "createIndividualsButton"
         const downloadIndividualsButtonId = "downloadIndividualsButton"
         const deleteIndividualsButtonContentId = "deleteIndividualsButtonContent"
         const downloadIndividualsButtonContentId = "downloadIndividualsButtonContent"
@@ -20,13 +21,17 @@
         const activeDeleteButtonClasses = ["btn-danger"]
         const inactiveDeleteButtonClasses = ["btn-outline-secondary", "disabled"]
         const inactiveDeleteButtonText = "Delete individuals"
-        const inactiveDownloadButtonText = "Download individuals"
+        const defaultDownloadButtonText = "Download"
         const deleteIndividualsConfirmationModalId = "deleteIndividualsConfirmationModal"
         const deleteIndividualsConfirmationModalContentId = "deleteIndividualsConfirmationModalContent"
         const deleteIndividualsConfirmationModalConfirmButtonId = "deleteIndividualsConfirmationModalConfirmButton"
         const deleteIndividualsConfirmationModalConfirmButtonContentId = "deleteIndividualsConfirmationModalConfirmButtonContent"
         const individualTableContainerId = individualActionFormId
         const individualTableHorizontalScrollKey = "individualsTableHorizontalScroll"
+        const downloadAllButtonID = "download-all"
+        const downloadFilteredButtonID = "download-filtered"
+        const downloadSelectedButtonID = "download-selected"
+        const downloadToggleID = "download-toggle"
 
         /**
          * Changes the URL
@@ -65,10 +70,10 @@
          * @returns {string} The text for the download button.
          */
         function getDownloadButtonText(count) {
-            if (count === 0) {
-                return inactiveDownloadButtonText
+            if (count === 0 && !window.location.search.length) {
+                return defaultDownloadButtonText
             } else {
-                return "Download " + count + " individual" + (count > 1 ? "s" : "")
+                return "Download ..."
             }
         }
 
@@ -137,13 +142,22 @@
         }
 
         function downloadFunc() {
+            let downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download"
+            goToURL(downloadURL)
+        }
+
+        function downloadSelectedFunc() {
             const selectedIds = Array.from(document.getElementsByClassName(selectIndividualCheckboxClass))
                 .filter(checkbox => checkbox.checked)
                     .map(getIndividualIdFromSelectCheckbox)
 
             const idSearchString = '?id=' + selectedIds.join('&id=')
-            const searchString = selectedIds.length ? idSearchString : window.location.search
-            let downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + searchString
+            let downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + idSearchString
+            goToURL(downloadURL)
+        }
+
+        function downloadFilteredFunc() {
+            let downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + window.location.search
             goToURL(downloadURL)
         }
 
@@ -151,8 +165,12 @@
 
             const uploadButton = document.getElementById(uploadIndividualFileButtonId)
             const deleteButton = document.getElementById(deleteIndividualsButtonId)
+            const createButton = document.getElementById(createIndividualsButtonId)
             const downloadButton = document.getElementById(downloadIndividualsButtonId)
-            const deleteButtonContent = document.getElementById(deleteIndividualsButtonContentId)
+            const downloadAllButton = document.getElementById(downloadAllButtonID)
+            const downloadFilteredButton = document.getElementById(downloadFilteredButtonID)
+            const downloadSelectedButton = document.getElementById(downloadSelectedButtonID)
+            const downloadToggleButton = document.getElementById(downloadToggleID)
             const downloadButtonContent = document.getElementById(downloadIndividualsButtonContentId)
             const uploadFileInput = document.getElementById(uploadIndividualFileInputId)
             const selectCheckboxes = Array.from(document.getElementsByClassName(selectIndividualCheckboxClass))
@@ -167,30 +185,39 @@
              */
             function refreshDeleteButton() {
                 const checkedCount = getSelectedIndividualCount()
-                deleteButtonContent.innerText = getDeleteButtonText(checkedCount);
                 if (checkedCount > 0) {
-                    // button is active
-                    for (const className of inactiveDeleteButtonClasses) {
-                        deleteButton.classList.remove(className)
-                    }
-                    for (const className of activeDeleteButtonClasses) {
-                        deleteButton.classList.add(className)
-                    }
+                    createButton.classList.add('d-none')
+                    deleteButton.classList.remove('d-none')
                 } else {
-                    // button is inactive
-                    for (const className of activeDeleteButtonClasses) {
-                        deleteButton.classList.remove(className)
-                    }
-                    for (const className of inactiveDeleteButtonClasses) {
-                        deleteButton.classList.add(className)
-                    }
+                    createButton.classList.remove('d-none')
+                    deleteButton.classList.add('d-none')
                 }
             }
 
             function refreshDownloadButton() {
                 const checkedCount = getSelectedIndividualCount()
                 downloadButtonContent.innerText = getDownloadButtonText(checkedCount);
+                if (checkedCount > 0) {
+                    downloadSelectedButton.classList.remove('d-none')
+                    downloadAllButton.classList.remove('d-none')
+                    downloadToggleButton.classList.remove('d-none')
+                } else {
+                    downloadSelectedButton.classList.add('d-none')
+                }
+
+                if (window.location.search.length) {
+                    downloadFilteredButton.classList.remove('d-none')
+                    downloadAllButton.classList.remove('d-none')
+                    downloadToggleButton.classList.remove('d-none')
+                } else {
+                    downloadFilteredButton.classList.add('d-none')
+                }
+                if (!window.location.search.length && !checkedCount) {
+                    downloadAllButton.classList.add('d-none')
+                    downloadToggleButton.classList.add('d-none')
+                }
             }
+            refreshDownloadButton()
 
             /**
              * Refreshes the style of the selected rows
@@ -312,42 +339,35 @@
     <header>
         {{template "nav" .}}
     </header>
-    <main class="container-fluid p-5">
+    <main class="container-fluid p-5 pt-0">
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="my-4">{{ $.RequestContext.SelectedCountry.Name }}</h1>
 
-            <div class="d-flex justify-content-end align-items-center">
                 {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                    <button type="button"
-                            id="deleteIndividualsButton"
-                            style="width: 21rem"
-                            class="btn disabled btn-outline-secondary me-2 individual-action-button"
-                            data-bs-toggle="modal"
-                            data-bs-target="#deleteIndividualsConfirmationModal"
-                            onclick="refreshDeleteConfirmationModal()">
-                        <i class="bi bi-trash"></i>
-                        <span id="deleteIndividualsButtonContent">Delete individuals</span>
-                    </button>
-
-                    <button style="width: 22rem"
-                            class="btn btn-outline-secondary me-2 individual-action-button"
-                            id="downloadIndividualsButton">
-                        <i class="bi bi-download"></i>
-                        <span id="downloadIndividualsButtonContent">Download individuals</span>
-                    </button>
-
-                    <a href="/countries/{{.Options.CountryID}}/individuals/new"
-                       class="btn btn-outline-primary me-2">
-                        <i class="bi bi-plus"></i>
-                        Create new Individual
-                    </a>
+                    <div class="btn-group me-2">
+                        <button type="button" class="btn btn-outline-secondary" id="downloadIndividualsButton">
+                            <i class="bi bi-download"></i>
+                            <span id="downloadIndividualsButtonContent">Download</span>
+                        </button>
+                        <button type="button"
+                                class="d-none btn btn-outline-secondary dropdown-toggle dropdown-toggle-split px-3"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                                id="download-toggle">
+                            <span class="visually-hidden">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li id="download-all"><a class="dropdown-item" onclick="downloadFunc()">... all individuals</a></li>
+                            <li id="download-filtered"><a class="dropdown-item" href="#" onclick="downloadFilteredFunc()">... filtered individuals</a></li>
+                            <li id="download-selected"><a class="dropdown-item" href="#" onclick="downloadSelectedFunc()">... selected individuals</a></li>
+                        </ul>
+                    </div>
                 {{end}}
-            </div>
         </div>
 
         <!-- INDIVIDUALS TABLE -->
         <form id="individuals-action-form" class="table-responsive mb-3 opacity-0 scroll-body" method="post">
-            <table class="table table-individuals">
+            <table class="table table-individuals mb-0">
                 <thead>
                 <tr>
                     <th class="sticky-column text-center" style="width: {{$selectWidth}}">
@@ -616,7 +636,7 @@
                             data-individual-id="{{.ID}}">
 
                             <td class="sticky-column text-center">
-                                <div style="width: {{$selectWidth}}">
+                                <div style="width: {{$selectWidth}}" class="mx-auto">
                                     <input class="form-check-input select-row-checkbox"
                                            type="checkbox"
                                            id="individual-checkbox-{{.ID}}"
@@ -835,10 +855,34 @@
                     </tr>
                 {{end}}
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th class="sticky-column">
+                            {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
+                                <button type="button"
+                                        id="deleteIndividualsButton"
+                                        class="btn btn-danger d-none icon-button"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteIndividualsConfirmationModal"
+                                        data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
+                                        onclick="refreshDeleteConfirmationModal()">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            {{end}}
+                            <a href="/countries/{{.Options.CountryID}}/individuals/new"
+                               id="createIndividualsButton"
+                               class="btn btn-primary icon-button"
+                               data-toggle="tooltip" data-placement="top" title="Create new Individual"
+                            >
+                                <i class="bi bi-plus"></i>
+                            </a>
+                        </th>
+                        <th colspan="22"></th>
+                    </tr>
+                </tfoot>
             </table>
         </form>
         <!-- END INDIVIDUALS TABLE -->
-
     </main>
 
     <!-- PAGE FOOTER -->
