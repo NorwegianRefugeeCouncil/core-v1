@@ -11,7 +11,7 @@ import (
 
 var foo = time.Time(time.Date(1992, 7, 31, 0, 0, 0, 0, time.UTC))
 
-var paramaters = []struct {
+var parameters = []struct {
 	column string
 	value  string
 	out    any
@@ -38,7 +38,7 @@ var paramaters = []struct {
 }
 
 func TestUnmarshalIndividualsTabularData(t *testing.T) {
-	for _, param := range paramaters {
+	for _, param := range parameters {
 		headerRow := []string{param.column}
 		dataRow := []string{param.value}
 		data := [][]string{headerRow, dataRow}

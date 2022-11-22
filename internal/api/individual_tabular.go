@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/mail"
 	"strconv"
 	"strings"
 	"time"
@@ -66,10 +67,10 @@ func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual
 		colMapping[strings.Trim(col, " \n\t\r")] = i
 	}
 
-	for _, cols := range data[1:] {
+	for row, cols := range data[1:] {
 		individual := &Individual{}
 		if err := individual.unmarshalTabularData(colMapping, cols); err != nil {
-			return err
+			return fmt.Errorf("parsing row #%d has lead to the following error: %s", row+2, err)
 		}
 		*individuals = append(*individuals, individual)
 	}
@@ -141,11 +142,29 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualDisplacementStatusComment:
 			i.DisplacementStatusComment = cols[idx]
 		case constants.FileColumnIndividualEmail1:
-			i.Email1 = cols[idx]
+			if cols[idx] != "" {
+				email, err := mail.ParseAddress(cols[idx])
+				if err != nil {
+					return err
+				}
+				i.Email1 = email.Address
+			}
 		case constants.FileColumnIndividualEmail2:
-			i.Email2 = cols[idx]
+			if cols[idx] != "" {
+				email, err := mail.ParseAddress(cols[idx])
+				if err != nil {
+					return err
+				}
+				i.Email2 = email.Address
+			}
 		case constants.FileColumnIndividualEmail3:
-			i.Email3 = cols[idx]
+			if cols[idx] != "" {
+				email, err := mail.ParseAddress(cols[idx])
+				if err != nil {
+					return err
+				}
+				i.Email3 = email.Address
+			}
 		case constants.FileColumnIndividualFullName:
 			i.FullName = cols[idx]
 		case constants.FileColumnIndividualFreeField1:
