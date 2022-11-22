@@ -183,6 +183,8 @@ main {
     .scroll-body {
         flex: auto;
         overflow-y: auto;
+        display: flex;
+        flex-direction: column;
     }
 }
 
