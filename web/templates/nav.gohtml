@@ -1,19 +1,4 @@
 {{define "nav"}}
-    <script>
-        /**
-         * Changes the URL
-         * @param url
-         */
-        function goToURL(url) {
-            window.location.href = url
-        }
-
-        function downloadFunc() {
-            goToURL(
-                window.location.protocol +"//"+ window.location.host + window.location.pathname + "/download" + window.location.search
-            )
-        }
-    </script>
     <nav class="navbar p-5">
         <div class="container-fluid" id="navbar-container">
             <a class="home-link me-0 me-lg-2" href="{{if eq "" .RequestContext.SelectedCountryID}}/{{else}}/countries/{{.RequestContext.SelectedCountryID}}/individuals{{end}}">

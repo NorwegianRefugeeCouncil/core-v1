@@ -160,6 +160,7 @@
 
             uploadButton.addEventListener('click', openUploadDialog);
             uploadFileInput.addEventListener('change', submitUploadForm);
+            downloadButton.addEventListener('click', downloadFunc)
 
             /**
              * Refreshes the disabled state of the delete button as well as the text of the button
@@ -328,9 +329,8 @@
                         <span id="deleteIndividualsButtonContent">Delete individuals</span>
                     </button>
 
-                    <button onclick="downloadFunc()"
-                            style="width: 22rem"
-                            class="btn disabled btn-outline-secondary me-2 individual-action-button"
+                    <button style="width: 22rem"
+                            class="btn btn-outline-secondary me-2 individual-action-button"
                             id="downloadIndividualsButton">
                         <i class="bi bi-download"></i>
                         <span id="downloadIndividualsButtonContent">Download individuals</span>
