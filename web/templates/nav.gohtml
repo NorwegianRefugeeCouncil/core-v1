@@ -1,5 +1,32 @@
 {{define "nav"}}
-    <nav class="navbar p-5" style="z-index: 1">
+    <script>
+        const uploadIndividualFileInputId = "individual-upload--file"
+        const uploadIndividualFileButtonId = "individual-upload--button"
+        const uploadIndividualFileFormId = "individual-upload--form"
+
+        /**
+         * opens the upload modal
+         */
+        function openUploadDialog() {
+            document.getElementById(uploadIndividualFileInputId).click();
+        }
+
+        /**
+         * submits the upload form
+         */
+        function submitUploadForm() {
+            document.getElementById(uploadIndividualFileButtonId).disabled = true;
+            document.getElementById(uploadIndividualFileFormId).submit();
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+            const uploadButton = document.getElementById(uploadIndividualFileButtonId)
+            const uploadFileInput = document.getElementById(uploadIndividualFileInputId)
+            uploadButton.addEventListener('click', openUploadDialog);
+            uploadFileInput.addEventListener('change', submitUploadForm);
+        })
+    </script>
+
+    <nav class="navbar p-5">
         <div class="container-fluid" id="navbar-container">
             <a class="home-link me-0 me-lg-2" href="{{if eq "" .RequestContext.SelectedCountryID}}/{{else}}/countries/{{.RequestContext.SelectedCountryID}}/individuals{{end}}">
                 <div class="d-flex flex-row align-items-center me-5">
@@ -11,26 +38,63 @@
             <div id="navbarContent">
                 <div class="me-auto mb-2 mb-lg-0 w-100">
                     <div class="d-flex flex-row w-100 align-items-center">
-                        <a href="/static/nrc_grf_template.xlsx" download="nrc-grf-template" class="nav-link">
-                            Download template
-                        </a>
 
+                        {{if .RequestContext.SelectedCountry}}
                         <div class="btn-group ms-5">
-
                             <button data-bs-toggle="collapse"
                                     data-bs-target="#filters"
+                                    id="search-button"
                                     type="button"
-                                    class="btn btn-link text-secondary dropdown-toggle text-decoration-none"
+                                    class="btn btn-link text-secondary dropdown-toggle text-decoration-none px-2"
                                     aria-haspopup="true"
                                     aria-expanded="false">
-                                <i class="bi bi-search d-lg-inline-block"></i>
                                 Search
                             </button>
+                        </div>
+                        {{end}}
+
+                        <div class="btn-group ms-5">
+                            <button type="button"
+                                    class="btn btn-link text-secondary dropdown-toggle text-decoration-none px-2"
+                                    data-bs-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false">
+                                Files
+                            </button>
+                            <div class="dropdown-menu">
+                                 <a href="/static/nrc_grf_template.xlsx"
+                                    download="nrc-grf-template"
+                                    class="dropdown-item"
+                                 >
+                                    Download template
+                                </a>
+                                {{if .RequestContext.SelectedCountry}}
+                                    {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
+                                        <form id="individual-upload--form"
+                                              action="/countries/{{.RequestContext.SelectedCountryID}}/individuals/upload"
+                                              enctype="multipart/form-data"
+                                              method="post"
+                                        >
+                                            <input
+                                                    hidden
+                                                    id="individual-upload--file"
+                                                    name="file"
+                                                    type="file"
+                                                    class="form-control"
+                                                    accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                            >
+                                            <button id="individual-upload--button" type="button" class="dropdown-item">
+                                                Upload {{.RequestContext.SelectedCountry.Name}} data
+                                            </button>
+                                        </form>
+                                    {{end}}
+                                {{end}}
+                            </div>
                         </div>
 
                         <div class="btn-group ms-5">
                             <button type="button"
-                                    class="btn btn-link text-secondary dropdown-toggle text-decoration-none"
+                                    class="btn btn-link text-secondary dropdown-toggle text-decoration-none px-2"
                                     data-bs-toggle="dropdown"
                                     aria-haspopup="true"
                                     aria-expanded="false">
@@ -57,8 +121,8 @@
         </div>
     </nav>
     {{if .RequestContext.SelectedCountry}}
-    <div class="w-100 collapse position-absolute bg-white shadow overflow-scroll" id="filters" style="top: 115px; max-height: 70vh;">
+        <div class="w-100 collapse position-absolute bg-white shadow overflow-scroll" id="filters">
         {{template "searchForm" .}}
-    </div>
+        </div>
     {{end}}
 {{end}}

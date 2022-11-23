@@ -4,12 +4,10 @@
     <script type="application/javascript" src="/static/country_selector.js"></script>
     <script type="application/javascript">
 
-        const uploadIndividualFileInputId = "individual-upload--file"
-        const uploadIndividualFileButtonId = "individual-upload--button"
-        const uploadIndividualFileFormId = "individual-upload--form"
         const individualActionFormId = "individuals-action-form"
-        const deleteIndividualsButtonId = "deleteIndividualsButton"
+        const downloadIndividualsButtonId = "downloadIndividualsButton"
         const deleteIndividualsButtonContentId = "deleteIndividualsButtonContent"
+        const deleteButtonId = "deleteButton"
         const selectIndividualCheckboxClass = "select-row-checkbox"
         const selectAllIndividualsCheckboxId = "selectAllCheckbox"
         const selectedRowAttributes = {"aria-selected": "true"}
@@ -24,6 +22,13 @@
         const deleteIndividualsConfirmationModalConfirmButtonContentId = "deleteIndividualsConfirmationModalConfirmButtonContent"
         const individualTableContainerId = individualActionFormId
         const individualTableHorizontalScrollKey = "individualsTableHorizontalScroll"
+        const downloadFilteredButtonID = "download-filtered"
+        const downloadSelectedButtonID = "download-selected"
+        const downloadToggleID = "download-toggle"
+
+        let searchParams = window.location.search.replace(/\??skip=[0-9]+&?/, '')
+        searchParams = searchParams.replace(/\??take=[0-9]+&?/, '')
+        searchParams = searchParams.replace(/\??sort=-?[a-z_]+&?/, '')
 
         /**
          * Changes the URL
@@ -75,13 +80,6 @@
         }
 
         /**
-         * opens the upload modal
-         */
-        function openUploadDialog() {
-            document.getElementById(uploadIndividualFileInputId).click();
-        }
-
-        /**
          * Opens the individual deletion confirmation modal
          */
         function refreshDeleteConfirmationModal() {
@@ -90,14 +88,6 @@
             const confirmButtonContent = document.getElementById(deleteIndividualsConfirmationModalConfirmButtonContentId)
             modalContent.innerHTML = "Are you sure you want to delete " + count + " individual" + (count > 1 ? "s" : "") + "?"
             confirmButtonContent.innerText = "Delete " + count + " individual" + (count > 1 ? "s" : "")
-        }
-
-        /**
-         * submits the upload form
-         */
-        function submitUploadForm() {
-            document.getElementById(uploadIndividualFileButtonId).disabled = true;
-            document.getElementById(uploadIndividualFileFormId).submit();
         }
 
         /**
@@ -120,41 +110,63 @@
             return row.getAttribute(dataIndividualIdAttribute)
         }
 
+        function downloadFunc() {
+            const downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download"
+            goToURL(downloadURL)
+        }
+
+        function downloadSelectedFunc() {
+            const selectedIds = Array.from(document.getElementsByClassName(selectIndividualCheckboxClass))
+                .filter(checkbox => checkbox.checked)
+                    .map(getIndividualIdFromSelectCheckbox)
+
+            const idSearchString = '?id=' + selectedIds.join('&id=')
+            const downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + idSearchString
+            goToURL(downloadURL)
+        }
+
+        function downloadFilteredFunc() {
+            const downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + searchParams
+            goToURL(downloadURL)
+        }
 
         document.addEventListener("DOMContentLoaded", function () {
 
-            const uploadButton = document.getElementById(uploadIndividualFileButtonId)
-            const deleteButton = document.getElementById(deleteIndividualsButtonId)
-            const deleteButtonContent = document.getElementById(deleteIndividualsButtonContentId)
-            const uploadFileInput = document.getElementById(uploadIndividualFileInputId)
+            const deleteButton = document.getElementById(deleteButtonId)
+            const downloadButton = document.getElementById(downloadIndividualsButtonId)
+            const downloadFilteredButton = document.getElementById(downloadFilteredButtonID)
+            const downloadSelectedButton = document.getElementById(downloadSelectedButtonID)
+            const deleteIndividualsButtonContent = document.getElementById(deleteIndividualsButtonContentId)
             const selectCheckboxes = Array.from(document.getElementsByClassName(selectIndividualCheckboxClass))
             const selectAllCheckbox = document.getElementById(selectAllIndividualsCheckboxId);
 
-            uploadButton.addEventListener('click', openUploadDialog);
-            uploadFileInput.addEventListener('change', submitUploadForm);
+            downloadButton.addEventListener('click', downloadFunc)
 
             /**
              * Refreshes the disabled state of the delete button as well as the text of the button
              */
             function refreshDeleteButton() {
                 const checkedCount = getSelectedIndividualCount()
-                deleteButtonContent.innerText = getDeleteButtonText(checkedCount);
+                deleteIndividualsButtonContent.innerText = getDeleteButtonText(checkedCount)
                 if (checkedCount > 0) {
-                    // button is active
-                    for (const className of inactiveDeleteButtonClasses) {
-                        deleteButton.classList.remove(className)
-                    }
-                    for (const className of activeDeleteButtonClasses) {
-                        deleteButton.classList.add(className)
-                    }
+                    deleteButton.classList.remove('disabled')
                 } else {
-                    // button is inactive
-                    for (const className of activeDeleteButtonClasses) {
-                        deleteButton.classList.remove(className)
-                    }
-                    for (const className of inactiveDeleteButtonClasses) {
-                        deleteButton.classList.add(className)
-                    }
+                    deleteButton.classList.add('disabled')
+                }
+            }
+
+            function refreshDownloadButton() {
+                const checkedCount = getSelectedIndividualCount()
+                if (checkedCount > 0) {
+                    downloadSelectedButton.classList.remove('disabled')
+                } else {
+                    downloadSelectedButton.classList.add('disabled')
+                }
+
+                if (searchParams) {
+                    downloadFilteredButton.classList.remove('disabled')
+                } else {
+                    downloadFilteredButton.classList.add('disabled')
                 }
             }
 
@@ -205,6 +217,7 @@
                 }
                 refreshDeleteButton()
                 refreshSelectAllCheckbox()
+                refreshDownloadButton()
             });
 
             // Handles the change of a single individual select checkbox
@@ -214,6 +227,7 @@
                     refreshIndividualRow(getIndividualIdFromSelectCheckbox(event.target))
                     refreshSelectAllCheckbox()
                     refreshDeleteButton()
+                    refreshDownloadButton()
                 })
             }
 
@@ -236,645 +250,627 @@
 
             // Refresh the text and style of the delete button when the page is loaded
             refreshDeleteButton()
+            refreshDownloadButton()
 
         });
     </script>
 
 {{end}}
 {{define "body"}}
-    <header class="sticky-top">
+    {{$checkBoxWidth := "4rem"}}
+    {{$dateWidth := "8rem"}}
+    {{$dateTimeWidth := "10rem"}}
+    {{$identWidth := "8rem"}}
+
+    {{$selectWidth := "2rem"}}
+    {{$idWidth := "20rem"}}
+    {{$nameWidth := "10rem"}}
+    {{$sexWidth := "8rem"}}
+    {{$ageWidth := "4rem"}}
+    {{$birthDateWidth := $dateWidth}}
+    {{$householdIDWidth := $identWidth}}
+    {{$isHeadOfHouseholdWidth := $checkBoxWidth}}
+    {{$communityIDWidth := $identWidth}}
+    {{$isHeadOfCommunityWidth := $checkBoxWidth}}
+    {{$phoneNumberWidth := "14rem"}}
+    {{$emailWidth := "14rem"}}
+    {{$registrationDateWidth := $dateWidth}}
+    {{$collectionAdministrativeAreaWidth := "10rem"}}
+    {{$collectionAdministrativeArea1Width := $collectionAdministrativeAreaWidth}}
+    {{$collectionAdministrativeArea2Width := $collectionAdministrativeAreaWidth}}
+    {{$collectionAdministrativeArea3Width := $collectionAdministrativeAreaWidth}}
+    {{$freeFieldWidth := "8rem"}}
+    {{$freeField1Width := $freeFieldWidth}}
+    {{$freeField2Width := $freeFieldWidth}}
+    {{$freeField3Width := $freeFieldWidth}}
+    {{$freeField4Width := $freeFieldWidth}}
+    {{$freeField5Width := $freeFieldWidth}}
+    {{$createdAtWidth := $dateTimeWidth}}
+    {{$updatedAtWidth := $dateTimeWidth}}
+
+    <header>
         {{template "nav" .}}
     </header>
-    <main style="">
-        <div class="container-fluid p-5">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1 class="my-4">{{ $.RequestContext.SelectedCountry.Name }}</h1>
+    <main class="container-fluid p-5 pt-0">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="my-4">{{ $.RequestContext.SelectedCountry.Name }}</h1>
 
-                <div class="d-flex justify-content-end align-items-center">
-                    {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                        <button type="button"
-                                id="deleteIndividualsButton"
-                                style="width: 21rem"
-                                class="btn disabled btn-outline-secondary me-2 individual-action-button"
-                                data-bs-toggle="modal"
-                                data-bs-target="#deleteIndividualsConfirmationModal"
-                                onclick="refreshDeleteConfirmationModal()">
-                            <i class="bi bi-trash"></i>
-                            <span id="deleteIndividualsButtonContent">Delete individuals</span>
+            <div class="d-flex justify-content-end align-items-center">
+                <a href="/countries/{{.Options.CountryID}}/individuals/new"
+                   class="btn btn-outline-primary me-2"
+                   data-toggle="tooltip" data-placement="top" title="Create new Individual"
+                >
+                    <i class="bi bi-plus"></i>
+                    <span>Create new individual</span>
+                </a>
+                {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
+                    <div class="btn-group me-2">
+                        <button type="button" class="btn btn-outline-secondary" id="downloadIndividualsButton">
+                            <i class="bi bi-download"></i>
+                            <span>Download all</span>
                         </button>
-                        <a href="/countries/{{.Options.CountryID}}/individuals/new"
-                           class="btn btn-outline-primary me-2">
-                            Create new Individual
-                        </a>
-                    {{end}}
-                    <a href="/countries/{{.Options.CountryID}}/individuals/download" target="_blank"
-                       class="btn btn-outline-primary">
-                        Download
-                    </a>
-                    {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                        <form id="individual-upload--form" action="/countries/{{.Options.CountryID}}/individuals/upload"
-                              enctype="multipart/form-data" method="post" class="ms-2">
-                            <input
-                                    hidden
-                                    id="individual-upload--file"
-                                    name="file"
-                                    type="file"
-                                    class="form-control"
-                                    accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                            >
-                            <button id="individual-upload--button" type="button" class="btn btn-outline-primary">
-                                Upload
-                            </button>
-                        </form>
-                    {{end}}
-                </div>
+                        <button type="button"
+                                class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split px-3"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                                id="download-toggle">
+                            <span class="visually-hidden">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a id="download-filtered" class="dropdown-item" href="#" onclick="downloadFilteredFunc()">Download filtered individuals</a></li>
+                            <li><a id="download-selected" class="dropdown-item" href="#" onclick="downloadSelectedFunc()">Download selected individuals</a></li>
+                        </ul>
+                    </div>
+                {{end}}
             </div>
+        </div>
 
-            {{$checkBoxWidth := "4rem"}}
-            {{$dateWidth := "8rem"}}
-            {{$dateTimeWidth := "10rem"}}
-            {{$identWidth := "8rem"}}
+        <!-- INDIVIDUALS TABLE -->
+        <form id="individuals-action-form" class="table-responsive opacity-0 scroll-body" method="post">
+            <table class="table table-individuals mb-0">
+                <thead>
+                <tr>
+                    <th class="sticky-column text-center" style="width: {{$selectWidth}}">
+                        <input class="form-check-input" type="checkbox" id="selectAllCheckbox"/>
+                    </th>
 
-            {{$selectWidth := "2rem"}}
-            {{$idWidth := "20rem"}}
-            {{$nameWidth := "10rem"}}
-            {{$sexWidth := "8rem"}}
-            {{$ageWidth := "4rem"}}
-            {{$birthDateWidth := $dateWidth}}
-            {{$householdIDWidth := $identWidth}}
-            {{$isHeadOfHouseholdWidth := $checkBoxWidth}}
-            {{$communityIDWidth := $identWidth}}
-            {{$isHeadOfCommunityWidth := $checkBoxWidth}}
-            {{$phoneNumberWidth := "14rem"}}
-            {{$emailWidth := "14rem"}}
-            {{$registrationDateWidth := $dateWidth}}
-            {{$collectionAdministrativeAreaWidth := "10rem"}}
-            {{$collectionAdministrativeArea1Width := $collectionAdministrativeAreaWidth}}
-            {{$collectionAdministrativeArea2Width := $collectionAdministrativeAreaWidth}}
-            {{$collectionAdministrativeArea3Width := $collectionAdministrativeAreaWidth}}
-            {{$collectionOfficeWidth := $collectionAdministrativeAreaWidth}}
-            {{$freeFieldWidth := "8rem"}}
-            {{$freeField1Width := $freeFieldWidth}}
-            {{$freeField2Width := $freeFieldWidth}}
-            {{$freeField3Width := $freeFieldWidth}}
-            {{$freeField4Width := $freeFieldWidth}}
-            {{$freeField5Width := $freeFieldWidth}}
-            {{$createdAtWidth := $dateTimeWidth}}
-            {{$updatedAtWidth := $dateTimeWidth}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "id"
+                    "Label" "ID"
+                    "Scope" "col"
+                    "Class" "sticky-column "
+                    "Title" "ID"
+                    "Style" "left: 3rem"
+                    "Width" $idWidth
+                    "MinWidth" $idWidth
+                    "MaxWidth" $idWidth
+                    )}}
 
-            <!-- INDIVIDUALS TABLE -->
-            <form id="individuals-action-form" class="table-responsive mb-3 opacity-0" method="post">
-                <table class="table table-individuals">
-                    <thead>
-                    <tr>
-                        <th class="sticky-column text-center" style="width: {{$selectWidth}}">
-                            <input class="form-check-input" type="checkbox" id="selectAllCheckbox"/>
-                        </th>
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "full_name"
+                    "Label" "Name"
+                    "Scope" "col"
+                    "Class" "sticky-column border-end"
+                    "Style" "left: 24rem"
+                    "Title" "Full Name"
+                    "Width" $nameWidth
+                    "MinWidth" $nameWidth
+                    "MaxWidth" $nameWidth
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "id"
-                        "Label" "ID"
-                        "Scope" "col"
-                        "Class" "sticky-column "
-                        "Title" "ID"
-                        "Style" "left: 3rem"
-                        "Width" $idWidth
-                        "MinWidth" $idWidth
-                        "MaxWidth" $idWidth
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "sex"
+                    "Label" "Sex"
+                    "Title" "Sex"
+                    "Width" $sexWidth
+                    "MinWidth" $sexWidth
+                    "MaxWidth" $sexWidth
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "full_name"
-                        "Label" "Name"
-                        "Scope" "col"
-                        "Class" "sticky-column border-end"
-                        "Style" "left: 24rem"
-                        "Title" "Full Name"
-                        "Width" $nameWidth
-                        "MinWidth" $nameWidth
-                        "MaxWidth" $nameWidth
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "age"
+                    "Label" "Age"
+                    "Title" "Age"
+                    "Width" $ageWidth
+                    "MinWidth" $ageWidth
+                    "MaxWidth" $ageWidth
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "sex"
-                        "Label" "Sex"
-                        "Title" "Sex"
-                        "Width" $sexWidth
-                        "MinWidth" $sexWidth
-                        "MaxWidth" $sexWidth
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "birth_date"
+                    "Label" "Birth Date"
+                    "Title" "Birth Date"
+                    "Width" $birthDateWidth
+                    "MinWidth" $birthDateWidth
+                    "MaxWidth" $birthDateWidth
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "age"
-                        "Label" "Age"
-                        "Title" "Age"
-                        "Width" $ageWidth
-                        "MinWidth" $ageWidth
-                        "MaxWidth" $ageWidth
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "household_id"
+                    "Label" "Household ID"
+                    "Title" "Household ID"
+                    "Width" $householdIDWidth
+                    "MinWidth" $householdIDWidth
+                    "MaxWidth" $householdIDWidth
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "birth_date"
-                        "Label" "Birth Date"
-                        "Title" "Birth Date"
-                        "Width" $birthDateWidth
-                        "MinWidth" $birthDateWidth
-                        "MaxWidth" $birthDateWidth
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "is_head_of_household"
+                    "Label" "HoH"
+                    "Title" "Head of Household"
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "household_id"
-                        "Label" "Household ID"
-                        "Title" "Household ID"
-                        "Width" $householdIDWidth
-                        "MinWidth" $householdIDWidth
-                        "MaxWidth" $householdIDWidth
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "community_id"
+                    "Label" "Community ID"
+                    "Title" "Community ID"
+                    "Width" $communityIDWidth
+                    "MinWidth" $communityIDWidth
+                    "MaxWidth" $communityIDWidth
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "is_head_of_household"
-                        "Label" "HoH"
-                        "Title" "Head of Household"
-                        "Class" "text-center"
-                        "Width" $isHeadOfHouseholdWidth
-                        "MinWidth" $isHeadOfHouseholdWidth
-                        "MaxWidth" $isHeadOfHouseholdWidth
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "is_head_of_community"
+                    "Label" "CR"
+                    "Title" "Community Representative"
+                    "Class" "text-center"
+                    "Width" $isHeadOfCommunityWidth
+                    "MinWidth" $isHeadOfCommunityWidth
+                    "MaxWidth" $isHeadOfCommunityWidth
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "community_id"
-                        "Label" "Community ID"
-                        "Title" "Community ID"
-                        "Width" $communityIDWidth
-                        "MinWidth" $communityIDWidth
-                        "MaxWidth" $communityIDWidth
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "phone_number_1"
+                    "Label" "Phone Number"
+                    "Title" "Phone Number"
+                    "Width" $phoneNumberWidth
+                    "MinWidth" $phoneNumberWidth
+                    "MaxWidth" $phoneNumberWidth
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "is_head_of_community"
-                        "Label" "CR"
-                        "Title" "Community Representative"
-                        "Class" "text-center"
-                        "Width" $isHeadOfCommunityWidth
-                        "MinWidth" $isHeadOfCommunityWidth
-                        "MaxWidth" $isHeadOfCommunityWidth
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "email_1"
+                    "Label" "Email"
+                    "Title" "Email Address"
+                    "Width" $emailWidth
+                    "MinWidth" $emailWidth
+                    "MaxWidth" $emailWidth
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "phone_number_1"
-                        "Label" "Phone Number"
-                        "Title" "Phone Number"
-                        "Width" $phoneNumberWidth
-                        "MinWidth" $phoneNumberWidth
-                        "MaxWidth" $phoneNumberWidth
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "collection_time"
+                    "Label" "Registration"
+                    "Title" "Registration Date"
+                    "Width" $registrationDateWidth
+                    "MinWidth" $registrationDateWidth
+                    "MaxWidth" $registrationDateWidth
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "email_1"
-                        "Label" "Email"
-                        "Title" "Email Address"
-                        "Width" $emailWidth
-                        "MinWidth" $emailWidth
-                        "MaxWidth" $emailWidth
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "collection_administrative_area_1"
+                    "Label" "Area1"
+                    "Title" "Collection Administrative Area 1"
+                    "Width" $collectionAdministrativeArea1Width
+                    "MinWidth" $collectionAdministrativeArea1Width
+                    "MaxWidth" $collectionAdministrativeArea1Width
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "collection_time"
-                        "Label" "Registration"
-                        "Title" "Registration Date"
-                        "Width" $registrationDateWidth
-                        "MinWidth" $registrationDateWidth
-                        "MaxWidth" $registrationDateWidth
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "collection_administrative_area_2"
+                    "Label" "Area2"
+                    "Title" "Collection Administrative Area 2"
+                    "Width" $collectionAdministrativeArea2Width
+                    "MinWidth" $collectionAdministrativeArea2Width
+                    "MaxWidth" $collectionAdministrativeArea2Width
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "collection_administrative_area_1"
-                        "Label" "Area1"
-                        "Title" "Collection Administrative Area 1"
-                        "Width" $collectionAdministrativeArea1Width
-                        "MinWidth" $collectionAdministrativeArea1Width
-                        "MaxWidth" $collectionAdministrativeArea1Width
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "collection_administrative_area_3"
+                    "Label" "Area3"
+                    "Title" "Collection Administrative Area 3"
+                    "Width" $collectionAdministrativeArea3Width
+                    "MinWidth" $collectionAdministrativeArea3Width
+                    "MaxWidth" $collectionAdministrativeArea3Width
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "collection_administrative_area_2"
-                        "Label" "Area2"
-                        "Title" "Collection Administrative Area 2"
-                        "Width" $collectionAdministrativeArea2Width
-                        "MinWidth" $collectionAdministrativeArea2Width
-                        "MaxWidth" $collectionAdministrativeArea2Width
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "free_field_1"
+                    "Label" "Free Field 1"
+                    "Title" "Free Field 1"
+                    "Width" $freeField1Width
+                    "MinWidth" $freeField1Width
+                    "MaxWidth" $freeField1Width
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "collection_administrative_area_3"
-                        "Label" "Area3"
-                        "Title" "Collection Administrative Area 3"
-                        "Width" $collectionAdministrativeArea3Width
-                        "MinWidth" $collectionAdministrativeArea3Width
-                        "MaxWidth" $collectionAdministrativeArea3Width
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "free_field_2"
+                    "Label" "Free Field 2"
+                    "Title" "Free Field 2"
+                    "Width" $freeField2Width
+                    "MinWidth" $freeField2Width
+                    "MaxWidth" $freeField2Width
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "collection_office"
-                        "Label" "Office"
-                        "Title" "Collection Office"
-                        "Width" $collectionOfficeWidth
-                        "MinWidth" $collectionOfficeWidth
-                        "MaxWidth" $collectionOfficeWidth
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "free_field_3"
+                    "Label" "Free Field 3"
+                    "Title" "Free Field 3"
+                    "Width" $freeField3Width
+                    "MinWidth" $freeField3Width
+                    "MaxWidth" $freeField3Width
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "free_field_1"
-                        "Label" "Free Field 1"
-                        "Title" "Free Field 1"
-                        "Width" $freeField1Width
-                        "MinWidth" $freeField1Width
-                        "MaxWidth" $freeField1Width
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "free_field_4"
+                    "Label" "Free Field 4"
+                    "Title" "Free Field 4"
+                    "Width" $freeField4Width
+                    "MinWidth" $freeField4Width
+                    "MaxWidth" $freeField4Width
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "free_field_2"
-                        "Label" "Free Field 2"
-                        "Title" "Free Field 2"
-                        "Width" $freeField2Width
-                        "MinWidth" $freeField2Width
-                        "MaxWidth" $freeField2Width
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "free_field_5"
+                    "Label" "Free Field 5"
+                    "Title" "Free Field 5"
+                    "Width" $freeField5Width
+                    "MinWidth" $freeField5Width
+                    "MaxWidth" $freeField5Width
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "free_field_3"
-                        "Label" "Free Field 3"
-                        "Title" "Free Field 3"
-                        "Width" $freeField3Width
-                        "MinWidth" $freeField3Width
-                        "MaxWidth" $freeField3Width
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "created_at"
+                    "Label" "Created"
+                    "Title" "Date Created"
+                    "Width" $createdAtWidth
+                    "MinWidth" $createdAtWidth
+                    "MaxWidth" $createdAtWidth
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "free_field_4"
-                        "Label" "Free Field 4"
-                        "Title" "Free Field 4"
-                        "Width" $freeField4Width
-                        "MinWidth" $freeField4Width
-                        "MaxWidth" $freeField4Width
-                        )}}
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "updated_at"
+                    "Label" "Updated"
+                    "Title" "Date Updated"
+                    "Width" $updatedAtWidth
+                    "MinWidth" $updatedAtWidth
+                    "MaxWidth" $updatedAtWidth
+                    )}}
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "free_field_5"
-                        "Label" "Free Field 5"
-                        "Title" "Free Field 5"
-                        "Width" $freeField5Width
-                        "MinWidth" $freeField5Width
-                        "MaxWidth" $freeField5Width
-                        )}}
+                    <th><!--filler--></th>
+                </tr>
+                </thead>
+                <tbody>
+                {{ if .Individuals }}
+                    {{range .Individuals}}
+                        <tr aria-selected="false"
+                            id="individual-row-{{.ID}}"
+                            class="individual-row"
+                            data-individual-id="{{.ID}}">
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "created_at"
-                        "Label" "Created"
-                        "Title" "Date Created"
-                        "Width" $createdAtWidth
-                        "MinWidth" $createdAtWidth
-                        "MaxWidth" $createdAtWidth
-                        )}}
+                            <td class="sticky-column text-center">
+                                <div style="width: {{$selectWidth}}" class="mx-auto">
+                                    <input class="form-check-input select-row-checkbox"
+                                           type="checkbox"
+                                           id="individual-checkbox-{{.ID}}"
+                                           value="{{.ID}}"
+                                           name="individual_id"/>
+                                </div>
+                            </td>
 
-                        {{template "columnHeader" (dict
-                        "Options" .Options
-                        "Sortable" true
-                        "SortKey" "updated_at"
-                        "Label" "Updated"
-                        "Title" "Date Updated"
-                        "Width" $updatedAtWidth
-                        "MinWidth" $updatedAtWidth
-                        "MaxWidth" $updatedAtWidth
-                        )}}
+                            <!-- ID -->
+                            <td class="sticky-column" style="left: 3rem">
+                                <div style="width: {{$idWidth}}">
+                                    <a href="/countries/{{.CountryID}}/individuals/{{.ID}}">
+                                        {{.ID}}
+                                    </a>
+                                </div>
+                            </td>
+                            <!-- End ID -->
 
-                        <th><!--filler--></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {{ if .Individuals }}
-                        {{range .Individuals}}
-                            <tr aria-selected="false"
-                                id="individual-row-{{.ID}}"
-                                class="individual-row"
-                                data-individual-id="{{.ID}}">
+                            <!-- Name -->
+                            <td class="sticky-column border-end" style="left: 24rem">
+                                <div style="width: {{$nameWidth}}">
+                                    {{if .FullName}}
+                                        {{.FullName}}
+                                    {{else}}
+                                        <span class="text-muted"><em>anonymous</em></span>
+                                    {{end}}
+                                </div>
+                            </td>
+                            <!-- End Name -->
 
-                                <td class="sticky-column text-center">
-                                    <div style="width: {{$selectWidth}}">
-                                        <input class="form-check-input select-row-checkbox"
+                            <!-- Sex -->
+                            <td>
+                                <div style="width: {{$sexWidth}}">
+                                    {{.Sex}}
+                                </div>
+                            </td>
+                            <!-- End Sex -->
+
+                            <!-- Age -->
+                            <td>
+                                <div style="width: {{$ageWidth}}">
+                                    {{if .Age}}
+                                        {{.Age}}
+                                    {{end}}
+                                </div>
+                            </td>
+                            <!-- End Age -->
+
+                            <!-- BirthDate -->
+                            <td>
+                                <div style="width: {{$birthDateWidth}}">
+                                    {{if .BirthDate}}
+                                        <span title="{{.BirthDate.Format "2006-01-02"}}">{{.BirthDate.Format "2006-01-02"}}</span>
+                                    {{end}}
+                                </div>
+                            </td>
+                            <!-- End BirthDate -->
+
+                            <!-- HouseholdID -->
+                            <td>
+                                <div style="width: {{$householdIDWidth}}">
+                                    {{.HouseholdID}}
+                                </div>
+                            </td>
+                            <!-- End HouseholdID -->
+
+                            <!-- IsHeadOfHousehold -->
+                            <td>
+                                <div class="text-center" style="width: {{$isHeadOfHouseholdWidth}}">
+                                    {{if .IsHeadOfHousehold}}
+                                        <input class="form-check-input marker-only"
                                                type="checkbox"
-                                               id="individual-checkbox-{{.ID}}"
-                                               value="{{.ID}}"
-                                               name="individual_id"/>
-                                    </div>
-                                </td>
+                                               checked="checked"
+                                               disabled="disabled"/>
+                                    {{end}}
+                                </div>
+                            </td>
+                            <!-- End IsHeadOfHousehold -->
 
-                                <!-- ID -->
-                                <td class="sticky-column" style="left: 3rem">
-                                    <div style="width: {{$idWidth}}">
-                                        <a href="/countries/{{.CountryID}}/individuals/{{.ID}}">
-                                            {{.ID}}
-                                        </a>
-                                    </div>
-                                </td>
-                                <!-- End ID -->
+                            <!-- CommunityID -->
+                            <td>
+                                <div style="width: {{$communityIDWidth}}">
+                                    {{.CommunityID}}
+                                </div>
+                            </td>
+                            <!-- End CommunityID -->
 
-                                <!-- Name -->
-                                <td class="sticky-column border-end" style="left: 24rem">
-                                    <div style="width: {{$nameWidth}}">
-                                        {{if .FullName}}
-                                            {{.FullName}}
-                                        {{else}}
-                                            <span class="text-muted"><em>anonymous</em></span>
-                                        {{end}}
-                                    </div>
-                                </td>
-                                <!-- End Name -->
+                            <!-- IsHeadOfCommunity -->
+                            <td>
+                                <div class="text-center" style="width: {{$isHeadOfCommunityWidth}}">
+                                    {{if .IsHeadOfCommunity}}
+                                        <input class="form-check-input marker-only"
+                                               type="checkbox"
+                                               checked="checked"
+                                               disabled="disabled">
+                                    {{end}}
+                                </div>
+                            </td>
+                            <!-- End IsHeadOfCommunity -->
 
-                                <!-- Sex -->
-                                <td>
-                                    <div style="width: {{$sexWidth}}">
-                                        {{.Sex}}
-                                    </div>
-                                </td>
-                                <!-- End Sex -->
+                            <!-- PhoneNumber -->
+                            <td>
+                                <div style="width: {{$phoneNumberWidth}}">
+                                    {{if .PhoneNumber1}}
+                                        <a class="font-monospace"
+                                           href="tel:{{.PhoneNumber1}}">{{.PhoneNumber1}}</a>
+                                    {{end}}
+                                </div>
+                            </td>
+                            <!-- End PhoneNumber -->
 
-                                <!-- Age -->
-                                <td>
-                                    <div style="width: {{$ageWidth}}">
-                                        {{if .Age}}
-                                            {{.Age}}
-                                        {{end}}
-                                    </div>
-                                </td>
-                                <!-- End Age -->
+                            <!-- Email -->
+                            <td>
+                                <div style="width: {{$emailWidth}}">
+                                    {{if .Email1}}
+                                        <a href="mailto:{{.Email1}}">{{.Email1}}</a>
+                                    {{end}}
+                                </div>
+                            </td>
+                            <!-- End Email -->
 
-                                <!-- BirthDate -->
-                                <td>
-                                    <div style="width: {{$birthDateWidth}}">
-                                        {{if .BirthDate}}
-                                            <span title="{{.BirthDate.Format "2006-01-02"}}">{{.BirthDate.Format "2006-01-02"}}</span>
-                                        {{end}}
-                                    </div>
-                                </td>
-                                <!-- End BirthDate -->
+                            <!-- Registration Date -->
+                            <td>
+                                <div style="width: {{$registrationDateWidth}}">
+                                    {{if .CollectionTime}}
+                                        {{.CollectionTime.Format "2006-01-02"}}
+                                    {{end}}
+                                </div>
+                            </td>
+                            <!-- End Registration Date -->
 
-                                <!-- HouseholdID -->
-                                <td>
-                                    <div style="width: {{$householdIDWidth}}">
-                                        {{.HouseholdID}}
-                                    </div>
-                                </td>
-                                <!-- End HouseholdID -->
+                            <!-- CollectionAdministrativeArea1 -->
+                            <td>
+                                <div style="width: {{$collectionAdministrativeArea1Width}}">
+                                    {{.CollectionAdministrativeArea1}}
+                                </div>
+                            </td>
+                            <!-- End CollectionAdministrativeArea1 -->
 
-                                <!-- IsHeadOfHousehold -->
-                                <td>
-                                    <div class="text-center" style="width: {{$isHeadOfHouseholdWidth}}">
-                                        {{if .IsHeadOfHousehold}}
-                                            <input class="form-check-input marker-only"
-                                                   type="checkbox"
-                                                   checked="checked"
-                                                   disabled="disabled"/>
-                                        {{end}}
-                                    </div>
-                                </td>
-                                <!-- End IsHeadOfHousehold -->
+                            <!-- CollectionAdministrativeArea2 -->
+                            <td>
+                                <div style="width: {{$collectionAdministrativeArea2Width}}">
+                                    {{.CollectionAdministrativeArea2}}
+                                </div>
+                            </td>
+                            <!-- End CollectionAdministrativeArea2 -->
 
-                                <!-- CommunityID -->
-                                <td>
-                                    <div style="width: {{$communityIDWidth}}">
-                                        {{.CommunityID}}
-                                    </div>
-                                </td>
-                                <!-- End CommunityID -->
+                            <!-- CollectionAdministrativeArea3 -->
+                            <td>
+                                <div style="width: {{$collectionAdministrativeArea3Width}}">
+                                    {{.CollectionAdministrativeArea3}}
+                                </div>
+                            </td>
+                            <!-- End CollectionAdministrativeArea3 -->
 
-                                <!-- IsHeadOfCommunity -->
-                                <td>
-                                    <div class="text-center" style="width: {{$isHeadOfCommunityWidth}}">
-                                        {{if .IsHeadOfCommunity}}
-                                            <input class="form-check-input marker-only"
-                                                   type="checkbox"
-                                                   checked="checked"
-                                                   disabled="disabled">
-                                        {{end}}
-                                    </div>
-                                </td>
-                                <!-- End IsHeadOfCommunity -->
+                            <!-- FreeField1 -->
+                            <td>
+                                <div style="width: {{$freeField1Width}}">
+                                    {{.FreeField1}}
+                                </div>
+                            </td>
+                            <!-- End FreeField1 -->
 
-                                <!-- PhoneNumber -->
-                                <td>
-                                    <div style="width: {{$phoneNumberWidth}}">
-                                        {{if .PhoneNumber1}}
-                                            <a class="font-monospace"
-                                               href="tel:{{.PhoneNumber1}}">{{.PhoneNumber1}}</a>
-                                        {{end}}
-                                    </div>
-                                </td>
-                                <!-- End PhoneNumber -->
+                            <!-- FreeField2 -->
+                            <td>
+                                <div style="width: {{$freeField2Width}}">
+                                    {{.FreeField2}}
+                                </div>
+                            </td>
+                            <!-- End FreeField2 -->
 
-                                <!-- Email -->
-                                <td>
-                                    <div style="width: {{$emailWidth}}">
-                                        {{if .Email1}}
-                                            <a href="mailto:{{.Email1}}">{{.Email1}}</a>
-                                        {{end}}
-                                    </div>
-                                </td>
-                                <!-- End Email -->
+                            <!-- FreeField3 -->
+                            <td>
+                                <div style="width: {{$freeField3Width}}">
+                                    {{.FreeField3}}
+                                </div>
+                            </td>
+                            <!-- End FreeField3 -->
 
-                                <!-- Registration Date -->
-                                <td>
-                                    <div style="width: {{$registrationDateWidth}}">
-                                        {{if .CollectionTime}}
-                                            {{.CollectionTime.Format "2006-01-02"}}
-                                        {{end}}
-                                    </div>
-                                </td>
-                                <!-- End Registration Date -->
+                            <!-- FreeField4 -->
+                            <td>
+                                <div style="width: {{$freeField4Width}}">
+                                    {{.FreeField4}}
+                                </div>
+                            </td>
+                            <!-- End FreeField4 -->
 
-                                <!-- CollectionAdministrativeArea1 -->
-                                <td>
-                                    <div style="width: {{$collectionAdministrativeArea1Width}}">
-                                        {{.CollectionAdministrativeArea1}}
-                                    </div>
-                                </td>
-                                <!-- End CollectionAdministrativeArea1 -->
+                            <!-- FreeField5 -->
+                            <td>
+                                <div style="width: {{$freeField5Width}}">
+                                    {{.FreeField5}}
+                                </div>
+                            </td>
+                            <!-- End FreeField5 -->
 
-                                <!-- CollectionAdministrativeArea2 -->
-                                <td>
-                                    <div style="width: {{$collectionAdministrativeArea2Width}}">
-                                        {{.CollectionAdministrativeArea2}}
-                                    </div>
-                                </td>
-                                <!-- End CollectionAdministrativeArea2 -->
+                            <!-- CreatedAt -->
+                            <td>
+                                <div style="width: {{$createdAtWidth}}">
+                                    {{.CreatedAt.Format "2006-01-02 15:04:05"}}
+                                </div>
+                            </td>
+                            <!-- End CreatedAt -->
 
-                                <!-- CollectionAdministrativeArea3 -->
-                                <td>
-                                    <div style="width: {{$collectionAdministrativeArea3Width}}">
-                                        {{.CollectionAdministrativeArea3}}
-                                    </div>
-                                </td>
-                                <!-- End CollectionAdministrativeArea3 -->
-
-                                <!-- CollectionOffice -->
-                                <td>
-                                    <div style="width: {{$collectionOfficeWidth}}">
-                                        {{.CollectionOffice}}
-                                    </div>
-                                </td>
-                                <!-- End CollectionOffice -->
-
-                                <!-- FreeField1 -->
-                                <td>
-                                    <div style="width: {{$freeField1Width}}">
-                                        {{.FreeField1}}
-                                    </div>
-                                </td>
-                                <!-- End FreeField1 -->
-
-                                <!-- FreeField2 -->
-                                <td>
-                                    <div style="width: {{$freeField2Width}}">
-                                        {{.FreeField2}}
-                                    </div>
-                                </td>
-                                <!-- End FreeField2 -->
-
-                                <!-- FreeField3 -->
-                                <td>
-                                    <div style="width: {{$freeField3Width}}">
-                                        {{.FreeField3}}
-                                    </div>
-                                </td>
-                                <!-- End FreeField3 -->
-
-                                <!-- FreeField4 -->
-                                <td>
-                                    <div style="width: {{$freeField4Width}}">
-                                        {{.FreeField4}}
-                                    </div>
-                                </td>
-                                <!-- End FreeField4 -->
-
-                                <!-- FreeField5 -->
-                                <td>
-                                    <div style="width: {{$freeField5Width}}">
-                                        {{.FreeField5}}
-                                    </div>
-                                </td>
-                                <!-- End FreeField5 -->
-
-                                <!-- CreatedAt -->
-                                <td>
-                                    <div style="width: {{$createdAtWidth}}">
-                                        {{.CreatedAt.Format "2006-01-02 15:04:05"}}
-                                    </div>
-                                </td>
-                                <!-- End CreatedAt -->
-
-                                <!-- UpdatedAt -->
-                                <td>
-                                    <div style="width: {{$updatedAtWidth}}">
-                                        {{.UpdatedAt.Format "2006-01-02 15:04:05"}}
-                                    </div>
-                                </td>
-                                <!-- End UpdatedAt -->
-
-                            </tr>
-                        {{end}}
-                    {{else}}
-                        <tr>
-                            <td colspan="23">No individuals found</td>
+                            <!-- UpdatedAt -->
+                            <td>
+                                <div style="width: {{$updatedAtWidth}}">
+                                    {{.UpdatedAt.Format "2006-01-02 15:04:05"}}
+                                </div>
+                            </td>
+                            <!-- End UpdatedAt -->
                         </tr>
                     {{end}}
-                    </tbody>
-                </table>
-            </form>
-            <!-- END INDIVIDUALS TABLE -->
-
-            <!-- PAGE FOOTER -->
-            <div class="d-flex align-items-start justify-content-end mb-5">
-                <div class="d-flex align-items-center">
-                    Results:
-                    <nav aria-label="pick amount of results" class="ms-2">
-                        <ul class="pagination mb-0">
-                            <li class="page-item {{if eq .Options.Take 20}}active{{end}}">
-                                <a href="{{(.Options.WithTake 20).QueryParams}}" class="page-link">20</a>
-                            </li>
-                            <li class="page-item {{if eq .Options.Take 50}}active{{end}}">
-                                <a href="{{(.Options.WithTake 50).QueryParams}}" class="page-link">50</a>
-                            </li>
-                            <li class="page-item {{if eq .Options.Take 100}}active{{end}}">
-                                <a href="{{(.Options.WithTake 100).QueryParams}}" class="page-link">100</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-                <div class="ms-3">
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination">
-                            <li class="page-item {{if eq 0 .Options.Skip}}disabled{{end}}">
-                                <a class="page-link" href="{{.Options.FirstPage.QueryParams}}">First</a>
-                            </li>
-                            <li class="page-item {{if eq 0 .Options.Skip}}disabled{{end}}">
-                                <a class="page-link"
-                                   href="{{.Options.PreviousPage.QueryParams}}">Previous</a>
-                            </li>
-                            <li class="page-item {{if lt (len .Individuals) .Options.Take}}disabled{{end}}">
-                                <a class="page-link"
-                                   href="{{.Options.NextPage.QueryParams}}">Next</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-            <!-- END PAGE FOOTER -->
-        </div>
+                {{else}}
+                    <tr>
+                        <td colspan="23">No individuals found</td>
+                    </tr>
+                {{end}}
+                </tbody>
+            </table>
+        </form>
+        <!-- END INDIVIDUALS TABLE -->
     </main>
+
+    <!-- PAGE FOOTER -->
+    <footer class="d-flex align-items-start justify-content-between">
+        {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
+            <button type="button"
+                    id="deleteButton"
+                    class="btn btn-danger disabled"
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteIndividualsConfirmationModal"
+                    data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
+                    onclick="refreshDeleteConfirmationModal()">
+                <i class="bi bi-trash"></i>
+                <span id="deleteIndividualsButtonContent">Delete individuals</span>
+            </button>
+        {{end}}
+        <div class="d-flex align-items-center justify-content-end">
+            <div class="d-flex align-items-center">
+                Results:
+                <nav aria-label="pick amount of results" class="ms-2">
+                    <ul class="pagination mb-0">
+                        <li class="page-item {{if eq .Options.Take 20}}active{{end}}">
+                            <a href="{{(.Options.WithTake 20).QueryParams}}" class="page-link">20</a>
+                        </li>
+                        <li class="page-item {{if eq .Options.Take 50}}active{{end}}">
+                            <a href="{{(.Options.WithTake 50).QueryParams}}" class="page-link">50</a>
+                        </li>
+                        <li class="page-item {{if eq .Options.Take 100}}active{{end}}">
+                            <a href="{{(.Options.WithTake 100).QueryParams}}" class="page-link">100</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="d-flex align-items-center ms-3">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination mb-0">
+                        <li class="page-item {{if eq 0 .Options.Skip}}disabled{{end}}">
+                            <a class="page-link" href="{{.Options.FirstPage.QueryParams}}">First</a>
+                        </li>
+                        <li class="page-item {{if eq 0 .Options.Skip}}disabled{{end}}">
+                            <a class="page-link"
+                               href="{{.Options.PreviousPage.QueryParams}}">Previous</a>
+                        </li>
+                        <li class="page-item {{if lt (len .Individuals) .Options.Take}}disabled{{end}}">
+                            <a class="page-link"
+                               href="{{.Options.NextPage.QueryParams}}">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </footer>
+    <!-- END PAGE FOOTER -->
 
     <div class="modal modal-lg" tabindex="-1" id="deleteIndividualsConfirmationModal">
         <div class="modal-dialog">

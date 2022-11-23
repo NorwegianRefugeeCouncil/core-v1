@@ -151,6 +151,57 @@ $table-active-bg-factor:      .05;
 
 // Add custom styles here
 
+
+$header-height: 100px;
+$footer-height: 80px;
+
+html, body {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    height: $header-height;
+    width: 100%;
+    flex: none;
+}
+
+main {
+    flex: auto;
+    height: calc(100% - $header-height - $footer-height - 20px);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .scroll-body {
+        flex: auto;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+footer {
+    height: $footer-height;
+    width: 100%;
+    padding: 0 25px;
+    margin: auto;
+    flex: none;
+};
+
+#filters {
+    z-index: 1000;
+    top: $header-height;
+    max-height: 70vh;
+}
+
 h1, h2 {
     font-weight: 700;
 }
@@ -217,10 +268,44 @@ button, .btn {
             border-color: $blue-200;
         }
     }
+
+        &.disabled {
+            border-color: $neutral300;
+            background-color: $neutral300;
+            color: $white;
+            &[class*="btn-outline-"] {
+                    border-color: $neutral300;
+                    background-color: $white;
+                    color: $neutral300;
+            }
+        }
+
+
+    &.icon-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+    }
 }
 
 nav.navbar {
     background-color: $white;
+    z-index: 1001;
+
+    button:focus[data-bs-toggle="collapse"] {
+        &:not(.collapsed) {
+            background-color: $blue-100;
+        }
+    }
+    button:focus[data-bs-toggle="dropdown"] {
+        &.show {
+            background-color: $blue-100;
+        }
+    }
 }
 
 .card {
@@ -257,34 +342,6 @@ nav.navbar {
     }
 }
 
-table {
-    border-collapse: separate;
-    border-spacing: 0;
-    thead {
-        border-color: $neutral200;
-        background-color: $neutral200;
-        font-weight: bold;
-    }
-    td {
-        border-bottom-width: 0;
-        background-color: $white;
-    }
-    tr {
-        border-bottom-width: 1px;
-    }
-    th.sticky-column, td.sticky-column {
-        position: sticky;
-        left: 0;
-        z-index: 10
-    }
-    th.sticky-column {
-        background-color: $neutral200;
-    }
-    td.sticky-column {
-        background-color: $white;
-    }
-}
-
 .alert {
     padding: 1rem;
 }
@@ -317,63 +374,120 @@ a.home-link {
     top: -67px;
 }
 
-table.table-individuals {
-
-    $maxWidth : 25rem;
-
-    th {
-        white-space: nowrap;
-        max-width: $maxWidth;
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+    thead {
+        border-color: $neutral200;
+        background-color: $neutral200;
+        font-weight: bold;
+    }
+    td {
+        border-bottom-width: 0;
+        background-color: $white;
+    }
+    tr {
+        border-bottom-width: 1px;
+    }
+    th.sticky-column, td.sticky-column {
+        position: sticky;
+        left: 0;
+    }
+    th.sticky-column {
+        background-color: $neutral200;
+        z-index: 11;
+    }
+    td.sticky-column {
+        z-index: 10;
+        background-color: $white;
     }
 
-    th.sortable:hover {
-        background-color: var(--bs-gray-300);
-    }
+    &.table-individuals {
 
-    th.sortable {
-        cursor: pointer;
-        @extend .pe-2;
-    }
+        $maxWidth : 25rem;
 
-    th.sortable .sort-icon-next {
-        display: none;
-    }
-    th.sortable:hover .sort-icon-next {
-      display: inline-block;
-    }
+        th {
+            white-space: nowrap;
+            max-width: $maxWidth;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: $neutral200;
+            
+            &.sticky-column {
+                z-index: 101;
+            }
 
-    th.sortable.sorted .sort-icon-sortable, th.sortable:hover .sort-icon-sortable {
-        display: none
-    }
+            &.sortable {
+                cursor: pointer;
+                @extend .pe-2;
 
-    th.sortable.sorted .sort-icon-current {
-        display: inline-block;
-    }
+                .sort-icon-next {
+                    display: none;
+                }
 
-    th.sortable:not(.sorted) .sort-icon-current, th.sortable.sorted:hover .sort-icon-current {
-        display: none;
-    }
+                &:hover {
+                    background-color: var(--bs-gray-300);
+                    .sort-icon-sortable {
+                        display: none
+                    }
+                    .sort-icon-next {
+                        display: inline-block;
+                    }
+                }
 
-    td div{
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        border-spacing: 0;
-        max-width: $maxWidth;
-    }
+                &.sorted {
+                    .sort-icon-sortable {
+                        display: none
+                    }
+                    .sort-icon-current {
+                        display: inline-block;
+                    }
+                    &:hover {
+                        .sort-icon-current {
+                            display: none;
+                        }
+                    }
+                }
 
-    tbody tr {
-        background: white;
-    }
+                &:not(.sorted) {
+                    .sort-icon-current {
+                        display: none;
+                    }
+                }
+            }
+        }
 
-    input[type="checkbox"].marker-only {
-        background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23000000' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e")!important;
-        border: none!important;
-        opacity: 0.5!important
-    }
+        td div {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            border-spacing: 0;
+            max-width: $maxWidth;
+        }
 
+        tbody tr {
+            background: white;
+        }
+        tfoot th {
+            bottom: 0;
+        }
+
+        input[type="checkbox"].marker-only {
+            background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23000000' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e")!important;
+            border: none!important;
+            opacity: 0.5!important
+        }
+    }
 }
 
 .cursor-pointer {
     cursor: pointer;
+}
+
+.page-link {
+    height: 50px;
+    line-height: 50px;
+    padding-top: 0;
+    padding-bottom: 0;
 }
