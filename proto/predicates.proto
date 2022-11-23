@@ -1,0 +1,92 @@
+// This is a sample package that defines
+// message types for various types of predicates.
+//
+// Could be useful to represent database query conditions.
+
+syntax = "proto3";
+package no.nrc.core.form;
+
+option go_package = "./proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/descriptor.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/any.proto";
+
+message RecordPredicate {
+  google.protobuf.Any predicate = 1;
+}
+
+message AllOfPredicate {
+  repeated RecordPredicate predicates = 1;
+}
+
+message AnyOfPredicate {
+  repeated RecordPredicate predicates = 1;
+}
+
+message NotPredicate {
+  RecordPredicate predicate = 1;
+}
+
+message EqualityPredicate {
+  string field_id = 1;
+  google.protobuf.Value value = 2;
+}
+
+message InequalityPredicate {
+  string field_id = 1;
+  google.protobuf.Value value = 2;
+}
+
+message ContainsPredicate {
+  string field_id = 1;
+  google.protobuf.Value value = 2;
+}
+
+message StartsWithPredicate {
+  string field_id = 1;
+  google.protobuf.Value value = 2;
+}
+
+message EndsWithPredicate {
+  string field_id = 1;
+  google.protobuf.Value value = 2;
+}
+
+message GreaterThanPredicate {
+  string field_id = 1;
+  google.protobuf.Value value = 2;
+}
+
+message GreaterThanOrEqualPredicate {
+  string field_id = 1;
+  google.protobuf.Value value = 2;
+}
+
+message LessThanPredicate {
+  string field_id = 1;
+  google.protobuf.Value value = 2;
+}
+
+message LessThanOrEqualPredicate {
+  string field_id = 1;
+  google.protobuf.Value value = 2;
+}
+
+message LikePredicate {
+  string field_id = 1;
+  google.protobuf.Value value = 2;
+}
+
+message RangePredicate {
+  string field_id = 1;
+  google.protobuf.Value min = 2;
+  google.protobuf.Value max = 3;
+}
+
+message InPredicate {
+  string field_id = 1;
+  repeated google.protobuf.Value values = 2;
+}

@@ -1,0 +1,100 @@
+syntax = "proto3";
+package no.nrc.core.form;
+
+option go_package = "./proto";
+
+import "forms.proto";
+import "predicates.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/any.proto";
+
+message GetFormRequest {
+  string form_id = 1;
+}
+
+message GetFormResponse {
+  Form form = 1;
+}
+
+message CreateFormRequest {
+  Form form = 1;
+}
+
+message CreateFormResponse {
+  Form form = 1;
+}
+
+message UpdateFormRequest {
+  Form form = 1;
+}
+
+message UpdateFormResponse {
+  Form form = 1;
+}
+
+message DeleteFormRequest {
+  string form_id = 1;
+}
+
+message FieldValue {
+  string field_id = 1;
+  google.protobuf.Value value = 2;
+}
+
+message Record {
+  string record_id = 1;
+  string form_id = 2;
+  repeated FieldValue field_values = 3;
+}
+
+message GetRecordRequest {
+  string form_id = 1;
+  string record_id = 2;
+}
+
+message GetRecordResponse {
+  Record record = 1;
+}
+
+message UpdateRecordRequest {
+  Record record = 1;
+}
+
+message UpdateRecordResponse {
+  Record record = 1;
+}
+
+message DeleteRecordRequest {
+  string form_id = 1;
+  string record_id = 2;
+}
+
+message SearchRecordsRequest {
+  string form_id = 1;
+  RecordPredicate predicate = 2;
+}
+
+message ListPagination {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message SearchRecordsResponse {
+  ListPagination pagination = 1;
+  repeated Record records = 2;
+}
+
+service FormService {
+  rpc GetForm (GetFormRequest) returns (GetFormResponse) {}
+  rpc CreateForm (CreateFormRequest) returns (CreateFormResponse) {}
+  rpc UpdateForm (UpdateFormRequest) returns (UpdateFormResponse) {}
+  rpc DeleteForm (DeleteFormRequest) returns (google.protobuf.Empty) {}
+}
+
+service RecordService {
+  rpc GetRecord (GetRecordRequest) returns (GetRecordResponse) {}
+  rpc UpdateRecord (UpdateRecordRequest) returns (UpdateRecordResponse) {}
+  rpc DeleteRecord (DeleteRecordRequest) returns (google.protobuf.Empty) {}
+  rpc SearchRecords (SearchRecordsRequest) returns (SearchRecordsResponse) {}
+}

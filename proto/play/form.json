@@ -1,0 +1,28 @@
+{
+  "id":  "test",
+  "title":  "Test Form",
+  "description":  "This is a test form",
+  "fields":  [
+    {
+      "id":  "text-field-1",
+      "typedConfig":  {
+        "@type":  "type.googleapis.com/proto.FormTextField",
+        "label":  "Text Field 1"
+      }
+    },
+    {
+      "id":  "textarea-field-1",
+      "typedConfig":  {
+        "@type":  "type.googleapis.com/proto.FormTextareaField",
+        "label":  "Textarea Field 1"
+      }
+    },
+    {
+      "id":  "date-field-1",
+      "typedConfig":  {
+        "@type":  "type.googleapis.com/proto.FormDateField",
+        "label":  "Date Field 1"
+      }
+    }
+  ]
+}
