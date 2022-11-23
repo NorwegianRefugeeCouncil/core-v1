@@ -68,7 +68,7 @@ func buildRouter(
 		middleware.HasCountryPermission(auth.PermissionRead),
 	))
 	individualsRouter.Path("/upload").Methods(http.MethodPost).Handler(withMiddleware(
-		handlers.UploadHandler(individualRepo),
+		handlers.UploadHandler(renderer, individualRepo),
 		middleware.EnsureSelectedCountry(),
 		middleware.HasCountryPermission(auth.PermissionWrite),
 	))

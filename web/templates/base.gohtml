@@ -18,7 +18,50 @@
 </head>
 <body>
 {{template "body" .}}
+
+{{if .ErrorKey}}
+    <!-- BEGIN ERROR MODAL -->
+    <div class="modal modal-lg d-inline" tabindex="-1" id="action-confirm-modal-0">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-circle me-2 text-danger"></i>
+                        An error occured
+                    </h5>
+                    <a class="btn-close"
+                       href="/countries/{{.RequestContext.SelectedCountryID}}/individuals"
+                    >
+                    </a>
+                </div>
+
+                <div class="modal-body">
+                    <p>
+                        {{.ErrorKey}}
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <form class="w-100"
+                          id="delete-individual-form"
+                          action="/countries/{{.Individual.CountryID}}/individuals/{{.Individual.ID}}/delete"
+                          method="post">
+                        <div class="d-flex flex-row justify-content-end">
+                            <a class="btn btn-secondary"
+                               href="/countries/{{.RequestContext.SelectedCountryID}}/individuals"
+                            >
+                                <i class="bi bi-house me-2"></i>
+                                Go back to Individuals List
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END ERROR MODAL -->
+{{end}}
 </body>
+
 
 
 <script type="application/javascript">

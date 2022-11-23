@@ -14,9 +14,10 @@ import (
 	"go.uber.org/zap"
 )
 
-func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
+func UploadHandler(renderer Renderer, individualRepo db.IndividualRepo) http.Handler {
 
 	const (
+		templateName  = "individuals.gohtml"
 		formParamFile = "file"
 	)
 
@@ -25,7 +26,15 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 		var (
 			ctx = r.Context()
 			l   = logging.NewLogger(ctx)
+			//error = ""
 		)
+
+		renderError := func(error string) {
+			re := r.WithContext(utils.WithError(ctx, error))
+			renderer.RenderView(w, re, templateName, map[string]interface{}{
+				"ErrorKey": error,
+			})
+		}
 
 		// todo: find sensible max memory value
 		maxMemory := int64(1024 * 1024 * 1024)
@@ -50,18 +59,22 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 		if strings.HasSuffix(filename, ".csv") {
 			if err = api.UnmarshalIndividualsCSV(formFile, &individuals, &fields); err != nil {
 				l.Error("failed to parse csv", zap.Error(err))
-				http.Error(w, "failed to parse csv: "+err.Error(), http.StatusBadRequest)
+				//http.Error(w, "failed to parse csv: "+err.Error(), http.StatusBadRequest)
+				//error = "Could not parse csv: " + err.Error()
+				renderError("Could not parse csv: " + err.Error())
 				return
 			}
 		} else if strings.HasSuffix(filename, ".xlsx") || strings.HasSuffix(filename, ".xls") {
 			if err = api.UnmarshalIndividualsExcel(formFile, &individuals, &fields); err != nil {
 				l.Error("failed to parse excel file", zap.Error(err))
 				http.Error(w, "failed to parse excel file: "+err.Error(), http.StatusBadRequest)
+				//error = "failed to excel file: " + err.Error()
 				return
 			}
 		} else {
 			l.Error(fmt.Sprintf("unsupported content type: %s", r.Header.Get("Content-Type")))
 			http.Error(w, "invalid content type", http.StatusBadRequest)
+			//error = "invalid content type"
 			return
 		}
 
@@ -69,6 +82,7 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 		if err != nil {
 			l.Error("failed to get selected country id", zap.Error(err))
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			//error = "Internal server error"
 			return
 		}
 
@@ -105,6 +119,8 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 		}
 
 		http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals", selectedCountryID), http.StatusSeeOther)
+
+		return
 	})
 }
 

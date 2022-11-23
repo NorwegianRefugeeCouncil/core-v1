@@ -16,7 +16,12 @@ const (
 	keyAuthContext
 	keyCountries
 	keySelectedCountryID
+	keyError
 )
+
+func WithError(ctx context.Context, error string) context.Context {
+	return context.WithValue(ctx, keyError, error)
+}
 
 func WithRequestID(ctx context.Context, id string) context.Context {
 	return context.WithValue(ctx, keyRequestID, id)
