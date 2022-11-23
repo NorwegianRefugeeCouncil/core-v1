@@ -79,7 +79,7 @@
         </div>
     </main>
     <footer>
-        <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto d-flex flex-row justify-content-end align-items-center">
+        <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto d-flex flex-row justify-content-between align-items-center">
             {{if .Individual.ID}}
                 <!-- DELETE BUTTON -->
                 <button class="btn btn-danger"
@@ -92,6 +92,7 @@
                 </button>
                 <!-- END DELETE BUTTON -->
             {{end}}
+            <div class="flex-grow-1"></div>
             <!-- SAVE BUTTON -->
             <button id="submitButton" type="submit" class="btn btn-primary mx-4">Save</button>
             <!-- END SAVE BUTTON -->

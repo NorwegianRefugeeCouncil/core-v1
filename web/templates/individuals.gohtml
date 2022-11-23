@@ -6,7 +6,8 @@
 
         const individualActionFormId = "individuals-action-form"
         const downloadIndividualsButtonId = "downloadIndividualsButton"
-        const deleteIndividualsButtonId = "deleteIndividualsButton"
+        const deleteIndividualsButtonContentId = "deleteIndividualsButtonContent"
+        const deleteButtonId = "deleteButton"
         const selectIndividualCheckboxClass = "select-row-checkbox"
         const selectAllIndividualsCheckboxId = "selectAllCheckbox"
         const selectedRowAttributes = {"aria-selected": "true"}
@@ -127,14 +128,13 @@
 
         document.addEventListener("DOMContentLoaded", function () {
 
+            const deleteButton = document.getElementById(deleteButtonId)
             const downloadButton = document.getElementById(downloadIndividualsButtonId)
             const downloadFilteredButton = document.getElementById(downloadFilteredButtonID)
             const downloadSelectedButton = document.getElementById(downloadSelectedButtonID)
-            const downloadToggleButton = document.getElementById(downloadToggleID)
-            const deleteButton = document.getElementById(deleteIndividualsButtonId)
+            const deleteIndividualsButtonContent = document.getElementById(deleteIndividualsButtonContentId)
             const selectCheckboxes = Array.from(document.getElementsByClassName(selectIndividualCheckboxClass))
             const selectAllCheckbox = document.getElementById(selectAllIndividualsCheckboxId);
-            const tableFooter = document.getElementsByTagName('tfoot')[0]
 
             downloadButton.addEventListener('click', downloadFunc)
 
@@ -143,11 +143,11 @@
              */
             function refreshDeleteButton() {
                 const checkedCount = getSelectedIndividualCount()
-                deleteButton.title = getDeleteButtonText(checkedCount)
+                deleteIndividualsButtonContent.innerText = getDeleteButtonText(checkedCount)
                 if (checkedCount > 0) {
-                    tableFooter.classList.remove('d-none')
+                    deleteButton.classList.remove('disabled')
                 } else {
-                    tableFooter.classList.add('d-none')
+                    deleteButton.classList.add('disabled')
                 }
             }
 
@@ -155,19 +155,14 @@
                 const checkedCount = getSelectedIndividualCount()
                 if (checkedCount > 0) {
                     downloadSelectedButton.classList.remove('disabled')
-                    downloadToggleButton.classList.remove('disabled')
                 } else {
                     downloadSelectedButton.classList.add('disabled')
                 }
 
                 if (window.location.search.length) {
                     downloadFilteredButton.classList.remove('disabled')
-                    downloadToggleButton.classList.remove('d-none')
                 } else {
                     downloadFilteredButton.classList.add('disabled')
-                }
-                if (!window.location.search.length && !checkedCount) {
-                    downloadToggleButton.classList.add('disabled')
                 }
             }
 
@@ -318,8 +313,8 @@
                             <span class="visually-hidden">Toggle Dropdown</span>
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a id="download-filtered" class="dropdown-item" href="#" onclick="downloadFilteredFunc()">... filtered individuals</a></li>
-                            <li><a id="download-selected" class="dropdown-item" href="#" onclick="downloadSelectedFunc()">... selected individuals</a></li>
+                            <li><a id="download-filtered" class="dropdown-item" href="#" onclick="downloadFilteredFunc()">Download filtered individuals</a></li>
+                            <li><a id="download-selected" class="dropdown-item" href="#" onclick="downloadSelectedFunc()">Download selected individuals</a></li>
                         </ul>
                     </div>
                 {{end}}
@@ -327,7 +322,7 @@
         </div>
 
         <!-- INDIVIDUALS TABLE -->
-        <form id="individuals-action-form" class="table-responsive mb-3 opacity-0 scroll-body" method="post">
+        <form id="individuals-action-form" class="table-responsive opacity-0 scroll-body" method="post">
             <table class="table table-individuals mb-0">
                 <thead>
                 <tr>
@@ -816,50 +811,45 @@
                     </tr>
                 {{end}}
                 </tbody>
-                <tfoot>
-                    <tr>
-                        <th class="sticky-column">
-                            {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                                <button type="button"
-                                        id="deleteIndividualsButton"
-                                        class="btn btn-danger icon-button"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#deleteIndividualsConfirmationModal"
-                                        data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
-                                        onclick="refreshDeleteConfirmationModal()">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            {{end}}
-                        </th>
-                        <th colspan="22"></th>
-                    </tr>
-                </tfoot>
             </table>
         </form>
         <!-- END INDIVIDUALS TABLE -->
     </main>
 
     <!-- PAGE FOOTER -->
-    <footer class="d-flex align-items-start justify-content-end">
-        <div class="d-flex align-items-center">
-            Results:
-            <nav aria-label="pick amount of results" class="ms-2">
-                <ul class="pagination mb-0">
-                    <li class="page-item {{if eq .Options.Take 20}}active{{end}}">
-                        <a href="{{(.Options.WithTake 20).QueryParams}}" class="page-link">20</a>
-                    </li>
-                    <li class="page-item {{if eq .Options.Take 50}}active{{end}}">
-                        <a href="{{(.Options.WithTake 50).QueryParams}}" class="page-link">50</a>
-                    </li>
-                    <li class="page-item {{if eq .Options.Take 100}}active{{end}}">
-                        <a href="{{(.Options.WithTake 100).QueryParams}}" class="page-link">100</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        <div class="ms-3">
+    <footer class="d-flex align-items-start justify-content-between">
+        {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
+            <button type="button"
+                    id="deleteButton"
+                    class="btn btn-danger disabled"
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteIndividualsConfirmationModal"
+                    data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
+                    onclick="refreshDeleteConfirmationModal()">
+                <i class="bi bi-trash"></i>
+                <span id="deleteIndividualsButtonContent">Delete individuals</span>
+            </button>
+        {{end}}
+        <div class="d-flex align-items-center justify-content-end">
+            <div class="d-flex align-items-center">
+                Results:
+                <nav aria-label="pick amount of results" class="ms-2">
+                    <ul class="pagination mb-0">
+                        <li class="page-item {{if eq .Options.Take 20}}active{{end}}">
+                            <a href="{{(.Options.WithTake 20).QueryParams}}" class="page-link">20</a>
+                        </li>
+                        <li class="page-item {{if eq .Options.Take 50}}active{{end}}">
+                            <a href="{{(.Options.WithTake 50).QueryParams}}" class="page-link">50</a>
+                        </li>
+                        <li class="page-item {{if eq .Options.Take 100}}active{{end}}">
+                            <a href="{{(.Options.WithTake 100).QueryParams}}" class="page-link">100</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="d-flex align-items-center ms-3">
                 <nav aria-label="Page navigation">
-                    <ul class="pagination">
+                    <ul class="pagination mb-0">
                         <li class="page-item {{if eq 0 .Options.Skip}}disabled{{end}}">
                             <a class="page-link" href="{{.Options.FirstPage.QueryParams}}">First</a>
                         </li>
@@ -874,6 +864,7 @@
                     </ul>
                 </nav>
             </div>
+        </div>
     </footer>
     <!-- END PAGE FOOTER -->
 
