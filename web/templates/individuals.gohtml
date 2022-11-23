@@ -26,6 +26,10 @@
         const downloadSelectedButtonID = "download-selected"
         const downloadToggleID = "download-toggle"
 
+        let searchParams = window.location.search.replace(/\??skip=[0-9]+&?/, '')
+        searchParams = searchParams.replace(/\??take=[0-9]+&?/, '')
+        searchParams = searchParams.replace(/\??sort=-?[a-z_]+&?/, '')
+
         /**
          * Changes the URL
          * @param url
@@ -107,7 +111,7 @@
         }
 
         function downloadFunc() {
-            let downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download"
+            const downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download"
             goToURL(downloadURL)
         }
 
@@ -117,12 +121,12 @@
                     .map(getIndividualIdFromSelectCheckbox)
 
             const idSearchString = '?id=' + selectedIds.join('&id=')
-            let downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + idSearchString
+            const downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + idSearchString
             goToURL(downloadURL)
         }
 
         function downloadFilteredFunc() {
-            let downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + window.location.search
+            const downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + searchParams
             goToURL(downloadURL)
         }
 
@@ -159,7 +163,7 @@
                     downloadSelectedButton.classList.add('disabled')
                 }
 
-                if (window.location.search.length) {
+                if (searchParams) {
                     downloadFilteredButton.classList.remove('disabled')
                 } else {
                     downloadFilteredButton.classList.add('disabled')
