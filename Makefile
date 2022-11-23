@@ -69,7 +69,9 @@ generate: prerequisites
 	protoc -I=./proto --go_out=. --go-grpc_out=. ./proto/forms.proto
 	protoc -I=./proto --go_out=. --go-grpc_out=. ./proto/forms_service.proto
 	protoc -I=./proto --go_out=. --go-grpc_out=. ./proto/predicates.proto
-	protoc --plugin=./web/proto/node_modules/.bin/protoc-gen-ts_proto -I=./proto --ts_proto_opt=useReadonlyTypes=true --ts_proto_out=./web/proto/ ./proto/fields.proto
+	protoc --plugin=./web/proto/node_modules/.bin/protoc-gen-ts_proto -I=./proto --ts_proto_opt=useReadonlyTypes=true --ts_proto_out=./web/proto/ ./proto/forms.proto
+	protoc --plugin=./web/proto/node_modules/.bin/protoc-gen-ts_proto -I=./proto --ts_proto_opt=useReadonlyTypes=true --ts_proto_out=./web/proto/ ./proto/forms_service
+	protoc --plugin=./web/proto/node_modules/.bin/protoc-gen-ts_proto -I=./proto --ts_proto_opt=useReadonlyTypes=true --ts_proto_out=./web/proto/ ./proto/predicates.proto
 	@go generate ./...
 	@go fix ./...
 
