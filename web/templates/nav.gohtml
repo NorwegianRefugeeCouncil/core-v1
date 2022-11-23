@@ -1,4 +1,31 @@
 {{define "nav"}}
+    <script>
+        const uploadIndividualFileInputId = "individual-upload--file"
+        const uploadIndividualFileButtonId = "individual-upload--button"
+        const uploadIndividualFileFormId = "individual-upload--form"
+
+        /**
+         * opens the upload modal
+         */
+        function openUploadDialog() {
+            document.getElementById(uploadIndividualFileInputId).click();
+        }
+
+        /**
+         * submits the upload form
+         */
+        function submitUploadForm() {
+            document.getElementById(uploadIndividualFileButtonId).disabled = true;
+            document.getElementById(uploadIndividualFileFormId).submit();
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+            const uploadButton = document.getElementById(uploadIndividualFileButtonId)
+            const uploadFileInput = document.getElementById(uploadIndividualFileInputId)
+            uploadButton.addEventListener('click', openUploadDialog);
+            uploadFileInput.addEventListener('change', submitUploadForm);
+        })
+    </script>
+
     <nav class="navbar p-5">
         <div class="container-fluid" id="navbar-container">
             <a class="home-link me-0 me-lg-2" href="{{if eq "" .RequestContext.SelectedCountryID}}/{{else}}/countries/{{.RequestContext.SelectedCountryID}}/individuals{{end}}">
@@ -42,25 +69,25 @@
                                     Download template
                                 </a>
                                 {{if .RequestContext.SelectedCountry}}
-                                {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                                    <form id="individual-upload--form"
-                                          action="/countries/{{.RequestContext.SelectedCountryID}}/individuals/upload"
-                                          enctype="multipart/form-data"
-                                          method="post"
-                                    >
-                                        <input
-                                                hidden
-                                                id="individual-upload--file"
-                                                name="file"
-                                                type="file"
-                                                class="form-control"
-                                                accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                    {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
+                                        <form id="individual-upload--form"
+                                              action="/countries/{{.RequestContext.SelectedCountryID}}/individuals/upload"
+                                              enctype="multipart/form-data"
+                                              method="post"
                                         >
-                                        <button id="individual-upload--button" type="button" class="dropdown-item">
-                                            Upload {{.RequestContext.SelectedCountry.Name}} data
-                                        </button>
-                                    </form>
-                                {{end}}
+                                            <input
+                                                    hidden
+                                                    id="individual-upload--file"
+                                                    name="file"
+                                                    type="file"
+                                                    class="form-control"
+                                                    accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                            >
+                                            <button id="individual-upload--button" type="button" class="dropdown-item">
+                                                Upload {{.RequestContext.SelectedCountry.Name}} data
+                                            </button>
+                                        </form>
+                                    {{end}}
                                 {{end}}
                             </div>
                         </div>

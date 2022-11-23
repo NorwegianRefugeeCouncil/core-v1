@@ -269,6 +269,18 @@ button, .btn {
         }
     }
 
+        &.disabled {
+            border-color: $neutral300;
+            background-color: $neutral300;
+            color: $white;
+            &[class*="btn-outline-"] {
+                    border-color: $neutral300;
+                    background-color: $white;
+                    color: $neutral300;
+            }
+        }
+
+
     &.icon-button {
         width: 40px;
         height: 40px;
