@@ -284,3 +284,11 @@ EOF
     error_message = "The log level must be one of \"debug\", \"info\", \"warn\", or \"error\"."
   }
 }
+
+variable "service_plan_sku_name" {
+  type        = string
+  default     = "P1v2"
+  description = <<EOF
+THe sku name of the app service plan.
+EOF
+}
