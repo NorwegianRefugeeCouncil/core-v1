@@ -279,6 +279,7 @@
     {{$collectionAdministrativeArea1Width := $collectionAdministrativeAreaWidth}}
     {{$collectionAdministrativeArea2Width := $collectionAdministrativeAreaWidth}}
     {{$collectionAdministrativeArea3Width := $collectionAdministrativeAreaWidth}}
+    {{$collectionOfficeWidth := $collectionAdministrativeAreaWidth}}
     {{$freeFieldWidth := "8rem"}}
     {{$freeField1Width := $freeFieldWidth}}
     {{$freeField2Width := $freeFieldWidth}}
@@ -505,6 +506,17 @@
                     "Width" $collectionAdministrativeArea3Width
                     "MinWidth" $collectionAdministrativeArea3Width
                     "MaxWidth" $collectionAdministrativeArea3Width
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "collection_office"
+                    "Label" "Office"
+                    "Title" "Collection Office"
+                    "Width" $collectionOfficeWidth
+                    "MinWidth" $collectionOfficeWidth
+                    "MaxWidth" $collectionOfficeWidth
                     )}}
 
                     {{template "columnHeader" (dict
@@ -752,6 +764,14 @@
                             </td>
                             <!-- End CollectionAdministrativeArea3 -->
 
+                            <!-- CollectionOffice -->
+                            <td>
+                                <div style="width: {{$collectionOfficeWidth}}">
+                                    {{.CollectionOffice}}
+                                </div>
+                            </td>
+                            <!-- End CollectionOffice -->
+
                             <!-- FreeField1 -->
                             <td>
                                 <div style="width: {{$freeField1Width}}">
@@ -811,7 +831,7 @@
                     {{end}}
                 {{else}}
                     <tr>
-                        <td colspan="23">No individuals found</td>
+                        <td colspan="24">No individuals found</td>
                     </tr>
                 {{end}}
                 </tbody>
