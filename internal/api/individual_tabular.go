@@ -60,6 +60,10 @@ func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual
 		col = trimString(col)
 		field, ok := constants.IndividualFileToDBMap[col]
 		if !ok {
+			ok = constants.IndividualSystemFileColumns.Contains(col)
+			if ok {
+				continue
+			}
 			return fmt.Errorf("unknown column: %s", logutils.Escape(col))
 		}
 		*fields = append(*fields, field)
