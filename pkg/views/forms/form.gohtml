@@ -76,7 +76,7 @@
     {{$field := .Field}}
     {{template "inputLabel" .}}
     <input type="number"
-           class="form-control {{if .Errors}}is-invalid{{end}}"
+           class="form-control {{if $field.Errors}}is-invalid{{end}}"
            id="{{$field.Name}}"
            name="{{$field.Name}}"
            value="{{$field.Value}}"
