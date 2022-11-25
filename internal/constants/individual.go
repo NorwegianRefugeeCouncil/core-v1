@@ -580,3 +580,8 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualSpokenLanguage3:                DBColumnIndividualSpokenLanguage3,
 	FileColumnIndividualVisionDisabilityLevel:          DBColumnIndividualVisionDisabilityLevel,
 }
+
+var IndividualSystemFileColumns = containers.NewStringSet(
+	FileColumnIndividualCreatedAt,
+	FileColumnIndividualUpdatedAt,
+)
