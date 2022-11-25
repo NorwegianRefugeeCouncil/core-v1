@@ -35,6 +35,12 @@ func UnmarshalIndividualsExcel(reader io.Reader, individuals *[]*Individual, fie
 		return err
 	}
 
+	defer func() {
+		if err := f.Close(); err != nil {
+			fmt.Println(err)
+		}
+	}()
+
 	sheets := f.GetSheetList()
 	if len(sheets) == 0 {
 		err := errors.New("no sheets found")
