@@ -35,6 +35,12 @@ func UnmarshalIndividualsExcel(reader io.Reader, individuals *[]*Individual, fie
 		return err
 	}
 
+	defer func() {
+		if err := f.Close(); err != nil {
+			fmt.Println(err)
+		}
+	}()
+
 	sheets := f.GetSheetList()
 	if len(sheets) == 0 {
 		err := errors.New("no sheets found")
@@ -318,20 +324,35 @@ func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
 
 	f := excelize.NewFile()
 
+	defer func() {
+		if err := f.Close(); err != nil {
+			fmt.Println(err)
+		}
+	}()
+
 	f.SetSheetName("Sheet1", sheetName)
 
-	if err := f.SetSheetRow(sheetName, "A1", &constants.IndividualFileColumns); err != nil {
+	streamWriter, err := f.NewStreamWriter(sheetName)
+	if err != nil {
 		return err
 	}
 
-	for i, individual := range individuals {
+	if err := streamWriter.SetRow("A1", stringArrayToInterfaceArray(constants.IndividualFileColumns)); err != nil {
+		return err
+	}
+
+	for idx, individual := range individuals {
 		row, err := individual.marshalTabularData()
 		if err != nil {
 			return err
 		}
-		if err := f.SetSheetRow(sheetName, fmt.Sprintf("A%d", i+2), &row); err != nil {
+		if err := streamWriter.SetRow(fmt.Sprintf("A%d", idx+2), stringArrayToInterfaceArray(row)); err != nil {
 			return err
 		}
+	}
+
+	if err := streamWriter.Flush(); err != nil {
+		return err
 	}
 
 	if err := f.Write(w); err != nil {
@@ -404,4 +425,12 @@ var TRUE_VALUES = []string{"true", "yes", "1"}
 
 func isTrue(value string) bool {
 	return slices.Contains(TRUE_VALUES, strings.ToLower(value))
+}
+
+func stringArrayToInterfaceArray(row []string) []interface{} {
+	var result []interface{}
+	for _, col := range row {
+		result = append(result, col)
+	}
+	return result
 }
