@@ -21,16 +21,16 @@
             const deleteButton = document.getElementById("deleteButton")
             const confirmDeleteButton = document.getElementById("confirmDeleteButton")
             submitButton.addEventListener("click", function () {
-                submitButton.disabled = true
+                form.submit()
                 deleteButton.disabled = true
                 confirmDeleteButton.disabled = true
-                form.submit()
+                submitButton.disabled = true
             })
             confirmDeleteButton.addEventListener("click", function () {
+                deletionForm.submit()
                 deleteButton.disabled = true
                 submitButton.disabled = true
                 confirmDeleteButton.disabled = true
-                deletionForm.submit()
             })
             const inputs = Array.from(document.querySelectorAll(".form-control"))
             const focusableInputs = inputs.filter(isFocusableInput)
