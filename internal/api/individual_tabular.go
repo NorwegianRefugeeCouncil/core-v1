@@ -314,7 +314,7 @@ func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
 
 	f := excelize.NewFile()
 
-	sheet := f.NewSheet(sheetName)
+	f.SetSheetName("Sheet1", sheetName)
 
 	if err := f.SetSheetRow(sheetName, "A1", &constants.IndividualFileColumns); err != nil {
 		return err
@@ -329,8 +329,6 @@ func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
 			return err
 		}
 	}
-
-	f.SetActiveSheet(sheet)
 
 	if err := f.Write(w); err != nil {
 		return err
