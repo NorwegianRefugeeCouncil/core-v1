@@ -17,13 +17,12 @@ import (
 )
 
 type TokenClaims struct {
-	Sub             string   `json:"sub"`
-	Iss             string   `json:"iss"`
-	Email           string   `json:"email"`
-	Groups          []string `json:"groups"`
-	NrcOrganisation string   `json:"nrcOrganisation"`
-	Iat             int64    `json:"iat"`
-	Exp             int64    `json:"exp"`
+	Sub    string   `json:"sub"`
+	Iss    string   `json:"iss"`
+	Email  string   `json:"email"`
+	Groups []string `json:"groups"`
+	Iat    int64    `json:"iat"`
+	Exp    int64    `json:"exp"`
 }
 
 const AuthHeaderFormatJWT = "jwt"
@@ -177,9 +176,6 @@ func validateTokenClaims(claims TokenClaims) error {
 	}
 	if claims.Groups == nil {
 		return fmt.Errorf("token is missing groups")
-	}
-	if claims.NrcOrganisation == "" {
-		return fmt.Errorf("token is missing nrcOrganisation")
 	}
 	if claims.Exp == 0 {
 		return fmt.Errorf("token is missing expiration")
