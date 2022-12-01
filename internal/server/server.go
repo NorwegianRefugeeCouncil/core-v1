@@ -104,6 +104,9 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 		blockKey2,
 	)
 	sessionStore.MaxAge(60 * 60) // 1 hour
+	sessionStore.Options.HttpOnly = true
+	sessionStore.Options.Secure = true
+	sessionStore.Options.SameSite = http.SameSiteStrictMode
 
 	// build the router
 	s.router = buildRouter(
