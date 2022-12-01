@@ -116,6 +116,7 @@ resource "azapi_update_resource" "app_auth" {
         }
         httpSettings = {
           requireHttps = true
+          # https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization#considerations-when-using-azure-front-door
           forwardProxy = {
             convention = "Standard"
           }
