@@ -41,7 +41,7 @@ func ComputePermissions(
 				allCountryIDs.Add(c.ID)
 			}
 
-			perms := parsePermissions(allCountries, globalAdminGroup, session.GetUserGroups())
+			perms := parsePermissions(allCountries, globalAdminGroup, session.GetUserGroups(), session.GetNrcOrganisation())
 			authIntf := auth.New(perms.countryIds, allCountryIDs, perms.isGlobalAdmin)
 			r = r.WithContext(utils.WithAuthContext(ctx, authIntf))
 			h.ServeHTTP(w, r)
@@ -58,16 +58,16 @@ type parsedPermissions struct {
 
 // parsePermissions will retrieve the country ids from the user's groups
 // and determine if the user is a global admin
-func parsePermissions(allCountries []*api.Country, globalAdminGroup string, userGroups []string) *parsedPermissions {
+func parsePermissions(allCountries []*api.Country, globalAdminGroup string, userGroups []string, nrcOrganisation string) *parsedPermissions {
 	countryIds := containers.NewStringSet()
 
 	// maps a jwt group name to a country id
 	countryGroupMap := make(map[string]string)
 	for _, c := range allCountries {
-		if len(c.JwtGroup) == 0 {
+		if c.NrcOrganisation == "" {
 			continue
 		}
-		countryGroupMap[c.JwtGroup] = c.ID
+		countryGroupMap[c.NrcOrganisation] = c.ID
 	}
 
 	isGlobalAdmin := false
@@ -78,10 +78,8 @@ func parsePermissions(allCountries []*api.Country, globalAdminGroup string, user
 		}
 	}
 
-	for _, group := range userGroups {
-		if countryID, ok := countryGroupMap[group]; ok {
-			countryIds.Add(countryID)
-		}
+	if countryID, ok := countryGroupMap[nrcOrganisation]; ok {
+		countryIds.Add(countryID)
 	}
 
 	return &parsedPermissions{

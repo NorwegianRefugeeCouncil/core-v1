@@ -9,6 +9,7 @@ type Session interface {
 	IsAuthenticated() bool
 	GetUserID() string
 	GetUserGroups() []string
+	GetNrcOrganisation() string
 	GetUserEmail() string
 	GetIssuer() string
 	GetSubject() string
@@ -20,6 +21,7 @@ type Session interface {
 type session struct {
 	isAuthenticated bool
 	userGroups      []string
+	nrcOrganisation string
 	userEmail       string
 	issuer          string
 	subject         string
@@ -45,6 +47,10 @@ func (s session) GetUserGroups() []string {
 	return ret
 }
 
+func (s session) GetNrcOrganisation() string {
+	return s.nrcOrganisation
+}
+
 func (s session) GetUserEmail() string {
 	return s.userEmail
 }
@@ -67,6 +73,7 @@ func (s session) GetIssuedAt() time.Time {
 
 func NewAuthenticatedSession(
 	userGroups []string,
+	nrcOrganisation string,
 	userEmail string,
 	issuer string,
 	subject string,
@@ -76,6 +83,7 @@ func NewAuthenticatedSession(
 	return &session{
 		isAuthenticated: true,
 		userGroups:      userGroups,
+		nrcOrganisation: nrcOrganisation,
 		userEmail:       userEmail,
 		issuer:          issuer,
 		subject:         subject,
