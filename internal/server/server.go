@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"encoding/hex"
+	"encoding/base64"
 	"net"
 	"net/http"
 	"time"
@@ -71,25 +71,27 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 	})
 	idTokenVerifier := middleware.NewIDTokenVerifier(oidcVerifier)
 
-	hashKey1, err := hex.DecodeString(o.HashKey1)
+	b64 := base64.StdEncoding
+
+	hashKey1, err := b64.DecodeString(o.HashKey1)
 	if err != nil {
 		l.Error("failed to decode hash key 1", zap.Error(err))
 		return nil, err
 	}
 
-	blockKey1, err := hex.DecodeString(o.BlockKey1)
+	blockKey1, err := b64.DecodeString(o.BlockKey1)
 	if err != nil {
 		l.Error("failed to decode block key 1", zap.Error(err))
 		return nil, err
 	}
 
-	hashKey2, err := hex.DecodeString(o.HashKey2)
+	hashKey2, err := b64.DecodeString(o.HashKey2)
 	if err != nil {
 		l.Error("failed to decode hash key 2", zap.Error(err))
 		return nil, err
 	}
 
-	blockKey2, err := hex.DecodeString(o.BlockKey2)
+	blockKey2, err := b64.DecodeString(o.BlockKey2)
 	if err != nil {
 		l.Error("failed to decode block key 2", zap.Error(err))
 		return nil, err

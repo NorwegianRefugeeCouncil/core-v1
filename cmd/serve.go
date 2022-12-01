@@ -330,22 +330,22 @@ opened, the token will not be refreshed.
 `, envTokenRefreshInterval)))
 
 	serveCmd.PersistentFlags().String(flagHashKey1, "", cleanDoc(fmt.Sprintf(`
-This flag specifies the first hash key used to encrypt the session cookie. Can also be set with %s
+This flag specifies the base64-encoded first hash key used to encrypt the session cookie. Can also be set with %s
 `, envHashKey1)))
 
 	serveCmd.PersistentFlags().String(flagBlockKey1, "", cleanDoc(fmt.Sprintf(`
-This flag specifies the first block key used to encrypt the session cookie. Can also be set with %s
+This flag specifies the base64-encoded first block key used to encrypt the session cookie. Can also be set with %s
 `, envBlockKey1)))
 
 	serveCmd.PersistentFlags().String(flagHashKey2, "", cleanDoc(fmt.Sprintf(`
-This flag specifies the second hash key used to encrypt the session cookie. 
+This flag specifies the base64-encoded second hash key used to encrypt the session cookie. 
 The second block key is used to perform smooth key rotation.
 Usually, the first hash key is moved to the second hash key, and a new first hash key is generated.
 Can also be set with %s
 `, envHashKey2)))
 
 	serveCmd.PersistentFlags().String(flagBlockKey2, "", cleanDoc(fmt.Sprintf(`
-This flag specifies the second block key used to encrypt the session cookie. 
+This flag specifies the base64-encoded second block key used to encrypt the session cookie. 
 The second block key is used to perform smooth key rotation.
 Usually, the first block key is moved to the second block key, and a new first block key is generated.
 Can also be set with %s
