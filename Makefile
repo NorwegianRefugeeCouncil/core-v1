@@ -52,7 +52,7 @@ serve: prerequisites
 		--jwt-global-admin-group="NRC_Core_GlobalAdmin" \
 		--id-token-header-name="Authorization" \
 		--id-token-header-format="bearer-token" \
-		--access-token-header-name="X-Forwarded-Access-Token" \
+		--access-token-header-name="x-auth-request-access-token" \
 		--access-token-header-format="jwt" \
 		--oidc-issuer="https://localhost:10000" \
 		--oauth-client-id="foo" \
