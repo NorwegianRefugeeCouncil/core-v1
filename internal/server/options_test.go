@@ -43,12 +43,12 @@ func (o Options) WithJwtGroupGlobalAdmin(jwtGroupGlobalAdmin string) Options {
 }
 
 func (o Options) WithAuthHeaderName(authHeaderName string) Options {
-	o.AuthHeaderName = authHeaderName
+	o.IdTokenAuthHeaderName = authHeaderName
 	return o
 }
 
 func (o Options) WithAuthHeaderFormat(authHeaderFormat string) Options {
-	o.AuthHeaderFormat = authHeaderFormat
+	o.IdTokenAuthHeaderFormat = authHeaderFormat
 	return o
 }
 
@@ -72,17 +72,17 @@ func (o Options) WithOAuthClientID(oauthClientID string) Options {
 
 func validOptions() Options {
 	return Options{
-		Address:              ":8080",
-		DatabaseDriver:       "postgres",
-		DatabaseDSN:          "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable",
-		LogoutURL:            "http://localhost:8080",
-		TokenRefreshURL:      "http://localhost:8080",
-		TokenRefreshInterval: 5 * time.Minute,
-		JwtGroupGlobalAdmin:  "global-admin",
-		AuthHeaderName:       "X-Auth-Token",
-		AuthHeaderFormat:     middleware.AuthHeaderFormatJWT,
-		OIDCIssuerURL:        "https://foo",
-		OAuthClientID:        "bar",
+		Address:                 ":8080",
+		DatabaseDriver:          "postgres",
+		DatabaseDSN:             "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable",
+		LogoutURL:               "http://localhost:8080",
+		TokenRefreshURL:         "http://localhost:8080",
+		TokenRefreshInterval:    5 * time.Minute,
+		JwtGroupGlobalAdmin:     "global-admin",
+		IdTokenAuthHeaderName:   "X-Auth-Token",
+		IdTokenAuthHeaderFormat: middleware.AuthHeaderFormatJWT,
+		OIDCIssuerURL:           "https://foo",
+		OAuthClientID:           "bar",
 	}
 }
 

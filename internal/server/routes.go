@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 
+	"github.com/coreos/go-oidc/v3/oidc"
 	gorillahandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/notcore/internal/auth"
@@ -16,9 +17,12 @@ func buildRouter(
 	individualRepo db.IndividualRepo,
 	countryRepo db.CountryRepo,
 	globalAdminGroup string,
-	authHeaderName string,
-	authHeaderFormat string,
+	idTokenAuthHeaderName string,
+	idTokenAuthHeaderFormat string,
+	accessTokenHeaderName string,
+	accessTokenHeaderFormat string,
 	loginURL string,
+	provider *oidc.Provider,
 	idTokenVerifier middleware.IDTokenVerifier,
 	tpl templates,
 ) *mux.Router {
@@ -39,7 +43,7 @@ func buildRouter(
 	webRouter.Use(
 		noCache,
 		middleware.RequestLogging,
-		middleware.Authentication(authHeaderName, authHeaderFormat, idTokenVerifier, loginURL),
+		middleware.Authentication(idTokenAuthHeaderName, idTokenAuthHeaderFormat, accessTokenHeaderName, accessTokenHeaderFormat, provider, idTokenVerifier, loginURL),
 		middleware.PrefetchCountries(countryRepo),
 		middleware.ComputePermissions(globalAdminGroup),
 		middleware.SelectedCountry(),
