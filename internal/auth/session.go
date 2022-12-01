@@ -27,7 +27,6 @@ type session struct {
 	subject         string
 	expiration      time.Time
 	issuedAt        time.Time
-	nrcOrganisation string
 }
 
 func (s session) IsAuthenticated() bool {
@@ -90,6 +89,5 @@ func NewAuthenticatedSession(
 		subject:         subject,
 		expiration:      expiration,
 		issuedAt:        issuedAt,
-		nrcOrganisation: nrcOrganisation,
 	}
 }

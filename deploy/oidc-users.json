@@ -53,7 +53,7 @@
     "password": "Password1!",
     "groups": [
     ],
-    "nrcOrganisation": "NRC_Uganda"
+    "nrcOrganisation": "NRC Uganda"
   },
   {
     "id": "SIMPLE_OIDC_USER_QUINN",
@@ -64,7 +64,7 @@
     "password": "Password1!",
     "groups": [
     ],
-    "nrcOrganisation": "NRC_Colombia"
+    "nrcOrganisation": "NRC Colombia"
   },
   {
     "id": "SIMPLE_OIDC_USER_SIM",
@@ -75,7 +75,7 @@
     "password": "Password1!",
     "groups": [
     ],
-    "nrcOrganisation": "NRC_Colombia"
+    "nrcOrganisation": "NRC Colombia"
   },
   {
     "id": "SIMPLE_OIDC_USER_PHILLIE",
