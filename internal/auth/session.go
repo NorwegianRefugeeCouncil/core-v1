@@ -25,6 +25,7 @@ type session struct {
 	subject         string
 	expiration      time.Time
 	issuedAt        time.Time
+	nrcOrganisation string
 }
 
 func (s session) IsAuthenticated() bool {
@@ -67,6 +68,7 @@ func (s session) GetIssuedAt() time.Time {
 
 func NewAuthenticatedSession(
 	userGroups []string,
+	nrcOrganisation string,
 	userEmail string,
 	issuer string,
 	subject string,
@@ -81,5 +83,6 @@ func NewAuthenticatedSession(
 		subject:         subject,
 		expiration:      expiration,
 		issuedAt:        issuedAt,
+		nrcOrganisation: nrcOrganisation,
 	}
 }

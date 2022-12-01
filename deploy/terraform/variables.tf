@@ -304,7 +304,7 @@ variable "backend_host_name" {
 }
 
 variable "frontdoor_sku_name" {
-  type          = string
-  description   = "The sku name of the frontdoor."
-  default       = "Standard_AzureFrontDoor"
+  type        = string
+  description = "The sku name of the frontdoor."
+  default     = "Standard_AzureFrontDoor"
 }

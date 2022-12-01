@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -12,6 +13,7 @@ import (
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
+	"golang.org/x/oauth2"
 )
 
 type TokenClaims struct {
@@ -49,8 +51,11 @@ type IDToken interface {
 }
 
 func Authentication(
-	authHeaderName,
-	authHeaderFormat string,
+	idTokenHeaderName,
+	idTokenHeaderFormat,
+	accessTokenHeaderName,
+	accessTokenHeaderFormat string,
+	provider *oidc.Provider,
 	idTokenVerifier IDTokenVerifier,
 	loginURL string,
 ) func(handler http.Handler) http.Handler {
@@ -65,7 +70,7 @@ func Authentication(
 			ctx := r.Context()
 			l := logging.NewLogger(ctx)
 
-			authPayload := r.Header.Get(authHeaderName)
+			authPayload := r.Header.Get(idTokenHeaderName)
 			if len(authPayload) == 0 {
 				l.Warn("missing authentication header")
 				redirectToLogin(w, r)
@@ -74,27 +79,16 @@ func Authentication(
 
 			var rawIdToken string
 
-			if authHeaderFormat == AuthHeaderFormatJWT {
-				// This is useful for scenarios where the token is a plain JWT.
-				// The auth header is in the format "<Header>: <token>"
-				rawIdToken = r.Header.Get(authHeaderName)
-			} else if authHeaderFormat == AuthHeaderFormatBearerToken {
-				// This is useful for scenarios where the token is a bearer token.
-				// And the auth header is in the format "<Header>: Bearer <jwt token>".
-				bearerTokenParts := strings.Split(r.Header.Get(authHeaderName), " ")
-				if len(bearerTokenParts) != 2 {
-					l.Warn("invalid bearer token format. parts != 2")
-					redirectToLogin(w, r)
-					return
-				}
-				if len(bearerTokenParts[0]) != 6 && bearerTokenParts[0] != "Bearer" {
-					l.Warn("invalid bearer token format. Does not start with 'Bearer'")
-					redirectToLogin(w, r)
-					return
-				}
-				rawIdToken = bearerTokenParts[1]
-			} else {
-				l.Warn("invalid auth header format", zap.String("authHeaderFormat", authHeaderFormat))
+			rawIdToken, err := parseAuthHeader(r, idTokenHeaderName, idTokenHeaderFormat)
+			if err != nil {
+				l.Warn("invalid authentication header", zap.Error(err))
+				redirectToLogin(w, r)
+				return
+			}
+
+			rawAccessToken, err := parseAuthHeader(r, accessTokenHeaderName, accessTokenHeaderFormat)
+			if err != nil {
+				l.Warn("invalid authentication header", zap.Error(err))
 				redirectToLogin(w, r)
 				return
 			}
@@ -127,8 +121,33 @@ func Authentication(
 				return
 			}
 
+			userInfo, err := provider.UserInfo(ctx, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: rawAccessToken}))
+			if err != nil {
+				l.Warn("failed to get user info from token", zap.Error(err))
+				redirectToLogin(w, r)
+				return
+			}
+
+			type userInfoClaims struct {
+				NrcOrganisation string `json:"nrcOrganisation"`
+			}
+
+			var info userInfoClaims
+			if err := userInfo.Claims(&info); err != nil {
+				l.Warn("failed to extract claims from user info", zap.Error(err))
+				redirectToLogin(w, r)
+				return
+			}
+
+			if len(info.NrcOrganisation) == 0 {
+				l.Warn("missing nrcOrganisation claim")
+				redirectToLogin(w, r)
+				return
+			}
+
 			session := auth.NewAuthenticatedSession(
 				tokenClaims.Groups,
+				info.NrcOrganisation,
 				tokenClaims.Email,
 				tokenClaims.Iss,
 				tokenClaims.Sub,
@@ -165,4 +184,27 @@ func validateTokenClaims(claims TokenClaims) error {
 		return fmt.Errorf("token is missing issued at")
 	}
 	return nil
+}
+
+func parseAuthHeader(r *http.Request, headerName, headerFormat string) (string, error) {
+	var rawToken string
+	if headerFormat == AuthHeaderFormatJWT {
+		// This is useful for scenarios where the token is a plain JWT.
+		// The auth header is in the format "<Header>: <token>"
+		rawToken = r.Header.Get(headerName)
+	} else if headerFormat == AuthHeaderFormatBearerToken {
+		// This is useful for scenarios where the token is a bearer token.
+		// And the auth header is in the format "<Header>: Bearer <jwt token>".
+		bearerTokenParts := strings.Split(r.Header.Get(headerName), " ")
+		if len(bearerTokenParts) != 2 {
+			return "", errors.New("invalid bearer token format. parts != 2")
+		}
+		if len(bearerTokenParts[0]) != 6 && bearerTokenParts[0] != "Bearer" {
+			return "", errors.New("invalid bearer token format. Does not start with 'Bearer'")
+		}
+		rawToken = bearerTokenParts[1]
+	} else {
+		return "", fmt.Errorf("invalid auth header format: %s", headerFormat)
+	}
+	return rawToken, nil
 }

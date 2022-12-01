@@ -35,8 +35,8 @@ resource "azurerm_postgresql_flexible_server" "postgres" {
 }
 
 resource "azurerm_postgresql_flexible_server_configuration" "extensions" {
-  provider = azurerm.runtime
+  provider  = azurerm.runtime
   server_id = azurerm_postgresql_flexible_server.postgres.id
-  name = "azure.extensions"
-  value = "uuid-ossp"
+  name      = "azure.extensions"
+  value     = "uuid-ossp"
 }
