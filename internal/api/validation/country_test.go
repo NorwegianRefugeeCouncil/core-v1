@@ -16,10 +16,10 @@ type CountryBuilder struct {
 func ValidCountry() *CountryBuilder {
 	return &CountryBuilder{
 		country: &api.Country{
-			ID:              "id",
-			Code:            "code",
-			Name:            "name",
-			NrcOrganisation: "nrc_organisation",
+			ID:       "id",
+			Code:     "code",
+			Name:     "name",
+			JwtGroup: "jwt_group",
 		},
 	}
 }
@@ -38,8 +38,8 @@ func (b *CountryBuilder) WithCode(code string) *CountryBuilder {
 	return b
 }
 
-func (b *CountryBuilder) WithNrcOrganisation(nrcOrganisation string) *CountryBuilder {
-	b.country.NrcOrganisation = nrcOrganisation
+func (b *CountryBuilder) WithJwtGroup(jwtGroup string) *CountryBuilder {
+	b.country.JwtGroup = jwtGroup
 	return b
 }
 
@@ -51,7 +51,7 @@ func (b *CountryBuilder) WithID(id string) *CountryBuilder {
 func TestValidateCountry(t *testing.T) {
 	namePath := validation.NewPath("name")
 	codePath := validation.NewPath("code")
-	nrcOrganisationPath := validation.NewPath("nrcOrganisation")
+	jwtGroupPath := validation.NewPath("jwtGroup")
 	weirdString := string([]byte{0x7f, 0x7f})
 	tests := []struct {
 		name    string
@@ -95,17 +95,17 @@ func TestValidateCountry(t *testing.T) {
 			country: ValidCountry().WithCode(bigstr(256)).Build(),
 			want:    validation.ErrorList{validation.TooLongMaxLength(codePath, bigstr(256), 255)},
 		}, {
-			name:    "missing nrc organisation",
-			country: ValidCountry().WithNrcOrganisation("").Build(),
-			want:    validation.ErrorList{validation.Required(nrcOrganisationPath, "nrc organisation is required")},
+			name:    "missing jwt group",
+			country: ValidCountry().WithJwtGroup("").Build(),
+			want:    validation.ErrorList{validation.Required(jwtGroupPath, "jwt group is required")},
 		}, {
-			name:    "invalid nrc organisation",
-			country: ValidCountry().WithNrcOrganisation("!!").Build(),
-			want:    validation.ErrorList{validation.Invalid(nrcOrganisationPath, "!!", "nrc organisation is invalid")},
+			name:    "invalid jwt group",
+			country: ValidCountry().WithJwtGroup("!!").Build(),
+			want:    validation.ErrorList{validation.Invalid(jwtGroupPath, "!!", "jwt group is invalid")},
 		}, {
-			name:    "nrc organisation too long",
-			country: ValidCountry().WithNrcOrganisation(bigstr(256)).Build(),
-			want:    validation.ErrorList{validation.TooLongMaxLength(nrcOrganisationPath, bigstr(256), 255)},
+			name:    "jwt group too long",
+			country: ValidCountry().WithJwtGroup(bigstr(256)).Build(),
+			want:    validation.ErrorList{validation.TooLongMaxLength(jwtGroupPath, bigstr(256), 255)},
 		},
 	}
 	for _, tt := range tests {
