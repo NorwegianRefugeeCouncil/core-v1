@@ -292,3 +292,13 @@ variable "service_plan_sku_name" {
 THe sku name of the app service plan. https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/service_plan#sku_name
 EOF
 }
+
+variable "dns_zone_name" {
+  type        = string
+  description = "The name of the dns zone."
+}
+
+variable "backend_host_name" {
+  type        = string
+  description = "The hostname of the backend."
+}

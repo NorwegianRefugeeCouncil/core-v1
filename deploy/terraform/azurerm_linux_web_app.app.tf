@@ -22,6 +22,15 @@ resource "azurerm_linux_web_app" "app" {
       docker_image_tag = var.container_image_tag
     }
     app_command_line = "serve"
+#    TODO: uncomment this block once the application is reachable from FrontDoor.
+#    Otherwise, the application will be have downtime.
+#    ip_restriction {
+#      service_tag = "AzureFrontDoor.Backend"
+#      headers {
+#        x_azure_fdid = [azurerm_cdn_frontdoor_profile.fd.resource_guid]
+#      }
+#      name = "Only Allow Azure Front Door"
+#    }
   }
   app_settings = {
     # See https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?pivots=container-linux#configure-port-number
@@ -42,6 +51,12 @@ resource "azurerm_linux_web_app" "app" {
     CORE_TOKEN_REFRESH_INTERVAL = "15m"
     CORE_TOKEN_REFRESH_URL      = "https://${var.app_name}-${var.environment}-${random_id.app_id.hex}.azurewebsites.net/.auth/refresh"
     CORE_LOG_LEVEL              = var.log_level
+
+#    TODO: replace CORE_{LOGIN,LOGOUT,REFRESH}_URL with this block once the application is reachable from FrontDoor
+#    CORE_LOGOUT_URL             = "https://${var.backend_host_name}/.auth/logout"
+#    CORE_LOGIN_URL              = "https://${var.backend_host_name}/.auth/login/oidc"
+#    CORE_TOKEN_REFRESH_URL      = "https://${var.backend_host_name}/.auth/refresh"
+
   }
   sticky_settings {
     app_setting_names = [
