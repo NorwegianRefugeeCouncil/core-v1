@@ -60,10 +60,10 @@ serve: prerequisites
 		--login-url="https://localhost:10000/oauth2/start" \
 		--token-refresh-url=https://localhost:10000/oauth2/start \
 		--token-refresh-interval=15m \
-		--hash-key-1="aEIA6jlgFkDCYdXZRpwi691Vp2nHwt9Q56nEHe+3Fic=" \
-		--block-key-1="C5UHC6SdjTN+GOYAKojrisLZeu/L0YfJfX5HPoBdPHA=" \
-		--hash-key-2="n4FAJnHxWvIDuJkK+7eVqnV0u8Wzpc0YHGgXtVfHJ60=" \
-		--block-key-2="Lor2S/RzvSk+OvKOQliYSW/a6uU4j5odMtfz7tVnUzU="
+		--hash-key-1="583ee90ea5821cb8c49ac0a8feeb7d090d597b1502fe653d68918122247d9675" \
+		--block-key-1="1e4254ae1f74406b853193466816ddffd592f8ef3bf9c2299735aec453a34239" \
+		--hash-key-2="28382c602c786507d5a286ff5890f1db12dc638355f50ab7cf91a946b07da670" \
+		--block-key-2="f735998d3da9d8a2b01cba8e9243605a7e02dd5daebefe62e23f2bc0b29787c2"
 .PHONY: bootstrap
 bootstrap:
 	@cd web/theme && yarn && yarn build
