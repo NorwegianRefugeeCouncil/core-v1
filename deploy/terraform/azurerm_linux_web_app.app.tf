@@ -116,6 +116,9 @@ resource "azapi_update_resource" "app_auth" {
         }
         httpSettings = {
           requireHttps = true
+          forwardProxy = {
+            convention = "Standard"
+          }
         }
       }
     }
