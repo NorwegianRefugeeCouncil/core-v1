@@ -99,7 +99,6 @@
                             </div>
                         </div>
 
-                        {{ $auth := .RequestContext.Auth }}
                         <div class="btn-group ms-5">
                             <button type="button"
                                     class="btn btn-link text-secondary dropdown-toggle text-decoration-none px-2"
@@ -109,15 +108,11 @@
                                 {{if .RequestContext.SelectedCountry}} {{.RequestContext.SelectedCountry.Name}} {{else}} Select Country {{end}}
                             </button>
                             <div class="dropdown-menu">
-                                {{range $ci, $c := .RequestContext.Countries}}
-                                    {{ if $auth.HasCountryLevelPermission $c.ID 1}}
-                                        <a class="dropdown-item" href="/countries/{{$c.ID}}/individuals">{{$c.Name}}</a>
-                                    {{end}}
+                                {{range $countryIndex, $country := .RequestContext.Countries}}
+                                    <a class="dropdown-item" href="/countries/{{.ID}}/individuals">{{$country.Name}}</a>
                                 {{end}}
-                                {{if $auth.IsGlobalAdmin}}
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="/countries">Edit Countries</a>
-                                {{end}}
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/countries">Edit Countries</a>
                             </div>
                         </div>
 

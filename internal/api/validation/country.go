@@ -24,7 +24,7 @@ func validateCountry(path *validation.Path, country *api.Country) validation.Err
 	allErrs := validation.ErrorList{}
 	allErrs = append(allErrs, validateCountryName(country.Name, path.Child("name"))...)
 	allErrs = append(allErrs, validateCountryCode(country.Code, path.Child("code"))...)
-	allErrs = append(allErrs, validateCountryNrcOgranisation(country.NrcOrganisation, path.Child("nrcOrganisation"))...)
+	allErrs = append(allErrs, validateCountryJWTGroup(country.JwtGroup, path.Child("jwtGroup"))...)
 	return allErrs
 }
 
@@ -42,9 +42,9 @@ var countryCodeMaxLength = 255
 var countryCodeMinLength = 2
 var countryCodePattern = regexp.MustCompile(`^[a-zA-Z0-9_-]+$`)
 
-var countryNrcOrganisationMaxLength = 255
-var countryNrcOrganisationMinLength = 1
-var countryNrcOrganisationPattern = regexp.MustCompile(`^[a-zA-Z0-9_-]+(?: [a-zA-Z0-9_-]+)*$`)
+var countryJwtGroupMaxLength = 255
+var countryJwtGroupMinLength = 1
+var countryJwtGroupPattern = regexp.MustCompile(`^[a-zA-Z0-9_-]+(?: [a-zA-Z0-9_-]+)*$`)
 
 func validateCountryName(name string, path *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
@@ -83,16 +83,16 @@ func validateCountryCode(code string, path *validation.Path) validation.ErrorLis
 	return allErrs
 }
 
-func validateCountryNrcOgranisation(nrcOrganisation string, path *validation.Path) validation.ErrorList {
+func validateCountryJWTGroup(jwtGroup string, path *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
-	if nrcOrganisation == "" {
-		allErrs = append(allErrs, validation.Required(path, "nrc organisation is required"))
-	} else if len(nrcOrganisation) > countryNrcOrganisationMaxLength {
-		allErrs = append(allErrs, validation.TooLongMaxLength(path, nrcOrganisation, countryNrcOrganisationMaxLength))
-	} else if len(nrcOrganisation) < countryNrcOrganisationMinLength {
-		allErrs = append(allErrs, validation.TooShortMinLength(path, nrcOrganisation, countryNrcOrganisationMinLength))
-	} else if !countryNrcOrganisationPattern.MatchString(nrcOrganisation) {
-		allErrs = append(allErrs, validation.Invalid(path, nrcOrganisation, "nrc organisation is invalid"))
+	if jwtGroup == "" {
+		allErrs = append(allErrs, validation.Required(path, "jwt group is required"))
+	} else if len(jwtGroup) > countryJwtGroupMaxLength {
+		allErrs = append(allErrs, validation.TooLongMaxLength(path, jwtGroup, countryJwtGroupMaxLength))
+	} else if len(jwtGroup) < countryJwtGroupMinLength {
+		allErrs = append(allErrs, validation.TooShortMinLength(path, jwtGroup, countryJwtGroupMinLength))
+	} else if !countryJwtGroupPattern.MatchString(jwtGroup) {
+		allErrs = append(allErrs, validation.Invalid(path, jwtGroup, "jwt group is invalid"))
 	}
 	return allErrs
 }
