@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/coreos/go-oidc/v3/oidc"
+	"github.com/gorilla/sessions"
 	"github.com/nrc-no/notcore/internal/auth"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
@@ -57,6 +58,7 @@ func Authentication(
 	accessTokenHeaderFormat string,
 	provider *oidc.Provider,
 	idTokenVerifier IDTokenVerifier,
+	sessionStore *sessions.CookieStore,
 	loginURL string,
 ) func(handler http.Handler) http.Handler {
 
@@ -80,13 +82,6 @@ func Authentication(
 			var rawIdToken string
 
 			rawIdToken, err := parseAuthHeader(r, idTokenHeaderName, idTokenHeaderFormat)
-			if err != nil {
-				l.Warn("invalid authentication header", zap.Error(err))
-				redirectToLogin(w, r)
-				return
-			}
-
-			rawAccessToken, err := parseAuthHeader(r, accessTokenHeaderName, accessTokenHeaderFormat)
 			if err != nil {
 				l.Warn("invalid authentication header", zap.Error(err))
 				redirectToLogin(w, r)
@@ -121,33 +116,16 @@ func Authentication(
 				return
 			}
 
-			userInfo, err := provider.UserInfo(ctx, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: rawAccessToken}))
+			userInfoClaims, err := getUserInfoClaims(sessionStore, provider, r, w, accessTokenHeaderName, accessTokenHeaderFormat)
 			if err != nil {
-				l.Warn("failed to get user info from token", zap.Error(err))
+				l.Warn("failed to get user info claims", zap.Error(err))
 				redirectToLogin(w, r)
 				return
 			}
 
-			type userInfoClaims struct {
-				NrcOrganisation string `json:"nrcOrganisation"`
-			}
-
-			var info userInfoClaims
-			if err := userInfo.Claims(&info); err != nil {
-				l.Warn("failed to extract claims from user info", zap.Error(err))
-				redirectToLogin(w, r)
-				return
-			}
-
-			if len(info.NrcOrganisation) == 0 {
-				l.Warn("missing nrcOrganisation claim")
-				redirectToLogin(w, r)
-				return
-			}
-
-			session := auth.NewAuthenticatedSession(
+			userSession := auth.NewAuthenticatedSession(
 				tokenClaims.Groups,
-				info.NrcOrganisation,
+				userInfoClaims.NrcOrganisation,
 				tokenClaims.Email,
 				tokenClaims.Iss,
 				tokenClaims.Sub,
@@ -155,12 +133,16 @@ func Authentication(
 				time.Unix(tokenClaims.Iat, 0),
 			)
 
-			ctx = utils.WithSession(ctx, session)
+			ctx = utils.WithSession(ctx, userSession)
 			r = r.WithContext(ctx)
 
 			h.ServeHTTP(w, r)
 		})
 	}
+}
+
+type userInfoClaims struct {
+	NrcOrganisation string `json:"nrcOrganisation"`
 }
 
 // validateTokenClaims will validate the claims of a token.
@@ -184,6 +166,55 @@ func validateTokenClaims(claims TokenClaims) error {
 		return fmt.Errorf("token is missing issued at")
 	}
 	return nil
+}
+
+func getUserInfoClaims(
+	sessionStore sessions.Store,
+	provider *oidc.Provider,
+	r *http.Request,
+	w http.ResponseWriter,
+	accessTokenHeaderName,
+	accessTokenHeaderFormat string,
+) (*userInfoClaims, error) {
+
+	ctx := r.Context()
+
+	cookieSession, _ := sessionStore.Get(r, "core-session")
+
+	nrcOrganisationInterface, ok := cookieSession.Values["nrcOrganisation"]
+	if ok {
+		nrcOrganisation, ok := nrcOrganisationInterface.(string)
+		if ok {
+			return &userInfoClaims{NrcOrganisation: nrcOrganisation}, nil
+		}
+	}
+
+	rawAccessToken, err := parseAuthHeader(r, accessTokenHeaderName, accessTokenHeaderFormat)
+	if err != nil {
+		return nil, err
+	}
+
+	userInfo, err := provider.UserInfo(ctx, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: rawAccessToken}))
+	if err != nil {
+		return nil, err
+	}
+
+	var info userInfoClaims
+	if err := userInfo.Claims(&info); err != nil {
+		return nil, err
+	}
+
+	if len(info.NrcOrganisation) == 0 {
+		return nil, fmt.Errorf("missing nrcOrganisation claim")
+	}
+
+	cookieSession.Values["nrcOrganisation"] = info.NrcOrganisation
+	if err := cookieSession.Save(r, w); err != nil {
+		return nil, err
+	}
+
+	return &info, nil
+
 }
 
 func parseAuthHeader(r *http.Request, headerName, headerFormat string) (string, error) {

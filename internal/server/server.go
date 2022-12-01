@@ -2,12 +2,14 @@ package server
 
 import (
 	"context"
+	"encoding/hex"
 	"net"
 	"net/http"
 	"time"
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
@@ -69,6 +71,38 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 	})
 	idTokenVerifier := middleware.NewIDTokenVerifier(oidcVerifier)
 
+	hashKey1, err := hex.DecodeString(o.HashKey1)
+	if err != nil {
+		l.Error("failed to decode hash key 1", zap.Error(err))
+		return nil, err
+	}
+
+	blockKey1, err := hex.DecodeString(o.BlockKey1)
+	if err != nil {
+		l.Error("failed to decode block key 1", zap.Error(err))
+		return nil, err
+	}
+
+	hashKey2, err := hex.DecodeString(o.HashKey2)
+	if err != nil {
+		l.Error("failed to decode hash key 2", zap.Error(err))
+		return nil, err
+	}
+
+	blockKey2, err := hex.DecodeString(o.BlockKey2)
+	if err != nil {
+		l.Error("failed to decode block key 2", zap.Error(err))
+		return nil, err
+	}
+
+	sessionStore := sessions.NewCookieStore(
+		hashKey1,
+		blockKey1,
+		hashKey2,
+		blockKey2,
+	)
+	sessionStore.MaxAge(60 * 60) // 1 hour
+
 	// build the router
 	s.router = buildRouter(
 		individualRepo,
@@ -81,6 +115,7 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 		o.LoginURL,
 		oidcProvider,
 		idTokenVerifier,
+		sessionStore,
 		tpl,
 	)
 
