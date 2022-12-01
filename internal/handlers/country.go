@@ -15,13 +15,14 @@ import (
 func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo) http.Handler {
 
 	const (
-		templateName       = "country.gohtml"
-		newId              = "new"
-		pathParamCountryID = "country_id"
-		viewParamCountry   = "Country"
-		formParamName      = "Name"
-		formParamCode      = "Code"
-		formParamJwtGroup  = "JwtGroup"
+		templateName             = "country.gohtml"
+		newId                    = "new"
+		pathParamCountryID       = "country_id"
+		viewParamCountry         = "Country"
+		formParamName            = "Name"
+		formParamCode            = "Code"
+		formParamJwtGroup        = "JwtGroup"
+		formParamNrcOrganisation = "NrcOrganisation"
 	)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -60,6 +61,7 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 		country.Name = strings.TrimSpace(r.FormValue(formParamName))
 		country.Code = strings.TrimSpace(strings.ToLower(r.FormValue(formParamCode)))
 		country.JwtGroup = strings.TrimSpace(r.FormValue(formParamJwtGroup))
+		country.NrcOrganisation = strings.TrimSpace(r.FormValue(formParamNrcOrganisation))
 
 		country, err = repo.Put(r.Context(), country)
 		if err != nil {

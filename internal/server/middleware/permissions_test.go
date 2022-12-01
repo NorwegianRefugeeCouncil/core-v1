@@ -13,6 +13,7 @@ func Test_parsePermissions(t *testing.T) {
 		allCountries     []*api.Country
 		globalAdminGroup string
 		userGroups       []string
+		nrcOrganisation  string
 	}
 	tests := []struct {
 		name string
@@ -25,6 +26,7 @@ func Test_parsePermissions(t *testing.T) {
 				allCountries:     []*api.Country{},
 				globalAdminGroup: "global-admin",
 				userGroups:       []string{"global-admin"},
+				nrcOrganisation:  "NRC Uganda",
 			},
 			want: &parsedPermissions{
 				isGlobalAdmin: true,
@@ -39,6 +41,7 @@ func Test_parsePermissions(t *testing.T) {
 				},
 				globalAdminGroup: "global-admin",
 				userGroups:       []string{"global-admin", "country-1"},
+				nrcOrganisation:  "NRC Uganda",
 			},
 			want: &parsedPermissions{
 				isGlobalAdmin: true,
@@ -53,6 +56,7 @@ func Test_parsePermissions(t *testing.T) {
 				},
 				globalAdminGroup: "global-admin",
 				userGroups:       []string{"country-1"},
+				nrcOrganisation:  "NRC Uganda",
 			},
 			want: &parsedPermissions{
 				isGlobalAdmin: false,
@@ -64,6 +68,7 @@ func Test_parsePermissions(t *testing.T) {
 				allCountries:     []*api.Country{},
 				globalAdminGroup: "global-admin",
 				userGroups:       []string{"country-1"},
+				nrcOrganisation:  "NRC Uganda",
 			},
 			want: &parsedPermissions{
 				isGlobalAdmin: false,
@@ -78,6 +83,7 @@ func Test_parsePermissions(t *testing.T) {
 				},
 				globalAdminGroup: "global-admin",
 				userGroups:       []string{"country-3"},
+				nrcOrganisation:  "NRC Uganda",
 			},
 			want: &parsedPermissions{
 				isGlobalAdmin: false,
@@ -87,7 +93,7 @@ func Test_parsePermissions(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := parsePermissions(tt.args.allCountries, tt.args.globalAdminGroup, tt.args.userGroups); !reflect.DeepEqual(got, tt.want) {
+			if got := parsePermissions(tt.args.allCountries, tt.args.globalAdminGroup, tt.args.userGroups, tt.args.nrcOrganisation); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("parsePermissions() = %v, want %v", got, tt.want)
 			}
 		})
