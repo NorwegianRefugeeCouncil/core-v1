@@ -108,8 +108,8 @@
                                 {{if .RequestContext.SelectedCountry}} {{.RequestContext.SelectedCountry.Name}} {{else}} Select Country {{end}}
                             </button>
                             <div class="dropdown-menu">
-                                {{range $countryIndex, $country := .RequestContext.Countries}}
-                                    <a class="dropdown-item" href="/countries/{{.ID}}/individuals">{{$country.Name}}</a>
+                                {{range $country := .RequestContext.Auth.GetCountryIDsWithReadWritePermissions}}
+                                    <a class="dropdown-item" href="/countries/{{$country}}/individuals">{{$country}}</a>
                                 {{end}}
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="/countries">Edit Countries</a>
