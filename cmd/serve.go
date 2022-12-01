@@ -16,31 +16,35 @@ import (
 )
 
 const (
-	envDbDSN                = "CORE_DB_DSN"
-	envDbDriver             = "CORE_DB_DRIVER"
-	envListenAddress        = "CORE_LISTEN_ADDRESS"
-	envLogoutURL            = "CORE_LOGOUT_URL"
-	envLoginURL             = "CORE_LOGIN_URL"
-	envTokenRefreshURL      = "CORE_TOKEN_REFRESH_URL"
-	envTokenRefreshInterval = "CORE_TOKEN_REFRESH_INTERVAL"
-	envJwtGlobalAdminGroup  = "CORE_JWT_GLOBAL_ADMIN_GROUP"
-	envAuthHeaderName       = "CORE_AUTH_HEADER_NAME"
-	envAuthHeaderFormat     = "CORE_AUTH_HEADER_FORMAT"
-	envOidcIssuerURL        = "CORE_OIDC_ISSUER"
-	envOidcClientID         = "CORE_OAUTH_CLIENT_ID"
+	envDbDSN                   = "CORE_DB_DSN"
+	envDbDriver                = "CORE_DB_DRIVER"
+	envListenAddress           = "CORE_LISTEN_ADDRESS"
+	envLogoutURL               = "CORE_LOGOUT_URL"
+	envLoginURL                = "CORE_LOGIN_URL"
+	envTokenRefreshURL         = "CORE_TOKEN_REFRESH_URL"
+	envTokenRefreshInterval    = "CORE_TOKEN_REFRESH_INTERVAL"
+	envJwtGlobalAdminGroup     = "CORE_JWT_GLOBAL_ADMIN_GROUP"
+	envIdTokenHeaderName       = "CORE_ID_TOKEN_HEADER_NAME"
+	envIdTokenHeaderFormat     = "CORE_ID_TOKEN_HEADER_FORMAT"
+	envAccessTokenHeaderName   = "CORE_ACCESS_TOKEN_HEADER_NAME"
+	envAccessTokenHeaderFormat = "CORE_ACCESS_TOKEN_HEADER_FORMAT"
+	envOidcIssuerURL           = "CORE_OIDC_ISSUER"
+	envOidcClientID            = "CORE_OAUTH_CLIENT_ID"
 
-	flagDbDSN                = "db-dsn"
-	flagDbDriver             = "db-driver"
-	flagListenAddress        = "listen-address"
-	flagLogoutURL            = "logout-url"
-	flagLoginURL             = "login-url"
-	flagTokenRefreshURL      = "token-refresh-url"
-	flagTokenRefreshInterval = "token-refresh-interval"
-	flagJwtGlobalAdminGroup  = "jwt-global-admin-group"
-	flagAuthHeaderName       = "auth-header-name"
-	flagAuthHeaderFormat     = "auth-header-format"
-	flagOidcIssuerURL        = "oidc-issuer"
-	flagOidcClientID         = "oauth-client-id"
+	flagDbDSN                   = "db-dsn"
+	flagDbDriver                = "db-driver"
+	flagListenAddress           = "listen-address"
+	flagLogoutURL               = "logout-url"
+	flagLoginURL                = "login-url"
+	flagTokenRefreshURL         = "token-refresh-url"
+	flagTokenRefreshInterval    = "token-refresh-interval"
+	flagJwtGlobalAdminGroup     = "jwt-global-admin-group"
+	flagIdTokenHeaderName       = "id-token-header-name"
+	flagIdTokenHeaderFormat     = "id-token-header-format"
+	flagAccessTokenHeaderName   = "access-token-header-name"
+	flagAccessTokenHeaderFormat = "access-token-header-format"
+	flagOidcIssuerURL           = "oidc-issuer"
+	flagOidcClientID            = "oauth-client-id"
 )
 
 // serveCmd represents the serve command
@@ -108,14 +112,24 @@ var serveCmd = &cobra.Command{
 			return fmt.Errorf("--%s is invalid: %w", flagTokenRefreshInterval, err)
 		}
 
-		authHeaderName := getFlagOrEnv(cmd, flagAuthHeaderName, envAuthHeaderName)
-		if len(authHeaderName) == 0 {
-			return fmt.Errorf("--%s is required", flagAuthHeaderName)
+		idTokenHeaderName := getFlagOrEnv(cmd, flagIdTokenHeaderName, envIdTokenHeaderName)
+		if len(idTokenHeaderName) == 0 {
+			return fmt.Errorf("--%s is required", flagIdTokenHeaderName)
 		}
 
-		authHeaderFormat := getFlagOrEnv(cmd, flagAuthHeaderFormat, envAuthHeaderFormat)
-		if len(authHeaderFormat) == 0 {
-			return fmt.Errorf("--%s is required", flagAuthHeaderFormat)
+		idTokenHeaderFormat := getFlagOrEnv(cmd, flagIdTokenHeaderFormat, envIdTokenHeaderFormat)
+		if len(idTokenHeaderFormat) == 0 {
+			return fmt.Errorf("--%s is required", flagIdTokenHeaderFormat)
+		}
+
+		accessTokenHeaderName := getFlagOrEnv(cmd, flagAccessTokenHeaderName, envAccessTokenHeaderName)
+		if len(idTokenHeaderName) == 0 {
+			return fmt.Errorf("--%s is required", flagAccessTokenHeaderName)
+		}
+
+		accessTokenHeaderFormat := getFlagOrEnv(cmd, flagAccessTokenHeaderFormat, envAccessTokenHeaderFormat)
+		if len(idTokenHeaderFormat) == 0 {
+			return fmt.Errorf("--%s is required", flagAccessTokenHeaderFormat)
 		}
 
 		oidcIssuerURL := getFlagOrEnv(cmd, flagOidcIssuerURL, envOidcIssuerURL)
@@ -129,18 +143,20 @@ var serveCmd = &cobra.Command{
 		}
 
 		options := server.Options{
-			Address:              listenAddress,
-			DatabaseDriver:       dbDriver,
-			DatabaseDSN:          dbDsn,
-			LogoutURL:            logoutURL,
-			LoginURL:             loginURL,
-			TokenRefreshURL:      refreshURL,
-			TokenRefreshInterval: tokenRefreshInterval,
-			JwtGroupGlobalAdmin:  jwtGroupGlobalAdmin,
-			AuthHeaderName:       authHeaderName,
-			AuthHeaderFormat:     authHeaderFormat,
-			OIDCIssuerURL:        oidcIssuerURL,
-			OAuthClientID:        oauthClientID,
+			Address:                 listenAddress,
+			DatabaseDriver:          dbDriver,
+			DatabaseDSN:             dbDsn,
+			LogoutURL:               logoutURL,
+			LoginURL:                loginURL,
+			TokenRefreshURL:         refreshURL,
+			TokenRefreshInterval:    tokenRefreshInterval,
+			JwtGroupGlobalAdmin:     jwtGroupGlobalAdmin,
+			IdTokenAuthHeaderName:   idTokenHeaderName,
+			IdTokenAuthHeaderFormat: idTokenHeaderFormat,
+			AccessTokenHeaderName:   accessTokenHeaderName,
+			AccessTokenHeaderFormat: accessTokenHeaderFormat,
+			OIDCIssuerURL:           oidcIssuerURL,
+			OAuthClientID:           oauthClientID,
 		}
 
 		srv, err := options.New(ctx)
@@ -206,8 +222,8 @@ This group is used to identify the global admin group. If the user is part of th
 as having Global Administrator permissions. 
 `, envJwtGlobalAdminGroup)))
 
-	serveCmd.PersistentFlags().String(flagAuthHeaderName, "", cleanDoc(fmt.Sprintf(`
-auth header name. Can also be set with %[2]s
+	serveCmd.PersistentFlags().String(flagIdTokenHeaderName, "", cleanDoc(fmt.Sprintf(`
+id token header name. Can also be set with %[2]s
 
 Different deployment scenarios exist for setting up an authentication proxy.
 Usually, a proxy will forward the authorization information via a header. 
@@ -215,10 +231,10 @@ This parameter is used to specify the name of the header that contains the autho
 
 For example
 	--%[1]s="X-Forwarded-ID-Token"
-`, flagAuthHeaderName, envAuthHeaderName)))
+`, flagIdTokenHeaderName, envIdTokenHeaderName)))
 
-	serveCmd.PersistentFlags().String(flagAuthHeaderFormat, "", cleanDoc(fmt.Sprintf(`
-authentication header format. Can also be set with %s. 
+	serveCmd.PersistentFlags().String(flagIdTokenHeaderFormat, "", cleanDoc(fmt.Sprintf(`
+id token header format. Can also be set with %s. 
 Allowed values are 
 - "%s"
 - "%s"
@@ -232,7 +248,37 @@ The application will expect a header like "<HeaderName>: <Token>".
 A value of "%[3]s" means that the header value is a JWT token prefixed with "bearer".
 The application will expect a header like "<HeaderName>: bearer <Token>".
 `,
-		envAuthHeaderFormat,
+		envIdTokenHeaderFormat,
+		middleware.AuthHeaderFormatJWT,
+		middleware.AuthHeaderFormatBearerToken)))
+
+	serveCmd.PersistentFlags().String(flagAccessTokenHeaderName, "", cleanDoc(fmt.Sprintf(`
+access token header name. Can also be set with %[2]s
+
+Different deployment scenarios exist for setting up an authentication proxy.
+Usually, a proxy will forward the authorization information via a header. 
+This parameter is used to specify the name of the header that contains the authorization information.
+
+For example
+	--%[1]s="X-Forwarded-Access-Token"
+`, flagIdTokenHeaderName, envIdTokenHeaderName)))
+
+	serveCmd.PersistentFlags().String(flagAccessTokenHeaderFormat, "", cleanDoc(fmt.Sprintf(`
+access token header format. Can also be set with %s. 
+Allowed values are 
+- "%s"
+- "%s"
+
+Depending on the authentication proxy, the value of the authentication header can be in different formats.
+This parameter is used to specify the expected format of the authentication header.
+
+A value of "%[2]s" means that the header value is a JWT token.
+The application will expect a header like "<HeaderName>: <Token>".
+
+A value of "%[3]s" means that the header value is a JWT token prefixed with "bearer".
+The application will expect a header like "<HeaderName>: bearer <Token>".
+`,
+		envIdTokenHeaderFormat,
 		middleware.AuthHeaderFormatJWT,
 		middleware.AuthHeaderFormatBearerToken)))
 

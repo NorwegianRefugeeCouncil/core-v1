@@ -50,8 +50,10 @@ serve: prerequisites
 		--db-dsn=postgres://postgres:postgres@localhost:5432/core?sslmode=disable \
 		--log-level=debug \
 		--jwt-global-admin-group="NRC_Core_GlobalAdmin" \
-		--auth-header-name="Authorization" \
-		--auth-header-format="bearer-token" \
+		--id-token-header-name="Authorization" \
+		--id-token-header-format="bearer-token" \
+		--access-token-header-name="X-Forwarded-Access-Token" \
+		--access-token-header-format="jwt" \
 		--oidc-issuer="https://localhost:10000" \
 		--oauth-client-id="foo" \
 		--logout-url="https://localhost:10000/oauth2/sign_out?rd=https%3A%2F%2Flocalhost:10000%2Fsession%2Fend" \

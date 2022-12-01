@@ -11,18 +11,20 @@ import (
 )
 
 type Options struct {
-	Address              string
-	DatabaseDriver       string
-	DatabaseDSN          string
-	LogoutURL            string
-	LoginURL             string
-	JwtGroupGlobalAdmin  string
-	AuthHeaderName       string
-	AuthHeaderFormat     string
-	OIDCIssuerURL        string
-	OAuthClientID        string
-	TokenRefreshURL      string
-	TokenRefreshInterval time.Duration
+	Address                 string
+	DatabaseDriver          string
+	DatabaseDSN             string
+	LogoutURL               string
+	LoginURL                string
+	JwtGroupGlobalAdmin     string
+	IdTokenAuthHeaderName   string
+	IdTokenAuthHeaderFormat string
+	AccessTokenHeaderName   string
+	AccessTokenHeaderFormat string
+	OIDCIssuerURL           string
+	OAuthClientID           string
+	TokenRefreshURL         string
+	TokenRefreshInterval    time.Duration
 }
 
 var globalAdminGroupRegex = regexp.MustCompile(`^[A-Za-z0-9_-]+(?: +[A-Za-z0-9_-]+)*$`)
@@ -62,11 +64,11 @@ func (o Options) validate() error {
 	if !globalAdminGroupRegex.MatchString(o.JwtGroupGlobalAdmin) {
 		return fmt.Errorf("JWT group global admin is invalid")
 	}
-	if !isValidRFC7230HeaderName(o.AuthHeaderName) {
+	if !isValidRFC7230HeaderName(o.IdTokenAuthHeaderName) {
 		return fmt.Errorf("auth header name is invalid")
 	}
-	if o.AuthHeaderFormat != middleware.AuthHeaderFormatJWT &&
-		o.AuthHeaderFormat != middleware.AuthHeaderFormatBearerToken {
+	if o.IdTokenAuthHeaderFormat != middleware.AuthHeaderFormatJWT &&
+		o.IdTokenAuthHeaderFormat != middleware.AuthHeaderFormatBearerToken {
 		return fmt.Errorf("auth header format is invalid. must be one of: %s, %s",
 			middleware.AuthHeaderFormatJWT,
 			middleware.AuthHeaderFormatBearerToken)
