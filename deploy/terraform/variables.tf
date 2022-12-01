@@ -302,3 +302,8 @@ variable "backend_host_name" {
   type        = string
   description = "The hostname of the backend."
 }
+
+variable "frontdoor_sku_name" {
+  type       = string
+  default    = "The sku name of the frontdoor."
+}
