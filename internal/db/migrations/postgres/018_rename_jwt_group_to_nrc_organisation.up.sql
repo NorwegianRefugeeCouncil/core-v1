@@ -1,0 +1,1 @@
+ALTER TABLE countries RENAME COLUMN jwt_group TO nrc_organisation;

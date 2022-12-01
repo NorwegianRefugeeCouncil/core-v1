@@ -45,28 +45,27 @@
                             </div>
                             <!-- End of Name -->
 
-                            <!-- JWT Group -->
+                            <!-- NRC Organisation -->
                             <div class="form mb-3">
-                                <label id="JwtGroupLabel"
-                                       for="JwtGroup"
+                                <label id="NrcOrganisationLabel"
+                                       for="NrcOrganisation"
                                        class="form-label">
-                                    JWT Group
+                                    NRC Organisation
                                 </label>
-                                <input id="JwtGroup"
-                                       name="JwtGroup"
+                                <input id="NrcOrganisation"
+                                       name="NrcOrganisation"
                                        class="form-control"
-                                       aria-describedby="JwtGroupHelp"
-                                       aria-labelledby="JwtGroupLabel"
-                                       value="{{.Country.JwtGroup}}">
-
+                                       aria-describedby="NrcOrganisationHelp"
+                                       aria-labelledby="NrcOrganisationLabel"
+                                       value="{{.Country.NrcOrganisation}}">
                                 <div class="form-text"
-                                     id="JwtGroupHelp">
-                                        The authentication group that this country is associated with.
-                                        Users that belong to this group will be able to access this country's
+                                     id="NrcOrganisationHelp">
+                                        The NRC Organisation that this country is associated with.
+                                        Users that belong to this NRC Organisation will be able to access this country's
                                         data.
                                 </div>
                             </div>
-                            <!-- End of JWT Group -->
+                            <!-- End of NRC Organisation -->
                         </div>
                         <div class="card-footer">
                             <button class="btn btn-primary" type="submit">Save</button>

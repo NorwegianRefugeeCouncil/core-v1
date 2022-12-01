@@ -9,7 +9,7 @@
     "groups": [
       "NRC_Core_GlobalAdmin"
     ],
-    "nrcOrganisation": "NRC_Uganda"
+    "nrcOrganisation": "NRC Head Office"
   },
   {
     "id": "EASY_TO_REMEMBER_LOGIN__country",
@@ -19,9 +19,8 @@
     "nickname": "cu",
     "password": "123",
     "groups": [
-      "NRC_Core_Uganda"
     ],
-    "nrcOrganisation": "NRC_Uganda"
+    "nrcOrganisation": "NRC Uganda"
   },
   {
     "id": "EASY_TO_REMEMBER_LOGIN__none",
@@ -31,7 +30,7 @@
     "nickname": "ncu",
     "password": "123",
     "groups": [],
-    "nrcOrganisation": "NRC_Uganda"
+    "nrcOrganisation": "none"
   },
   {
     "id": "SIMPLE_OIDC_USER_HARLEY",
@@ -43,7 +42,7 @@
     "groups": [
       "NRC_Core_GlobalAdmin"
     ],
-    "nrcOrganisation": "NRC_Uganda"
+    "nrcOrganisation": "NRC Head Office"
   },
   {
     "id": "SIMPLE_OIDC_USER_BARB",
@@ -53,9 +52,8 @@
     "nickname": "barb",
     "password": "Password1!",
     "groups": [
-      "NRC_Core_Uganda"
     ],
-    "nrcOrganisation": "NRC_Uganda"
+    "nrcOrganisation": "NRC Uganda"
   },
   {
     "id": "SIMPLE_OIDC_USER_QUINN",
@@ -65,9 +63,8 @@
     "nickname": "quinn",
     "password": "Password1!",
     "groups": [
-      "NRC_Core_Colombia"
     ],
-    "nrcOrganisation": "NRC_Colombia"
+    "nrcOrganisation": "NRC Colombia"
   },
   {
     "id": "SIMPLE_OIDC_USER_SIM",
@@ -77,10 +74,8 @@
     "nickname": "sim",
     "password": "Password1!",
     "groups": [
-      "NRC_Core_Colombia",
-      "NRC_Core_Uganda"
     ],
-    "nrcOrganisation": "NRC_Colombia"
+    "nrcOrganisation": "NRC Colombia"
   },
   {
     "id": "SIMPLE_OIDC_USER_PHILLIE",
@@ -90,9 +85,6 @@
     "nickname": "phillie",
     "password": "Password1!",
     "groups": [
-      "Fake",
-      "Group",
-      "Here"
     ],
     "nrcOrganisation": "none"
   }

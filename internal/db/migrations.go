@@ -39,6 +39,7 @@ var migrations = []migration{
 	migrationFromFile("015_rename_gender"),
 	migrationFromFile("016_add_displacement_status_comment_field"),
 	migrationFromFile("017_add_office_field"),
+	migrationFromFile("018_rename_jwt_group_to_nrc_organisation"),
 }
 
 // Migrate runs the migrations on the database.
