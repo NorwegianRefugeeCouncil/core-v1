@@ -100,9 +100,6 @@
                         </div>
 
                         {{ $auth := .RequestContext.Auth }}
-                        {{$countries := $auth.GetCountryIDsWithReadWritePermissions}}
-                        {{$countryNumber := len $countries}}
-                        {{if not (eq $countryNumber 1)}}
                         <div class="btn-group ms-5">
                             <button type="button"
                                     class="btn btn-link text-secondary dropdown-toggle text-decoration-none px-2"
@@ -123,7 +120,6 @@
                                 {{end}}
                             </div>
                         </div>
-                        {{end}}
 
                         {{ if logoutURL}}
                             <a title="Logout" class="nav-link order-last ms-5" href="{{logoutURL}}">
