@@ -21,7 +21,6 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 		viewParamCountry         = "Country"
 		formParamName            = "Name"
 		formParamCode            = "Code"
-		formParamJwtGroup        = "JwtGroup"
 		formParamNrcOrganisation = "NrcOrganisation"
 	)
 
@@ -60,7 +59,6 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 		}
 		country.Name = strings.TrimSpace(r.FormValue(formParamName))
 		country.Code = strings.TrimSpace(strings.ToLower(r.FormValue(formParamCode)))
-		country.JwtGroup = strings.TrimSpace(r.FormValue(formParamJwtGroup))
 		country.NrcOrganisation = strings.TrimSpace(r.FormValue(formParamNrcOrganisation))
 
 		country, err = repo.Put(r.Context(), country)

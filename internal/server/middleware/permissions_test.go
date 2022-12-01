@@ -36,11 +36,11 @@ func Test_parsePermissions(t *testing.T) {
 			name: "global admin. with countries defined",
 			args: args{
 				allCountries: []*api.Country{
-					{ID: "1", JwtGroup: "country-1", NrcOrganisation: "country 1"},
-					{ID: "2", JwtGroup: "country-2", NrcOrganisation: "country 2"},
+					{ID: "1", NrcOrganisation: "country 1"},
+					{ID: "2", NrcOrganisation: "country 2"},
 				},
 				globalAdminGroup: "global-admin",
-				userGroups:       []string{"global-admin", "country-1"},
+				userGroups:       []string{"global-admin"},
 				nrcOrganisation:  "country 1",
 			},
 			want: &parsedPermissions{
@@ -51,11 +51,11 @@ func Test_parsePermissions(t *testing.T) {
 			name: "country access only",
 			args: args{
 				allCountries: []*api.Country{
-					{ID: "1", JwtGroup: "country-1", NrcOrganisation: "country 1"},
-					{ID: "2", JwtGroup: "country-2", NrcOrganisation: "country 2"},
+					{ID: "1", NrcOrganisation: "country 1"},
+					{ID: "2", NrcOrganisation: "country 2"},
 				},
 				globalAdminGroup: "global-admin",
-				userGroups:       []string{"country-1"},
+				userGroups:       []string{},
 				nrcOrganisation:  "country 1",
 			},
 			want: &parsedPermissions{
@@ -67,7 +67,7 @@ func Test_parsePermissions(t *testing.T) {
 			args: args{
 				allCountries:     []*api.Country{},
 				globalAdminGroup: "global-admin",
-				userGroups:       []string{"country-1"},
+				userGroups:       []string{},
 				nrcOrganisation:  "NRC Uganda",
 			},
 			want: &parsedPermissions{
@@ -78,12 +78,12 @@ func Test_parsePermissions(t *testing.T) {
 			name: "country access only. no matching countries",
 			args: args{
 				allCountries: []*api.Country{
-					{ID: "1", JwtGroup: "country-1"},
-					{ID: "2", JwtGroup: "country-2"},
+					{ID: "1", NrcOrganisation: "country 1"},
+					{ID: "2", NrcOrganisation: "country 2"},
 				},
 				globalAdminGroup: "global-admin",
-				userGroups:       []string{"country-3"},
-				nrcOrganisation:  "NRC Uganda",
+				userGroups:       []string{},
+				nrcOrganisation:  "country 3",
 			},
 			want: &parsedPermissions{
 				isGlobalAdmin: false,
