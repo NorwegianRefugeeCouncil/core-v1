@@ -21,39 +21,48 @@ func generateUniqueDownloadFileNameForCountryAndExtension(selectedCountryID stri
 	return fileName
 }
 
-func assertValidFileNameForCountry(fileName, wantCountryID string) (string, error) {
+func assertValidFileNameForCountry(fileName, wantCountryID string) (string, string, error) {
 	parts := strings.Split(fileName, "_")
 	if len(parts) != 2 {
-		return "", fmt.Errorf("invalid file name")
+		return "", "", fmt.Errorf("invalid file name")
 	}
 	countryID, err := uuid.Parse(parts[0])
 	if err != nil {
-		return "", fmt.Errorf("invalid file name")
+		return "", "", fmt.Errorf("invalid file name")
 	}
 	if countryID.String() != wantCountryID {
-		return "", fmt.Errorf("invalid file name")
+		return "", "", fmt.Errorf("invalid file name")
 	}
 
 	secondParts := strings.Split(parts[1], ".")
 	if len(secondParts) != 2 {
-		return "", fmt.Errorf("invalid file name")
+		return "", "", fmt.Errorf("invalid file name")
 	}
 
 	ext := secondParts[1]
 	if !isValidFileExtension(ext) {
-		return "", fmt.Errorf("invalid file name")
+		return "", "", fmt.Errorf("invalid file name")
 	}
 
 	_, err = uuid.Parse(secondParts[0])
 	if err != nil {
-		return "", fmt.Errorf("invalid file name")
+		return "", "", fmt.Errorf("invalid file name")
 	}
 
-	return "download." + ext, nil
+	return "download." + ext, ext, nil
 }
 
 func isValidFileExtension(ext string) bool {
 	return ext == "csv" || ext == "xlsx"
+}
+
+func setContentTypeForExtension(w http.ResponseWriter, ext string) {
+	switch ext {
+	case "csv":
+		w.Header().Set("Content-Type", "text/csv")
+	case "xlsx":
+		w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	}
 }
 
 func HandleDownload(
@@ -81,7 +90,7 @@ func HandleDownload(
 
 			// at this point, the file was already created and ready for download.
 
-			resultFileName, err := assertValidFileNameForCountry(file, selectedCountryID)
+			resultFileName, resultFileExtension, err := assertValidFileNameForCountry(file, selectedCountryID)
 			if err != nil {
 				l.Error("invalid file name", zap.Error(err))
 				http.Error(w, "invalid file name: "+err.Error(), http.StatusBadRequest)
@@ -105,6 +114,7 @@ func HandleDownload(
 				return
 			}
 
+			setContentTypeForExtension(w, resultFileExtension)
 			// serve the file
 			http.ServeContent(w, r, resultFileName, time.Time{}, file)
 			return
