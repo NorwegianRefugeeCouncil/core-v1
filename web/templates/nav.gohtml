@@ -15,7 +15,10 @@
          * submits the upload form
          */
         function submitUploadForm() {
-            document.getElementById(uploadIndividualFileButtonId).disabled = true;
+            const uploadButton = document.getElementById(uploadIndividualFileButtonId)
+            if (uploadButton) {
+                uploadButton.disabled = true
+            }
             document.getElementById(uploadIndividualFileFormId).submit();
 
             // open upload modal
@@ -27,8 +30,10 @@
         }
         document.addEventListener("DOMContentLoaded", function () {
             const uploadButton = document.getElementById(uploadIndividualFileButtonId)
+            if (uploadButton) {
+                uploadButton.addEventListener('click', openUploadDialog);
+            }
             const uploadFileInput = document.getElementById(uploadIndividualFileInputId)
-            uploadButton.addEventListener('click', openUploadDialog);
             uploadFileInput.addEventListener('change', submitUploadForm);
         })
     </script>
