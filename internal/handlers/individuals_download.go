@@ -106,7 +106,7 @@ func HandleDownload(
 			}
 
 			// serve the file
-			http.ServeContent(w, r, resultFileName, time.Now(), file)
+			http.ServeContent(w, r, resultFileName, time.Time{}, file)
 			return
 		}
 
@@ -162,9 +162,6 @@ func HandleDownload(
 		}()
 
 		if format == "xlsx" {
-			w.Header().Set("Content-Disposition", "attachment; filename=records.xlsx")
-			w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-
 			if err := api.MarshalIndividualsExcel(downloadFile, ret); err != nil {
 				l.Error("failed to write xlsx", zap.Error(err))
 				http.Error(w, "failed to write xlsx: "+err.Error(), http.StatusInternalServerError)
@@ -174,9 +171,6 @@ func HandleDownload(
 		}
 
 		if format == "csv" {
-			w.Header().Set("Content-Disposition", "attachment; filename=records.csv")
-			w.Header().Set("Content-Type", "text/csv")
-
 			if err := api.MarshalIndividualsCSV(downloadFile, ret); err != nil {
 				l.Error("failed to write csv", zap.Error(err))
 				http.Error(w, "failed to write csv: "+err.Error(), http.StatusInternalServerError)
