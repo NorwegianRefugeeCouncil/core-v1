@@ -16,7 +16,12 @@ import (
 	"go.uber.org/zap"
 )
 
-func assertValidFiledNameForCountry(fileName, wantCountryID string) (string, error) {
+func generateUniqueDownloadFileNameForCountryAndExtension(selectedCountryID string, format string) string {
+	fileName := fmt.Sprintf("%s_%s.%s", selectedCountryID, uuid.New().String(), format)
+	return fileName
+}
+
+func assertValidFileNameForCountry(fileName, wantCountryID string) (string, error) {
 	parts := strings.Split(fileName, "_")
 	if len(parts) != 2 {
 		return "", fmt.Errorf("invalid file name")
@@ -76,7 +81,7 @@ func HandleDownload(
 
 			// at this point, the file was already created and ready for download.
 
-			resultFileName, err := assertValidFiledNameForCountry(file, selectedCountryID)
+			resultFileName, err := assertValidFileNameForCountry(file, selectedCountryID)
 			if err != nil {
 				l.Error("invalid file name", zap.Error(err))
 				http.Error(w, "invalid file name: "+err.Error(), http.StatusBadRequest)
@@ -143,7 +148,7 @@ func HandleDownload(
 			return
 		}
 
-		fileName := fmt.Sprintf("%s_%s.%s", selectedCountryID, uuid.New().String(), format)
+		fileName := generateUniqueDownloadFileNameForCountryAndExtension(selectedCountryID, format)
 		downloadFile, err := os.Create(path.Join("/tmp", fileName))
 		if err != nil {
 			l.Error("failed to create temp file", zap.Error(err))
