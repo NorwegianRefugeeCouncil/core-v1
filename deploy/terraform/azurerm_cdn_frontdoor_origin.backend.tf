@@ -1,6 +1,6 @@
 resource "azurerm_cdn_frontdoor_origin" "backend" {
   provider                       = azurerm.runtime
-  name                           = "backend"
+  name                           = "fdo-${random_id.app_id.hex}"
   cdn_frontdoor_origin_group_id  = azurerm_cdn_frontdoor_origin_group.backend.id
   enabled                        = true
   certificate_name_check_enabled = true

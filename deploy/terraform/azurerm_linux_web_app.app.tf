@@ -21,6 +21,10 @@ resource "azurerm_linux_web_app" "app" {
       docker_image     = var.container_image
       docker_image_tag = var.container_image_tag
     }
+    cors {
+      allowed_origins = []
+      support_credentials = false
+    }
     app_command_line = "serve"
     ip_restriction {
       service_tag = "AzureFrontDoor.Backend"
