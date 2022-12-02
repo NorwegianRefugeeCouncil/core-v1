@@ -30,7 +30,7 @@ func buildRouter(
 	r := mux.NewRouter()
 	r.Use(
 		gorillahandlers.RecoveryHandler(gorillahandlers.PrintRecoveryStack(true)),
-		gorillahandlers.CompressHandler,
+		// gorillahandlers.CompressHandler,
 		middleware.RequestId,
 	)
 	renderer := handlers.NewRenderer(tpl)
