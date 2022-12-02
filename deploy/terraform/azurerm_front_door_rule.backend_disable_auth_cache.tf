@@ -13,7 +13,7 @@ resource "azurerm_cdn_frontdoor_rule" "backend_disable_auth_cache" {
 
   actions {
     route_configuration_override_action {
-      cache_behavior                = "Disable"
+      cache_behavior                = "Disabled"
     }
   }
 
