@@ -61,15 +61,19 @@ func HandleDownload(
 			return
 		}
 
-		tmpFile, err := os.CreateTemp("/tmp", "download")
+		tmpFile, err := os.CreateTemp("", "download")
 		if err != nil {
 			l.Error("failed to create temp file", zap.Error(err))
 			http.Error(w, "failed to create temp file: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 		defer func() {
-			_ = tmpFile.Close()
-			_ = os.Remove(tmpFile.Name())
+			if err := tmpFile.Close(); err != nil {
+				l.Error("failed to close temp file", zap.Error(err))
+			}
+			if err := os.Remove(tmpFile.Name()); err != nil {
+				l.Error("failed to remove temp file", zap.Error(err))
+			}
 		}()
 
 		if format == "xlsx" {
