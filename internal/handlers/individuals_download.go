@@ -53,7 +53,7 @@ func assertValidFileNameForCountry(fileName, wantCountryID string) (string, erro
 }
 
 func isValidFileExtension(ext string) bool {
-	return ext == ".csv" || ext == ".xlsx"
+	return ext == "csv" || ext == "xlsx"
 }
 
 func HandleDownload(
@@ -136,7 +136,7 @@ func HandleDownload(
 		}
 
 		if !isValidFileExtension(format) {
-			l.Error("invalid format", zap.String("format", format))
+			l.Error("invalid format")
 			http.Error(w, "invalid format", http.StatusBadRequest)
 			return
 		}
