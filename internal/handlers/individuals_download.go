@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
@@ -59,27 +61,47 @@ func HandleDownload(
 			return
 		}
 
+		tmpFile, err := os.CreateTemp("", "download")
+		if err != nil {
+			l.Error("failed to create temp file", zap.Error(err))
+			http.Error(w, "failed to create temp file: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer func() {
+			if err := tmpFile.Close(); err != nil {
+				l.Error("failed to close temp file", zap.Error(err))
+			}
+			if err := os.Remove(tmpFile.Name()); err != nil {
+				l.Error("failed to remove temp file", zap.Error(err))
+			}
+		}()
+
 		if format == "xlsx" {
 			w.Header().Set("Content-Disposition", "attachment; filename=records.xlsx")
 			w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
-			if err := api.MarshalIndividualsExcel(w, ret); err != nil {
+			if err := api.MarshalIndividualsExcel(tmpFile, ret); err != nil {
 				l.Error("failed to write xlsx", zap.Error(err))
 				http.Error(w, "failed to write xlsx: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
+
 		} else if format == "csv" {
 			w.Header().Set("Content-Disposition", "attachment; filename=records.csv")
 			w.Header().Set("Content-Type", "text/csv")
 
-			if err := api.MarshalIndividualsCSV(w, ret); err != nil {
+			if err := api.MarshalIndividualsCSV(tmpFile, ret); err != nil {
 				l.Error("failed to write csv", zap.Error(err))
 				http.Error(w, "failed to write csv: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
+
 		} else {
 			http.Error(w, "invalid format", http.StatusBadRequest)
 			return
 		}
+
+		http.ServeContent(w, r, "individuals."+format, time.Now(), tmpFile)
+
 	})
 }
