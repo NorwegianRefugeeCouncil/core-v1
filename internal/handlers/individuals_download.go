@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"bytes"
 	"net/http"
+	"time"
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
@@ -63,11 +65,13 @@ func HandleDownload(
 			w.Header().Set("Content-Disposition", "attachment; filename=records.xlsx")
 			w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
-			if err := api.MarshalIndividualsExcel(w, ret); err != nil {
+			buf, err := api.MarshalIndividualsExcel(w, ret)
+			if err != nil {
 				l.Error("failed to write xlsx", zap.Error(err))
 				http.Error(w, "failed to write xlsx: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
+			http.ServeContent(w, r, "records.xlsx", time.Now(), bytes.NewReader(buf.Bytes()))
 		} else if format == "csv" {
 			w.Header().Set("Content-Disposition", "attachment; filename=records.csv")
 			w.Header().Set("Content-Type", "text/csv")

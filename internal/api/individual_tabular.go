@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"encoding/csv"
 	"errors"
 	"fmt"
@@ -319,7 +320,7 @@ func MarshalIndividualsCSV(w io.Writer, individuals []*Individual) error {
 	return nil
 }
 
-func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
+func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) (*bytes.Buffer, error) {
 	const sheetName = "Individuals"
 
 	f := excelize.NewFile()
@@ -334,32 +335,37 @@ func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
 
 	streamWriter, err := f.NewStreamWriter(sheetName)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if err := streamWriter.SetRow("A1", stringArrayToInterfaceArray(constants.IndividualFileColumns)); err != nil {
-		return err
+		return nil, err
 	}
 
 	for idx, individual := range individuals {
 		row, err := individual.marshalTabularData()
 		if err != nil {
-			return err
+			return nil, err
 		}
 		if err := streamWriter.SetRow(fmt.Sprintf("A%d", idx+2), stringArrayToInterfaceArray(row)); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
 	if err := streamWriter.Flush(); err != nil {
-		return err
+		return nil, err
 	}
 
-	if err := f.Write(w); err != nil {
-		return err
+	// if err := f.Write(w); err != nil {
+	// 	return nil, err
+	// }
+
+	buf, err := f.WriteToBuffer()
+	if err != nil {
+		return nil, err
 	}
 
-	return nil
+	return buf, nil
 }
 
 func getTimeFormatForField(field string) string {
