@@ -67,7 +67,10 @@ func HandleDownload(
 			http.Error(w, "failed to create temp file: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-		defer tmpFile.Close()
+		defer func() {
+			_ = tmpFile.Close()
+			_ = os.Remove(tmpFile.Name())
+		}()
 
 		if format == "xlsx" {
 			w.Header().Set("Content-Disposition", "attachment; filename=records.xlsx")
