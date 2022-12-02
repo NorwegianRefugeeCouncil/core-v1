@@ -21,7 +21,7 @@ func generateUniqueDownloadFileNameForCountryAndExtension(selectedCountryID stri
 	return fileName
 }
 
-func assertValidFileNameForCountry(fileName, wantCountryID string) (string, extension, error) {
+func assertValidFileNameForCountry(fileName, wantCountryID string) (string, string, error) {
 	parts := strings.Split(fileName, "_")
 	if len(parts) != 2 {
 		return "", "", fmt.Errorf("invalid file name")
