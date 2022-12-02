@@ -196,7 +196,7 @@ func HandleDownload(
 			selectedCountryID,
 			path.Base(downloadFile.Name()),
 		)
-		http.Redirect(w, r, redirectPath, http.StatusFound)
+		http.Redirect(w, r, redirectPath, http.StatusSeeOther)
 
 	})
 }
