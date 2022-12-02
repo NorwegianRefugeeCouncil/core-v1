@@ -339,7 +339,7 @@ This flag specifies the hex-encoded first block key used to encrypt the session 
 
 	serveCmd.PersistentFlags().String(flagHashKey2, "", cleanDoc(fmt.Sprintf(`
 This flag specifies the hex-encoded second hash key used to encrypt the session cookie. 
-The second block key is used to perform smooth key rotation.
+The second hash key is used to perform smooth key rotation.
 Usually, the first hash key is moved to the second hash key, and a new first hash key is generated.
 Can also be set with %s
 `, envHashKey2)))
