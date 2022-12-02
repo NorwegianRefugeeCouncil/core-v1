@@ -13,6 +13,7 @@ resource "azurerm_cdn_frontdoor_rule" "backend_disable_download_cache" {
 
   actions {
     route_configuration_override_action {
+      compression_enabled           = false 
       cache_behavior                = "Disabled"
     }
   }
