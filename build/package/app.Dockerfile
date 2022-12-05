@@ -25,6 +25,7 @@ COPY --chown=${uid}:${gid} . .
 RUN cd web/theme && \
     yarn && \
     yarn build
+RUN go run . template
 
 FROM base as dev
 ENTRYPOINT ["/app/scripts/docker-dev-entrypoint.sh"]
