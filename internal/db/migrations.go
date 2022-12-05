@@ -40,6 +40,7 @@ var migrations = []migration{
 	migrationFromFile("016_add_displacement_status_comment_field"),
 	migrationFromFile("017_add_office_field"),
 	migrationFromFile("018_add_nrc_organisation_to_country"),
+	migrationFromFile("019_individual_indices"),
 }
 
 // Migrate runs the migrations on the database.
