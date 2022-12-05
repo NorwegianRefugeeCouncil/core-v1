@@ -51,7 +51,7 @@ func (b *CountryBuilder) WithID(id string) *CountryBuilder {
 func TestValidateCountry(t *testing.T) {
 	namePath := validation.NewPath("name")
 	codePath := validation.NewPath("code")
-	nrcOrganisationPath := validation.NewPath("nrcOrganisation")
+	nrcOrganisationPath := validation.NewPath("nrcOrganisations")
 	weirdString := string([]byte{0x7f, 0x7f})
 	tests := []struct {
 		name    string

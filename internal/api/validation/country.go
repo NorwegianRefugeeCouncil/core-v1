@@ -88,14 +88,15 @@ func validateCountryNrcOrganisations(nrcOrganisations string, path *validation.P
 	allErrs := validation.ErrorList{}
 	if nrcOrganisations == "" {
 		allErrs = append(allErrs, validation.Required(path, "nrc organisation is required"))
-	}
-	for _, org := range strings.Split(nrcOrganisations, ",") {
-		if len(org) > countryNrcOrganisationMaxLength {
-			allErrs = append(allErrs, validation.TooLongMaxLength(path, org, countryNrcOrganisationMaxLength))
-		} else if len(org) < countryNrcOrganisationMinLength {
-			allErrs = append(allErrs, validation.TooShortMinLength(path, org, countryNrcOrganisationMinLength))
-		} else if !countryNrcOrganisationPattern.MatchString(org) {
-			allErrs = append(allErrs, validation.Invalid(path, org, "nrc organisation is invalid"))
+	} else {
+		for _, org := range strings.Split(nrcOrganisations, ",") {
+			if len(org) > countryNrcOrganisationMaxLength {
+				allErrs = append(allErrs, validation.TooLongMaxLength(path, org, countryNrcOrganisationMaxLength))
+			} else if len(org) < countryNrcOrganisationMinLength {
+				allErrs = append(allErrs, validation.TooShortMinLength(path, org, countryNrcOrganisationMinLength))
+			} else if !countryNrcOrganisationPattern.MatchString(org) {
+				allErrs = append(allErrs, validation.Invalid(path, org, "nrc organisation is invalid"))
+			}
 		}
 	}
 	return allErrs
