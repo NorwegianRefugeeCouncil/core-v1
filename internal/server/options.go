@@ -25,6 +25,10 @@ type Options struct {
 	OAuthClientID           string
 	TokenRefreshURL         string
 	TokenRefreshInterval    time.Duration
+	HashKey1                string
+	BlockKey1               string
+	HashKey2                string
+	BlockKey2               string
 }
 
 var globalAdminGroupRegex = regexp.MustCompile(`^[A-Za-z0-9_-]+(?: +[A-Za-z0-9_-]+)*$`)

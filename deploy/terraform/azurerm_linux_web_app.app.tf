@@ -57,6 +57,11 @@ resource "azurerm_linux_web_app" "app" {
     CORE_LOGIN_URL         = "https://${var.backend_host_name}/.auth/login/oidc"
     CORE_TOKEN_REFRESH_URL = "https://${var.backend_host_name}/.auth/refresh"
 
+    CORE_HASH_KEY_1  = local.current_hash_key
+    CORE_BLOCK_KEY_1 = local.current_block_key
+    CORE_HASH_KEY_1  = local.old_hash_key
+    CORE_BLOCK_KEY_1 = local.old_block_key
+
   }
   sticky_settings {
     app_setting_names = [

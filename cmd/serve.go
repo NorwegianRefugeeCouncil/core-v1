@@ -30,6 +30,10 @@ const (
 	envAccessTokenHeaderFormat = "CORE_ACCESS_TOKEN_HEADER_FORMAT"
 	envOidcIssuerURL           = "CORE_OIDC_ISSUER"
 	envOidcClientID            = "CORE_OAUTH_CLIENT_ID"
+	envHashKey1                = "CORE_HASH_KEY_1"
+	envBlockKey1               = "CORE_BLOCK_KEY_1"
+	envHashKey2                = "CORE_HASH_KEY_2"
+	envBlockKey2               = "CORE_BLOCK_KEY_2"
 
 	flagDbDSN                   = "db-dsn"
 	flagDbDriver                = "db-driver"
@@ -45,6 +49,10 @@ const (
 	flagAccessTokenHeaderFormat = "access-token-header-format"
 	flagOidcIssuerURL           = "oidc-issuer"
 	flagOidcClientID            = "oauth-client-id"
+	flagHashKey1                = "hash-key-1"
+	flagBlockKey1               = "block-key-1"
+	flagHashKey2                = "hash-key-2"
+	flagBlockKey2               = "block-key-2"
 )
 
 // serveCmd represents the serve command
@@ -142,6 +150,24 @@ var serveCmd = &cobra.Command{
 			return fmt.Errorf("--%s is required", flagOidcClientID)
 		}
 
+		hashKey1 := getFlagOrEnv(cmd, flagHashKey1, envHashKey1)
+		if len(hashKey1) == 0 {
+			return fmt.Errorf("--%s is required", flagHashKey1)
+		}
+		blockKey1 := getFlagOrEnv(cmd, flagBlockKey1, envBlockKey1)
+		if len(blockKey1) == 0 {
+			return fmt.Errorf("--%s is required", flagBlockKey1)
+		}
+
+		hashKey2 := getFlagOrEnv(cmd, flagHashKey2, envHashKey2)
+		if len(hashKey2) == 0 {
+			return fmt.Errorf("--%s is required", flagHashKey2)
+		}
+		blockKey2 := getFlagOrEnv(cmd, flagBlockKey2, envBlockKey2)
+		if len(blockKey2) == 0 {
+			return fmt.Errorf("--%s is required", flagBlockKey2)
+		}
+
 		options := server.Options{
 			Address:                 listenAddress,
 			DatabaseDriver:          dbDriver,
@@ -157,6 +183,10 @@ var serveCmd = &cobra.Command{
 			AccessTokenHeaderFormat: accessTokenHeaderFormat,
 			OIDCIssuerURL:           oidcIssuerURL,
 			OAuthClientID:           oauthClientID,
+			HashKey1:                hashKey1,
+			BlockKey1:               blockKey1,
+			HashKey2:                hashKey2,
+			BlockKey2:               blockKey2,
 		}
 
 		srv, err := options.New(ctx)
@@ -298,6 +328,29 @@ For example, if the value of this flag is set to 50m, the token will be refreshe
 The browser will be responsible for refreshing the token. So if the user does not have a browser window
 opened, the token will not be refreshed.
 `, envTokenRefreshInterval)))
+
+	serveCmd.PersistentFlags().String(flagHashKey1, "", cleanDoc(fmt.Sprintf(`
+This flag specifies the hex-encoded first hash key used to encrypt the session cookie. Can also be set with %s
+`, envHashKey1)))
+
+	serveCmd.PersistentFlags().String(flagBlockKey1, "", cleanDoc(fmt.Sprintf(`
+This flag specifies the hex-encoded first block key used to encrypt the session cookie. Can also be set with %s
+`, envBlockKey1)))
+
+	serveCmd.PersistentFlags().String(flagHashKey2, "", cleanDoc(fmt.Sprintf(`
+This flag specifies the hex-encoded second hash key used to encrypt the session cookie. 
+The second hash key is used to perform smooth key rotation.
+Usually, the first hash key is moved to the second hash key, and a new first hash key is generated.
+Can also be set with %s
+`, envHashKey2)))
+
+	serveCmd.PersistentFlags().String(flagBlockKey2, "", cleanDoc(fmt.Sprintf(`
+This flag specifies the hex-encoded second block key used to encrypt the session cookie. 
+The second block key is used to perform smooth key rotation.
+Usually, the first block key is moved to the second block key, and a new first block key is generated.
+Can also be set with %s
+`, envBlockKey2)))
+
 }
 
 func cleanDoc(s string) string {
