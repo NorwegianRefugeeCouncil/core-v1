@@ -50,9 +50,9 @@ locals {
   year        = tonumber(formatdate("YYYY", local.timestamp))
   month       = tonumber(formatdate("MM", local.timestamp))
   date_num    = local.year + local.month
-  odd_keeper  = floor((date_num + 1) / 2)
-  even_keeper = floor(date_num / 2)
-  use_even    = date_num % 2 == 0
+  odd_keeper  = floor((local.date_num + 1) / 2)
+  even_keeper = floor(local.date_num / 2)
+  use_even    = local.date_num % 2 == 0
 }
 
 
