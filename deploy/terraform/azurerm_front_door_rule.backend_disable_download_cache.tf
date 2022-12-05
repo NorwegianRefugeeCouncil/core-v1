@@ -13,13 +13,13 @@ resource "azurerm_cdn_frontdoor_rule" "backend_disable_download_compression" {
 
   actions {
     route_configuration_override_action {
-      compression_enabled           = false 
+      compression_enabled = false
     }
   }
 
   conditions {
     request_uri_condition {
-      operator = "EndsWith"
+      operator     = "EndsWith"
       match_values = ["/download"]
     }
   }

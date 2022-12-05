@@ -13,13 +13,13 @@ resource "azurerm_cdn_frontdoor_rule" "backend_disable_auth_cache" {
 
   actions {
     route_configuration_override_action {
-      cache_behavior                = "Disabled"
+      cache_behavior = "Disabled"
     }
   }
 
   conditions {
     request_uri_condition {
-      operator = "BeginsWith"
+      operator     = "BeginsWith"
       match_values = ["/.auth"]
     }
   }
