@@ -1,34 +1,46 @@
--- Add indices on the individual_registrations table
-CREATE INDEX IF NOT EXISTS idx_individual_registrations__country_id
-    ON individual_registrations
-        (
-         country_id,
-         deleted_at
-            );
-CREATE INDEX IF NOT EXISTS idx_individual_registrations__search
-    ON individual_registrations
-        (
-         country_id,
-         deleted_at,
-         full_name,
-         sex,
-         free_field_1,
-         free_field_2,
-         free_field_3,
-         free_field_4,
-         free_field_5,
-         collection_office,
-         normalized_phone_number_1,
-         normalized_phone_number_2,
-         normalized_phone_number_3,
-         address,
-         phone_number_1,
-         phone_number_2,
-         phone_number_3,
-         identification_number_1,
-         identification_number_2,
-         identification_number_3,
-         is_minor,
-         household_id,
-         community_id
-            );
+
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__address ON individual_registrations (country_id, address);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__age ON individual_registrations (country_id, age);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__birth_date ON individual_registrations (country_id, birth_date);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__collection_administrative_area_1 ON individual_registrations (country_id, collection_administrative_area_1);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__collection_administrative_area_2 ON individual_registrations (country_id, collection_administrative_area_2);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__collection_administrative_area_3 ON individual_registrations (country_id, collection_administrative_area_3);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__collection_office ON individual_registrations (country_id, collection_office);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__community_id ON individual_registrations (country_id, community_id);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__country_id ON individual_registrations (country_id);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__created_at ON individual_registrations (country_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__deleted_at ON individual_registrations (country_id, deleted_at);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__displacement_status ON individual_registrations (country_id, displacement_status);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__email_1 ON individual_registrations (country_id, email_1);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__email_2 ON individual_registrations (country_id, email_2);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__email_3 ON individual_registrations (country_id, email_3);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__engagement_context ON individual_registrations (country_id, engagement_context);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__free_field_1 ON individual_registrations (country_id, free_field_1);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__free_field_2 ON individual_registrations (country_id, free_field_2);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__free_field_3 ON individual_registrations (country_id, free_field_3);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__free_field_4 ON individual_registrations (country_id, free_field_4);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__free_field_5 ON individual_registrations (country_id, free_field_5);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__full_name ON individual_registrations (country_id, full_name);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__has_cognitive_disability ON individual_registrations (country_id, has_cognitive_disability);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__has_communication_disability ON individual_registrations (country_id, has_communication_disability);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__has_mobility_disability ON individual_registrations (country_id, has_mobility_disability);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__has_selfcare_disability ON individual_registrations (country_id, has_selfcare_disability);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__has_vision_disability ON individual_registrations (country_id, has_vision_disability);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__household_id ON individual_registrations (country_id, household_id);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__identification_number_1 ON individual_registrations (country_id, identification_number_1);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__identification_number_2 ON individual_registrations (country_id, identification_number_2);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__identification_number_3 ON individual_registrations (country_id, identification_number_3);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__is_head_of_community ON individual_registrations (country_id, is_head_of_community);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__is_head_of_household ON individual_registrations (country_id, is_head_of_household);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__is_minor ON individual_registrations (country_id, is_minor);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__phone_number_1 ON individual_registrations (country_id, phone_number_1);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__phone_number_2 ON individual_registrations (country_id, phone_number_2);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__phone_number_3 ON individual_registrations (country_id, phone_number_3);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__preferred_communication_language ON individual_registrations (country_id, preferred_communication_language);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__preferred_name ON individual_registrations (country_id, preferred_name);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__presents_protection_concerns  ON individual_registrations (country_id, presents_protection_concerns);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__sex ON individual_registrations (country_id, sex);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__spoken_language_1 ON individual_registrations (country_id, spoken_language_1);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__spoken_language_2 ON individual_registrations (country_id, spoken_language_2);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__spoken_language_3 ON individual_registrations (country_id, spoken_language_3);
+CREATE INDEX IF NOT EXISTS idx_individual_registrations__updated_at ON individual_registrations (country_id, updated_at);
