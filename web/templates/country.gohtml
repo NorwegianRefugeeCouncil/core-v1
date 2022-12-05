@@ -29,14 +29,6 @@
                             {{end}}
                             <!-- End of ID -->
 
-                            <!-- Code -->
-                            <div class="form mb-3">
-                                <label for="Code" class="form-label">Code</label>
-                                <input id="Code" name="Code" class="form-control font-monospace"
-                                       value="{{.Country.Code}}">
-                            </div>
-                            <!-- End of Code -->
-
                             <!-- Name -->
                             <div class="form mb-3">
                                 <label for="Name" class="form-label">Name</label>
@@ -45,24 +37,36 @@
                             </div>
                             <!-- End of Name -->
 
+                            <!-- Code -->
+                            <div class="form mb-3">
+                                <label for="Code" class="form-label">Code</label>
+                                <input id="Code" name="Code" class="form-control font-monospace"
+                                       value="{{.Country.Code}}">
+                            </div>
+                            <!-- End of Code -->
+
                             <!-- NRC Organisation -->
                             <div class="form mb-3">
-                                <label id="NrcOrganisationLabel"
-                                       for="NrcOrganisation"
+                                <label id="NrcOrganisationsLabel"
+                                       for="NrcOrganisations"
                                        class="form-label">
                                     NRC Organisation
                                 </label>
-                                <input id="NrcOrganisation"
-                                       name="NrcOrganisation"
+                                <input id="NrcOrganisations"
+                                       name="NrcOrganisations"
                                        class="form-control"
-                                       aria-describedby="NrcOrganisationHelp"
-                                       aria-labelledby="NrcOrganisationLabel"
-                                       value="{{.Country.NrcOrganisation}}">
+                                       aria-describedby="NrcOrganisationsHelp"
+                                       aria-labelledby="NrcOrganisationsLabel"
+                                       value="{{.Country.NrcOrganisations}}">
                                 <div class="form-text"
-                                     id="NrcOrganisationHelp">
+                                     id="NrcOrganisationsHelp">
                                         The NRC Organisation that this country is associated with.
                                         Users that belong to this NRC Organisation will be able to access this country's
                                         data.
+                                    <br>
+                                    If you want to enter multiple NRC Organisations, please separate them with a comma, <b>without adding extra spaces</b>.
+                                    <br>
+                                    Example: <code>NRC Organisation1,NRCOrganisation2</code>
                                 </div>
                             </div>
                             <!-- End of NRC Organisation -->

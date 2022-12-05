@@ -21,7 +21,7 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 		viewParamCountry         = "Country"
 		formParamName            = "Name"
 		formParamCode            = "Code"
-		formParamNrcOrganisation = "NrcOrganisation"
+		formParamNrcOrganisation = "NrcOrganisations"
 	)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +59,7 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 		}
 		country.Name = strings.TrimSpace(r.FormValue(formParamName))
 		country.Code = strings.TrimSpace(strings.ToLower(r.FormValue(formParamCode)))
-		country.NrcOrganisation = strings.TrimSpace(r.FormValue(formParamNrcOrganisation))
+		country.NrcOrganisations = strings.TrimSpace(r.FormValue(formParamNrcOrganisation))
 
 		country, err = repo.Put(r.Context(), country)
 		if err != nil {

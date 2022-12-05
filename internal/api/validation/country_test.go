@@ -16,10 +16,10 @@ type CountryBuilder struct {
 func ValidCountry() *CountryBuilder {
 	return &CountryBuilder{
 		country: &api.Country{
-			ID:              "id",
-			Code:            "code",
-			Name:            "name",
-			NrcOrganisation: "nrc_organisation",
+			ID:               "id",
+			Code:             "code",
+			Name:             "name",
+			NrcOrganisations: "nrc_organisations",
 		},
 	}
 }
@@ -38,8 +38,8 @@ func (b *CountryBuilder) WithCode(code string) *CountryBuilder {
 	return b
 }
 
-func (b *CountryBuilder) WithNrcOrganisation(nrcOrganisation string) *CountryBuilder {
-	b.country.NrcOrganisation = nrcOrganisation
+func (b *CountryBuilder) WithNrcOrganisation(nrcOrganisations string) *CountryBuilder {
+	b.country.NrcOrganisations = nrcOrganisations
 	return b
 }
 
@@ -104,7 +104,7 @@ func TestValidateCountry(t *testing.T) {
 			want:    validation.ErrorList{validation.Invalid(nrcOrganisationPath, "!!", "nrc organisation is invalid")},
 		}, {
 			name:    "nrc organisation too long",
-			country: ValidCountry().WithNrcOrganisation(bigstr(256)).Build(),
+			country: ValidCountry().WithNrcOrganisation(bigstr(256) + ",shortName").Build(),
 			want:    validation.ErrorList{validation.TooLongMaxLength(nrcOrganisationPath, bigstr(256), 255)},
 		},
 	}

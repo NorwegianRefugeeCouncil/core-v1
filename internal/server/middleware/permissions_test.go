@@ -36,8 +36,8 @@ func Test_parsePermissions(t *testing.T) {
 			name: "global admin. with countries defined",
 			args: args{
 				allCountries: []*api.Country{
-					{ID: "1", NrcOrganisation: "country 1"},
-					{ID: "2", NrcOrganisation: "country 2"},
+					{ID: "1", NrcOrganisations: "country 1"},
+					{ID: "2", NrcOrganisations: "country 2"},
 				},
 				globalAdminGroup: "global-admin",
 				userGroups:       []string{"global-admin"},
@@ -51,12 +51,27 @@ func Test_parsePermissions(t *testing.T) {
 			name: "country access only",
 			args: args{
 				allCountries: []*api.Country{
-					{ID: "1", NrcOrganisation: "country 1"},
-					{ID: "2", NrcOrganisation: "country 2"},
+					{ID: "1", NrcOrganisations: "country 1"},
+					{ID: "2", NrcOrganisations: "country 2"},
 				},
 				globalAdminGroup: "global-admin",
 				userGroups:       []string{},
 				nrcOrganisation:  "country 1",
+			},
+			want: &parsedPermissions{
+				isGlobalAdmin: false,
+				countryIds:    containers.NewStringSet("1"),
+			},
+		}, {
+			name: "country access only, multiple countries per nrc organisation",
+			args: args{
+				allCountries: []*api.Country{
+					{ID: "1", NrcOrganisations: "country 1, country 3"},
+					{ID: "2", NrcOrganisations: "country 2"},
+				},
+				globalAdminGroup: "global-admin",
+				userGroups:       []string{},
+				nrcOrganisation:  "country 3",
 			},
 			want: &parsedPermissions{
 				isGlobalAdmin: false,
@@ -78,8 +93,8 @@ func Test_parsePermissions(t *testing.T) {
 			name: "country access only. no matching countries",
 			args: args{
 				allCountries: []*api.Country{
-					{ID: "1", NrcOrganisation: "country 1"},
-					{ID: "2", NrcOrganisation: "country 2"},
+					{ID: "1", NrcOrganisations: "country 1"},
+					{ID: "2", NrcOrganisations: "country 2"},
 				},
 				globalAdminGroup: "global-admin",
 				userGroups:       []string{},
