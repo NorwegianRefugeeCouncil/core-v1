@@ -1,9 +1,13 @@
 package db
 
 import (
+	"context"
 	"fmt"
+	"time"
 
+	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
+	"go.uber.org/zap"
 )
 
 func batch[T any](batchSize int, all []T, fn func([]T) (stop bool, err error)) error {
@@ -21,4 +25,16 @@ func batch[T any](batchSize int, all []T, fn func([]T) (stop bool, err error)) e
 		}
 	}
 	return nil
+}
+
+func logDuration(ctx context.Context, name string, fields ...zap.Field) func() {
+	start := time.Now()
+	logger := logging.NewLogger(ctx)
+	return func() {
+		fields = append([]zap.Field{
+			zap.String("operation", name),
+			zap.Duration("duration", time.Since(start)),
+		}, fields...)
+		logger.Debug("duration audit", fields...)
+	}
 }
