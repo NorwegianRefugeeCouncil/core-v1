@@ -6,6 +6,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"github.com/nrc-no/notcore/internal/server/cache"
 )
 
 //go:embed languages.json
@@ -20,6 +21,8 @@ var languageRetirements string
 //go:embed language_macro_mapping.json
 var macroLanguageMapping string
 
+var Cache *cache.Cache
+
 func init() {
 	if err := json.Unmarshal([]byte(languagesJson), &Languages); err != nil {
 		panic(err)
@@ -32,6 +35,13 @@ func init() {
 	}
 	if err := json.Unmarshal([]byte(macroLanguageMapping), &MacroLanguageMappings); err != nil {
 		panic(err)
+	}
+
+	cache, err := cache.NewCache()
+	if err != nil {
+		panic(err)
+	} else {
+		Cache = &cache
 	}
 }
 

@@ -3,6 +3,7 @@ module github.com/nrc-no/notcore
 go 1.18
 
 require (
+	github.com/allegro/bigcache/v3 v3.1.0
 	github.com/coreos/go-oidc/v3 v3.4.0
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0

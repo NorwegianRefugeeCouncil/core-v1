@@ -2,7 +2,6 @@ package views
 
 import (
 	"fmt"
-
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/pkg/views/forms"
@@ -811,13 +810,24 @@ func buildLanguageOptions() []forms.SelectInputFieldOption {
 		Value: "",
 		Label: "",
 	})
-	for _, lang := range constants.Languages {
-		opts = append(opts, forms.SelectInputFieldOption{
-			Value: lang.ID,
-			Label: lang.Name,
-		})
+
+	cache := *constants.Cache
+
+	languageOptions, err := cache.ReadLanguageOptions()
+	if err != nil {
+		fmt.Sprintf("%s", err)
+		for _, lang := range constants.Languages {
+			opts = append(opts, forms.SelectInputFieldOption{
+				Value: lang.ID,
+				Label: lang.Name,
+			})
+		}
+		err = cache.UpdateLanguageOptions(opts)
+		return opts
 	}
-	return opts
+
+	return languageOptions
+
 }
 
 type displacementStatusCodec struct{}
