@@ -46,7 +46,6 @@ func (i individualRepo) GetAll(ctx context.Context, options api.ListIndividualsO
 		return i.batchedGetAllInternal(ctx, tx, options)
 	})
 	if err != nil {
-
 		return nil, err
 	}
 	return ret.([]*api.Individual), nil
@@ -97,6 +96,10 @@ func (i individualRepo) unbatchedGetAllInternal(ctx context.Context, tx *sqlx.Tx
 	l := logging.NewLogger(ctx)
 	l.Debug("getting list individuals", zap.Any("options", options))
 	var ret []*api.Individual
+
+	auditDuration := logDuration(ctx, "get individuals unbatched")
+	defer auditDuration()
+
 	sql, args := newGetAllIndividualsSQLQuery(i.driverName(), options).build()
 	err := tx.SelectContext(ctx, &ret, sql, args...)
 	if err != nil {
@@ -118,6 +121,10 @@ func (i individualRepo) GetByID(ctx context.Context, id string) (*api.Individual
 func (i individualRepo) getByIdInternal(ctx context.Context, tx *sqlx.Tx, id string) (*api.Individual, error) {
 	l := logging.NewLogger(ctx).With(zap.String("individual_id", id))
 	l.Debug("getting individual by id")
+
+	auditDuration := logDuration(ctx, "get individual by id")
+	defer auditDuration()
+
 	var ret = api.Individual{}
 	err := tx.GetContext(ctx, &ret, "SELECT * FROM individual_registrations WHERE id = $1 and deleted_at IS NULL", id)
 	if err != nil {
@@ -202,6 +209,10 @@ func (i individualRepo) putManyInternal(ctx context.Context, tx *sqlx.Tx, indivi
 
 		var out []*api.Individual
 		qry := b.String()
+
+		auditDuration := logDuration(ctx, "putting individuals", zap.Int("count", len(individualsInBatch)))
+		defer auditDuration()
+
 		err := tx.SelectContext(ctx, &out, qry, args...)
 		if err != nil {
 			return false, err
@@ -267,6 +278,9 @@ func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx,
 			args = append(args, id)
 		}
 		query += ") and deleted_at IS NULL"
+
+		auditDuration := logDuration(ctx, "deleting individuals", zap.Int("count", len(idsInBatch)))
+		defer auditDuration()
 
 		result, err := tx.ExecContext(ctx, query, args...)
 		if err != nil {

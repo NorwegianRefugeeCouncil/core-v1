@@ -34,6 +34,9 @@ func (c countryRepo) GetAll(ctx context.Context) ([]*api.Country, error) {
 
 	const query = "SELECT * FROM countries ORDER BY name"
 
+	auditDuration := logDuration(ctx, "get all countries")
+	defer auditDuration()
+
 	var countries []*api.Country
 	if err := c.db.SelectContext(ctx, &countries, query); err != nil {
 		l.Error("failed to get countries", zap.Error(err))
@@ -48,6 +51,9 @@ func (c countryRepo) GetByID(ctx context.Context, id string) (*api.Country, erro
 
 	const query = "SELECT * FROM countries WHERE id = $1"
 	var args = []interface{}{id}
+
+	auditDuration := logDuration(ctx, "get country by id")
+	defer auditDuration()
 
 	var ret api.Country
 	if err := c.db.GetContext(ctx, &ret, query, args...); err != nil {
@@ -77,6 +83,9 @@ func (c countryRepo) updateCountry(ctx context.Context, country *api.Country) (*
 		country.NrcOrganisation,
 	}
 
+	auditDuration := logDuration(ctx, "update country")
+	defer auditDuration()
+
 	if _, err := c.db.ExecContext(ctx, query, args...); err != nil {
 		l.Error("failed to update country", zap.Error(err))
 		return nil, err
@@ -98,6 +107,9 @@ func (c countryRepo) createCountry(ctx context.Context, country *api.Country) (*
 		country.Name,
 		country.NrcOrganisation,
 	}
+
+	auditDuration := logDuration(ctx, "create country")
+	defer auditDuration()
 
 	if _, err := c.db.ExecContext(ctx, query, args...); err != nil {
 		l.Error("failed to create country", zap.Error(err))
