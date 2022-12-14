@@ -46,7 +46,7 @@ stages:
       env:
         DOCKER_BUILDKIT: "1"
 
-    - script: "make coverage"
+    - script: "mkdir -p ./reports && docker run --rm -v $(shell pwd)/reports:/app/reports core-dev coverage"
       displayName: run tests
 
     - script: "sed -i 's|<source>/app</source>|<source>$(Build.Repository.LocalPath)</source>|g' reports/coverage.xml"
