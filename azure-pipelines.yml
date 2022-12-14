@@ -81,7 +81,7 @@ stages:
 
     - task: Docker@2
       displayName: Build final image
-      # condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
       env:
         DOCKER_BUILDKIT: "1"
       inputs:
@@ -97,7 +97,7 @@ stages:
 
     - task: Docker@2
       displayName: Push dev image
-      # condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
       inputs:
         command: push
         containerRegistry: $(CONTAINER_REGISTRY_CONNECTION)
@@ -107,7 +107,7 @@ stages:
 
     - task: Docker@2
       displayName: Push final image
-      # condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
       inputs:
         command: push
         containerRegistry: $(CONTAINER_REGISTRY_CONNECTION)
