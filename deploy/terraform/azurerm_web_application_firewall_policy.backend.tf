@@ -4,7 +4,7 @@ resource "azurerm_web_application_firewall_policy" "backend" {
   location            = azurerm_resource_group.rg.location
 
   policy_settings {
-    file_upload_limit_in_mb     = 500
+    file_upload_limit_in_mb     = 800
     max_request_body_size_in_kb = 128
   }
 
