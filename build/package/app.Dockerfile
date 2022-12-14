@@ -23,7 +23,7 @@ RUN go mod download && \
     go install github.com/AlekSi/gocov-xml@latest
 ADD --chown=${uid}:${gid} web web
 WORKDIR web/theme
-RUN cd web/theme && yarn && yarn build
+RUN yarn && yarn build
 WORKDIR /app
 ADD --chown=${uid}:${gid} scripts scripts
 ADD --chown=${uid}:${gid} cmd cmd
