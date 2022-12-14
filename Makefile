@@ -29,7 +29,7 @@ down: prerequisites
 ## Runs the tests and generates a coverage report
 coverage: .dev-image
 	@mkdir -p ./reports
-	docker run --rm -it -v $(shell pwd)/reports:/app/reports core-dev coverage
+	docker run --rm -v $(shell pwd)/reports:/app/reports core-dev coverage
 
 .PHONY: test
 ## Runs the tests
