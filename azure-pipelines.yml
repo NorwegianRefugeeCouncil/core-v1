@@ -42,13 +42,16 @@ stages:
       continueOnError: true
 
     - script: "DOCKER_BUILDKIT=1 docker build -f $(DOCKERFILE_PATH) -t core-dev --target dev --cache-from=$(CONTAINER_REGISTRY)/$(REPOSITORY):latest --build-arg BUILDKIT_INLINE_CACHE=1 $(BUILD_CONTEXT)"
-      displayName: build dev image
+      displayName: Build dev image
 
-    - script: "mkdir -p ./reports && docker run --rm -v $(pwd)/reports:/app/reports core-dev coverage"
-      displayName: run tests
+    - script: "docker run --rm -v $(pwd)/reports:/app/reports core-dev coverage --cid ./container_id"
+      displayName: Run tests
+
+    - displayName: "Copy test and coverage reports"
+      script: "mkdir reports && docker cp $(cat container_id):/app/reports/. reports"
 
     - script: "sed -i 's|<source>/app</source>|<source>$(Build.Repository.LocalPath)</source>|g' reports/coverage.xml"
-      displayName: "update coverage source"
+      displayName: "Update coverage report source directory"
 
     - task: PublishTestResults@2
       displayName: 'Publish test results'
