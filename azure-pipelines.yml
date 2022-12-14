@@ -1,0 +1,150 @@
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- main
+
+resources:
+- repo: self
+
+variables:
+  BUILD_CONTEXT: '$(Build.Repository.LocalPath)'
+  DOCKERFILE_PATH: 'build/package/app.Dockerfile'
+  DOCKER_BUILDKIT: 1
+  GOBIN:  '$(GOPATH)\bin'
+  GOPATH: '$(System.DefaultWorkingDirectory)\gopath'
+  GO_VERSION: '1.19.2'
+  IS_MAIN: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+  LDFLAGS: '-w -s'
+  REPOSITORY: 'core/webapp'
+  REPOSITORY_CACHE : 'core/webapp-cache'
+  TAG: '$(Build.BuildId)'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build, Test, Push
+  jobs:
+  - job: Test
+    displayName: Test, Lint & Coverage
+    steps:
+
+    - task: Docker@2
+      displayName: 'Login to ACR'
+      inputs:
+        command: login
+        containerRegistry: $(CONTAINER_REGISTRY_CONNECTION)
+
+    - script: "docker pull $(CONTAINER_REGISTRY)/$(REPOSITORY_CACHE):latest"
+      displayName: Pull latest for layer caching
+      continueOnError: true
+
+    - script: |
+        DOCKER_BUILDKIT=1 docker build \
+          -f $(DOCKERFILE_PATH) \
+          --tag core-dev \
+          --tag $(CONTAINER_REGISTRY)/$(REPOSITORY_CACHE):latest \
+          --target dev \
+          --cache-from=$(CONTAINER_REGISTRY)/$(REPOSITORY_CACHE):latest \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
+          $(BUILD_CONTEXT)
+      displayName: Build dev image
+
+    - script: "docker run --cidfile ./container_id core-dev coverage"
+      displayName: Run tests
+
+    - script: "mkdir reports && docker cp $(cat container_id):/app/reports/. reports"
+      displayName: "Copy test and coverage reports"
+
+    - script: "sed -i 's|<source>/app</source>|<source>$(Build.Repository.LocalPath)</source>|g' reports/coverage.xml"
+      displayName: "Update coverage report source directory"
+
+    - task: PublishTestResults@2
+      displayName: 'Publish test results'
+      condition: always()
+      inputs:
+        failTaskOnFailedTests: true
+        testResultsFormat: 'JUnit'
+        testResultsFiles: './reports/report.xml'
+        searchFolder: '$(Build.SourcesDirectory)'
+
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish code coverage results'
+      condition: always()
+      inputs:
+        failIfCoverageEmpty: true
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: './reports/coverage.xml'
+
+    - task: Docker@2
+      displayName: Build final image
+      # condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      env:
+        DOCKER_BUILDKIT: "1"
+      inputs:
+        command: build
+        repository: $(REPOSITORY)
+        dockerfile: $(DOCKERFILE_PATH)
+        buildContext: $(BUILD_CONTEXT)
+        containerRegistry: $(CONTAINER_REGISTRY_CONNECTION)
+        arguments: --cache-from=dev --build-arg BUILDKIT_INLINE_CACHE=1
+        tags: |
+          $(tag)
+          latest
+
+    - task: Docker@2
+      displayName: Push dev image
+      # condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      inputs:
+        command: push
+        containerRegistry: $(CONTAINER_REGISTRY_CONNECTION)
+        repository: $(REPOSITORY_CACHE)
+        tags: |
+          latest
+
+    - task: Docker@2
+      displayName: Push final image
+      # condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      inputs:
+        command: push
+        containerRegistry: $(CONTAINER_REGISTRY_CONNECTION)
+        repository: $(REPOSITORY)
+        tags: |
+          $(tag)
+          latest
+
+    - bash: echo -n "$(CONTAINER_REGISTRY)/$(REPOSITORY):$(TAG)" > $(Build.SourcesDirectory)/ref.txt
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      displayName: Output version build artifact
+
+    - publish: $(Build.SourcesDirectory)/ref.txt
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      artifact: ImageRef
+      displayName: Publish image reference output build artifact
+
+    - bash: echo -n "$(CONTAINER_REGISTRY)/$(REPOSITORY)" > $(Build.SourcesDirectory)/image.txt
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      displayName: Output image build artifact
+
+    - publish: $(Build.SourcesDirectory)/image.txt
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      artifact: Image
+      displayName: Publish image output build artifact
+
+    - bash: echo -n "$(TAG)" > $(Build.SourcesDirectory)/tag.txt
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      displayName: Output version build artifact
+
+    - publish: $(Build.SourcesDirectory)/tag.txt
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      artifact: Version
+      displayName: Publish version build artifact
+
+    - publish: $(Build.SourcesDirectory)/deploy/terraform
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      artifact: Terraform
+      displayName: Publish terraform manifests build artifact
+
