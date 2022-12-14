@@ -47,8 +47,8 @@ stages:
     - script: "docker run --rm -v $(pwd)/reports:/app/reports core-dev coverage --cid ./container_id"
       displayName: Run tests
 
-    - displayName: "Copy test and coverage reports"
-      script: "mkdir reports && docker cp $(cat container_id):/app/reports/. reports"
+    - script: "mkdir reports && docker cp $(cat container_id):/app/reports/. reports"
+      displayName: "Copy test and coverage reports"
 
     - script: "sed -i 's|<source>/app</source>|<source>$(Build.Repository.LocalPath)</source>|g' reports/coverage.xml"
       displayName: "Update coverage report source directory"
