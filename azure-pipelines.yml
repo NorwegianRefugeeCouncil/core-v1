@@ -4,8 +4,7 @@
 
 trigger:
 - main
-pr:
-- main
+
 resources:
 - repo: self
 
