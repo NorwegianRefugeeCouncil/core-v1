@@ -15,16 +15,22 @@ RUN useradd -l -m -d /home/app -u ${USER_ID} -g ${GROUP_ID} core || echo "User a
 RUN mkdir /out && chown ${uid}:${gid} /out
 USER ${uid}:${gid}
 WORKDIR /app
-COPY go.mod ./
-COPY go.sum ./
+ADD go.mod ./
+ADD go.sum ./
 RUN go mod download && \
     go install github.com/jstemmer/go-junit-report/v2@latest && \
     go install github.com/axw/gocov/gocov@latest && \
     go install github.com/AlekSi/gocov-xml@latest
-COPY --chown=${uid}:${gid} . .
-RUN cd web/theme && \
-    yarn && \
-    yarn build
+ADD --chown=${uid}:${gid} web web
+WORKDIR web/theme
+RUN cd web/theme && yarn && yarn build
+WORKDIR /app
+ADD --chown=${uid}:${gid} scripts scripts
+ADD --chown=${uid}:${gid} cmd cmd
+ADD --chown=${uid}:${gid} internal internal
+ADD --chown=${uid}:${gid} pkg pkg
+ADD --chown=${uid}:${gid} tools tools
+ADD --chown=${uid}:${gid} main.go main.go
 RUN go run . template
 RUN go build -ldflags '-w -s' -o /out/core --tags fts5 && chmod +x /out/core
 
