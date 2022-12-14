@@ -51,7 +51,7 @@ stages:
           $(BUILD_CONTEXT)
       displayName: Build dev image
 
-    - script: "docker run core-dev coverage --cidfile ./container_id"
+    - script: "docker run --cidfile ./container_id core-dev coverage"
       displayName: Run tests
 
     - script: "mkdir reports && docker cp $(cat container_id):/app/reports/. reports"
