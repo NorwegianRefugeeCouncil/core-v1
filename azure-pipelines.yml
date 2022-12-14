@@ -43,8 +43,6 @@ stages:
 
     - script: "DOCKER_BUILDKIT=1 docker build -f $(DOCKERFILE_PATH) -t core-dev --target dev --build-arg BUILDKIT_INLINE_CACHE=1 $(BUILD_CONTEXT)"
       displayName: build dev image
-      env:
-        DOCKER_BUILDKIT: "1"
 
     - script: "mkdir -p ./reports && docker run --rm -v $(shell pwd)/reports:/app/reports core-dev coverage"
       displayName: run tests
