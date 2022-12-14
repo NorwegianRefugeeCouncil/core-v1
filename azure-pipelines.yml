@@ -44,7 +44,7 @@ stages:
     - script: "DOCKER_BUILDKIT=1 docker build -f $(DOCKERFILE_PATH) -t core-dev --target dev --cache-from=$(CONTAINER_REGISTRY)/$(REPOSITORY):latest --build-arg BUILDKIT_INLINE_CACHE=1 $(BUILD_CONTEXT)"
       displayName: build dev image
 
-    - script: "mkdir -p ./reports && docker run --rm -v $(shell pwd)/reports:/app/reports core-dev coverage"
+    - script: "mkdir -p ./reports && docker run --rm -v $(pwd)/reports:/app/reports core-dev coverage"
       displayName: run tests
 
     - script: "sed -i 's|<source>/app</source>|<source>$(Build.Repository.LocalPath)</source>|g' reports/coverage.xml"
