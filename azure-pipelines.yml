@@ -18,6 +18,7 @@ variables:
   IS_MAIN: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
   LDFLAGS: '-w -s'
   REPOSITORY: 'core/webapp'
+  REPOSITORY_CACHE : 'core/webapp-cache'
   TAG: '$(Build.BuildId)'
 
 pool:
@@ -37,16 +38,17 @@ stages:
         command: login
         containerRegistry: $(CONTAINER_REGISTRY_CONNECTION)
 
-    - script: "docker pull $(CONTAINER_REGISTRY)/$(REPOSITORY):latest"
+    - script: "docker pull $(CONTAINER_REGISTRY)/$(REPOSITORY_CACHE):latest"
       displayName: Pull latest for layer caching
       continueOnError: true
 
     - script: |
         DOCKER_BUILDKIT=1 docker build \
           -f $(DOCKERFILE_PATH) \
-          -t core-dev \
+          --tag core-dev \
+          --tag $(CONTAINER_REGISTRY)/$(REPOSITORY_CACHE):latest \
           --target dev \
-          --cache-from=$(CONTAINER_REGISTRY)/$(REPOSITORY):latest \
+          --cache-from=$(CONTAINER_REGISTRY)/$(REPOSITORY_CACHE):latest \
           --build-arg BUILDKIT_INLINE_CACHE=1 \
           $(BUILD_CONTEXT)
       displayName: Build dev image
@@ -88,9 +90,19 @@ stages:
         dockerfile: $(DOCKERFILE_PATH)
         buildContext: $(BUILD_CONTEXT)
         containerRegistry: $(CONTAINER_REGISTRY_CONNECTION)
-        arguments: --cache-from=$(CONTAINER_REGISTRY)/$(REPOSITORY):latest --build-arg BUILDKIT_INLINE_CACHE=1
+        arguments: --cache-from=dev --build-arg BUILDKIT_INLINE_CACHE=1
         tags: |
           $(tag)
+          latest
+
+    - task: Docker@2
+      displayName: Push dev image
+      # condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      inputs:
+        command: push
+        containerRegistry: $(CONTAINER_REGISTRY_CONNECTION)
+        repository: $(REPOSITORY_CACHE)
+        tags: |
           latest
 
     - task: Docker@2
