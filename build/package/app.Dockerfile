@@ -26,12 +26,12 @@ RUN cd web/theme && \
     yarn && \
     yarn build
 RUN go run . template
+RUN go build -ldflags '-w -s' -o /out/core --tags fts5 && chmod +x /out/core
 
 FROM base as dev
 ENTRYPOINT ["/app/scripts/docker-dev-entrypoint.sh"]
 
 FROM base as builder
-RUN go build -ldflags '-w -s' -o /out/core --tags fts5 && chmod +x /out/core
 WORKDIR /out
 ENTRYPOINT ["/out/app"]
 
