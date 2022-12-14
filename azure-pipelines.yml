@@ -83,6 +83,23 @@ stages:
         codeCoverageTool: 'Cobertura'
         summaryFileLocation: './reports/coverage.xml'
 
+    - task: Docker@2
+      inputs:
+        command: login
+        containerRegistry: $(CONTAINER_REGISTRY_CONNECTION)
+
+    - script: "docker pull $(CONTAINER_REGISTRY)/$(REPOSITORY):latest"
+      displayName: Pull latest for layer caching
+      continueOnError: true
+
+    - script: "docker build -f $(DOCKERFILE_PATH) -t core-dev --target dev --build-arg BUILDKIT_INLINE_CACHE=1 $(BUILD_CONTEXT)"
+      displayName: build dev image
+      env:
+        DOCKER_BUILDKIT: "1"
+
+    - script: "make coverage"
+      displayName: run tests
+
   - job: BuildPush
     dependsOn: [Test]
     condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
