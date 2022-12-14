@@ -47,7 +47,7 @@ stages:
           -t core-dev \
           --target dev \
           --cache-from=$(CONTAINER_REGISTRY)/$(REPOSITORY):latest \
-          --build-arg BUILDKIT_INLINE_CACHE=1 $(BUILD_CONTEXT)"
+          --build-arg BUILDKIT_INLINE_CACHE=1 $(BUILD_CONTEXT)
       displayName: Build dev image
 
     - script: "docker run core-dev coverage --cid ./container_id"
