@@ -49,7 +49,7 @@ stages:
     - script: "make coverage"
       displayName: run tests
 
-    - script: "sed -i '|<source>/app</source>|<source>$(Build.Repository.LocalPath)</source>|' reports/coverage.xml"
+    - script: "sed -i 's|<source>/app</source>|<source>$(Build.Repository.LocalPath)</source>|g' reports/coverage.xml"
       displayName: "update coverage source"
 
     - task: PublishTestResults@2
