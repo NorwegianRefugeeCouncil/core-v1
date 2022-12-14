@@ -31,59 +31,6 @@ stages:
     displayName: Test, Lint & Coverage
     steps:
 
-    - task: GoTool@0
-      displayName: Install GO
-      inputs:
-        version: $(GO_VERSION)
-        goBin: $(GOBIN)
-        goPath: $(GOPATH)
-
-    - bash: |
-        mkdir -p '$(GOBIN)'
-        mkdir -p '$(GOPATH)/pkg'
-        shopt -s extglob
-        shopt -s dotglob
-        echo '##vso[task.prependpath]$(GOBIN)'
-        echo '##vso[task.prependpath]$(GOROOT)/bin'
-      displayName: 'Set up the Go workspace'
-
-    - bash: |
-        go version
-        go install github.com/jstemmer/go-junit-report/v2@latest
-        go install github.com/axw/gocov/gocov@latest
-        go install github.com/AlekSi/gocov-xml@latest
-      displayName: 'Get dependencies'
-
-    - bash: |
-        go vet ./...
-      continueOnError: 'true'
-      displayName: 'Run go vet'
-
-    - bash: |
-        mkdir reports
-        go test ./... -v -coverpkg=./... -coverprofile=./reports/coverage.txt -covermode count 2>&1 | go-junit-report > ./reports/junit.xml
-        gocov convert ./reports/coverage.txt > ./reports/coverage.json
-        gocov-xml < ./reports/coverage.json > ./reports/coverage.xml
-      displayName: 'Run unit tests'
-
-    - task: PublishTestResults@2
-      displayName: 'Publish test results'
-      condition: always()
-      inputs:
-        failTaskOnFailedTests: true
-        testResultsFormat: 'JUnit'
-        testResultsFiles: './reports/junit.xml'
-        searchFolder: '$(Build.SourcesDirectory)'
-
-    - task: PublishCodeCoverageResults@1
-      displayName: 'Publish code coverage results'
-      condition: always()
-      inputs:
-        failIfCoverageEmpty: true
-        codeCoverageTool: 'Cobertura'
-        summaryFileLocation: './reports/coverage.xml'
-
-
     - task: Docker@2
       displayName: 'Login to ACR'
       inputs:
@@ -102,44 +49,78 @@ stages:
     - script: "make coverage"
       displayName: run tests
 
-  - job: BuildPush
-    dependsOn: [Test]
-    condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
-    displayName: Build and Push Docker Image
-    steps:
-    - task: Docker@2
-      name: docker
-      displayName: Build and push to container registry
+    - task: PublishTestResults@2
+      displayName: 'Publish test results'
+      condition: always()
       inputs:
-        command: buildAndPush
+        failTaskOnFailedTests: true
+        testResultsFormat: 'JUnit'
+        testResultsFiles: './reports/report.xml'
+        searchFolder: '$(Build.SourcesDirectory)'
+
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish code coverage results'
+      condition: always()
+      inputs:
+        failIfCoverageEmpty: true
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: './reports/coverage.xml'
+
+    - task: Docker@2
+      displayName: Build final image
+      env:
+        DOCKER_BUILDKIT: "1"
+      inputs:
+        command: build
         repository: $(REPOSITORY)
         dockerfile: $(DOCKERFILE_PATH)
         buildContext: $(BUILD_CONTEXT)
         containerRegistry: $(CONTAINER_REGISTRY_CONNECTION)
+        arguments: --cache-from=$(CONTAINER_REGISTRY)/$(REPOSITORY):latest --build-arg BUILDKIT_INLINE_CACHE=1
         tags: |
-          $(TAG)
+          $(tag)
+          latest
+
+    - task: Docker@2
+      displayName: Push final image
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      inputs:
+          command: push
+          containerRegistry: $(CONTAINER_REGISTRY_CONNECTION)
+          repository: $(REPOSITORY)
+          tags: |
+            $(tag)
+            latest
 
     - bash: echo -n "$(CONTAINER_REGISTRY)/$(REPOSITORY):$(TAG)" > $(Build.SourcesDirectory)/ref.txt
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
       displayName: Output version build artifact
 
     - publish: $(Build.SourcesDirectory)/ref.txt
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
       artifact: ImageRef
       displayName: Publish image reference output build artifact
 
     - bash: echo -n "$(CONTAINER_REGISTRY)/$(REPOSITORY)" > $(Build.SourcesDirectory)/image.txt
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
       displayName: Output image build artifact
 
     - publish: $(Build.SourcesDirectory)/image.txt
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
       artifact: Image
       displayName: Publish image output build artifact
 
     - bash: echo -n "$(TAG)" > $(Build.SourcesDirectory)/tag.txt
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
       displayName: Output version build artifact
 
     - publish: $(Build.SourcesDirectory)/tag.txt
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
       artifact: Version
       displayName: Publish version build artifact
 
     - publish: $(Build.SourcesDirectory)/deploy/terraform
+      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
       artifact: Terraform
       displayName: Publish terraform manifests build artifact
+
