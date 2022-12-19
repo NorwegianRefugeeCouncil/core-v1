@@ -1,11 +1,10 @@
 package validation
 
 import (
-	"regexp"
-	"strings"
-
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/api/validation"
+	"regexp"
 )
 
 func ValidateCountry(country *api.Country) validation.ErrorList {
@@ -84,12 +83,12 @@ func validateCountryCode(code string, path *validation.Path) validation.ErrorLis
 	return allErrs
 }
 
-func validateCountryNrcOrganisations(nrcOrganisations string, path *validation.Path) validation.ErrorList {
+func validateCountryNrcOrganisations(nrcOrganisations containers.StringSet, path *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
-	if nrcOrganisations == "" {
+	if nrcOrganisations.Len() == 0 {
 		allErrs = append(allErrs, validation.Required(path, "nrc organisation is required"))
 	} else {
-		for _, org := range strings.Split(nrcOrganisations, ",") {
+		for _, org := range nrcOrganisations.Items() {
 			if len(org) > countryNrcOrganisationMaxLength {
 				allErrs = append(allErrs, validation.TooLongMaxLength(path, org, countryNrcOrganisationMaxLength))
 			} else if len(org) < countryNrcOrganisationMinLength {

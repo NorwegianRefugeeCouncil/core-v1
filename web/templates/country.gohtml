@@ -1,4 +1,50 @@
 {{define "head"}}
+    <script>
+        const nrcOrgInputGroupID = "nrc-org-input-group"
+        const addOrgsButtonID = "add-more-orgs-button"
+        const nrcOrgInputClass = "nrc-org-input"
+
+        function removeNRCOrgInput(i) {
+            const input = document.getElementById(nrcOrgInputGroupID + '-'+i)
+            input.remove()
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const nrcOrgInputGroup = document.getElementById(nrcOrgInputGroupID)
+            const button = document.getElementById(addOrgsButtonID)
+
+            function addNRCOrgInput() {
+                const nrcOrgInputs = document.getElementsByClassName(nrcOrgInputClass)
+                const inputNr = nrcOrgInputs.length
+
+                var newInputGroup = document.createElement("div")
+                var newInput = document.createElement("input")
+                var newDeleteButton = document.createElement("button")
+                var deleteIcon = document.createElement("i")
+
+                newInput.classList = "form-control " + nrcOrgInputClass
+                newInput.placeholder = "New NRC Organisation"
+                newInput.name = "NrcOrganisations"
+                newInput.value = null
+
+                deleteIcon.classList = "bi bi-dash-circle"
+
+                newDeleteButton.classList = "btn btn-outline-secondary"
+                newDeleteButton.onclick = () => removeNRCOrgInput(inputNr)
+
+                newInputGroup.classList = "input-group mb-3"
+                newInputGroup.id = nrcOrgInputGroupID + "-" +  inputNr
+
+                newInputGroup.appendChild(newInput)
+                newDeleteButton.appendChild(deleteIcon)
+                newInputGroup.appendChild(newDeleteButton)
+                nrcOrgInputGroup.appendChild(newInputGroup)
+            }
+            addNRCOrgInput()
+
+            button.addEventListener('click', addNRCOrgInput)
+        })
+    </script>
 {{end}}
 {{define "body"}}
     <header class="sticky-top">
@@ -49,24 +95,35 @@
                             <div class="form mb-3">
                                 <label id="NrcOrganisationsLabel"
                                        for="NrcOrganisations"
-                                       class="form-label">
+                                       class="form-label w-100 d-flex justify-content-between mb-2">
                                     NRC Organisation
+                                    <button
+                                        class="btn btn-outline-primary icon-button d-inline-flex"
+                                        type="button"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-title="Add another NRC Organisation this country's associated with."
+                                    >
+                                        <i class="bi bi-plus " id="add-more-orgs-button"></i>
+                                    </button>
                                 </label>
-                                <input id="NrcOrganisations"
-                                       name="NrcOrganisations"
-                                       class="form-control"
-                                       aria-describedby="NrcOrganisationsHelp"
-                                       aria-labelledby="NrcOrganisationsLabel"
-                                       value="{{.Country.NrcOrganisations}}">
-                                <div class="form-text"
-                                     id="NrcOrganisationsHelp">
-                                        The NRC Organisation that this country is associated with.
-                                        Users that belong to this NRC Organisation will be able to access this country's
-                                        data.
-                                    <br>
-                                    If you want to enter multiple NRC Organisations, please separate them with a comma, <b>without adding extra spaces</b>.
-                                    <br>
-                                    Example: <code>NRC Organisation1,NRCOrganisation2</code>
+                                {{range $i, $org := .Country.NrcOrganisations.Items }}
+                                    <div class="input-group mb-3" id="nrc-org-input-group-{{$i}}">
+                                        <input
+                                            id="nrc-org-input"
+                                            name="NrcOrganisations"
+                                            class="form-control nrc-org-input"
+                                            value="{{$org}}">
+                                        <button class="btn btn-outline-secondary" onclick=removeNRCOrgInput({{$i}})>
+                                            <i class="bi bi-dash-circle"></i>
+                                        </button>
+                                    </div>
+                                {{end}}
+                                <div class="input-group mb-3" id="nrc-org-input-group">
+                                </div>
+                                <div class="form-text" id="NrcOrganisationsHelp">
+                                    The NRC Organisation that this country is associated with.
+                                    Users that belong to this NRC Organisation will be able to access this country's
+                                    data.
                                 </div>
                             </div>
                             <!-- End of NRC Organisation -->
@@ -77,5 +134,17 @@
                     </div>
         </form>
     </main>
+
+{{end}}
+
+
+
+{{define "nrcORgInput"}}
+    <input
+        id="nrc-org-input-group-"
+        name="NrcOrganisations"
+        class="form-control"
+        value="{{.Country.NrcOrganisations}}"
+    >
 
 {{end}}

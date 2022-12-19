@@ -312,7 +312,7 @@ func (p *listIndividualsOptionsEncoder) encodeHouseholdID() {
 }
 
 func (p *listIndividualsOptionsEncoder) encodeID() {
-	if len(p.values.IDs) != 0 {
+	if p.values.IDs.Len() != 0 {
 		for _, id := range p.values.IDs.Items() {
 			p.out.Add(constants.FormParamsGetIndividualsID, id)
 		}

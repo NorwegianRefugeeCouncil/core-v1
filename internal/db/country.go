@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/nrc-no/notcore/internal/api"
@@ -55,12 +54,12 @@ func (c countryRepo) GetByID(ctx context.Context, id string) (*api.Country, erro
 	auditDuration := logDuration(ctx, "get country by id")
 	defer auditDuration()
 
-	var ret api.Country
-	if err := c.db.GetContext(ctx, &ret, query, args...); err != nil {
+	var country api.Country
+	if err := c.db.GetContext(ctx, &country, query, args...); err != nil {
 		l.Error("failed to get country by id", zap.Error(err))
 		return nil, err
 	}
-	return &ret, nil
+	return &country, nil
 }
 
 func (c countryRepo) Put(ctx context.Context, country *api.Country) (*api.Country, error) {

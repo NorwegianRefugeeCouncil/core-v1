@@ -52,9 +52,9 @@ func (i individualRepo) GetAll(ctx context.Context, options api.ListIndividualsO
 }
 
 func (i individualRepo) batchedGetAllInternal(ctx context.Context, tx *sqlx.Tx, options api.ListIndividualsOptions) ([]*api.Individual, error) {
-	if len(options.IDs) > 0 {
+	if options.IDs.Len() > 0 {
 		var ret []*api.Individual
-		err := batch(maxParams/len(options.IDs), options.IDs.Items(), func(idsInBatch []string) (stop bool, err error) {
+		err := batch(maxParams/options.IDs.Len(), options.IDs.Items(), func(idsInBatch []string) (stop bool, err error) {
 			// check if we already reached the limit. If so, exit early
 			if options.Take != 0 && len(ret) >= options.Take {
 				return true, nil
@@ -267,7 +267,7 @@ func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx,
 	l := logging.NewLogger(ctx).With(zap.Strings("individual_ids", ids.Items()))
 	l.Debug("deleting individuals")
 
-	if err := batch(maxParams/len(ids), ids.Items(), func(idsInBatch []string) (bool, error) {
+	if err := batch(maxParams/ids.Len(), ids.Items(), func(idsInBatch []string) (bool, error) {
 		var query = "UPDATE individual_registrations SET deleted_at = $1 WHERE id IN ("
 		var args = []interface{}{time.Now().UTC().Format(time.RFC3339)}
 		for i, id := range idsInBatch {

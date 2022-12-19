@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/nrc-no/notcore/internal/containers"
 	"html/template"
 	"net/http"
 	"strings"
@@ -59,14 +60,13 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 		}
 		country.Name = strings.TrimSpace(r.FormValue(formParamName))
 		country.Code = strings.TrimSpace(strings.ToLower(r.FormValue(formParamCode)))
-
-		orgs := strings.Split(r.FormValue(formParamNrcOrganisation), ",")
-		trimmedOrgs := []string{}
-		for _, org := range orgs {
-			trimmedOrgs = append(trimmedOrgs, strings.TrimSpace(org))
+		orgs := containers.NewStringSet(r.Form[formParamNrcOrganisation]...)
+		for _, org := range orgs.Items() {
+			if org == "" {
+				orgs.Remove(org)
+			}
 		}
-
-		country.NrcOrganisations = strings.Join(trimmedOrgs, ",")
+		country.NrcOrganisations = orgs
 
 		country, err = repo.Put(r.Context(), country)
 		if err != nil {

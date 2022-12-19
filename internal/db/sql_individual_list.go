@@ -421,7 +421,7 @@ func (g *getAllIndividualsSQLQuery) withHouseholdID(householdID string) *getAllI
 }
 
 func (g *getAllIndividualsSQLQuery) withIds(ids containers.StringSet) *getAllIndividualsSQLQuery {
-	if len(ids) == 0 {
+	if ids.Len() == 0 {
 		return g
 	}
 	g.writeString(" AND id IN (")

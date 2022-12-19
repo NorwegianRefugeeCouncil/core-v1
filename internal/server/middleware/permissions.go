@@ -1,15 +1,13 @@
 package middleware
 
 import (
-	"net/http"
-	"strings"
-
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/auth"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
+	"net/http"
 )
 
 // permissionMiddleware will compute the user's permissions and add them to the context
@@ -63,8 +61,7 @@ func parsePermissions(allCountries []*api.Country, globalAdminGroup string, user
 	countryIds := containers.NewStringSet()
 
 	for _, c := range allCountries {
-		nrcOrganisations := strings.Split(c.NrcOrganisations, ",")
-		for _, org := range nrcOrganisations {
+		for _, org := range c.NrcOrganisations.Items() {
 			if nrcOrganisation == org {
 				countryIds.Add(c.ID)
 			}
