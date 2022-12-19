@@ -339,12 +339,12 @@ func (g *getAllIndividualsSQLQuery) withFullName(name string) *getAllIndividuals
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withSexes(sexs containers.Set[api.Sex]) *getAllIndividualsSQLQuery {
-	if len(sexs) == 0 {
+func (g *getAllIndividualsSQLQuery) withSexes(sexes containers.Set[api.Sex]) *getAllIndividualsSQLQuery {
+	if len(sexes) == 0 {
 		return g
 	}
 	g.writeString(" AND sex IN (")
-	for i, sex := range sexs.Items() {
+	for i, sex := range sexes.Items() {
 		if i != 0 {
 			g.writeString(",")
 		}

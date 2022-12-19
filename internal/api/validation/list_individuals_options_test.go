@@ -55,7 +55,7 @@ func TestValidateListIndividualsOptions(t *testing.T) {
 				Sexes:     containers.NewSet[api.Sex]("invalid"),
 			},
 			want: validation.ErrorList{
-				validation.NotSupported(validation.NewPath("sexs").Index(0), api.Sex("invalid"), allowedSexesStr),
+				validation.NotSupported(validation.NewPath("sexes").Index(0), api.Sex("invalid"), allowedSexesStr),
 			},
 		}, {
 			name: "invalid displacement status",
