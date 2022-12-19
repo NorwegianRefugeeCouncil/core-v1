@@ -61,12 +61,12 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 		country.Name = strings.TrimSpace(r.FormValue(formParamName))
 		country.Code = strings.TrimSpace(strings.ToLower(r.FormValue(formParamCode)))
 		orgs := containers.NewStringSet(r.Form[formParamNrcOrganisation]...)
+		country.NrcOrganisations = containers.NewStringSet()
 		for _, org := range orgs.Items() {
-			if org == "" {
-				orgs.Remove(org)
+			if org != "" {
+				country.NrcOrganisations.Add(strings.TrimSpace(org))
 			}
 		}
-		country.NrcOrganisations = orgs
 
 		country, err = repo.Put(r.Context(), country)
 		if err != nil {
