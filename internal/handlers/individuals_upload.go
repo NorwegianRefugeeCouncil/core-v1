@@ -26,7 +26,6 @@ func UploadHandler(renderer Renderer, individualRepo db.IndividualRepo) http.Han
 		var (
 			ctx = r.Context()
 			l   = logging.NewLogger(ctx)
-			//error = ""
 		)
 
 		renderError := func(error string) {
@@ -59,30 +58,25 @@ func UploadHandler(renderer Renderer, individualRepo db.IndividualRepo) http.Han
 		if strings.HasSuffix(filename, ".csv") {
 			if err = api.UnmarshalIndividualsCSV(formFile, &individuals, &fields); err != nil {
 				l.Error("failed to parse csv", zap.Error(err))
-				//http.Error(w, "failed to parse csv: "+err.Error(), http.StatusBadRequest)
-				//error = "Could not parse csv: " + err.Error()
-				renderError("Could not parse csv: " + err.Error())
+				renderError("Could not parse uploaded csv file: " + err.Error())
 				return
 			}
 		} else if strings.HasSuffix(filename, ".xlsx") || strings.HasSuffix(filename, ".xls") {
 			if err = api.UnmarshalIndividualsExcel(formFile, &individuals, &fields); err != nil {
 				l.Error("failed to parse excel file", zap.Error(err))
-				http.Error(w, "failed to parse excel file: "+err.Error(), http.StatusBadRequest)
-				//error = "failed to excel file: " + err.Error()
+				renderError("Could not parse uploaded excel file: " + err.Error())
 				return
 			}
 		} else {
 			l.Error(fmt.Sprintf("unsupported content type: %s", r.Header.Get("Content-Type")))
-			http.Error(w, "invalid content type", http.StatusBadRequest)
-			//error = "invalid content type"
+			renderError(fmt.Sprintf("Could not process uploaded file of filetype %s, please upload a .csv or a .xlsx file.", r.Header.Get("Content-Type")))
 			return
 		}
 
 		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
 		if err != nil {
 			l.Error("failed to get selected country id", zap.Error(err))
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-			//error = "Internal server error"
+			renderError("Could not detect selected country. Please select a country from the dropdown.")
 			return
 		}
 
@@ -100,21 +94,21 @@ func UploadHandler(renderer Renderer, individualRepo db.IndividualRepo) http.Han
 		existingIndividuals, err := individualRepo.GetAll(ctx, api.ListIndividualsOptions{IDs: individualIds})
 		if err != nil {
 			l.Error("failed to get existing individuals", zap.Error(err))
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			renderError("Could not load list of individuals")
 			return
 		}
 
 		invalidIndividualIds := validateIndividualsExistInCountry(individualIds, existingIndividuals, selectedCountryID)
 		if len(invalidIndividualIds) > 0 {
 			l.Warn("user trying to update individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
-			http.Error(w, fmt.Sprintf("individuals not found: %v", invalidIndividualIds), http.StatusNotFound)
+			renderError(fmt.Sprintf("Could update individuals %s, they do not exist in the database for the selected country.", zap.Strings("individual_ids", invalidIndividualIds)))
 			return
 		}
 
 		_, err = individualRepo.PutMany(r.Context(), individuals, fieldSet)
 		if err != nil {
 			l.Error("failed to put individuals", zap.Error(err))
-			http.Error(w, "failed to put records: "+err.Error(), http.StatusInternalServerError)
+			renderError("Could not upload individual data: " + err.Error())
 			return
 		}
 
