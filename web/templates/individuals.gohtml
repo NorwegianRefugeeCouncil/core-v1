@@ -338,7 +338,7 @@
             </div>
         </div>
 
-        {{if not .ErrorKey}}
+        {{if not .UploadError}}
         <!-- INDIVIDUALS TABLE -->
         <form id="individuals-action-form" class="table-responsive scroll-body" method="post">
             <table class="table table-individuals mb-0">
@@ -944,8 +944,6 @@
             </div>
         </div>
     </div>
-
-
 {{end}}
 
 {{define "columnHeader"}}
@@ -1038,6 +1036,4 @@
             </div>
         </div>
     </th>
-
-
 {{end}}

@@ -19,15 +19,31 @@
 <body>
 {{template "body" .}}
 
-{{if .ErrorKey}}
+{{if .UploadError}}
+{{if gt (len .UploadError) 0}}
     <!-- BEGIN ERROR MODAL -->
-    <div class="modal modal-lg d-inline" tabindex="-1" id="action-confirm-modal-0">
+    <div
+{{/*            class="modal modal-lg d-inline"*/}}
+{{/*         tabindex="-1"*/}}
+         id="action-confirm-modal-0"
+         data-bs-backdrop="static"
+         class="modal fade show static-background-modal"
+{{/*         id="staticBackdropLive"*/}}
+{{/*         data-bs-backdrop="static"*/}}
+         data-bs-keyboard="false"
+         tabindex="-1"
+         aria-labelledby="staticBackdropLiveLabel"
+         aria-modal="true"
+         role="dialog"
+         style="display: block;"
+
+    >
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
                         <i class="bi bi-exclamation-circle me-2 text-danger"></i>
-                        An error occured
+                        Something went wrong
                     </h5>
                     <a class="btn-close"
                        href="/countries/{{.RequestContext.SelectedCountryID}}/individuals"
@@ -37,28 +53,24 @@
 
                 <div class="modal-body">
                     <p>
-                        {{.ErrorKey}}
+                        {{.UploadError}}
                     </p>
                 </div>
                 <div class="modal-footer">
-                    <form class="w-100"
-                          id="delete-individual-form"
-                          action="/countries/{{.Individual.CountryID}}/individuals/{{.Individual.ID}}/delete"
-                          method="post">
-                        <div class="d-flex flex-row justify-content-end">
-                            <a class="btn btn-secondary"
-                               href="/countries/{{.RequestContext.SelectedCountryID}}/individuals"
-                            >
-                                <i class="bi bi-house me-2"></i>
-                                Go back to Individuals List
-                            </a>
-                        </div>
-                    </form>
+                    <div class="d-flex flex-row justify-content-end">
+                        <a class="btn btn-secondary"
+                           href="/countries/{{.RequestContext.SelectedCountryID}}/individuals"
+                        >
+                            <i class="bi bi-house me-2"></i>
+                            Go back to Individuals List
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- END ERROR MODAL -->
+{{end}}
 {{end}}
 </body>
 

@@ -28,10 +28,9 @@ func UploadHandler(renderer Renderer, individualRepo db.IndividualRepo) http.Han
 			l   = logging.NewLogger(ctx)
 		)
 
-		renderError := func(error string) {
-			re := r.WithContext(utils.WithError(ctx, error))
-			renderer.RenderView(w, re, templateName, map[string]interface{}{
-				"ErrorKey": error,
+		renderError := func(e string) {
+			renderer.RenderView(w, r, templateName, map[string]interface{}{
+				"UploadError": e,
 			})
 		}
 
@@ -94,7 +93,7 @@ func UploadHandler(renderer Renderer, individualRepo db.IndividualRepo) http.Han
 		existingIndividuals, err := individualRepo.GetAll(ctx, api.ListIndividualsOptions{IDs: individualIds})
 		if err != nil {
 			l.Error("failed to get existing individuals", zap.Error(err))
-			renderError("Could not load list of individuals")
+			renderError("Could not load list of individuals: " + err.Error())
 			return
 		}
 
