@@ -16,7 +16,6 @@ const (
 	keyAuthContext
 	keyCountries
 	keySelectedCountryID
-	keyError
 )
 
 func WithRequestID(ctx context.Context, id string) context.Context {

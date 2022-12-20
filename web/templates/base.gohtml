@@ -23,20 +23,13 @@
 {{if gt (len .UploadError) 0}}
     <!-- BEGIN ERROR MODAL -->
     <div
-{{/*            class="modal modal-lg d-inline"*/}}
-{{/*         tabindex="-1"*/}}
          id="action-confirm-modal-0"
          data-bs-backdrop="static"
-         class="modal fade show static-background-modal"
-{{/*         id="staticBackdropLive"*/}}
-{{/*         data-bs-backdrop="static"*/}}
+         class="modal fade show static-background-modal d-block"
          data-bs-keyboard="false"
          tabindex="-1"
-         aria-labelledby="staticBackdropLiveLabel"
          aria-modal="true"
          role="dialog"
-         style="display: block;"
-
     >
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
