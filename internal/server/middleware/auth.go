@@ -124,7 +124,7 @@ func Authentication(
 			}
 
 			userSession := auth.NewAuthenticatedSession(
-				userInfoClaims.Groups,
+				tokenClaims.Groups,
 				userInfoClaims.NrcOrganisation,
 				tokenClaims.Email,
 				tokenClaims.Iss,
@@ -142,8 +142,7 @@ func Authentication(
 }
 
 type userInfoClaims struct {
-	NrcOrganisation string   `json:"nrcOrganisation"`
-	Groups          []string `json:"groups"`
+	NrcOrganisation string `json:"nrcOrganisation"`
 }
 
 // validateTokenClaims will validate the claims of a token.
@@ -156,6 +155,9 @@ func validateTokenClaims(claims TokenClaims) error {
 	}
 	if claims.Email == "" {
 		return fmt.Errorf("token is missing email")
+	}
+	if claims.Groups == nil {
+		return fmt.Errorf("token is missing groups")
 	}
 	if claims.Exp == 0 {
 		return fmt.Errorf("token is missing expiration")
