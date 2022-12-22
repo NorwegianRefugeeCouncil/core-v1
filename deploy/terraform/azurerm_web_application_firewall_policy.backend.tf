@@ -1,4 +1,5 @@
 resource "azurerm_web_application_firewall_policy" "backend" {
+  provider            = azurerm.runtime
   name                = "waf${random_id.app_id.hex}"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
