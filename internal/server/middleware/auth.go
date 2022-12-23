@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -18,12 +19,11 @@ import (
 )
 
 type TokenClaims struct {
-	Sub    string   `json:"sub"`
-	Iss    string   `json:"iss"`
-	Email  string   `json:"email"`
-	Groups []string `json:"groups"`
-	Iat    int64    `json:"iat"`
-	Exp    int64    `json:"exp"`
+	Sub   string `json:"sub"`
+	Iss   string `json:"iss"`
+	Email string `json:"email"`
+	Iat   int64  `json:"iat"`
+	Exp   int64  `json:"exp"`
 }
 
 const AuthHeaderFormatJWT = "jwt"
@@ -124,7 +124,7 @@ func Authentication(
 			}
 
 			userSession := auth.NewAuthenticatedSession(
-				tokenClaims.Groups,
+				userInfoClaims.Groups,
 				userInfoClaims.NrcOrganisation,
 				tokenClaims.Email,
 				tokenClaims.Iss,
@@ -142,7 +142,8 @@ func Authentication(
 }
 
 type userInfoClaims struct {
-	NrcOrganisation string `json:"nrcOrganisation"`
+	NrcOrganisation string   `json:"nrcOrganisation"`
+	Groups          []string `json:"groups"`
 }
 
 // validateTokenClaims will validate the claims of a token.
@@ -155,9 +156,6 @@ func validateTokenClaims(claims TokenClaims) error {
 	}
 	if claims.Email == "" {
 		return fmt.Errorf("token is missing email")
-	}
-	if claims.Groups == nil {
-		return fmt.Errorf("token is missing groups")
 	}
 	if claims.Exp == 0 {
 		return fmt.Errorf("token is missing expiration")
@@ -181,11 +179,13 @@ func getUserInfoClaims(
 
 	cookieSession, _ := sessionStore.Get(r, "core-session")
 
-	nrcOrganisationInterface, ok := cookieSession.Values["nrcOrganisation"]
+	userInfoInterface, ok := cookieSession.Values["oidc_userinfo"]
 	if ok {
-		nrcOrganisation, ok := nrcOrganisationInterface.(string)
+		userInfoBytesRead, ok := userInfoInterface.([]byte)
+		userInfo := userInfoClaims{}
+		json.Unmarshal(userInfoBytesRead, &userInfo)
 		if ok {
-			return &userInfoClaims{NrcOrganisation: nrcOrganisation}, nil
+			return &userInfo, nil
 		}
 	}
 
@@ -204,17 +204,24 @@ func getUserInfoClaims(
 		return nil, err
 	}
 
+	if info.Groups == nil {
+		return nil, fmt.Errorf("missing groups claim")
+	}
+
 	if len(info.NrcOrganisation) == 0 {
 		return nil, fmt.Errorf("missing nrcOrganisation claim")
 	}
 
-	cookieSession.Values["nrcOrganisation"] = info.NrcOrganisation
+	infoBytesWrite, err := json.Marshal(info)
+	if err != nil {
+		return nil, err
+	}
+	cookieSession.Values["oidc_userinfo"] = infoBytesWrite
 	if err := cookieSession.Save(r, w); err != nil {
 		return nil, err
 	}
 
 	return &info, nil
-
 }
 
 func parseAuthHeader(r *http.Request, headerName, headerFormat string) (string, error) {
