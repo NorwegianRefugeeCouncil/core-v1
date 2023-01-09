@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"github.com/nrc-no/notcore/internal/containers"
 	"strings"
 	"testing"
 
@@ -19,7 +20,7 @@ func ValidCountry() *CountryBuilder {
 			ID:               "id",
 			Code:             "code",
 			Name:             "name",
-			NrcOrganisations: "nrc_organisations",
+			NrcOrganisations: containers.NewStringSet("nrc_organisation"),
 		},
 	}
 }
@@ -38,7 +39,7 @@ func (b *CountryBuilder) WithCode(code string) *CountryBuilder {
 	return b
 }
 
-func (b *CountryBuilder) WithNrcOrganisation(nrcOrganisations string) *CountryBuilder {
+func (b *CountryBuilder) WithNrcOrganisation(nrcOrganisations containers.StringSet) *CountryBuilder {
 	b.country.NrcOrganisations = nrcOrganisations
 	return b
 }
@@ -96,15 +97,15 @@ func TestValidateCountry(t *testing.T) {
 			want:    validation.ErrorList{validation.TooLongMaxLength(codePath, bigstr(256), 255)},
 		}, {
 			name:    "missing nrc organisation",
-			country: ValidCountry().WithNrcOrganisation("").Build(),
+			country: ValidCountry().WithNrcOrganisation(containers.NewStringSet()).Build(),
 			want:    validation.ErrorList{validation.Required(nrcOrganisationPath, "nrc organisation is required")},
 		}, {
 			name:    "invalid nrc organisation",
-			country: ValidCountry().WithNrcOrganisation("!!").Build(),
+			country: ValidCountry().WithNrcOrganisation(containers.NewStringSet("!!")).Build(),
 			want:    validation.ErrorList{validation.Invalid(nrcOrganisationPath, "!!", "nrc organisation is invalid")},
 		}, {
 			name:    "nrc organisation too long",
-			country: ValidCountry().WithNrcOrganisation(bigstr(256) + ",shortName").Build(),
+			country: ValidCountry().WithNrcOrganisation(containers.NewStringSet(bigstr(256), "shortName")).Build(),
 			want:    validation.ErrorList{validation.TooLongMaxLength(nrcOrganisationPath, bigstr(256), 255)},
 		},
 	}

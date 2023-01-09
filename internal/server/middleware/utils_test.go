@@ -16,8 +16,8 @@ func nextHandler() http.HandlerFunc {
 }
 
 func configureDummyContextMiddleware(
-	allowedCountryIDs containers.Set[string],
-	allCountryIDs containers.Set[string],
+	allowedCountryIDs containers.StringSet,
+	allCountryIDs containers.StringSet,
 	isGlobalAdmin bool,
 	selectedCountryId string,
 ) mux.MiddlewareFunc {

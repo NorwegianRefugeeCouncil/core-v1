@@ -52,79 +52,79 @@ func TestSetClear(t *testing.T) {
 func TestSetEquals(t *testing.T) {
 	s1 := NewStringSet("a")
 	s2 := NewStringSet("a")
-	assert.True(t, s1.Equals(s2))
+	assert.True(t, s1.Equals(s2.Set))
 	s2.Add("b")
-	assert.False(t, s1.Equals(s2))
+	assert.False(t, s1.Equals(s2.Set))
 }
 
 func TestSetIntersects(t *testing.T) {
 	s1 := NewStringSet()
 	s2 := NewStringSet()
-	assert.False(t, s1.Intersects(s2))
+	assert.False(t, s1.Intersects(s2.Set))
 	s1.Add("a")
-	assert.False(t, s1.Intersects(s2))
+	assert.False(t, s1.Intersects(s2.Set))
 	s2.Add("a")
-	assert.True(t, s1.Intersects(s2))
+	assert.True(t, s1.Intersects(s2.Set))
 	s2.Add("b")
-	assert.True(t, s1.Intersects(s2))
+	assert.True(t, s1.Intersects(s2.Set))
 }
 
 func TestSetSubsetOf(t *testing.T) {
 	s1 := NewStringSet("a")
 	s2 := NewStringSet("a")
-	assert.True(t, s1.SubsetOf(s2))
+	assert.True(t, s1.SubsetOf(s2.Set))
 	s2.Add("b")
-	assert.False(t, s2.SubsetOf(s1))
-	assert.True(t, s1.SubsetOf(s2))
+	assert.False(t, s2.SubsetOf(s1.Set))
+	assert.True(t, s1.SubsetOf(s2.Set))
 }
 
 func TestSetSupersetOf(t *testing.T) {
 	s1 := NewStringSet("a")
 	s2 := NewStringSet("a")
-	assert.True(t, s1.SupersetOf(s2))
+	assert.True(t, s1.SupersetOf(s2.Set))
 	s2.Add("b")
-	assert.True(t, s2.SupersetOf(s1))
-	assert.False(t, s1.SupersetOf(s2))
+	assert.True(t, s2.SupersetOf(s1.Set))
+	assert.False(t, s1.SupersetOf(s2.Set))
 }
 
 func TestSetDifference(t *testing.T) {
 	s1 := NewStringSet("a")
 	s2 := NewStringSet("a")
-	assert.ElementsMatch(t, []string{}, s1.Difference(s2).Items())
+	assert.ElementsMatch(t, []string{}, s1.Difference(s2.Set).Items())
 	s1.Add("b")
-	assert.ElementsMatch(t, []string{"b"}, s1.Difference(s2).Items())
+	assert.ElementsMatch(t, []string{"b"}, s1.Difference(s2.Set).Items())
 	s2.Add("b")
-	assert.ElementsMatch(t, []string{}, s1.Difference(s2).Items())
+	assert.ElementsMatch(t, []string{}, s1.Difference(s2.Set).Items())
 }
 
 func TestSetUnion(t *testing.T) {
 	s1 := NewStringSet("a")
 	s2 := NewStringSet("a")
-	assert.ElementsMatch(t, []string{"a"}, s1.Union(s2).Items())
+	assert.ElementsMatch(t, []string{"a"}, s1.Union(s2.Set).Items())
 	s1.Add("b")
-	assert.ElementsMatch(t, []string{"a", "b"}, s1.Union(s2).Items())
+	assert.ElementsMatch(t, []string{"a", "b"}, s1.Union(s2.Set).Items())
 	s2.Add("b")
-	assert.ElementsMatch(t, []string{"a", "b"}, s1.Union(s2).Items())
+	assert.ElementsMatch(t, []string{"a", "b"}, s1.Union(s2.Set).Items())
 }
 
 func TestSetIntersection(t *testing.T) {
 	s1 := NewStringSet("a")
 	s2 := NewStringSet("a")
-	assert.ElementsMatch(t, []string{"a"}, s1.Intersection(s2).Items())
+	assert.ElementsMatch(t, []string{"a"}, s1.Intersection(s2.Set).Items())
 	s1.Add("b")
-	assert.ElementsMatch(t, []string{"a"}, s1.Intersection(s2).Items())
+	assert.ElementsMatch(t, []string{"a"}, s1.Intersection(s2.Set).Items())
 	s2.Add("b")
-	assert.ElementsMatch(t, []string{"a", "b"}, s1.Intersection(s2).Items())
+	assert.ElementsMatch(t, []string{"a", "b"}, s1.Intersection(s2.Set).Items())
 }
 
 func TestSetSymmetricDifference(t *testing.T) {
 	s1 := NewStringSet("a")
 	s2 := NewStringSet("a")
-	assert.ElementsMatch(t, []string{}, s1.SymmetricDifference(s2).Items())
+	assert.ElementsMatch(t, []string{}, s1.SymmetricDifference(s2.Set).Items())
 	s1.Add("b")
-	assert.ElementsMatch(t, []string{"b"}, s1.SymmetricDifference(s2).Items())
+	assert.ElementsMatch(t, []string{"b"}, s1.SymmetricDifference(s2.Set).Items())
 	s2.Add("c")
-	assert.ElementsMatch(t, []string{"b", "c"}, s1.SymmetricDifference(s2).Items())
+	assert.ElementsMatch(t, []string{"b", "c"}, s1.SymmetricDifference(s2.Set).Items())
 }
 
 func TestSetString(t *testing.T) {

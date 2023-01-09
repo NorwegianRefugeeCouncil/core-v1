@@ -36,7 +36,7 @@ func Test_parsePermissions(t *testing.T) {
 			name: "global admin. with countries defined",
 			args: args{
 				allCountries: []*api.Country{
-					{ID: "1", NrcOrganisations: "country 1"},
+					{ID: "1", NrcOrganisations: containers.NewStringSet("country 1")},
 				},
 				globalAdminGroup: "global-admin",
 				userGroups:       []string{"global-admin"},
@@ -50,8 +50,8 @@ func Test_parsePermissions(t *testing.T) {
 			name: "country access only",
 			args: args{
 				allCountries: []*api.Country{
-					{ID: "1", NrcOrganisations: "country 1"},
-					{ID: "2", NrcOrganisations: "country 2"},
+					{ID: "1", NrcOrganisations: containers.NewStringSet("country 1")},
+					{ID: "2", NrcOrganisations: containers.NewStringSet("country 2")},
 				},
 				globalAdminGroup: "global-admin",
 				userGroups:       []string{},
@@ -65,7 +65,7 @@ func Test_parsePermissions(t *testing.T) {
 			name: "country access only, multiple countries per nrc organisation",
 			args: args{
 				allCountries: []*api.Country{
-					{ID: "1", NrcOrganisations: "country 1,country 3"},
+					{ID: "1", NrcOrganisations: containers.NewStringSet("country 1", "country 3")},
 				},
 				userGroups:      []string{},
 				nrcOrganisation: "country 3",
@@ -90,8 +90,8 @@ func Test_parsePermissions(t *testing.T) {
 			name: "country access only. no matching countries",
 			args: args{
 				allCountries: []*api.Country{
-					{ID: "1", NrcOrganisations: "country 1"},
-					{ID: "2", NrcOrganisations: "country 2"},
+					{ID: "1", NrcOrganisations: containers.NewStringSet("country 1")},
+					{ID: "2", NrcOrganisations: containers.NewStringSet("country 2")},
 				},
 				globalAdminGroup: "global-admin",
 				userGroups:       []string{},

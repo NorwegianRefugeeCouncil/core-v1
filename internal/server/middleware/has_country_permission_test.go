@@ -21,8 +21,8 @@ func TestHasCountryPermission(t *testing.T) {
 
 	var parametrizedTests = []struct {
 		name              string
-		allowedCountryIDs containers.Set[string]
-		allCountryIDs     containers.Set[string]
+		allowedCountryIDs containers.StringSet
+		allCountryIDs     containers.StringSet
 		isGlobalAdmin     bool
 		selectedCountryID string
 		expectedStatus    int
