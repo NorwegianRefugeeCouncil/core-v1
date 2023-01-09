@@ -1,14 +1,13 @@
 package middleware
 
 import (
-	"net/http"
-
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/auth"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
+	"net/http"
 )
 
 // permissionMiddleware will compute the user's permissions and add them to the context
@@ -61,13 +60,12 @@ type parsedPermissions struct {
 func parsePermissions(allCountries []*api.Country, globalAdminGroup string, userGroups []string, nrcOrganisation string) *parsedPermissions {
 	countryIds := containers.NewStringSet()
 
-	// maps a jwt group name to a country id
-	countryGroupMap := make(map[string]string)
 	for _, c := range allCountries {
-		if c.NrcOrganisation == "" {
-			continue
+		for _, org := range c.NrcOrganisations.Items() {
+			if nrcOrganisation == org {
+				countryIds.Add(c.ID)
+			}
 		}
-		countryGroupMap[c.NrcOrganisation] = c.ID
 	}
 
 	isGlobalAdmin := false
@@ -76,10 +74,6 @@ func parsePermissions(allCountries []*api.Country, globalAdminGroup string, user
 			isGlobalAdmin = true
 			continue
 		}
-	}
-
-	if countryID, ok := countryGroupMap[nrcOrganisation]; ok {
-		countryIds.Add(countryID)
 	}
 
 	return &parsedPermissions{

@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"github.com/nrc-no/notcore/internal/containers"
 	"strings"
 	"testing"
 
@@ -16,10 +17,10 @@ type CountryBuilder struct {
 func ValidCountry() *CountryBuilder {
 	return &CountryBuilder{
 		country: &api.Country{
-			ID:              "id",
-			Code:            "code",
-			Name:            "name",
-			NrcOrganisation: "nrc_organisation",
+			ID:               "id",
+			Code:             "code",
+			Name:             "name",
+			NrcOrganisations: containers.NewStringSet("nrc_organisation"),
 		},
 	}
 }
@@ -38,8 +39,8 @@ func (b *CountryBuilder) WithCode(code string) *CountryBuilder {
 	return b
 }
 
-func (b *CountryBuilder) WithNrcOrganisation(nrcOrganisation string) *CountryBuilder {
-	b.country.NrcOrganisation = nrcOrganisation
+func (b *CountryBuilder) WithNrcOrganisation(nrcOrganisations containers.StringSet) *CountryBuilder {
+	b.country.NrcOrganisations = nrcOrganisations
 	return b
 }
 
@@ -51,7 +52,7 @@ func (b *CountryBuilder) WithID(id string) *CountryBuilder {
 func TestValidateCountry(t *testing.T) {
 	namePath := validation.NewPath("name")
 	codePath := validation.NewPath("code")
-	nrcOrganisationPath := validation.NewPath("nrcOrganisation")
+	nrcOrganisationPath := validation.NewPath("nrcOrganisations")
 	weirdString := string([]byte{0x7f, 0x7f})
 	tests := []struct {
 		name    string
@@ -96,15 +97,15 @@ func TestValidateCountry(t *testing.T) {
 			want:    validation.ErrorList{validation.TooLongMaxLength(codePath, bigstr(256), 255)},
 		}, {
 			name:    "missing nrc organisation",
-			country: ValidCountry().WithNrcOrganisation("").Build(),
+			country: ValidCountry().WithNrcOrganisation(containers.NewStringSet()).Build(),
 			want:    validation.ErrorList{validation.Required(nrcOrganisationPath, "nrc organisation is required")},
 		}, {
 			name:    "invalid nrc organisation",
-			country: ValidCountry().WithNrcOrganisation("!!").Build(),
+			country: ValidCountry().WithNrcOrganisation(containers.NewStringSet("!!")).Build(),
 			want:    validation.ErrorList{validation.Invalid(nrcOrganisationPath, "!!", "nrc organisation is invalid")},
 		}, {
 			name:    "nrc organisation too long",
-			country: ValidCountry().WithNrcOrganisation(bigstr(256)).Build(),
+			country: ValidCountry().WithNrcOrganisation(containers.NewStringSet(bigstr(256), "shortName")).Build(),
 			want:    validation.ErrorList{validation.TooLongMaxLength(nrcOrganisationPath, bigstr(256), 255)},
 		},
 	}

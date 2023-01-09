@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/nrc-no/notcore/internal/containers"
 	"html/template"
 	"net/http"
 	"strings"
@@ -21,7 +22,7 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 		viewParamCountry         = "Country"
 		formParamName            = "Name"
 		formParamCode            = "Code"
-		formParamNrcOrganisation = "NrcOrganisation"
+		formParamNrcOrganisation = "NrcOrganisations"
 	)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +60,13 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 		}
 		country.Name = strings.TrimSpace(r.FormValue(formParamName))
 		country.Code = strings.TrimSpace(strings.ToLower(r.FormValue(formParamCode)))
-		country.NrcOrganisation = strings.TrimSpace(r.FormValue(formParamNrcOrganisation))
+		orgs := containers.NewStringSet(r.Form[formParamNrcOrganisation]...)
+		country.NrcOrganisations = containers.NewStringSet()
+		for _, org := range orgs.Items() {
+			if org != "" {
+				country.NrcOrganisations.Add(strings.TrimSpace(org))
+			}
+		}
 
 		country, err = repo.Put(r.Context(), country)
 		if err != nil {

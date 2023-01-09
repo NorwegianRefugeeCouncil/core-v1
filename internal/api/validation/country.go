@@ -1,10 +1,10 @@
 package validation
 
 import (
-	"regexp"
-
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/api/validation"
+	"regexp"
 )
 
 func ValidateCountry(country *api.Country) validation.ErrorList {
@@ -24,7 +24,7 @@ func validateCountry(path *validation.Path, country *api.Country) validation.Err
 	allErrs := validation.ErrorList{}
 	allErrs = append(allErrs, validateCountryName(country.Name, path.Child("name"))...)
 	allErrs = append(allErrs, validateCountryCode(country.Code, path.Child("code"))...)
-	allErrs = append(allErrs, validateCountryNrcOgranisation(country.NrcOrganisation, path.Child("nrcOrganisation"))...)
+	allErrs = append(allErrs, validateCountryNrcOrganisations(country.NrcOrganisations, path.Child("nrcOrganisations"))...)
 	return allErrs
 }
 
@@ -83,16 +83,20 @@ func validateCountryCode(code string, path *validation.Path) validation.ErrorLis
 	return allErrs
 }
 
-func validateCountryNrcOgranisation(nrcOrganisation string, path *validation.Path) validation.ErrorList {
+func validateCountryNrcOrganisations(nrcOrganisations containers.StringSet, path *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
-	if nrcOrganisation == "" {
+	if nrcOrganisations.Len() == 0 {
 		allErrs = append(allErrs, validation.Required(path, "nrc organisation is required"))
-	} else if len(nrcOrganisation) > countryNrcOrganisationMaxLength {
-		allErrs = append(allErrs, validation.TooLongMaxLength(path, nrcOrganisation, countryNrcOrganisationMaxLength))
-	} else if len(nrcOrganisation) < countryNrcOrganisationMinLength {
-		allErrs = append(allErrs, validation.TooShortMinLength(path, nrcOrganisation, countryNrcOrganisationMinLength))
-	} else if !countryNrcOrganisationPattern.MatchString(nrcOrganisation) {
-		allErrs = append(allErrs, validation.Invalid(path, nrcOrganisation, "nrc organisation is invalid"))
+	} else {
+		for _, org := range nrcOrganisations.Items() {
+			if len(org) > countryNrcOrganisationMaxLength {
+				allErrs = append(allErrs, validation.TooLongMaxLength(path, org, countryNrcOrganisationMaxLength))
+			} else if len(org) < countryNrcOrganisationMinLength {
+				allErrs = append(allErrs, validation.TooShortMinLength(path, org, countryNrcOrganisationMinLength))
+			} else if !countryNrcOrganisationPattern.MatchString(org) {
+				allErrs = append(allErrs, validation.Invalid(path, org, "nrc organisation is invalid"))
+			}
+		}
 	}
 	return allErrs
 }

@@ -106,7 +106,7 @@
 
                         {{ $auth := .RequestContext.Auth }}
                         {{ $countries := $auth.GetCountryIDsWithReadWritePermissions }}
-                        {{ $countryLength := len $countries }}
+                        {{ $countryLength := $countries.Len }}
                         {{if or (gt $countryLength 1) ($auth.IsGlobalAdmin)}}
                         <div class="btn-group ms-5">
                             <button type="button"

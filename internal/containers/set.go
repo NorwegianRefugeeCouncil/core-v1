@@ -1,7 +1,9 @@
 package containers
 
 import (
+	"database/sql/driver"
 	"fmt"
+	"github.com/lib/pq"
 	"strings"
 
 	"golang.org/x/exp/constraints"
@@ -10,7 +12,9 @@ import (
 
 type empty struct{}
 type Set[T constraints.Ordered] map[T]empty
-type StringSet = Set[string]
+type StringSet struct {
+	Set[string]
+}
 
 func NewSet[T constraints.Ordered](elements ...T) Set[T] {
 	set := Set[T]{}
@@ -20,9 +24,27 @@ func NewSet[T constraints.Ordered](elements ...T) Set[T] {
 	return set
 }
 
+func (s StringSet) Value() (driver.Value, error) {
+	var a pq.StringArray
+	a = s.Items()
+	return a.Value()
+}
+
+func (s *StringSet) Scan(src interface{}) error {
+	var a pq.StringArray
+	err := a.Scan(src)
+	if err != nil {
+		return err
+	}
+	*s = NewStringSet(a...)
+	return nil
+}
+
 func NewStringSet(elements ...string) StringSet {
 	set := NewSet[string](elements...)
-	return set
+	return StringSet{
+		set,
+	}
 }
 
 func (s Set[T]) Add(items ...T) {

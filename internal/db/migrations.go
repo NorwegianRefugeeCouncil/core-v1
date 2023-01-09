@@ -41,6 +41,8 @@ var migrations = []migration{
 	migrationFromFile("017_add_office_field"),
 	migrationFromFile("018_add_nrc_organisation_to_country"),
 	migrationFromFile("019_individual_indices"),
+	migrationFromFile("020_rename_nrc_organisation_to_plural"),
+	migrationFromFile("021_convert_nrc_organisations_to_array"),
 }
 
 // Migrate runs the migrations on the database.
