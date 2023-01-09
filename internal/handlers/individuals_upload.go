@@ -101,7 +101,7 @@ func UploadHandler(renderer Renderer, individualRepo db.IndividualRepo) http.Han
 		invalidIndividualIds := validateIndividualsExistInCountry(individualIds, existingIndividuals, selectedCountryID)
 		if len(invalidIndividualIds) > 0 {
 			l.Warn("user trying to update individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
-			renderError(fmt.Sprintf("Could update individuals %s, they do not exist in the database for the selected country.", zap.Strings("individual_ids", invalidIndividualIds)))
+			renderError(fmt.Sprintf("Could not update individuals %s, they do not exist in the database for the selected country.", zap.Strings("individual_ids", invalidIndividualIds)))
 			return
 		}
 
