@@ -2,9 +2,6 @@
 {{end}}
 {{define "body"}}
     {{ $isGlobalAdmin := .RequestContext.Auth.IsGlobalAdmin }}
-    <header class="sticky-top">
-        {{template "nav" .}}
-    </header>
     <main>
         <div class="container mt-4">
             <div class="d-flex justify-content-between align-items-center">

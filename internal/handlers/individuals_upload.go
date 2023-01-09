@@ -67,8 +67,9 @@ func UploadHandler(renderer Renderer, individualRepo db.IndividualRepo) http.Han
 				return
 			}
 		} else {
-			l.Error(fmt.Sprintf("unsupported content type: %s", r.Header.Get("Content-Type")))
-			renderError(fmt.Sprintf("Could not process uploaded file of filetype %s, please upload a .csv or a .xlsx file.", r.Header.Get("Content-Type")))
+			var contentType = r.Header.Get("Content-Type")
+			l.Error(fmt.Sprintf("unsupported content type: %s", contentType))
+			renderError(fmt.Sprintf("Could not process uploaded file of filetype %s, please upload a .csv or a .xlsx file.", contentType))
 			return
 		}
 

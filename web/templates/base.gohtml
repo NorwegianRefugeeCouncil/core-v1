@@ -17,39 +17,26 @@
     {{template "head" .}}
 </head>
 <body>
-{{template "body" .}}
+    <header class="sticky-top">
+        {{template "nav" .}}
+    </header>
+    {{if not .UploadError}}
+        {{template "body" .}}
+    {{end}}
 
-{{if .UploadError}}
-{{if gt (len .UploadError) 0}}
-    <!-- BEGIN ERROR MODAL -->
-    <div
-         id="action-confirm-modal-0"
-         data-bs-backdrop="static"
-         class="modal fade show static-background-modal d-block"
-         data-bs-keyboard="false"
-         tabindex="-1"
-         aria-modal="true"
-         role="dialog"
-    >
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="bi bi-exclamation-circle me-2 text-danger"></i>
-                        Something went wrong
-                    </h5>
-                    <a class="btn-close"
-                       href="/countries/{{.RequestContext.SelectedCountryID}}/individuals"
-                    >
-                    </a>
-                </div>
+    {{if .UploadError}}
+        {{if gt (len .UploadError) 0}}
+            <!-- BEGIN ERROR MODAL -->
+            <main class="container m-3">
+                <h1 class="row">
+                    <i class="bi bi-exclamation-circle me-2 text-danger"></i>
+                    Something went wrong
+                </h1>
 
-                <div class="modal-body">
-                    <p>
-                        {{.UploadError}}
-                    </p>
+                <div class="row">
+                    {{.UploadError}}
                 </div>
-                <div class="modal-footer">
+                <div class="row">
                     <div class="d-flex flex-row justify-content-end">
                         <a class="btn btn-secondary"
                            href="/countries/{{.RequestContext.SelectedCountryID}}/individuals"
@@ -59,12 +46,10 @@
                         </a>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    <!-- END ERROR MODAL -->
-{{end}}
-{{end}}
+            </main>
+            <!-- END ERROR MODAL -->
+        {{end}}
+    {{end}}
 </body>
 
 

@@ -299,9 +299,7 @@
     {{$updatedAtWidth := $dateTimeWidth}}
 
     {{$canWrite := .RequestContext.HasSelectedCountryWritePermission}}
-    <header>
-        {{template "nav" .}}
-    </header>
+
     <main class="container-fluid p-5 pt-0">
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="my-4">{{ $.RequestContext.SelectedCountry.Name }}</h1>
