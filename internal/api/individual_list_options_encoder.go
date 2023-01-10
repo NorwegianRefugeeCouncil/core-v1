@@ -26,6 +26,7 @@ type listIndividualsOptionsEncoder struct {
 func (p *listIndividualsOptionsEncoder) encode() url.Values {
 	p.out = url.Values{}
 	fns := []func(){
+		p.encodeActive,
 		p.encodeAddress,
 		p.encodeAgeFrom,
 		p.encodeAgeTo,
@@ -91,6 +92,12 @@ func (p *listIndividualsOptionsEncoder) encode() url.Values {
 		fn()
 	}
 	return p.out
+}
+
+func (p *listIndividualsOptionsEncoder) encodeActive() {
+	if p.values.Active != nil {
+		p.out.Add(constants.FormParamsGetIndividualsActive, strconv.FormatBool(*p.values.Active))
+	}
 }
 
 func (p *listIndividualsOptionsEncoder) encodeAddress() {

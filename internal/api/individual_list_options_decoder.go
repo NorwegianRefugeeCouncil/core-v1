@@ -18,6 +18,7 @@ type listIndividualsOptionsDecoder struct {
 
 func (p *listIndividualsOptionsDecoder) parse() error {
 	fns := []func() error{
+		p.parseActive,
 		p.parseAddress,
 		p.parseAgeFrom,
 		p.parseAgeTo,
@@ -86,6 +87,12 @@ func (p *listIndividualsOptionsDecoder) parse() error {
 		}
 	}
 	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseActive() error {
+	var err error
+	p.out.Active, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsActive))
+	return err
 }
 
 func (p *listIndividualsOptionsDecoder) parseAddress() error {

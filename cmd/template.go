@@ -28,6 +28,7 @@ to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Commented out fields are currently blank, but left in place in case we want to change values later
 		individual := &api.Individual{
+			Active:                        true,
 			Address:                       "123 Blvd. Drive",
 			Age:                           pointers.Int(34),
 			BirthDate:                     pointers.Time(time.Date(1984, 1, 1, 0, 0, 0, 0, time.UTC)),

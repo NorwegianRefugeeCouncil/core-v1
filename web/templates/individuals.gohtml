@@ -8,6 +8,8 @@
         const downloadIndividualsButtonId = "downloadIndividualsButton"
         const deleteIndividualsButtonContentId = "deleteIndividualsButtonContent"
         const deleteButtonId = "deleteButton"
+        const deactivateButtonId = "deactivateButton"
+        const activateButtonId = "activateButton"
         const selectIndividualCheckboxClass = "select-row-checkbox"
         const selectAllIndividualsCheckboxId = "selectAllCheckbox"
         const selectedRowAttributes = {"aria-selected": "true"}
@@ -15,11 +17,12 @@
         const dataIndividualIdAttribute = "data-individual-id"
         const activeDeleteButtonClasses = ["btn-danger"]
         const inactiveDeleteButtonClasses = ["btn-outline-secondary", "disabled"]
-        const inactiveDeleteButtonText = "Delete individuals"
         const deleteIndividualsConfirmationModalId = "deleteIndividualsConfirmationModal"
         const deleteIndividualsConfirmationModalContentId = "deleteIndividualsConfirmationModalContent"
         const deleteIndividualsConfirmationModalConfirmButtonId = "deleteIndividualsConfirmationModalConfirmButton"
         const deleteIndividualsConfirmationModalConfirmButtonContentId = "deleteIndividualsConfirmationModalConfirmButtonContent"
+        const deactivateIndividualsButtonContentId = "deactivateIndividualsButtonContent"
+        const activateIndividualsButtonContentId = "activateIndividualsButtonContent"
         const individualTableContainerId = individualActionFormId
         const individualTableHorizontalScrollKey = "individualsTableHorizontalScroll"
         const downloadFilteredButtonID = "download-filtered"
@@ -54,11 +57,11 @@
          * @param count The number of selected individuals.
          * @returns {string} The text for the delete button.
          */
-        function getDeleteButtonText(count) {
+        function getActionButtonText(count, actionString) {
             if (count === 0) {
-                return inactiveDeleteButtonText
+                return actionString + " individuals"
             } else {
-                return "Delete " + count + " individual" + (count > 1 ? "s" : "")
+                return actionString + " " + count + " individual" + (count > 1 ? "s" : "")
             }
         }
 
@@ -133,11 +136,15 @@
 
         document.addEventListener("DOMContentLoaded", function () {
 
+            const deactivateButton = document.getElementById(deactivateButtonId)
+            const activateButton = document.getElementById(activateButtonId)
             const deleteButton = document.getElementById(deleteButtonId)
             const downloadButton = document.getElementById(downloadIndividualsButtonId)
             const downloadFilteredButton = document.getElementById(downloadFilteredButtonID)
             const downloadSelectedButton = document.getElementById(downloadSelectedButtonID)
             const deleteIndividualsButtonContent = document.getElementById(deleteIndividualsButtonContentId)
+            const deactivateIndividualsButtonContent = document.getElementById(deactivateIndividualsButtonContentId)
+            const activateIndividualsButtonContent = document.getElementById(activateIndividualsButtonContentId)
             const selectCheckboxes = Array.from(document.getElementsByClassName(selectIndividualCheckboxClass))
             const selectAllCheckbox = document.getElementById(selectAllIndividualsCheckboxId);
             const tableContainer = document.getElementById(individualTableContainerId)
@@ -145,15 +152,21 @@
             downloadButton.addEventListener('click', downloadFunc)
 
             /**
-             * Refreshes the disabled state of the delete button as well as the text of the button
+             * Refreshes the disabled state of the action buttons as well as the text of the buttons
              */
-            function refreshDeleteButton() {
+            function refreshActionButtons() {
                 const checkedCount = getSelectedIndividualCount()
-                deleteIndividualsButtonContent.innerText = getDeleteButtonText(checkedCount)
+                deleteIndividualsButtonContent.innerText = getActionButtonText(checkedCount, "Delete")
+                deactivateIndividualsButtonContent.innerText = getActionButtonText(checkedCount, "Deactivate")
+                activateIndividualsButtonContent.innerText = getActionButtonText(checkedCount, "Activate")
                 if (checkedCount > 0) {
                     deleteButton.classList.remove('disabled')
+                    deactivateButton.classList.remove('disabled')
+                    activateButton.classList.remove('disabled')
                 } else {
                     deleteButton.classList.add('disabled')
+                    deactivateButton.classList.add('disabled')
+                    activateButton.classList.add('disabled')
                 }
             }
 
@@ -217,7 +230,7 @@
                     selectCheckboxes[i].checked = isChecked
                     refreshIndividualRow(getIndividualIdFromSelectCheckbox(selectCheckboxes[i]))
                 }
-                refreshDeleteButton()
+                refreshActionButtons()
                 refreshSelectAllCheckbox()
                 refreshDownloadButton()
             });
@@ -228,7 +241,7 @@
                 selectCheckbox.addEventListener("change", function (event) {
                     refreshIndividualRow(getIndividualIdFromSelectCheckbox(event.target))
                     refreshSelectAllCheckbox()
-                    refreshDeleteButton()
+                    refreshActionButtons()
                     refreshDownloadButton()
                 })
             }
@@ -246,7 +259,7 @@
             });
 
             // Refresh the text and style of the delete button when the page is loaded
-            refreshDeleteButton()
+            refreshActionButtons()
             refreshDownloadButton()
 
             const dateTimeTextElements = Array.from(document.getElementsByClassName(dateTimeTextClass))
@@ -265,7 +278,7 @@
     {{$dateTimeWidth := "10rem"}}
     {{$identWidth := "8rem"}}
 
-    {{$selectWidth := "2rem"}}
+    {{$selectWidth := "4rem"}}
     {{$idWidth := "20rem"}}
     {{$nameWidth := "10rem"}}
     {{$idOffset := "2rem"}}
@@ -624,8 +637,13 @@
 
                             {{if $canWrite}}
                             <td class="sticky-column text-center">
-                                <div style="width: {{$selectWidth}}" class="mx-auto">
-                                    <input class="form-check-input select-row-checkbox"
+                                <div style="width: {{$selectWidth}}" class="d-flex justify-content-end align-items-center pe-3">
+                                    {{if not .Active}}
+                                        <div class="px-1 me-1 flex-grow-0">
+                                            <i class="bi bi-eye-slash-fill "></i>
+                                        </div>
+                                    {{end}}
+                                    <input class="form-check-input select-row-checkbox {{if not .Active}}mt-0{{end}}"
                                            type="checkbox"
                                            id="individual-checkbox-{{.ID}}"
                                            value="{{.ID}}"

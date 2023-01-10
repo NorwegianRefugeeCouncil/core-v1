@@ -105,6 +105,7 @@ const (
 	FormParamsGetIndividualCollectionOffice                = "collection_office"
 	FormParamsGetIndividualCollectionAgentName             = "collection_agent_name"
 	FormParamsGetIndividualCollectionAgentTitle            = "collection_agent_title"
+	FormParamsGetIndividualsActive                         = "active"
 	FormParamsGetIndividualsAddress                        = "address"
 	FormParamsGetIndividualsAgeFrom                        = "age_from"
 	FormParamsGetIndividualsAgeTo                          = "age_to"
@@ -172,6 +173,7 @@ const (
 	FormParamsGetIndividualsVisionDisabilityLevel          = "vision_disability_level"
 	FormParamsGetIndividualsSort                           = "sort"
 
+	DBColumnIndividualActive                         = "active"
 	DBColumnIndividualAddress                        = "address"
 	DBColumnIndividualAge                            = "age"
 	DBColumnIndividualBirthDate                      = "birth_date"
@@ -281,6 +283,7 @@ const (
 	DBColumnIndividualServiceDeliveredDate7          = "service_delivered_date_7"
 	DBColumnIndividualServiceComments7               = "service_comments_7"
 
+	FileColumnIndividualActive                         = "active"
 	FileColumnIndividualAddress                        = "address"
 	FileColumnIndividualAge                            = "age"
 	FileColumnIndividualBirthDate                      = "birth_date"
@@ -388,6 +391,7 @@ const (
 )
 
 var IndividualDBColumns = containers.NewStringSet(
+	DBColumnIndividualActive,
 	DBColumnIndividualAddress,
 	DBColumnIndividualAge,
 	DBColumnIndividualBirthDate,
@@ -601,11 +605,13 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualServiceRequestedDate7,
 	FileColumnIndividualServiceDeliveredDate7,
 	FileColumnIndividualServiceComments7,
+	FileColumnIndividualActive,
 	FileColumnIndividualCreatedAt,
 	FileColumnIndividualUpdatedAt,
 }
 
 var IndividualDBToFileMap = map[string]string{
+	DBColumnIndividualActive:                         FileColumnIndividualActive,
 	DBColumnIndividualAddress:                        FileColumnIndividualAddress,
 	DBColumnIndividualAge:                            FileColumnIndividualAge,
 	DBColumnIndividualBirthDate:                      FileColumnIndividualBirthDate,
@@ -713,6 +719,7 @@ var IndividualDBToFileMap = map[string]string{
 }
 
 var IndividualFileToDBMap = map[string]string{
+	FileColumnIndividualActive:                         DBColumnIndividualActive,
 	FileColumnIndividualAddress:                        DBColumnIndividualAddress,
 	FileColumnIndividualAge:                            DBColumnIndividualAge,
 	FileColumnIndividualBirthDate:                      DBColumnIndividualBirthDate,

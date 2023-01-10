@@ -149,6 +149,10 @@ $modal-backdrop-opacity: .5;
 
 $table-active-bg-factor: .05;
 
+//$list-group-border-width: 2px;
+$list-group-border-radius: 3px;
+$list-group-border-color: $secondary;
+
 @import "node_modules/bootstrap/scss/bootstrap";
 
 
@@ -229,10 +233,12 @@ button, .btn {
     }
     &.btn-primary {
         &:active, &:focus-visible, &:focus {
+            color: $white;
             background-color: $orange-700;
             border-color: $orange-700;
         }
         &:hover {
+            color: $white;
             background-color: $orange-200;
             border-color: $orange-200;
         }
@@ -247,16 +253,20 @@ button, .btn {
         &:active, &:focus-visible, &:focus {
             background-color: $orange-200;
             border-color: $orange-200;
+            color: $primary;
         }
     }
     &.btn-secondary {
+        color: $white;
         &:active, &:focus-visible, &:focus {
             background-color: $blue-700;
             border-color: $blue-700;
+            color: $white;
         }
         &:hover {
             background-color: $blue-300;
             border-color: $blue-300;
+            color: $white;
         }
     }
     &.btn-outline-secondary {
@@ -269,19 +279,33 @@ button, .btn {
         &:active, &:focus-visible, &:focus {
             background-color: $blue-200;
             border-color: $blue-200;
+            color: $secondary;
         }
     }
 
-        &.disabled {
-            border-color: $neutral300;
-            background-color: $neutral300;
+    &.btn-outline-danger {
+        color: $danger;
+        &:hover {
+            background-color: rgba($danger, 0.7);
             color: $white;
-            &[class*="btn-outline-"] {
-                    border-color: $neutral300;
-                    background-color: $white;
-                    color: $neutral300;
-            }
         }
+        &:active, &:focus-visible, &:focus {
+            background-color: rgba($danger, 0.5);
+            border-color: $danger;
+            color: $danger;
+        }
+    }
+
+    &.disabled {
+        border-color: $neutral300;
+        background-color: $neutral300;
+        color: $white;
+        &[class*="btn-outline-"] {
+                border-color: $neutral300;
+                background-color: $white;
+                color: $neutral300;
+        }
+    }
 
 
     &.icon-button {
@@ -481,8 +505,4 @@ table {
     line-height: 50px;
     padding-top: 0;
     padding-bottom: 0;
-}
-
-.static-background-modal {
-  background-color: rgba($neutral400, 0.5);
 }
