@@ -28,6 +28,11 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			args:    api.ListIndividualsOptions{},
 			wantSql: defaultQuery,
 		}, {
+			name:     "active",
+			args:     api.ListIndividualsOptions{Active: pointers.Bool(true)},
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND active = $1`,
+			wantArgs: []interface{}{true},
+		}, {
 			name:     "address",
 			args:     api.ListIndividualsOptions{Address: "123 Main St"},
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND address ILIKE $1`,

@@ -81,6 +81,16 @@ func buildRouter(
 		middleware.EnsureSelectedCountry(),
 		middleware.HasCountryPermission(auth.PermissionWrite),
 	))
+	individualsRouter.Path("/deactivate").Methods(http.MethodPost).Handler(withMiddleware(
+		handlers.HandleIndividualsDeactivate(individualRepo),
+		middleware.EnsureSelectedCountry(),
+		middleware.HasCountryPermission(auth.PermissionWrite),
+	))
+	individualsRouter.Path("/activate").Methods(http.MethodPost).Handler(withMiddleware(
+		handlers.HandleIndividualsActivate(individualRepo),
+		middleware.EnsureSelectedCountry(),
+		middleware.HasCountryPermission(auth.PermissionWrite),
+	))
 
 	individualRouter := individualsRouter.PathPrefix("/{individual_id}").Subrouter()
 	individualRouter.Path("").Methods(http.MethodGet).Handler(withMiddleware(

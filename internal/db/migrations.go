@@ -43,6 +43,7 @@ var migrations = []migration{
 	migrationFromFile("019_individual_indices"),
 	migrationFromFile("020_rename_nrc_organisation_to_plural"),
 	migrationFromFile("021_convert_nrc_organisations_to_array"),
+	migrationFromFile("022_add_active_column_to_individual"),
 }
 
 // Migrate runs the migrations on the database.

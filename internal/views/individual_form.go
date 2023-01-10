@@ -55,6 +55,7 @@ func (f *IndividualForm) build() error {
 		f.buildFullName,
 		f.buildPreferredName,
 		f.buildPrefersToRemainAnonymous,
+		f.buildActive,
 		f.buildSex,
 		f.buildBirthDate,
 		f.buildAge,
@@ -211,6 +212,13 @@ func (f *IndividualForm) buildIdField() error {
 
 func (f *IndividualForm) isNew() bool {
 	return len(f.individual.ID) == 0
+}
+
+func (f *IndividualForm) buildActive() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "active",
+		DisplayName: "Is the Individual Active",
+	}, f.personalInfoSection, f.individual.Active)
 }
 
 func (f *IndividualForm) buildFullName() error {

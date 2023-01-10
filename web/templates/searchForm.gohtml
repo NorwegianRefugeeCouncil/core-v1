@@ -6,7 +6,7 @@
         <h6 class="mt-2">Personal Info</h6>
         <div class="row">
             <!-- Full Name -->
-            <div class="form-group mb-3 col-6">
+            <div class="form-group mb-3 col-3">
                 <label class="form-label" for="Name">Name</label>
                 <input id="Name"
                        name="full_name"
@@ -74,6 +74,40 @@
                 </div>
             </div>
             <!-- End Is Minor -->
+            <!-- Is Active -->
+            <div class="form-group col-3">
+                <label class="form-text">Is active</label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value=""
+                               id="IsActive"
+                               name="active"
+                               {{if eq .Options.Active nil }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsActive">
+                            All
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value="true"
+                               id="ActiveYes"
+                               name="active"
+                               {{if .Options.IsActiveSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="ActiveYes">
+                            Yes
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline mb-3">
+                        <input class="form-check-input" type="radio" value="false"
+                               id="ActiveNo"
+                               name="active"
+                               {{if .Options.IsNotActiveSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="ActiveNo">
+                            No
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- End Is Active -->
         </div>
         <div class="row">
             <!-- ID -->
