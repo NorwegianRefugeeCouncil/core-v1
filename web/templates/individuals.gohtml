@@ -282,7 +282,7 @@
     {{$dateTimeWidth := "10rem"}}
     {{$identWidth := "8rem"}}
 
-    {{$selectWidth := "4rem"}}
+    {{$selectWidth := "1.5rem"}}
     {{$idWidth := "20rem"}}
     {{$nameWidth := "10rem"}}
     {{$sexWidth := "8rem"}}
@@ -351,9 +351,9 @@
             <table class="table table-individuals mb-0">
                 <thead>
                 <tr>
-                    <th class="sticky-column d-flex justify-content-end align-items-center" style="width: {{$selectWidth}}">
+                    <th class="sticky-column">
                         {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                            <div id="action-menu" class="px-1 me-1 flex-grow-0">
+                            <div id="action-menu">
                                 <i class="bi bi-three-dots-vertical cursor-pointer"
                                    id="action-menu-trigger"
                                    data-bs-target="#action-menu__list"
@@ -387,7 +387,9 @@
                                 </ul>
                             </div>
                         {{end}}
-                        <input class="form-check-input mt-0" type="checkbox" id="selectAllCheckbox"/>
+                    </th>
+                    <th class="sticky-column text-center" style="width: {{$selectWidth}}; left: 1rem">
+                        <input class="form-check-input" type="checkbox" id="selectAllCheckbox"/>
                     </th>
 
                     {{template "columnHeader" (dict
@@ -398,7 +400,7 @@
                     "Scope" "col"
                     "Class" "sticky-column "
                     "Title" "ID"
-                    "Style" "left: 4rem"
+                    "Style" "left: 2.5rem"
                     "Width" $idWidth
                     "MinWidth" $idWidth
                     "MaxWidth" $idWidth
@@ -411,7 +413,7 @@
                     "Label" "Name"
                     "Scope" "col"
                     "Class" "sticky-column border-end"
-                    "Style" "left: 24rem"
+                    "Style" "left: 22.5rem"
                     "Title" "Full Name"
                     "Width" $nameWidth
                     "MinWidth" $nameWidth
@@ -662,14 +664,16 @@
                             class="individual-row"
                             data-individual-id="{{.ID}}">
 
+                            <td class="sticky-column text-center" style="width: 1rem" >
+                                {{if not .Active}}
+                                    <div class="">
+                                        <i class="bi bi-eye-slash-fill "></i>
+                                    </div>
+                                {{end}}
+                            </td>
                             <td class="sticky-column text-center">
-                                <div style="width: {{$selectWidth}}" class="d-flex justify-content-end align-items-center pe-3">
-                                    {{if not .Active}}
-                                        <div class="px-1 me-1 flex-grow-0">
-                                            <i class="bi bi-eye-slash-fill "></i>
-                                        </div>
-                                    {{end}}
-                                    <input class="form-check-input select-row-checkbox {{if not .Active}}mt-0{{end}}"
+                                <div style="width: {{$selectWidth}}; left: 1rem">
+                                    <input class="form-check-input select-row-checkbox"
                                            type="checkbox"
                                            id="individual-checkbox-{{.ID}}"
                                            value="{{.ID}}"
@@ -678,7 +682,7 @@
                             </td>
 
                             <!-- ID -->
-                            <td class="sticky-column" style="left: 3rem">
+                            <td class="sticky-column" style="left: 2.5rem">
                                 <div style="width: {{$idWidth}}">
                                     <a href="/countries/{{.CountryID}}/individuals/{{.ID}}">
                                         {{.ID}}
@@ -688,7 +692,7 @@
                             <!-- End ID -->
 
                             <!-- Name -->
-                            <td class="sticky-column border-end" style="left: 24rem">
+                            <td class="sticky-column border-end" style="left: 22.5rem">
                                 <div style="width: {{$nameWidth}}">
                                     {{if .FullName}}
                                         {{.FullName}}
@@ -891,7 +895,7 @@
                     {{end}}
                 {{else}}
                     <tr>
-                        <td colspan="24">No individuals found</td>
+                        <td colspan="25">No individuals found</td>
                     </tr>
                 {{end}}
                 </tbody>

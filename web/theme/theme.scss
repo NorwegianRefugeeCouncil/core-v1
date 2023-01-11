@@ -519,6 +519,14 @@ table {
             padding: 5px 10px;
             cursor: pointer;
         }
+
+        #action-menu-trigger:hover {
+            color: $primary;
+        }
+    }
+
+    .form-check-input {
+        margin: 0.25rem 0;
     }
 }
 
@@ -531,8 +539,4 @@ table {
     line-height: 50px;
     padding-top: 0;
     padding-bottom: 0;
-}
-
-#action-menu-trigger:hover {
-    background-color: $neutral100;
 }
