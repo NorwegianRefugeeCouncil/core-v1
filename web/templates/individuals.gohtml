@@ -353,15 +353,12 @@
                 <tr>
                     <th class="sticky-column d-flex justify-content-end align-items-center" style="width: {{$selectWidth}}">
                         {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                            <div class="px-1 me-1 flex-grow-0">
-
-                            <i class="bi bi-three-dots-vertical cursor-pointer "
-                               id="action-menu-trigger"
-                               data-bs-target="#action-menu"
-                               data-bs-toggle="collapse"></i>
-                            </div>
-                            <div id="action-menu" class="collapse flex-grow-0">
-                                <ul class="list-group">
+                            <div id="action-menu" class="px-1 me-1 flex-grow-0">
+                                <i class="bi bi-three-dots-vertical cursor-pointer"
+                                   id="action-menu-trigger"
+                                   data-bs-target="#action-menu__list"
+                                   data-bs-toggle="collapse"></i>
+                                <ul id="action-menu__list" class="list-group collapse flex-grow-0">
                                     <li class="list-group-item" data-bs-toggle="modal"
                                         data-bs-target="#deleteIndividualsConfirmationModal"
                                         data-toggle="tooltip" data-placement="top" title="Delete selected individuals"

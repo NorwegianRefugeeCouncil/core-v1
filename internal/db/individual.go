@@ -251,178 +251,89 @@ func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual
 	return ret[0], nil
 }
 
-func (i individualRepo) SoftDelete(ctx context.Context, id string) error {
+func (i individualRepo) performAction(ctx context.Context, id string, action string) error {
 	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		err := i.softDeleteManyInternal(ctx, tx, containers.NewStringSet(id))
+		err := i.performActionManyInternal(ctx, tx, containers.NewStringSet(id), action)
 		return nil, err
 	})
 	return err
+}
+
+func (i individualRepo) performActionMany(ctx context.Context, ids containers.StringSet, action string) error {
+	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
+		err := i.performActionManyInternal(ctx, tx, ids, action)
+		return nil, err
+	})
+	return err
+}
+
+func (i individualRepo) performActionManyInternal(ctx context.Context, tx *sqlx.Tx, ids containers.StringSet, action string) error {
+	l := logging.NewLogger(ctx).With(zap.Strings("individual_ids", ids.Items()))
+	l.Debug("performing action: " + action + " individuals")
+
+	if err := batch(maxParams/ids.Len(), ids.Items(), func(idsInBatch []string) (bool, error) {
+		var query = "UPDATE individual_registrations SET " + individualActions[action].targetField + " = $1 WHERE id IN ("
+		var args = []interface{}{individualActions[action].newValue}
+		for i, id := range idsInBatch {
+			if i != 0 {
+				query += ","
+			}
+			query += fmt.Sprintf("$%d", i+2)
+			args = append(args, id)
+		}
+		query += ") "
+		for _, c := range individualActions[action].conditions {
+			query += c + " "
+		}
+
+		auditDuration := logDuration(ctx, "performing action: "+action+" individuals", zap.Int("count", len(idsInBatch)))
+		defer auditDuration()
+
+		result, err := tx.ExecContext(ctx, query, args...)
+		if err != nil {
+			l.Error("failed to "+action+" individuals", zap.Error(err))
+			return false, err
+		}
+
+		rowsAffected, err := result.RowsAffected()
+		if err != nil {
+			l.Error("failed to get rows affected", zap.Error(err))
+			return false, err
+		} else if rowsAffected != int64(len(idsInBatch)) {
+			l.Error("failed to "+action+" all individuals", zap.Int64("rows_affected", rowsAffected))
+			return false, fmt.Errorf("failed to " + action + " all individuals")
+		}
+
+		return false, nil
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (i individualRepo) SoftDelete(ctx context.Context, id string) error {
+	return i.performAction(ctx, id, DeleteAction)
 }
 
 func (i individualRepo) SoftDeleteMany(ctx context.Context, ids containers.StringSet) error {
-	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		err := i.softDeleteManyInternal(ctx, tx, ids)
-		return nil, err
-	})
-	return err
-}
-
-func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx, ids containers.StringSet) error {
-	l := logging.NewLogger(ctx).With(zap.Strings("individual_ids", ids.Items()))
-	l.Debug("deleting individuals")
-
-	if err := batch(maxParams/ids.Len(), ids.Items(), func(idsInBatch []string) (bool, error) {
-		var query = "UPDATE individual_registrations SET deleted_at = $1 WHERE id IN ("
-		var args = []interface{}{time.Now().UTC().Format(time.RFC3339)}
-		for i, id := range idsInBatch {
-			if i != 0 {
-				query += ","
-			}
-			query += fmt.Sprintf("$%d", i+2)
-			args = append(args, id)
-		}
-		query += ") and deleted_at IS NULL"
-
-		auditDuration := logDuration(ctx, "deleting individuals", zap.Int("count", len(idsInBatch)))
-		defer auditDuration()
-
-		result, err := tx.ExecContext(ctx, query, args...)
-		if err != nil {
-			l.Error("failed to delete individuals", zap.Error(err))
-			return false, err
-		}
-
-		rowsAffected, err := result.RowsAffected()
-		if err != nil {
-			l.Error("failed to get rows affected", zap.Error(err))
-			return false, err
-		} else if rowsAffected != int64(len(idsInBatch)) {
-			l.Error("failed to delete all individuals", zap.Int64("rows_affected", rowsAffected))
-			return false, fmt.Errorf("failed to delete all individuals")
-		}
-
-		return false, nil
-	}); err != nil {
-		return err
-	}
-
-	return nil
+	return i.performActionMany(ctx, ids, DeleteAction)
 }
 
 func (i individualRepo) Activate(ctx context.Context, id string) error {
-	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		err := i.activateManyInternal(ctx, tx, containers.NewStringSet(id))
-		return nil, err
-	})
-	return err
+	return i.performAction(ctx, id, ActivateAction)
 }
 
 func (i individualRepo) ActivateMany(ctx context.Context, ids containers.StringSet) error {
-	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		err := i.activateManyInternal(ctx, tx, ids)
-		return nil, err
-	})
-	return err
-}
-
-func (i individualRepo) activateManyInternal(ctx context.Context, tx *sqlx.Tx, ids containers.StringSet) error {
-	l := logging.NewLogger(ctx).With(zap.Strings("individual_ids", ids.Items()))
-	l.Debug("activating individuals")
-
-	if err := batch(maxParams/len(ids), ids.Items(), func(idsInBatch []string) (bool, error) {
-		var query = "UPDATE individual_registrations SET active = $1 WHERE id IN ("
-		var args = []interface{}{true}
-		for i, id := range idsInBatch {
-			if i != 0 {
-				query += ","
-			}
-			query += fmt.Sprintf("$%d", i+2)
-			args = append(args, id)
-		}
-		query += ")"
-
-		auditDuration := logDuration(ctx, "activating individuals", zap.Int("count", len(idsInBatch)))
-		defer auditDuration()
-
-		result, err := tx.ExecContext(ctx, query, args...)
-		if err != nil {
-			l.Error("failed to activate individuals", zap.Error(err))
-			return false, err
-		}
-
-		rowsAffected, err := result.RowsAffected()
-		if err != nil {
-			l.Error("failed to get rows affected", zap.Error(err))
-			return false, err
-		} else if rowsAffected != int64(len(idsInBatch)) {
-			l.Error("failed to activate all individuals", zap.Int64("rows_affected", rowsAffected))
-			return false, fmt.Errorf("failed to activate all individuals")
-		}
-
-		return false, nil
-	}); err != nil {
-		return err
-	}
-
-	return nil
+	return i.performActionMany(ctx, ids, ActivateAction)
 }
 
 func (i individualRepo) Deactivate(ctx context.Context, id string) error {
-	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		err := i.deactivateManyInternal(ctx, tx, containers.NewStringSet(id))
-		return nil, err
-	})
-	return err
+	return i.performAction(ctx, id, DeactivateAction)
 }
 
 func (i individualRepo) DeactivateMany(ctx context.Context, ids containers.StringSet) error {
-	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		err := i.deactivateManyInternal(ctx, tx, ids)
-		return nil, err
-	})
-	return err
-}
-
-func (i individualRepo) deactivateManyInternal(ctx context.Context, tx *sqlx.Tx, ids containers.StringSet) error {
-	l := logging.NewLogger(ctx).With(zap.Strings("individual_ids", ids.Items()))
-	l.Debug("deactivating individuals")
-
-	if err := batch(maxParams/len(ids), ids.Items(), func(idsInBatch []string) (bool, error) {
-		var query = "UPDATE individual_registrations SET active = $1 WHERE id IN ("
-		var args = []interface{}{false}
-		for i, id := range idsInBatch {
-			if i != 0 {
-				query += ","
-			}
-			query += fmt.Sprintf("$%d", i+2)
-			args = append(args, id)
-		}
-		query += ")"
-
-		auditDuration := logDuration(ctx, "deactivating individuals", zap.Int("count", len(idsInBatch)))
-		defer auditDuration()
-
-		result, err := tx.ExecContext(ctx, query, args...)
-		if err != nil {
-			l.Error("failed to deactivate individuals", zap.Error(err))
-			return false, err
-		}
-
-		rowsAffected, err := result.RowsAffected()
-		if err != nil {
-			l.Error("failed to get rows affected", zap.Error(err))
-			return false, err
-		} else if rowsAffected != int64(len(idsInBatch)) {
-			l.Error("failed to deactivate all individuals", zap.Int64("rows_affected", rowsAffected))
-			return false, fmt.Errorf("failed to deactivate all individuals")
-		}
-
-		return false, nil
-	}); err != nil {
-		return err
-	}
-
-	return nil
+	return i.performActionMany(ctx, ids, DeactivateAction)
 }
 
 func NewIndividualRepo(db *sqlx.DB) IndividualRepo {

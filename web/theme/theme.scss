@@ -503,6 +503,23 @@ table {
             opacity: 0.5!important
         }
     }
+
+    #action-menu {
+        #action-menu__list {
+            z-index: 102;
+            margin-top: 1px;
+            top: 40px;
+            left: 20px;
+            position: absolute;
+            font-weight: 400;
+            text-align: start;
+        }
+
+        .list-group-item {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    }
 }
 
 .cursor-pointer {
@@ -518,19 +535,4 @@ table {
 
 #action-menu-trigger:hover {
     background-color: $neutral100;
-}
-
-#action-menu {
-    z-index: 102;
-    margin-top: 1px;
-    top: 40px;
-    left: 20px;
-    position: absolute;
-    font-weight: 400;
-    text-align: start;
-
-    .list-group-item {
-        padding: 5px 10px;
-        cursor: pointer;
-    }
 }
