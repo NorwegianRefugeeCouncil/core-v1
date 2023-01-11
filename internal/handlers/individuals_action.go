@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func HandleIndividualsDelete(repo db.IndividualRepo) http.Handler {
+func HandleIndividualsAction(repo db.IndividualRepo, action string) http.Handler {
 
 	const (
 		formParamField = "individual_id"
@@ -49,13 +49,13 @@ func HandleIndividualsDelete(repo db.IndividualRepo) http.Handler {
 
 		invalidIndividualIds := validateIndividualsExistInCountry(individualIds, individuals, countryID)
 		if len(invalidIndividualIds) > 0 {
-			l.Warn("user trying to delete individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
+			l.Warn("user trying to "+action+" individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
 			http.Error(w, fmt.Sprintf("individuals not found: %v", invalidIndividualIds), http.StatusNotFound)
 			return
 		}
 
-		if err := repo.SoftDeleteMany(ctx, individualIds); err != nil {
-			l.Error("failed to delete individuals", zap.Error(err))
+		if err := repo.PerformActionMany(ctx, individualIds, action); err != nil {
+			l.Error("failed to "+action+" individuals", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

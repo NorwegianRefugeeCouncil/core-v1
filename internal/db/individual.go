@@ -22,6 +22,8 @@ type IndividualRepo interface {
 	GetByID(ctx context.Context, id string) (*api.Individual, error)
 	Put(ctx context.Context, individual *api.Individual, fields containers.StringSet) (*api.Individual, error)
 	PutMany(ctx context.Context, individuals []*api.Individual, fields containers.StringSet) ([]*api.Individual, error)
+	PerformAction(ctx context.Context, id string, action string) error
+	PerformActionMany(ctx context.Context, ids containers.StringSet, action string) error
 	SoftDelete(ctx context.Context, id string) error
 	SoftDeleteMany(ctx context.Context, ids containers.StringSet) error
 	Activate(ctx context.Context, id string) error
@@ -251,7 +253,7 @@ func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual
 	return ret[0], nil
 }
 
-func (i individualRepo) performAction(ctx context.Context, id string, action string) error {
+func (i individualRepo) PerformAction(ctx context.Context, id string, action string) error {
 	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		err := i.performActionManyInternal(ctx, tx, containers.NewStringSet(id), action)
 		return nil, err
@@ -259,7 +261,7 @@ func (i individualRepo) performAction(ctx context.Context, id string, action str
 	return err
 }
 
-func (i individualRepo) performActionMany(ctx context.Context, ids containers.StringSet, action string) error {
+func (i individualRepo) PerformActionMany(ctx context.Context, ids containers.StringSet, action string) error {
 	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		err := i.performActionManyInternal(ctx, tx, ids, action)
 		return nil, err
@@ -313,27 +315,27 @@ func (i individualRepo) performActionManyInternal(ctx context.Context, tx *sqlx.
 }
 
 func (i individualRepo) SoftDelete(ctx context.Context, id string) error {
-	return i.performAction(ctx, id, DeleteAction)
+	return i.PerformAction(ctx, id, DeleteAction)
 }
 
 func (i individualRepo) SoftDeleteMany(ctx context.Context, ids containers.StringSet) error {
-	return i.performActionMany(ctx, ids, DeleteAction)
+	return i.PerformActionMany(ctx, ids, DeleteAction)
 }
 
 func (i individualRepo) Activate(ctx context.Context, id string) error {
-	return i.performAction(ctx, id, ActivateAction)
+	return i.PerformAction(ctx, id, ActivateAction)
 }
 
 func (i individualRepo) ActivateMany(ctx context.Context, ids containers.StringSet) error {
-	return i.performActionMany(ctx, ids, ActivateAction)
+	return i.PerformActionMany(ctx, ids, ActivateAction)
 }
 
 func (i individualRepo) Deactivate(ctx context.Context, id string) error {
-	return i.performAction(ctx, id, DeactivateAction)
+	return i.PerformAction(ctx, id, DeactivateAction)
 }
 
 func (i individualRepo) DeactivateMany(ctx context.Context, ids containers.StringSet) error {
-	return i.performActionMany(ctx, ids, DeactivateAction)
+	return i.PerformActionMany(ctx, ids, DeactivateAction)
 }
 
 func NewIndividualRepo(db *sqlx.DB) IndividualRepo {
