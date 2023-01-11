@@ -278,7 +278,7 @@
     {{$dateTimeWidth := "10rem"}}
     {{$identWidth := "8rem"}}
 
-    {{$selectWidth := "4rem"}}
+    {{$selectWidth := "1.5rem"}}
     {{$idWidth := "20rem"}}
     {{$nameWidth := "10rem"}}
     {{$idOffset := "2rem"}}
@@ -634,16 +634,17 @@
                             id="individual-row-{{.ID}}"
                             class="individual-row"
                             data-individual-id="{{.ID}}">
-
+                            <td class="sticky-column text-center" style="width: 1rem" >
+                                {{if not .Active}}
+                                    <div class="">
+                                        <i class="bi bi-eye-slash-fill "></i>
+                                    </div>
+                                {{end}}
+                            </td>
                             {{if $canWrite}}
                             <td class="sticky-column text-center">
-                                <div style="width: {{$selectWidth}}" class="d-flex justify-content-end align-items-center pe-3">
-                                    {{if not .Active}}
-                                        <div class="px-1 me-1 flex-grow-0">
-                                            <i class="bi bi-eye-slash-fill "></i>
-                                        </div>
-                                    {{end}}
-                                    <input class="form-check-input select-row-checkbox {{if not .Active}}mt-0{{end}}"
+                                <div style="width: {{$selectWidth}}; left: 1rem">
+                                    <input class="form-check-input select-row-checkbox"
                                            type="checkbox"
                                            id="individual-checkbox-{{.ID}}"
                                            value="{{.ID}}"
@@ -866,7 +867,7 @@
                     {{end}}
                 {{else}}
                     <tr>
-                        <td colspan="{{if not $canWrite}}23{{else}}24{{end}}">No individuals found</td>
+                        <td colspan="{{if not $canWrite}}24{{else}}25{{end}}">No individuals found</td>
                     </tr>
                 {{end}}
                 </tbody>
