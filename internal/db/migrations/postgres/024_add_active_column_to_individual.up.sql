@@ -1,4 +1,4 @@
 ALTER TABLE individual_registrations
 
     -- add active column
-    ADD COLUMN active      bool         NOT NULL DEFAULT true;
+    ADD COLUMN IF NOT EXISTS active      bool         NOT NULL DEFAULT true;
