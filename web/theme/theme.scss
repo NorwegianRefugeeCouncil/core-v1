@@ -519,10 +519,17 @@ table {
             padding: 5px 10px;
             cursor: pointer;
         }
+    }
 
-        #action-menu-trigger:hover {
+    #inactive-toggle-button {
+        cursor: pointer;
+        i:hover {
             color: $primary;
         }
+    }
+
+    #action-menu-trigger:hover {
+        color: $primary;
     }
 
     .form-check-input {

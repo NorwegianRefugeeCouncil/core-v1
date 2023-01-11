@@ -10,6 +10,10 @@
         const deleteButtonId = "deleteButton"
         const deactivateButtonId = "deactivateButton"
         const activateButtonId = "activateButton"
+        const actionMenuId = "action-menu"
+        const inactiveToggleButtonId = "inactive-toggle-button"
+        const inactiveToggleIconActiveId = "inactive-toggle-button__active"
+        const inactiveToggleIconInactiveId = "inactive-toggle-button__inactive"
         const selectIndividualCheckboxClass = "select-row-checkbox"
         const selectAllIndividualsCheckboxId = "selectAllCheckbox"
         const selectedRowAttributes = {"aria-selected": "true"}
@@ -134,11 +138,23 @@
             goToURL(downloadURL)
         }
 
+        function toggleInactivePeople() {
+            let params = new URLSearchParams(document.location.search);
+            let active = params.get("active");
+            params.set('active', active === "true" ? "false" : "true");
+            const url = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + params
+            goToURL(url)
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
 
             const deactivateButton = document.getElementById(deactivateButtonId)
             const activateButton = document.getElementById(activateButtonId)
             const deleteButton = document.getElementById(deleteButtonId)
+            const actionMenuTrigger = document.getElementById(actionMenuId)
+            const inactiveToggleButton = document.getElementById(inactiveToggleButtonId)
+            const inactiveToggleButtonIconActive = document.getElementById(inactiveToggleIconActiveId)
+            const inactiveToggleButtonIconInactive = document.getElementById(inactiveToggleIconInactiveId)
             const downloadButton = document.getElementById(downloadIndividualsButtonId)
             const downloadFilteredButton = document.getElementById(downloadFilteredButtonID)
             const downloadSelectedButton = document.getElementById(downloadSelectedButtonID)
@@ -181,6 +197,27 @@
                     downloadFilteredButton.classList.remove('disabled')
                 } else {
                     downloadFilteredButton.classList.add('disabled')
+                }
+            }
+
+            function refreshTableActionButton() {
+                const checkedCount = getSelectedIndividualCount()
+                if (checkedCount > 0) {
+                    actionMenuTrigger.classList.remove('d-none')
+                    inactiveToggleButton.classList.add('d-none')
+                } else {
+                    actionMenuTrigger.classList.add('d-none')
+                    inactiveToggleButton.classList.remove('d-none')
+                }
+
+                let params = new URLSearchParams(document.location.search);
+                let active = params.get("active");
+                if (active === "false") {
+                     inactiveToggleButtonIconActive.classList.add('d-none')
+                     inactiveToggleButtonIconInactive.classList.remove('d-none')
+                } else {
+                     inactiveToggleButtonIconActive.classList.remove('d-none')
+                     inactiveToggleButtonIconInactive.classList.add('d-none')
                 }
             }
 
@@ -232,6 +269,7 @@
                 refreshActionButtons()
                 refreshSelectAllCheckbox()
                 refreshDownloadButton()
+                refreshTableActionButton()
             });
 
             // Handles the change of a single individual select checkbox
@@ -242,6 +280,7 @@
                     refreshSelectAllCheckbox()
                     refreshActionButtons()
                     refreshDownloadButton()
+                    refreshTableActionButton()
                 })
             }
 
@@ -265,6 +304,7 @@
             // Refresh the text and style of the delete button when the page is loaded
             refreshActionButtons()
             refreshDownloadButton()
+            refreshTableActionButton()
 
             const dateTimeTextElements = Array.from(document.getElementsByClassName(dateTimeTextClass))
             for (const dateTimeText of dateTimeTextElements) {
@@ -352,41 +392,54 @@
                 <thead>
                 <tr>
                     <th class="sticky-column">
-                        {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                            <div id="action-menu">
-                                <i class="bi bi-three-dots-vertical cursor-pointer"
-                                   id="action-menu-trigger"
-                                   data-bs-target="#action-menu__list"
-                                   data-bs-toggle="collapse"></i>
-                                <ul id="action-menu__list" class="list-group collapse flex-grow-0">
-                                    <li class="list-group-item" data-bs-toggle="modal"
-                                        data-bs-target="#deleteIndividualsConfirmationModal"
-                                        data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
-                                        onclick="refreshDeleteConfirmationModal()"
-                                        id="deleteButton"
-                                    >
-                                        <i class="bi bi-trash me-2"></i>
-                                        <span id="deleteIndividualsButtonContent">Delete individuals</span>
-                                    </li>
-                                    <li class="list-group-item"
-                                        onclick="submitActionForm('deactivate')"
-                                        data-toggle="tooltip" data-placement="top" title="Deactivate selected individuals"
-                                        id="deactivateButton"
-                                    >
-                                        <i class="bi bi-eye-slash-fill me-2"></i>
-                                        <span id="deactivateIndividualsButtonContent">Deactivate individuals</span>
-                                    </li>
-                                    <li class="list-group-item"
-                                        onclick="submitActionForm('activate')"
-                                        data-toggle="tooltip" data-placement="top" title="Activate selected individuals"
-                                        id="activateButton"
-                                    >
-                                        <i class="bi bi-eye me-2"></i>
-                                        <span id="activateIndividualsButtonContent">Activate individuals</span>
-                                    </li>
-                                </ul>
+                        <div id="action-buttons">
+                            {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
+                                <div id="action-menu" class="d-none">
+                                    <i class="bi bi-three-dots-vertical cursor-pointer"
+                                       id="action-menu-trigger"
+                                       data-bs-target="#action-menu__list"
+                                       data-bs-toggle="collapse"></i>
+                                    <ul id="action-menu__list" class="list-group collapse flex-grow-0">
+                                        <li class="list-group-item" data-bs-toggle="modal"
+                                            data-bs-target="#deleteIndividualsConfirmationModal"
+                                            data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
+                                            onclick="refreshDeleteConfirmationModal()"
+                                            id="deleteButton"
+                                        >
+                                            <i class="bi bi-trash me-2"></i>
+                                            <span id="deleteIndividualsButtonContent">Delete individuals</span>
+                                        </li>
+                                        <li class="list-group-item"
+                                            onclick="submitActionForm('deactivate')"
+                                            data-toggle="tooltip" data-placement="top" title="Deactivate selected individuals"
+                                            id="deactivateButton"
+                                        >
+                                            <i class="bi bi-eye-slash-fill me-2"></i>
+                                            <span id="deactivateIndividualsButtonContent">Deactivate individuals</span>
+                                        </li>
+                                        <li class="list-group-item"
+                                            onclick="submitActionForm('activate')"
+                                            data-toggle="tooltip" data-placement="top" title="Activate selected individuals"
+                                            id="activateButton"
+                                        >
+                                            <i class="bi bi-eye me-2"></i>
+                                            <span id="activateIndividualsButtonContent">Activate individuals</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            {{end}}
+                            <div id="inactive-toggle-button"
+                                 onclick="toggleInactivePeople()">
+                                <i class="bi bi-eye"
+                                   id="inactive-toggle-button__inactive"
+                                   data-toggle="tooltip" data-placement="top" title="Show active individuals"
+                                ></i>
+                                <i class="bi bi-eye-slash-fill"
+                                   id="inactive-toggle-button__active"
+                                   data-toggle="tooltip" data-placement="top" title="Show inactive individuals"
+                                ></i>
                             </div>
-                        {{end}}
+                        </div>
                     </th>
                     <th class="sticky-column text-center" style="width: {{$selectWidth}}; left: 1rem">
                         <input class="form-check-input" type="checkbox" id="selectAllCheckbox"/>
