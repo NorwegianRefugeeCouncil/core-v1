@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/nrc-no/notcore/internal/auth"
+	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"github.com/nrc-no/notcore/internal/validation"
@@ -103,6 +104,8 @@ type RequestContext struct {
 	SelectedCountry *api.Country
 	// Session is the current user session
 	Session auth.Session
+
+	Locales locales.Interface
 }
 
 func (r RequestContext) HasSelectedCountryWritePermission() bool {
@@ -201,12 +204,15 @@ func renderView(
 		}
 	}
 
+	localesInterface := locales.New(ctx)
+
 	rc := RequestContext{
 		Request:         r,
 		Auth:            authIntf,
 		Countries:       countries,
 		SelectedCountry: selectedCountry,
 		Session:         session,
+		Locales:         localesInterface,
 	}
 	vd[vd.RequestContextKey()] = rc
 
