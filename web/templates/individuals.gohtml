@@ -329,14 +329,14 @@
                        class="btn btn-outline-primary me-2"
                     >
                         <i class="bi bi-plus"></i>
-                        <span>New participant</span>
+                        <span>{{.RequestContext.Locales.Translate "create_new_individual"}}</span>
                     </a>
                 {{end}}
                 {{ if .RequestContext.HasSelectedCountryReadPermission}}
                     <div class="btn-group me-2">
                         <button type="button" class="btn btn-outline-secondary" id="downloadIndividualsButton">
                             <i class="bi bi-download"></i>
-                            <span>Download all</span>
+                            <span>{{.RequestContext.Locales.Translate "download_all"}}</span>
                         </button>
                         <button type="button"
                                 class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split px-3"
@@ -345,8 +345,8 @@
                                 id="download-toggle">
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a id="download-filtered" class="dropdown-item" href="#" onclick="downloadFilteredFunc()">Download filtered participants</a></li>
-                            <li><a id="download-selected" class="dropdown-item" href="#" onclick="downloadSelectedFunc()">Download selected participants</a></li>
+                            <li><a id="download-filtered" class="dropdown-item" href="#" onclick="downloadFilteredFunc()">{{.RequestContext.Locales.Translate "download_selected_individuals"}}</a></li>
+                            <li><a id="download-selected" class="dropdown-item" href="#" onclick="downloadSelectedFunc()">{{.RequestContext.Locales.Translate "download_filtered_individuals"}}</a></li>
                         </ul>
                     </div>
                 {{end}}
@@ -417,11 +417,12 @@
                         <input class="form-check-input" type="checkbox" id="selectAllCheckbox"/>
                     </th>
 
+                    {{$id := }}
                     {{template "columnHeader" (dict
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "id"
-                    "Label" "ID"
+                    "Label" (.RequestContext.Locales.Translate "individual_id") 
                     "Scope" "col"
                     "Class" "sticky-column "
                     "Title" "ID"
@@ -435,7 +436,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "full_name"
-                    "Label" "Name"
+                    "Label" "Name" 
                     "Scope" "col"
                     "Class" "sticky-column border-end"
                     "Title" "Full Name"

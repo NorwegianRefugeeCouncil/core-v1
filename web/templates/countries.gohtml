@@ -5,10 +5,10 @@
     <main>
         <div class="container mt-4">
             <div class="d-flex justify-content-between align-items-center">
-                <h1 class="my-4">Countries</h1>
+                <h1 class="my-4">{{.RequestContext.Locales.Translate "countries"}}</h1>
                 {{ if $isGlobalAdmin }}
                     <div>
-                        <a href="/countries/new" class="btn btn-primary float-end">New Country</a>
+                        <a href="/countries/new" class="btn btn-primary float-end">{{.RequestContext.Locales.Translate "new_country"}}</a>
                     </div>
                 {{ end }}
             </div>
@@ -18,10 +18,10 @@
                         <table class="table">
                             <thead>
                             <tr>
-                                <th style="min-width:12rem">Name</th>
+                                <th style="min-width:12rem">{{.RequestContext.Locales.Translate "name"}}</th>
                                 {{ if $isGlobalAdmin }}
                                 <th>
-                                    <span class="" title="Actions">Actions</span>
+                                    <span class="" title="Actions">{{.RequestContext.Locales.Translate "actions"}}</span>
                                 </th>
                                 {{end}}
                             </tr>
@@ -39,7 +39,7 @@
                         </table>
                     {{else}}
                         <div class="">
-                            No country found
+                            {{.RequestContext.Locales.Translate "no_country_found"}}
                         </div>
                     {{end}}
                 </div>

@@ -23,7 +23,7 @@
                 var deleteIcon = document.createElement("i")
 
                 newInput.classList = "form-control " + nrcOrgInputClass
-                newInput.placeholder = "New NRC Organisation"
+                newInput.placeholder = {{.RequestContext.Locales.Translate "new_nrc_organisation"}}
                 newInput.name = "NrcOrganisations"
                 newInput.value = null
 
@@ -52,13 +52,13 @@
             {{if .Country.ID}}
                 {{.Country.Name}}
             {{else}}
-                New Country
+                {{.RequestContext.Locales.Translate "new_country"}}
             {{end}}
         </h1>
         <form method="post" action="/countries/{{if eq "" .Country.ID}}new{{else}}{{.Country.ID}}{{end}}">
             <div class="card">
                         <div class="card-header">
-                            Country details
+                            {{.RequestContext.Locales.Translate "country_details"}}
                         </div>
                         <div class="card-body list-group list-group-flush pt-2">
                             <!-- ID -->
@@ -74,7 +74,7 @@
 
                             <!-- Name -->
                             <div class="form mb-3">
-                                <label for="Name" class="form-label">Name</label>
+                                <label for="Name" class="form-label">{{.RequestContext.Locales.Translate "name"}}</label>
                                 <input id="Name" name="Name" class="form-control"
                                        value="{{.Country.Name}}">
                             </div>
@@ -82,7 +82,7 @@
 
                             <!-- Code -->
                             <div class="form mb-3">
-                                <label for="Code" class="form-label">Code</label>
+                                <label for="Code" class="form-label">{{.RequestContext.Locales.Translate "code"}}</label>
                                 <input id="Code" name="Code" class="form-control font-monospace"
                                        value="{{.Country.Code}}">
                             </div>
@@ -93,7 +93,7 @@
                                 <label id="NrcOrganisationsLabel"
                                        for="NrcOrganisations"
                                        class="form-label w-100 d-flex justify-content-between mb-2">
-                                    NRC Organisation
+                                    {{.RequestContext.Locales.Translate "nrc_organisation"}}
                                     <button
                                         class="btn btn-outline-primary icon-button d-inline-flex"
                                         type="button"
@@ -118,15 +118,13 @@
                                 <div class="input-group mb-3" id="nrc-org-input-group">
                                 </div>
                                 <div class="form-text" id="NrcOrganisationsHelp">
-                                    The NRC Organisation that this country is associated with.
-                                    Users that belong to this NRC Organisation will be able to access this country's
-                                    data.
+                                    {{.RequestContext.Locales.Translate "nrc_organisation_description"}}
                                 </div>
                             </div>
                             <!-- End of NRC Organisation -->
                         </div>
                         <div class="card-footer">
-                            <button class="btn btn-primary" type="submit">Save</button>
+                            <button class="btn btn-primary" type="submit">{{.RequestContext.Locales.Translate "save"}}</button>
                         </div>
                     </div>
         </form>

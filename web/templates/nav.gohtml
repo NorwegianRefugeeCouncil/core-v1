@@ -59,7 +59,7 @@
             <div class="home-link me-0 me-lg-2">
                 <div class="d-flex flex-row align-items-center">
                     <img src="/static/nrc_logo.png" alt="nrc logo" width="50" height="50" class="d-inline-block"/>
-                    <span class="ms-2">Core{{if .RequestContext.SelectedCountry}} {{.RequestContext.SelectedCountry.Name}}{{end}}</span>
+                    <span class="ms-2">CORE{{if .RequestContext.SelectedCountry}} {{.RequestContext.SelectedCountry.Name}}{{end}}</span>
                 </div>
             </div>
             <div>
@@ -81,7 +81,7 @@
                                         class="btn btn-sm btn-link dropdown-toggle text-decoration-none px-2"
                                         aria-haspopup="true"
                                         aria-expanded="false">
-                                    Search
+                                    {{.RequestContext.Locales.Translate "search"}}
                                 </button>
                             </div>
 
@@ -99,7 +99,7 @@
                                             download="nrc-grf-template.xlsx"
                                             class="dropdown-item"
                                          >
-                                            Download template
+                                             {{.RequestContext.Locales.Translate "download_template"}}
                                         </a>
                                         <form id="individual-upload--form"
                                               action="/countries/{{.RequestContext.SelectedCountryID}}/participants/upload"
@@ -115,7 +115,7 @@
                                                     accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                             >
                                             <button id="individual-upload--button" type="button" class="dropdown-item">
-                                                Upload {{.RequestContext.SelectedCountry.Name}} data
+                                                {{.RequestContext.Locales.Translate "upload_data"}}
                                             </button>
                                         </form>
                                     </div>
@@ -133,7 +133,7 @@
                                     data-bs-toggle="dropdown"
                                     aria-haspopup="true"
                                     aria-expanded="false">
-                                {{if .RequestContext.SelectedCountry}} {{.RequestContext.SelectedCountry.Name}} {{else}} Select Country {{end}}
+                                {{if .RequestContext.SelectedCountry}} {{.RequestContext.SelectedCountry.Name}} {{else}} {{.RequestContext.Locales.Translate "select_country"}} {{end}}
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
                                 {{range $ci, $c := .RequestContext.Countries}}
@@ -141,7 +141,7 @@
                                 {{end}}
                                 {{if $auth.IsGlobalAdmin}}
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="/countries">Edit Countries</a>
+                                    <a class="dropdown-item" href="/countries">{{.RequestContext.Locales.Translate "edit_countries"}}</a>
                                 {{end}}
                             </div>
                         </div>
@@ -164,10 +164,10 @@
             <div class="modal-body">
                 <div class="d-flex flex-column align-items-center">
                     <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Uploading...</span>
+                        <span class="visually-hidden">{{.RequestContext.Locales.Translate "uploading"}}</span>
                     </div>
-                    <div class="mt-3">Uploading...</div>
-                    <div class="mt-3">Navigating away from this page will stop the file upload</div>
+                    <div class="mt-3">{{.RequestContext.Locales.Translate "uploading"}}</div>
+                    <div class="mt-3">{{.RequestContext.Locales.Translate "navigating_away"}}</div>
                 </div>
             </div>
         </div>
