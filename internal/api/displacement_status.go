@@ -15,6 +15,7 @@ const (
 	DisplacementStatusIDP           DisplacementStatus = "idp"
 	DisplacementStatusHostCommunity DisplacementStatus = "host_community"
 	DisplacementStatusReturnee      DisplacementStatus = "returnee"
+	DisplacementStatusAsylumSeeker  DisplacementStatus = "asylum_seeker"
 	DisplacementStatusNonDisplaced  DisplacementStatus = "non_displaced"
 	DisplacementStatusOther         DisplacementStatus = "other"
 
@@ -27,6 +28,7 @@ func AllDisplacementStatuses() containers.Set[DisplacementStatus] {
 		DisplacementStatusIDP,
 		DisplacementStatusHostCommunity,
 		DisplacementStatusReturnee,
+		DisplacementStatusAsylumSeeker,
 		DisplacementStatusNonDisplaced,
 		DisplacementStatusOther,
 	)
@@ -46,6 +48,8 @@ func (g DisplacementStatus) String() string {
 		return "Host Community"
 	case DisplacementStatusReturnee:
 		return "Returnee"
+	case DisplacementStatusAsylumSeeker:
+		return "Asylum Seeker"
 	case DisplacementStatusNonDisplaced:
 		return "Non-Displaced"
 	case DisplacementStatusOther:
@@ -67,6 +71,8 @@ func ParseDisplacementStatus(str string) (DisplacementStatus, error) {
 		return DisplacementStatusHostCommunity, nil
 	case string(DisplacementStatusReturnee):
 		return DisplacementStatusReturnee, nil
+	case string(DisplacementStatusAsylumSeeker):
+		return DisplacementStatusAsylumSeeker, nil
 	case string(DisplacementStatusNonDisplaced):
 		return DisplacementStatusNonDisplaced, nil
 	case string(DisplacementStatusUnspecified):

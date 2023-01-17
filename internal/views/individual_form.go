@@ -834,6 +834,8 @@ func (d *displacementStatusCodec) Encode(v interface{}) (string, error) {
 			return string(api.DisplacementStatusHostCommunity), nil
 		case api.DisplacementStatusReturnee:
 			return string(api.DisplacementStatusReturnee), nil
+		case api.DisplacementStatusAsylumSeeker:
+			return string(api.DisplacementStatusAsylumSeeker), nil
 		case api.DisplacementStatusNonDisplaced:
 			return string(api.DisplacementStatusNonDisplaced), nil
 		case api.DisplacementStatusOther:
@@ -858,6 +860,8 @@ func (d *displacementStatusCodec) Decode(v string) (interface{}, error) {
 		return api.DisplacementStatusHostCommunity, nil
 	case string(api.DisplacementStatusReturnee):
 		return api.DisplacementStatusReturnee, nil
+	case string(api.DisplacementStatusAsylumSeeker):
+		return api.DisplacementStatusAsylumSeeker, nil
 	case string(api.DisplacementStatusNonDisplaced):
 		return api.DisplacementStatusNonDisplaced, nil
 	case string(api.DisplacementStatusOther):
