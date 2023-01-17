@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/nrc-no/notcore/internal/utils"
 	"net/http"
 
 	"github.com/coreos/go-oidc/v3/oidc"
@@ -17,7 +18,7 @@ import (
 func buildRouter(
 	individualRepo db.IndividualRepo,
 	countryRepo db.CountryRepo,
-	globalAdminGroup string,
+	jwtGroups utils.JwtGroupOptions,
 	idTokenAuthHeaderName string,
 	idTokenAuthHeaderFormat string,
 	accessTokenHeaderName string,
@@ -47,7 +48,7 @@ func buildRouter(
 		middleware.RequestLogging,
 		middleware.Authentication(idTokenAuthHeaderName, idTokenAuthHeaderFormat, accessTokenHeaderName, accessTokenHeaderFormat, provider, idTokenVerifier, sessionStore, loginURL),
 		middleware.PrefetchCountries(countryRepo),
-		middleware.ComputePermissions(globalAdminGroup),
+		middleware.ComputePermissions(jwtGroups),
 		middleware.SelectedCountry(),
 	)
 

@@ -24,7 +24,7 @@ func HandleHome(templates map[string]*template.Template) http.Handler {
 			return
 		}
 
-		allowedCountryIDs := authInterface.GetCountryIDsWithReadWritePermissions().Items()
+		allowedCountryIDs := authInterface.GetAllowedCountries().Items()
 
 		if authInterface.IsGlobalAdmin() || len(allowedCountryIDs) != 1 {
 			http.Redirect(w, r, "/countries", http.StatusTemporaryRedirect)

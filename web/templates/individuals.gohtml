@@ -239,9 +239,6 @@
             if (horizontalScrollStr) {
                 tableContainer.scrollLeft = parseInt(horizontalScrollStr)
             }
-            setTimeout(() => {
-                tableContainer.classList.remove("opacity-0")
-            }, 0)
 
             // store the horizontal scroll position of the table
             tableContainer.addEventListener("scroll", function (event) {
@@ -296,6 +293,7 @@
     {{$createdAtWidth := $dateTimeWidth}}
     {{$updatedAtWidth := $dateTimeWidth}}
 
+    {{$canWrite := .RequestContext.Auth.HasMinimumPermissionWrite .RequestContext.SelectedCountry.ID}}
     <header>
         {{template "nav" .}}
     </header>
@@ -304,13 +302,15 @@
             <h1 class="my-4">{{ $.RequestContext.SelectedCountry.Name }}</h1>
 
             <div class="d-flex justify-content-end align-items-center">
-                <a href="/countries/{{.Options.CountryID}}/individuals/new"
-                   class="btn btn-outline-primary me-2"
-                   data-toggle="tooltip" data-placement="top" title="Create new Individual"
-                >
-                    <i class="bi bi-plus"></i>
-                    <span>Create new individual</span>
-                </a>
+                {{if $canWrite}}
+                    <a href="/countries/{{.Options.CountryID}}/individuals/new"
+                       class="btn btn-outline-primary me-2"
+                       data-toggle="tooltip" data-placement="top" title="Create new Individual"
+                    >
+                        <i class="bi bi-plus"></i>
+                        <span>Create new individual</span>
+                    </a>
+                {{end}}
                 {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
                     <div class="btn-group me-2">
                         <button type="button" class="btn btn-outline-secondary" id="downloadIndividualsButton">
@@ -334,12 +334,16 @@
         </div>
 
         <!-- INDIVIDUALS TABLE -->
-        <form id="individuals-action-form" class="table-responsive opacity-0 scroll-body" method="post">
+        <form id="individuals-action-form" class="table-responsive scroll-body" method="post">
             <table class="table table-individuals mb-0">
                 <thead>
                 <tr>
                     <th class="sticky-column text-center" style="width: {{$selectWidth}}">
-                        <input class="form-check-input" type="checkbox" id="selectAllCheckbox"/>
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="selectAllCheckbox"
+                               {{if not $canWrite}}disabled{{end}}
+                        />
                     </th>
 
                     {{template "columnHeader" (dict
@@ -350,7 +354,7 @@
                     "Scope" "col"
                     "Class" "sticky-column "
                     "Title" "ID"
-                    "Style" "left: 3rem"
+                    "Style" "left: 2rem"
                     "Width" $idWidth
                     "MinWidth" $idWidth
                     "MaxWidth" $idWidth
@@ -363,7 +367,7 @@
                     "Label" "Name"
                     "Scope" "col"
                     "Class" "sticky-column border-end"
-                    "Style" "left: 24rem"
+                    "Style" "left: 22rem"
                     "Title" "Full Name"
                     "Width" $nameWidth
                     "MinWidth" $nameWidth
@@ -618,6 +622,7 @@
                                 <div style="width: {{$selectWidth}}" class="mx-auto">
                                     <input class="form-check-input select-row-checkbox"
                                            type="checkbox"
+                                           {{if not $canWrite}}disabled{{end}}
                                            id="individual-checkbox-{{.ID}}"
                                            value="{{.ID}}"
                                            name="individual_id"/>

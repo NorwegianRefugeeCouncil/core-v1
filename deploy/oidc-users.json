@@ -12,6 +12,54 @@
     "nrcOrganisation": "NRC Head Office"
   },
   {
+    "id": "EASY_TO_REMEMBER_LOGIN__global_admin",
+    "email": "admin@gmail.com",
+    "email_verified": true,
+    "name": "Global admin user",
+    "nickname": "gau",
+    "password": "123",
+    "groups": [
+      "NRC_Core_GlobalAdmin"
+    ],
+    "nrcOrganisation": "NRC Head Office"
+  },
+  {
+    "id": "EASY_TO_REMEMBER_LOGIN__country_r",
+    "email": "r@gmail.com",
+    "email_verified": true,
+    "name": "Country user",
+    "nickname": "cu",
+    "password": "123",
+    "groups": [
+      "NRC_Core_CanRead"
+    ],
+    "nrcOrganisation": "NRC Colombia"
+  },
+  {
+    "id": "EASY_TO_REMEMBER_LOGIN__country_rw",
+    "email": "rw@gmail.com",
+    "email_verified": true,
+    "name": "Country user",
+    "nickname": "cu",
+    "password": "123",
+    "groups": [
+      "NRC_Core_CanRead",
+      "NRC_Core_CanWrite"
+    ],
+    "nrcOrganisation": "NRC Colombia"
+  },
+  {
+    "id": "EASY_TO_REMEMBER_LOGIN__country_none",
+    "email": "none@gmail.com",
+    "email_verified": true,
+    "name": "Country user",
+    "nickname": "cu",
+    "password": "123",
+    "groups": [
+    ],
+    "nrcOrganisation": "NRC Colombia"
+  },
+  {
     "id": "EASY_TO_REMEMBER_LOGIN__country",
     "email": "b@gmail.com",
     "email_verified": true,

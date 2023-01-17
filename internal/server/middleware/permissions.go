@@ -12,7 +12,7 @@ import (
 
 // permissionMiddleware will compute the user's permissions and add them to the context
 func ComputePermissions(
-	globalAdminGroup string,
+	jwtGroups utils.JwtGroupOptions,
 ) func(handler http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 
@@ -40,8 +40,8 @@ func ComputePermissions(
 				allCountryIDs.Add(c.ID)
 			}
 
-			perms := parsePermissions(allCountries, globalAdminGroup, session.GetUserGroups(), session.GetNrcOrganisation())
-			authIntf := auth.New(perms.countryIds, allCountryIDs, perms.isGlobalAdmin)
+			perms := parsePermissions(allCountries, jwtGroups, session.GetUserGroups(), session.GetNrcOrganisation())
+			authIntf := auth.New(perms.CountryIds, allCountryIDs, perms.IsGlobalAdmin, perms.CanRead, perms.CanWrite)
 			r = r.WithContext(utils.WithAuthContext(ctx, authIntf))
 			h.ServeHTTP(w, r)
 
@@ -49,15 +49,9 @@ func ComputePermissions(
 	}
 }
 
-// parsedPermissions is a helper struct to store the parsed permissions
-type parsedPermissions struct {
-	isGlobalAdmin bool
-	countryIds    containers.StringSet
-}
-
 // parsePermissions will retrieve the country ids from the user's groups
 // and determine if the user is a global admin
-func parsePermissions(allCountries []*api.Country, globalAdminGroup string, userGroups []string, nrcOrganisation string) *parsedPermissions {
+func parsePermissions(allCountries []*api.Country, jwtGroups utils.JwtGroupOptions, userGroups []string, nrcOrganisation string) *utils.ParsedPermissions {
 	countryIds := containers.NewStringSet()
 
 	for _, c := range allCountries {
@@ -69,15 +63,27 @@ func parsePermissions(allCountries []*api.Country, globalAdminGroup string, user
 	}
 
 	isGlobalAdmin := false
+	canRead := false
+	canWrite := false
 	for _, group := range userGroups {
-		if group == globalAdminGroup {
+		if group == jwtGroups.GlobalAdmin {
 			isGlobalAdmin = true
+			continue
+		}
+		if group == jwtGroups.CanRead {
+			canRead = true
+			continue
+		}
+		if group == jwtGroups.CanWrite {
+			canWrite = true
 			continue
 		}
 	}
 
-	return &parsedPermissions{
-		isGlobalAdmin: isGlobalAdmin,
-		countryIds:    countryIds,
+	return &utils.ParsedPermissions{
+		IsGlobalAdmin: isGlobalAdmin,
+		CountryIds:    countryIds,
+		CanRead:       canRead,
+		CanWrite:      canWrite,
 	}
 }

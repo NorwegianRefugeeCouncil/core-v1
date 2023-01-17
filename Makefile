@@ -55,6 +55,8 @@ serve: prerequisites
 		--db-dsn=postgres://postgres:postgres@localhost:5432/core?sslmode=disable \
 		--log-level=debug \
 		--jwt-global-admin-group="NRC_Core_GlobalAdmin" \
+		--jwt-can-read-group="NRC_Core_CanRead" \
+		--jwt-can-write-group="NRC_Core_CanWrite" \
 		--id-token-header-name="Authorization" \
 		--id-token-header-format="bearer-token" \
 		--access-token-header-name="x-auth-request-access-token" \

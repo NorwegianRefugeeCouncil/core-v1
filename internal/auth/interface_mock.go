@@ -48,18 +48,18 @@ func (mr *MockInterfaceMockRecorder) CanReadWriteToCountryID(arg0 interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CanReadWriteToCountryID", reflect.TypeOf((*MockInterface)(nil).CanReadWriteToCountryID), arg0)
 }
 
-// GetCountryIDsWithReadWritePermissions mocks base method.
-func (m *MockInterface) GetCountryIDsWithReadWritePermissions() containers.Set[string] {
+// GetAllowedCountries mocks base method.
+func (m *MockInterface) GetAllowedCountries() containers.Set[string] {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCountryIDsWithReadWritePermissions")
+	ret := m.ctrl.Call(m, "GetAllowedCountries")
 	ret0, _ := ret[0].(containers.Set[string])
 	return ret0
 }
 
-// GetCountryIDsWithReadWritePermissions indicates an expected call of GetCountryIDsWithReadWritePermissions.
-func (mr *MockInterfaceMockRecorder) GetCountryIDsWithReadWritePermissions() *gomock.Call {
+// GetAllowedCountries indicates an expected call of GetAllowedCountries.
+func (mr *MockInterfaceMockRecorder) GetAllowedCountries() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCountryIDsWithReadWritePermissions", reflect.TypeOf((*MockInterface)(nil).GetCountryIDsWithReadWritePermissions))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllowedCountries", reflect.TypeOf((*MockInterface)(nil).GetAllowedCountries))
 }
 
 // IsGlobalAdmin mocks base method.
