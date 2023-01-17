@@ -105,7 +105,7 @@ const (
 	FormParamsGetIndividualCollectionOffice                = "collection_office"
 	FormParamsGetIndividualCollectionAgentName             = "collection_agent_name"
 	FormParamsGetIndividualCollectionAgentTitle            = "collection_agent_title"
-	FormParamsGetIndividualsActive                         = "active"
+	FormParamsGetIndividualsActive                         = "inactive"
 	FormParamsGetIndividualsAddress                        = "address"
 	FormParamsGetIndividualsAgeFrom                        = "age_from"
 	FormParamsGetIndividualsAgeTo                          = "age_to"

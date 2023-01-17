@@ -17,14 +17,14 @@ var deleteAction = individualAction{
 	newValue:    time.Now().UTC().Format(time.RFC3339),
 }
 var activateAction = individualAction{
-	conditions:  []string{"and active IS false"},
-	targetField: "active",
-	newValue:    true,
+	conditions:  []string{},
+	targetField: "inactive",
+	newValue:    false,
 }
 var deactivateAction = individualAction{
-	conditions:  []string{"and active IS true"},
-	targetField: "active",
-	newValue:    false,
+	conditions:  []string{},
+	targetField: "inactive",
+	newValue:    true,
 }
 
 const (

@@ -10,7 +10,7 @@ import (
 )
 
 type ListIndividualsOptions struct {
-	Active                         *bool
+	Inactive                       *bool
 	Address                        string
 	AgeFrom                        *int
 	AgeTo                          *int
@@ -144,12 +144,12 @@ func (s *SortTerms) parseTerm(term string) (string, SortDirection, error) {
 	return term, direction, nil
 }
 
-func (o ListIndividualsOptions) IsActiveSelected() bool {
-	return o.Active != nil && *o.Active
+func (o ListIndividualsOptions) IsInactiveSelected() bool {
+	return *o.Inactive == true
 }
 
-func (o ListIndividualsOptions) IsNotActiveSelected() bool {
-	return o.Active != nil && !*o.Active
+func (o ListIndividualsOptions) IsNotInactiveSelected() bool {
+	return o.Inactive != nil && !*o.Inactive
 }
 
 func (o ListIndividualsOptions) IsMinorSelected() bool {

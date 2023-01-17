@@ -53,19 +53,6 @@
         }
 
         /**
-         * Gets the text for the delete button based on the number of selected individuals.
-         * @param count The number of selected individuals.
-         * @returns {string} The text for the delete button.
-         */
-        function getActionButtonText(count, actionString) {
-            if (count === 0) {
-                return actionString + " individuals"
-            } else {
-                return actionString + " " + count + " individual" + (count > 1 ? "s" : "")
-            }
-        }
-
-        /**
          * Gets the row id for the given individual id.
          * @param individualId The individual id.
          * @returns {string} The row id.
@@ -134,6 +121,18 @@
             goToURL(downloadURL)
         }
 
+        function toggleInactiveIndividuals() {
+            let params = new URLSearchParams(document.location.search);
+            let inactive = params.get("inactive");
+            if (inactive === "true") {
+                params.delete("inactive");
+            } else {
+                params.set("inactive", "true");
+            }
+            const url = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + params
+            goToURL(url)
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
 
             const deactivateButton = document.getElementById(deactivateButtonId)
@@ -142,9 +141,6 @@
             const downloadButton = document.getElementById(downloadIndividualsButtonId)
             const downloadFilteredButton = document.getElementById(downloadFilteredButtonID)
             const downloadSelectedButton = document.getElementById(downloadSelectedButtonID)
-            const deleteIndividualsButtonContent = document.getElementById(deleteIndividualsButtonContentId)
-            const deactivateIndividualsButtonContent = document.getElementById(deactivateIndividualsButtonContentId)
-            const activateIndividualsButtonContent = document.getElementById(activateIndividualsButtonContentId)
             const selectCheckboxes = Array.from(document.getElementsByClassName(selectIndividualCheckboxClass))
             const selectAllCheckbox = document.getElementById(selectAllIndividualsCheckboxId);
             const tableContainer = document.getElementById(individualTableContainerId)
@@ -156,9 +152,6 @@
              */
             function refreshActionButtons() {
                 const checkedCount = getSelectedIndividualCount()
-                deleteIndividualsButtonContent.innerText = getActionButtonText(checkedCount, "Delete")
-                deactivateIndividualsButtonContent.innerText = getActionButtonText(checkedCount, "Deactivate")
-                activateIndividualsButtonContent.innerText = getActionButtonText(checkedCount, "Activate")
                 if (checkedCount > 0) {
                     deleteButton.classList.remove('disabled')
                     deactivateButton.classList.remove('disabled')
@@ -338,7 +331,6 @@
                                 data-bs-toggle="dropdown"
                                 aria-expanded="false"
                                 id="download-toggle">
-                            <span class="visually-hidden">Toggle Dropdown</span>
                         </button>
                         <ul class="dropdown-menu">
                             <li><a id="download-filtered" class="dropdown-item" href="#" onclick="downloadFilteredFunc()">Download filtered individuals</a></li>
@@ -354,12 +346,16 @@
             <table class="table table-individuals mb-0">
                 <thead>
                 <tr>
+                    <th class="sticky-column">
+                        <i class="bi bi-eye{{if not .Options.IsInactiveSelected}}-slash-fill{{end}}"
+                           onclick="toggleInactiveIndividuals()"
+                           role="button"
+                           data-toggle="tooltip" data-placement="top" title="{{if not .Options.IsInactiveSelected}}Show{{else}}Hide{{end}} inactive individuals"></i>
+                    </th>
+
                     {{if $canWrite}}
-                    <th class="sticky-column text-center" style="width: {{$selectWidth}}">
-                        <input class="form-check-input"
-                               type="checkbox"
-                               id="selectAllCheckbox"
-                        />
+                    <th class="sticky-column text-center" style="width: {{$selectWidth}}; left: 1rem">
+                        <input class="form-check-input" type="checkbox" id="selectAllCheckbox"/>
                     </th>
                     {{end}}
 
@@ -635,7 +631,7 @@
                             class="individual-row"
                             data-individual-id="{{.ID}}">
                             <td class="sticky-column text-center" style="width: 1rem" >
-                                {{if not .Active}}
+                                {{if .Inactive}}
                                     <div class="">
                                         <i class="bi bi-eye-slash-fill "></i>
                                     </div>
@@ -877,19 +873,37 @@
     </main>
 
     <!-- PAGE FOOTER -->
-    <footer class="d-flex align-items-start justify-content-between">
-        {{ if .RequestContext.HasSelectedCountryWritePermission}}
-            <button type="button"
-                    id="deleteButton"
-                    class="btn btn-danger disabled"
-                    data-bs-toggle="modal"
-                    data-bs-target="#deleteIndividualsConfirmationModal"
-                    data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
-                    onclick="refreshDeleteConfirmationModal()">
-                <i class="bi bi-trash"></i>
-                <span id="deleteIndividualsButtonContent">Delete individuals</span>
-            </button>
-        {{end}}
+
+    <footer class="d-flex align-items-center justify-content-between">
+        <div>
+            {{ if .RequestContext.HasSelectedCountryWritePermission}}
+                <button type="button"
+                        id="deleteButton"
+                        class="btn btn-outline-danger disabled me-2"
+                        data-bs-toggle="modal"
+                        data-bs-target="#deleteIndividualsConfirmationModal"
+                        data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
+                        onclick="refreshDeleteConfirmationModal()">
+                    <i class="bi bi-trash"></i>
+                </button>
+                <div class="btn-group me-2">
+                    <button type="button"
+                            id="deactivateButton"
+                            class="btn btn-outline-secondary disabled"
+                            onclick="submitActionForm('deactivate')"
+                            data-toggle="tooltip" data-placement="top" title="Deactivate selected individuals">
+                        <i class="bi bi-eye-slash-fill"></i>
+                    </button>
+                    <button type="button"
+                            id="activateButton"
+                            class="btn btn-outline-secondary disabled"
+                            onclick="submitActionForm('activate')"
+                            data-toggle="tooltip" data-placement="top" title="Activate selected individuals">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+            {{end}}
+        </div>
         <div class="d-flex align-items-center justify-content-end">
             <div class="d-flex align-items-center">
                 Results:

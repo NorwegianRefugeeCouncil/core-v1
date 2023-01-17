@@ -9,8 +9,8 @@ import (
 )
 
 type Individual struct {
-	// Active is true if the individual is active
-	Active bool `json:"active" db:"active"`
+	// Inactive is true if the individual is inactive
+	Inactive bool `json:"inactive" db:"inactive"`
 	// Address is the residence address of the individual
 	Address string `json:"address" db:"address"`
 	// Age is the age of the individual
@@ -224,7 +224,7 @@ type IndividualList struct {
 func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 	switch field {
 	case constants.DBColumnIndividualActive:
-		return i.Active, nil
+		return i.Inactive, nil
 	case constants.DBColumnIndividualAddress:
 		return i.Address, nil
 	case constants.DBColumnIndividualAge:

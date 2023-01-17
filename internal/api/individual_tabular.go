@@ -115,7 +115,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualID:
 			i.ID = cols[idx]
 		case constants.FileColumnIndividualActive:
-			i.Active = isTrue(cols[idx])
+			i.Inactive = isFalse(cols[idx])
 		case constants.FileColumnIndividualAddress:
 			i.Address = cols[idx]
 		case constants.FileColumnIndividualAge:
@@ -652,6 +652,12 @@ var TRUE_VALUES = []string{"true", "yes", "1"}
 
 func isTrue(value string) bool {
 	return slices.Contains(TRUE_VALUES, strings.ToLower(value))
+}
+
+var FALSE_VALUES = []string{"false", "no", "0"}
+
+func isFalse(value string) bool {
+	return slices.Contains(FALSE_VALUES, strings.ToLower(value))
 }
 
 func stringArrayToInterfaceArray(row []string) []interface{} {

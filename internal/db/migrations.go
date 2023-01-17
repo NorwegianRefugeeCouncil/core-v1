@@ -45,7 +45,7 @@ var migrations = []migration{
 	migrationFromFile("021_convert_nrc_organisations_to_array"),
 	migrationFromFile("022_new_individual_fields"),
 	migrationFromFile("023_add_service_fields"),
-	migrationFromFile("024_add_active_column_to_individual"),
+	migrationFromFile("024_add_inactive_column_to_individual"),
 }
 
 // Migrate runs the migrations on the database.

@@ -24,12 +24,6 @@ type IndividualRepo interface {
 	PutMany(ctx context.Context, individuals []*api.Individual, fields containers.StringSet) ([]*api.Individual, error)
 	PerformAction(ctx context.Context, id string, action string) error
 	PerformActionMany(ctx context.Context, ids containers.StringSet, action string) error
-	SoftDelete(ctx context.Context, id string) error
-	SoftDeleteMany(ctx context.Context, ids containers.StringSet) error
-	Activate(ctx context.Context, id string) error
-	ActivateMany(ctx context.Context, ids containers.StringSet) error
-	Deactivate(ctx context.Context, id string) error
-	DeactivateMany(ctx context.Context, ids containers.StringSet) error
 }
 
 type individualRepo struct {
@@ -320,22 +314,6 @@ func (i individualRepo) SoftDelete(ctx context.Context, id string) error {
 
 func (i individualRepo) SoftDeleteMany(ctx context.Context, ids containers.StringSet) error {
 	return i.PerformActionMany(ctx, ids, DeleteAction)
-}
-
-func (i individualRepo) Activate(ctx context.Context, id string) error {
-	return i.PerformAction(ctx, id, ActivateAction)
-}
-
-func (i individualRepo) ActivateMany(ctx context.Context, ids containers.StringSet) error {
-	return i.PerformActionMany(ctx, ids, ActivateAction)
-}
-
-func (i individualRepo) Deactivate(ctx context.Context, id string) error {
-	return i.PerformAction(ctx, id, DeactivateAction)
-}
-
-func (i individualRepo) DeactivateMany(ctx context.Context, ids containers.StringSet) error {
-	return i.PerformActionMany(ctx, ids, DeactivateAction)
 }
 
 func NewIndividualRepo(db *sqlx.DB) IndividualRepo {
