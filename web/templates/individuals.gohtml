@@ -861,18 +861,21 @@
 
     <!-- PAGE FOOTER -->
     <footer class="d-flex align-items-start justify-content-between">
-        {{ if or .RequestContext.Auth.IsGlobalAdmin .RequestContext.HasSelectedCountryWritePermission}}
-            <button type="button"
-                    id="deleteButton"
-                    class="btn btn-danger disabled"
-                    data-bs-toggle="modal"
-                    data-bs-target="#deleteIndividualsConfirmationModal"
-                    data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
-                    onclick="refreshDeleteConfirmationModal()">
-                <i class="bi bi-trash"></i>
-                <span id="deleteIndividualsButtonContent">Delete individuals</span>
-            </button>
-        {{end}}
+        <div>
+            {{ if or .RequestContext.Auth.IsGlobalAdmin .RequestContext.HasSelectedCountryWritePermission}}
+                <button type="button"
+                        id="deleteButton"
+                        class="btn btn-danger disabled"
+                        data-bs-toggle="modal"
+                        data-bs-target="#deleteIndividualsConfirmationModal"
+                        data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
+                        onclick="refreshDeleteConfirmationModal()">
+                    <i class="bi bi-trash"></i>
+                    <span id="deleteIndividualsButtonContent">Delete individuals</span>
+                </button>
+            {{end}}
+        </div>
+        <div class="flex-grow-1"></div>
         <div class="d-flex align-items-center justify-content-end">
             <div class="d-flex align-items-center">
                 Results:
