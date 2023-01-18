@@ -268,6 +268,12 @@
     {{$selectWidth := "2rem"}}
     {{$idWidth := "20rem"}}
     {{$nameWidth := "10rem"}}
+    {{$idOffset := "2rem"}}
+    {{$nameOffset := "22rem"}}
+    {{if not .RequestContext.HasSelectedCountryWritePermission}}
+        {{$idOffset = "0rem"}}
+        {{$nameOffset = "20rem"}}
+    {{end}}
     {{$sexWidth := "8rem"}}
     {{$ageWidth := "4rem"}}
     {{$birthDateWidth := $dateWidth}}
@@ -337,13 +343,14 @@
             <table class="table table-individuals mb-0">
                 <thead>
                 <tr>
+                    {{if $canWrite}}
                     <th class="sticky-column text-center" style="width: {{$selectWidth}}">
                         <input class="form-check-input"
                                type="checkbox"
                                id="selectAllCheckbox"
-                               {{if not $canWrite}}disabled{{end}}
                         />
                     </th>
+                    {{end}}
 
                     {{template "columnHeader" (dict
                     "Options" .Options
@@ -353,10 +360,10 @@
                     "Scope" "col"
                     "Class" "sticky-column "
                     "Title" "ID"
-                    "Style" "left: 2rem"
                     "Width" $idWidth
                     "MinWidth" $idWidth
                     "MaxWidth" $idWidth
+                    "Left" $idOffset
                     )}}
 
                     {{template "columnHeader" (dict
@@ -366,11 +373,11 @@
                     "Label" "Name"
                     "Scope" "col"
                     "Class" "sticky-column border-end"
-                    "Style" "left: 22rem"
                     "Title" "Full Name"
                     "Width" $nameWidth
                     "MinWidth" $nameWidth
                     "MaxWidth" $nameWidth
+                    "Left" $nameOffset
                     )}}
 
                     {{template "columnHeader" (dict
@@ -617,19 +624,20 @@
                             class="individual-row"
                             data-individual-id="{{.ID}}">
 
+                            {{if $canWrite}}
                             <td class="sticky-column text-center">
                                 <div style="width: {{$selectWidth}}" class="mx-auto">
                                     <input class="form-check-input select-row-checkbox"
                                            type="checkbox"
-                                           {{if not $canWrite}}disabled{{end}}
                                            id="individual-checkbox-{{.ID}}"
                                            value="{{.ID}}"
                                            name="individual_id"/>
                                 </div>
                             </td>
+                            {{end}}
 
                             <!-- ID -->
-                            <td class="sticky-column" style="left: 3rem">
+                            <td class="sticky-column" style="left: {{$idOffset}}">
                                 <div style="width: {{$idWidth}}">
                                     <a href="/countries/{{.CountryID}}/individuals/{{.ID}}">
                                         {{.ID}}
@@ -639,7 +647,7 @@
                             <!-- End ID -->
 
                             <!-- Name -->
-                            <td class="sticky-column border-end" style="left: 24rem">
+                            <td class="sticky-column border-end" style="left: {{$nameOffset}}">
                                 <div style="width: {{$nameWidth}}">
                                     {{if .FullName}}
                                         {{.FullName}}
@@ -842,7 +850,7 @@
                     {{end}}
                 {{else}}
                     <tr>
-                        <td colspan="24">No individuals found</td>
+                        <td colspan="{{if not $canWrite}}23{{else}}24{{end}}">No individuals found</td>
                     </tr>
                 {{end}}
                 </tbody>
@@ -948,6 +956,8 @@
     {{$sortDirection := ""}}
     {{$sortDirectionForLink := ""}}
     {{$sorted := false}}
+    {{$left:= .Left}}
+
     {{if $sortable}}
         {{$sortDirection = $options.GetSortDirection $sortKey}}
         {{if eq $sortDirection "ascending"}}
@@ -974,6 +984,9 @@
     {{end}}
     {{if $maxWidth}}
         {{$style = concat $style "max-width: " $maxWidth ";" }}
+    {{end}}
+    {{if $left}}
+        {{$style = concat $style "left: " $left ";" }}
     {{end}}
     {{$style = concat $style "\"" }}
 
