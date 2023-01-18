@@ -139,6 +139,21 @@ func (i *IndividualBuilder) WithFullName(fullName string) *IndividualBuilder {
 	return i
 }
 
+func (i *IndividualBuilder) WithFirstName(firstName string) *IndividualBuilder {
+	i.individual.FirstName = firstName
+	return i
+}
+
+func (i *IndividualBuilder) WithMiddleName(middleName string) *IndividualBuilder {
+	i.individual.MiddleName = middleName
+	return i
+}
+
+func (i *IndividualBuilder) WithLastName(lastName string) *IndividualBuilder {
+	i.individual.LastName = lastName
+	return i
+}
+
 func (i *IndividualBuilder) WithFreeField1(freeField string) *IndividualBuilder {
 	i.individual.FreeField1 = freeField
 	return i
@@ -395,6 +410,9 @@ func ValidIndividual() *IndividualBuilder {
 		WithEmail1("email@email.com").
 		WithPhoneNumber1("1234567890").
 		WithFullName("John Doe").
+		WithFirstName("John").
+		WithMiddleName("James").
+		WithLastName("Doe").
 		WithDisplacementStatus("idp").
 		WithBirthDate(&bd).
 		WithCountryID(uuid.New().String()).
@@ -519,8 +537,20 @@ func TestValidateIndividual(t *testing.T) {
 			want: validation.ErrorList{validation.Invalid(email3Path, "invalid", "invalid email address")},
 		}, {
 			name: "fullName (too long)",
-			i:    ValidIndividual().WithFullName(bigstr(individualFullNameMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("fullName"), bigstr(individualFullNameMaxLength+1), individualFullNameMaxLength)},
+			i:    ValidIndividual().WithFullName(bigstr(individualNameMaxLength + 1)).Build(),
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("fullName"), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
+		}, {
+			name: "firstName (too long)",
+			i:    ValidIndividual().WithFirstName(bigstr(individualNameMaxLength + 1)).Build(),
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("firstName"), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
+		}, {
+			name: "middleName (too long)",
+			i:    ValidIndividual().WithMiddleName(bigstr(individualNameMaxLength + 1)).Build(),
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("middleName"), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
+		}, {
+			name: "LastName (too long)",
+			i:    ValidIndividual().WithLastName(bigstr(individualNameMaxLength + 1)).Build(),
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("lastName"), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
 		}, {
 			name: "freeField1 (too long)",
 			i:    ValidIndividual().WithFreeField1(bigstr(individualFreeFieldMaxLength + 1)).Build(),

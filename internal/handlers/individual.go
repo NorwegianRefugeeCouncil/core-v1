@@ -108,6 +108,8 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 		}
 		individual.CountryID = selectedCountryID
 
+		individual.Normalize()
+
 		// Validate the individual
 		validationErrors = apivalidation.ValidateIndividual(individual)
 		if len(validationErrors) > 0 {

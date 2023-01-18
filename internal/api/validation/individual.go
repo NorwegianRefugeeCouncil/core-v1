@@ -53,7 +53,10 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualFreeField(i.FreeField3, p.Child("freeField3"))...)
 	allErrs = append(allErrs, validateIndividualFreeField(i.FreeField4, p.Child("freeField4"))...)
 	allErrs = append(allErrs, validateIndividualFreeField(i.FreeField5, p.Child("freeField5"))...)
-	allErrs = append(allErrs, validateIndividualFullName(i.FullName, p.Child("fullName"))...)
+	allErrs = append(allErrs, validateIndividualName(i.FullName, p.Child("fullName"))...)
+	allErrs = append(allErrs, validateIndividualName(i.FirstName, p.Child("firstName"))...)
+	allErrs = append(allErrs, validateIndividualName(i.MiddleName, p.Child("middleName"))...)
+	allErrs = append(allErrs, validateIndividualName(i.LastName, p.Child("lastName"))...)
 	allErrs = append(allErrs, validateIndividualSex(i.Sex, p.Child("sex"))...)
 	allErrs = append(allErrs, validateIndividualHouseholdID(i.HouseholdID, p.Child("householdId"))...)
 	allErrs = append(allErrs, validateIndividualEngagementContext(i.EngagementContext, p.Child("engagementContext"))...)
@@ -90,7 +93,7 @@ const (
 	individualCollectionAgentTitleMaxLength           = 64
 	individualCommunityIDMaxLength                    = 64
 	individualEmailMaxLength                          = 255
-	individualFullNameMaxLength                       = 255
+	individualNameMaxLength                           = 255
 	individualFreeFieldMaxLength                      = 255
 	individualHouseholdIDMaxLength                    = 64
 	individualIdentificationTypeMaxLength             = 64
@@ -255,11 +258,11 @@ func validateIndividualEmail(email string, path *validation.Path) validation.Err
 	return allErrs
 }
 
-func validateIndividualFullName(fullName string, path *validation.Path) validation.ErrorList {
+func validateIndividualName(name string, path *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
 	// email is optional
-	if len(fullName) > individualFullNameMaxLength {
-		allErrs = append(allErrs, validation.TooLongMaxLength(path, fullName, individualFullNameMaxLength))
+	if len(name) > individualNameMaxLength {
+		allErrs = append(allErrs, validation.TooLongMaxLength(path, name, individualNameMaxLength))
 	}
 	return allErrs
 }
