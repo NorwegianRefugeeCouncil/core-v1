@@ -320,6 +320,26 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND is_head_of_household = $1`,
 			wantArgs: []interface{}{false},
 		}, {
+			name:     "isFemaleHeadedHousehold",
+			args:     api.ListIndividualsOptions{IsFemaleHeadedHousehold: pointers.Bool(true)},
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND is_female_headed_household = $1`,
+			wantArgs: []interface{}{true},
+		}, {
+			name:     "isFemaleHeadedHousehold (false)",
+			args:     api.ListIndividualsOptions{IsFemaleHeadedHousehold: pointers.Bool(false)},
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND is_female_headed_household = $1`,
+			wantArgs: []interface{}{false},
+		}, {
+			name:     "isMinorHeadedHousehold",
+			args:     api.ListIndividualsOptions{IsMinorHeadedHousehold: pointers.Bool(true)},
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND is_minor_headed_household = $1`,
+			wantArgs: []interface{}{true},
+		}, {
+			name:     "isMinorHeadedHousehold (false)",
+			args:     api.ListIndividualsOptions{IsMinorHeadedHousehold: pointers.Bool(false)},
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND is_minor_headed_household = $1`,
+			wantArgs: []interface{}{false},
+		}, {
 			name:     "isMinor",
 			args:     api.ListIndividualsOptions{IsMinor: pointers.Bool(true)},
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND is_minor = $1`,

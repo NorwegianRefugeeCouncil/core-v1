@@ -73,6 +73,8 @@ func (f *IndividualForm) build() error {
 		f.buildInternalID,
 		f.buildHouseholdID,
 		f.buildIsHeadOfHousehold,
+		f.buildIsFemaleHeadedHousehold,
+		f.buildIsMinorHeadedHousehold,
 		f.buildCommunityID,
 		f.buildIsHeadOfCommunity,
 		f.buildSpokenLanguage1,
@@ -375,6 +377,21 @@ func (f *IndividualForm) buildIsHeadOfHousehold() error {
 		DisplayName: "Is Head of Household",
 	}, f.personalInfoSection, f.individual.IsHeadOfHousehold)
 }
+
+func (f *IndividualForm) buildIsFemaleHeadedHousehold() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "isFemaleHeadedHousehold",
+		DisplayName: "Is Female Headed Household",
+	}, f.personalInfoSection, f.individual.IsFemaleHeadedHousehold)
+}
+
+func (f *IndividualForm) buildIsMinorHeadedHousehold() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "isMinorHeadedHousehold",
+		DisplayName: "Is Minor Headed Household",
+	}, f.personalInfoSection, f.individual.IsMinorHeadedHousehold)
+}
+
 func (f *IndividualForm) buildCommunityID() error {
 	return buildField(&forms.TextInputField{
 		Name:        "communityId",

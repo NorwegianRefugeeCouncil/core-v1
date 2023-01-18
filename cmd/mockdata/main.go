@@ -362,6 +362,9 @@ func Generate(count uint) error {
 			isHeadOfHousehold = randomBool()
 		}
 
+		isMinorHeadedHousehold := randomBool()
+		isFemaleHeadedHousehold := randomBool()
+
 		isMinor := randomBool()
 
 		nationality1 := randomCountry()
@@ -442,6 +445,8 @@ func Generate(count uint) error {
 			internalId,
 			isHeadOfCommunity,
 			isHeadOfHousehold,
+			isFemaleHeadedHousehold,
+			isMinorHeadedHousehold,
 			isMinor,
 			mobilityDisabilityLevel,
 			nationality1,

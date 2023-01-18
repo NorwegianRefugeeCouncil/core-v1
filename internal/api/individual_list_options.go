@@ -53,6 +53,8 @@ type ListIndividualsOptions struct {
 	InternalID                     string
 	IsHeadOfCommunity              *bool
 	IsHeadOfHousehold              *bool
+	IsFemaleHeadedHousehold        *bool
+	IsMinorHeadedHousehold         *bool
 	IsMinor                        *bool
 	MobilityDisabilityLevel        DisabilityLevel
 	Nationality                    string

@@ -323,6 +323,30 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 			args:    url.Values{"is_head_of_household": []string{"invalid"}},
 			wantErr: true,
 		}, {
+			name: "isFemaleHeadedHousehold",
+			args: url.Values{"is_female_headed_household": []string{"true"}},
+			want: ListIndividualsOptions{IsFemaleHeadedHousehold: pointers.Bool(true)},
+		}, {
+			name: "isFemaleHeadedHousehold (false)",
+			args: url.Values{"is_female_headed_household": []string{"false"}},
+			want: ListIndividualsOptions{IsFemaleHeadedHousehold: pointers.Bool(false)},
+		}, {
+			name:    "isFemaleHeadedHousehold (invalid)",
+			args:    url.Values{"is_female_headed_household": []string{"invalid"}},
+			wantErr: true,
+		}, {
+			name: "isMinorHeadedHousehold",
+			args: url.Values{"is_minor_headed_household": []string{"true"}},
+			want: ListIndividualsOptions{IsMinorHeadedHousehold: pointers.Bool(true)},
+		}, {
+			name: "isMinorHeadedHousehold (false)",
+			args: url.Values{"is_minor_headed_household": []string{"false"}},
+			want: ListIndividualsOptions{IsMinorHeadedHousehold: pointers.Bool(false)},
+		}, {
+			name:    "isMinorHeadedHousehold (invalid)",
+			args:    url.Values{"is_minor_headed_household": []string{"invalid"}},
+			wantErr: true,
+		}, {
 			name: "isMinor",
 			args: url.Values{"is_minor": []string{"true"}},
 			want: ListIndividualsOptions{IsMinor: pointers.Bool(true)},
@@ -701,6 +725,22 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			name: "isHeadOfHousehold (false)",
 			o:    ListIndividualsOptions{CountryID: countryId, IsHeadOfHousehold: pointers.Bool(false)},
 			want: "/countries/usa/individuals?is_head_of_household=false",
+		}, {
+			name: "isFemaleHeadedHousehold",
+			o:    ListIndividualsOptions{CountryID: countryId, IsFemaleHeadedHousehold: pointers.Bool(true)},
+			want: "/countries/usa/individuals?is_female_headed_household=true",
+		}, {
+			name: "isFemaleHeadedHousehold (false)",
+			o:    ListIndividualsOptions{CountryID: countryId, IsFemaleHeadedHousehold: pointers.Bool(false)},
+			want: "/countries/usa/individuals?is_female_headed_household=false",
+		}, {
+			name: "isMinorHeadedHousehold",
+			o:    ListIndividualsOptions{CountryID: countryId, IsMinorHeadedHousehold: pointers.Bool(true)},
+			want: "/countries/usa/individuals?is_minor_headed_household=true",
+		}, {
+			name: "isMinorHeadedHousehold (false)",
+			o:    ListIndividualsOptions{CountryID: countryId, IsMinorHeadedHousehold: pointers.Bool(false)},
+			want: "/countries/usa/individuals?is_minor_headed_household=false",
 		}, {
 			name: "isMinor",
 			o:    ListIndividualsOptions{CountryID: countryId, IsMinor: pointers.Bool(true)},

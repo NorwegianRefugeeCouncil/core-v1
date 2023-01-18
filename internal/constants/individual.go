@@ -48,6 +48,8 @@ const (
 	FormParamIndividualIsActive                       = "IsActive"
 	FormParamIndividualIsHeadOfCommunity              = "IsHeadOfCommunity"
 	FormParamIndividualIsHeadOfHousehold              = "IsHeadOfHousehold"
+	FormParamsIndividualsIsFemaleHeadedHousehold      = "IsFemaleHeadedHousehold"
+	FormParamIndividualIsMinorHeadedHousehold         = "IsMinorHeadedHousehold"
 	FormParamIndividualIsMinor                        = "IsMinor"
 	FormParamIndividualMobilityDisabilityLevel        = "MobilityDisabilityLevel"
 	FormParamIndividualNationality1                   = "Nationality1"
@@ -117,6 +119,8 @@ const (
 	FormParamsGetIndividualsInternalID                     = "internal_id"
 	FormParamsGetIndividualsIsHeadOfCommunity              = "is_head_of_community"
 	FormParamsGetIndividualsIsHeadOfHousehold              = "is_head_of_household"
+	FormParamsGetIndividualsIsFemaleHeadedHousehold        = "is_female_headed_household"
+	FormParamsGetIndividualsIsMinorHeadedHousehold         = "is_minor_headed_household"
 	FormParamsGetIndividualsIsMinor                        = "is_minor"
 	FormParamsGetIndividualsMobilityDisabilityLevel        = "mobility_disability_level"
 	FormParamsGetIndividualsNationality                    = "nationality"
@@ -187,6 +191,8 @@ const (
 	DBColumnIndividualInternalID                     = "internal_id"
 	DBColumnIndividualIsHeadOfCommunity              = "is_head_of_community"
 	DBColumnIndividualIsHeadOfHousehold              = "is_head_of_household"
+	DBColumnIndividualIsFemaleHeadedHousehold        = "is_female_headed_household"
+	DBColumnIndividualIsMinorHeadedHousehold         = "is_minor_headed_household"
 	DBColumnIndividualIsMinor                        = "is_minor"
 	DBColumnIndividualMobilityDisabilityLevel        = "mobility_disability_level"
 	DBColumnIndividualNationality1                   = "nationality_1"
@@ -262,6 +268,8 @@ const (
 	FileColumnIndividualInternalID                     = "internal_id"
 	FileColumnIndividualIsHeadOfCommunity              = "is_head_of_community"
 	FileColumnIndividualIsHeadOfHousehold              = "is_head_of_household"
+	FileColumnIndividualIsFemaleHeadedHousehold        = "is_female_headed_household"
+	FileColumnIndividualIsMinorHeadedHousehold         = "is_minor_headed_household"
 	FileColumnIndividualIsMinor                        = "is_minor"
 	FileColumnIndividualMobilityDisabilityLevel        = "mobility_disability_level"
 	FileColumnIndividualNationality1                   = "nationality_1"
@@ -337,6 +345,8 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualInternalID,
 	DBColumnIndividualIsHeadOfCommunity,
 	DBColumnIndividualIsHeadOfHousehold,
+	DBColumnIndividualIsFemaleHeadedHousehold,
+	DBColumnIndividualIsMinorHeadedHousehold,
 	DBColumnIndividualIsMinor,
 	DBColumnIndividualMobilityDisabilityLevel,
 	DBColumnIndividualNationality1,
@@ -385,6 +395,8 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualInternalID,
 	FileColumnIndividualHouseholdID,
 	FileColumnIndividualIsHeadOfHousehold,
+	FileColumnIndividualIsFemaleHeadedHousehold,
+	FileColumnIndividualIsMinorHeadedHousehold,
 	FileColumnIndividualCommunityID,
 	FileColumnIndividualIsHeadOfCommunity,
 	FileColumnIndividualSpokenLanguage1,
@@ -488,6 +500,8 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualInternalID:                     FileColumnIndividualInternalID,
 	DBColumnIndividualIsHeadOfCommunity:              FileColumnIndividualIsHeadOfCommunity,
 	DBColumnIndividualIsHeadOfHousehold:              FileColumnIndividualIsHeadOfHousehold,
+	DBColumnIndividualIsFemaleHeadedHousehold:        FileColumnIndividualIsFemaleHeadedHousehold,
+	DBColumnIndividualIsMinorHeadedHousehold:         FileColumnIndividualIsMinorHeadedHousehold,
 	DBColumnIndividualIsMinor:                        FileColumnIndividualIsMinor,
 	DBColumnIndividualMobilityDisabilityLevel:        FileColumnIndividualMobilityDisabilityLevel,
 	DBColumnIndividualNationality1:                   FileColumnIndividualNationality1,
@@ -561,6 +575,8 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualInternalID:                     DBColumnIndividualInternalID,
 	FileColumnIndividualIsHeadOfCommunity:              DBColumnIndividualIsHeadOfCommunity,
 	FileColumnIndividualIsHeadOfHousehold:              DBColumnIndividualIsHeadOfHousehold,
+	FileColumnIndividualIsFemaleHeadedHousehold:        DBColumnIndividualIsFemaleHeadedHousehold,
+	FileColumnIndividualIsMinorHeadedHousehold:         DBColumnIndividualIsMinorHeadedHousehold,
 	FileColumnIndividualIsMinor:                        DBColumnIndividualIsMinor,
 	FileColumnIndividualMobilityDisabilityLevel:        DBColumnIndividualMobilityDisabilityLevel,
 	FileColumnIndividualNationality1:                   DBColumnIndividualNationality1,

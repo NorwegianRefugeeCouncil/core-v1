@@ -61,6 +61,8 @@ func (p *listIndividualsOptionsDecoder) parse() error {
 		p.parseInternalID,
 		p.parseIsHeadOfCommunity,
 		p.parseIsHeadOfHousehold,
+		p.parseIsFemaleHeadedHousehold,
+		p.parseIsMinorHeadedHousehold,
 		p.parseIsMinor,
 		p.parseMobilityDisabilityLevel,
 		p.parseNationality,
@@ -371,6 +373,18 @@ func (p *listIndividualsOptionsDecoder) parseIsHeadOfCommunity() error {
 func (p *listIndividualsOptionsDecoder) parseIsHeadOfHousehold() error {
 	var err error
 	p.out.IsHeadOfHousehold, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsIsHeadOfHousehold))
+	return err
+}
+
+func (p *listIndividualsOptionsDecoder) parseIsFemaleHeadedHousehold() error {
+	var err error
+	p.out.IsFemaleHeadedHousehold, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsIsFemaleHeadedHousehold))
+	return err
+}
+
+func (p *listIndividualsOptionsDecoder) parseIsMinorHeadedHousehold() error {
+	var err error
+	p.out.IsMinorHeadedHousehold, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsIsMinorHeadedHousehold))
 	return err
 }
 

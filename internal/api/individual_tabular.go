@@ -239,6 +239,10 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.IsHeadOfCommunity = isTrue(cols[idx])
 		case constants.FileColumnIndividualIsHeadOfHousehold:
 			i.IsHeadOfHousehold = isTrue(cols[idx])
+		case constants.FileColumnIndividualIsFemaleHeadedHousehold:
+			i.IsFemaleHeadedHousehold = isTrue(cols[idx])
+		case constants.FileColumnIndividualIsMinorHeadedHousehold:
+			i.IsMinorHeadedHousehold = isTrue(cols[idx])
 		case constants.FileColumnIndividualIsMinor:
 			i.IsMinor = isTrue(cols[idx])
 		case constants.FileColumnIndividualMobilityDisabilityLevel:

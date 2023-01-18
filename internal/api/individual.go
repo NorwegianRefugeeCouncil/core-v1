@@ -124,6 +124,10 @@ type Individual struct {
 	IsHeadOfCommunity bool `json:"isHeadOfCommunity" db:"is_head_of_community"`
 	// IsHeadOfHousehold is a flag indicating whether the individual is the head of the household
 	IsHeadOfHousehold bool `json:"isHeadOfHousehold" db:"is_head_of_household"`
+	// IsFemaleHeadedHousehold is a flag indicating whether the head of the household is female
+	IsFemaleHeadedHousehold bool `json:"isFemaleHeadedHousehold" db:"is_female_headed_household"`
+	// IsMinorHeadedHousehold is a flag indicating whether the head of the household is a minor
+	IsMinorHeadedHousehold bool `json:"isMinorHeadedHousehold" db:"is_minor_headed_household"`
 	// IsMinor is a flag indicating whether the individual is a minor
 	IsMinor bool `json:"isMinor" db:"is_minor"`
 	// MobilityDisabilityLevel is the mobility disability level of the individual
@@ -276,6 +280,10 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.IsHeadOfCommunity, nil
 	case constants.DBColumnIndividualIsHeadOfHousehold:
 		return i.IsHeadOfHousehold, nil
+	case constants.DBColumnIndividualIsFemaleHeadedHousehold:
+		return i.IsFemaleHeadedHousehold, nil
+	case constants.DBColumnIndividualIsMinorHeadedHousehold:
+		return i.IsMinorHeadedHousehold, nil
 	case constants.DBColumnIndividualIsMinor:
 		return i.IsMinor, nil
 	case constants.DBColumnIndividualNationality1:

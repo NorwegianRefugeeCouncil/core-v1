@@ -68,6 +68,8 @@ func (p *listIndividualsOptionsEncoder) encode() url.Values {
 		p.encodeInternalID,
 		p.encodeIsHeadOfCommunity,
 		p.encodeIsHeadOfHousehold,
+		p.encodeIsFemaleHeadedHousehold,
+		p.encodeIsMinorHeadedHousehold,
 		p.encodeIsMinor,
 		p.encodeMobilityDisabilityLevel,
 		p.encodeNationality,
@@ -351,6 +353,18 @@ func (p *listIndividualsOptionsEncoder) encodeIsHeadOfHousehold() {
 	}
 }
 
+func (p *listIndividualsOptionsEncoder) encodeIsFemaleHeadedHousehold() {
+	if p.values.IsFemaleHeadedHousehold != nil {
+		p.out.Add(constants.FormParamsGetIndividualsIsFemaleHeadedHousehold, strconv.FormatBool(*p.values.IsFemaleHeadedHousehold))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeIsMinorHeadedHousehold() {
+	if p.values.IsMinorHeadedHousehold != nil {
+		p.out.Add(constants.FormParamsGetIndividualsIsMinorHeadedHousehold, strconv.FormatBool(*p.values.IsMinorHeadedHousehold))
+	}
+}
+
 func (p *listIndividualsOptionsEncoder) encodeIsMinor() {
 	if p.values.IsMinor != nil {
 		p.out.Add(constants.FormParamsGetIndividualsIsMinor, strconv.FormatBool(*p.values.IsMinor))
@@ -495,6 +509,8 @@ var sortableColumns = containers.NewStringSet(
 	constants.DBColumnIndividualInternalID,
 	constants.DBColumnIndividualIsHeadOfCommunity,
 	constants.DBColumnIndividualIsHeadOfHousehold,
+	constants.DBColumnIndividualIsFemaleHeadedHousehold,
+	constants.DBColumnIndividualIsMinorHeadedHousehold,
 	constants.DBColumnIndividualIsMinor,
 	constants.DBColumnIndividualMobilityDisabilityLevel,
 	constants.DBColumnIndividualNationality1,

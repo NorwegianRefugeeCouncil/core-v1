@@ -65,6 +65,8 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withInternalID(options.InternalID).
 		withIsHeadOfCommunity(options.IsHeadOfCommunity).
 		withIsHeadOfHousehold(options.IsHeadOfHousehold).
+		withIsFemaleHeadedHousehold(options.IsFemaleHeadedHousehold).
+		withIsMinorHeadedHousehold(options.IsMinorHeadedHousehold).
 		withIsMinor(options.IsMinor).
 		withMobilityDisabilityLevel(options.MobilityDisabilityLevel).
 		withNationality(options.Nationality).
@@ -483,6 +485,22 @@ func (g *getAllIndividualsSQLQuery) withIsHeadOfHousehold(isHeadOfHousehold *boo
 		return g
 	}
 	g.writeString(" AND is_head_of_household = ").writeArg(*isHeadOfHousehold)
+	return g
+}
+
+func (g *getAllIndividualsSQLQuery) withIsFemaleHeadedHousehold(isFemaleHeadedHousehold *bool) *getAllIndividualsSQLQuery {
+	if isFemaleHeadedHousehold == nil {
+		return g
+	}
+	g.writeString(" AND is_female_headed_household = ").writeArg(*isFemaleHeadedHousehold)
+	return g
+}
+
+func (g *getAllIndividualsSQLQuery) withIsMinorHeadedHousehold(isMinorHeadedHousehold *bool) *getAllIndividualsSQLQuery {
+	if isMinorHeadedHousehold == nil {
+		return g
+	}
+	g.writeString(" AND is_minor_headed_household = ").writeArg(*isMinorHeadedHousehold)
 	return g
 }
 
