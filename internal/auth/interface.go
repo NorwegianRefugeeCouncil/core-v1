@@ -18,18 +18,18 @@ type Interface interface {
 	IsGlobalAdmin() bool
 	GetAllowedCountries() containers.StringSet
 	HasCountryLevelPermission(countryID string, perm Permission) bool
-	HasMinimumPermissionWrite(countryID string) bool
-	HasMinimumPermissionRead(countryID string) bool
-	CanRead(countryID string) bool
-	CanWrite(countryID string) bool
+	HasCountryPermissionWrite(countryID string) bool
+	HasCountryPermissionRead(countryID string) bool
 }
 
 type permissions struct {
 	// isGlobalAdmin is true if the user has global admin permissions
 	isGlobalAdmin bool
-	canRead       bool
-	canWrite      bool
-	// allowedCountryIDs is a list of country IDs that the user has explicit read/write permissions to
+	// canRead is true if the user has read permissions
+	canRead bool
+	// canWrite is true if the user has write permissions
+	canWrite bool
+	// allowedCountryIDs is a list of country IDs that the user is attached to by their organisation property
 	allowedCountryIDs containers.StringSet
 	// allCountryIDs is a list of all country IDs
 	allCountryIDs containers.StringSet
@@ -55,9 +55,9 @@ func (p permissions) HasCountryLevelPermission(countryID string, perm Permission
 	case PermissionGlobalAdmin:
 		return p.IsGlobalAdmin()
 	case PermissionWrite:
-		return p.HasMinimumPermissionWrite(countryID)
+		return p.HasCountryPermissionWrite(countryID)
 	case PermissionRead:
-		return p.HasMinimumPermissionRead(countryID)
+		return p.HasCountryPermissionRead(countryID)
 	default:
 		return false
 	}
@@ -70,20 +70,12 @@ func (p permissions) GetAllowedCountries() containers.StringSet {
 	return containers.NewStringSet(p.allowedCountryIDs.Items()...)
 }
 
-func (p permissions) HasMinimumPermissionWrite(countryID string) bool {
+func (p permissions) HasCountryPermissionWrite(countryID string) bool {
 	return p.isGlobalAdmin || (p.allowedCountryIDs.Contains(countryID) && p.canWrite)
 }
 
-func (p permissions) HasMinimumPermissionRead(countryID string) bool {
-	return p.isGlobalAdmin || (p.allowedCountryIDs.Contains(countryID) && (p.canWrite || p.canRead))
-}
-
-func (p permissions) CanWrite(countryID string) bool {
-	return p.allowedCountryIDs.Contains(countryID) && p.canWrite
-}
-
-func (p permissions) CanRead(countryID string) bool {
-	return p.allowedCountryIDs.Contains(countryID) && p.canRead
+func (p permissions) HasCountryPermissionRead(countryID string) bool {
+	return p.isGlobalAdmin || (p.allowedCountryIDs.Contains(countryID) && p.canRead)
 }
 
 func (p permissions) IsGlobalAdmin() bool {

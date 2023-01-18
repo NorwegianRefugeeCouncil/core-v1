@@ -24,7 +24,7 @@ func Test_parsePermissions(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *utils.ParsedPermissions
+		want *ParsedPermissions
 	}{
 		{
 			name: "global admin. no countries defined",
@@ -34,7 +34,7 @@ func Test_parsePermissions(t *testing.T) {
 				userGroups:      []string{"global-admin"},
 				nrcOrganisation: "NRC HO",
 			},
-			want: &utils.ParsedPermissions{
+			want: &ParsedPermissions{
 				IsGlobalAdmin: true,
 				CanWrite:      false,
 				CanRead:       false,
@@ -50,7 +50,7 @@ func Test_parsePermissions(t *testing.T) {
 				userGroups:      []string{"global-admin"},
 				nrcOrganisation: "NRC Country 1",
 			},
-			want: &utils.ParsedPermissions{
+			want: &ParsedPermissions{
 				IsGlobalAdmin: true,
 				CanWrite:      false,
 				CanRead:       false,
@@ -67,7 +67,7 @@ func Test_parsePermissions(t *testing.T) {
 				userGroups:      []string{},
 				nrcOrganisation: "NRC Country 1",
 			},
-			want: &utils.ParsedPermissions{
+			want: &ParsedPermissions{
 				IsGlobalAdmin: false,
 				CanWrite:      false,
 				CanRead:       false,
@@ -82,7 +82,7 @@ func Test_parsePermissions(t *testing.T) {
 				userGroups:      []string{},
 				nrcOrganisation: "NRC Country 3",
 			},
-			want: &utils.ParsedPermissions{
+			want: &ParsedPermissions{
 				IsGlobalAdmin: false,
 				CanWrite:      false,
 				CanRead:       false,
@@ -96,7 +96,7 @@ func Test_parsePermissions(t *testing.T) {
 				userGroups:      []string{},
 				nrcOrganisation: "NRC Country 1",
 			},
-			want: &utils.ParsedPermissions{
+			want: &ParsedPermissions{
 				IsGlobalAdmin: false,
 				CanWrite:      false,
 				CanRead:       false,
@@ -113,7 +113,7 @@ func Test_parsePermissions(t *testing.T) {
 				userGroups:      []string{},
 				nrcOrganisation: "NRC Country 3",
 			},
-			want: &utils.ParsedPermissions{
+			want: &ParsedPermissions{
 				IsGlobalAdmin: false,
 				CanWrite:      false,
 				CanRead:       false,
@@ -129,7 +129,7 @@ func Test_parsePermissions(t *testing.T) {
 				userGroups:      []string{"can-read"},
 				nrcOrganisation: "NRC Country 1",
 			},
-			want: &utils.ParsedPermissions{
+			want: &ParsedPermissions{
 				IsGlobalAdmin: false,
 				CanWrite:      false,
 				CanRead:       true,
@@ -145,7 +145,7 @@ func Test_parsePermissions(t *testing.T) {
 				userGroups:      []string{"can-write"},
 				nrcOrganisation: "NRC Country 1",
 			},
-			want: &utils.ParsedPermissions{
+			want: &ParsedPermissions{
 				IsGlobalAdmin: false,
 				CanWrite:      true,
 				CanRead:       false,
@@ -161,7 +161,7 @@ func Test_parsePermissions(t *testing.T) {
 				userGroups:      []string{"can-read", "can-write"},
 				nrcOrganisation: "NRC Country 1",
 			},
-			want: &utils.ParsedPermissions{
+			want: &ParsedPermissions{
 				IsGlobalAdmin: false,
 				CanWrite:      true,
 				CanRead:       true,

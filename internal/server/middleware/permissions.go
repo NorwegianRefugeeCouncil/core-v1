@@ -10,6 +10,14 @@ import (
 	"net/http"
 )
 
+// ParsedPermissions is a helper struct to store the parsed permissions
+type ParsedPermissions struct {
+	IsGlobalAdmin bool
+	CountryIds    containers.StringSet
+	CanRead       bool
+	CanWrite      bool
+}
+
 // permissionMiddleware will compute the user's permissions and add them to the context
 func ComputePermissions(
 	jwtGroups utils.JwtGroupOptions,
@@ -51,7 +59,7 @@ func ComputePermissions(
 
 // parsePermissions will retrieve the country ids from the user's groups
 // and determine if the user is a global admin
-func parsePermissions(allCountries []*api.Country, jwtGroups utils.JwtGroupOptions, userGroups []string, nrcOrganisation string) *utils.ParsedPermissions {
+func parsePermissions(allCountries []*api.Country, jwtGroups utils.JwtGroupOptions, userGroups []string, nrcOrganisation string) *ParsedPermissions {
 	countryIds := containers.NewStringSet()
 
 	for _, c := range allCountries {
@@ -68,22 +76,25 @@ func parsePermissions(allCountries []*api.Country, jwtGroups utils.JwtGroupOptio
 	for _, group := range userGroups {
 		if group == jwtGroups.GlobalAdmin {
 			isGlobalAdmin = true
+			canWrite = true
+			canRead = true
+			continue
+		}
+		if group == jwtGroups.CanWrite {
+			canWrite = true
+			canRead = true
 			continue
 		}
 		if group == jwtGroups.CanRead {
 			canRead = true
 			continue
 		}
-		if group == jwtGroups.CanWrite {
-			canWrite = true
-			continue
-		}
 	}
 
-	return &utils.ParsedPermissions{
+	return &ParsedPermissions{
 		IsGlobalAdmin: isGlobalAdmin,
-		CountryIds:    countryIds,
-		CanRead:       canRead,
 		CanWrite:      canWrite,
+		CanRead:       canRead,
+		CountryIds:    countryIds,
 	}
 }

@@ -62,7 +62,7 @@
             <h1 class="col-8 text-truncate pe-2">
                 {{.form.Title}}
             </h1>
-            {{if .RequestContext.Auth.HasMinimumPermissionWrite .RequestContext.SelectedCountry.ID}}
+            {{if .RequestContext.HasSelectedCountryWritePermission}}
                 {{if .Individual.ID}}
                     <a href="/countries/{{.RequestContext.SelectedCountry.ID}}/individuals/new"
                        class="btn btn-outline-primary col-4">
@@ -72,7 +72,7 @@
             {{end}}
         </div>
         <div class="scroll-body">
-            <fieldset {{if not (.RequestContext.Auth.HasMinimumPermissionWrite .RequestContext.SelectedCountry.ID)}}disabled{{end}}>
+            <fieldset {{if not .RequestContext.HasSelectedCountryWritePermission}}disabled{{end}}>
                 <form id="individualForm"
                       class="container-fluid"
                       method="post"
@@ -83,7 +83,7 @@
         </div>
     </main>
 
-    {{if .RequestContext.Auth.HasMinimumPermissionWrite .RequestContext.SelectedCountry.ID}}
+    {{if .RequestContext.HasSelectedCountryWritePermission}}
     <footer>
         <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto d-flex flex-row justify-content-between align-items-center">
             {{if .Individual.ID}}

@@ -64,7 +64,7 @@
                                 </button>
                             </div>
 
-                            {{if (.RequestContext.Auth.HasMinimumPermissionWrite .RequestContext.SelectedCountry.ID)}}
+                            {{if .RequestContext.HasSelectedCountryWritePermission}}
                                 <div class="btn-group ms-5">
                                     <button type="button"
                                             class="btn btn-link text-secondary dropdown-toggle text-decoration-none px-2"
@@ -116,9 +116,7 @@
                             </button>
                             <div class="dropdown-menu">
                                 {{range $ci, $c := .RequestContext.Countries}}
-                                    {{if $auth.HasMinimumPermissionRead $c.ID}}
-                                        <a class="dropdown-item" href="/countries/{{$c.ID}}/individuals">{{$c.Name}}</a>
-                                    {{end}}
+                                    <a class="dropdown-item" href="/countries/{{$c.ID}}/individuals">{{$c.Name}}</a>
                                 {{end}}
                                 {{if $auth.IsGlobalAdmin}}
                                     <div class="dropdown-divider"></div>
