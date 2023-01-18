@@ -347,7 +347,7 @@
                 <thead>
                 <tr>
                     <th class="sticky-column">
-                        <i class="bi bi-eye{{if not .Options.IsInactiveSelected}}-slash-fill{{end}}"
+                        <i class="bi bi-eye{{if .Options.IsInactiveSelected}}-slash-fill{{end}}"
                            onclick="toggleInactiveIndividuals()"
                            role="button"
                            data-toggle="tooltip" data-placement="top" title="{{if not .Options.IsInactiveSelected}}Show{{else}}Hide{{end}} inactive individuals"></i>

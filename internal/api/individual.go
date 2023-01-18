@@ -223,7 +223,7 @@ type IndividualList struct {
 
 func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 	switch field {
-	case constants.DBColumnIndividualActive:
+	case constants.DBColumnIndividualInactive:
 		return i.Inactive, nil
 	case constants.DBColumnIndividualAddress:
 		return i.Address, nil

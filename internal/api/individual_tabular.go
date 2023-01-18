@@ -114,7 +114,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		switch field {
 		case constants.FileColumnIndividualID:
 			i.ID = cols[idx]
-		case constants.FileColumnIndividualActive:
+		case constants.FileColumnIndividualInactive:
 			i.Inactive = isFalse(cols[idx])
 		case constants.FileColumnIndividualAddress:
 			i.Address = cols[idx]
