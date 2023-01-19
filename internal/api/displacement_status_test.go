@@ -72,6 +72,7 @@ func TestDisplacementStatus_String(t *testing.T) {
 		{"idp", DisplacementStatusIDP, "IDP"},
 		{"host_community", DisplacementStatusHostCommunity, "Host Community"},
 		{"returnee", DisplacementStatusReturnee, "Returnee"},
+		{"asylum_seeker", DisplacementStatusAsylumSeeker, "Asylum Seeker"},
 		{"non_displaced", DisplacementStatusNonDisplaced, "Non-Displaced"},
 		{"other", DisplacementStatusOther, "Other"},
 	}
@@ -104,6 +105,11 @@ func TestDisplacementStatus_MarshalText(t *testing.T) {
 		assert.Equal(t, "returnee", string(got))
 	}
 	{
+		got, err := DisplacementStatusAsylumSeeker.MarshalText()
+		assert.NoError(t, err)
+		assert.Equal(t, "asylum_seeker", string(got))
+	}
+	{
 		got, err := DisplacementStatusNonDisplaced.MarshalText()
 		assert.NoError(t, err)
 		assert.Equal(t, "non_displaced", string(got))
@@ -130,6 +136,11 @@ func TestDisplacementStatus_UnmarshalText(t *testing.T) {
 		var g = new(DisplacementStatus)
 		assert.NoError(t, g.UnmarshalText([]byte("host_community")))
 		assert.Equal(t, DisplacementStatusHostCommunity, *g)
+	}
+	{
+		var g = new(DisplacementStatus)
+		assert.NoError(t, g.UnmarshalText([]byte("asylum_seeker")))
+		assert.Equal(t, DisplacementStatusAsylumSeeker, *g)
 	}
 	{
 		var g = new(DisplacementStatus)
@@ -163,6 +174,7 @@ func TestParseDisplacementStatus(t *testing.T) {
 		{"refugee", "refugee", DisplacementStatusRefugee, false},
 		{"idp", "idp", DisplacementStatusIDP, false},
 		{"host_community", "host_community", DisplacementStatusHostCommunity, false},
+		{"asylum_seeker", "asylum_seeker", DisplacementStatusAsylumSeeker, false},
 		{"non_displaced", "non_displaced", DisplacementStatusNonDisplaced, false},
 		{"returnee", "returnee", DisplacementStatusReturnee, false},
 		{"invalid", "invalid", "", true},
@@ -186,6 +198,7 @@ func TestAllDisplacementStatuss(t *testing.T) {
 		DisplacementStatusHostCommunity,
 		DisplacementStatusRefugee,
 		DisplacementStatusReturnee,
+		DisplacementStatusAsylumSeeker,
 		DisplacementStatusNonDisplaced,
 		DisplacementStatusOther,
 	}, AllDisplacementStatuses().Items())

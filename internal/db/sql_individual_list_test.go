@@ -133,8 +133,8 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 		}, {
 			name:     "displacementStatus (all)",
 			args:     api.ListIndividualsOptions{DisplacementStatuses: api.AllDisplacementStatuses()},
-			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND displacement_status IN ($1,$2,$3,$4,$5,$6)`,
-			wantArgs: []interface{}{"host_community", "idp", "non_displaced", "other", "refugee", "returnee"},
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND displacement_status IN ($1,$2,$3,$4,$5,$6,$7)`,
+			wantArgs: []interface{}{"asylum_seeker", "host_community", "idp", "non_displaced", "other", "refugee", "returnee"},
 		}, {
 			name:    "displacementStatus (none)",
 			args:    api.ListIndividualsOptions{DisplacementStatuses: containers.NewSet[api.DisplacementStatus]()},
