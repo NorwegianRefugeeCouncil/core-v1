@@ -38,6 +38,10 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+	for _, c := range Countries {
+		CountriesByCode[c.ISO3166Alpha3] = c
+	}
 }
 
 var Countries []Country
+var CountriesByCode = make(map[string]Country)

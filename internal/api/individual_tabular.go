@@ -624,6 +624,10 @@ func (i *Individual) marshalTabularData() ([]string, error) {
 				row[j] = strconv.Itoa(*value.(*int))
 			}
 		case string:
+			if (field == constants.DBColumnIndividualNationality1 || field == constants.DBColumnIndividualNationality2) && v != "" {
+				row[j] = constants.CountriesByCode[v].Name
+				break
+			}
 			row[j] = v
 		case time.Time:
 			row[j] = v.Format(getTimeFormatForField(field))
