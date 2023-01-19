@@ -628,6 +628,10 @@ func (i *Individual) marshalTabularData() ([]string, error) {
 				row[j] = constants.CountriesByCode[v].Name
 				break
 			}
+			if (field == constants.DBColumnIndividualSpokenLanguage1 || field == constants.DBColumnIndividualSpokenLanguage2 || field == constants.DBColumnIndividualSpokenLanguage3 || field == constants.DBColumnIndividualPreferredCommunicationLanguage) && v != "" {
+				row[j] = constants.LanguagesByCode[v].Name
+				break
+			}
 			row[j] = v
 		case time.Time:
 			row[j] = v.Format(getTimeFormatForField(field))

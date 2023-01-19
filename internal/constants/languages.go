@@ -33,7 +33,13 @@ func init() {
 	if err := json.Unmarshal([]byte(macroLanguageMapping), &MacroLanguageMappings); err != nil {
 		panic(err)
 	}
+
+	for _, l := range Languages {
+		LanguagesByCode[l.ID] = l
+	}
 }
+
+var LanguagesByCode = make(map[string]Language)
 
 type Language struct {
 	ID       string `json:"id"`
