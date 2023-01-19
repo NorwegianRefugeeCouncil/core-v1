@@ -447,6 +447,10 @@
                             {{if .Options.DisplacementStatuses.Contains "returnee" }}selected{{end}}>
                         Returnee
                     </option>
+                    <option value="asylum_seeker"
+                            {{if .Options.DisplacementStatuses.Contains "asylum_seeker" }}selected{{end}}>
+                        Asylum Seeker
+                    </option>
                     <option value="non_displaced"
                             {{if .Options.DisplacementStatuses.Contains "non_displaced" }}selected{{end}}>
                         Non Displaced
