@@ -36,10 +36,12 @@ func init() {
 
 	for _, l := range Languages {
 		LanguagesByCode[l.ID] = l
+		LanguagesByName[l.Name] = l
 	}
 }
 
 var LanguagesByCode = make(map[string]Language)
+var LanguagesByName = make(map[string]Language)
 
 type Language struct {
 	ID       string `json:"id"`

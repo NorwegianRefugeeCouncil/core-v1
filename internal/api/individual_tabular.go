@@ -294,9 +294,17 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			}
 			i.MobilityDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualNationality1:
-			i.Nationality1 = cols[idx]
+			if c := constants.CountriesByCode[cols[idx]].Name; c != "" {
+				i.Nationality1 = cols[idx]
+			} else if c := constants.CountriesByName[cols[idx]].Name; c != "" {
+				i.Nationality1 = constants.CountriesByName[cols[idx]].ISO3166Alpha3
+			}
 		case constants.FileColumnIndividualNationality2:
-			i.Nationality2 = cols[idx]
+			if c := constants.CountriesByCode[cols[idx]].Name; c != "" {
+				i.Nationality2 = cols[idx]
+			} else if c := constants.CountriesByName[cols[idx]].Name; c != "" {
+				i.Nationality2 = constants.CountriesByName[cols[idx]].ISO3166Alpha3
+			}
 		case constants.FileColumnIndividualPhoneNumber1:
 			i.PhoneNumber1 = cols[idx]
 		case constants.FileColumnIndividualPhoneNumber2:
@@ -310,7 +318,11 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualPreferredName:
 			i.PreferredName = cols[idx]
 		case constants.FileColumnIndividualPreferredCommunicationLanguage:
-			i.PreferredCommunicationLanguage = cols[idx]
+			if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
+				i.PreferredCommunicationLanguage = cols[idx]
+			} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
+				i.PreferredCommunicationLanguage = constants.LanguagesByName[cols[idx]].ID
+			}
 		case constants.FileColumnIndividualPrefersToRemainAnonymous:
 			i.PrefersToRemainAnonymous = isTrue(cols[idx])
 		case constants.FileColumnIndividualPresentsProtectionConcerns:
@@ -323,11 +335,23 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			}
 			i.SelfCareDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualSpokenLanguage1:
-			i.SpokenLanguage1 = cols[idx]
+			if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
+				i.SpokenLanguage1 = cols[idx]
+			} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
+				i.SpokenLanguage1 = constants.LanguagesByName[cols[idx]].ID
+			}
 		case constants.FileColumnIndividualSpokenLanguage2:
-			i.SpokenLanguage2 = cols[idx]
+			if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
+				i.SpokenLanguage2 = cols[idx]
+			} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
+				i.SpokenLanguage2 = constants.LanguagesByName[cols[idx]].ID
+			}
 		case constants.FileColumnIndividualSpokenLanguage3:
-			i.SpokenLanguage3 = cols[idx]
+			if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
+				i.SpokenLanguage3 = cols[idx]
+			} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
+				i.SpokenLanguage3 = constants.LanguagesByName[cols[idx]].ID
+			}
 		case constants.FileColumnIndividualVisionDisabilityLevel:
 			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
 			if err != nil {

@@ -40,8 +40,10 @@ func init() {
 	}
 	for _, c := range Countries {
 		CountriesByCode[c.ISO3166Alpha3] = c
+		CountriesByName[c.Name] = c
 	}
 }
 
 var Countries []Country
 var CountriesByCode = make(map[string]Country)
+var CountriesByName = make(map[string]Country)
