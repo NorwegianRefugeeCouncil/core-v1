@@ -176,6 +176,8 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualInternalID,
 		constants.FileColumnIndividualIsHeadOfCommunity,
 		constants.FileColumnIndividualIsHeadOfHousehold,
+		constants.FileColumnIndividualIsFemaleHeadedHousehold,
+		constants.FileColumnIndividualIsMinorHeadedHousehold,
 		constants.FileColumnIndividualIsMinor,
 		constants.FileColumnIndividualMobilityDisabilityLevel,
 		constants.FileColumnIndividualNationality1,
