@@ -862,7 +862,7 @@
     <!-- PAGE FOOTER -->
     <footer class="d-flex align-items-start justify-content-between">
         <div>
-            {{ if or .RequestContext.Auth.IsGlobalAdmin .RequestContext.HasSelectedCountryWritePermission}}
+            {{ if .RequestContext.HasSelectedCountryWritePermission}}
                 <button type="button"
                         id="deleteButton"
                         class="btn btn-danger disabled"

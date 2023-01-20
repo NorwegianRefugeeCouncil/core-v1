@@ -106,19 +106,11 @@ type RequestContext struct {
 }
 
 func (r RequestContext) HasSelectedCountryWritePermission() bool {
-	authInterface, err := utils.GetAuthContext(r.Request.Context())
-	if err != nil {
-		return false
-	}
-	return authInterface.HasCountryPermissionWrite(r.SelectedCountry.ID)
+	return r.Auth.HasCountryPermissionWrite(r.SelectedCountryID())
 }
 
 func (r RequestContext) HasSelectedCountryReadPermission() bool {
-	authInterface, err := utils.GetAuthContext(r.Request.Context())
-	if err != nil {
-		return false
-	}
-	return authInterface.HasCountryPermissionRead(r.SelectedCountry.ID)
+	return r.Auth.HasCountryPermissionRead(r.SelectedCountryID())
 }
 
 func (r RequestContext) SelectedCountryID() string {
