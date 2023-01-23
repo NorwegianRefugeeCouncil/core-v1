@@ -57,7 +57,7 @@
                     <div class="d-flex flex-row w-100 align-items-center">
 
                         {{if .RequestContext.SelectedCountry}}
-                        <div class="btn-group ms-5">
+                        <div class="btn-group ms-3">
                             <button data-bs-toggle="collapse"
                                     data-bs-target="#filters"
                                     id="search-button"
@@ -70,7 +70,7 @@
                         </div>
 
                         {{if .RequestContext.HasSelectedCountryWritePermission}}
-                        <div class="btn-group ms-5">
+                        <div class="btn-group ms-3">
                             <button type="button"
                                     class="btn btn-sm btn-link text-secondary dropdown-toggle text-decoration-none px-2"
                                     data-bs-toggle="dropdown"
@@ -111,7 +111,7 @@
                         {{ $countries := $auth.GetAllowedCountries }}
                         {{ $countryLength := $countries.Len }}
                         {{if or (gt $countryLength 1) ($auth.IsGlobalAdmin)}}
-                        <div class="btn-group ms-5">
+                        <div class="btn-group ms-3">
                             <button type="button"
                                     class="btn btn-sm btn-link text-secondary dropdown-toggle text-decoration-none px-2"
                                     data-bs-toggle="dropdown"
@@ -132,7 +132,7 @@
                         {{end}}
 
                         {{ if logoutURL}}
-                            <a title="Logout" class="nav-link order-last ms-5" href="{{logoutURL}}">
+                            <a title="Logout" class="nav-link order-last ms-3" href="{{logoutURL}}">
                                 <div class="nav-item d-inline-block">Logout</div>
                                 <i class="bi bi-box-arrow-right d-lg-inline-block"></i>
                             </a>

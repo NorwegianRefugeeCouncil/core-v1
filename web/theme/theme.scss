@@ -136,10 +136,11 @@ $dropdown-font-size: 20px;
 
 $nav-link-color: $secondary;
 $nav-link-hover-color: $orange;
-$nav-link-font-size: 18px;
-$navbar-padding-y: 40px !default;
-$navbar-brand-padding-y: $navbar-padding-y !default;
-$navbar-brand-height: 65px;
+$nav-link-font-size: 16px;
+$nav-link-font-weight: 500;
+$navbar-padding-y:                  40px !default;
+$navbar-brand-padding-y:            $navbar-padding-y !default;
+$navbar-brand-height:               65px;
 
 $modal-inner-padding: 20px !default;
 $modal-content-border-radius: 3px !default;
@@ -351,6 +352,7 @@ nav.navbar {
 .nav-link {
     color: $nav-link-color;
     font-size: $nav-link-font-size;
+    font-weight: $nav-link-font-weight;
     &:hover {
         color: $nav-link-hover-color;
     }
