@@ -155,13 +155,14 @@
                 if (checkedCount > 0) {
                     deleteButton.classList.remove('disabled')
                     deactivateButton.classList.remove('disabled')
-                    activateButton.classList.remove('disabled')
+                    activateButton && activateButton.classList.remove('disabled')
                 } else {
                     deleteButton.classList.add('disabled')
                     deactivateButton.classList.add('disabled')
-                    activateButton.classList.add('disabled')
+                    activateButton && activateButton.classList.add('disabled')
                 }
             }
+
 
             function refreshDownloadButton() {
                 const checkedCount = getSelectedIndividualCount()
@@ -170,7 +171,6 @@
                 } else {
                     downloadSelectedButton.classList.add('disabled')
                 }
-
                 if (searchParams) {
                     downloadFilteredButton.classList.remove('disabled')
                 } else {
