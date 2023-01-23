@@ -112,7 +112,7 @@
                     .map(getIndividualIdFromSelectCheckbox)
 
             const idSearchString = '?id=' + selectedIds.join('&id=')
-            const downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + idSearchString
+            const downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + idSearchString {{if .Options.Inactive}}+ "&inactive=true" {{end}}
             goToURL(downloadURL)
         }
 
