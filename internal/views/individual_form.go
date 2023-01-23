@@ -54,6 +54,9 @@ func (f *IndividualForm) build() error {
 		f.buildIdField,
 		f.buildFullName,
 		f.buildPreferredName,
+		f.buildFirstName,
+		f.buildMiddleName,
+		f.buildLastName,
 		f.buildPrefersToRemainAnonymous,
 		f.buildSex,
 		f.buildBirthDate,
@@ -228,6 +231,27 @@ func (f *IndividualForm) buildPreferredName() error {
 		DisplayName: "Preferred Name",
 		Value:       f.individual.PreferredName,
 	}, f.personalInfoSection, f.individual.PreferredName)
+}
+
+func (f *IndividualForm) buildFirstName() error {
+	return buildField(&forms.TextInputField{
+		Name:        "firstName",
+		DisplayName: "First Name",
+	}, f.personalInfoSection, f.individual.FirstName)
+}
+
+func (f *IndividualForm) buildMiddleName() error {
+	return buildField(&forms.TextInputField{
+		Name:        "middleName",
+		DisplayName: "Middle Name",
+	}, f.personalInfoSection, f.individual.MiddleName)
+}
+
+func (f *IndividualForm) buildLastName() error {
+	return buildField(&forms.TextInputField{
+		Name:        "lastName",
+		DisplayName: "Last Name",
+	}, f.personalInfoSection, f.individual.LastName)
 }
 
 func (f *IndividualForm) buildPrefersToRemainAnonymous() error {

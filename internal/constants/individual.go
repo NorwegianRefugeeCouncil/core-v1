@@ -22,6 +22,9 @@ const (
 	FormParamIndividualEmail2                         = "Email2"
 	FormParamIndividualEmail3                         = "Email3"
 	FormParamIndividualFullName                       = "FullName"
+	FormParamIndividualFirstName                      = "FirstName"
+	FormParamIndividualMiddleName                     = "MiddleName"
+	FormParamIndividualLastName                       = "LastName"
 	FormParamIndividualSex                            = "Sex"
 	FormParamIndividualHasCognitiveDisability         = "HasCognitiveDisability"
 	FormParamIndividualHasCommunicationDisability     = "HasCommunicationDisability"
@@ -97,6 +100,9 @@ const (
 	FormParamsGetIndividualsDisplacementStatusComment      = "displacement_status_comment"
 	FormParamsGetIndividualsEmail                          = "email"
 	FormParamsGetIndividualsFullName                       = "full_name"
+	FormParamsGetIndividualsFirstName                      = "first_name"
+	FormParamsGetIndividualsMiddleName                     = "middle_name"
+	FormParamsGetIndividualsLastName                       = "last_name"
 	FormParamsGetIndividualsFreeField1                     = "free_field_1"
 	FormParamsGetIndividualsFreeField2                     = "free_field_2"
 	FormParamsGetIndividualsFreeField3                     = "free_field_3"
@@ -161,6 +167,9 @@ const (
 	DBColumnIndividualEmail2                         = "email_2"
 	DBColumnIndividualEmail3                         = "email_3"
 	DBColumnIndividualFullName                       = "full_name"
+	DBColumnIndividualFirstName                      = "first_name"
+	DBColumnIndividualMiddleName                     = "middle_name"
+	DBColumnIndividualLastName                       = "last_name"
 	DBColumnIndividualFreeField1                     = "free_field_1"
 	DBColumnIndividualFreeField2                     = "free_field_2"
 	DBColumnIndividualFreeField3                     = "free_field_3"
@@ -238,6 +247,9 @@ const (
 	FileColumnIndividualEmail2                         = "email_2"
 	FileColumnIndividualEmail3                         = "email_3"
 	FileColumnIndividualFullName                       = "full_name"
+	FileColumnIndividualFirstName                      = "first_name"
+	FileColumnIndividualMiddleName                     = "middle_name"
+	FileColumnIndividualLastName                       = "last_name"
 	FileColumnIndividualFreeField1                     = "free_field_1"
 	FileColumnIndividualFreeField2                     = "free_field_2"
 	FileColumnIndividualFreeField3                     = "free_field_3"
@@ -315,6 +327,9 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualEmail2,
 	DBColumnIndividualEmail3,
 	DBColumnIndividualFullName,
+	DBColumnIndividualFirstName,
+	DBColumnIndividualMiddleName,
+	DBColumnIndividualLastName,
 	DBColumnIndividualFreeField1,
 	DBColumnIndividualFreeField2,
 	DBColumnIndividualFreeField3,
@@ -376,6 +391,9 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualID,
 	FileColumnIndividualFullName,
 	FileColumnIndividualPreferredName,
+	FileColumnIndividualFirstName,
+	FileColumnIndividualMiddleName,
+	FileColumnIndividualLastName,
 	FileColumnIndividualPrefersToRemainAnonymous,
 	FileColumnIndividualSex,
 	FileColumnIndividualBirthDate,
@@ -470,6 +488,9 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualEmail2:                         FileColumnIndividualEmail2,
 	DBColumnIndividualEmail3:                         FileColumnIndividualEmail3,
 	DBColumnIndividualFullName:                       FileColumnIndividualFullName,
+	DBColumnIndividualFirstName:                      FileColumnIndividualFirstName,
+	DBColumnIndividualMiddleName:                     FileColumnIndividualMiddleName,
+	DBColumnIndividualLastName:                       FileColumnIndividualLastName,
 	DBColumnIndividualFreeField1:                     FileColumnIndividualFreeField1,
 	DBColumnIndividualFreeField2:                     FileColumnIndividualFreeField2,
 	DBColumnIndividualFreeField3:                     FileColumnIndividualFreeField3,
@@ -545,6 +566,9 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualEmail2:                         DBColumnIndividualEmail2,
 	FileColumnIndividualEmail3:                         DBColumnIndividualEmail3,
 	FileColumnIndividualFullName:                       DBColumnIndividualFullName,
+	FileColumnIndividualFirstName:                      DBColumnIndividualFirstName,
+	FileColumnIndividualMiddleName:                     DBColumnIndividualMiddleName,
+	FileColumnIndividualLastName:                       DBColumnIndividualLastName,
 	FileColumnIndividualFreeField1:                     DBColumnIndividualFreeField1,
 	FileColumnIndividualFreeField2:                     DBColumnIndividualFreeField2,
 	FileColumnIndividualFreeField3:                     DBColumnIndividualFreeField3,
