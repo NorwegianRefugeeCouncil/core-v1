@@ -314,7 +314,7 @@
                         <span>Create new individual</span>
                     </a>
                 {{end}}
-                {{ if or .RequestContext.Auth.IsGlobalAdmin .RequestContext.HasSelectedCountryReadPermission}}
+                {{ if .RequestContext.HasSelectedCountryReadPermission}}
                     <div class="btn-group me-2">
                         <button type="button" class="btn btn-outline-secondary" id="downloadIndividualsButton">
                             <i class="bi bi-download"></i>

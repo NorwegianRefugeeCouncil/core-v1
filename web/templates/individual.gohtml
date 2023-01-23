@@ -14,6 +14,10 @@
             return input.type !== "hidden" && !input.disabled
         }
 
+        function goBack () {
+            window.history.back();
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("individualForm")
             const deletionForm = document.getElementById("delete-individual-form")
@@ -96,6 +100,9 @@
                 <!-- END DELETE BUTTON -->
             {{end}}
             <div class="flex-grow-1"></div>
+            <!-- CANCEL BUTTON -->
+            <button onclick="goBack()" class="btn btn-outline-primary mx-4">Cancel</button>
+            <!-- END CANCEL BUTTON -->
             <!-- SAVE BUTTON -->
             <button id="submitButton" type="submit" class="btn btn-primary mx-4">Save</button>
             <!-- END SAVE BUTTON -->
