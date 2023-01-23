@@ -58,6 +58,12 @@ type Individual struct {
 	Email3 string `json:"email3" db:"email_3"`
 	// FullName is the full name of the individual
 	FullName string `json:"fullName" db:"full_name"`
+	// FirstName is the first name of the individual
+	FirstName string `json:"firstName" db:"first_name"`
+	// MiddleName is the middle name of the individual
+	MiddleName string `json:"middleName" db:"middle_name"`
+	// LastName is the last name of the individual
+	LastName string `json:"lastName" db:"last_name"`
 	// FreeField1 is a free field for the individual
 	FreeField1 string `json:"freeField1" db:"free_field_1"`
 	// FreeField2 is a free field for the individual
@@ -124,6 +130,10 @@ type Individual struct {
 	IsHeadOfCommunity bool `json:"isHeadOfCommunity" db:"is_head_of_community"`
 	// IsHeadOfHousehold is a flag indicating whether the individual is the head of the household
 	IsHeadOfHousehold bool `json:"isHeadOfHousehold" db:"is_head_of_household"`
+	// IsFemaleHeadedHousehold is a flag indicating whether the head of the household is female
+	IsFemaleHeadedHousehold bool `json:"isFemaleHeadedHousehold" db:"is_female_headed_household"`
+	// IsMinorHeadedHousehold is a flag indicating whether the head of the household is a minor
+	IsMinorHeadedHousehold bool `json:"isMinorHeadedHousehold" db:"is_minor_headed_household"`
 	// IsMinor is a flag indicating whether the individual is a minor
 	IsMinor bool `json:"isMinor" db:"is_minor"`
 	// MobilityDisabilityLevel is the mobility disability level of the individual
@@ -228,6 +238,12 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.Email3, nil
 	case constants.DBColumnIndividualFullName:
 		return i.FullName, nil
+	case constants.DBColumnIndividualFirstName:
+		return i.FirstName, nil
+	case constants.DBColumnIndividualMiddleName:
+		return i.MiddleName, nil
+	case constants.DBColumnIndividualLastName:
+		return i.LastName, nil
 	case constants.DBColumnIndividualSex:
 		return i.Sex, nil
 	case constants.DBColumnIndividualHasCognitiveDisability:
@@ -276,6 +292,10 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.IsHeadOfCommunity, nil
 	case constants.DBColumnIndividualIsHeadOfHousehold:
 		return i.IsHeadOfHousehold, nil
+	case constants.DBColumnIndividualIsFemaleHeadedHousehold:
+		return i.IsFemaleHeadedHousehold, nil
+	case constants.DBColumnIndividualIsMinorHeadedHousehold:
+		return i.IsMinorHeadedHousehold, nil
 	case constants.DBColumnIndividualIsMinor:
 		return i.IsMinor, nil
 	case constants.DBColumnIndividualNationality1:
@@ -358,6 +378,9 @@ func (i *Individual) Normalize() {
 	i.FreeField4 = trimString(i.FreeField4)
 	i.FreeField5 = trimString(i.FreeField5)
 	i.FullName = trimString(i.FullName)
+	i.FirstName = trimString(i.FirstName)
+	i.MiddleName = trimString(i.MiddleName)
+	i.LastName = trimString(i.LastName)
 	i.HouseholdID = trimString(i.HouseholdID)
 	i.ID = trimString(i.ID)
 	i.EngagementContext = trimString(i.EngagementContext)
@@ -397,5 +420,8 @@ func (i *Individual) Normalize() {
 	if i.PrefersToRemainAnonymous {
 		i.FullName = ""
 		i.PreferredName = ""
+		i.FirstName = ""
+		i.MiddleName = ""
+		i.LastName = ""
 	}
 }

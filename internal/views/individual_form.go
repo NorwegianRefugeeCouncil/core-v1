@@ -54,6 +54,9 @@ func (f *IndividualForm) build() error {
 		f.buildIdField,
 		f.buildFullName,
 		f.buildPreferredName,
+		f.buildFirstName,
+		f.buildMiddleName,
+		f.buildLastName,
 		f.buildPrefersToRemainAnonymous,
 		f.buildSex,
 		f.buildBirthDate,
@@ -73,6 +76,8 @@ func (f *IndividualForm) build() error {
 		f.buildInternalID,
 		f.buildHouseholdID,
 		f.buildIsHeadOfHousehold,
+		f.buildIsFemaleHeadedHousehold,
+		f.buildIsMinorHeadedHousehold,
 		f.buildCommunityID,
 		f.buildIsHeadOfCommunity,
 		f.buildSpokenLanguage1,
@@ -228,6 +233,27 @@ func (f *IndividualForm) buildPreferredName() error {
 	}, f.personalInfoSection, f.individual.PreferredName)
 }
 
+func (f *IndividualForm) buildFirstName() error {
+	return buildField(&forms.TextInputField{
+		Name:        "firstName",
+		DisplayName: "First Name",
+	}, f.personalInfoSection, f.individual.FirstName)
+}
+
+func (f *IndividualForm) buildMiddleName() error {
+	return buildField(&forms.TextInputField{
+		Name:        "middleName",
+		DisplayName: "Middle Name",
+	}, f.personalInfoSection, f.individual.MiddleName)
+}
+
+func (f *IndividualForm) buildLastName() error {
+	return buildField(&forms.TextInputField{
+		Name:        "lastName",
+		DisplayName: "Last Name",
+	}, f.personalInfoSection, f.individual.LastName)
+}
+
 func (f *IndividualForm) buildPrefersToRemainAnonymous() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "prefersToRemainAnonymous",
@@ -375,6 +401,21 @@ func (f *IndividualForm) buildIsHeadOfHousehold() error {
 		DisplayName: "Is Head of Household",
 	}, f.personalInfoSection, f.individual.IsHeadOfHousehold)
 }
+
+func (f *IndividualForm) buildIsFemaleHeadedHousehold() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "isFemaleHeadedHousehold",
+		DisplayName: "Is Female Headed Household",
+	}, f.personalInfoSection, f.individual.IsFemaleHeadedHousehold)
+}
+
+func (f *IndividualForm) buildIsMinorHeadedHousehold() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "isMinorHeadedHousehold",
+		DisplayName: "Is Minor Headed Household",
+	}, f.personalInfoSection, f.individual.IsMinorHeadedHousehold)
+}
+
 func (f *IndividualForm) buildCommunityID() error {
 	return buildField(&forms.TextInputField{
 		Name:        "communityId",

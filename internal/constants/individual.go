@@ -22,6 +22,9 @@ const (
 	FormParamIndividualEmail2                         = "Email2"
 	FormParamIndividualEmail3                         = "Email3"
 	FormParamIndividualFullName                       = "FullName"
+	FormParamIndividualFirstName                      = "FirstName"
+	FormParamIndividualMiddleName                     = "MiddleName"
+	FormParamIndividualLastName                       = "LastName"
 	FormParamIndividualSex                            = "Sex"
 	FormParamIndividualHasCognitiveDisability         = "HasCognitiveDisability"
 	FormParamIndividualHasCommunicationDisability     = "HasCommunicationDisability"
@@ -48,6 +51,8 @@ const (
 	FormParamIndividualIsActive                       = "IsActive"
 	FormParamIndividualIsHeadOfCommunity              = "IsHeadOfCommunity"
 	FormParamIndividualIsHeadOfHousehold              = "IsHeadOfHousehold"
+	FormParamsIndividualsIsFemaleHeadedHousehold      = "IsFemaleHeadedHousehold"
+	FormParamIndividualIsMinorHeadedHousehold         = "IsMinorHeadedHousehold"
 	FormParamIndividualIsMinor                        = "IsMinor"
 	FormParamIndividualMobilityDisabilityLevel        = "MobilityDisabilityLevel"
 	FormParamIndividualNationality1                   = "Nationality1"
@@ -95,6 +100,9 @@ const (
 	FormParamsGetIndividualsDisplacementStatusComment      = "displacement_status_comment"
 	FormParamsGetIndividualsEmail                          = "email"
 	FormParamsGetIndividualsFullName                       = "full_name"
+	FormParamsGetIndividualsFirstName                      = "first_name"
+	FormParamsGetIndividualsMiddleName                     = "middle_name"
+	FormParamsGetIndividualsLastName                       = "last_name"
 	FormParamsGetIndividualsFreeField1                     = "free_field_1"
 	FormParamsGetIndividualsFreeField2                     = "free_field_2"
 	FormParamsGetIndividualsFreeField3                     = "free_field_3"
@@ -117,6 +125,8 @@ const (
 	FormParamsGetIndividualsInternalID                     = "internal_id"
 	FormParamsGetIndividualsIsHeadOfCommunity              = "is_head_of_community"
 	FormParamsGetIndividualsIsHeadOfHousehold              = "is_head_of_household"
+	FormParamsGetIndividualsIsFemaleHeadedHousehold        = "is_female_headed_household"
+	FormParamsGetIndividualsIsMinorHeadedHousehold         = "is_minor_headed_household"
 	FormParamsGetIndividualsIsMinor                        = "is_minor"
 	FormParamsGetIndividualsMobilityDisabilityLevel        = "mobility_disability_level"
 	FormParamsGetIndividualsNationality                    = "nationality"
@@ -157,6 +167,9 @@ const (
 	DBColumnIndividualEmail2                         = "email_2"
 	DBColumnIndividualEmail3                         = "email_3"
 	DBColumnIndividualFullName                       = "full_name"
+	DBColumnIndividualFirstName                      = "first_name"
+	DBColumnIndividualMiddleName                     = "middle_name"
+	DBColumnIndividualLastName                       = "last_name"
 	DBColumnIndividualFreeField1                     = "free_field_1"
 	DBColumnIndividualFreeField2                     = "free_field_2"
 	DBColumnIndividualFreeField3                     = "free_field_3"
@@ -187,6 +200,8 @@ const (
 	DBColumnIndividualInternalID                     = "internal_id"
 	DBColumnIndividualIsHeadOfCommunity              = "is_head_of_community"
 	DBColumnIndividualIsHeadOfHousehold              = "is_head_of_household"
+	DBColumnIndividualIsFemaleHeadedHousehold        = "is_female_headed_household"
+	DBColumnIndividualIsMinorHeadedHousehold         = "is_minor_headed_household"
 	DBColumnIndividualIsMinor                        = "is_minor"
 	DBColumnIndividualMobilityDisabilityLevel        = "mobility_disability_level"
 	DBColumnIndividualNationality1                   = "nationality_1"
@@ -232,6 +247,9 @@ const (
 	FileColumnIndividualEmail2                         = "email_2"
 	FileColumnIndividualEmail3                         = "email_3"
 	FileColumnIndividualFullName                       = "full_name"
+	FileColumnIndividualFirstName                      = "first_name"
+	FileColumnIndividualMiddleName                     = "middle_name"
+	FileColumnIndividualLastName                       = "last_name"
 	FileColumnIndividualFreeField1                     = "free_field_1"
 	FileColumnIndividualFreeField2                     = "free_field_2"
 	FileColumnIndividualFreeField3                     = "free_field_3"
@@ -262,6 +280,8 @@ const (
 	FileColumnIndividualInternalID                     = "internal_id"
 	FileColumnIndividualIsHeadOfCommunity              = "is_head_of_community"
 	FileColumnIndividualIsHeadOfHousehold              = "is_head_of_household"
+	FileColumnIndividualIsFemaleHeadedHousehold        = "is_female_headed_household"
+	FileColumnIndividualIsMinorHeadedHousehold         = "is_minor_headed_household"
 	FileColumnIndividualIsMinor                        = "is_minor"
 	FileColumnIndividualMobilityDisabilityLevel        = "mobility_disability_level"
 	FileColumnIndividualNationality1                   = "nationality_1"
@@ -307,6 +327,9 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualEmail2,
 	DBColumnIndividualEmail3,
 	DBColumnIndividualFullName,
+	DBColumnIndividualFirstName,
+	DBColumnIndividualMiddleName,
+	DBColumnIndividualLastName,
 	DBColumnIndividualFreeField1,
 	DBColumnIndividualFreeField2,
 	DBColumnIndividualFreeField3,
@@ -337,6 +360,8 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualInternalID,
 	DBColumnIndividualIsHeadOfCommunity,
 	DBColumnIndividualIsHeadOfHousehold,
+	DBColumnIndividualIsFemaleHeadedHousehold,
+	DBColumnIndividualIsMinorHeadedHousehold,
 	DBColumnIndividualIsMinor,
 	DBColumnIndividualMobilityDisabilityLevel,
 	DBColumnIndividualNationality1,
@@ -366,6 +391,9 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualID,
 	FileColumnIndividualFullName,
 	FileColumnIndividualPreferredName,
+	FileColumnIndividualFirstName,
+	FileColumnIndividualMiddleName,
+	FileColumnIndividualLastName,
 	FileColumnIndividualPrefersToRemainAnonymous,
 	FileColumnIndividualSex,
 	FileColumnIndividualBirthDate,
@@ -385,6 +413,8 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualInternalID,
 	FileColumnIndividualHouseholdID,
 	FileColumnIndividualIsHeadOfHousehold,
+	FileColumnIndividualIsFemaleHeadedHousehold,
+	FileColumnIndividualIsMinorHeadedHousehold,
 	FileColumnIndividualCommunityID,
 	FileColumnIndividualIsHeadOfCommunity,
 	FileColumnIndividualSpokenLanguage1,
@@ -458,6 +488,9 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualEmail2:                         FileColumnIndividualEmail2,
 	DBColumnIndividualEmail3:                         FileColumnIndividualEmail3,
 	DBColumnIndividualFullName:                       FileColumnIndividualFullName,
+	DBColumnIndividualFirstName:                      FileColumnIndividualFirstName,
+	DBColumnIndividualMiddleName:                     FileColumnIndividualMiddleName,
+	DBColumnIndividualLastName:                       FileColumnIndividualLastName,
 	DBColumnIndividualFreeField1:                     FileColumnIndividualFreeField1,
 	DBColumnIndividualFreeField2:                     FileColumnIndividualFreeField2,
 	DBColumnIndividualFreeField3:                     FileColumnIndividualFreeField3,
@@ -488,6 +521,8 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualInternalID:                     FileColumnIndividualInternalID,
 	DBColumnIndividualIsHeadOfCommunity:              FileColumnIndividualIsHeadOfCommunity,
 	DBColumnIndividualIsHeadOfHousehold:              FileColumnIndividualIsHeadOfHousehold,
+	DBColumnIndividualIsFemaleHeadedHousehold:        FileColumnIndividualIsFemaleHeadedHousehold,
+	DBColumnIndividualIsMinorHeadedHousehold:         FileColumnIndividualIsMinorHeadedHousehold,
 	DBColumnIndividualIsMinor:                        FileColumnIndividualIsMinor,
 	DBColumnIndividualMobilityDisabilityLevel:        FileColumnIndividualMobilityDisabilityLevel,
 	DBColumnIndividualNationality1:                   FileColumnIndividualNationality1,
@@ -531,6 +566,9 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualEmail2:                         DBColumnIndividualEmail2,
 	FileColumnIndividualEmail3:                         DBColumnIndividualEmail3,
 	FileColumnIndividualFullName:                       DBColumnIndividualFullName,
+	FileColumnIndividualFirstName:                      DBColumnIndividualFirstName,
+	FileColumnIndividualMiddleName:                     DBColumnIndividualMiddleName,
+	FileColumnIndividualLastName:                       DBColumnIndividualLastName,
 	FileColumnIndividualFreeField1:                     DBColumnIndividualFreeField1,
 	FileColumnIndividualFreeField2:                     DBColumnIndividualFreeField2,
 	FileColumnIndividualFreeField3:                     DBColumnIndividualFreeField3,
@@ -561,6 +599,8 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualInternalID:                     DBColumnIndividualInternalID,
 	FileColumnIndividualIsHeadOfCommunity:              DBColumnIndividualIsHeadOfCommunity,
 	FileColumnIndividualIsHeadOfHousehold:              DBColumnIndividualIsHeadOfHousehold,
+	FileColumnIndividualIsFemaleHeadedHousehold:        DBColumnIndividualIsFemaleHeadedHousehold,
+	FileColumnIndividualIsMinorHeadedHousehold:         DBColumnIndividualIsMinorHeadedHousehold,
 	FileColumnIndividualIsMinor:                        DBColumnIndividualIsMinor,
 	FileColumnIndividualMobilityDisabilityLevel:        DBColumnIndividualMobilityDisabilityLevel,
 	FileColumnIndividualNationality1:                   DBColumnIndividualNationality1,

@@ -177,6 +177,12 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			}
 		case constants.FileColumnIndividualFullName:
 			i.FullName = cols[idx]
+		case constants.FileColumnIndividualFirstName:
+			i.FirstName = cols[idx]
+		case constants.FileColumnIndividualMiddleName:
+			i.MiddleName = cols[idx]
+		case constants.FileColumnIndividualLastName:
+			i.LastName = cols[idx]
 		case constants.FileColumnIndividualFreeField1:
 			i.FreeField1 = cols[idx]
 		case constants.FileColumnIndividualFreeField2:
@@ -239,6 +245,10 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.IsHeadOfCommunity = isTrue(cols[idx])
 		case constants.FileColumnIndividualIsHeadOfHousehold:
 			i.IsHeadOfHousehold = isTrue(cols[idx])
+		case constants.FileColumnIndividualIsFemaleHeadedHousehold:
+			i.IsFemaleHeadedHousehold = isTrue(cols[idx])
+		case constants.FileColumnIndividualIsMinorHeadedHousehold:
+			i.IsMinorHeadedHousehold = isTrue(cols[idx])
 		case constants.FileColumnIndividualIsMinor:
 			i.IsMinor = isTrue(cols[idx])
 		case constants.FileColumnIndividualMobilityDisabilityLevel:

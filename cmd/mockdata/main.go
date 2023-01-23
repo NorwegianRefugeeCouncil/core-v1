@@ -147,6 +147,9 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualEmail2,
 		constants.FileColumnIndividualEmail3,
 		constants.FileColumnIndividualFullName,
+		constants.FileColumnIndividualFirstName,
+		constants.FileColumnIndividualMiddleName,
+		constants.FileColumnIndividualLastName,
 		constants.FileColumnIndividualFreeField1,
 		constants.FileColumnIndividualFreeField2,
 		constants.FileColumnIndividualFreeField3,
@@ -176,6 +179,8 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualInternalID,
 		constants.FileColumnIndividualIsHeadOfCommunity,
 		constants.FileColumnIndividualIsHeadOfHousehold,
+		constants.FileColumnIndividualIsFemaleHeadedHousehold,
+		constants.FileColumnIndividualIsMinorHeadedHousehold,
 		constants.FileColumnIndividualIsMinor,
 		constants.FileColumnIndividualMobilityDisabilityLevel,
 		constants.FileColumnIndividualNationality1,
@@ -252,8 +257,11 @@ func Generate(count uint) error {
 			email3 = f.Email()
 		}
 
-		var fullName = strings.ToUpper(f.LastName()) + ", " + f.FirstName()
-		var preferredName = fullName
+		firstName := f.FirstName()
+		middleName := f.FirstName()
+		lastName := f.LastName()
+		var fullName = firstName + " " + middleName + " " + lastName
+		var preferredName = firstName + " " + lastName
 		if randBool(5) {
 			preferredName = f.Name()
 		}
@@ -362,6 +370,9 @@ func Generate(count uint) error {
 			isHeadOfHousehold = randomBool()
 		}
 
+		isMinorHeadedHousehold := randomBool()
+		isFemaleHeadedHousehold := randomBool()
+
 		isMinor := randomBool()
 
 		nationality1 := randomCountry()
@@ -384,6 +395,9 @@ func Generate(count uint) error {
 		prefersToRemainAnonymous := randBool(5)
 		if prefersToRemainAnonymous {
 			fullName = ""
+			firstName = ""
+			middleName = ""
+			lastName = ""
 			preferredName = ""
 		}
 		presentsProtectionConcerns := randomBool()
@@ -413,6 +427,9 @@ func Generate(count uint) error {
 			email2,
 			email3,
 			fullName,
+			firstName,
+			middleName,
+			lastName,
 			freeField1,
 			freeField2,
 			freeField3,
@@ -442,6 +459,8 @@ func Generate(count uint) error {
 			internalId,
 			isHeadOfCommunity,
 			isHeadOfHousehold,
+			isFemaleHeadedHousehold,
+			isMinorHeadedHousehold,
 			isMinor,
 			mobilityDisabilityLevel,
 			nationality1,
