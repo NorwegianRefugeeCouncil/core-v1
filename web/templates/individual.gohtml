@@ -91,48 +91,48 @@
 
     {{if .RequestContext.HasSelectedCountryWritePermission}}
     <footer>
-        <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto d-flex flex-row justify-content-between align-items-center">
+        <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto d-flex flex-row align-items-center">
             {{if .Individual.ID}}
                 {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .Individual.CountryID 1)}}
-                    <div class="btn-group me-2">
-                        <button type="button"
-                                id="deleteButton"
-                                class="btn btn-outline-danger me-2"
-                                data-bs-toggle="modal"
-                                data-bs-target="#deleteIndividualConfirmationModal"
-                                data-toggle="tooltip" data-placement="top" title="Delete individual"
-                        >
-                            <i class="bi bi-trash"></i>
-                        </button>
+                    <button type="button"
+                            id="deleteButton"
+                            class="btn btn-sm btn-outline-danger me-2 d-flex"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteIndividualConfirmationModal"
+                            data-toggle="tooltip" data-placement="top" title="Delete individual">
+                        <i class="bi bi-trash"></i>
+                        Delete
+                    </button>
 
-                        {{if not .Individual.Inactive}}
-                            <form class="w-100"
-                                  id="deactivate-individual-form"
-                                  action="/countries/{{.Individual.CountryID}}/individuals/{{.Individual.ID}}/deactivate"
-                                  method="post">
-                                <button type="submit"
-                                        id="deactivateButton"
-                                        class="btn btn-outline-secondary"
-                                        data-toggle="tooltip" data-placement="top" title="Deactivate individual">
-                                    <i class="bi bi-eye-slash-fill"></i>
-                                </button>
-                            </form>
-                        {{end}}
+                    {{if not .Individual.Inactive}}
+                        <form class="w-100"
+                              id="deactivate-individual-form"
+                              action="/countries/{{.Individual.CountryID}}/individuals/{{.Individual.ID}}/deactivate"
+                              method="post">
+                            <button type="submit"
+                                    id="deactivateButton"
+                                    class="btn btn-sm btn-outline-secondary"
+                                    data-toggle="tooltip" data-placement="top" title="Deactivate individual">
+                                <i class="bi bi-eye-slash-fill"></i>
+                                Deactivate
+                            </button>
+                        </form>
+                    {{end}}
 
-                        {{if .Individual.Inactive}}
-                            <form class="w-100"
-                                  id="activate-individual-form"
-                                  action="/countries/{{.Individual.CountryID}}/individuals/{{.Individual.ID}}/activate"
-                                  method="post">
-                                <button type="submit"
-                                        id="activateButton"
-                                        class="btn btn-outline-secondary"
-                                        data-toggle="tooltip" data-placement="top" title="Activate individual">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                            </form>
-                        {{end}}
-                    </div>
+                    {{if .Individual.Inactive}}
+                        <form class="w-100"
+                              id="activate-individual-form"
+                              action="/countries/{{.Individual.CountryID}}/individuals/{{.Individual.ID}}/activate"
+                              method="post">
+                            <button type="submit"
+                                    id="activateButton"
+                                    class="btn btn-sm btn-outline-secondary"
+                                    data-toggle="tooltip" data-placement="top" title="Activate individual">
+                                <i class="bi bi-eye"></i>
+                                Activate
+                            </button>
+                        </form>
+                    {{end}}
                 {{end}}
             {{end}}
             <div class="flex-grow-1"></div>
@@ -140,7 +140,7 @@
             <button onclick="goBack()" class="btn btn-outline-primary mx-4">Cancel</button>
             <!-- END CANCEL BUTTON -->
             <!-- SAVE BUTTON -->
-            <button id="submitButton" type="submit" class="btn btn-primary mx-4">Save</button>
+            <button id="submitButton" type="submit" tabindex="0" class="btn btn-primary mx-4">Save</button>
             <!-- END SAVE BUTTON -->
         </div>
     </footer>

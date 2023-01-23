@@ -40,7 +40,14 @@ func HandleIndividualsAction(repo db.IndividualRepo, action string) http.Handler
 		}
 		individualIds := containers.NewStringSet(r.Form[formParamField]...)
 
-		individuals, err := repo.GetAll(ctx, api.ListIndividualsOptions{IDs: individualIds})
+		var options api.ListIndividualsOptions
+		if err := api.NewIndividualListFromURLValues(r.Form, &options); err != nil {
+			l.Error("failed to parse options", zap.Error(err))
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		individuals, err := repo.GetAll(ctx, api.ListIndividualsOptions{IDs: individualIds, Inactive: options.Inactive})
 		if err != nil {
 			l.Error("failed to list individuals", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)

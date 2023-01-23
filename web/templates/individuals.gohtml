@@ -87,7 +87,7 @@
          */
         function submitActionForm(action) {
             const form = document.getElementById(individualActionFormId);
-            form.action = "/countries/{{.Options.CountryID}}/individuals/" + action;
+            form.action = "/countries/{{.Options.CountryID}}/individuals/" + action {{if .Options.Inactive}}+ "?inactive=true" {{end}}
             form.submit();
         }
 
@@ -347,14 +347,12 @@
                 <thead>
                 <tr>
                     <th class="sticky-column">
-                        <i class="bi bi-eye{{if .Options.IsInactiveSelected}}-slash-fill{{end}}"
-                           onclick="toggleInactiveIndividuals()"
-                           role="button"
-                           data-toggle="tooltip" data-placement="top" title="{{if not .Options.IsInactiveSelected}}Show{{else}}Hide{{end}} inactive individuals"></i>
+                        <i class="bi bi-eye-slash-fill"
+                           data-toggle="tooltip" data-placement="top" title="Is Inactive"></i>
                     </th>
 
                     {{if $canWrite}}
-                    <th class="sticky-column text-center" style="width: {{$selectWidth}}; left: 1rem">
+                    <th class="sticky-column text-center" style="width: {{$selectWidth}}; left: {{$selectWidth}}">
                         <input class="form-check-input" type="checkbox" id="selectAllCheckbox"/>
                     </th>
                     {{end}}
@@ -630,7 +628,7 @@
                             id="individual-row-{{.ID}}"
                             class="individual-row"
                             data-individual-id="{{.ID}}">
-                            <td class="sticky-column text-center" style="width: 1rem" >
+                            <td class="sticky-column text-center" style="width: {{$selectWidth}}">
                                 {{if .Inactive}}
                                     <div class="">
                                         <i class="bi bi-eye-slash-fill "></i>
@@ -638,8 +636,8 @@
                                 {{end}}
                             </td>
                             {{if $canWrite}}
-                            <td class="sticky-column text-center">
-                                <div style="width: {{$selectWidth}}; left: 1rem">
+                            <td class="sticky-column text-center" style="width: {{$selectWidth}}; left: {{$selectWidth}};">
+                                <div>
                                     <input class="form-check-input select-row-checkbox"
                                            type="checkbox"
                                            id="individual-checkbox-{{.ID}}"
@@ -879,28 +877,33 @@
             {{ if .RequestContext.HasSelectedCountryWritePermission}}
                 <button type="button"
                         id="deleteButton"
-                        class="btn btn-outline-danger disabled me-2"
+                        class="btn btn-sm btn-outline-danger disabled me-2"
                         data-bs-toggle="modal"
                         data-bs-target="#deleteIndividualsConfirmationModal"
                         data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
                         onclick="refreshDeleteConfirmationModal()">
                     <i class="bi bi-trash"></i>
+                    Delete
                 </button>
                 <div class="btn-group me-2">
                     <button type="button"
                             id="deactivateButton"
-                            class="btn btn-outline-secondary disabled"
+                            class="btn btn-sm btn-outline-secondary disabled"
                             onclick="submitActionForm('deactivate')"
                             data-toggle="tooltip" data-placement="top" title="Deactivate selected individuals">
                         <i class="bi bi-eye-slash-fill"></i>
+                        Deactivate
                     </button>
+                    {{if .Options.IsInactiveSelected}}
                     <button type="button"
                             id="activateButton"
-                            class="btn btn-outline-secondary disabled"
+                            class="btn btn-sm btn-outline-secondary disabled"
                             onclick="submitActionForm('activate')"
                             data-toggle="tooltip" data-placement="top" title="Activate selected individuals">
                         <i class="bi bi-eye"></i>
+                        Activate
                     </button>
+                    {{end}}
                 </div>
             {{end}}
         </div>
@@ -908,31 +911,31 @@
             <div class="d-flex align-items-center">
                 Results:
                 <nav aria-label="pick amount of results" class="ms-2">
-                    <ul class="pagination mb-0">
-                        <li class="page-item {{if eq .Options.Take 20}}active{{end}}">
-                            <a href="{{(.Options.WithTake 20).QueryParams}}" class="page-link">20</a>
+                    <ul class="pagination btn-group mb-0">
+                        <li class="page-item btn btn-sm {{if eq .Options.Take 20}}btn-primary{{else}}btn-outline-secondary{{end}}">
+                            <a href="{{(.Options.WithTake 20).QueryParams}}" class="text-decoration-none {{if eq .Options.Take 20}}text-white{{end}}">20</a>
                         </li>
-                        <li class="page-item {{if eq .Options.Take 50}}active{{end}}">
-                            <a href="{{(.Options.WithTake 50).QueryParams}}" class="page-link">50</a>
+                        <li class="page-item btn btn-sm {{if eq .Options.Take 50}}btn-primary{{else}}btn-outline-secondary{{end}}">
+                            <a href="{{(.Options.WithTake 50).QueryParams}}" class="text-decoration-none {{if eq .Options.Take 50}}text-white{{end}}">50</a>
                         </li>
-                        <li class="page-item {{if eq .Options.Take 100}}active{{end}}">
-                            <a href="{{(.Options.WithTake 100).QueryParams}}" class="page-link">100</a>
+                        <li class="page-item btn btn-sm {{if eq .Options.Take 100}}btn-primary{{else}}btn-outline-secondary{{end}}">
+                            <a href="{{(.Options.WithTake 100).QueryParams}}" class="text-decoration-none {{if eq .Options.Take 100}}text-white{{end}}">100</a>
                         </li>
                     </ul>
                 </nav>
             </div>
             <div class="d-flex align-items-center ms-3">
                 <nav aria-label="Page navigation">
-                    <ul class="pagination mb-0">
-                        <li class="page-item {{if eq 0 .Options.Skip}}disabled{{end}}">
-                            <a class="page-link" href="{{.Options.FirstPage.QueryParams}}">First</a>
+                    <ul class="pagination btn-group mb-0">
+                        <li class="page-item btn btn-sm btn-outline-secondary {{if eq 0 .Options.Skip}}disabled{{end}}">
+                            <a class="text-decoration-none" href="{{.Options.FirstPage.QueryParams}}">First</a>
                         </li>
-                        <li class="page-item {{if eq 0 .Options.Skip}}disabled{{end}}">
-                            <a class="page-link"
+                        <li class="page-item btn btn-sm btn-outline-secondary {{if eq 0 .Options.Skip}}disabled{{end}}">
+                            <a class="text-decoration-none"
                                href="{{.Options.PreviousPage.QueryParams}}">Previous</a>
                         </li>
-                        <li class="page-item {{if lt (len .Individuals) .Options.Take}}disabled{{end}}">
-                            <a class="page-link"
+                        <li class="page-item btn btn-sm btn-outline-secondary {{if lt (len .Individuals) .Options.Take}}disabled{{end}}">
+                            <a class="text-decoration-none"
                                href="{{.Options.NextPage.QueryParams}}">Next</a>
                         </li>
                     </ul>

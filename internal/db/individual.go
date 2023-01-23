@@ -308,14 +308,6 @@ func (i individualRepo) performActionManyInternal(ctx context.Context, tx *sqlx.
 	return nil
 }
 
-func (i individualRepo) SoftDelete(ctx context.Context, id string) error {
-	return i.PerformAction(ctx, id, DeleteAction)
-}
-
-func (i individualRepo) SoftDeleteMany(ctx context.Context, ids containers.StringSet) error {
-	return i.PerformActionMany(ctx, ids, DeleteAction)
-}
-
 func NewIndividualRepo(db *sqlx.DB) IndividualRepo {
 	return &individualRepo{db: db}
 }

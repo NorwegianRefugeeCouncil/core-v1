@@ -145,11 +145,7 @@ func (s *SortTerms) parseTerm(term string) (string, SortDirection, error) {
 }
 
 func (o ListIndividualsOptions) IsInactiveSelected() bool {
-	return *o.Inactive == true
-}
-
-func (o ListIndividualsOptions) IsNotInactiveSelected() bool {
-	return o.Inactive != nil && !*o.Inactive
+	return *o.Inactive
 }
 
 func (o ListIndividualsOptions) IsMinorSelected() bool {
