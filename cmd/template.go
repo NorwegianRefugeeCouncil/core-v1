@@ -103,6 +103,10 @@ to quickly create a Cobra application.`,
 			SpokenLanguage3: "",
 			UpdatedAt:       time.Now(),
 			// VisionDisabilityLevel:          nil,
+			ServiceCC1:            api.ServiceCCShelter,
+			ServiceRequestedDate1: pointers.Time(time.Date(2022, 2, 1, 0, 0, 0, 0, time.UTC)),
+			ServiceDeliveredDate1: pointers.Time(time.Date(2022, 2, 2, 0, 0, 0, 0, time.UTC)),
+			ServiceComments1:      "Service comment",
 		}
 		individualList := []*api.Individual{individual}
 		_, b, _, _ := runtime.Caller(0)

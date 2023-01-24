@@ -11,6 +11,9 @@ var allowedSexesStr []string
 var allowedDisabilityLevels = api.AllDisabilityLevels()
 var allowedDisabilityLevelsStr []string
 
+var allowedServiceCCs = api.AllServiceCCs()
+var allowedServiceCCsStr []string
+
 func init() {
 	for _, v := range allowedDisplacementStatuses.Items() {
 		allowedDisplacementStatusesStr = append(allowedDisplacementStatusesStr, string(v))
@@ -20,5 +23,8 @@ func init() {
 	}
 	for _, v := range allowedDisabilityLevels.Items() {
 		allowedDisabilityLevelsStr = append(allowedDisabilityLevelsStr, string(v))
+	}
+	for _, v := range allowedServiceCCs.Items() {
+		allowedServiceCCsStr = append(allowedServiceCCsStr, string(v))
 	}
 }

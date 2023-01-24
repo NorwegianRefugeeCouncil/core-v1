@@ -16,6 +16,7 @@ type IndividualForm struct {
 	protectionSection     *forms.FormSection
 	disabilitiesSection   *forms.FormSection
 	dataCollectionSection *forms.FormSection
+	serviceSection        *forms.FormSection
 }
 
 func NewIndividualForm(i *api.Individual) (*IndividualForm, error) {
@@ -47,6 +48,7 @@ func (f *IndividualForm) build() error {
 		f.buildProtectionSection,
 		f.buildDisabilitiesSection,
 		f.buildDataColletionSection,
+		f.buildServiceSection,
 	}
 
 	fieldBuilders := []builderFuncs{
@@ -124,6 +126,34 @@ func (f *IndividualForm) build() error {
 		f.buildCollectionLocation2,
 		f.buildCollectionLocation3,
 		f.buildCollectionOffice,
+		f.buildServiceCC(1),
+		f.buildServiceRequestedDate(1),
+		f.buildServiceDeliveredDate(1),
+		f.buildServiceComments(1),
+		f.buildServiceCC(2),
+		f.buildServiceRequestedDate(2),
+		f.buildServiceDeliveredDate(2),
+		f.buildServiceComments(2),
+		f.buildServiceCC(3),
+		f.buildServiceRequestedDate(3),
+		f.buildServiceDeliveredDate(3),
+		f.buildServiceComments(3),
+		f.buildServiceCC(4),
+		f.buildServiceRequestedDate(4),
+		f.buildServiceDeliveredDate(4),
+		f.buildServiceComments(4),
+		f.buildServiceCC(5),
+		f.buildServiceRequestedDate(5),
+		f.buildServiceDeliveredDate(5),
+		f.buildServiceComments(5),
+		f.buildServiceCC(6),
+		f.buildServiceRequestedDate(6),
+		f.buildServiceDeliveredDate(6),
+		f.buildServiceComments(6),
+		f.buildServiceCC(7),
+		f.buildServiceRequestedDate(7),
+		f.buildServiceDeliveredDate(7),
+		f.buildServiceComments(7),
 	}
 
 	if err := runBuilderFunctions(sectionBuilders...); err != nil {
@@ -200,6 +230,17 @@ func (f *IndividualForm) buildDataColletionSection() error {
 		Collapsed:   !f.isNew(),
 	}
 	f.Form.Sections = append(f.Form.Sections, f.dataCollectionSection)
+	return nil
+}
+
+func (f *IndividualForm) buildServiceSection() error {
+	f.serviceSection = &forms.FormSection{
+		Title:       "Services",
+		Fields:      []forms.Field{},
+		Collapsible: true,
+		Collapsed:   !f.isNew(),
+	}
+	f.Form.Sections = append(f.Form.Sections, f.serviceSection)
 	return nil
 }
 
@@ -782,6 +823,128 @@ func (f *IndividualForm) buildFreeField5() error {
 	}, f.dataCollectionSection, f.individual.FreeField5)
 }
 
+func (f *IndividualForm) buildServiceCC(idx int) func() error {
+	return func() error {
+		var value interface{}
+		switch idx {
+		case 1:
+			value = f.individual.ServiceCC1
+		case 2:
+			value = f.individual.ServiceCC2
+		case 3:
+			value = f.individual.ServiceCC3
+		case 4:
+			value = f.individual.ServiceCC4
+		case 5:
+			value = f.individual.ServiceCC5
+		case 6:
+			value = f.individual.ServiceCC6
+		case 7:
+			value = f.individual.ServiceCC7
+		default:
+			return fmt.Errorf("invalid service CC index: %d", idx)
+		}
+
+		options := getServiceCCOptions()
+		if f.isNew() {
+			options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
+		}
+		return buildField(&forms.SelectInputField{
+			Name:        fmt.Sprintf("serviceCC%d", idx),
+			DisplayName: fmt.Sprintf("Service %d CC", idx),
+			Options:     options,
+			Codec:       &serviceCCCodec{},
+		}, f.serviceSection, value)
+	}
+}
+
+func (f *IndividualForm) buildServiceRequestedDate(idx int) func() error {
+	return func() error {
+		var value interface{}
+		switch idx {
+		case 1:
+			value = f.individual.ServiceRequestedDate1
+		case 2:
+			value = f.individual.ServiceRequestedDate2
+		case 3:
+			value = f.individual.ServiceRequestedDate3
+		case 4:
+			value = f.individual.ServiceRequestedDate4
+		case 5:
+			value = f.individual.ServiceRequestedDate5
+		case 6:
+			value = f.individual.ServiceRequestedDate6
+		case 7:
+			value = f.individual.ServiceRequestedDate7
+		default:
+			return fmt.Errorf("invalid service requested date index: %d", idx)
+		}
+
+		return buildField(&forms.DateInputField{
+			Name:        fmt.Sprintf("serviceRequestedDate%d", idx),
+			DisplayName: fmt.Sprintf("Service %d Requested Date", idx),
+		}, f.serviceSection, value)
+	}
+}
+
+func (f *IndividualForm) buildServiceDeliveredDate(idx int) func() error {
+	return func() error {
+		var value interface{}
+		switch idx {
+		case 1:
+			value = f.individual.ServiceDeliveredDate1
+		case 2:
+			value = f.individual.ServiceDeliveredDate2
+		case 3:
+			value = f.individual.ServiceDeliveredDate3
+		case 4:
+			value = f.individual.ServiceDeliveredDate4
+		case 5:
+			value = f.individual.ServiceDeliveredDate5
+		case 6:
+			value = f.individual.ServiceDeliveredDate6
+		case 7:
+			value = f.individual.ServiceDeliveredDate7
+		default:
+			return fmt.Errorf("invalid service delivered date index: %d", idx)
+		}
+
+		return buildField(&forms.DateInputField{
+			Name:        fmt.Sprintf("serviceDeliveredDate%d", idx),
+			DisplayName: fmt.Sprintf("Service %d Delivered Date", idx),
+		}, f.serviceSection, value)
+	}
+}
+
+func (f *IndividualForm) buildServiceComments(idx int) func() error {
+	return func() error {
+		var value interface{}
+		switch idx {
+		case 1:
+			value = f.individual.ServiceComments1
+		case 2:
+			value = f.individual.ServiceComments2
+		case 3:
+			value = f.individual.ServiceComments3
+		case 4:
+			value = f.individual.ServiceComments4
+		case 5:
+			value = f.individual.ServiceComments5
+		case 6:
+			value = f.individual.ServiceComments6
+		case 7:
+			value = f.individual.ServiceComments7
+		default:
+			return fmt.Errorf("invalid service comments index: %d", idx)
+		}
+
+		return buildField(&forms.TextAreaInputField{
+			Name:        fmt.Sprintf("serviceComments%d", idx),
+			DisplayName: fmt.Sprintf("Service %d Comments", idx),
+		}, f.serviceSection, value)
+	}
+}
+
 func buildField(field forms.InputField, section *forms.FormSection, value interface{}) error {
 	if err := field.SetValue(value); err != nil {
 		return err
@@ -823,6 +986,18 @@ func getSexOptions() []forms.SelectInputFieldOption {
 func getDisplacementStatusOptions() []forms.SelectInputFieldOption {
 	var ret []forms.SelectInputFieldOption
 	for _, s := range api.AllDisplacementStatuses().Items() {
+		ret = append(ret, forms.SelectInputFieldOption{
+			Label: s.String(),
+			Value: string(s),
+		})
+	}
+	return ret
+}
+
+func getServiceCCOptions() []forms.SelectInputFieldOption {
+	fmt.Println(api.AllServiceCCs().Items())
+	var ret []forms.SelectInputFieldOption
+	for _, s := range api.AllServiceCCs().Items() {
 		ret = append(ret, forms.SelectInputFieldOption{
 			Label: s.String(),
 			Value: string(s),
@@ -907,6 +1082,63 @@ func (d *displacementStatusCodec) Decode(v string) (interface{}, error) {
 		return api.DisplacementStatusUnspecified, nil
 	default:
 		return nil, fmt.Errorf("invalid displacement status: %v", v)
+	}
+}
+
+type serviceCCCodec struct{}
+
+func (d *serviceCCCodec) Encode(v interface{}) (string, error) {
+	switch v.(type) {
+	case api.ServiceCC:
+		switch v.(api.ServiceCC) {
+		case api.ServiceCCNone:
+			return string(api.ServiceCCNone), nil
+		case api.ServiceCCShelter:
+			return string(api.ServiceCCShelter), nil
+		case api.ServiceCCWash:
+			return string(api.ServiceCCWash), nil
+		case api.ServiceCCProtection:
+			return string(api.ServiceCCProtection), nil
+		case api.ServiceCCEducation:
+			return string(api.ServiceCCEducation), nil
+		case api.ServiceCCICLA:
+			return string(api.ServiceCCICLA), nil
+		case api.ServiceCCLFS:
+			return string(api.ServiceCCLFS), nil
+		case api.ServiceCCCVA:
+			return string(api.ServiceCCCVA), nil
+		case api.ServiceCCOther:
+			return string(api.ServiceCCOther), nil
+		default:
+			return "", fmt.Errorf("invalid service CC: %v", v)
+		}
+	default:
+		return "", fmt.Errorf("invalid service CC type: %T", v)
+	}
+}
+
+func (d *serviceCCCodec) Decode(v string) (interface{}, error) {
+	switch v {
+	case string(api.ServiceCCNone):
+		return api.ServiceCCNone, nil
+	case string(api.ServiceCCShelter):
+		return api.ServiceCCShelter, nil
+	case string(api.ServiceCCWash):
+		return api.ServiceCCWash, nil
+	case string(api.ServiceCCProtection):
+		return api.ServiceCCProtection, nil
+	case string(api.ServiceCCEducation):
+		return api.ServiceCCEducation, nil
+	case string(api.ServiceCCICLA):
+		return api.ServiceCCICLA, nil
+	case string(api.ServiceCCLFS):
+		return api.ServiceCCLFS, nil
+	case string(api.ServiceCCCVA):
+		return api.ServiceCCCVA, nil
+	case string(api.ServiceCCOther):
+		return api.ServiceCCOther, nil
+	default:
+		return nil, fmt.Errorf("invalid service CC: %v", v)
 	}
 }
 

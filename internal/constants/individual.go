@@ -69,6 +69,34 @@ const (
 	FormParamIndividualSpokenLanguage2                = "SpokenLanguage2"
 	FormParamIndividualSpokenLanguage3                = "SpokenLanguage3"
 	FormParamIndividualVisionDisabilityLevel          = "VisionDisabilityLevel"
+	FormParamServiceCC1                               = "ServiceCC1"
+	FormParamServiceRequestedDate1                    = "ServiceRequestedDate1"
+	FormParamServiceDeliveredDate1                    = "ServiceDeliveredDate1"
+	FormParamServiceComments1                         = "ServiceComments1"
+	FormParamServiceCC2                               = "ServiceCC2"
+	FormParamServiceRequestedDate2                    = "ServiceRequestedDate2"
+	FormParamServiceDeliveredDate2                    = "ServiceDeliveredDate2"
+	FormParamServiceComments2                         = "ServiceComments2"
+	FormParamServiceCC3                               = "ServiceCC3"
+	FormParamServiceRequestedDate3                    = "ServiceRequestedDate3"
+	FormParamServiceDeliveredDate3                    = "ServiceDeliveredDate3"
+	FormParamServiceComments3                         = "ServiceComments3"
+	FormParamServiceCC4                               = "ServiceCC4"
+	FormParamServiceRequestedDate4                    = "ServiceRequestedDate4"
+	FormParamServiceDeliveredDate4                    = "ServiceDeliveredDate4"
+	FormParamServiceComments4                         = "ServiceComments4"
+	FormParamServiceCC5                               = "ServiceCC5"
+	FormParamServiceRequestedDate5                    = "ServiceRequestedDate5"
+	FormParamServiceDeliveredDate5                    = "ServiceDeliveredDate5"
+	FormParamServiceComments5                         = "ServiceComments5"
+	FormParamServiceCC6                               = "ServiceCC6"
+	FormParamServiceRequestedDate6                    = "ServiceRequestedDate6"
+	FormParamServiceDeliveredDate6                    = "ServiceDeliveredDate6"
+	FormParamServiceComments6                         = "ServiceComments6"
+	FormParamServiceCC7                               = "ServiceCC7"
+	FormParamServiceRequestedDate7                    = "ServiceRequestedDate7"
+	FormParamServiceDeliveredDate7                    = "ServiceDeliveredDate7"
+	FormParamServiceComments7                         = "ServiceComments7"
 
 	FormParamsGetIndividualCognitiveDisabilityLevel        = "cognitive_disability_level"
 	FormParamsGetIndividualCollectionAdministrativeArea1   = "collection_administrative_area_1"
@@ -224,6 +252,34 @@ const (
 	DBColumnIndividualSpokenLanguage3                = "spoken_language_3"
 	DBColumnIndividualUpdatedAt                      = "updated_at"
 	DBColumnIndividualVisionDisabilityLevel          = "vision_disability_level"
+	DBColumnIndividualServiceCC1                     = "service_cc_1"
+	DBColumnIndividualServiceRequestedDate1          = "service_requested_date_1"
+	DBColumnIndividualServiceDeliveredDate1          = "service_delivered_date_1"
+	DBColumnIndividualServiceComments1               = "service_comments_1"
+	DBColumnIndividualServiceCC2                     = "service_cc_2"
+	DBColumnIndividualServiceRequestedDate2          = "service_requested_date_2"
+	DBColumnIndividualServiceDeliveredDate2          = "service_delivered_date_2"
+	DBColumnIndividualServiceComments2               = "service_comments_2"
+	DBColumnIndividualServiceCC3                     = "service_cc_3"
+	DBColumnIndividualServiceRequestedDate3          = "service_requested_date_3"
+	DBColumnIndividualServiceDeliveredDate3          = "service_delivered_date_3"
+	DBColumnIndividualServiceComments3               = "service_comments_3"
+	DBColumnIndividualServiceCC4                     = "service_cc_4"
+	DBColumnIndividualServiceRequestedDate4          = "service_requested_date_4"
+	DBColumnIndividualServiceDeliveredDate4          = "service_delivered_date_4"
+	DBColumnIndividualServiceComments4               = "service_comments_4"
+	DBColumnIndividualServiceCC5                     = "service_cc_5"
+	DBColumnIndividualServiceRequestedDate5          = "service_requested_date_5"
+	DBColumnIndividualServiceDeliveredDate5          = "service_delivered_date_5"
+	DBColumnIndividualServiceComments5               = "service_comments_5"
+	DBColumnIndividualServiceCC6                     = "service_cc_6"
+	DBColumnIndividualServiceRequestedDate6          = "service_requested_date_6"
+	DBColumnIndividualServiceDeliveredDate6          = "service_delivered_date_6"
+	DBColumnIndividualServiceComments6               = "service_comments_6"
+	DBColumnIndividualServiceCC7                     = "service_cc_7"
+	DBColumnIndividualServiceRequestedDate7          = "service_requested_date_7"
+	DBColumnIndividualServiceDeliveredDate7          = "service_delivered_date_7"
+	DBColumnIndividualServiceComments7               = "service_comments_7"
 
 	FileColumnIndividualAddress                        = "address"
 	FileColumnIndividualAge                            = "age"
@@ -301,6 +357,34 @@ const (
 	FileColumnIndividualSpokenLanguage3                = "spoken_language_3"
 	FileColumnIndividualUpdatedAt                      = "updated_at"
 	FileColumnIndividualVisionDisabilityLevel          = "vision_disability_level"
+	FileColumnIndividualServiceCC1                     = "service_cc_1"
+	FileColumnIndividualServiceRequestedDate1          = "service_requested_date_1"
+	FileColumnIndividualServiceDeliveredDate1          = "service_delivered_date_1"
+	FileColumnIndividualServiceComments1               = "service_comments_1"
+	FileColumnIndividualServiceCC2                     = "service_cc_2"
+	FileColumnIndividualServiceRequestedDate2          = "service_requested_date_2"
+	FileColumnIndividualServiceDeliveredDate2          = "service_delivered_date_2"
+	FileColumnIndividualServiceComments2               = "service_comments_2"
+	FileColumnIndividualServiceCC3                     = "service_cc_3"
+	FileColumnIndividualServiceRequestedDate3          = "service_requested_date_3"
+	FileColumnIndividualServiceDeliveredDate3          = "service_delivered_date_3"
+	FileColumnIndividualServiceComments3               = "service_comments_3"
+	FileColumnIndividualServiceCC4                     = "service_cc_4"
+	FileColumnIndividualServiceRequestedDate4          = "service_requested_date_4"
+	FileColumnIndividualServiceDeliveredDate4          = "service_delivered_date_4"
+	FileColumnIndividualServiceComments4               = "service_comments_4"
+	FileColumnIndividualServiceCC5                     = "service_cc_5"
+	FileColumnIndividualServiceRequestedDate5          = "service_requested_date_5"
+	FileColumnIndividualServiceDeliveredDate5          = "service_delivered_date_5"
+	FileColumnIndividualServiceComments5               = "service_comments_5"
+	FileColumnIndividualServiceCC6                     = "service_cc_6"
+	FileColumnIndividualServiceRequestedDate6          = "service_requested_date_6"
+	FileColumnIndividualServiceDeliveredDate6          = "service_delivered_date_6"
+	FileColumnIndividualServiceComments6               = "service_comments_6"
+	FileColumnIndividualServiceCC7                     = "service_cc_7"
+	FileColumnIndividualServiceRequestedDate7          = "service_requested_date_7"
+	FileColumnIndividualServiceDeliveredDate7          = "service_delivered_date_7"
+	FileColumnIndividualServiceComments7               = "service_comments_7"
 )
 
 var IndividualDBColumns = containers.NewStringSet(
@@ -384,6 +468,34 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualSpokenLanguage3,
 	DBColumnIndividualUpdatedAt,
 	DBColumnIndividualVisionDisabilityLevel,
+	DBColumnIndividualServiceCC1,
+	DBColumnIndividualServiceRequestedDate1,
+	DBColumnIndividualServiceDeliveredDate1,
+	DBColumnIndividualServiceComments1,
+	DBColumnIndividualServiceCC2,
+	DBColumnIndividualServiceRequestedDate2,
+	DBColumnIndividualServiceDeliveredDate2,
+	DBColumnIndividualServiceComments2,
+	DBColumnIndividualServiceCC3,
+	DBColumnIndividualServiceRequestedDate3,
+	DBColumnIndividualServiceDeliveredDate3,
+	DBColumnIndividualServiceComments3,
+	DBColumnIndividualServiceCC4,
+	DBColumnIndividualServiceRequestedDate4,
+	DBColumnIndividualServiceDeliveredDate4,
+	DBColumnIndividualServiceComments4,
+	DBColumnIndividualServiceCC5,
+	DBColumnIndividualServiceRequestedDate5,
+	DBColumnIndividualServiceDeliveredDate5,
+	DBColumnIndividualServiceComments5,
+	DBColumnIndividualServiceCC6,
+	DBColumnIndividualServiceRequestedDate6,
+	DBColumnIndividualServiceDeliveredDate6,
+	DBColumnIndividualServiceComments6,
+	DBColumnIndividualServiceCC7,
+	DBColumnIndividualServiceRequestedDate7,
+	DBColumnIndividualServiceDeliveredDate7,
+	DBColumnIndividualServiceComments7,
 )
 
 // Ordering is important
@@ -461,6 +573,34 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualCollectionAdministrativeArea2,
 	FileColumnIndividualCollectionAdministrativeArea3,
 	FileColumnIndividualCollectionOffice,
+	FileColumnIndividualServiceCC1,
+	FileColumnIndividualServiceRequestedDate1,
+	FileColumnIndividualServiceDeliveredDate1,
+	FileColumnIndividualServiceComments1,
+	FileColumnIndividualServiceCC2,
+	FileColumnIndividualServiceRequestedDate2,
+	FileColumnIndividualServiceDeliveredDate2,
+	FileColumnIndividualServiceComments2,
+	FileColumnIndividualServiceCC3,
+	FileColumnIndividualServiceRequestedDate3,
+	FileColumnIndividualServiceDeliveredDate3,
+	FileColumnIndividualServiceComments3,
+	FileColumnIndividualServiceCC4,
+	FileColumnIndividualServiceRequestedDate4,
+	FileColumnIndividualServiceDeliveredDate4,
+	FileColumnIndividualServiceComments4,
+	FileColumnIndividualServiceCC5,
+	FileColumnIndividualServiceRequestedDate5,
+	FileColumnIndividualServiceDeliveredDate5,
+	FileColumnIndividualServiceComments5,
+	FileColumnIndividualServiceCC6,
+	FileColumnIndividualServiceRequestedDate6,
+	FileColumnIndividualServiceDeliveredDate6,
+	FileColumnIndividualServiceComments6,
+	FileColumnIndividualServiceCC7,
+	FileColumnIndividualServiceRequestedDate7,
+	FileColumnIndividualServiceDeliveredDate7,
+	FileColumnIndividualServiceComments7,
 	FileColumnIndividualCreatedAt,
 	FileColumnIndividualUpdatedAt,
 }
@@ -542,6 +682,34 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualSpokenLanguage3:                FileColumnIndividualSpokenLanguage3,
 	DBColumnIndividualVisionDisabilityLevel:          FileColumnIndividualVisionDisabilityLevel,
 	DBColumnIndividualUpdatedAt:                      FileColumnIndividualUpdatedAt,
+	DBColumnIndividualServiceCC1:                     FileColumnIndividualServiceCC1,
+	DBColumnIndividualServiceRequestedDate1:          FileColumnIndividualServiceRequestedDate1,
+	DBColumnIndividualServiceDeliveredDate1:          FileColumnIndividualServiceDeliveredDate1,
+	DBColumnIndividualServiceComments1:               FileColumnIndividualServiceComments1,
+	DBColumnIndividualServiceCC2:                     FileColumnIndividualServiceCC2,
+	DBColumnIndividualServiceRequestedDate2:          FileColumnIndividualServiceRequestedDate2,
+	DBColumnIndividualServiceDeliveredDate2:          FileColumnIndividualServiceDeliveredDate2,
+	DBColumnIndividualServiceComments2:               FileColumnIndividualServiceComments2,
+	DBColumnIndividualServiceCC3:                     FileColumnIndividualServiceCC3,
+	DBColumnIndividualServiceRequestedDate3:          FileColumnIndividualServiceRequestedDate3,
+	DBColumnIndividualServiceDeliveredDate3:          FileColumnIndividualServiceDeliveredDate3,
+	DBColumnIndividualServiceComments3:               FileColumnIndividualServiceComments3,
+	DBColumnIndividualServiceCC4:                     FileColumnIndividualServiceCC4,
+	DBColumnIndividualServiceRequestedDate4:          FileColumnIndividualServiceRequestedDate4,
+	DBColumnIndividualServiceDeliveredDate4:          FileColumnIndividualServiceDeliveredDate4,
+	DBColumnIndividualServiceComments4:               FileColumnIndividualServiceComments4,
+	DBColumnIndividualServiceCC5:                     FileColumnIndividualServiceCC5,
+	DBColumnIndividualServiceRequestedDate5:          FileColumnIndividualServiceRequestedDate5,
+	DBColumnIndividualServiceDeliveredDate5:          FileColumnIndividualServiceDeliveredDate5,
+	DBColumnIndividualServiceComments5:               FileColumnIndividualServiceComments5,
+	DBColumnIndividualServiceCC6:                     FileColumnIndividualServiceCC6,
+	DBColumnIndividualServiceRequestedDate6:          FileColumnIndividualServiceRequestedDate6,
+	DBColumnIndividualServiceDeliveredDate6:          FileColumnIndividualServiceDeliveredDate6,
+	DBColumnIndividualServiceComments6:               FileColumnIndividualServiceComments6,
+	DBColumnIndividualServiceCC7:                     FileColumnIndividualServiceCC7,
+	DBColumnIndividualServiceRequestedDate7:          FileColumnIndividualServiceRequestedDate7,
+	DBColumnIndividualServiceDeliveredDate7:          FileColumnIndividualServiceDeliveredDate7,
+	DBColumnIndividualServiceComments7:               FileColumnIndividualServiceComments7,
 }
 
 var IndividualFileToDBMap = map[string]string{
@@ -619,6 +787,34 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualSpokenLanguage2:                DBColumnIndividualSpokenLanguage2,
 	FileColumnIndividualSpokenLanguage3:                DBColumnIndividualSpokenLanguage3,
 	FileColumnIndividualVisionDisabilityLevel:          DBColumnIndividualVisionDisabilityLevel,
+	FileColumnIndividualServiceCC1:                     DBColumnIndividualServiceCC1,
+	FileColumnIndividualServiceRequestedDate1:          DBColumnIndividualServiceRequestedDate1,
+	FileColumnIndividualServiceDeliveredDate1:          DBColumnIndividualServiceDeliveredDate1,
+	FileColumnIndividualServiceComments1:               DBColumnIndividualServiceComments1,
+	FileColumnIndividualServiceCC2:                     DBColumnIndividualServiceCC2,
+	FileColumnIndividualServiceRequestedDate2:          DBColumnIndividualServiceRequestedDate2,
+	FileColumnIndividualServiceDeliveredDate2:          DBColumnIndividualServiceDeliveredDate2,
+	FileColumnIndividualServiceComments2:               DBColumnIndividualServiceComments2,
+	FileColumnIndividualServiceCC3:                     DBColumnIndividualServiceCC3,
+	FileColumnIndividualServiceRequestedDate3:          DBColumnIndividualServiceRequestedDate3,
+	FileColumnIndividualServiceDeliveredDate3:          DBColumnIndividualServiceDeliveredDate3,
+	FileColumnIndividualServiceComments3:               DBColumnIndividualServiceComments3,
+	FileColumnIndividualServiceCC4:                     DBColumnIndividualServiceCC4,
+	FileColumnIndividualServiceRequestedDate4:          DBColumnIndividualServiceRequestedDate4,
+	FileColumnIndividualServiceDeliveredDate4:          DBColumnIndividualServiceDeliveredDate4,
+	FileColumnIndividualServiceComments4:               DBColumnIndividualServiceComments4,
+	FileColumnIndividualServiceCC5:                     DBColumnIndividualServiceCC5,
+	FileColumnIndividualServiceRequestedDate5:          DBColumnIndividualServiceRequestedDate5,
+	FileColumnIndividualServiceDeliveredDate5:          DBColumnIndividualServiceDeliveredDate5,
+	FileColumnIndividualServiceComments5:               DBColumnIndividualServiceComments5,
+	FileColumnIndividualServiceCC6:                     DBColumnIndividualServiceCC6,
+	FileColumnIndividualServiceRequestedDate6:          DBColumnIndividualServiceRequestedDate6,
+	FileColumnIndividualServiceDeliveredDate6:          DBColumnIndividualServiceDeliveredDate6,
+	FileColumnIndividualServiceComments6:               DBColumnIndividualServiceComments6,
+	FileColumnIndividualServiceCC7:                     DBColumnIndividualServiceCC7,
+	FileColumnIndividualServiceRequestedDate7:          DBColumnIndividualServiceRequestedDate7,
+	FileColumnIndividualServiceDeliveredDate7:          DBColumnIndividualServiceDeliveredDate7,
+	FileColumnIndividualServiceComments7:               DBColumnIndividualServiceComments7,
 }
 
 var IndividualSystemFileColumns = containers.NewStringSet(

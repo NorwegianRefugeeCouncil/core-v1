@@ -82,6 +82,20 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualSpokenLanguage(i.SpokenLanguage1, p.Child("spokenLanguage1"))...)
 	allErrs = append(allErrs, validateIndividualSpokenLanguage(i.SpokenLanguage2, p.Child("spokenLanguage2"))...)
 	allErrs = append(allErrs, validateIndividualSpokenLanguage(i.SpokenLanguage3, p.Child("spokenLanguage3"))...)
+	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC1, p.Child("serviceCC1"))...)
+	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments1, p.Child("serviceComments1"))...)
+	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC2, p.Child("serviceCC2"))...)
+	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments2, p.Child("serviceComments2"))...)
+	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC3, p.Child("serviceCC3"))...)
+	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments3, p.Child("serviceComments3"))...)
+	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC4, p.Child("serviceCC4"))...)
+	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments4, p.Child("serviceComments4"))...)
+	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC5, p.Child("serviceCC5"))...)
+	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments5, p.Child("serviceComments5"))...)
+	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC6, p.Child("serviceCC6"))...)
+	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments6, p.Child("serviceComments6"))...)
+	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC7, p.Child("serviceCC7"))...)
+	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments7, p.Child("serviceComments7"))...)
 	return allErrs
 }
 
@@ -387,6 +401,21 @@ func validateIndividualSpokenLanguage(language string, path *validation.Path) va
 	allErrs := validation.ErrorList{}
 	if len(language) > individualSpokenLanguageMaxLength {
 		allErrs = append(allErrs, validation.TooLongMaxLength(path, language, individualSpokenLanguageMaxLength))
+	}
+	return allErrs
+}
+
+func validateIndividualServiceCC(cc api.ServiceCC, path *validation.Path) validation.ErrorList {
+	if allowedServiceCCs.Contains(cc) {
+		return validation.ErrorList{}
+	}
+	return validation.ErrorList{validation.NotSupported(path, cc, allowedServiceCCsStr)}
+}
+
+func validateIndividualServiceComment(comment string, path *validation.Path) validation.ErrorList {
+	allErrs := validation.ErrorList{}
+	if len(comment) > maxTextLength {
+		allErrs = append(allErrs, validation.TooLongMaxLength(path, comment, maxTextLength))
 	}
 	return allErrs
 }
