@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"errors"
 	"fmt"
+	"github.com/nrc-no/notcore/pkg/logutils"
 	"io"
 	"net/mail"
 	"strconv"
@@ -11,28 +12,32 @@ import (
 	"time"
 
 	"github.com/nrc-no/notcore/internal/constants"
-	"github.com/nrc-no/notcore/pkg/logutils"
 	"github.com/xuri/excelize/v2"
 	"golang.org/x/exp/slices"
 )
 
 // Unmarshal
 
-func UnmarshalIndividualsCSV(reader io.Reader, individuals *[]*Individual, fields *[]string) error {
+type FileError struct {
+	Message string
+	Err     []error
+}
+
+func UnmarshalIndividualsCSV(reader io.Reader, individuals *[]*Individual, fields *[]string) ([]FileError, error) {
 	csvReader := csv.NewReader(reader)
 	csvReader.TrimLeadingSpace = true
 	records, err := csvReader.ReadAll()
 	if err != nil {
-		return err
+		return []FileError{}, err
 	}
-	return UnmarshalIndividualsTabularData(records, individuals, fields)
+	return UnmarshalIndividualsTabularData(records, individuals, fields), err
 }
 
-func UnmarshalIndividualsExcel(reader io.Reader, individuals *[]*Individual, fields *[]string) error {
+func UnmarshalIndividualsExcel(reader io.Reader, individuals *[]*Individual, fields *[]string) ([]FileError, error) {
 	f, err := excelize.OpenReader(reader)
-
+	var fileErrors []FileError
 	if err != nil {
-		return err
+		return fileErrors, err
 	}
 
 	defer func() {
@@ -44,24 +49,26 @@ func UnmarshalIndividualsExcel(reader io.Reader, individuals *[]*Individual, fie
 	sheets := f.GetSheetList()
 	if len(sheets) == 0 {
 		err := errors.New("no sheets found")
-		return err
+		return fileErrors, err
 	}
 
 	rows, err := f.GetRows(sheets[0])
 	if err != nil {
-		return err
+		return fileErrors, err
 	}
 	if len(rows) == 0 {
 		err := errors.New("no rows found")
-		return err
+		return fileErrors, err
 	}
 
-	return UnmarshalIndividualsTabularData(rows, individuals, fields)
+	return UnmarshalIndividualsTabularData(rows, individuals, fields), err
 }
 
-func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual, fields *[]string) error {
+func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual, fields *[]string) []FileError {
 	colMapping := map[string]int{}
 	headerRow := data[0]
+	var fileErrors []FileError
+	var columnErrors []error
 	for i, col := range headerRow {
 		col = trimString(col)
 		field, ok := constants.IndividualFileToDBMap[col]
@@ -70,26 +77,39 @@ func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual
 			if ok {
 				continue
 			}
-			return fmt.Errorf("unknown column: %s", logutils.Escape(col))
+			columnErrors = append(columnErrors, fmt.Errorf("unknown column: \"%s\"	", logutils.Escape(col)))
 		}
 		*fields = append(*fields, field)
 		col = trimString(col)
 		colMapping[strings.Trim(col, " \n\t\r")] = i
 	}
+	if len(columnErrors) > 0 {
+		fileErrors = append(fileErrors, FileError{
+			Message: fmt.Sprintf("Unknown columns"),
+			Err:     columnErrors,
+		})
+	}
 
 	for row, cols := range data[1:] {
 		individual := &Individual{}
-		if err := individual.unmarshalTabularData(colMapping, cols); err != nil {
-			return fmt.Errorf("parsing row #%d has lead to the following error: %s", row+2, err)
+		var rowErrors []error
+		for _, err := range individual.unmarshalTabularData(colMapping, cols) {
+			rowErrors = append(rowErrors, err)
+		}
+		if len(rowErrors) > 0 {
+			fileErrors = append(fileErrors, FileError{
+				Message: fmt.Sprintf("Parsing row #%d has lead to an error", row+2),
+				Err:     rowErrors,
+			})
 		}
 		*individuals = append(*individuals, individual)
 	}
 
-	return nil
+	return fileErrors
 }
 
-func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []string) error {
-	var err error
+func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []string) []error {
+	var errors []error
 	for field, idx := range colMapping {
 		switch field {
 		case constants.FileColumnIndividualID:
@@ -103,15 +123,23 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			}
 			age, err := strconv.Atoi(ageStr)
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.Age = &age
 		case constants.FileColumnIndividualBirthDate:
-			i.BirthDate, err = ParseDate(cols[idx])
+			var birthDate *time.Time
+			birthDate, err := ParseDate(cols[idx])
+			if err != nil {
+				errors = append(errors, err)
+				break
+			}
+			i.BirthDate = birthDate
 		case constants.FileColumnIndividualCognitiveDisabilityLevel:
 			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.CognitiveDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualCollectionAdministrativeArea1:
@@ -130,15 +158,17 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.Comments = cols[idx]
 		case constants.FileColumnIndividualCollectionTime:
 			var collectionTime *time.Time
-			collectionTime, err = ParseDate(cols[idx])
+			collectionTime, err := ParseDate(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.CollectionTime = *collectionTime
 		case constants.FileColumnIndividualCommunicationDisabilityLevel:
 			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.CommunicationDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualCommunityID:
@@ -146,7 +176,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualDisplacementStatus:
 			displacementStatus, err := ParseDisplacementStatus(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.DisplacementStatus = displacementStatus
 		case constants.FileColumnIndividualDisplacementStatusComment:
@@ -155,7 +186,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			if cols[idx] != "" {
 				email, err := mail.ParseAddress(cols[idx])
 				if err != nil {
-					return err
+					errors = append(errors, err)
+					break
 				}
 				i.Email1 = email.Address
 			}
@@ -163,7 +195,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			if cols[idx] != "" {
 				email, err := mail.ParseAddress(cols[idx])
 				if err != nil {
-					return err
+					errors = append(errors, err)
+					break
 				}
 				i.Email2 = email.Address
 			}
@@ -171,7 +204,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			if cols[idx] != "" {
 				email, err := mail.ParseAddress(cols[idx])
 				if err != nil {
-					return err
+					errors = append(errors, err)
+					break
 				}
 				i.Email3 = email.Address
 			}
@@ -214,7 +248,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualHearingDisabilityLevel:
 			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.HearingDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualHouseholdID:
@@ -254,7 +289,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualMobilityDisabilityLevel:
 			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.MobilityDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualNationality1:
@@ -282,7 +318,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualSelfCareDisabilityLevel:
 			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.SelfCareDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualSpokenLanguage1:
@@ -294,7 +331,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualVisionDisabilityLevel:
 			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.VisionDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualServiceCC1:
@@ -453,8 +491,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.ServiceComments7 = cols[idx]
 		}
 	}
-	if err != nil {
-		return err
+	if len(errors) > 0 {
+		return errors
 	}
 	i.Normalize()
 	return nil
