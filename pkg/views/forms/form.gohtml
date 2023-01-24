@@ -95,6 +95,8 @@
            id="{{$field.Name}}"
            name="{{$field.Name}}"
            value="{{$field.Value}}"
+           min="{{$field.MinValue}}"
+           max="{{$field.MaxValue}}"
            aria-labelledby="{{$field.Name}}--label"
            aria-describedby="{{$field.Name}}--help {{if $field.Errors}}{{$field.Name}}--errors{{end}}"
            {{if $field.Errors}}required{{end}}>

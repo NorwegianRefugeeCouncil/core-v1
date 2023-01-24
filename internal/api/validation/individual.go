@@ -194,6 +194,9 @@ func validateIndividualBirthDate(birthDate *time.Time, path *validation.Path) va
 	if birthDate.After(time.Now()) {
 		allErrs = append(allErrs, validation.Invalid(path, birthDate, "birthdate cannot be in the future"))
 	}
+	if birthDate.Before(time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC)) {
+		allErrs = append(allErrs, validation.Invalid(path, birthDate, "birthdate cannot be before 1900-01-01"))
+	}
 	if *birthDate == (time.Time{}) {
 		allErrs = append(allErrs, validation.Invalid(path, birthDate, "must be a valid date"))
 	}

@@ -10,6 +10,10 @@ type DateInputField struct {
 	Required bool
 	// Value is the string value of the field.
 	Value string
+	// MinValue is the minimum allowed value of the field.
+	MinValue string
+	// MaxValue is the maximum allowed value of the field.
+	MaxValue string
 	// Help is the help text of the field.
 	Help string
 	// Errors are the errors of the field.
