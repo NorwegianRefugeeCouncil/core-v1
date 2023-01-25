@@ -36,8 +36,8 @@ func Test_parsePermissions(t *testing.T) {
 			},
 			want: &ParsedPermissions{
 				IsGlobalAdmin: true,
-				CanWrite:      false,
-				CanRead:       false,
+				CanWrite:      true,
+				CanRead:       true,
 				CountryIds:    containers.NewStringSet(),
 			},
 		}, {
@@ -52,8 +52,8 @@ func Test_parsePermissions(t *testing.T) {
 			},
 			want: &ParsedPermissions{
 				IsGlobalAdmin: true,
-				CanWrite:      false,
-				CanRead:       false,
+				CanWrite:      true,
+				CanRead:       true,
 				CountryIds:    containers.NewStringSet("1"),
 			},
 		}, {
@@ -148,7 +148,7 @@ func Test_parsePermissions(t *testing.T) {
 			want: &ParsedPermissions{
 				IsGlobalAdmin: false,
 				CanWrite:      true,
-				CanRead:       false,
+				CanRead:       true,
 				CountryIds:    containers.NewStringSet("1"),
 			},
 		}, {
