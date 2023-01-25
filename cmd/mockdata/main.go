@@ -199,6 +199,27 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualSpokenLanguage2,
 		constants.FileColumnIndividualSpokenLanguage3,
 		constants.FileColumnIndividualVisionDisabilityLevel,
+		constants.FileColumnIndividualServiceCC1,
+		constants.FileColumnIndividualServiceRequestedDate1,
+		constants.FileColumnIndividualServiceDeliveredDate1,
+		constants.FileColumnIndividualServiceCC2,
+		constants.FileColumnIndividualServiceRequestedDate2,
+		constants.FileColumnIndividualServiceDeliveredDate2,
+		constants.FileColumnIndividualServiceCC3,
+		constants.FileColumnIndividualServiceRequestedDate3,
+		constants.FileColumnIndividualServiceDeliveredDate3,
+		constants.FileColumnIndividualServiceCC4,
+		constants.FileColumnIndividualServiceRequestedDate4,
+		constants.FileColumnIndividualServiceDeliveredDate4,
+		constants.FileColumnIndividualServiceCC5,
+		constants.FileColumnIndividualServiceRequestedDate5,
+		constants.FileColumnIndividualServiceDeliveredDate5,
+		constants.FileColumnIndividualServiceCC6,
+		constants.FileColumnIndividualServiceRequestedDate6,
+		constants.FileColumnIndividualServiceDeliveredDate6,
+		constants.FileColumnIndividualServiceCC7,
+		constants.FileColumnIndividualServiceRequestedDate7,
+		constants.FileColumnIndividualServiceDeliveredDate7,
 	}); err != nil {
 		return err
 	}
@@ -406,6 +427,34 @@ func Generate(count uint) error {
 		spokenLanguage2 := randomLanguage()
 		spokenLanguage3 := randomLanguage()
 
+		serviceCC1 := string(api.ServiceCCShelter)
+		serviceRequested1 := randomDate()
+		serviceDelivered1 := randomDate()
+
+		serviceCC2 := string(api.ServiceCCWash)
+		serviceRequested2 := randomDate()
+		serviceDelivered2 := randomDate()
+
+		serviceCC3 := string(api.ServiceCCProtection)
+		serviceRequested3 := randomDate()
+		serviceDelivered3 := randomDate()
+
+		serviceCC4 := string(api.ServiceCCEducation)
+		serviceRequested4 := randomDate()
+		serviceDelivered4 := randomDate()
+
+		serviceCC5 := string(api.ServiceCCICLA)
+		serviceRequested5 := randomDate()
+		serviceDelivered5 := randomDate()
+
+		serviceCC6 := string(api.ServiceCCLFS)
+		serviceRequested6 := randomDate()
+		serviceDelivered6 := randomDate()
+
+		serviceCC7 := string(api.ServiceCCCVA)
+		serviceRequested7 := randomDate()
+		serviceDelivered7 := randomDate()
+
 		if err := writer.Write([]string{
 			address,
 			age,
@@ -479,6 +528,27 @@ func Generate(count uint) error {
 			spokenLanguage2,
 			spokenLanguage3,
 			visionDisabilityLevel,
+			serviceCC1,
+			serviceRequested1,
+			serviceDelivered1,
+			serviceCC2,
+			serviceRequested2,
+			serviceDelivered2,
+			serviceCC3,
+			serviceRequested3,
+			serviceDelivered3,
+			serviceCC4,
+			serviceRequested4,
+			serviceDelivered4,
+			serviceCC5,
+			serviceRequested5,
+			serviceDelivered5,
+			serviceCC6,
+			serviceRequested6,
+			serviceDelivered6,
+			serviceCC7,
+			serviceRequested7,
+			serviceDelivered7,
 		}); err != nil {
 			return err
 		}
