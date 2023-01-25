@@ -86,7 +86,7 @@ func ParseServiceCC(str string) (ServiceCC, error) {
 	case string(ServiceCCOther):
 		return ServiceCCOther, nil
 	default:
-		return "", fmt.Errorf("unknown displacement status type: %v", logutils.Escape(str))
+		return "", fmt.Errorf("unknown service type: %v", logutils.Escape(str))
 	}
 }
 
