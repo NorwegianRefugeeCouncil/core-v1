@@ -83,18 +83,32 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualSpokenLanguage(i.SpokenLanguage2, p.Child("spokenLanguage2"))...)
 	allErrs = append(allErrs, validateIndividualSpokenLanguage(i.SpokenLanguage3, p.Child("spokenLanguage3"))...)
 	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC1, p.Child("serviceCC1"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate1, p.Child("serviceRequestedDate1"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate1, p.Child("serviceDeliveredDate1"))...)
 	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments1, p.Child("serviceComments1"))...)
 	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC2, p.Child("serviceCC2"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate2, p.Child("serviceRequestedDate2"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate2, p.Child("serviceDeliveredDate2"))...)
 	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments2, p.Child("serviceComments2"))...)
 	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC3, p.Child("serviceCC3"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate3, p.Child("serviceRequestedDate3"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate3, p.Child("serviceDeliveredDate3"))...)
 	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments3, p.Child("serviceComments3"))...)
 	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC4, p.Child("serviceCC4"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate4, p.Child("serviceRequestedDate4"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate4, p.Child("serviceDeliveredDate4"))...)
 	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments4, p.Child("serviceComments4"))...)
 	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC5, p.Child("serviceCC5"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate5, p.Child("serviceRequestedDate5"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate5, p.Child("serviceDeliveredDate5"))...)
 	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments5, p.Child("serviceComments5"))...)
 	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC6, p.Child("serviceCC6"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate6, p.Child("serviceRequestedDate6"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate6, p.Child("serviceDeliveredDate6"))...)
 	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments6, p.Child("serviceComments6"))...)
 	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC7, p.Child("serviceCC7"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate7, p.Child("serviceRequestedDate7"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate7, p.Child("serviceDeliveredDate7"))...)
 	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments7, p.Child("serviceComments7"))...)
 	return allErrs
 }
@@ -410,6 +424,20 @@ func validateIndividualServiceCC(cc api.ServiceCC, path *validation.Path) valida
 		return validation.ErrorList{}
 	}
 	return validation.ErrorList{validation.NotSupported(path, cc, allowedServiceCCsStr)}
+}
+
+func validateIndividualServiceDate(d *time.Time, path *validation.Path) validation.ErrorList {
+	allErrs := validation.ErrorList{}
+	if d == nil {
+		return allErrs
+	}
+	if d.After(time.Now()) {
+		allErrs = append(allErrs, validation.Invalid(path, d, "birthdate cannot be in the future"))
+	}
+	if *d == (time.Time{}) {
+		allErrs = append(allErrs, validation.Invalid(path, d, "must be a valid date"))
+	}
+	return allErrs
 }
 
 func validateIndividualServiceComment(comment string, path *validation.Path) validation.ErrorList {
