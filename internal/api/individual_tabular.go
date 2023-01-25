@@ -177,6 +177,12 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			}
 		case constants.FileColumnIndividualFullName:
 			i.FullName = cols[idx]
+		case constants.FileColumnIndividualFirstName:
+			i.FirstName = cols[idx]
+		case constants.FileColumnIndividualMiddleName:
+			i.MiddleName = cols[idx]
+		case constants.FileColumnIndividualLastName:
+			i.LastName = cols[idx]
 		case constants.FileColumnIndividualFreeField1:
 			i.FreeField1 = cols[idx]
 		case constants.FileColumnIndividualFreeField2:
@@ -239,6 +245,10 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.IsHeadOfCommunity = isTrue(cols[idx])
 		case constants.FileColumnIndividualIsHeadOfHousehold:
 			i.IsHeadOfHousehold = isTrue(cols[idx])
+		case constants.FileColumnIndividualIsFemaleHeadedHousehold:
+			i.IsFemaleHeadedHousehold = isTrue(cols[idx])
+		case constants.FileColumnIndividualIsMinorHeadedHousehold:
+			i.IsMinorHeadedHousehold = isTrue(cols[idx])
 		case constants.FileColumnIndividualIsMinor:
 			i.IsMinor = isTrue(cols[idx])
 		case constants.FileColumnIndividualMobilityDisabilityLevel:
@@ -287,6 +297,160 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				return err
 			}
 			i.VisionDisabilityLevel = disabilityLevel
+		case constants.FileColumnIndividualServiceCC1:
+			cc, err := ParseServiceCC(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceCC1 = cc
+		case constants.FileColumnIndividualServiceRequestedDate1:
+			var date *time.Time
+			date, err = ParseDate(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceRequestedDate1 = date
+		case constants.FileColumnIndividualServiceDeliveredDate1:
+			var date *time.Time
+			date, err = ParseDate(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceDeliveredDate1 = date
+		case constants.FileColumnIndividualServiceComments1:
+			i.ServiceComments1 = cols[idx]
+		case constants.FileColumnIndividualServiceCC2:
+			cc, err := ParseServiceCC(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceCC2 = cc
+		case constants.FileColumnIndividualServiceRequestedDate2:
+			var date *time.Time
+			date, err = ParseDate(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceRequestedDate2 = date
+		case constants.FileColumnIndividualServiceDeliveredDate2:
+			var date *time.Time
+			date, err = ParseDate(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceDeliveredDate2 = date
+		case constants.FileColumnIndividualServiceComments2:
+			i.ServiceComments2 = cols[idx]
+		case constants.FileColumnIndividualServiceCC3:
+			cc, err := ParseServiceCC(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceCC3 = cc
+		case constants.FileColumnIndividualServiceRequestedDate3:
+			var date *time.Time
+			date, err = ParseDate(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceRequestedDate3 = date
+		case constants.FileColumnIndividualServiceDeliveredDate3:
+			var date *time.Time
+			date, err = ParseDate(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceDeliveredDate3 = date
+		case constants.FileColumnIndividualServiceComments3:
+			i.ServiceComments3 = cols[idx]
+		case constants.FileColumnIndividualServiceCC4:
+			cc, err := ParseServiceCC(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceCC4 = cc
+		case constants.FileColumnIndividualServiceRequestedDate4:
+			var date *time.Time
+			date, err = ParseDate(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceRequestedDate4 = date
+		case constants.FileColumnIndividualServiceDeliveredDate4:
+			var date *time.Time
+			date, err = ParseDate(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceDeliveredDate4 = date
+		case constants.FileColumnIndividualServiceComments4:
+			i.ServiceComments4 = cols[idx]
+		case constants.FileColumnIndividualServiceCC5:
+			cc, err := ParseServiceCC(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceCC5 = cc
+		case constants.FileColumnIndividualServiceRequestedDate5:
+			var date *time.Time
+			date, err = ParseDate(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceRequestedDate5 = date
+		case constants.FileColumnIndividualServiceDeliveredDate5:
+			var date *time.Time
+			date, err = ParseDate(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceDeliveredDate5 = date
+		case constants.FileColumnIndividualServiceComments5:
+			i.ServiceComments5 = cols[idx]
+		case constants.FileColumnIndividualServiceCC6:
+			cc, err := ParseServiceCC(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceCC6 = cc
+		case constants.FileColumnIndividualServiceRequestedDate6:
+			var date *time.Time
+			date, err = ParseDate(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceRequestedDate6 = date
+		case constants.FileColumnIndividualServiceDeliveredDate6:
+			var date *time.Time
+			date, err = ParseDate(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceDeliveredDate6 = date
+		case constants.FileColumnIndividualServiceComments6:
+			i.ServiceComments6 = cols[idx]
+		case constants.FileColumnIndividualServiceCC7:
+			cc, err := ParseServiceCC(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceCC7 = cc
+		case constants.FileColumnIndividualServiceRequestedDate7:
+			var date *time.Time
+			date, err = ParseDate(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceRequestedDate7 = date
+		case constants.FileColumnIndividualServiceDeliveredDate7:
+			var date *time.Time
+			date, err = ParseDate(cols[idx])
+			if err != nil {
+				return err
+			}
+			i.ServiceDeliveredDate7 = date
+		case constants.FileColumnIndividualServiceComments7:
+			i.ServiceComments7 = cols[idx]
 		}
 	}
 	if err != nil {
@@ -411,6 +575,8 @@ func (i *Individual) marshalTabularData() ([]string, error) {
 		case DisabilityLevel:
 			row[j] = string(v)
 		case DisplacementStatus:
+			row[j] = string(v)
+		case ServiceCC:
 			row[j] = string(v)
 		case Sex:
 			row[j] = string(v)

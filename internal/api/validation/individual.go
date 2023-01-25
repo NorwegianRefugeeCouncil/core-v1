@@ -53,7 +53,10 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualFreeField(i.FreeField3, p.Child("freeField3"))...)
 	allErrs = append(allErrs, validateIndividualFreeField(i.FreeField4, p.Child("freeField4"))...)
 	allErrs = append(allErrs, validateIndividualFreeField(i.FreeField5, p.Child("freeField5"))...)
-	allErrs = append(allErrs, validateIndividualFullName(i.FullName, p.Child("fullName"))...)
+	allErrs = append(allErrs, validateIndividualName(i.FullName, p.Child("fullName"))...)
+	allErrs = append(allErrs, validateIndividualName(i.FirstName, p.Child("firstName"))...)
+	allErrs = append(allErrs, validateIndividualName(i.MiddleName, p.Child("middleName"))...)
+	allErrs = append(allErrs, validateIndividualName(i.LastName, p.Child("lastName"))...)
 	allErrs = append(allErrs, validateIndividualSex(i.Sex, p.Child("sex"))...)
 	allErrs = append(allErrs, validateIndividualHouseholdID(i.HouseholdID, p.Child("householdId"))...)
 	allErrs = append(allErrs, validateIndividualEngagementContext(i.EngagementContext, p.Child("engagementContext"))...)
@@ -79,6 +82,34 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualSpokenLanguage(i.SpokenLanguage1, p.Child("spokenLanguage1"))...)
 	allErrs = append(allErrs, validateIndividualSpokenLanguage(i.SpokenLanguage2, p.Child("spokenLanguage2"))...)
 	allErrs = append(allErrs, validateIndividualSpokenLanguage(i.SpokenLanguage3, p.Child("spokenLanguage3"))...)
+	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC1, p.Child("serviceCC1"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate1, p.Child("serviceRequestedDate1"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate1, p.Child("serviceDeliveredDate1"))...)
+	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments1, p.Child("serviceComments1"))...)
+	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC2, p.Child("serviceCC2"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate2, p.Child("serviceRequestedDate2"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate2, p.Child("serviceDeliveredDate2"))...)
+	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments2, p.Child("serviceComments2"))...)
+	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC3, p.Child("serviceCC3"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate3, p.Child("serviceRequestedDate3"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate3, p.Child("serviceDeliveredDate3"))...)
+	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments3, p.Child("serviceComments3"))...)
+	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC4, p.Child("serviceCC4"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate4, p.Child("serviceRequestedDate4"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate4, p.Child("serviceDeliveredDate4"))...)
+	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments4, p.Child("serviceComments4"))...)
+	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC5, p.Child("serviceCC5"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate5, p.Child("serviceRequestedDate5"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate5, p.Child("serviceDeliveredDate5"))...)
+	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments5, p.Child("serviceComments5"))...)
+	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC6, p.Child("serviceCC6"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate6, p.Child("serviceRequestedDate6"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate6, p.Child("serviceDeliveredDate6"))...)
+	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments6, p.Child("serviceComments6"))...)
+	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC7, p.Child("serviceCC7"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate7, p.Child("serviceRequestedDate7"))...)
+	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate7, p.Child("serviceDeliveredDate7"))...)
+	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments7, p.Child("serviceComments7"))...)
 	return allErrs
 }
 
@@ -90,7 +121,7 @@ const (
 	individualCollectionAgentTitleMaxLength           = 64
 	individualCommunityIDMaxLength                    = 64
 	individualEmailMaxLength                          = 255
-	individualFullNameMaxLength                       = 255
+	individualNameMaxLength                           = 255
 	individualFreeFieldMaxLength                      = 255
 	individualHouseholdIDMaxLength                    = 64
 	individualIdentificationTypeMaxLength             = 64
@@ -255,11 +286,11 @@ func validateIndividualEmail(email string, path *validation.Path) validation.Err
 	return allErrs
 }
 
-func validateIndividualFullName(fullName string, path *validation.Path) validation.ErrorList {
+func validateIndividualName(name string, path *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
 	// email is optional
-	if len(fullName) > individualFullNameMaxLength {
-		allErrs = append(allErrs, validation.TooLongMaxLength(path, fullName, individualFullNameMaxLength))
+	if len(name) > individualNameMaxLength {
+		allErrs = append(allErrs, validation.TooLongMaxLength(path, name, individualNameMaxLength))
 	}
 	return allErrs
 }
@@ -384,6 +415,35 @@ func validateIndividualSpokenLanguage(language string, path *validation.Path) va
 	allErrs := validation.ErrorList{}
 	if len(language) > individualSpokenLanguageMaxLength {
 		allErrs = append(allErrs, validation.TooLongMaxLength(path, language, individualSpokenLanguageMaxLength))
+	}
+	return allErrs
+}
+
+func validateIndividualServiceCC(cc api.ServiceCC, path *validation.Path) validation.ErrorList {
+	if allowedServiceCCs.Contains(cc) {
+		return validation.ErrorList{}
+	}
+	return validation.ErrorList{validation.NotSupported(path, cc, allowedServiceCCsStr)}
+}
+
+func validateIndividualServiceDate(d *time.Time, path *validation.Path) validation.ErrorList {
+	allErrs := validation.ErrorList{}
+	if d == nil {
+		return allErrs
+	}
+	if d.After(time.Now()) {
+		allErrs = append(allErrs, validation.Invalid(path, d, "service date cannot be in the future"))
+	}
+	if *d == (time.Time{}) {
+		allErrs = append(allErrs, validation.Invalid(path, d, "must be a valid date"))
+	}
+	return allErrs
+}
+
+func validateIndividualServiceComment(comment string, path *validation.Path) validation.ErrorList {
+	allErrs := validation.ErrorList{}
+	if len(comment) > maxTextLength {
+		allErrs = append(allErrs, validation.TooLongMaxLength(path, comment, maxTextLength))
 	}
 	return allErrs
 }

@@ -58,6 +58,12 @@ type Individual struct {
 	Email3 string `json:"email3" db:"email_3"`
 	// FullName is the full name of the individual
 	FullName string `json:"fullName" db:"full_name"`
+	// FirstName is the first name of the individual
+	FirstName string `json:"firstName" db:"first_name"`
+	// MiddleName is the middle name of the individual
+	MiddleName string `json:"middleName" db:"middle_name"`
+	// LastName is the last name of the individual
+	LastName string `json:"lastName" db:"last_name"`
 	// FreeField1 is a free field for the individual
 	FreeField1 string `json:"freeField1" db:"free_field_1"`
 	// FreeField2 is a free field for the individual
@@ -124,6 +130,10 @@ type Individual struct {
 	IsHeadOfCommunity bool `json:"isHeadOfCommunity" db:"is_head_of_community"`
 	// IsHeadOfHousehold is a flag indicating whether the individual is the head of the household
 	IsHeadOfHousehold bool `json:"isHeadOfHousehold" db:"is_head_of_household"`
+	// IsFemaleHeadedHousehold is a flag indicating whether the head of the household is female
+	IsFemaleHeadedHousehold bool `json:"isFemaleHeadedHousehold" db:"is_female_headed_household"`
+	// IsMinorHeadedHousehold is a flag indicating whether the head of the household is a minor
+	IsMinorHeadedHousehold bool `json:"isMinorHeadedHousehold" db:"is_minor_headed_household"`
 	// IsMinor is a flag indicating whether the individual is a minor
 	IsMinor bool `json:"isMinor" db:"is_minor"`
 	// MobilityDisabilityLevel is the mobility disability level of the individual
@@ -168,6 +178,41 @@ type Individual struct {
 	UpdatedAt time.Time `json:"updatedAt" db:"updated_at"`
 	// VisionDisabilityLevel is the vision disability level of the individual
 	VisionDisabilityLevel DisabilityLevel `json:"visionDisabilityLevel" db:"vision_disability_level"`
+
+	ServiceCC1            ServiceCC  `json:"serviceCC1" db:"service_cc_1"`
+	ServiceRequestedDate1 *time.Time `json:"serviceRequestedDate1" db:"service_requested_date_1"`
+	ServiceDeliveredDate1 *time.Time `json:"serviceDeliveredDate1" db:"service_delivered_date_1"`
+	ServiceComments1      string     `json:"serviceComments1" db:"service_comments_1"`
+
+	ServiceCC2            ServiceCC  `json:"serviceCC2" db:"service_cc_2"`
+	ServiceRequestedDate2 *time.Time `json:"serviceRequestedDate2" db:"service_requested_date_2"`
+	ServiceDeliveredDate2 *time.Time `json:"serviceDeliveredDate2" db:"service_delivered_date_2"`
+	ServiceComments2      string     `json:"serviceComments2" db:"service_comments_2"`
+
+	ServiceCC3            ServiceCC  `json:"serviceCC3" db:"service_cc_3"`
+	ServiceRequestedDate3 *time.Time `json:"serviceRequestedDate3" db:"service_requested_date_3"`
+	ServiceDeliveredDate3 *time.Time `json:"serviceDeliveredDate3" db:"service_delivered_date_3"`
+	ServiceComments3      string     `json:"serviceComments3" db:"service_comments_3"`
+
+	ServiceCC4            ServiceCC  `json:"serviceCC4" db:"service_cc_4"`
+	ServiceRequestedDate4 *time.Time `json:"serviceRequestedDate4" db:"service_requested_date_4"`
+	ServiceDeliveredDate4 *time.Time `json:"serviceDeliveredDate4" db:"service_delivered_date_4"`
+	ServiceComments4      string     `json:"serviceComments4" db:"service_comments_4"`
+
+	ServiceCC5            ServiceCC  `json:"serviceCC5" db:"service_cc_5"`
+	ServiceRequestedDate5 *time.Time `json:"serviceRequestedDate5" db:"service_requested_date_5"`
+	ServiceDeliveredDate5 *time.Time `json:"serviceDeliveredDate5" db:"service_delivered_date_5"`
+	ServiceComments5      string     `json:"serviceComments5" db:"service_comments_5"`
+
+	ServiceCC6            ServiceCC  `json:"serviceCC6" db:"service_cc_6"`
+	ServiceRequestedDate6 *time.Time `json:"serviceRequestedDate6" db:"service_requested_date_6"`
+	ServiceDeliveredDate6 *time.Time `json:"serviceDeliveredDate6" db:"service_delivered_date_6"`
+	ServiceComments6      string     `json:"serviceComments6" db:"service_comments_6"`
+
+	ServiceCC7            ServiceCC  `json:"serviceCC7" db:"service_cc_7"`
+	ServiceRequestedDate7 *time.Time `json:"serviceRequestedDate7" db:"service_requested_date_7"`
+	ServiceDeliveredDate7 *time.Time `json:"serviceDeliveredDate7" db:"service_delivered_date_7"`
+	ServiceComments7      string     `json:"serviceComments7" db:"service_comments_7"`
 }
 
 type IndividualList struct {
@@ -228,6 +273,12 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.Email3, nil
 	case constants.DBColumnIndividualFullName:
 		return i.FullName, nil
+	case constants.DBColumnIndividualFirstName:
+		return i.FirstName, nil
+	case constants.DBColumnIndividualMiddleName:
+		return i.MiddleName, nil
+	case constants.DBColumnIndividualLastName:
+		return i.LastName, nil
 	case constants.DBColumnIndividualSex:
 		return i.Sex, nil
 	case constants.DBColumnIndividualHasCognitiveDisability:
@@ -276,6 +327,10 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.IsHeadOfCommunity, nil
 	case constants.DBColumnIndividualIsHeadOfHousehold:
 		return i.IsHeadOfHousehold, nil
+	case constants.DBColumnIndividualIsFemaleHeadedHousehold:
+		return i.IsFemaleHeadedHousehold, nil
+	case constants.DBColumnIndividualIsMinorHeadedHousehold:
+		return i.IsMinorHeadedHousehold, nil
 	case constants.DBColumnIndividualIsMinor:
 		return i.IsMinor, nil
 	case constants.DBColumnIndividualNationality1:
@@ -324,6 +379,62 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.FreeField4, nil
 	case constants.DBColumnIndividualFreeField5:
 		return i.FreeField5, nil
+	case constants.DBColumnIndividualServiceCC1:
+		return i.ServiceCC1, nil
+	case constants.DBColumnIndividualServiceRequestedDate1:
+		return i.ServiceRequestedDate1, nil
+	case constants.DBColumnIndividualServiceDeliveredDate1:
+		return i.ServiceDeliveredDate1, nil
+	case constants.DBColumnIndividualServiceComments1:
+		return i.ServiceComments1, nil
+	case constants.DBColumnIndividualServiceCC2:
+		return i.ServiceCC2, nil
+	case constants.DBColumnIndividualServiceRequestedDate2:
+		return i.ServiceRequestedDate2, nil
+	case constants.DBColumnIndividualServiceDeliveredDate2:
+		return i.ServiceDeliveredDate2, nil
+	case constants.DBColumnIndividualServiceComments2:
+		return i.ServiceComments2, nil
+	case constants.DBColumnIndividualServiceCC3:
+		return i.ServiceCC3, nil
+	case constants.DBColumnIndividualServiceRequestedDate3:
+		return i.ServiceRequestedDate3, nil
+	case constants.DBColumnIndividualServiceDeliveredDate3:
+		return i.ServiceDeliveredDate3, nil
+	case constants.DBColumnIndividualServiceComments3:
+		return i.ServiceComments3, nil
+	case constants.DBColumnIndividualServiceCC4:
+		return i.ServiceCC4, nil
+	case constants.DBColumnIndividualServiceRequestedDate4:
+		return i.ServiceRequestedDate4, nil
+	case constants.DBColumnIndividualServiceDeliveredDate4:
+		return i.ServiceDeliveredDate4, nil
+	case constants.DBColumnIndividualServiceComments4:
+		return i.ServiceComments4, nil
+	case constants.DBColumnIndividualServiceCC5:
+		return i.ServiceCC5, nil
+	case constants.DBColumnIndividualServiceRequestedDate5:
+		return i.ServiceRequestedDate5, nil
+	case constants.DBColumnIndividualServiceDeliveredDate5:
+		return i.ServiceDeliveredDate5, nil
+	case constants.DBColumnIndividualServiceComments5:
+		return i.ServiceComments5, nil
+	case constants.DBColumnIndividualServiceCC6:
+		return i.ServiceCC6, nil
+	case constants.DBColumnIndividualServiceRequestedDate6:
+		return i.ServiceRequestedDate6, nil
+	case constants.DBColumnIndividualServiceDeliveredDate6:
+		return i.ServiceDeliveredDate6, nil
+	case constants.DBColumnIndividualServiceComments6:
+		return i.ServiceComments6, nil
+	case constants.DBColumnIndividualServiceCC7:
+		return i.ServiceCC7, nil
+	case constants.DBColumnIndividualServiceRequestedDate7:
+		return i.ServiceRequestedDate7, nil
+	case constants.DBColumnIndividualServiceDeliveredDate7:
+		return i.ServiceDeliveredDate7, nil
+	case constants.DBColumnIndividualServiceComments7:
+		return i.ServiceComments7, nil
 	default:
 		return nil, fmt.Errorf("unknown field: %s", field)
 	}
@@ -358,6 +469,9 @@ func (i *Individual) Normalize() {
 	i.FreeField4 = trimString(i.FreeField4)
 	i.FreeField5 = trimString(i.FreeField5)
 	i.FullName = trimString(i.FullName)
+	i.FirstName = trimString(i.FirstName)
+	i.MiddleName = trimString(i.MiddleName)
+	i.LastName = trimString(i.LastName)
 	i.HouseholdID = trimString(i.HouseholdID)
 	i.ID = trimString(i.ID)
 	i.EngagementContext = trimString(i.EngagementContext)
@@ -394,8 +508,26 @@ func (i *Individual) Normalize() {
 	i.SpokenLanguage2 = trimString(i.SpokenLanguage2)
 	i.SpokenLanguage3 = trimString(i.SpokenLanguage3)
 
+	i.ServiceCC1 = ServiceCC(trimString(string(i.ServiceCC1)))
+	i.ServiceComments1 = trimString(i.ServiceComments1)
+	i.ServiceCC2 = ServiceCC(trimString(string(i.ServiceCC2)))
+	i.ServiceComments2 = trimString(i.ServiceComments2)
+	i.ServiceCC3 = ServiceCC(trimString(string(i.ServiceCC3)))
+	i.ServiceComments3 = trimString(i.ServiceComments3)
+	i.ServiceCC4 = ServiceCC(trimString(string(i.ServiceCC4)))
+	i.ServiceComments4 = trimString(i.ServiceComments4)
+	i.ServiceCC5 = ServiceCC(trimString(string(i.ServiceCC5)))
+	i.ServiceComments5 = trimString(i.ServiceComments5)
+	i.ServiceCC6 = ServiceCC(trimString(string(i.ServiceCC6)))
+	i.ServiceComments6 = trimString(i.ServiceComments6)
+	i.ServiceCC7 = ServiceCC(trimString(string(i.ServiceCC7)))
+	i.ServiceComments7 = trimString(i.ServiceComments7)
+
 	if i.PrefersToRemainAnonymous {
 		i.FullName = ""
 		i.PreferredName = ""
+		i.FirstName = ""
+		i.MiddleName = ""
+		i.LastName = ""
 	}
 }
