@@ -432,11 +432,11 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "birthdate (in the future)",
 			i:    ValidIndividual().WithBirthDate(&futureDate).Build(),
-			want: validation.ErrorList{validation.Invalid(validation.NewPath("birthDate"), &futureDate, "birthdate cannot be in the future")},
+			want: validation.ErrorList{validation.Invalid(birthDatePath, &futureDate, "birthdate cannot be in the future")},
 		}, {
 			name: "birthdate (empty)",
 			i:    ValidIndividual().WithBirthDate(&emptyDate).Build(),
-			want: validation.ErrorList{validation.Invalid(birthDatePath, &emptyDate, "must be a valid date")},
+			want: validation.ErrorList{validation.Invalid(birthDatePath, &emptyDate, "birthdate cannot be before 1900-01-01"), validation.Invalid(birthDatePath, &emptyDate, "must be a valid date")},
 		}, {
 			name: "cognitiveDisabilityLevel (invalid)",
 			i:    ValidIndividual().WithCognitiveDisabilityLevel("invalid").Build(),
