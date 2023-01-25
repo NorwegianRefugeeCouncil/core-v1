@@ -432,7 +432,7 @@ func validateIndividualServiceDate(d *time.Time, path *validation.Path) validati
 		return allErrs
 	}
 	if d.After(time.Now()) {
-		allErrs = append(allErrs, validation.Invalid(path, d, "birthdate cannot be in the future"))
+		allErrs = append(allErrs, validation.Invalid(path, d, "service date cannot be in the future"))
 	}
 	if *d == (time.Time{}) {
 		allErrs = append(allErrs, validation.Invalid(path, d, "must be a valid date"))
