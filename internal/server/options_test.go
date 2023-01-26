@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/nrc-no/notcore/internal/utils"
 	"testing"
 	"time"
 
@@ -38,7 +39,17 @@ func (o Options) WithTokenRefreshInterval(tokenRefreshInterval time.Duration) Op
 }
 
 func (o Options) WithJwtGroupGlobalAdmin(jwtGroupGlobalAdmin string) Options {
-	o.JwtGroupGlobalAdmin = jwtGroupGlobalAdmin
+	o.JwtGroups.GlobalAdmin = jwtGroupGlobalAdmin
+	return o
+}
+
+func (o Options) WithJwtGroupCanRead(jwtGroupCanRead string) Options {
+	o.JwtGroups.CanRead = jwtGroupCanRead
+	return o
+}
+
+func (o Options) WithJwtGroupCanWrite(jwtGroupCanWrite string) Options {
+	o.JwtGroups.CanWrite = jwtGroupCanWrite
 	return o
 }
 
@@ -72,13 +83,17 @@ func (o Options) WithOAuthClientID(oauthClientID string) Options {
 
 func validOptions() Options {
 	return Options{
-		Address:                 ":8080",
-		DatabaseDriver:          "postgres",
-		DatabaseDSN:             "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable",
-		LogoutURL:               "http://localhost:8080",
-		TokenRefreshURL:         "http://localhost:8080",
-		TokenRefreshInterval:    5 * time.Minute,
-		JwtGroupGlobalAdmin:     "global-admin",
+		Address:              ":8080",
+		DatabaseDriver:       "postgres",
+		DatabaseDSN:          "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable",
+		LogoutURL:            "http://localhost:8080",
+		TokenRefreshURL:      "http://localhost:8080",
+		TokenRefreshInterval: 5 * time.Minute,
+		JwtGroups: utils.JwtGroupOptions{
+			GlobalAdmin: "global-admin",
+			CanRead:     "can-read",
+			CanWrite:    "can-write",
+		},
 		IdTokenAuthHeaderName:   "X-Auth-Token",
 		IdTokenAuthHeaderFormat: middleware.AuthHeaderFormatJWT,
 		OIDCIssuerURL:           "https://foo",
@@ -163,6 +178,26 @@ func TestOptions_validate(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name:    "JWT group can read is required",
+			options: validOptions().WithJwtGroupCanRead(""),
+			wantErr: true,
+		},
+		{
+			name:    "JWT group can read is invalid",
+			options: validOptions().WithJwtGroupCanRead("!!!"),
+			wantErr: true,
+		},
+		{
+			name:    "JWT group can write is required",
+			options: validOptions().WithJwtGroupCanWrite(""),
+			wantErr: true,
+		},
+		{
+			name:    "JWT group can write is invalid",
+			options: validOptions().WithJwtGroupCanWrite("!!!"),
+			wantErr: true,
+		},
+		{
 			name:    "Auth header name is required",
 			options: validOptions().WithAuthHeaderName(""),
 			wantErr: true,
@@ -197,7 +232,7 @@ func TestOptions_validate(t *testing.T) {
 	}
 }
 
-func TestGlobalAdminGroupRegex(t *testing.T) {
+func TestJwtGroupRegex(t *testing.T) {
 	tests := []struct {
 		name  string
 		group string
@@ -256,8 +291,8 @@ func TestGlobalAdminGroupRegex(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := globalAdminGroupRegex.MatchString(tt.group); got != tt.want {
-				t.Errorf("globalAdminGroupRegex.MatchString() = %v, want %v", got, tt.want)
+			if got := jwtGroupRegex.MatchString(tt.group); got != tt.want {
+				t.Errorf("jwtGroupRegex.MatchString() = %v, want %v", got, tt.want)
 			}
 		})
 	}

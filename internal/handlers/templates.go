@@ -105,6 +105,14 @@ type RequestContext struct {
 	Session auth.Session
 }
 
+func (r RequestContext) HasSelectedCountryWritePermission() bool {
+	return r.Auth.HasCountryPermissionWrite(r.SelectedCountryID())
+}
+
+func (r RequestContext) HasSelectedCountryReadPermission() bool {
+	return r.Auth.HasCountryPermissionRead(r.SelectedCountryID())
+}
+
 func (r RequestContext) SelectedCountryID() string {
 	if r.SelectedCountry == nil {
 		return ""

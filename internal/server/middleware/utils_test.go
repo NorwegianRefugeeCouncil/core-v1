@@ -19,6 +19,8 @@ func configureDummyContextMiddleware(
 	allowedCountryIDs containers.StringSet,
 	allCountryIDs containers.StringSet,
 	isGlobalAdmin bool,
+	canRead bool,
+	canWrite bool,
 	selectedCountryId string,
 ) mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
@@ -27,6 +29,8 @@ func configureDummyContextMiddleware(
 				allowedCountryIDs,
 				allCountryIDs,
 				isGlobalAdmin,
+				canRead,
+				canWrite,
 			)
 			r = r.WithContext(
 				utils.WithAuthContext(

@@ -32,7 +32,7 @@ func HandleCountries(templates map[string]*template.Template) http.Handler {
 			return
 		}
 
-		allowedCountryIDs := authCtx.GetCountryIDsWithReadWritePermissions()
+		allowedCountryIDs := authCtx.GetAllowedCountries()
 		countries, err := utils.GetCountries(ctx)
 		if err != nil {
 			l.Error("failed to get countries", zap.Error(err))

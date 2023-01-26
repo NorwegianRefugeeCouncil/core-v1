@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"github.com/nrc-no/notcore/internal/utils"
 	"net"
 	"net/url"
 	"regexp"
@@ -16,7 +17,7 @@ type Options struct {
 	DatabaseDSN             string
 	LogoutURL               string
 	LoginURL                string
-	JwtGroupGlobalAdmin     string
+	JwtGroups               utils.JwtGroupOptions
 	IdTokenAuthHeaderName   string
 	IdTokenAuthHeaderFormat string
 	AccessTokenHeaderName   string
@@ -31,7 +32,7 @@ type Options struct {
 	BlockKey2               string
 }
 
-var globalAdminGroupRegex = regexp.MustCompile(`^[A-Za-z0-9_-]+(?: +[A-Za-z0-9_-]+)*$`)
+var jwtGroupRegex = regexp.MustCompile(`^[A-Za-z0-9_-]+(?: +[A-Za-z0-9_-]+)*$`)
 
 func (o Options) validate() error {
 	if len(o.Address) == 0 {
@@ -62,11 +63,23 @@ func (o Options) validate() error {
 	if o.TokenRefreshInterval < time.Minute {
 		return fmt.Errorf("minimum value for token refresh interval is 1 minute")
 	}
-	if len(o.JwtGroupGlobalAdmin) == 0 {
+	if len(o.JwtGroups.GlobalAdmin) == 0 {
 		return fmt.Errorf("JWT group global admin is required")
 	}
-	if !globalAdminGroupRegex.MatchString(o.JwtGroupGlobalAdmin) {
+	if !jwtGroupRegex.MatchString(o.JwtGroups.GlobalAdmin) {
 		return fmt.Errorf("JWT group global admin is invalid")
+	}
+	if len(o.JwtGroups.CanRead) == 0 {
+		return fmt.Errorf("JWT group can read is required")
+	}
+	if !jwtGroupRegex.MatchString(o.JwtGroups.CanRead) {
+		return fmt.Errorf("JWT group can read is invalid")
+	}
+	if len(o.JwtGroups.CanWrite) == 0 {
+		return fmt.Errorf("JWT group can write is required")
+	}
+	if !jwtGroupRegex.MatchString(o.JwtGroups.CanWrite) {
+		return fmt.Errorf("JWT group can read is invalid")
 	}
 	if !isValidRFC7230HeaderName(o.IdTokenAuthHeaderName) {
 		return fmt.Errorf("auth header name is invalid")

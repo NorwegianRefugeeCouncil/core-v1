@@ -52,60 +52,58 @@
                     <div class="d-flex flex-row w-100 align-items-center">
 
                         {{if .RequestContext.SelectedCountry}}
-                        <div class="btn-group ms-5">
-                            <button data-bs-toggle="collapse"
-                                    data-bs-target="#filters"
-                                    id="search-button"
-                                    type="button"
-                                    class="btn btn-link text-secondary dropdown-toggle text-decoration-none px-2"
-                                    aria-haspopup="true"
-                                    aria-expanded="false">
-                                Search
-                            </button>
-                        </div>
+                            <div class="btn-group ms-5">
+                                <button data-bs-toggle="collapse"
+                                        data-bs-target="#filters"
+                                        id="search-button"
+                                        type="button"
+                                        class="btn btn-link text-secondary dropdown-toggle text-decoration-none px-2"
+                                        aria-haspopup="true"
+                                        aria-expanded="false">
+                                    Search
+                                </button>
+                            </div>
+
+                            {{if .RequestContext.HasSelectedCountryWritePermission}}
+                                <div class="btn-group ms-5">
+                                    <button type="button"
+                                            class="btn btn-link text-secondary dropdown-toggle text-decoration-none px-2"
+                                            data-bs-toggle="dropdown"
+                                            aria-haspopup="true"
+                                            aria-expanded="false">
+                                        Files
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                         <a href="/static/nrc_grf_template.xlsx"
+                                            download="nrc-grf-template.xlsx"
+                                            class="dropdown-item"
+                                         >
+                                            Download template
+                                        </a>
+                                            <form id="individual-upload--form"
+                                                  action="/countries/{{.RequestContext.SelectedCountryID}}/individuals/upload"
+                                                  enctype="multipart/form-data"
+                                                  method="post"
+                                            >
+                                                <input
+                                                        hidden
+                                                        id="individual-upload--file"
+                                                        name="file"
+                                                        type="file"
+                                                        class="form-control"
+                                                        accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                                >
+                                                <button id="individual-upload--button" type="button" class="dropdown-item">
+                                                    Upload {{.RequestContext.SelectedCountry.Name}} data
+                                                </button>
+                                            </form>
+                                    </div>
+                                </div>
+                            {{end}}
                         {{end}}
 
-                        <div class="btn-group ms-5">
-                            <button type="button"
-                                    class="btn btn-link text-secondary dropdown-toggle text-decoration-none px-2"
-                                    data-bs-toggle="dropdown"
-                                    aria-haspopup="true"
-                                    aria-expanded="false">
-                                Files
-                            </button>
-                            <div class="dropdown-menu">
-                                 <a href="/static/nrc_grf_template.xlsx"
-                                    download="nrc-grf-template.xlsx"
-                                    class="dropdown-item"
-                                 >
-                                    Download template
-                                </a>
-                                {{if .RequestContext.SelectedCountry}}
-                                    {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-                                        <form id="individual-upload--form"
-                                              action="/countries/{{.RequestContext.SelectedCountryID}}/individuals/upload"
-                                              enctype="multipart/form-data"
-                                              method="post"
-                                        >
-                                            <input
-                                                    hidden
-                                                    id="individual-upload--file"
-                                                    name="file"
-                                                    type="file"
-                                                    class="form-control"
-                                                    accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                            >
-                                            <button id="individual-upload--button" type="button" class="dropdown-item">
-                                                Upload {{.RequestContext.SelectedCountry.Name}} data
-                                            </button>
-                                        </form>
-                                    {{end}}
-                                {{end}}
-                            </div>
-                        </div>
-
                         {{ $auth := .RequestContext.Auth }}
-                        {{ $countries := $auth.GetCountryIDsWithReadWritePermissions }}
+                        {{ $countries := $auth.GetAllowedCountries }}
                         {{ $countryLength := $countries.Len }}
                         {{if or (gt $countryLength 1) ($auth.IsGlobalAdmin)}}
                         <div class="btn-group ms-5">
@@ -118,9 +116,7 @@
                             </button>
                             <div class="dropdown-menu">
                                 {{range $ci, $c := .RequestContext.Countries}}
-                                    {{ if $auth.HasCountryLevelPermission $c.ID 1}}
-                                        <a class="dropdown-item" href="/countries/{{$c.ID}}/individuals">{{$c.Name}}</a>
-                                    {{end}}
+                                    <a class="dropdown-item" href="/countries/{{$c.ID}}/individuals">{{$c.Name}}</a>
                                 {{end}}
                                 {{if $auth.IsGlobalAdmin}}
                                     <div class="dropdown-divider"></div>

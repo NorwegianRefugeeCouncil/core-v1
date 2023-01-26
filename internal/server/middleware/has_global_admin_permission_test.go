@@ -11,10 +11,12 @@ import (
 func TestHasGlobalAdminPermission(t *testing.T) {
 	var parametrizedTests = []struct {
 		isGlobalAdmin  bool
+		canRead        bool
+		canWrite       bool
 		expectedStatus int
 	}{
-		{true, http.StatusOK},
-		{false, http.StatusForbidden},
+		{true, true, true, http.StatusOK},
+		{false, true, true, http.StatusForbidden},
 	}
 
 	for _, tt := range parametrizedTests {
@@ -23,6 +25,8 @@ func TestHasGlobalAdminPermission(t *testing.T) {
 				containers.NewStringSet(),
 				containers.NewStringSet(),
 				tt.isGlobalAdmin,
+				tt.canRead,
+				tt.canWrite,
 				"",
 			)(
 				HasGlobalAdminPermission()(
@@ -30,10 +34,10 @@ func TestHasGlobalAdminPermission(t *testing.T) {
 				),
 			)
 			req := httptest.NewRequest("GET", "http://testing", nil)
-			responeRecorder := httptest.NewRecorder()
-			handlerToTest.ServeHTTP(responeRecorder, req)
-			if responeRecorder.Code != tt.expectedStatus {
-				t.Errorf("expected status %d, got %d", tt.expectedStatus, responeRecorder.Code)
+			responseRecorder := httptest.NewRecorder()
+			handlerToTest.ServeHTTP(responseRecorder, req)
+			if responseRecorder.Code != tt.expectedStatus {
+				t.Errorf("expected status %d, got %d", tt.expectedStatus, responseRecorder.Code)
 			}
 		})
 	}

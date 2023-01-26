@@ -10,9 +10,17 @@ import (
 	"net/http"
 )
 
+// ParsedPermissions is a helper struct to store the parsed permissions
+type ParsedPermissions struct {
+	IsGlobalAdmin bool
+	CountryIds    containers.StringSet
+	CanRead       bool
+	CanWrite      bool
+}
+
 // permissionMiddleware will compute the user's permissions and add them to the context
 func ComputePermissions(
-	globalAdminGroup string,
+	jwtGroups utils.JwtGroupOptions,
 ) func(handler http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 
@@ -40,8 +48,8 @@ func ComputePermissions(
 				allCountryIDs.Add(c.ID)
 			}
 
-			perms := parsePermissions(allCountries, globalAdminGroup, session.GetUserGroups(), session.GetNrcOrganisation())
-			authIntf := auth.New(perms.countryIds, allCountryIDs, perms.isGlobalAdmin)
+			perms := parsePermissions(allCountries, jwtGroups, session.GetUserGroups(), session.GetNrcOrganisation())
+			authIntf := auth.New(perms.CountryIds, allCountryIDs, perms.IsGlobalAdmin, perms.CanRead, perms.CanWrite)
 			r = r.WithContext(utils.WithAuthContext(ctx, authIntf))
 			h.ServeHTTP(w, r)
 
@@ -49,15 +57,9 @@ func ComputePermissions(
 	}
 }
 
-// parsedPermissions is a helper struct to store the parsed permissions
-type parsedPermissions struct {
-	isGlobalAdmin bool
-	countryIds    containers.StringSet
-}
-
 // parsePermissions will retrieve the country ids from the user's groups
 // and determine if the user is a global admin
-func parsePermissions(allCountries []*api.Country, globalAdminGroup string, userGroups []string, nrcOrganisation string) *parsedPermissions {
+func parsePermissions(allCountries []*api.Country, jwtGroups utils.JwtGroupOptions, userGroups []string, nrcOrganisation string) *ParsedPermissions {
 	countryIds := containers.NewStringSet()
 
 	for _, c := range allCountries {
@@ -69,15 +71,30 @@ func parsePermissions(allCountries []*api.Country, globalAdminGroup string, user
 	}
 
 	isGlobalAdmin := false
+	canRead := false
+	canWrite := false
 	for _, group := range userGroups {
-		if group == globalAdminGroup {
+		if group == jwtGroups.GlobalAdmin {
 			isGlobalAdmin = true
+			canWrite = true
+			canRead = true
+			continue
+		}
+		if group == jwtGroups.CanWrite {
+			canWrite = true
+			canRead = true
+			continue
+		}
+		if group == jwtGroups.CanRead {
+			canRead = true
 			continue
 		}
 	}
 
-	return &parsedPermissions{
-		isGlobalAdmin: isGlobalAdmin,
-		countryIds:    countryIds,
+	return &ParsedPermissions{
+		IsGlobalAdmin: isGlobalAdmin,
+		CanWrite:      canWrite,
+		CanRead:       canRead,
+		CountryIds:    countryIds,
 	}
 }

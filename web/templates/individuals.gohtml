@@ -140,6 +140,7 @@
             const deleteIndividualsButtonContent = document.getElementById(deleteIndividualsButtonContentId)
             const selectCheckboxes = Array.from(document.getElementsByClassName(selectIndividualCheckboxClass))
             const selectAllCheckbox = document.getElementById(selectAllIndividualsCheckboxId);
+            const tableContainer = document.getElementById(individualTableContainerId)
 
             downloadButton.addEventListener('click', downloadFunc)
 
@@ -232,16 +233,11 @@
                 })
             }
 
-            const tableContainer = document.getElementById(individualTableContainerId)
-
             // restore the horizontal scroll position
             const horizontalScrollStr = sessionStorage.getItem(individualTableHorizontalScrollKey)
             if (horizontalScrollStr) {
                 tableContainer.scrollLeft = parseInt(horizontalScrollStr)
             }
-            setTimeout(() => {
-                tableContainer.classList.remove("opacity-0")
-            }, 0)
 
             // store the horizontal scroll position of the table
             tableContainer.addEventListener("scroll", function (event) {
@@ -272,6 +268,12 @@
     {{$selectWidth := "2rem"}}
     {{$idWidth := "20rem"}}
     {{$nameWidth := "10rem"}}
+    {{$idOffset := "2rem"}}
+    {{$nameOffset := "22rem"}}
+    {{if not .RequestContext.HasSelectedCountryWritePermission}}
+        {{$idOffset = "0rem"}}
+        {{$nameOffset = "20rem"}}
+    {{end}}
     {{$sexWidth := "8rem"}}
     {{$ageWidth := "4rem"}}
     {{$birthDateWidth := $dateWidth}}
@@ -296,6 +298,7 @@
     {{$createdAtWidth := $dateTimeWidth}}
     {{$updatedAtWidth := $dateTimeWidth}}
 
+    {{$canWrite := .RequestContext.HasSelectedCountryWritePermission}}
     <header>
         {{template "nav" .}}
     </header>
@@ -304,14 +307,16 @@
             <h1 class="my-4">{{ $.RequestContext.SelectedCountry.Name }}</h1>
 
             <div class="d-flex justify-content-end align-items-center">
-                <a href="/countries/{{.Options.CountryID}}/individuals/new"
-                   class="btn btn-outline-primary me-2"
-                   data-toggle="tooltip" data-placement="top" title="Create new Individual"
-                >
-                    <i class="bi bi-plus"></i>
-                    <span>Create new individual</span>
-                </a>
-                {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
+                {{if $canWrite}}
+                    <a href="/countries/{{.Options.CountryID}}/individuals/new"
+                       class="btn btn-outline-primary me-2"
+                       data-toggle="tooltip" data-placement="top" title="Create new Individual"
+                    >
+                        <i class="bi bi-plus"></i>
+                        <span>Create new individual</span>
+                    </a>
+                {{end}}
+                {{ if or .RequestContext.Auth.IsGlobalAdmin .RequestContext.HasSelectedCountryReadPermission}}
                     <div class="btn-group me-2">
                         <button type="button" class="btn btn-outline-secondary" id="downloadIndividualsButton">
                             <i class="bi bi-download"></i>
@@ -334,13 +339,18 @@
         </div>
 
         <!-- INDIVIDUALS TABLE -->
-        <form id="individuals-action-form" class="table-responsive opacity-0 scroll-body" method="post">
+        <form id="individuals-action-form" class="table-responsive scroll-body" method="post">
             <table class="table table-individuals mb-0">
                 <thead>
                 <tr>
+                    {{if $canWrite}}
                     <th class="sticky-column text-center" style="width: {{$selectWidth}}">
-                        <input class="form-check-input" type="checkbox" id="selectAllCheckbox"/>
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="selectAllCheckbox"
+                        />
                     </th>
+                    {{end}}
 
                     {{template "columnHeader" (dict
                     "Options" .Options
@@ -350,10 +360,10 @@
                     "Scope" "col"
                     "Class" "sticky-column "
                     "Title" "ID"
-                    "Style" "left: 3rem"
                     "Width" $idWidth
                     "MinWidth" $idWidth
                     "MaxWidth" $idWidth
+                    "Left" $idOffset
                     )}}
 
                     {{template "columnHeader" (dict
@@ -363,11 +373,11 @@
                     "Label" "Name"
                     "Scope" "col"
                     "Class" "sticky-column border-end"
-                    "Style" "left: 24rem"
                     "Title" "Full Name"
                     "Width" $nameWidth
                     "MinWidth" $nameWidth
                     "MaxWidth" $nameWidth
+                    "Left" $nameOffset
                     )}}
 
                     {{template "columnHeader" (dict
@@ -614,6 +624,7 @@
                             class="individual-row"
                             data-individual-id="{{.ID}}">
 
+                            {{if $canWrite}}
                             <td class="sticky-column text-center">
                                 <div style="width: {{$selectWidth}}" class="mx-auto">
                                     <input class="form-check-input select-row-checkbox"
@@ -623,9 +634,10 @@
                                            name="individual_id"/>
                                 </div>
                             </td>
+                            {{end}}
 
                             <!-- ID -->
-                            <td class="sticky-column" style="left: 3rem">
+                            <td class="sticky-column" style="left: {{$idOffset}}">
                                 <div style="width: {{$idWidth}}">
                                     <a href="/countries/{{.CountryID}}/individuals/{{.ID}}">
                                         {{.ID}}
@@ -635,7 +647,7 @@
                             <!-- End ID -->
 
                             <!-- Name -->
-                            <td class="sticky-column border-end" style="left: 24rem">
+                            <td class="sticky-column border-end" style="left: {{$nameOffset}}">
                                 <div style="width: {{$nameWidth}}">
                                     {{if .FullName}}
                                         {{.FullName}}
@@ -838,7 +850,7 @@
                     {{end}}
                 {{else}}
                     <tr>
-                        <td colspan="24">No individuals found</td>
+                        <td colspan="{{if not $canWrite}}23{{else}}24{{end}}">No individuals found</td>
                     </tr>
                 {{end}}
                 </tbody>
@@ -849,18 +861,21 @@
 
     <!-- PAGE FOOTER -->
     <footer class="d-flex align-items-start justify-content-between">
-        {{ if or (.RequestContext.Auth.IsGlobalAdmin) (.RequestContext.Auth.HasCountryLevelPermission .RequestContext.SelectedCountryID 1)}}
-            <button type="button"
-                    id="deleteButton"
-                    class="btn btn-danger disabled"
-                    data-bs-toggle="modal"
-                    data-bs-target="#deleteIndividualsConfirmationModal"
-                    data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
-                    onclick="refreshDeleteConfirmationModal()">
-                <i class="bi bi-trash"></i>
-                <span id="deleteIndividualsButtonContent">Delete individuals</span>
-            </button>
-        {{end}}
+        <div>
+            {{ if .RequestContext.HasSelectedCountryWritePermission}}
+                <button type="button"
+                        id="deleteButton"
+                        class="btn btn-danger disabled"
+                        data-bs-toggle="modal"
+                        data-bs-target="#deleteIndividualsConfirmationModal"
+                        data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
+                        onclick="refreshDeleteConfirmationModal()">
+                    <i class="bi bi-trash"></i>
+                    <span id="deleteIndividualsButtonContent">Delete individuals</span>
+                </button>
+            {{end}}
+        </div>
+        <div class="flex-grow-1"></div>
         <div class="d-flex align-items-center justify-content-end">
             <div class="d-flex align-items-center">
                 Results:
@@ -944,6 +959,8 @@
     {{$sortDirection := ""}}
     {{$sortDirectionForLink := ""}}
     {{$sorted := false}}
+    {{$left:= .Left}}
+
     {{if $sortable}}
         {{$sortDirection = $options.GetSortDirection $sortKey}}
         {{if eq $sortDirection "ascending"}}
@@ -970,6 +987,9 @@
     {{end}}
     {{if $maxWidth}}
         {{$style = concat $style "max-width: " $maxWidth ";" }}
+    {{end}}
+    {{if $left}}
+        {{$style = concat $style "left: " $left ";" }}
     {{end}}
     {{$style = concat $style "\"" }}
 

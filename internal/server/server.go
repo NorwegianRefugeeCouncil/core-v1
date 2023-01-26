@@ -110,7 +110,7 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 	s.router = buildRouter(
 		individualRepo,
 		countryRepo,
-		o.JwtGroupGlobalAdmin,
+		o.JwtGroups,
 		o.IdTokenAuthHeaderName,
 		o.IdTokenAuthHeaderFormat,
 		o.AccessTokenHeaderName,

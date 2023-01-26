@@ -62,22 +62,28 @@
             <h1 class="col-8 text-truncate pe-2">
                 {{.form.Title}}
             </h1>
-            {{if .Individual.ID}}
-                <a href="/countries/{{.RequestContext.SelectedCountry.ID}}/individuals/new"
-                   class="btn btn-outline-primary col-4">
-                    Create new Individual
-                </a>
+            {{if .RequestContext.HasSelectedCountryWritePermission}}
+                {{if .Individual.ID}}
+                    <a href="/countries/{{.RequestContext.SelectedCountry.ID}}/individuals/new"
+                       class="btn btn-outline-primary col-4">
+                        Create new Individual
+                    </a>
+                {{end}}
             {{end}}
         </div>
         <div class="scroll-body">
-            <form id="individualForm"
-                  class="container-fluid"
-                  method="post"
-                  action="/countries/{{.Individual.CountryID}}/individuals/{{if .Individual.ID}}{{.Individual.ID}}{{else}}new{{end}}">
-                {{.form.HTML}}
-            </form>
+            <fieldset {{if not .RequestContext.HasSelectedCountryWritePermission}}disabled{{end}}>
+                <form id="individualForm"
+                      class="container-fluid"
+                      method="post"
+                      action="/countries/{{.Individual.CountryID}}/individuals/{{if .Individual.ID}}{{.Individual.ID}}{{else}}new{{end}}">
+                    {{.form.HTML}}
+                </form>
+            </fieldset>
         </div>
     </main>
+
+    {{if .RequestContext.HasSelectedCountryWritePermission}}
     <footer>
         <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto d-flex flex-row justify-content-between align-items-center">
             {{if .Individual.ID}}
@@ -98,6 +104,7 @@
             <!-- END SAVE BUTTON -->
         </div>
     </footer>
+    {{end}}
 
     <!-- DELETE CONFIRMATION MODAL -->
     <div class="modal modal-lg" tabindex="-1" id="action-confirm-modal-0">
