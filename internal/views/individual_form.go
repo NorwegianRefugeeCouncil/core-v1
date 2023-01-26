@@ -756,21 +756,21 @@ func (f *IndividualForm) buildCollectionDate() error {
 func (f *IndividualForm) buildCollectionLocation1() error {
 	return buildField(&forms.TextInputField{
 		Name:        "collectionAdministrativeArea1",
-		DisplayName: "Collection Location 1",
+		DisplayName: "Location of registration (admin1)",
 	}, f.dataCollectionSection, f.individual.CollectionAdministrativeArea1)
 }
 
 func (f *IndividualForm) buildCollectionLocation2() error {
 	return buildField(&forms.TextInputField{
 		Name:        "collectionAdministrativeArea2",
-		DisplayName: "Collection Location 2",
+		DisplayName: "Location of registration (admin2)",
 	}, f.dataCollectionSection, f.individual.CollectionAdministrativeArea2)
 }
 
 func (f *IndividualForm) buildCollectionLocation3() error {
 	return buildField(&forms.TextInputField{
 		Name:        "collectionAdministrativeArea3",
-		DisplayName: "Collection Location 3",
+		DisplayName: "Location of registration (admin3)",
 	}, f.dataCollectionSection, f.individual.CollectionAdministrativeArea3)
 }
 
