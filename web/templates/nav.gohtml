@@ -28,13 +28,19 @@
             });
             modal.show();
         }
+
+        function submitAndResetUploadInput(e) {
+                submitUploadForm()
+                e.target.value = null
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
             const uploadButton = document.getElementById(uploadIndividualFileButtonId)
             if (uploadButton) {
                 uploadButton.addEventListener('click', openUploadDialog);
             }
             const uploadFileInput = document.getElementById(uploadIndividualFileInputId)
-            uploadFileInput.addEventListener('change', submitUploadForm);
+            uploadFileInput.addEventListener('change', submitAndResetUploadInput);
         })
     </script>
 
