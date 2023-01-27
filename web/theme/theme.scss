@@ -137,14 +137,16 @@ $dropdown-font-size: 20px;
 $nav-link-color: $secondary;
 $nav-link-hover-color: $orange;
 $nav-link-font-size: 18px;
-$navbar-padding-y:                  40px !default;
-$navbar-brand-padding-y:            $navbar-padding-y !default;
-$navbar-brand-height:               65px;
+$navbar-padding-y: 40px !default;
+$navbar-brand-padding-y: $navbar-padding-y !default;
+$navbar-brand-height: 65px;
 
 $modal-inner-padding: 20px !default;
 $modal-content-border-radius: 3px !default;
+$modal-backdrop-bg: $neutral500;
+$modal-backdrop-opacity: .5;
 
-$table-active-bg-factor:      .05;
+$table-active-bg-factor: .05;
 
 @import "node_modules/bootstrap/scss/bootstrap";
 
@@ -490,4 +492,8 @@ table {
     line-height: 50px;
     padding-top: 0;
     padding-bottom: 0;
+}
+
+.static-background-modal {
+  background-color: rgba($neutral400, 0.5);
 }

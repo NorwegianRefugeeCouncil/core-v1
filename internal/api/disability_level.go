@@ -58,7 +58,7 @@ func ParseDisabilityLevel(str string) (DisabilityLevel, error) {
 	case string(DisabilityLevelUnspecified):
 		return DisabilityLevelUnspecified, nil
 	default:
-		return "", fmt.Errorf("unknown disability level: %v", logutils.Escape(str))
+		return "", fmt.Errorf("unknown disability level: \"%v\"", logutils.Escape(str))
 	}
 }
 

@@ -299,9 +299,7 @@
     {{$updatedAtWidth := $dateTimeWidth}}
 
     {{$canWrite := .RequestContext.HasSelectedCountryWritePermission}}
-    <header>
-        {{template "nav" .}}
-    </header>
+
     <main class="container-fluid p-5 pt-0">
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="my-4">{{ $.RequestContext.SelectedCountry.Name }}</h1>
@@ -861,21 +859,18 @@
 
     <!-- PAGE FOOTER -->
     <footer class="d-flex align-items-start justify-content-between">
-        <div>
-            {{ if .RequestContext.HasSelectedCountryWritePermission}}
-                <button type="button"
-                        id="deleteButton"
-                        class="btn btn-danger disabled"
-                        data-bs-toggle="modal"
-                        data-bs-target="#deleteIndividualsConfirmationModal"
-                        data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
-                        onclick="refreshDeleteConfirmationModal()">
-                    <i class="bi bi-trash"></i>
-                    <span id="deleteIndividualsButtonContent">Delete individuals</span>
-                </button>
-            {{end}}
-        </div>
-        <div class="flex-grow-1"></div>
+        {{ if .RequestContext.HasSelectedCountryWritePermission}}
+            <button type="button"
+                    id="deleteButton"
+                    class="btn btn-danger disabled"
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteIndividualsConfirmationModal"
+                    data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
+                    onclick="refreshDeleteConfirmationModal()">
+                <i class="bi bi-trash"></i>
+                <span id="deleteIndividualsButtonContent">Delete individuals</span>
+            </button>
+        {{end}}
         <div class="d-flex align-items-center justify-content-end">
             <div class="d-flex align-items-center">
                 Results:
@@ -943,8 +938,6 @@
             </div>
         </div>
     </div>
-
-
 {{end}}
 
 {{define "columnHeader"}}
@@ -1037,6 +1030,4 @@
             </div>
         </div>
     </th>
-
-
 {{end}}

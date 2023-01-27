@@ -17,9 +17,11 @@
     {{template "head" .}}
 </head>
 <body>
-{{template "body" .}}
+    <header class="sticky-top">
+        {{template "nav" .}}
+    </header>
+    {{template "body" .}}
 </body>
-
 
 <script type="application/javascript">
 

@@ -14,9 +14,10 @@ import (
 	"go.uber.org/zap"
 )
 
-func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
+func UploadHandler(renderer Renderer, individualRepo db.IndividualRepo) http.Handler {
 
 	const (
+		templateName  = "error.gohtml"
 		formParamFile = "file"
 	)
 
@@ -26,6 +27,13 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 			ctx = r.Context()
 			l   = logging.NewLogger(ctx)
 		)
+
+		renderError := func(title string, fileErrors []api.FileError) {
+			renderer.RenderView(w, r, templateName, map[string]interface{}{
+				"Errors": fileErrors,
+				"Title":  title,
+			})
+		}
 
 		// todo: find sensible max memory value
 		maxMemory := int64(1024 * 1024 * 1024)
@@ -40,7 +48,7 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 		formFile, _, err := r.FormFile(formParamFile)
 		if err != nil {
 			l.Error("failed to get form file", zap.Error(err))
-			http.Error(w, "failed to parse input file: "+err.Error(), http.StatusBadRequest)
+			renderError("failed to parse input file: "+err.Error(), nil)
 			return
 		}
 
@@ -48,27 +56,34 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 		var fields []string
 
 		if strings.HasSuffix(filename, ".csv") {
-			if err = api.UnmarshalIndividualsCSV(formFile, &individuals, &fields); err != nil {
+			fileErrors, err := api.UnmarshalIndividualsCSV(formFile, &individuals, &fields)
+			if err != nil {
 				l.Error("failed to parse csv", zap.Error(err))
-				http.Error(w, "failed to parse csv: "+err.Error(), http.StatusBadRequest)
+			}
+			if fileErrors != nil {
+				renderError("Could not parse uploaded .csv file", fileErrors)
 				return
 			}
 		} else if strings.HasSuffix(filename, ".xlsx") || strings.HasSuffix(filename, ".xls") {
-			if err = api.UnmarshalIndividualsExcel(formFile, &individuals, &fields); err != nil {
+			fileErrors, err := api.UnmarshalIndividualsExcel(formFile, &individuals, &fields)
+			if err != nil {
 				l.Error("failed to parse excel file", zap.Error(err))
-				http.Error(w, "failed to parse excel file: "+err.Error(), http.StatusBadRequest)
+			}
+			if fileErrors != nil {
+				renderError("Could not parse uploaded .xls(x) file", fileErrors)
 				return
 			}
 		} else {
-			l.Error(fmt.Sprintf("unsupported content type: %s", r.Header.Get("Content-Type")))
-			http.Error(w, "invalid content type", http.StatusBadRequest)
+			var contentType = r.Header.Get("Content-Type")
+			l.Error(fmt.Sprintf("unsupported content type: %s", contentType))
+			renderError(fmt.Sprintf("Could not process uploaded file of filetype %s, please upload a .csv or a .xls(x) file.", contentType), nil)
 			return
 		}
 
 		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
 		if err != nil {
 			l.Error("failed to get selected country id", zap.Error(err))
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			renderError("Could not detect selected country. Please select a country from the dropdown.", nil)
 			return
 		}
 
@@ -86,25 +101,27 @@ func UploadHandler(individualRepo db.IndividualRepo) http.Handler {
 		existingIndividuals, err := individualRepo.GetAll(ctx, api.ListIndividualsOptions{IDs: individualIds})
 		if err != nil {
 			l.Error("failed to get existing individuals", zap.Error(err))
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			renderError("Could not load list of individuals: "+err.Error(), nil)
 			return
 		}
 
 		invalidIndividualIds := validateIndividualsExistInCountry(individualIds, existingIndividuals, selectedCountryID)
 		if len(invalidIndividualIds) > 0 {
 			l.Warn("user trying to update individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
-			http.Error(w, fmt.Sprintf("individuals not found: %v", invalidIndividualIds), http.StatusNotFound)
+			renderError(fmt.Sprintf("Could not update individuals %s, they do not exist in the database for the selected country.", strings.Join(invalidIndividualIds, ",")), nil)
 			return
 		}
 
 		_, err = individualRepo.PutMany(r.Context(), individuals, fieldSet)
 		if err != nil {
 			l.Error("failed to put individuals", zap.Error(err))
-			http.Error(w, "failed to put records: "+err.Error(), http.StatusInternalServerError)
+			renderError("Could not upload individual data: "+err.Error(), nil)
 			return
 		}
 
 		http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals", selectedCountryID), http.StatusSeeOther)
+
+		return
 	})
 }
 
