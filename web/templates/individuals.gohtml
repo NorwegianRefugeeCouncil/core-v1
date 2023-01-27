@@ -87,7 +87,8 @@
          */
         function submitActionForm(action) {
             const form = document.getElementById(individualActionFormId);
-            form.action = "/countries/{{.Options.CountryID}}/individuals/" + action {{if .Options.Inactive}}+ "?inactive=true" {{end}}
+            let params = new URLSearchParams(document.location.search);
+            form.action = "/countries/{{.Options.CountryID}}/individuals/" + action + (params.get("inactive") ? "?inactive=true" : '');
             form.submit();
         }
 
