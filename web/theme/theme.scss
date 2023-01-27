@@ -309,6 +309,22 @@ nav.navbar {
             background-color: $blue-100;
         }
     }
+
+    .btn-link, .nav-link {
+        color: $nav-link-color;
+        font-size: $nav-link-font-size;
+        font-weight: $nav-link-font-weight;
+        &:hover {
+            color: $nav-link-hover-color;
+        }
+    }
+
+    .home-link {
+        color: $nav-link-color;
+        font-size: 18px;
+        font-weight: 500;
+        text-decoration: none;
+    }
 }
 
 .card {
@@ -347,26 +363,6 @@ nav.navbar {
 
 .alert {
     padding: 1rem;
-}
-
-.nav-link {
-    color: $nav-link-color;
-    font-size: $nav-link-font-size;
-    font-weight: $nav-link-font-weight;
-    &:hover {
-        color: $nav-link-hover-color;
-    }
-}
-
-a.home-link {
-    color: $nav-link-color;
-    font-size: 18px;
-    font-weight: 500;
-    text-decoration: none;
-
-    &:hover {
-        color: $nav-link-hover-color;
-    }
 }
 
 table {
