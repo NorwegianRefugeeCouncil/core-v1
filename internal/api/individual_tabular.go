@@ -338,21 +338,24 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualServiceCC1:
 			cc, err := ParseServiceCC(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceCC1 = cc
 		case constants.FileColumnIndividualServiceRequestedDate1:
 			var date *time.Time
-			date, err = ParseDate(cols[idx])
+			date, err := ParseDate(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceRequestedDate1 = date
 		case constants.FileColumnIndividualServiceDeliveredDate1:
 			var date *time.Time
-			date, err = ParseDate(cols[idx])
+			date, err := ParseDate(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceDeliveredDate1 = date
 		case constants.FileColumnIndividualServiceComments1:
@@ -360,21 +363,24 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualServiceCC2:
 			cc, err := ParseServiceCC(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceCC2 = cc
 		case constants.FileColumnIndividualServiceRequestedDate2:
 			var date *time.Time
-			date, err = ParseDate(cols[idx])
+			date, err := ParseDate(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceRequestedDate2 = date
 		case constants.FileColumnIndividualServiceDeliveredDate2:
 			var date *time.Time
-			date, err = ParseDate(cols[idx])
+			date, err := ParseDate(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceDeliveredDate2 = date
 		case constants.FileColumnIndividualServiceComments2:
@@ -382,21 +388,24 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualServiceCC3:
 			cc, err := ParseServiceCC(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceCC3 = cc
 		case constants.FileColumnIndividualServiceRequestedDate3:
 			var date *time.Time
-			date, err = ParseDate(cols[idx])
+			date, err := ParseDate(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceRequestedDate3 = date
 		case constants.FileColumnIndividualServiceDeliveredDate3:
 			var date *time.Time
-			date, err = ParseDate(cols[idx])
+			date, err := ParseDate(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceDeliveredDate3 = date
 		case constants.FileColumnIndividualServiceComments3:
@@ -404,21 +413,24 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualServiceCC4:
 			cc, err := ParseServiceCC(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceCC4 = cc
 		case constants.FileColumnIndividualServiceRequestedDate4:
 			var date *time.Time
-			date, err = ParseDate(cols[idx])
+			date, err := ParseDate(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceRequestedDate4 = date
 		case constants.FileColumnIndividualServiceDeliveredDate4:
 			var date *time.Time
-			date, err = ParseDate(cols[idx])
+			date, err := ParseDate(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceDeliveredDate4 = date
 		case constants.FileColumnIndividualServiceComments4:
@@ -426,21 +438,24 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualServiceCC5:
 			cc, err := ParseServiceCC(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceCC5 = cc
 		case constants.FileColumnIndividualServiceRequestedDate5:
 			var date *time.Time
-			date, err = ParseDate(cols[idx])
+			date, err := ParseDate(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceRequestedDate5 = date
 		case constants.FileColumnIndividualServiceDeliveredDate5:
 			var date *time.Time
-			date, err = ParseDate(cols[idx])
+			date, err := ParseDate(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceDeliveredDate5 = date
 		case constants.FileColumnIndividualServiceComments5:
@@ -448,21 +463,24 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualServiceCC6:
 			cc, err := ParseServiceCC(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceCC6 = cc
 		case constants.FileColumnIndividualServiceRequestedDate6:
 			var date *time.Time
-			date, err = ParseDate(cols[idx])
+			date, err := ParseDate(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceRequestedDate6 = date
 		case constants.FileColumnIndividualServiceDeliveredDate6:
 			var date *time.Time
-			date, err = ParseDate(cols[idx])
+			date, err := ParseDate(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceDeliveredDate6 = date
 		case constants.FileColumnIndividualServiceComments6:
@@ -470,21 +488,24 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualServiceCC7:
 			cc, err := ParseServiceCC(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceCC7 = cc
 		case constants.FileColumnIndividualServiceRequestedDate7:
 			var date *time.Time
-			date, err = ParseDate(cols[idx])
+			date, err := ParseDate(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceRequestedDate7 = date
 		case constants.FileColumnIndividualServiceDeliveredDate7:
 			var date *time.Time
-			date, err = ParseDate(cols[idx])
+			date, err := ParseDate(cols[idx])
 			if err != nil {
-				return err
+				errors = append(errors, err)
+				break
 			}
 			i.ServiceDeliveredDate7 = date
 		case constants.FileColumnIndividualServiceComments7:
