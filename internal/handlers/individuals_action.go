@@ -67,6 +67,10 @@ func HandleIndividualsAction(repo db.IndividualRepo, action string) http.Handler
 			return
 		}
 
-		http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals", countryID), http.StatusFound)
+		if *options.Inactive {
+			http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals?inactive=true", countryID), http.StatusFound)
+		} else {
+			http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals", countryID), http.StatusFound)
+		}
 	})
 }
