@@ -20,39 +20,8 @@
     <header class="sticky-top">
         {{template "nav" .}}
     </header>
-    {{if not .UploadError}}
-        {{template "body" .}}
-    {{end}}
-
-    {{if .UploadError}}
-        {{if gt (len .UploadError) 0}}
-            <!-- BEGIN ERROR MODAL -->
-            <main class="container m-3">
-                <h1 class="row">
-                    <i class="bi bi-exclamation-circle me-2 text-danger"></i>
-                    Something went wrong
-                </h1>
-
-                <div class="row">
-                    {{.UploadError}}
-                </div>
-                <div class="row">
-                    <div class="d-flex flex-row justify-content-end">
-                        <a class="btn btn-secondary"
-                           href="/countries/{{.RequestContext.SelectedCountryID}}/individuals"
-                        >
-                            <i class="bi bi-house me-2"></i>
-                            Go back to Individuals List
-                        </a>
-                    </div>
-                </div>
-            </main>
-            <!-- END ERROR MODAL -->
-        {{end}}
-    {{end}}
+    {{template "body" .}}
 </body>
-
-
 
 <script type="application/javascript">
 

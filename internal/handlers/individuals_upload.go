@@ -17,7 +17,7 @@ import (
 func UploadHandler(renderer Renderer, individualRepo db.IndividualRepo) http.Handler {
 
 	const (
-		templateName  = "individuals.gohtml"
+		templateName  = "error.gohtml"
 		formParamFile = "file"
 	)
 
@@ -28,9 +28,10 @@ func UploadHandler(renderer Renderer, individualRepo db.IndividualRepo) http.Han
 			l   = logging.NewLogger(ctx)
 		)
 
-		renderError := func(e string) {
+		renderError := func(title string, fileErrors []api.FileError) {
 			renderer.RenderView(w, r, templateName, map[string]interface{}{
-				"UploadError": e,
+				"Errors": fileErrors,
+				"Title":  title,
 			})
 		}
 
@@ -47,7 +48,7 @@ func UploadHandler(renderer Renderer, individualRepo db.IndividualRepo) http.Han
 		formFile, _, err := r.FormFile(formParamFile)
 		if err != nil {
 			l.Error("failed to get form file", zap.Error(err))
-			http.Error(w, "failed to parse input file: "+err.Error(), http.StatusBadRequest)
+			renderError("failed to parse input file: "+err.Error(), nil)
 			return
 		}
 
@@ -55,28 +56,34 @@ func UploadHandler(renderer Renderer, individualRepo db.IndividualRepo) http.Han
 		var fields []string
 
 		if strings.HasSuffix(filename, ".csv") {
-			if err = api.UnmarshalIndividualsCSV(formFile, &individuals, &fields); err != nil {
+			fileErrors, err := api.UnmarshalIndividualsCSV(formFile, &individuals, &fields)
+			if err != nil {
 				l.Error("failed to parse csv", zap.Error(err))
-				renderError("Could not parse uploaded csv file: " + err.Error())
+			}
+			if fileErrors != nil {
+				renderError("Could not parse uploaded .csv file", fileErrors)
 				return
 			}
 		} else if strings.HasSuffix(filename, ".xlsx") || strings.HasSuffix(filename, ".xls") {
-			if err = api.UnmarshalIndividualsExcel(formFile, &individuals, &fields); err != nil {
+			fileErrors, err := api.UnmarshalIndividualsExcel(formFile, &individuals, &fields)
+			if err != nil {
 				l.Error("failed to parse excel file", zap.Error(err))
-				renderError("Could not parse uploaded excel file: " + err.Error())
+			}
+			if fileErrors != nil {
+				renderError("Could not parse uploaded .xls(x) file", fileErrors)
 				return
 			}
 		} else {
 			var contentType = r.Header.Get("Content-Type")
 			l.Error(fmt.Sprintf("unsupported content type: %s", contentType))
-			renderError(fmt.Sprintf("Could not process uploaded file of filetype %s, please upload a .csv or a .xlsx file.", contentType))
+			renderError(fmt.Sprintf("Could not process uploaded file of filetype %s, please upload a .csv or a .xls(x) file.", contentType), nil)
 			return
 		}
 
 		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
 		if err != nil {
 			l.Error("failed to get selected country id", zap.Error(err))
-			renderError("Could not detect selected country. Please select a country from the dropdown.")
+			renderError("Could not detect selected country. Please select a country from the dropdown.", nil)
 			return
 		}
 
@@ -94,21 +101,21 @@ func UploadHandler(renderer Renderer, individualRepo db.IndividualRepo) http.Han
 		existingIndividuals, err := individualRepo.GetAll(ctx, api.ListIndividualsOptions{IDs: individualIds})
 		if err != nil {
 			l.Error("failed to get existing individuals", zap.Error(err))
-			renderError("Could not load list of individuals: " + err.Error())
+			renderError("Could not load list of individuals: "+err.Error(), nil)
 			return
 		}
 
 		invalidIndividualIds := validateIndividualsExistInCountry(individualIds, existingIndividuals, selectedCountryID)
 		if len(invalidIndividualIds) > 0 {
 			l.Warn("user trying to update individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
-			renderError(fmt.Sprintf("Could not update individuals %s, they do not exist in the database for the selected country.", zap.Strings("individual_ids", invalidIndividualIds)))
+			renderError(fmt.Sprintf("Could not update individuals %s, they do not exist in the database for the selected country.", strings.Join(invalidIndividualIds, ",")), nil)
 			return
 		}
 
 		_, err = individualRepo.PutMany(r.Context(), individuals, fieldSet)
 		if err != nil {
 			l.Error("failed to put individuals", zap.Error(err))
-			renderError("Could not upload individual data: " + err.Error())
+			renderError("Could not upload individual data: "+err.Error(), nil)
 			return
 		}
 

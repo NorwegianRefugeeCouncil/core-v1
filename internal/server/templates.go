@@ -95,6 +95,7 @@ func parseTemplates(
 			"templates/nav.gohtml",
 			"templates/base.gohtml",
 			"templates/searchForm.gohtml",
+			"templates/error.gohtml",
 			"templates/"+name)
 		if err != nil {
 			return nil, err

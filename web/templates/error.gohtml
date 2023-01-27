@@ -1,0 +1,41 @@
+{{define "head"}}
+{{end}}
+{{define "body"}}
+<main class="container my-5 mx-auto">
+    <div class="row mb-5">
+        <h1 class="text-danger">
+            <i class="bi bi-exclamation-circle me-2"></i>
+            Something went wrong
+        </h1>
+    </div>
+    <div class="row mb-3">
+        <h5>
+            {{.Title}}
+        </h5>
+    </div>
+
+    <div class="row">
+        {{range .Errors}}
+            <div class="alert alert-danger" role="alert">
+                <b>{{.Message}}</b>
+                <br>
+                <ul class="mb-0">
+                    {{range .Err}}
+                        <li>{{.}}</li>
+                    {{end}}
+                </ul>
+            </div>
+        {{end}}
+    </div>
+    <div class="row mt-5">
+        <div class="d-flex flex-row justify-content-end">
+            <a class="btn btn-secondary"
+               href="/countries/{{.RequestContext.SelectedCountryID}}/individuals"
+            >
+                <i class="bi bi-house me-2"></i>
+                Go back to Individuals List
+            </a>
+        </div>
+    </div>
+</main>
+{{end}}

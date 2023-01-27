@@ -49,12 +49,12 @@ func TestUnmarshalIndividualsTabularData(t *testing.T) {
 		var individuals []*api.Individual
 		var fields []string
 
-		err := api.UnmarshalIndividualsTabularData(data, &individuals, &fields)
+		fileErrors := api.UnmarshalIndividualsTabularData(data, &individuals, &fields)
 
 		if param.error {
-			assert.Error(t, err)
+			assert.Greater(t, len(fileErrors), 0)
 		} else {
-			assert.NoError(t, err)
+			assert.Len(t, fileErrors, 0)
 
 			assert.Len(t, individuals, 1)
 			value, err := individuals[0].GetFieldValue(param.column)
