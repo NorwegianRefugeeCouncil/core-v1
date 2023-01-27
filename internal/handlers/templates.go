@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/db"
 	"html/template"
 	"net/http"
 
@@ -221,6 +222,7 @@ func renderView(
 		EnableBetaFeatures: enableBetaFeatures,
 	}
 	vd[vd.RequestContextKey()] = rc
+	vd["DeduplicationOptions"] = db.DeduplicationOptions
 
 	if err := templates[tmpl].ExecuteTemplate(w, "base", vd); err != nil {
 		l.Error("failed to execute template", zap.Error(err))

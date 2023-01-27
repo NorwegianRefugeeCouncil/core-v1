@@ -24,10 +24,86 @@ type IndividualRepo interface {
 	PutMany(ctx context.Context, individuals []*api.Individual, fields containers.StringSet) ([]*api.Individual, error)
 	PerformAction(ctx context.Context, id string, action string) error
 	PerformActionMany(ctx context.Context, ids containers.StringSet, action string) error
+	FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationTypes []string) ([]*api.Individual, error)
 }
 
 type individualRepo struct {
 	db *sqlx.DB
+}
+
+func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationTypes []string) ([]*api.Individual, error) {
+	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
+		return i.findDuplicatesInternal(ctx, tx, individuals, deduplicationTypes)
+	})
+	if err != nil {
+		return nil, err
+	}
+	return ret.([]*api.Individual), nil
+}
+
+func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, newIndividuals []*api.Individual, deduplicationTypes []string) ([]*api.Individual, error) {
+	args := make([]interface{}, 0)
+
+	existingIndividualIds := containers.NewStringSet()
+	var uncheckedIndividuals []*api.Individual
+	for _, individual := range newIndividuals {
+		if individual.ID == "" {
+			uncheckedIndividuals = append(uncheckedIndividuals, individual)
+		} else {
+			existingIndividualIds.Add(individual.ID)
+		}
+	}
+
+	if len(uncheckedIndividuals) == 0 {
+		return []*api.Individual{}, nil
+	}
+	ret := make([]*api.Individual, 0, len(uncheckedIndividuals))
+
+	query := "SELECT * FROM individual_registrations WHERE "
+	if existingIndividualIds.Len() > 0 {
+		query += fmt.Sprintf("id NOT IN ('%s') AND ", strings.Join(existingIndividualIds.Items(), "','"))
+	}
+	query += "deleted_at IS NULL"
+
+	for _, deduplicationType := range deduplicationTypes {
+		d, ok := ParseString(deduplicationType)
+		if !ok {
+			return nil, fmt.Errorf("invalid deduplication type %s", deduplicationType)
+		}
+		for i, field := range DeduplicationOptions[d].Value.Columns {
+			values := make([]string, 0, len(uncheckedIndividuals))
+			for _, individual := range uncheckedIndividuals {
+				val, err := individual.GetFieldValue(field)
+				if err == nil && val != "" {
+					values = append(values, val.(string))
+				}
+			}
+			if len(values) == 0 {
+				continue
+			}
+
+			if i == 0 {
+				query += " AND ("
+			} else {
+				query += " " + DeduplicationOptions[d].Value.Condition + " "
+			}
+
+			query += field + " IN ('" + strings.Join(values, "','") + "')"
+
+			if i == len(DeduplicationOptions[d].Value.Columns)-1 {
+				query += ")"
+			}
+		}
+	}
+
+	out := make([]*api.Individual, 0)
+
+	err := tx.SelectContext(ctx, &out, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	ret = append(ret, out...)
+	return ret, nil
 }
 
 func (i individualRepo) driverName() string {
