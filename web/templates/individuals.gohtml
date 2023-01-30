@@ -88,7 +88,7 @@
         function submitActionForm(action) {
             const form = document.getElementById(individualActionFormId);
             let params = new URLSearchParams(document.location.search);
-            form.action = "/countries/{{.Options.CountryID}}/individuals/" + action + (params.get("inactive") ? "?inactive=true" : '');
+            form.action = "/countries/{{.Options.CountryID}}/individuals/" + action + (params ? "?" + params.toString() : "");
             form.submit();
         }
 

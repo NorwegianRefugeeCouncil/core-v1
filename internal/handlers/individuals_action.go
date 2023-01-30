@@ -47,7 +47,7 @@ func HandleIndividualsAction(repo db.IndividualRepo, action string) http.Handler
 			return
 		}
 
-		individuals, err := repo.GetAll(ctx, api.ListIndividualsOptions{IDs: individualIds, Inactive: options.Inactive})
+		individuals, err := repo.GetAll(ctx, options)
 		if err != nil {
 			l.Error("failed to list individuals", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -67,10 +67,9 @@ func HandleIndividualsAction(repo db.IndividualRepo, action string) http.Handler
 			return
 		}
 
-		if options.Inactive != nil && *options.Inactive {
-			http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals?inactive=true", countryID), http.StatusFound)
-		} else {
-			http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals", countryID), http.StatusFound)
-		}
+		r.URL.Path = fmt.Sprintf("/countries/%s/individuals", countryID)
+		r.Form.Del("individual_id")
+		http.Redirect(w, r, r.URL.String(), http.StatusFound)
+
 	})
 }
