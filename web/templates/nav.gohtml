@@ -44,26 +44,31 @@
         })
     </script>
 
-    <nav class="navbar p-5">
-        <div class="container-fluid" id="navbar-container">
-            <a class="home-link me-0 me-lg-2" href="{{if eq "" .RequestContext.SelectedCountryID}}/{{else}}/countries/{{.RequestContext.SelectedCountryID}}/individuals{{end}}">
-                <div class="d-flex flex-row align-items-center me-5">
-                    <img src="/static/nrc_logo.png" alt="nrc logo" width="65" height="65" class="d-inline-block"/>
-                    <span class="ms-3">Core{{if .RequestContext.SelectedCountry}} {{.RequestContext.SelectedCountry.Name}}{{end}}</span>
+    <nav class="navbar py-3 px-5">
+        <div class="container-fluid">
+            <div class="home-link me-0 me-lg-2">
+                <div class="d-flex flex-row align-items-center">
+                    <img src="/static/nrc_logo.png" alt="nrc logo" width="50" height="50" class="d-inline-block"/>
+                    <span class="ms-2">Core{{if .RequestContext.SelectedCountry}} {{.RequestContext.SelectedCountry.Name}}{{end}}</span>
                 </div>
-            </a>
-
-            <div id="navbarContent">
-                <div class="me-auto mb-2 mb-lg-0 w-100">
+            </div>
+            <div>
+                <div class="me-auto w-100">
                     <div class="d-flex flex-row w-100 align-items-center">
 
-                        {{if .RequestContext.SelectedCountry}}
-                            <div class="btn-group ms-5">
+                       {{ if .RequestContext.SelectedCountry}}
+                            <div class="btn btn-sm btn-link text-decoration-none px-2">
+                                <a class="nav-link" href="{{if eq "" .RequestContext.SelectedCountryID}}/{{else}}/countries/{{.RequestContext.SelectedCountryID}}/individuals{{end}}">
+                                    Participants
+                                </a>
+                            </div>
+
+                            <div class="btn-group ms-3">
                                 <button data-bs-toggle="collapse"
                                         data-bs-target="#filters"
                                         id="search-button"
                                         type="button"
-                                        class="btn btn-link text-secondary dropdown-toggle text-decoration-none px-2"
+                                        class="btn btn-sm btn-link dropdown-toggle text-decoration-none px-2"
                                         aria-haspopup="true"
                                         aria-expanded="false">
                                     Search
@@ -71,38 +76,38 @@
                             </div>
 
                             {{if .RequestContext.HasSelectedCountryWritePermission}}
-                                <div class="btn-group ms-5">
+                                <div class="btn-group ms-3">
                                     <button type="button"
-                                            class="btn btn-link text-secondary dropdown-toggle text-decoration-none px-2"
+                                            class="btn btn-sm btn-link dropdown-toggle text-decoration-none px-2"
                                             data-bs-toggle="dropdown"
                                             aria-haspopup="true"
                                             aria-expanded="false">
                                         Files
                                     </button>
-                                    <div class="dropdown-menu dropdown-menu-end">
+                                    <div class="dropdown-menu">
                                          <a href="/static/nrc_grf_template.xlsx"
                                             download="nrc-grf-template.xlsx"
                                             class="dropdown-item"
                                          >
                                             Download template
                                         </a>
-                                            <form id="individual-upload--form"
-                                                  action="/countries/{{.RequestContext.SelectedCountryID}}/individuals/upload"
-                                                  enctype="multipart/form-data"
-                                                  method="post"
+                                        <form id="individual-upload--form"
+                                              action="/countries/{{.RequestContext.SelectedCountryID}}/individuals/upload"
+                                              enctype="multipart/form-data"
+                                              method="post"
+                                        >
+                                            <input
+                                                    hidden
+                                                    id="individual-upload--file"
+                                                    name="file"
+                                                    type="file"
+                                                    class="form-control"
+                                                    accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                             >
-                                                <input
-                                                        hidden
-                                                        id="individual-upload--file"
-                                                        name="file"
-                                                        type="file"
-                                                        class="form-control"
-                                                        accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                                >
-                                                <button id="individual-upload--button" type="button" class="dropdown-item">
-                                                    Upload {{.RequestContext.SelectedCountry.Name}} data
-                                                </button>
-                                            </form>
+                                            <button id="individual-upload--button" type="button" class="dropdown-item">
+                                                Upload {{.RequestContext.SelectedCountry.Name}} data
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             {{end}}
@@ -112,9 +117,9 @@
                         {{ $countries := $auth.GetAllowedCountries }}
                         {{ $countryLength := $countries.Len }}
                         {{if or (gt $countryLength 1) ($auth.IsGlobalAdmin)}}
-                        <div class="btn-group ms-5">
+                        <div class="btn-group ms-3">
                             <button type="button"
-                                    class="btn btn-link text-secondary dropdown-toggle text-decoration-none px-2"
+                                    class="btn btn-sm btn-link dropdown-toggle text-decoration-none px-2"
                                     data-bs-toggle="dropdown"
                                     aria-haspopup="true"
                                     aria-expanded="false">
@@ -133,10 +138,12 @@
                         {{end}}
 
                         {{ if logoutURL}}
-                            <a title="Logout" class="nav-link order-last ms-5" href="{{logoutURL}}">
-                                <div class="nav-item d-inline-block">Logout</div>
-                                <i class="bi bi-box-arrow-right d-lg-inline-block"></i>
-                            </a>
+                            <div class="btn btn-sm btn-link text-decoration-none px-2">
+                                <a title="Logout" class="nav-link order-last ms-3" href="{{logoutURL}}">
+                                    <div class="nav-item d-inline-block">Logout</div>
+                                    <i class="bi bi-box-arrow-right d-lg-inline-block"></i>
+                                </a>
+                            </div>
                         {{end}}
                     </div>
                 </div>

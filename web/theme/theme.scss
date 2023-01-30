@@ -136,10 +136,11 @@ $dropdown-font-size: 20px;
 
 $nav-link-color: $secondary;
 $nav-link-hover-color: $orange;
-$nav-link-font-size: 18px;
-$navbar-padding-y: 40px !default;
-$navbar-brand-padding-y: $navbar-padding-y !default;
-$navbar-brand-height: 65px;
+$nav-link-font-size: 16px;
+$nav-link-font-weight: 500;
+$navbar-padding-y:                  40px !default;
+$navbar-brand-padding-y:            $navbar-padding-y !default;
+$navbar-brand-height:               65px;
 
 $modal-inner-padding: 20px !default;
 $modal-content-border-radius: 3px !default;
@@ -154,7 +155,7 @@ $table-active-bg-factor: .05;
 // Add custom styles here
 
 
-$header-height: 100px;
+$header-height: 80px;
 $footer-height: 80px;
 
 html, body {
@@ -308,6 +309,22 @@ nav.navbar {
             background-color: $blue-100;
         }
     }
+
+    .btn-link, .nav-link {
+        color: $nav-link-color;
+        font-size: $nav-link-font-size;
+        font-weight: $nav-link-font-weight;
+        &:hover {
+            color: $nav-link-hover-color;
+        }
+    }
+
+    .home-link {
+        color: $nav-link-color;
+        font-size: 18px;
+        font-weight: 500;
+        text-decoration: none;
+    }
 }
 
 .card {
@@ -346,34 +363,6 @@ nav.navbar {
 
 .alert {
     padding: 1rem;
-}
-
-.nav-link {
-    color: $nav-link-color;
-    font-size: $nav-link-font-size;
-    &:hover {
-        color: $nav-link-hover-color;
-    }
-}
-
-a.home-link {
-    color: $nav-link-color;
-    font-size: 24px;
-    font-weight: $font-weight-bold;
-    text-decoration: none;
-
-    &:hover {
-        color: $nav-link-hover-color;
-    }
-}
-
-.no-text-decoration {
-    text-decoration: none;
-}
-
-.nrc-individual-delete-btn {
-    position: relative;
-    top: -67px;
 }
 
 table {
