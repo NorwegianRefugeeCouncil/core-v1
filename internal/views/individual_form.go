@@ -324,6 +324,7 @@ func (f *IndividualForm) buildBirthDate() error {
 	return buildField(&forms.DateInputField{
 		Name:        "birthDate",
 		DisplayName: "Birth Date",
+		MinValue:    "1900-01-01",
 	}, f.personalInfoSection, f.individual.BirthDate)
 }
 
