@@ -19,6 +19,10 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 		wantErr bool
 	}{
 		{
+			name: "inactive",
+			args: url.Values{"inactive": []string{"true"}},
+			want: ListIndividualsOptions{Inactive: pointers.Bool(true)},
+		}, {
 			name: "address",
 			args: url.Values{"address": []string{"address"}},
 			want: ListIndividualsOptions{Address: "address"},
@@ -510,6 +514,10 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 		want string
 	}{
 		{
+			name: "inactive",
+			o:    ListIndividualsOptions{CountryID: countryId, Inactive: pointers.Bool(true)},
+			want: "/countries/usa/individuals?inactive=true",
+		}, {
 			name: "address",
 			o:    ListIndividualsOptions{CountryID: countryId, Address: "address"},
 			want: "/countries/usa/individuals?address=address",

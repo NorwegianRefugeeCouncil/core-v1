@@ -22,6 +22,7 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 	}
 	qry = qry.
 		writeString("SELECT * FROM individual_registrations WHERE deleted_at IS NULL").
+		withInactive(options.Inactive).
 		withAddress(options.Address).
 		withAgeFrom(options.AgeFrom).
 		withAgeTo(options.AgeTo).
@@ -87,6 +88,13 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withLimit(options.Take)
 
 	return qry
+}
+
+func (g *getAllIndividualsSQLQuery) withInactive(inactive *bool) *getAllIndividualsSQLQuery {
+	if inactive == nil || *inactive != true {
+		g.writeString(" AND inactive = false")
+	}
+	return g
 }
 
 func (g *getAllIndividualsSQLQuery) withAddress(address string) *getAllIndividualsSQLQuery {

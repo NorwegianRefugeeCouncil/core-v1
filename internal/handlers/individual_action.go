@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func HandleIndividualDelete(repo db.IndividualRepo) http.Handler {
+func HandleIndividualAction(repo db.IndividualRepo, action string) http.Handler {
 
 	const (
 		pathParamIndividualID = "individual_id"
@@ -45,13 +45,17 @@ func HandleIndividualDelete(repo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		if err := repo.SoftDelete(ctx, individual.ID); err != nil {
+		if err := repo.PerformAction(ctx, individual.ID, action); err != nil {
 			l.Error("failed to delete individual", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals", individual.CountryID), http.StatusFound)
+		if action == db.DeleteAction {
+			http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals", individual.CountryID), http.StatusFound)
+		} else {
+			http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals/%s", individual.CountryID, individual.ID), http.StatusFound)
+		}
 
 	})
 }

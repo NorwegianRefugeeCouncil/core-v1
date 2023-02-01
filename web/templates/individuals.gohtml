@@ -8,6 +8,8 @@
         const downloadIndividualsButtonId = "downloadIndividualsButton"
         const deleteIndividualsButtonContentId = "deleteIndividualsButtonContent"
         const deleteButtonId = "deleteButton"
+        const deactivateButtonId = "deactivateButton"
+        const activateButtonId = "activateButton"
         const selectIndividualCheckboxClass = "select-row-checkbox"
         const selectAllIndividualsCheckboxId = "selectAllCheckbox"
         const selectedRowAttributes = {"aria-selected": "true"}
@@ -15,11 +17,12 @@
         const dataIndividualIdAttribute = "data-individual-id"
         const activeDeleteButtonClasses = ["btn-danger"]
         const inactiveDeleteButtonClasses = ["btn-outline-secondary", "disabled"]
-        const inactiveDeleteButtonText = "Delete individuals"
         const deleteIndividualsConfirmationModalId = "deleteIndividualsConfirmationModal"
         const deleteIndividualsConfirmationModalContentId = "deleteIndividualsConfirmationModalContent"
         const deleteIndividualsConfirmationModalConfirmButtonId = "deleteIndividualsConfirmationModalConfirmButton"
         const deleteIndividualsConfirmationModalConfirmButtonContentId = "deleteIndividualsConfirmationModalConfirmButtonContent"
+        const deactivateIndividualsButtonContentId = "deactivateIndividualsButtonContent"
+        const activateIndividualsButtonContentId = "activateIndividualsButtonContent"
         const individualTableContainerId = individualActionFormId
         const individualTableHorizontalScrollKey = "individualsTableHorizontalScroll"
         const downloadFilteredButtonID = "download-filtered"
@@ -47,19 +50,6 @@
             return Array.from(document.getElementsByClassName(selectIndividualCheckboxClass))
                 .filter(checkbox => checkbox.checked)
                 .length
-        }
-
-        /**
-         * Gets the text for the delete button based on the number of selected individuals.
-         * @param count The number of selected individuals.
-         * @returns {string} The text for the delete button.
-         */
-        function getDeleteButtonText(count) {
-            if (count === 0) {
-                return inactiveDeleteButtonText
-            } else {
-                return "Delete " + count + " individual" + (count > 1 ? "s" : "")
-            }
         }
 
         /**
@@ -97,7 +87,8 @@
          */
         function submitActionForm(action) {
             const form = document.getElementById(individualActionFormId);
-            form.action = "/countries/{{.Options.CountryID}}/individuals/" + action;
+            let params = new URLSearchParams(document.location.search);
+            form.action = "/countries/{{.Options.CountryID}}/individuals/" + action + (params ? "?" + params.toString() : "");
             form.submit();
         }
 
@@ -122,7 +113,7 @@
                     .map(getIndividualIdFromSelectCheckbox)
 
             const idSearchString = '?id=' + selectedIds.join('&id=')
-            const downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + idSearchString
+            const downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + idSearchString {{if .Options.Inactive}}+ "&inactive=true" {{end}}
             goToURL(downloadURL)
         }
 
@@ -131,13 +122,26 @@
             goToURL(downloadURL)
         }
 
+        function toggleInactiveIndividuals() {
+            let params = new URLSearchParams(document.location.search);
+            let inactive = params.get("inactive");
+            if (inactive === "true") {
+                params.delete("inactive");
+            } else {
+                params.set("inactive", "true");
+            }
+            const url = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + params
+            goToURL(url)
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
 
+            const deactivateButton = document.getElementById(deactivateButtonId)
+            const activateButton = document.getElementById(activateButtonId)
             const deleteButton = document.getElementById(deleteButtonId)
             const downloadButton = document.getElementById(downloadIndividualsButtonId)
             const downloadFilteredButton = document.getElementById(downloadFilteredButtonID)
             const downloadSelectedButton = document.getElementById(downloadSelectedButtonID)
-            const deleteIndividualsButtonContent = document.getElementById(deleteIndividualsButtonContentId)
             const selectCheckboxes = Array.from(document.getElementsByClassName(selectIndividualCheckboxClass))
             const selectAllCheckbox = document.getElementById(selectAllIndividualsCheckboxId);
             const tableContainer = document.getElementById(individualTableContainerId)
@@ -145,17 +149,21 @@
             downloadButton.addEventListener('click', downloadFunc)
 
             /**
-             * Refreshes the disabled state of the delete button as well as the text of the button
+             * Refreshes the disabled state of the action buttons as well as the text of the buttons
              */
-            function refreshDeleteButton() {
+            function refreshActionButtons() {
                 const checkedCount = getSelectedIndividualCount()
-                deleteIndividualsButtonContent.innerText = getDeleteButtonText(checkedCount)
                 if (checkedCount > 0) {
                     deleteButton.classList.remove('disabled')
+                    deactivateButton.classList.remove('disabled')
+                    activateButton && activateButton.classList.remove('disabled')
                 } else {
                     deleteButton.classList.add('disabled')
+                    deactivateButton.classList.add('disabled')
+                    activateButton && activateButton.classList.add('disabled')
                 }
             }
+
 
             function refreshDownloadButton() {
                 const checkedCount = getSelectedIndividualCount()
@@ -164,7 +172,6 @@
                 } else {
                     downloadSelectedButton.classList.add('disabled')
                 }
-
                 if (searchParams) {
                     downloadFilteredButton.classList.remove('disabled')
                 } else {
@@ -217,7 +224,7 @@
                     selectCheckboxes[i].checked = isChecked
                     refreshIndividualRow(getIndividualIdFromSelectCheckbox(selectCheckboxes[i]))
                 }
-                refreshDeleteButton()
+                refreshActionButtons()
                 refreshSelectAllCheckbox()
                 refreshDownloadButton()
             });
@@ -228,7 +235,7 @@
                 selectCheckbox.addEventListener("change", function (event) {
                     refreshIndividualRow(getIndividualIdFromSelectCheckbox(event.target))
                     refreshSelectAllCheckbox()
-                    refreshDeleteButton()
+                    refreshActionButtons()
                     refreshDownloadButton()
                 })
             }
@@ -246,7 +253,7 @@
             });
 
             // Refresh the text and style of the delete button when the page is loaded
-            refreshDeleteButton()
+            refreshActionButtons()
             refreshDownloadButton()
 
             const dateTimeTextElements = Array.from(document.getElementsByClassName(dateTimeTextClass))
@@ -265,7 +272,7 @@
     {{$dateTimeWidth := "10rem"}}
     {{$identWidth := "8rem"}}
 
-    {{$selectWidth := "2rem"}}
+    {{$selectWidth := "1.5rem"}}
     {{$idWidth := "20rem"}}
     {{$nameWidth := "10rem"}}
     {{$idOffset := "2rem"}}
@@ -325,7 +332,6 @@
                                 data-bs-toggle="dropdown"
                                 aria-expanded="false"
                                 id="download-toggle">
-                            <span class="visually-hidden">Toggle Dropdown</span>
                         </button>
                         <ul class="dropdown-menu">
                             <li><a id="download-filtered" class="dropdown-item" href="#" onclick="downloadFilteredFunc()">Download filtered individuals</a></li>
@@ -341,12 +347,14 @@
             <table class="table table-individuals mb-0">
                 <thead>
                 <tr>
+                    <th class="sticky-column">
+                        <i class="bi bi-eye-slash-fill"
+                           data-toggle="tooltip" data-placement="top" title="Is Inactive"></i>
+                    </th>
+
                     {{if $canWrite}}
-                    <th class="sticky-column text-center" style="width: {{$selectWidth}}">
-                        <input class="form-check-input"
-                               type="checkbox"
-                               id="selectAllCheckbox"
-                        />
+                    <th class="sticky-column text-center" style="width: {{$selectWidth}}; left: {{$selectWidth}}">
+                        <input class="form-check-input" type="checkbox" id="selectAllCheckbox"/>
                     </th>
                     {{end}}
 
@@ -621,10 +629,16 @@
                             id="individual-row-{{.ID}}"
                             class="individual-row"
                             data-individual-id="{{.ID}}">
-
+                            <td class="sticky-column text-center" style="width: {{$selectWidth}}">
+                                {{if .Inactive}}
+                                    <div class="">
+                                        <i class="bi bi-eye-slash-fill "></i>
+                                    </div>
+                                {{end}}
+                            </td>
                             {{if $canWrite}}
-                            <td class="sticky-column text-center">
-                                <div style="width: {{$selectWidth}}" class="mx-auto">
+                            <td class="sticky-column text-center" style="width: {{$selectWidth}}; left: {{$selectWidth}};">
+                                <div>
                                     <input class="form-check-input select-row-checkbox"
                                            type="checkbox"
                                            id="individual-checkbox-{{.ID}}"
@@ -848,7 +862,7 @@
                     {{end}}
                 {{else}}
                     <tr>
-                        <td colspan="{{if not $canWrite}}23{{else}}24{{end}}">No individuals found</td>
+                        <td colspan="{{if not $canWrite}}24{{else}}25{{end}}">No individuals found</td>
                     </tr>
                 {{end}}
                 </tbody>
@@ -858,48 +872,71 @@
     </main>
 
     <!-- PAGE FOOTER -->
-    <footer class="d-flex align-items-start justify-content-between">
-        {{ if .RequestContext.HasSelectedCountryWritePermission}}
-            <button type="button"
-                    id="deleteButton"
-                    class="btn btn-danger disabled"
-                    data-bs-toggle="modal"
-                    data-bs-target="#deleteIndividualsConfirmationModal"
-                    data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
-                    onclick="refreshDeleteConfirmationModal()">
-                <i class="bi bi-trash"></i>
-                <span id="deleteIndividualsButtonContent">Delete individuals</span>
-            </button>
-        {{end}}
+
+    <footer class="d-flex align-items-center justify-content-between">
+        <div>
+            {{ if .RequestContext.HasSelectedCountryWritePermission}}
+                <button type="button"
+                        id="deleteButton"
+                        class="btn btn-sm btn-outline-danger disabled me-2"
+                        data-bs-toggle="modal"
+                        data-bs-target="#deleteIndividualsConfirmationModal"
+                        data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
+                        onclick="refreshDeleteConfirmationModal()">
+                    <i class="bi bi-trash"></i>
+                    Delete
+                </button>
+                <div class="btn-group me-2">
+                    <button type="button"
+                            id="deactivateButton"
+                            class="btn btn-sm btn-outline-secondary disabled"
+                            onclick="submitActionForm('deactivate')"
+                            data-toggle="tooltip" data-placement="top" title="Deactivate selected individuals">
+                        <i class="bi bi-eye-slash-fill"></i>
+                        Deactivate
+                    </button>
+                    {{if .Options.IsInactiveSelected}}
+                    <button type="button"
+                            id="activateButton"
+                            class="btn btn-sm btn-outline-secondary disabled"
+                            onclick="submitActionForm('activate')"
+                            data-toggle="tooltip" data-placement="top" title="Activate selected individuals">
+                        <i class="bi bi-eye"></i>
+                        Activate
+                    </button>
+                    {{end}}
+                </div>
+            {{end}}
+        </div>
         <div class="d-flex align-items-center justify-content-end">
             <div class="d-flex align-items-center">
                 Results:
                 <nav aria-label="pick amount of results" class="ms-2">
-                    <ul class="pagination mb-0">
-                        <li class="page-item {{if eq .Options.Take 20}}active{{end}}">
-                            <a href="{{(.Options.WithTake 20).QueryParams}}" class="page-link">20</a>
+                    <ul class="pagination btn-group mb-0">
+                        <li class="page-item btn btn-sm {{if eq .Options.Take 20}}btn-primary{{else}}btn-outline-secondary{{end}}">
+                            <a href="{{(.Options.WithTake 20).QueryParams}}" class="text-decoration-none {{if eq .Options.Take 20}}text-white{{end}}">20</a>
                         </li>
-                        <li class="page-item {{if eq .Options.Take 50}}active{{end}}">
-                            <a href="{{(.Options.WithTake 50).QueryParams}}" class="page-link">50</a>
+                        <li class="page-item btn btn-sm {{if eq .Options.Take 50}}btn-primary{{else}}btn-outline-secondary{{end}}">
+                            <a href="{{(.Options.WithTake 50).QueryParams}}" class="text-decoration-none {{if eq .Options.Take 50}}text-white{{end}}">50</a>
                         </li>
-                        <li class="page-item {{if eq .Options.Take 100}}active{{end}}">
-                            <a href="{{(.Options.WithTake 100).QueryParams}}" class="page-link">100</a>
+                        <li class="page-item btn btn-sm {{if eq .Options.Take 100}}btn-primary{{else}}btn-outline-secondary{{end}}">
+                            <a href="{{(.Options.WithTake 100).QueryParams}}" class="text-decoration-none {{if eq .Options.Take 100}}text-white{{end}}">100</a>
                         </li>
                     </ul>
                 </nav>
             </div>
             <div class="d-flex align-items-center ms-3">
                 <nav aria-label="Page navigation">
-                    <ul class="pagination mb-0">
-                        <li class="page-item {{if eq 0 .Options.Skip}}disabled{{end}}">
-                            <a class="page-link" href="{{.Options.FirstPage.QueryParams}}">First</a>
+                    <ul class="pagination btn-group mb-0">
+                        <li class="page-item btn btn-sm btn-outline-secondary {{if eq 0 .Options.Skip}}disabled{{end}}">
+                            <a class="text-decoration-none" href="{{.Options.FirstPage.QueryParams}}">First</a>
                         </li>
-                        <li class="page-item {{if eq 0 .Options.Skip}}disabled{{end}}">
-                            <a class="page-link"
+                        <li class="page-item btn btn-sm btn-outline-secondary {{if eq 0 .Options.Skip}}disabled{{end}}">
+                            <a class="text-decoration-none"
                                href="{{.Options.PreviousPage.QueryParams}}">Previous</a>
                         </li>
-                        <li class="page-item {{if lt (len .Individuals) .Options.Take}}disabled{{end}}">
-                            <a class="page-link"
+                        <li class="page-item btn btn-sm btn-outline-secondary {{if lt (len .Individuals) .Options.Take}}disabled{{end}}">
+                            <a class="text-decoration-none"
                                href="{{.Options.NextPage.QueryParams}}">Next</a>
                         </li>
                     </ul>

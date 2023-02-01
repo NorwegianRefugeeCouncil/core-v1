@@ -6,7 +6,7 @@
         <h6 class="mt-2">Personal Info</h6>
         <div class="row">
             <!-- Full Name -->
-            <div class="form-group mb-3 col-6">
+            <div class="form-group mb-3 col-3">
                 <label class="form-label" for="Name">Name</label>
                 <input id="Name"
                        name="full_name"
@@ -74,7 +74,24 @@
                 </div>
             </div>
             <!-- End Is Minor -->
+
+            <!-- Inactive -->
+            <div class="form-group col-3">
+                <label class="form-text">Show Inactive</label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" value="true" id="Inactive"
+                               name="inactive"
+                               {{if .Options.IsInactiveSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="inactive">
+                            Yes
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- End Inactive -->
         </div>
+
         <div class="row">
             <!-- ID -->
             <div class="form-group mb-3 col-3">

@@ -24,6 +24,11 @@ func (i *IndividualBuilder) Build() *api.Individual {
 	return i.individual
 }
 
+func (i *IndividualBuilder) WithInactive(inactive bool) *IndividualBuilder {
+	i.individual.Inactive = inactive
+	return i
+}
+
 func (i *IndividualBuilder) WithAddress(address string) *IndividualBuilder {
 	i.individual.Address = address
 	return i

@@ -10,6 +10,7 @@ import (
 )
 
 type ListIndividualsOptions struct {
+	Inactive                       *bool
 	Address                        string
 	AgeFrom                        *int
 	AgeTo                          *int
@@ -141,6 +142,10 @@ func (s *SortTerms) parseTerm(term string) (string, SortDirection, error) {
 		return "", "", fmt.Errorf("invalid sort term: %s", term)
 	}
 	return term, direction, nil
+}
+
+func (o ListIndividualsOptions) IsInactiveSelected() bool {
+	return *o.Inactive
 }
 
 func (o ListIndividualsOptions) IsMinorSelected() bool {

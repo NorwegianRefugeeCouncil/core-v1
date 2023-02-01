@@ -22,8 +22,8 @@ type IndividualRepo interface {
 	GetByID(ctx context.Context, id string) (*api.Individual, error)
 	Put(ctx context.Context, individual *api.Individual, fields containers.StringSet) (*api.Individual, error)
 	PutMany(ctx context.Context, individuals []*api.Individual, fields containers.StringSet) ([]*api.Individual, error)
-	SoftDelete(ctx context.Context, id string) error
-	SoftDeleteMany(ctx context.Context, ids containers.StringSet) error
+	PerformAction(ctx context.Context, id string, action string) error
+	PerformActionMany(ctx context.Context, ids containers.StringSet, action string) error
 }
 
 type individualRepo struct {
@@ -247,29 +247,29 @@ func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual
 	return ret[0], nil
 }
 
-func (i individualRepo) SoftDelete(ctx context.Context, id string) error {
+func (i individualRepo) PerformAction(ctx context.Context, id string, action string) error {
 	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		err := i.softDeleteManyInternal(ctx, tx, containers.NewStringSet(id))
+		err := i.performActionManyInternal(ctx, tx, containers.NewStringSet(id), action)
 		return nil, err
 	})
 	return err
 }
 
-func (i individualRepo) SoftDeleteMany(ctx context.Context, ids containers.StringSet) error {
+func (i individualRepo) PerformActionMany(ctx context.Context, ids containers.StringSet, action string) error {
 	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		err := i.softDeleteManyInternal(ctx, tx, ids)
+		err := i.performActionManyInternal(ctx, tx, ids, action)
 		return nil, err
 	})
 	return err
 }
 
-func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx, ids containers.StringSet) error {
+func (i individualRepo) performActionManyInternal(ctx context.Context, tx *sqlx.Tx, ids containers.StringSet, action string) error {
 	l := logging.NewLogger(ctx).With(zap.Strings("individual_ids", ids.Items()))
-	l.Debug("deleting individuals")
+	l.Debug("performing action: " + action + " individuals")
 
 	if err := batch(maxParams/ids.Len(), ids.Items(), func(idsInBatch []string) (bool, error) {
-		var query = "UPDATE individual_registrations SET deleted_at = $1 WHERE id IN ("
-		var args = []interface{}{time.Now().UTC().Format(time.RFC3339)}
+		var query = "UPDATE individual_registrations SET " + individualActions[action].targetField + " = $1 WHERE id IN ("
+		var args = []interface{}{individualActions[action].newValue}
 		for i, id := range idsInBatch {
 			if i != 0 {
 				query += ","
@@ -277,14 +277,17 @@ func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx,
 			query += fmt.Sprintf("$%d", i+2)
 			args = append(args, id)
 		}
-		query += ") and deleted_at IS NULL"
+		query += ") "
+		for _, c := range individualActions[action].conditions {
+			query += c + " "
+		}
 
-		auditDuration := logDuration(ctx, "deleting individuals", zap.Int("count", len(idsInBatch)))
+		auditDuration := logDuration(ctx, "performing action: "+action+" individuals", zap.Int("count", len(idsInBatch)))
 		defer auditDuration()
 
 		result, err := tx.ExecContext(ctx, query, args...)
 		if err != nil {
-			l.Error("failed to delete individuals", zap.Error(err))
+			l.Error("failed to "+action+" individuals", zap.Error(err))
 			return false, err
 		}
 
@@ -293,8 +296,8 @@ func (i individualRepo) softDeleteManyInternal(ctx context.Context, tx *sqlx.Tx,
 			l.Error("failed to get rows affected", zap.Error(err))
 			return false, err
 		} else if rowsAffected != int64(len(idsInBatch)) {
-			l.Error("failed to delete all individuals", zap.Int64("rows_affected", rowsAffected))
-			return false, fmt.Errorf("failed to delete all individuals")
+			l.Error("failed to "+action+" all individuals", zap.Int64("rows_affected", rowsAffected))
+			return false, fmt.Errorf("failed to " + action + " all individuals")
 		}
 
 		return false, nil

@@ -21,6 +21,9 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
+		defaultTake := 20
+		defaultInactive := false
+
 		var (
 			individuals   []*api.Individual
 			getAllOptions api.ListIndividualsOptions
@@ -68,8 +71,12 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			return
 		}
 
+		if getAllOptions.Inactive == nil {
+			getAllOptions.Inactive = &defaultInactive
+		}
+
 		if getAllOptions.Take <= 0 || getAllOptions.Take > 100 {
-			getAllOptions.Take = 20
+			getAllOptions.Take = defaultTake
 		}
 
 		if len(getAllOptions.Sort) == 0 {
