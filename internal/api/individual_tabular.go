@@ -298,12 +298,18 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				i.Nationality1 = cols[idx]
 			} else if c := constants.CountriesByName[cols[idx]].Name; c != "" {
 				i.Nationality1 = constants.CountriesByName[cols[idx]].ISO3166Alpha3
+			} else {
+				errors = append(errors, fmt.Errorf("invalid value for nationality 1: %s", cols[idx]))
+				break
 			}
 		case constants.FileColumnIndividualNationality2:
 			if c := constants.CountriesByCode[cols[idx]].Name; c != "" {
 				i.Nationality2 = cols[idx]
 			} else if c := constants.CountriesByName[cols[idx]].Name; c != "" {
 				i.Nationality2 = constants.CountriesByName[cols[idx]].ISO3166Alpha3
+			} else {
+				errors = append(errors, fmt.Errorf("invalid value for nationality 2: %s", cols[idx]))
+				break
 			}
 		case constants.FileColumnIndividualPhoneNumber1:
 			i.PhoneNumber1 = cols[idx]
@@ -322,6 +328,9 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				i.PreferredCommunicationLanguage = cols[idx]
 			} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
 				i.PreferredCommunicationLanguage = constants.LanguagesByName[cols[idx]].ID
+			} else {
+				errors = append(errors, fmt.Errorf("invalid value for preferred communication language: %s", cols[idx]))
+				break
 			}
 		case constants.FileColumnIndividualPrefersToRemainAnonymous:
 			i.PrefersToRemainAnonymous = isTrue(cols[idx])
@@ -339,18 +348,27 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				i.SpokenLanguage1 = cols[idx]
 			} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
 				i.SpokenLanguage1 = constants.LanguagesByName[cols[idx]].ID
+			} else {
+				errors = append(errors, fmt.Errorf("invalid value for spoken language 1: %s", cols[idx]))
+				break
 			}
 		case constants.FileColumnIndividualSpokenLanguage2:
 			if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
 				i.SpokenLanguage2 = cols[idx]
 			} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
 				i.SpokenLanguage2 = constants.LanguagesByName[cols[idx]].ID
+			} else {
+				errors = append(errors, fmt.Errorf("invalid value for spoken language 2: %s", cols[idx]))
+				break
 			}
 		case constants.FileColumnIndividualSpokenLanguage3:
 			if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
 				i.SpokenLanguage3 = cols[idx]
 			} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
 				i.SpokenLanguage3 = constants.LanguagesByName[cols[idx]].ID
+			} else {
+				errors = append(errors, fmt.Errorf("invalid value for spoken language 3: %s", cols[idx]))
+				break
 			}
 		case constants.FileColumnIndividualVisionDisabilityLevel:
 			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
