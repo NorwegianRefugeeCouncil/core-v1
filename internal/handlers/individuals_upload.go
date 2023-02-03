@@ -119,38 +119,42 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 
 		deduplicationTypes := r.MultipartForm.Value[formParamDeduplicationType]
 
-		duplicates, err := individualRepo.FindDuplicates(r.Context(), individuals, deduplicationTypes)
+		// TODO find duplicates within the file
+		if len(deduplicationTypes) > 0 {
 
-		if err != nil {
-			renderError("An error occurred while trying to check for duplicates: "+err.Error(), nil)
-			return
-		}
+			duplicates, err := individualRepo.FindDuplicates(r.Context(), individuals, deduplicationTypes)
+			if err != nil {
+				renderError("An error occurred while trying to check for duplicates: "+err.Error(), nil)
+				return
+			}
 
-		if len(duplicates) > 0 {
-			duplicateErrors := make([]api.FileError, 0)
-			for _, duplicate := range duplicates {
-				errorList := make([]error, 0)
-				for _, field := range deduplicationTypes {
-					f, ok := db.ParseString(field)
-					if !ok {
-						renderError("Can not deduplicate by "+field, nil)
-					}
-					for _, col := range db.DeduplicationOptions[f].Value.Columns {
-						val, err := duplicate.GetFieldValue(constants.IndividualDBToFileMap[col])
-						if err != nil {
-							errorList = append(errorList, errors.New(fmt.Sprintf("Unknown value for %s", col))) // TODO for separate columns
-						} else if val != "" {
-							errorList = append(errorList, errors.New(fmt.Sprintf("Duplicate value for %s: %s", col, val)))
+			// TODO make this a function
+			if len(duplicates) > 0 {
+				duplicateErrors := make([]api.FileError, 0, len(duplicates))
+				for _, duplicate := range duplicates {
+					errorList := make([]error, 0)
+					for _, field := range deduplicationTypes {
+						f, ok := db.ParseString(field)
+						if !ok {
+							renderError("Can not deduplicate by "+field, nil)
+						}
+						for _, col := range db.DeduplicationOptions[f].Value.Columns {
+							val, err := duplicate.GetFieldValue(constants.IndividualDBToFileMap[col])
+							if err != nil {
+								errorList = append(errorList, errors.New(fmt.Sprintf("Unknown value for %s", col)))
+							} else if val != "" {
+								errorList = append(errorList, errors.New(fmt.Sprintf("Duplicate value for %s: %s", col, val)))
+							}
 						}
 					}
+					duplicateErrors = append(duplicateErrors, api.FileError{
+						Message: fmt.Sprintf("Participant %s has values that are duplicated in your upload", duplicate.ID),
+						Err:     errorList,
+					})
 				}
-				duplicateErrors = append(duplicateErrors, api.FileError{
-					Message: fmt.Sprintf("Participant %s has values that are duplicated in your upload", duplicate.ID),
-					Err:     errorList,
-				})
+				renderError(fmt.Sprintf("%d duplicates found in database", len(duplicates)), duplicateErrors)
+				return
 			}
-			renderError("Duplicates found", duplicateErrors)
-			return
 		}
 
 		_, err = individualRepo.PutMany(r.Context(), individuals, fieldSet)

@@ -3,6 +3,7 @@ package constants
 import "github.com/nrc-no/notcore/internal/containers"
 
 const (
+	FormParamIndividualInactive                       = "Inactive"
 	FormParamIndividualAddress                        = "Address"
 	FormParamIndividualAge                            = "Age"
 	FormParamIndividualBirthDate                      = "BirthDate"
@@ -11,8 +12,10 @@ const (
 	FormParamIndividualCollectionAdministrativeArea2  = "CollectionAdministrativeArea2"
 	FormParamIndividualCollectionAdministrativeArea3  = "CollectionAdministrativeArea3 "
 	FormParamIndividualCollectionOffice               = "CollectionOffice "
-	FormParamIndividualCollectionAgentID              = "CollectionAgentName "
+	FormParamIndividualCollectionAgentName            = "CollectionAgentName "
+	FormParamIndividualCollectionAgentTitle           = "CollectionAgentTitle "
 	FormParamIndividualCollectionTime                 = "CollectionTime"
+	FormParamIndividualComments                       = "Comments"
 	FormParamIndividualCommunicationDisabilityLevel   = "CommunicationDisabilityLevel"
 	FormParamIndividualCommunityID                    = "CommunityID"
 	FormParamIndividualCommunitySize                  = "CommunitySize"
@@ -22,6 +25,11 @@ const (
 	FormParamIndividualEmail1                         = "Email1"
 	FormParamIndividualEmail2                         = "Email2"
 	FormParamIndividualEmail3                         = "Email3"
+	FormParamIndividualFreeField1                     = "FreeField1"
+	FormParamIndividualFreeField2                     = "FreeField2"
+	FormParamIndividualFreeField3                     = "FreeField3"
+	FormParamIndividualFreeField4                     = "FreeField4"
+	FormParamIndividualFreeField5                     = "FreeField5"
 	FormParamIndividualFullName                       = "FullName"
 	FormParamIndividualFirstName                      = "FirstName"
 	FormParamIndividualMiddleName                     = "MiddleName"
@@ -53,16 +61,17 @@ const (
 	FormParamIndividualIdentificationTypeExplanation2 = "IdentificationTypeExplanation2"
 	FormParamIndividualIdentificationTypeExplanation3 = "IdentificationTypeExplanation3"
 	FormParamIndividualInternalID                     = "InternalID"
-	FormParamIndividualIsActive                       = "IsActive"
 	FormParamIndividualIsHeadOfCommunity              = "IsHeadOfCommunity"
 	FormParamIndividualIsHeadOfHousehold              = "IsHeadOfHousehold"
-	FormParamsIndividualsIsFemaleHeadedHousehold      = "IsFemaleHeadedHousehold"
+	FormParamIndividualIsFemaleHeadedHousehold        = "IsFemaleHeadedHousehold"
 	FormParamIndividualIsMinorHeadedHousehold         = "IsMinorHeadedHousehold"
 	FormParamIndividualIsMinor                        = "IsMinor"
 	FormParamIndividualMobilityDisabilityLevel        = "MobilityDisabilityLevel"
 	FormParamIndividualNationality1                   = "Nationality1"
 	FormParamIndividualNationality2                   = "Nationality2"
-	FormParamIndividualPhoneNumber                    = "PhoneNumber1"
+	FormParamIndividualPhoneNumber1                   = "PhoneNumber1"
+	FormParamIndividualPhoneNumber2                   = "PhoneNumber2"
+	FormParamIndividualPhoneNumber3                   = "PhoneNumber3"
 	FormParamIndividualPreferredCommunicationLanguage = "PreferredCommunicationLanguage"
 	FormParamIndividualPreferredContactMethod         = "PreferredContactMethod"
 	FormParamIndividualPreferredContactMethodComments = "PreferredContactMethodComments"
@@ -75,34 +84,34 @@ const (
 	FormParamIndividualSpokenLanguage2                = "SpokenLanguage2"
 	FormParamIndividualSpokenLanguage3                = "SpokenLanguage3"
 	FormParamIndividualVisionDisabilityLevel          = "VisionDisabilityLevel"
-	FormParamServiceCC1                               = "ServiceCC1"
-	FormParamServiceRequestedDate1                    = "ServiceRequestedDate1"
-	FormParamServiceDeliveredDate1                    = "ServiceDeliveredDate1"
-	FormParamServiceComments1                         = "ServiceComments1"
-	FormParamServiceCC2                               = "ServiceCC2"
-	FormParamServiceRequestedDate2                    = "ServiceRequestedDate2"
-	FormParamServiceDeliveredDate2                    = "ServiceDeliveredDate2"
-	FormParamServiceComments2                         = "ServiceComments2"
-	FormParamServiceCC3                               = "ServiceCC3"
-	FormParamServiceRequestedDate3                    = "ServiceRequestedDate3"
-	FormParamServiceDeliveredDate3                    = "ServiceDeliveredDate3"
-	FormParamServiceComments3                         = "ServiceComments3"
-	FormParamServiceCC4                               = "ServiceCC4"
-	FormParamServiceRequestedDate4                    = "ServiceRequestedDate4"
-	FormParamServiceDeliveredDate4                    = "ServiceDeliveredDate4"
-	FormParamServiceComments4                         = "ServiceComments4"
-	FormParamServiceCC5                               = "ServiceCC5"
-	FormParamServiceRequestedDate5                    = "ServiceRequestedDate5"
-	FormParamServiceDeliveredDate5                    = "ServiceDeliveredDate5"
-	FormParamServiceComments5                         = "ServiceComments5"
-	FormParamServiceCC6                               = "ServiceCC6"
-	FormParamServiceRequestedDate6                    = "ServiceRequestedDate6"
-	FormParamServiceDeliveredDate6                    = "ServiceDeliveredDate6"
-	FormParamServiceComments6                         = "ServiceComments6"
-	FormParamServiceCC7                               = "ServiceCC7"
-	FormParamServiceRequestedDate7                    = "ServiceRequestedDate7"
-	FormParamServiceDeliveredDate7                    = "ServiceDeliveredDate7"
-	FormParamServiceComments7                         = "ServiceComments7"
+	FormParamIndividualServiceCC1                     = "ServiceCC1"
+	FormParamIndividualServiceRequestedDate1          = "ServiceRequestedDate1"
+	FormParamIndividualServiceDeliveredDate1          = "ServiceDeliveredDate1"
+	FormParamIndividualServiceComments1               = "ServiceComments1"
+	FormParamIndividualServiceCC2                     = "ServiceCC2"
+	FormParamIndividualServiceRequestedDate2          = "ServiceRequestedDate2"
+	FormParamIndividualServiceDeliveredDate2          = "ServiceDeliveredDate2"
+	FormParamIndividualServiceComments2               = "ServiceComments2"
+	FormParamIndividualServiceCC3                     = "ServiceCC3"
+	FormParamIndividualServiceRequestedDate3          = "ServiceRequestedDate3"
+	FormParamIndividualServiceDeliveredDate3          = "ServiceDeliveredDate3"
+	FormParamIndividualServiceComments3               = "ServiceComments3"
+	FormParamIndividualServiceCC4                     = "ServiceCC4"
+	FormParamIndividualServiceRequestedDate4          = "ServiceRequestedDate4"
+	FormParamIndividualServiceDeliveredDate4          = "ServiceDeliveredDate4"
+	FormParamIndividualServiceComments4               = "ServiceComments4"
+	FormParamIndividualServiceCC5                     = "ServiceCC5"
+	FormParamIndividualServiceRequestedDate5          = "ServiceRequestedDate5"
+	FormParamIndividualServiceDeliveredDate5          = "ServiceDeliveredDate5"
+	FormParamIndividualServiceComments5               = "ServiceComments5"
+	FormParamIndividualServiceCC6                     = "ServiceCC6"
+	FormParamIndividualServiceRequestedDate6          = "ServiceRequestedDate6"
+	FormParamIndividualServiceDeliveredDate6          = "ServiceDeliveredDate6"
+	FormParamIndividualServiceComments6               = "ServiceComments6"
+	FormParamIndividualServiceCC7                     = "ServiceCC7"
+	FormParamIndividualServiceRequestedDate7          = "ServiceRequestedDate7"
+	FormParamIndividualServiceDeliveredDate7          = "ServiceDeliveredDate7"
+	FormParamIndividualServiceComments7               = "ServiceComments7"
 
 	FormParamsGetIndividualCognitiveDisabilityLevel        = "cognitive_disability_level"
 	FormParamsGetIndividualCollectionAdministrativeArea1   = "collection_administrative_area_1"
@@ -875,6 +884,112 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualServiceRequestedDate7:          DBColumnIndividualServiceRequestedDate7,
 	FileColumnIndividualServiceDeliveredDate7:          DBColumnIndividualServiceDeliveredDate7,
 	FileColumnIndividualServiceComments7:               DBColumnIndividualServiceComments7,
+}
+
+var IndividualFileToStructMap = map[string]string{
+	FileColumnIndividualInactive:                       FormParamIndividualInactive,
+	FileColumnIndividualAddress:                        FormParamIndividualAddress,
+	FileColumnIndividualAge:                            FormParamIndividualAge,
+	FileColumnIndividualBirthDate:                      FormParamIndividualBirthDate,
+	FileColumnIndividualCognitiveDisabilityLevel:       FormParamIndividualCognitiveDisabilityLevel,
+	FileColumnIndividualCollectionAdministrativeArea1:  FormParamIndividualCollectionAdministrativeArea1,
+	FileColumnIndividualCollectionAdministrativeArea2:  FormParamIndividualCollectionAdministrativeArea2,
+	FileColumnIndividualCollectionAdministrativeArea3:  FormParamIndividualCollectionAdministrativeArea3,
+	FileColumnIndividualCollectionOffice:               FormParamIndividualCollectionOffice,
+	FileColumnIndividualCollectionAgentName:            FormParamIndividualCollectionAgentName,
+	FileColumnIndividualCollectionAgentTitle:           FormParamIndividualCollectionAgentTitle,
+	FileColumnIndividualCollectionTime:                 FormParamIndividualCollectionTime,
+	FileColumnIndividualComments:                       FormParamIndividualComments,
+	FileColumnIndividualCommunicationDisabilityLevel:   FormParamIndividualCommunicationDisabilityLevel,
+	FileColumnIndividualCommunityID:                    FormParamIndividualCommunityID,
+	FileColumnIndividualCountryID:                      FormParamIndividualCountryID,
+	FileColumnIndividualDisplacementStatus:             FormParamIndividualDisplacementStatus,
+	FileColumnIndividualDisplacementStatusComment:      FormParamIndividualDisplacementStatusComment,
+	FileColumnIndividualEmail1:                         FormParamIndividualEmail1,
+	FileColumnIndividualEmail2:                         FormParamIndividualEmail2,
+	FileColumnIndividualEmail3:                         FormParamIndividualEmail3,
+	FileColumnIndividualFullName:                       FormParamIndividualFullName,
+	FileColumnIndividualFirstName:                      FormParamIndividualFirstName,
+	FileColumnIndividualMiddleName:                     FormParamIndividualMiddleName,
+	FileColumnIndividualLastName:                       FormParamIndividualLastName,
+	FileColumnIndividualFreeField1:                     FormParamIndividualFreeField1,
+	FileColumnIndividualFreeField2:                     FormParamIndividualFreeField2,
+	FileColumnIndividualFreeField3:                     FormParamIndividualFreeField3,
+	FileColumnIndividualFreeField4:                     FormParamIndividualFreeField4,
+	FileColumnIndividualFreeField5:                     FormParamIndividualFreeField5,
+	FileColumnIndividualSex:                            FormParamIndividualSex,
+	FileColumnIndividualHasCognitiveDisability:         FormParamIndividualHasCognitiveDisability,
+	FileColumnIndividualHasCommunicationDisability:     FormParamIndividualHasCommunicationDisability,
+	FileColumnIndividualHasConsentedToRGPD:             FormParamIndividualHasConsentedToRGPD,
+	FileColumnIndividualHasConsentedToReferral:         FormParamIndividualHasConsentedToReferral,
+	FileColumnIndividualHasHearingDisability:           FormParamIndividualHasHearingDisability,
+	FileColumnIndividualHasMobilityDisability:          FormParamIndividualHasMobilityDisability,
+	FileColumnIndividualHasSelfCareDisability:          FormParamIndividualHasSelfCareDisability,
+	FileColumnIndividualHasVisionDisability:            FormParamIndividualHasVisionDisability,
+	FileColumnIndividualHearingDisabilityLevel:         FormParamIndividualHearingDisabilityLevel,
+	FileColumnIndividualHouseholdID:                    FormParamIndividualHouseholdID,
+	FileColumnIndividualID:                             FormParamIndividualID,
+	FileColumnIndividualEngagementContext:              FormParamIndividualEngagementContext,
+	FileColumnIndividualIdentificationNumber1:          FormParamIndividualIdentificationNumber1,
+	FileColumnIndividualIdentificationNumber2:          FormParamIndividualIdentificationNumber2,
+	FileColumnIndividualIdentificationNumber3:          FormParamIndividualIdentificationNumber3,
+	FileColumnIndividualIdentificationType1:            FormParamIndividualIdentificationType1,
+	FileColumnIndividualIdentificationType2:            FormParamIndividualIdentificationType2,
+	FileColumnIndividualIdentificationType3:            FormParamIndividualIdentificationType3,
+	FileColumnIndividualIdentificationTypeExplanation1: FormParamIndividualIdentificationTypeExplanation1,
+	FileColumnIndividualIdentificationTypeExplanation2: FormParamIndividualIdentificationTypeExplanation2,
+	FileColumnIndividualIdentificationTypeExplanation3: FormParamIndividualIdentificationTypeExplanation3,
+	FileColumnIndividualInternalID:                     FormParamIndividualInternalID,
+	FileColumnIndividualIsHeadOfCommunity:              FormParamIndividualIsHeadOfCommunity,
+	FileColumnIndividualIsHeadOfHousehold:              FormParamIndividualIsHeadOfHousehold,
+	FileColumnIndividualIsFemaleHeadedHousehold:        FormParamIndividualIsFemaleHeadedHousehold,
+	FileColumnIndividualIsMinorHeadedHousehold:         FormParamIndividualIsMinorHeadedHousehold,
+	FileColumnIndividualIsMinor:                        FormParamIndividualIsMinor,
+	FileColumnIndividualMobilityDisabilityLevel:        FormParamIndividualMobilityDisabilityLevel,
+	FileColumnIndividualNationality1:                   FormParamIndividualNationality1,
+	FileColumnIndividualNationality2:                   FormParamIndividualNationality2,
+	FileColumnIndividualPhoneNumber1:                   FormParamIndividualPhoneNumber1,
+	FileColumnIndividualPhoneNumber2:                   FormParamIndividualPhoneNumber2,
+	FileColumnIndividualPhoneNumber3:                   FormParamIndividualPhoneNumber3,
+	FileColumnIndividualPreferredCommunicationLanguage: FormParamIndividualPreferredCommunicationLanguage,
+	FileColumnIndividualPreferredContactMethod:         FormParamIndividualPreferredContactMethod,
+	FileColumnIndividualPreferredContactMethodComments: FormParamIndividualPreferredContactMethodComments,
+	FileColumnIndividualPreferredName:                  FormParamIndividualPreferredName,
+	FileColumnIndividualPrefersToRemainAnonymous:       FormParamIndividualPrefersToRemainAnonymous,
+	FileColumnIndividualPresentsProtectionConcerns:     FormParamIndividualPresentsProtectionConcerns,
+	FileColumnIndividualSelfCareDisabilityLevel:        FormParamIndividualSelfCareDisabilityLevel,
+	FileColumnIndividualSpokenLanguage1:                FormParamIndividualSpokenLanguage1,
+	FileColumnIndividualSpokenLanguage2:                FormParamIndividualSpokenLanguage2,
+	FileColumnIndividualSpokenLanguage3:                FormParamIndividualSpokenLanguage3,
+	FileColumnIndividualVisionDisabilityLevel:          FormParamIndividualVisionDisabilityLevel,
+	FileColumnIndividualServiceCC1:                     FormParamIndividualServiceCC1,
+	FileColumnIndividualServiceRequestedDate1:          FormParamIndividualServiceRequestedDate1,
+	FileColumnIndividualServiceDeliveredDate1:          FormParamIndividualServiceDeliveredDate1,
+	FileColumnIndividualServiceComments1:               FormParamIndividualServiceComments1,
+	FileColumnIndividualServiceCC2:                     FormParamIndividualServiceCC2,
+	FileColumnIndividualServiceRequestedDate2:          FormParamIndividualServiceRequestedDate2,
+	FileColumnIndividualServiceDeliveredDate2:          FormParamIndividualServiceDeliveredDate2,
+	FileColumnIndividualServiceComments2:               FormParamIndividualServiceComments2,
+	FileColumnIndividualServiceCC3:                     FormParamIndividualServiceCC3,
+	FileColumnIndividualServiceRequestedDate3:          FormParamIndividualServiceRequestedDate3,
+	FileColumnIndividualServiceDeliveredDate3:          FormParamIndividualServiceDeliveredDate3,
+	FileColumnIndividualServiceComments3:               FormParamIndividualServiceComments3,
+	FileColumnIndividualServiceCC4:                     FormParamIndividualServiceCC4,
+	FileColumnIndividualServiceRequestedDate4:          FormParamIndividualServiceRequestedDate4,
+	FileColumnIndividualServiceDeliveredDate4:          FormParamIndividualServiceDeliveredDate4,
+	FileColumnIndividualServiceComments4:               FormParamIndividualServiceComments4,
+	FileColumnIndividualServiceCC5:                     FormParamIndividualServiceCC5,
+	FileColumnIndividualServiceRequestedDate5:          FormParamIndividualServiceRequestedDate5,
+	FileColumnIndividualServiceDeliveredDate5:          FormParamIndividualServiceDeliveredDate5,
+	FileColumnIndividualServiceComments5:               FormParamIndividualServiceComments5,
+	FileColumnIndividualServiceCC6:                     FormParamIndividualServiceCC6,
+	FileColumnIndividualServiceRequestedDate6:          FormParamIndividualServiceRequestedDate6,
+	FileColumnIndividualServiceDeliveredDate6:          FormParamIndividualServiceDeliveredDate6,
+	FileColumnIndividualServiceComments6:               FormParamIndividualServiceComments6,
+	FileColumnIndividualServiceCC7:                     FormParamIndividualServiceCC7,
+	FileColumnIndividualServiceRequestedDate7:          FormParamIndividualServiceRequestedDate7,
+	FileColumnIndividualServiceDeliveredDate7:          FormParamIndividualServiceDeliveredDate7,
+	FileColumnIndividualServiceComments7:               FormParamIndividualServiceComments7,
 }
 
 var IndividualSystemFileColumns = containers.NewStringSet(

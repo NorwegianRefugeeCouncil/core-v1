@@ -564,3 +564,7 @@ func (i *Individual) Normalize() {
 		i.NativeName = ""
 	}
 }
+
+func (i *Individual) Dereference() {
+
+}
