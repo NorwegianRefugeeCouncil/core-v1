@@ -296,9 +296,27 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			}
 			i.MobilityDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualNationality1:
-			i.Nationality1 = cols[idx]
+			if cols[idx] != "" {
+				if c := constants.CountriesByCode[cols[idx]].Name; c != "" {
+					i.Nationality1 = cols[idx]
+				} else if c := constants.CountriesByName[cols[idx]].Name; c != "" {
+					i.Nationality1 = constants.CountriesByName[cols[idx]].ISO3166Alpha3
+				} else {
+					errors = append(errors, fmt.Errorf("invalid value for nationality 1: %s", cols[idx]))
+					break
+				}
+			}
 		case constants.FileColumnIndividualNationality2:
-			i.Nationality2 = cols[idx]
+			if cols[idx] != "" {
+				if c := constants.CountriesByCode[cols[idx]].Name; c != "" {
+					i.Nationality2 = cols[idx]
+				} else if c := constants.CountriesByName[cols[idx]].Name; c != "" {
+					i.Nationality2 = constants.CountriesByName[cols[idx]].ISO3166Alpha3
+				} else {
+					errors = append(errors, fmt.Errorf("invalid value for nationality 2: %s", cols[idx]))
+					break
+				}
+			}
 		case constants.FileColumnIndividualPhoneNumber1:
 			i.PhoneNumber1 = cols[idx]
 		case constants.FileColumnIndividualPhoneNumber2:
@@ -312,7 +330,16 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualPreferredName:
 			i.PreferredName = cols[idx]
 		case constants.FileColumnIndividualPreferredCommunicationLanguage:
-			i.PreferredCommunicationLanguage = cols[idx]
+			if cols[idx] != "" {
+				if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
+					i.PreferredCommunicationLanguage = cols[idx]
+				} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
+					i.PreferredCommunicationLanguage = constants.LanguagesByName[cols[idx]].ID
+				} else {
+					errors = append(errors, fmt.Errorf("invalid value for preferred communication language: %s", cols[idx]))
+					break
+				}
+			}
 		case constants.FileColumnIndividualPrefersToRemainAnonymous:
 			i.PrefersToRemainAnonymous = isTrue(cols[idx])
 		case constants.FileColumnIndividualPresentsProtectionConcerns:
@@ -325,11 +352,38 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			}
 			i.SelfCareDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualSpokenLanguage1:
-			i.SpokenLanguage1 = cols[idx]
+			if cols[idx] != "" {
+				if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
+					i.SpokenLanguage1 = cols[idx]
+				} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
+					i.SpokenLanguage1 = constants.LanguagesByName[cols[idx]].ID
+				} else {
+					errors = append(errors, fmt.Errorf("invalid value for spoken language 1: %s", cols[idx]))
+					break
+				}
+			}
 		case constants.FileColumnIndividualSpokenLanguage2:
-			i.SpokenLanguage2 = cols[idx]
+			if cols[idx] != "" {
+				if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
+					i.SpokenLanguage2 = cols[idx]
+				} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
+					i.SpokenLanguage2 = constants.LanguagesByName[cols[idx]].ID
+				} else {
+					errors = append(errors, fmt.Errorf("invalid value for spoken language 2: %s", cols[idx]))
+					break
+				}
+			}
 		case constants.FileColumnIndividualSpokenLanguage3:
-			i.SpokenLanguage3 = cols[idx]
+			if cols[idx] != "" {
+				if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
+					i.SpokenLanguage3 = cols[idx]
+				} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
+					i.SpokenLanguage3 = constants.LanguagesByName[cols[idx]].ID
+				} else {
+					errors = append(errors, fmt.Errorf("invalid value for spoken language 3: %s", cols[idx]))
+					break
+				}
+			}
 		case constants.FileColumnIndividualVisionDisabilityLevel:
 			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
 			if err != nil {
@@ -626,6 +680,14 @@ func (i *Individual) marshalTabularData() ([]string, error) {
 				row[j] = strconv.Itoa(*value.(*int))
 			}
 		case string:
+			if (field == constants.DBColumnIndividualNationality1 || field == constants.DBColumnIndividualNationality2) && v != "" {
+				row[j] = constants.CountriesByCode[v].Name
+				break
+			}
+			if (field == constants.DBColumnIndividualSpokenLanguage1 || field == constants.DBColumnIndividualSpokenLanguage2 || field == constants.DBColumnIndividualSpokenLanguage3 || field == constants.DBColumnIndividualPreferredCommunicationLanguage) && v != "" {
+				row[j] = constants.LanguagesByCode[v].Name
+				break
+			}
 			row[j] = v
 		case time.Time:
 			row[j] = v.Format(getTimeFormatForField(field))
