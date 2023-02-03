@@ -52,9 +52,9 @@ func HandleIndividualAction(repo db.IndividualRepo, action string) http.Handler 
 		}
 
 		if action == db.DeleteAction {
-			http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals", individual.CountryID), http.StatusFound)
+			http.Redirect(w, r, fmt.Sprintf("/countries/%s/participants", individual.CountryID), http.StatusFound)
 		} else {
-			http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals/%s", individual.CountryID, individual.ID), http.StatusFound)
+			http.Redirect(w, r, fmt.Sprintf("/countries/%s/participants/%s", individual.CountryID, individual.ID), http.StatusFound)
 		}
 
 	})

@@ -58,7 +58,7 @@
 
                        {{ if .RequestContext.SelectedCountry}}
                             <div class="btn btn-sm btn-link text-decoration-none px-2">
-                                <a class="nav-link" href="{{if eq "" .RequestContext.SelectedCountryID}}/{{else}}/countries/{{.RequestContext.SelectedCountryID}}/individuals{{end}}">
+                                <a class="nav-link" href="{{if eq "" .RequestContext.SelectedCountryID}}/{{else}}/countries/{{.RequestContext.SelectedCountryID}}/participants{{end}}">
                                     Participants
                                 </a>
                             </div>
@@ -92,7 +92,7 @@
                                             Download template
                                         </a>
                                         <form id="individual-upload--form"
-                                              action="/countries/{{.RequestContext.SelectedCountryID}}/individuals/upload"
+                                              action="/countries/{{.RequestContext.SelectedCountryID}}/participants/upload"
                                               enctype="multipart/form-data"
                                               method="post"
                                         >
@@ -127,7 +127,7 @@
                             </button>
                             <div class="dropdown-menu">
                                 {{range $ci, $c := .RequestContext.Countries}}
-                                    <a class="dropdown-item" href="/countries/{{$c.ID}}/individuals">{{$c.Name}}</a>
+                                    <a class="dropdown-item" href="/countries/{{$c.ID}}/participants">{{$c.Name}}</a>
                                 {{end}}
                                 {{if $auth.IsGlobalAdmin}}
                                     <div class="dropdown-divider"></div>

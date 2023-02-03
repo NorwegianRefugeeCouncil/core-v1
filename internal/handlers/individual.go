@@ -134,7 +134,7 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 		}
 
 		if individualId == "new" {
-			http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals/%s", individual.CountryID, individual.ID), http.StatusFound)
+			http.Redirect(w, r, fmt.Sprintf("/countries/%s/participants/%s", individual.CountryID, individual.ID), http.StatusFound)
 			return
 		} else {
 			render()

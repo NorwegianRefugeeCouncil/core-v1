@@ -101,25 +101,25 @@ func UploadHandler(renderer Renderer, individualRepo db.IndividualRepo) http.Han
 		existingIndividuals, err := individualRepo.GetAll(ctx, api.ListIndividualsOptions{IDs: individualIds})
 		if err != nil {
 			l.Error("failed to get existing individuals", zap.Error(err))
-			renderError("Could not load list of individuals: "+err.Error(), nil)
+			renderError("Could not load list of participants: "+err.Error(), nil)
 			return
 		}
 
 		invalidIndividualIds := validateIndividualsExistInCountry(individualIds, existingIndividuals, selectedCountryID)
 		if len(invalidIndividualIds) > 0 {
 			l.Warn("user trying to update individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
-			renderError(fmt.Sprintf("Could not update individuals %s, they do not exist in the database for the selected country.", strings.Join(invalidIndividualIds, ",")), nil)
+			renderError(fmt.Sprintf("Could not update participants %s, they do not exist in the database for the selected country.", strings.Join(invalidIndividualIds, ",")), nil)
 			return
 		}
 
 		_, err = individualRepo.PutMany(r.Context(), individuals, fieldSet)
 		if err != nil {
 			l.Error("failed to put individuals", zap.Error(err))
-			renderError("Could not upload individual data: "+err.Error(), nil)
+			renderError("Could not upload participant data: "+err.Error(), nil)
 			return
 		}
 
-		http.Redirect(w, r, fmt.Sprintf("/countries/%s/individuals", selectedCountryID), http.StatusSeeOther)
+		http.Redirect(w, r, fmt.Sprintf("/countries/%s/participants", selectedCountryID), http.StatusSeeOther)
 
 		return
 	})

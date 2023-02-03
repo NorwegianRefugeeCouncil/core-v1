@@ -260,7 +260,7 @@ func (o ListIndividualsOptions) GetSortDirection(field string) SortDirection {
 
 func (o ListIndividualsOptions) QueryParams() string {
 	params := newListIndividualsOptionsEncoder(o, time.Now()).encode()
-	u := url.URL{Path: "/countries/" + o.CountryID + "/individuals"}
+	u := url.URL{Path: "/countries/" + o.CountryID + "/participants"}
 	u.RawQuery = params.Encode()
 	return u.String()
 }

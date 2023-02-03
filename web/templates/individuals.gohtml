@@ -77,8 +77,8 @@
             const count = getSelectedIndividualCount()
             const modalContent = document.getElementById(deleteIndividualsConfirmationModalContentId)
             const confirmButtonContent = document.getElementById(deleteIndividualsConfirmationModalConfirmButtonContentId)
-            modalContent.innerHTML = "Are you sure you want to delete " + count + " individual" + (count > 1 ? "s" : "") + "?"
-            confirmButtonContent.innerText = "Delete " + count + " individual" + (count > 1 ? "s" : "")
+            modalContent.innerHTML = "Are you sure you want to delete " + count + " participant" + (count > 1 ? "s" : "") + "?"
+            confirmButtonContent.innerText = "Delete " + count + " participant" + (count > 1 ? "s" : "")
         }
 
         /**
@@ -88,7 +88,7 @@
         function submitActionForm(action) {
             const form = document.getElementById(individualActionFormId);
             let params = new URLSearchParams(document.location.search);
-            form.action = "/countries/{{.Options.CountryID}}/individuals/" + action + (params ? "?" + params.toString() : "");
+            form.action = "/countries/{{.Options.CountryID}}/participants/" + action + (params ? "?" + params.toString() : "");
             form.submit();
         }
 
@@ -313,12 +313,11 @@
 
             <div class="d-flex justify-content-end align-items-center">
                 {{if $canWrite}}
-                    <a href="/countries/{{.Options.CountryID}}/individuals/new"
+                    <a href="/countries/{{.Options.CountryID}}/participants/new"
                        class="btn btn-outline-primary me-2"
-                       data-toggle="tooltip" data-placement="top" title="Create new Individual"
                     >
                         <i class="bi bi-plus"></i>
-                        <span>Create new individual</span>
+                        <span>New participant</span>
                     </a>
                 {{end}}
                 {{ if .RequestContext.HasSelectedCountryReadPermission}}
@@ -334,8 +333,8 @@
                                 id="download-toggle">
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a id="download-filtered" class="dropdown-item" href="#" onclick="downloadFilteredFunc()">Download filtered individuals</a></li>
-                            <li><a id="download-selected" class="dropdown-item" href="#" onclick="downloadSelectedFunc()">Download selected individuals</a></li>
+                            <li><a id="download-filtered" class="dropdown-item" href="#" onclick="downloadFilteredFunc()">Download filtered participants</a></li>
+                            <li><a id="download-selected" class="dropdown-item" href="#" onclick="downloadSelectedFunc()">Download selected participants</a></li>
                         </ul>
                     </div>
                 {{end}}
@@ -651,7 +650,7 @@
                             <!-- ID -->
                             <td class="sticky-column" style="left: {{$idOffset}}">
                                 <div style="width: {{$idWidth}}">
-                                    <a href="/countries/{{.CountryID}}/individuals/{{.ID}}">
+                                    <a href="/countries/{{.CountryID}}/participants/{{.ID}}">
                                         {{.ID}}
                                     </a>
                                 </div>
@@ -862,7 +861,7 @@
                     {{end}}
                 {{else}}
                     <tr>
-                        <td colspan="{{if not $canWrite}}24{{else}}25{{end}}">No individuals found</td>
+                        <td colspan="{{if not $canWrite}}24{{else}}25{{end}}">No participants found</td>
                     </tr>
                 {{end}}
                 </tbody>
@@ -881,7 +880,7 @@
                         class="btn btn-sm btn-outline-danger disabled me-2"
                         data-bs-toggle="modal"
                         data-bs-target="#deleteIndividualsConfirmationModal"
-                        data-toggle="tooltip" data-placement="top" title="Delete selected individuals"
+                        data-toggle="tooltip" data-placement="top" title="Delete selected participants"
                         onclick="refreshDeleteConfirmationModal()">
                     <i class="bi bi-trash"></i>
                     Delete
@@ -891,7 +890,7 @@
                             id="deactivateButton"
                             class="btn btn-sm btn-outline-secondary disabled"
                             onclick="submitActionForm('deactivate')"
-                            data-toggle="tooltip" data-placement="top" title="Deactivate selected individuals">
+                            data-toggle="tooltip" data-placement="top" title="Deactivate selected participants">
                         <i class="bi bi-eye-slash-fill"></i>
                         Deactivate
                     </button>
@@ -900,7 +899,7 @@
                             id="activateButton"
                             class="btn btn-sm btn-outline-secondary disabled"
                             onclick="submitActionForm('activate')"
-                            data-toggle="tooltip" data-placement="top" title="Activate selected individuals">
+                            data-toggle="tooltip" data-placement="top" title="Activate selected participants">
                         <i class="bi bi-eye"></i>
                         Activate
                     </button>
@@ -952,7 +951,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title">
                         <i class="bi bi-exclamation-circle text-danger"></i>
-                        Delete Individuals
+                        Delete Participants
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>

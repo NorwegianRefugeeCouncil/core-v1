@@ -196,7 +196,7 @@ func HandleDownload(
 			}
 		}()
 
-		redirectPath := fmt.Sprintf("/countries/%s/individuals/download?file=%s",
+		redirectPath := fmt.Sprintf("/countries/%s/participants/download?file=%s",
 			selectedCountryID,
 			path.Base(downloadFile.Name()),
 		)
