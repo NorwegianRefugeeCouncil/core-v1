@@ -180,6 +180,11 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND inactive = false AND (full_name ILIKE $1 OR preferred_name ILIKE $2 OR first_name ILIKE $3 OR middle_name ILIKE $4 OR last_name ILIKE $5)`,
 			wantArgs: []interface{}{"%John%", "%John%", "%John%", "%John%", "%John%"},
 		}, {
+			name:     "mothers name",
+			args:     api.ListIndividualsOptions{MothersName: "Jane Doe"},
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND inactive = false AND mothers_name ILIKE $1`,
+			wantArgs: []interface{}{"%Jane Doe%"},
+		}, {
 			name:     "sex (single)",
 			args:     api.ListIndividualsOptions{Sexes: containers.NewSet[api.Sex](api.SexMale, api.SexFemale)},
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND inactive = false AND sex IN ($1,$2)`,

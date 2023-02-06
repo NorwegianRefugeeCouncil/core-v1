@@ -59,6 +59,7 @@ func (f *IndividualForm) build() error {
 		f.buildFirstName,
 		f.buildMiddleName,
 		f.buildLastName,
+		f.buildMothersName,
 		f.buildPrefersToRemainAnonymous,
 		f.buildSex,
 		f.buildBirthDate,
@@ -293,6 +294,13 @@ func (f *IndividualForm) buildLastName() error {
 		Name:        "lastName",
 		DisplayName: "Last Name",
 	}, f.personalInfoSection, f.individual.LastName)
+}
+
+func (f *IndividualForm) buildMothersName() error {
+	return buildField(&forms.TextInputField{
+		Name:        "mothersName",
+		DisplayName: "Mother's Name",
+	}, f.personalInfoSection, f.individual.MothersName)
 }
 
 func (f *IndividualForm) buildPrefersToRemainAnonymous() error {

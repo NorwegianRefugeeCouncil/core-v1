@@ -150,6 +150,7 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualFirstName,
 		constants.FileColumnIndividualMiddleName,
 		constants.FileColumnIndividualLastName,
+		constants.FileColumnIndividualMothersName,
 		constants.FileColumnIndividualFreeField1,
 		constants.FileColumnIndividualFreeField2,
 		constants.FileColumnIndividualFreeField3,
@@ -286,6 +287,8 @@ func Generate(count uint) error {
 		if randBool(5) {
 			preferredName = f.Name()
 		}
+
+		mothersName := f.Name()
 
 		var freeField1 string
 		if randBool(30) {
@@ -479,6 +482,7 @@ func Generate(count uint) error {
 			firstName,
 			middleName,
 			lastName,
+			mothersName,
 			freeField1,
 			freeField2,
 			freeField3,

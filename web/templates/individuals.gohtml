@@ -421,6 +421,17 @@
                     {{template "columnHeader" (dict
                     "Options" .Options
                     "Sortable" true
+                    "SortKey" "mothers_name"
+                    "Label" "Mother's Name"
+                    "Title" "Mother's Name"
+                    "Width" $nameWidth
+                    "MinWidth" $nameWidth
+                    "MaxWidth" $nameWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
                     "SortKey" "household_id"
                     "Label" "Household ID"
                     "Title" "Household ID"
@@ -696,6 +707,14 @@
                                 </div>
                             </td>
                             <!-- End BirthDate -->
+
+                            <!-- Mothers Name -->
+                            <td>
+                                <div style="width: {{$nameWidth}}">
+                                        {{.MothersName}}
+                                </div>
+                            </td>
+                            <!-- End Mothers Name -->
 
                             <!-- HouseholdID -->
                             <td>
