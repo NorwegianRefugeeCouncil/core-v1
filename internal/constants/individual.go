@@ -15,6 +15,7 @@ const (
 	FormParamIndividualCollectionTime                 = "CollectionTime"
 	FormParamIndividualCommunicationDisabilityLevel   = "CommunicationDisabilityLevel"
 	FormParamIndividualCommunityID                    = "CommunityID"
+	FormParamIndividualCommunitySize                  = "CommunitySize"
 	FormParamIndividualCountryID                      = "Country"
 	FormParamIndividualDisplacementStatus             = "DisplacementStatus"
 	FormParamIndividualDisplacementStatusComment      = "DisplacementStatusComment"
@@ -124,6 +125,7 @@ const (
 	FormParamsGetIndividualsCollectionTimeTo               = "collection_time_to"
 	FormParamsGetIndividualsCommunicationDisabilityLevel   = "communication_disability_level "
 	FormParamsGetIndividualsCommunityID                    = "community_id"
+	FormParamsGetIndividualsCommunitySize                  = "community_size"
 	FormParamsGetIndividualsCountryID                      = "country_id"
 	FormParamsGetIndividualsCreatedAtFrom                  = "created_at_from"
 	FormParamsGetIndividualsCreatedAtTo                    = "created_at_to"
@@ -192,6 +194,7 @@ const (
 	DBColumnIndividualComments                       = "comments"
 	DBColumnIndividualCommunicationDisabilityLevel   = "communication_disability_level"
 	DBColumnIndividualCommunityID                    = "community_id"
+	DBColumnIndividualCommunitySize                  = "community_size"
 	DBColumnIndividualCountryID                      = "country_id"
 	DBColumnIndividualCreatedAt                      = "created_at"
 	DBColumnIndividualDeletedAt                      = "deleted_at"
@@ -304,6 +307,7 @@ const (
 	FileColumnIndividualComments                       = "comments"
 	FileColumnIndividualCommunicationDisabilityLevel   = "communication_disability_level"
 	FileColumnIndividualCommunityID                    = "community_id"
+	FileColumnIndividualCommunitySize                  = "community_size"
 	FileColumnIndividualCountryID                      = "country_id"
 	FileColumnIndividualCreatedAt                      = "created_at"
 	FileColumnIndividualDisplacementStatus             = "displacement_status"
@@ -414,6 +418,7 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualComments,
 	DBColumnIndividualCommunicationDisabilityLevel,
 	DBColumnIndividualCommunityID,
+	DBColumnIndividualCommunitySize,
 	DBColumnIndividualCountryID,
 	DBColumnIndividualCreatedAt,
 	DBColumnIndividualDeletedAt,
@@ -543,6 +548,7 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualIsFemaleHeadedHousehold,
 	FileColumnIndividualIsMinorHeadedHousehold,
 	FileColumnIndividualCommunityID,
+	FileColumnIndividualCommunitySize,
 	FileColumnIndividualIsHeadOfCommunity,
 	FileColumnIndividualMothersName,
 	FileColumnIndividualSpokenLanguage1,
@@ -638,6 +644,7 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualComments:                       FileColumnIndividualComments,
 	DBColumnIndividualCommunicationDisabilityLevel:   FileColumnIndividualCommunicationDisabilityLevel,
 	DBColumnIndividualCommunityID:                    FileColumnIndividualCommunityID,
+	DBColumnIndividualCommunitySize:                  FileColumnIndividualCommunitySize,
 	DBColumnIndividualCountryID:                      FileColumnIndividualCountryID,
 	DBColumnIndividualCreatedAt:                      FileColumnIndividualCreatedAt,
 	DBColumnIndividualDisplacementStatus:             FileColumnIndividualDisplacementStatus,
@@ -748,6 +755,7 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualComments:                       DBColumnIndividualComments,
 	FileColumnIndividualCommunicationDisabilityLevel:   DBColumnIndividualCommunicationDisabilityLevel,
 	FileColumnIndividualCommunityID:                    DBColumnIndividualCommunityID,
+	FileColumnIndividualCommunitySize:                  DBColumnIndividualCommunitySize,
 	FileColumnIndividualCountryID:                      DBColumnIndividualCountryID,
 	FileColumnIndividualDisplacementStatus:             DBColumnIndividualDisplacementStatus,
 	FileColumnIndividualDisplacementStatusComment:      DBColumnIndividualDisplacementStatusComment,
