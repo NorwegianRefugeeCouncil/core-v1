@@ -64,6 +64,8 @@ type Individual struct {
 	FirstName string `json:"firstName" db:"first_name"`
 	// MiddleName is the middle name of the individual
 	MiddleName string `json:"middleName" db:"middle_name"`
+	// MothersName is the name of the individuals mother
+	MothersName string `json:"mothersName" db:"mothers_name"`
 	// LastName is the last name of the individual
 	LastName string `json:"lastName" db:"last_name"`
 	// FreeField1 is a free field for the individual
@@ -283,6 +285,8 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.MiddleName, nil
 	case constants.DBColumnIndividualLastName:
 		return i.LastName, nil
+	case constants.DBColumnIndividualMothersName:
+		return i.MothersName, nil
 	case constants.DBColumnIndividualSex:
 		return i.Sex, nil
 	case constants.DBColumnIndividualHasCognitiveDisability:
@@ -476,6 +480,7 @@ func (i *Individual) Normalize() {
 	i.FirstName = trimString(i.FirstName)
 	i.MiddleName = trimString(i.MiddleName)
 	i.LastName = trimString(i.LastName)
+	i.MothersName = trimString(i.MothersName)
 	i.HouseholdID = trimString(i.HouseholdID)
 	i.ID = trimString(i.ID)
 	i.EngagementContext = trimString(i.EngagementContext)

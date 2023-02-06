@@ -159,6 +159,11 @@ func (i *IndividualBuilder) WithLastName(lastName string) *IndividualBuilder {
 	return i
 }
 
+func (i *IndividualBuilder) WithMothersName(mothersName string) *IndividualBuilder {
+	i.individual.MothersName = mothersName
+	return i
+}
+
 func (i *IndividualBuilder) WithFreeField1(freeField string) *IndividualBuilder {
 	i.individual.FreeField1 = freeField
 	return i
@@ -418,6 +423,7 @@ func ValidIndividual() *IndividualBuilder {
 		WithFirstName("John").
 		WithMiddleName("James").
 		WithLastName("Doe").
+		WithMothersName("Jane Doe").
 		WithDisplacementStatus("idp").
 		WithBirthDate(&bd).
 		WithCountryID(uuid.New().String()).
@@ -556,6 +562,10 @@ func TestValidateIndividual(t *testing.T) {
 			name: "LastName (too long)",
 			i:    ValidIndividual().WithLastName(bigstr(individualNameMaxLength + 1)).Build(),
 			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("lastName"), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
+		}, {
+			name: "MothersName (too long)",
+			i:    ValidIndividual().WithMothersName(bigstr(individualNameMaxLength + 1)).Build(),
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("mothersName"), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
 		}, {
 			name: "freeField1 (too long)",
 			i:    ValidIndividual().WithFreeField1(bigstr(individualFreeFieldMaxLength + 1)).Build(),
