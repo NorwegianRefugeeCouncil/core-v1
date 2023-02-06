@@ -167,6 +167,7 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualHasVisionDisability,
 		constants.FileColumnIndividualHearingDisabilityLevel,
 		constants.FileColumnIndividualHouseholdID,
+		constants.FileColumnIndividualHouseholdSize,
 		constants.FileColumnIndividualIdentificationType1,
 		constants.FileColumnIndividualIdentificationTypeExplanation1,
 		constants.FileColumnIndividualIdentificationNumber1,
@@ -350,6 +351,12 @@ func Generate(count uint) error {
 		if randBool(80) {
 			householdId = pick(householdIds...)
 		}
+
+		var householdSize string
+		if randBool(80) {
+			householdSize = strconv.Itoa(rand.Intn(10))
+		}
+
 		identificationType1 := randomIdentificationType()
 		identificationTypeExplanation1 := ""
 		var identificationNumber1 string
@@ -499,6 +506,7 @@ func Generate(count uint) error {
 			hasVisionDisability,
 			hearingDisabilityLevel,
 			householdId,
+			householdSize,
 			identificationType1,
 			identificationTypeExplanation1,
 			identificationNumber1,
