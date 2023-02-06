@@ -48,6 +48,7 @@ var migrations = []migration{
 	migrationFromFile("024_add_inactive_column_to_individual"),
 	migrationFromFile("025_add_mothers_name_field"),
 	migrationFromFile("026_add_household_size_field"),
+	migrationFromFile("027_add_community_size_field"),
 }
 
 // Migrate runs the migrations on the database.

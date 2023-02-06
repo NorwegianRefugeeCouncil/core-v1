@@ -83,6 +83,7 @@ func (f *IndividualForm) build() error {
 		f.buildIsFemaleHeadedHousehold,
 		f.buildIsMinorHeadedHousehold,
 		f.buildCommunityID,
+		f.buildCommunitySize,
 		f.buildIsHeadOfCommunity,
 		f.buildSpokenLanguage1,
 		f.buildSpokenLanguage2,
@@ -479,6 +480,13 @@ func (f *IndividualForm) buildCommunityID() error {
 		Name:        "communityId",
 		DisplayName: "Community ID",
 	}, f.personalInfoSection, f.individual.CommunityID)
+}
+
+func (f *IndividualForm) buildCommunitySize() error {
+	return buildField(&forms.NumberInputField{
+		Name:        "communitySize",
+		DisplayName: "Community Size",
+	}, f.personalInfoSection, f.individual.CommunitySize)
 }
 
 func (f *IndividualForm) buildIsHeadOfCommunity() error {
