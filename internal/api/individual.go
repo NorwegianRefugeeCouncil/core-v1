@@ -102,6 +102,8 @@ type Individual struct {
 	HearingDisabilityLevel DisabilityLevel `json:"hearingDisabilityLevel" db:"hearing_disability_level"`
 	// HouseholdID is the ID of the household the individual belongs to
 	HouseholdID string `json:"householdId" db:"household_id"`
+	// HouseholdSize is the size of the household the individual belongs to
+	HouseholdSize *int `json:"householdSize" db:"household_size"`
 	// ID is the ID of the individual
 	ID string `json:"id" db:"id"`
 	// IdentificationType1 is the type of primary identification of the individual
@@ -307,6 +309,8 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.HasConsentedToReferral, nil
 	case constants.DBColumnIndividualHouseholdID:
 		return i.HouseholdID, nil
+	case constants.DBColumnIndividualHouseholdSize:
+		return i.HouseholdSize, nil
 	case constants.DBColumnIndividualID:
 		return i.ID, nil
 	case constants.DBColumnIndividualIdentificationType1:

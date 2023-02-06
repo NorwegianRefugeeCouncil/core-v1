@@ -78,6 +78,7 @@ func (f *IndividualForm) build() error {
 		f.buildIdentification3Number,
 		f.buildInternalID,
 		f.buildHouseholdID,
+		f.buildHouseholdSize,
 		f.buildIsHeadOfHousehold,
 		f.buildIsFemaleHeadedHousehold,
 		f.buildIsMinorHeadedHousehold,
@@ -443,6 +444,13 @@ func (f *IndividualForm) buildHouseholdID() error {
 		Name:        "householdId",
 		DisplayName: "Household ID",
 	}, f.personalInfoSection, f.individual.HouseholdID)
+}
+
+func (f *IndividualForm) buildHouseholdSize() error {
+	return buildField(&forms.NumberInputField{
+		Name:        "householdSize",
+		DisplayName: "Household Size",
+	}, f.personalInfoSection, f.individual.HouseholdSize)
 }
 
 func (f *IndividualForm) buildIsHeadOfHousehold() error {
