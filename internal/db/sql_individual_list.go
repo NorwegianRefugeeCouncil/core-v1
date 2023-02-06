@@ -94,9 +94,10 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 }
 
 func (g *getAllIndividualsSQLQuery) withInactive(inactive *bool) *getAllIndividualsSQLQuery {
-	if inactive == nil || *inactive != true {
-		g.writeString(" AND " + constants.DBColumnIndividualInactive + " = false")
+	if inactive == nil {
+		return g
 	}
+	g.writeString(" AND " + constants.DBColumnIndividualInactive + " = ").writeArg(*inactive)
 	return g
 }
 
