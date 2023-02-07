@@ -42,6 +42,8 @@ type Individual struct {
 	CommunicationDisabilityLevel DisabilityLevel `json:"communicationDisabilityLevel" db:"communication_disability_level"`
 	// CommunityID is the ID of the community the individual belongs to
 	CommunityID string `json:"communityId" db:"community_id"`
+	// CommunitySize is the size of the community the individual belongs to
+	CommunitySize *int `json:"communitySize" db:"community_size"`
 	// CountryID is the ID of the country the individual belongs to
 	CountryID string `json:"countryId" db:"country_id"`
 	// CreatedAt is the time the individual record was created in the database
@@ -253,6 +255,8 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.Comments, nil
 	case constants.DBColumnIndividualCommunityID:
 		return i.CommunityID, nil
+	case constants.DBColumnIndividualCommunitySize:
+		return i.CommunitySize, nil
 	case constants.DBColumnIndividualCountryID:
 		return i.CountryID, nil
 	case constants.DBColumnIndividualCreatedAt:

@@ -175,6 +175,17 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.CommunicationDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualCommunityID:
 			i.CommunityID = cols[idx]
+		case constants.FileColumnIndividualCommunitySize:
+			var communitySizeStr = cols[idx]
+			if communitySizeStr == "" {
+				continue
+			}
+			communitySize, err := strconv.Atoi(communitySizeStr)
+			if err != nil {
+				errors = append(errors, err)
+				break
+			}
+			i.CommunitySize = &communitySize
 		case constants.FileColumnIndividualDisplacementStatus:
 			displacementStatus, err := ParseDisplacementStatus(cols[idx])
 			if err != nil {
