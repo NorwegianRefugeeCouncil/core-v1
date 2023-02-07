@@ -36,6 +36,7 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualCollectionTime(i.CollectionTime, p.Child("collectionTime"))...)
 	allErrs = append(allErrs, validateIndividualComments(i.Comments, p.Child("comments"))...)
 	allErrs = append(allErrs, validateIndividualCommunityID(i.CommunityID, p.Child("communityId"))...)
+	allErrs = append(allErrs, validateIndividualCommunitySize(i.CommunitySize, p.Child("communitySize"))...)
 	allErrs = append(allErrs, validateIndividualCountryID(i.CountryID, p.Child("countryId"))...)
 	allErrs = append(allErrs, validateIndividualDisabilityLevel(i.CognitiveDisabilityLevel, p.Child("cognitiveDisabilityLevel"))...)
 	allErrs = append(allErrs, validateIndividualDisabilityLevel(i.CommunicationDisabilityLevel, p.Child("communicationDisabilityLevel"))...)
@@ -60,6 +61,7 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualName(i.MothersName, p.Child("mothersName"))...)
 	allErrs = append(allErrs, validateIndividualSex(i.Sex, p.Child("sex"))...)
 	allErrs = append(allErrs, validateIndividualHouseholdID(i.HouseholdID, p.Child("householdId"))...)
+	allErrs = append(allErrs, validateIndividualHouseholdSize(i.HouseholdSize, p.Child("householdSize"))...)
 	allErrs = append(allErrs, validateIndividualEngagementContext(i.EngagementContext, p.Child("engagementContext"))...)
 	allErrs = append(allErrs, validateIndividualIdentificationNumber(i.IdentificationNumber1, p.Child("identificationNumber1"))...)
 	allErrs = append(allErrs, validateIndividualIdentificationNumber(i.IdentificationNumber2, p.Child("identificationNumber2"))...)
@@ -153,6 +155,28 @@ func validateIndividualAge(age *int, path *validation.Path) validation.ErrorList
 	}
 	if *age < 0 {
 		allErrs = append(allErrs, validation.Invalid(path, age, "must be greater than or equal to 0"))
+	}
+	return allErrs
+}
+
+func validateIndividualHouseholdSize(householdSize *int, path *validation.Path) validation.ErrorList {
+	allErrs := validation.ErrorList{}
+	if householdSize == nil {
+		return allErrs
+	}
+	if *householdSize < 0 {
+		allErrs = append(allErrs, validation.Invalid(path, householdSize, "must be greater than or equal to 0"))
+	}
+	return allErrs
+}
+
+func validateIndividualCommunitySize(communitySize *int, path *validation.Path) validation.ErrorList {
+	allErrs := validation.ErrorList{}
+	if communitySize == nil {
+		return allErrs
+	}
+	if *communitySize < 0 {
+		allErrs = append(allErrs, validation.Invalid(path, communitySize, "must be greater than or equal to 0"))
 	}
 	return allErrs
 }

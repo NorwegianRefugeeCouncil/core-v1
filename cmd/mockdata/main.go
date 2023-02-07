@@ -141,6 +141,7 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualComments,
 		constants.FileColumnIndividualCommunicationDisabilityLevel,
 		constants.FileColumnIndividualCommunityID,
+		constants.FileColumnIndividualCommunitySize,
 		constants.FileColumnIndividualDisplacementStatus,
 		constants.FileColumnIndividualDisplacementStatusComment,
 		constants.FileColumnIndividualEmail1,
@@ -167,6 +168,7 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualHasVisionDisability,
 		constants.FileColumnIndividualHearingDisabilityLevel,
 		constants.FileColumnIndividualHouseholdID,
+		constants.FileColumnIndividualHouseholdSize,
 		constants.FileColumnIndividualIdentificationType1,
 		constants.FileColumnIndividualIdentificationTypeExplanation1,
 		constants.FileColumnIndividualIdentificationNumber1,
@@ -259,6 +261,12 @@ func Generate(count uint) error {
 		if randBool(80) {
 			communityId = pick(communityIds...)
 		}
+
+		var communitySize string
+		if randBool(80) {
+			communitySize = strconv.Itoa(rand.Intn(10))
+		}
+
 		displacementStatus := randomDisplacementStatus()
 		displacementStatusComment := ""
 
@@ -350,6 +358,12 @@ func Generate(count uint) error {
 		if randBool(80) {
 			householdId = pick(householdIds...)
 		}
+
+		var householdSize string
+		if randBool(80) {
+			householdSize = strconv.Itoa(rand.Intn(10))
+		}
+
 		identificationType1 := randomIdentificationType()
 		identificationTypeExplanation1 := ""
 		var identificationNumber1 string
@@ -473,6 +487,7 @@ func Generate(count uint) error {
 			comments,
 			communicationDisabilityLevel,
 			communityId,
+			communitySize,
 			displacementStatus,
 			displacementStatusComment,
 			email1,
@@ -499,6 +514,7 @@ func Generate(count uint) error {
 			hasVisionDisability,
 			hearingDisabilityLevel,
 			householdId,
+			householdSize,
 			identificationType1,
 			identificationTypeExplanation1,
 			identificationNumber1,

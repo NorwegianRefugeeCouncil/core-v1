@@ -15,6 +15,7 @@ const (
 	FormParamIndividualCollectionTime                 = "CollectionTime"
 	FormParamIndividualCommunicationDisabilityLevel   = "CommunicationDisabilityLevel"
 	FormParamIndividualCommunityID                    = "CommunityID"
+	FormParamIndividualCommunitySize                  = "CommunitySize"
 	FormParamIndividualCountryID                      = "Country"
 	FormParamIndividualDisplacementStatus             = "DisplacementStatus"
 	FormParamIndividualDisplacementStatusComment      = "DisplacementStatusComment"
@@ -37,6 +38,7 @@ const (
 	FormParamIndividualHasVisionDisability            = "HasVisionDisability"
 	FormParamIndividualHearingDisabilityLevel         = "HearingDisabilityLevel"
 	FormParamIndividualHouseholdID                    = "HouseholdID"
+	FormParamIndividualHouseholdSize                  = "HouseholdSize"
 	FormParamIndividualID                             = "ID"
 	FormParamIndividualEngagementContext              = "EngagementContext"
 	FormParamIndividualIdentificationNumber1          = "IdentificationNumber1"
@@ -123,6 +125,7 @@ const (
 	FormParamsGetIndividualsCollectionTimeTo               = "collection_time_to"
 	FormParamsGetIndividualsCommunicationDisabilityLevel   = "communication_disability_level "
 	FormParamsGetIndividualsCommunityID                    = "community_id"
+	FormParamsGetIndividualsCommunitySize                  = "community_size"
 	FormParamsGetIndividualsCountryID                      = "country_id"
 	FormParamsGetIndividualsCreatedAtFrom                  = "created_at_from"
 	FormParamsGetIndividualsCreatedAtTo                    = "created_at_to"
@@ -150,6 +153,7 @@ const (
 	FormParamsGetIndividualsHasVisionDisability            = "has_vision_disability"
 	FormParamsGetIndividualsHearingDisabilityLevel         = "hearing_disability_level"
 	FormParamsGetIndividualsHouseholdID                    = "household_id"
+	FormParamsGetIndividualsHouseholdSize                  = "household_size"
 	FormParamsGetIndividualsID                             = "id"
 	FormParamsGetIndividualsEngagementContext              = "engagement_context"
 	FormParamsGetIndividualsIdentificationNumber           = "identification_number"
@@ -190,6 +194,7 @@ const (
 	DBColumnIndividualComments                       = "comments"
 	DBColumnIndividualCommunicationDisabilityLevel   = "communication_disability_level"
 	DBColumnIndividualCommunityID                    = "community_id"
+	DBColumnIndividualCommunitySize                  = "community_size"
 	DBColumnIndividualCountryID                      = "country_id"
 	DBColumnIndividualCreatedAt                      = "created_at"
 	DBColumnIndividualDeletedAt                      = "deleted_at"
@@ -219,6 +224,7 @@ const (
 	DBColumnIndividualHasVisionDisability            = "has_vision_disability"
 	DBColumnIndividualHearingDisabilityLevel         = "hearing_disability_level"
 	DBColumnIndividualHouseholdID                    = "household_id"
+	DBColumnIndividualHouseholdSize                  = "household_size"
 	DBColumnIndividualID                             = "id"
 	DBColumnIndividualEngagementContext              = "engagement_context"
 	DBColumnIndividualIdentificationNumber1          = "identification_number_1"
@@ -301,6 +307,7 @@ const (
 	FileColumnIndividualComments                       = "comments"
 	FileColumnIndividualCommunicationDisabilityLevel   = "communication_disability_level"
 	FileColumnIndividualCommunityID                    = "community_id"
+	FileColumnIndividualCommunitySize                  = "community_size"
 	FileColumnIndividualCountryID                      = "country_id"
 	FileColumnIndividualCreatedAt                      = "created_at"
 	FileColumnIndividualDisplacementStatus             = "displacement_status"
@@ -329,6 +336,7 @@ const (
 	FileColumnIndividualHasVisionDisability            = "has_vision_disability"
 	FileColumnIndividualHearingDisabilityLevel         = "hearing_disability_level"
 	FileColumnIndividualHouseholdID                    = "household_id"
+	FileColumnIndividualHouseholdSize                  = "household_size"
 	FileColumnIndividualID                             = "id"
 	FileColumnIndividualEngagementContext              = "engagement_context"
 	FileColumnIndividualIdentificationNumber1          = "identification_number_1"
@@ -410,6 +418,7 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualComments,
 	DBColumnIndividualCommunicationDisabilityLevel,
 	DBColumnIndividualCommunityID,
+	DBColumnIndividualCommunitySize,
 	DBColumnIndividualCountryID,
 	DBColumnIndividualCreatedAt,
 	DBColumnIndividualDeletedAt,
@@ -439,6 +448,7 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualHasVisionDisability,
 	DBColumnIndividualHearingDisabilityLevel,
 	DBColumnIndividualHouseholdID,
+	DBColumnIndividualHouseholdSize,
 	DBColumnIndividualID,
 	DBColumnIndividualEngagementContext,
 	DBColumnIndividualIdentificationNumber1,
@@ -533,10 +543,12 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualIdentificationTypeExplanation3,
 	FileColumnIndividualInternalID,
 	FileColumnIndividualHouseholdID,
+	FileColumnIndividualHouseholdSize,
 	FileColumnIndividualIsHeadOfHousehold,
 	FileColumnIndividualIsFemaleHeadedHousehold,
 	FileColumnIndividualIsMinorHeadedHousehold,
 	FileColumnIndividualCommunityID,
+	FileColumnIndividualCommunitySize,
 	FileColumnIndividualIsHeadOfCommunity,
 	FileColumnIndividualMothersName,
 	FileColumnIndividualSpokenLanguage1,
@@ -632,6 +644,7 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualComments:                       FileColumnIndividualComments,
 	DBColumnIndividualCommunicationDisabilityLevel:   FileColumnIndividualCommunicationDisabilityLevel,
 	DBColumnIndividualCommunityID:                    FileColumnIndividualCommunityID,
+	DBColumnIndividualCommunitySize:                  FileColumnIndividualCommunitySize,
 	DBColumnIndividualCountryID:                      FileColumnIndividualCountryID,
 	DBColumnIndividualCreatedAt:                      FileColumnIndividualCreatedAt,
 	DBColumnIndividualDisplacementStatus:             FileColumnIndividualDisplacementStatus,
@@ -660,6 +673,7 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualHasVisionDisability:            FileColumnIndividualHasVisionDisability,
 	DBColumnIndividualHearingDisabilityLevel:         FileColumnIndividualHearingDisabilityLevel,
 	DBColumnIndividualHouseholdID:                    FileColumnIndividualHouseholdID,
+	DBColumnIndividualHouseholdSize:                  FileColumnIndividualHouseholdSize,
 	DBColumnIndividualID:                             FileColumnIndividualID,
 	DBColumnIndividualEngagementContext:              FileColumnIndividualEngagementContext,
 	DBColumnIndividualIdentificationNumber1:          FileColumnIndividualIdentificationNumber1,
@@ -741,6 +755,7 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualComments:                       DBColumnIndividualComments,
 	FileColumnIndividualCommunicationDisabilityLevel:   DBColumnIndividualCommunicationDisabilityLevel,
 	FileColumnIndividualCommunityID:                    DBColumnIndividualCommunityID,
+	FileColumnIndividualCommunitySize:                  DBColumnIndividualCommunitySize,
 	FileColumnIndividualCountryID:                      DBColumnIndividualCountryID,
 	FileColumnIndividualDisplacementStatus:             DBColumnIndividualDisplacementStatus,
 	FileColumnIndividualDisplacementStatusComment:      DBColumnIndividualDisplacementStatusComment,
@@ -768,6 +783,7 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualHasVisionDisability:            DBColumnIndividualHasVisionDisability,
 	FileColumnIndividualHearingDisabilityLevel:         DBColumnIndividualHearingDisabilityLevel,
 	FileColumnIndividualHouseholdID:                    DBColumnIndividualHouseholdID,
+	FileColumnIndividualHouseholdSize:                  DBColumnIndividualHouseholdSize,
 	FileColumnIndividualID:                             DBColumnIndividualID,
 	FileColumnIndividualEngagementContext:              DBColumnIndividualEngagementContext,
 	FileColumnIndividualIdentificationNumber1:          DBColumnIndividualIdentificationNumber1,

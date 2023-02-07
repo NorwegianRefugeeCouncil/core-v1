@@ -42,6 +42,8 @@ type Individual struct {
 	CommunicationDisabilityLevel DisabilityLevel `json:"communicationDisabilityLevel" db:"communication_disability_level"`
 	// CommunityID is the ID of the community the individual belongs to
 	CommunityID string `json:"communityId" db:"community_id"`
+	// CommunitySize is the size of the community the individual belongs to
+	CommunitySize *int `json:"communitySize" db:"community_size"`
 	// CountryID is the ID of the country the individual belongs to
 	CountryID string `json:"countryId" db:"country_id"`
 	// CreatedAt is the time the individual record was created in the database
@@ -102,6 +104,8 @@ type Individual struct {
 	HearingDisabilityLevel DisabilityLevel `json:"hearingDisabilityLevel" db:"hearing_disability_level"`
 	// HouseholdID is the ID of the household the individual belongs to
 	HouseholdID string `json:"householdId" db:"household_id"`
+	// HouseholdSize is the size of the household the individual belongs to
+	HouseholdSize *int `json:"householdSize" db:"household_size"`
 	// ID is the ID of the individual
 	ID string `json:"id" db:"id"`
 	// IdentificationType1 is the type of primary identification of the individual
@@ -251,6 +255,8 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.Comments, nil
 	case constants.DBColumnIndividualCommunityID:
 		return i.CommunityID, nil
+	case constants.DBColumnIndividualCommunitySize:
+		return i.CommunitySize, nil
 	case constants.DBColumnIndividualCountryID:
 		return i.CountryID, nil
 	case constants.DBColumnIndividualCreatedAt:
@@ -307,6 +313,8 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.HasConsentedToReferral, nil
 	case constants.DBColumnIndividualHouseholdID:
 		return i.HouseholdID, nil
+	case constants.DBColumnIndividualHouseholdSize:
+		return i.HouseholdSize, nil
 	case constants.DBColumnIndividualID:
 		return i.ID, nil
 	case constants.DBColumnIndividualIdentificationType1:
