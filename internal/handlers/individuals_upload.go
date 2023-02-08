@@ -60,28 +60,13 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		var individuals []*api.Individual
 		var fields []string
 
-		if strings.HasSuffix(filename, ".csv") {
-			fileErrors, err := api.UnmarshalIndividualsCSV(formFile, &individuals, &fields, &UPLOAD_LIMIT)
-			if err != nil {
-				l.Error("failed to parse csv", zap.Error(err))
-			}
-			if fileErrors != nil {
-				renderError("Could not parse uploaded .csv file", fileErrors)
-				return
-			}
-		} else if strings.HasSuffix(filename, ".xlsx") || strings.HasSuffix(filename, ".xls") {
-			fileErrors, err := api.UnmarshalIndividualsExcel(formFile, &individuals, &fields, &UPLOAD_LIMIT)
-			if err != nil {
-				l.Error("failed to parse excel file", zap.Error(err))
-			}
-			if fileErrors != nil {
-				renderError("Could not parse uploaded .xls(x) file", fileErrors)
-				return
-			}
-		} else {
-			var contentType = r.Header.Get("Content-Type")
-			l.Error(fmt.Sprintf("unsupported content type: %s", contentType))
-			renderError(fmt.Sprintf("Could not process uploaded file of filetype %s, please upload a .csv or a .xls(x) file.", contentType), nil)
+		fileErrors, records, err := api.UnmarshalIndividualsFile(filename, formFile, &individuals, &fields)
+		if err != nil {
+			l.Error("failed to parse file", zap.Error(err))
+			renderError("Failed to parse input file: "+err.Error(), nil)
+		}
+		if fileErrors != nil {
+			renderError("Could not parse uploaded file", fileErrors)
 			return
 		}
 
@@ -103,7 +88,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			}
 		}
 
-		existingIndividuals, err := individualRepo.GetAll(ctx, api.ListIndividualsOptions{IDs: individualIds})
+		existingIndividuals, err := individualRepo.GetAll(ctx, api.ListIndividualsOptions{IDs: individualIds, CountryID: selectedCountryID})
 		if err != nil {
 			l.Error("failed to get existing individuals", zap.Error(err))
 			renderError("Could not load list of participants: "+err.Error(), nil)
@@ -122,6 +107,38 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		// TODO find duplicates within the file
 		if len(deduplicationTypes) > 0 {
 
+			structProperties := make([]string, 0)
+			fileColumns := make([]string, 0)
+			for _, d := range deduplicationTypes {
+				dt, ok := db.ParseString(d)
+				if ok {
+					for _, vc := range db.DeduplicationOptions[dt].Value.Columns {
+						fileColumns = append(fileColumns, constants.IndividualDBToFileMap[vc])
+						structProperties = append(structProperties, constants.IndividualFileToStructMap[vc])
+					}
+				} else {
+					l.Error("invalid deduplication type", zap.String("deduplication_type", d))
+					renderError("Invalid deduplication type: "+d, nil)
+					return
+				}
+			}
+
+			duplicatesInFile := api.FindDuplicatesInUpload(fileColumns, records)
+
+			if duplicatesInFile.Len() > 0 {
+				errors := make([]error, 0)
+				for _, duplicate := range duplicatesInFile.Items() {
+					errors = append(errors, fmt.Errorf(duplicate))
+				}
+				renderError(
+					"Found duplicates within your uploaded file: ",
+					[]api.FileError{{
+						Message: fmt.Sprintf("When checking for duplicates in the columns %s, we found the following duplicated values: ", deduplicationTypes),
+						Err:     errors}},
+				)
+				return
+			}
+
 			duplicates, err := individualRepo.FindDuplicates(r.Context(), individuals, deduplicationTypes)
 			if err != nil {
 				renderError("An error occurred while trying to check for duplicates: "+err.Error(), nil)
@@ -129,7 +146,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			}
 
 			// TODO make this a function
-			if len(duplicates) > 0 {
+			if len(duplicates) > 0 || duplicatesInFile.Len() > 0 {
 				duplicateErrors := make([]api.FileError, 0, len(duplicates))
 				for _, duplicate := range duplicates {
 					errorList := make([]error, 0)

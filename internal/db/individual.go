@@ -3,8 +3,6 @@ package db
 import (
 	"context"
 	"fmt"
-	"github.com/go-gota/gota/dataframe"
-	"github.com/nrc-no/notcore/internal/constants"
 	"strings"
 	"time"
 
@@ -46,11 +44,6 @@ func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.I
 // TODO no deduplication if no deduplication types are specified
 func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, newIndividuals []*api.Individual, deduplicationTypes []string) ([]*api.Individual, error) {
 	args := make([]interface{}, 0)
-
-	duplicatesInFile, err := findDuplicatesInUpload(newIndividuals, deduplicationTypes)
-
-	return duplicatesInFile, err
-
 	existingIndividualIds := containers.NewStringSet()
 	var uncheckedIndividuals []*api.Individual
 	for _, individual := range newIndividuals {
@@ -105,40 +98,12 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 
 	out := make([]*api.Individual, 0)
 
-	err = tx.SelectContext(ctx, &out, query, args...)
+	err := tx.SelectContext(ctx, &out, query, args...)
 	if err != nil {
 		return nil, err
 	}
 	ret = append(ret, out...)
 	return ret, nil
-}
-
-func findDuplicatesInUpload(individuals []*api.Individual, deduplicationTypes []string) ([]*api.Individual, error) {
-	duplicates := make([]*api.Individual, 0)
-
-	cols := make([]string, 0)
-	for _, d := range deduplicationTypes {
-		dt, ok := ParseString(d)
-		if !ok {
-			return nil, fmt.Errorf("parse fail")
-		}
-		for _, vc := range DeduplicationOptions[dt].Value.Columns {
-			cols = append(cols, constants.IndividualFileToStructMap[vc])
-		}
-	}
-
-	inds := make([]api.Individual, 0, len(individuals))
-	for _, i := range individuals {
-		inds = append(inds, *i)
-	}
-	df := dataframe.LoadStructs(inds)
-
-	sel2 := df.
-		Select(cols)
-	grouped := sel2.GroupBy(cols[0])
-	aggr := grouped.Aggregation([]dataframe.AggregationType{dataframe.Aggregation_COUNT}, cols)
-
-	return duplicates, fmt.Errorf("COUNT %d", aggr)
 }
 
 func (i individualRepo) driverName() string {

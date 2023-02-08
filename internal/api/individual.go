@@ -471,6 +471,7 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 
 func (i *Individual) String() string {
 	jsonBytes, err := json.Marshal(i)
+	json.Unmarshal(jsonBytes, &i)
 	if err != nil {
 		return ""
 	}
@@ -563,8 +564,4 @@ func (i *Individual) Normalize() {
 		i.LastName = ""
 		i.NativeName = ""
 	}
-}
-
-func (i *Individual) Dereference() {
-
 }

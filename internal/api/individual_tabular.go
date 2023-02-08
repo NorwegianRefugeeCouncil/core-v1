@@ -4,7 +4,10 @@ import (
 	"encoding/csv"
 	"errors"
 	"fmt"
+	"github.com/go-gota/gota/dataframe"
+	"github.com/go-gota/gota/series"
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
+	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/logutils"
 	"io"
 	"net/mail"
@@ -17,52 +20,115 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-// Unmarshal
-
 type FileError struct {
 	Message string
 	Err     []error
 }
 
-func UnmarshalIndividualsCSV(reader io.Reader, individuals *[]*Individual, fields *[]string, rowLimit *int) ([]FileError, error) {
-	csvReader := csv.NewReader(reader)
-	csvReader.TrimLeadingSpace = true
-	records, err := csvReader.ReadAll()
-	if err != nil {
-		return []FileError{}, err
+func GetRecordsFromFile(filename string, reader io.Reader) ([][]string, error) {
+	if strings.HasSuffix(filename, ".csv") {
+		csvReader := csv.NewReader(reader)
+		csvReader.TrimLeadingSpace = true
+		csvReader.Comma = ','
+		csvReader.LazyQuotes = false
+		csvReader.Comment = 0
+		records, err := csvReader.ReadAll()
+		return records, err
+	} else if strings.HasSuffix(filename, ".xlsx") || strings.HasSuffix(filename, ".xls") {
+		f, err := excelize.OpenReader(reader)
+		if err != nil {
+			return nil, err
+		}
+
+		defer func() {
+			if err := f.Close(); err != nil {
+				fmt.Println(err)
+			}
+		}()
+
+		sheets := f.GetSheetList()
+		if len(sheets) == 0 {
+			err := errors.New("no sheets found")
+			return nil, err
+		}
+
+		rows, err := f.GetRows(sheets[0])
+		if err != nil {
+			return nil, err
+		}
+		if len(rows) == 0 {
+			err := errors.New("no rows found")
+			return nil, err
+		}
+		return rows, err
+	} else {
+		fileNameParts := strings.Split(filename, ".")
+		fileType := fileNameParts[len(fileNameParts)-1]
+
+		err := errors.New(fmt.Sprintf("Could not process uploaded file of filetype %s, please upload a .csv or a .xls(x) file.", fileType))
+		return nil, err
 	}
-	return UnmarshalIndividualsTabularData(records, individuals, fields, rowLimit), err
 }
 
-func UnmarshalIndividualsExcel(reader io.Reader, individuals *[]*Individual, fields *[]string, rowLimit *int) ([]FileError, error) {
-	f, err := excelize.OpenReader(reader)
-	var fileErrors []FileError
-	if err != nil {
-		return fileErrors, err
-	}
+// TODO: write TESTS!!!
+func FindDuplicatesInUpload(columns []string, records [][]string) containers.Set[string] {
+	duplicates := containers.NewSet[string]()
 
-	defer func() {
-		if err := f.Close(); err != nil {
-			fmt.Println(err)
+	df := dataframe.LoadRecords(records, dataframe.DetectTypes(false), dataframe.DefaultType(series.String), dataframe.HasHeader(true))
+
+	selectedColumns := df.Select(columns)
+
+	for c, column := range columns {
+		thisColumn := dataframe.New(series.New(selectedColumns.Col(columns[c]), series.String, column))
+		nextColumn := dataframe.New(series.New(selectedColumns.Col(columns[(c+1)%(len(columns))]), series.String, column))
+
+		// compare to next column
+		crossJoin := thisColumn.InnerJoin(nextColumn, column)
+		// compare to self
+		selfJoin := thisColumn.InnerJoin(thisColumn, column)
+
+		// inner joining the column with itself leads to a data frame with false positives
+		// we need to remove the original values from the column from the self join, the rest will be duplicates
+		// first, we need to get the indices of the original values in the self join
+		// we only add elements from the self join to the duplicates set if their index is not an index of one of the original values
+		indices := containers.NewSet[int]()
+		for i := 0; i < thisColumn.Nrow(); i++ {
+			foundDuplicate := false
+			for j := 0; !foundDuplicate && j < selfJoin.Nrow(); j++ {
+				se := selfJoin.Elem(j, 0)
+				te := thisColumn.Elem(i, 0)
+				if se.String() == te.String() {
+					if !indices.Contains(i) {
+						indices.Add(i)
+						foundDuplicate = true
+						continue
+					}
+				}
+			}
 		}
-	}()
 
-	sheets := f.GetSheetList()
-	if len(sheets) == 0 {
-		err := errors.New("no sheets found")
-		return fileErrors, err
+		for k := 0; k < selfJoin.Nrow(); k++ {
+			if !indices.Contains(k) {
+				duplicates.Add(selfJoin.Elem(k, 0).String())
+			}
+		}
+
+		for j := 0; j < crossJoin.Nrow(); j++ {
+			duplicates.Add(crossJoin.Elem(j, 0).String())
+		}
+
 	}
+	return duplicates
+}
 
-	rows, err := f.GetRows(sheets[0])
+// Unmarshal
+
+func UnmarshalIndividualsFile(filename string, reader io.Reader, individuals *[]*Individual, fields *[]string, rowLimit *int) ([]FileError, [][]string, error) {
+	records, err := GetRecordsFromFile(filename, reader)
 	if err != nil {
-		return fileErrors, err
+		return nil, nil, err
 	}
-	if len(rows) == 0 {
-		err := errors.New("no rows found")
-		return fileErrors, err
-	}
-
-	return UnmarshalIndividualsTabularData(rows, individuals, fields, rowLimit), err
+	return UnmarshalIndividualsTabularData(records, individuals, fields, rowLimit), records, err
 }
 
 func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual, fields *[]string, rowLimit *int) []FileError {
