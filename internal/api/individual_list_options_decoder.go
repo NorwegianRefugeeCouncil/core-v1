@@ -74,6 +74,9 @@ func (p *listIndividualsOptionsDecoder) parse() error {
 		p.parsePresentsProtectionConcerns,
 		p.parseSelfCareDisabilityLevel,
 		p.parseSpokenLanguage,
+		p.parseServiceCCType,
+		p.parseServiceRequestedDateFrom,
+		p.parseServiceRequestedDateTo,
 		p.parseUpdatedAtFrom,
 		p.parseUpdatedAtTo,
 		p.parseSkip,
@@ -356,6 +359,22 @@ func (p *listIndividualsOptionsDecoder) parseEngagementContext() error {
 	}
 	ecSet := containers.NewSet[EngagementContext]()
 	for _, ec := range p.values[constants.FormParamsGetIndividualsEngagementContext] {
+		parsedEc, err := ParseEngagementContext(ec)
+		if err != nil {
+			return err
+		}
+		ecSet.Add(parsedEc)
+	}
+	p.out.EngagementContext = ecSet
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseServiceCCType1() error {
+	if len(p.values[constants.FormParamsGetIndividualsServiceCC1]) == 0 {
+		return nil
+	}
+	ecSet := containers.NewSet[EngagementContext]()
+	for _, ec := range p.values[constants.FormParamsGetIndividualsServiceCC1] {
 		parsedEc, err := ParseEngagementContext(ec)
 		if err != nil {
 			return err
