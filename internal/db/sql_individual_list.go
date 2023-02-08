@@ -346,6 +346,8 @@ func (g *getAllIndividualsSQLQuery) withFullName(name string) *getAllIndividuals
 		g.writeArg("%" + name + "%")
 		g.writeString(" OR " + constants.DBColumnIndividualLastName + "e LIKE ")
 		g.writeArg("%" + name + "%")
+		g.writeString(" OR native_name LIKE ")
+		g.writeArg("%" + name + "%")
 		g.writeString(")")
 	} else if g.driverName == "postgres" {
 		g.writeString(" AND (" + constants.DBColumnIndividualFullName + " ILIKE ")
@@ -357,6 +359,8 @@ func (g *getAllIndividualsSQLQuery) withFullName(name string) *getAllIndividuals
 		g.writeString(" OR " + constants.DBColumnIndividualMiddleName + " ILIKE ")
 		g.writeArg("%" + name + "%")
 		g.writeString(" OR " + constants.DBColumnIndividualLastName + " ILIKE ")
+		g.writeArg("%" + name + "%")
+		g.writeString(" OR native_name ILIKE ")
 		g.writeArg("%" + name + "%")
 		g.writeString(")")
 	}
