@@ -151,6 +151,7 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualFirstName,
 		constants.FileColumnIndividualMiddleName,
 		constants.FileColumnIndividualLastName,
+		constants.FileColumnIndividualNativeName,
 		constants.FileColumnIndividualMothersName,
 		constants.FileColumnIndividualFreeField1,
 		constants.FileColumnIndividualFreeField2,
@@ -290,6 +291,7 @@ func Generate(count uint) error {
 		firstName := f.FirstName()
 		middleName := f.FirstName()
 		lastName := f.LastName()
+		nativeName := f.Name()
 		var fullName = firstName + " " + middleName + " " + lastName
 		var preferredName = firstName + " " + lastName
 		if randBool(5) {
@@ -437,6 +439,7 @@ func Generate(count uint) error {
 			middleName = ""
 			lastName = ""
 			preferredName = ""
+			nativeName = ""
 		}
 		presentsProtectionConcerns := randomBool()
 
@@ -497,6 +500,7 @@ func Generate(count uint) error {
 			firstName,
 			middleName,
 			lastName,
+			nativeName,
 			mothersName,
 			freeField1,
 			freeField2,

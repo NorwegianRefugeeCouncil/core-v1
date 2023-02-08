@@ -58,6 +58,7 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualName(i.FirstName, p.Child("firstName"))...)
 	allErrs = append(allErrs, validateIndividualName(i.MiddleName, p.Child("middleName"))...)
 	allErrs = append(allErrs, validateIndividualName(i.LastName, p.Child("lastName"))...)
+	allErrs = append(allErrs, validateIndividualName(i.NativeName, p.Child("nativeName"))...)
 	allErrs = append(allErrs, validateIndividualName(i.MothersName, p.Child("mothersName"))...)
 	allErrs = append(allErrs, validateIndividualSex(i.Sex, p.Child("sex"))...)
 	allErrs = append(allErrs, validateIndividualHouseholdID(i.HouseholdID, p.Child("householdId"))...)

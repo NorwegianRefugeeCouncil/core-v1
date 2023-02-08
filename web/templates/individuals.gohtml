@@ -389,6 +389,18 @@
                     {{template "columnHeader" (dict
                     "Options" .Options
                     "Sortable" true
+                    "SortKey" "native_name"
+                    "Label" "Native Name"
+                    "Scope" "col"
+                    "Title" "Native Name"
+                    "Width" $nameWidth
+                    "MinWidth" $nameWidth
+                    "MaxWidth" $nameWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
                     "SortKey" "sex"
                     "Label" "Sex"
                     "Title" "Sex"
@@ -680,6 +692,18 @@
                                 </div>
                             </td>
                             <!-- End Name -->
+
+                            <!-- Native Name -->
+                            <td>
+                                <div style="width: {{$nameWidth}}">
+                                    {{if not .PrefersToRemainAnonymous}}
+                                        {{.NativeName}}
+                                    {{else}}
+                                        <span class="text-muted"><em>anonymous</em></span>
+                                    {{end}}
+                                </div>
+                            </td>
+                            <!-- End Native Name -->
 
                             <!-- Sex -->
                             <td>

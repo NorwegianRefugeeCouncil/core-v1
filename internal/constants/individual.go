@@ -26,6 +26,7 @@ const (
 	FormParamIndividualFirstName                      = "FirstName"
 	FormParamIndividualMiddleName                     = "MiddleName"
 	FormParamIndividualLastName                       = "LastName"
+	FormParamIndividualNativeName                     = "NativeName"
 	FormParamIndividualMothersName                    = "MothersName"
 	FormParamIndividualSex                            = "Sex"
 	FormParamIndividualHasCognitiveDisability         = "HasCognitiveDisability"
@@ -136,6 +137,7 @@ const (
 	FormParamsGetIndividualsFirstName                      = "first_name"
 	FormParamsGetIndividualsMiddleName                     = "middle_name"
 	FormParamsGetIndividualsLastName                       = "last_name"
+	FormParamsGetIndividualsNativeName                     = "native_name"
 	FormParamsGetIndividualsMothersName                    = "mothers_name"
 	FormParamsGetIndividualsFreeField1                     = "free_field_1"
 	FormParamsGetIndividualsFreeField2                     = "free_field_2"
@@ -207,6 +209,7 @@ const (
 	DBColumnIndividualFirstName                      = "first_name"
 	DBColumnIndividualMiddleName                     = "middle_name"
 	DBColumnIndividualLastName                       = "last_name"
+	DBColumnIndividualNativeName                     = "native_name"
 	DBColumnIndividualMothersName                    = "mothers_name"
 	DBColumnIndividualFreeField1                     = "free_field_1"
 	DBColumnIndividualFreeField2                     = "free_field_2"
@@ -319,6 +322,7 @@ const (
 	FileColumnIndividualFirstName                      = "first_name"
 	FileColumnIndividualMiddleName                     = "middle_name"
 	FileColumnIndividualLastName                       = "last_name"
+	FileColumnIndividualNativeName                     = "native_name"
 	FileColumnIndividualMothersName                    = "mothers_name"
 	FileColumnIndividualFreeField1                     = "free_field_1"
 	FileColumnIndividualFreeField2                     = "free_field_2"
@@ -431,6 +435,7 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualFirstName,
 	DBColumnIndividualMiddleName,
 	DBColumnIndividualLastName,
+	DBColumnIndividualNativeName,
 	DBColumnIndividualMothersName,
 	DBColumnIndividualFreeField1,
 	DBColumnIndividualFreeField2,
@@ -525,6 +530,7 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualFirstName,
 	FileColumnIndividualMiddleName,
 	FileColumnIndividualLastName,
+	FileColumnIndividualNativeName,
 	FileColumnIndividualPrefersToRemainAnonymous,
 	FileColumnIndividualSex,
 	FileColumnIndividualBirthDate,
@@ -656,6 +662,7 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualFirstName:                      FileColumnIndividualFirstName,
 	DBColumnIndividualMiddleName:                     FileColumnIndividualMiddleName,
 	DBColumnIndividualLastName:                       FileColumnIndividualLastName,
+	DBColumnIndividualNativeName:                     FileColumnIndividualNativeName,
 	DBColumnIndividualMothersName:                    FileColumnIndividualMothersName,
 	DBColumnIndividualFreeField1:                     FileColumnIndividualFreeField1,
 	DBColumnIndividualFreeField2:                     FileColumnIndividualFreeField2,
@@ -766,6 +773,7 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualFirstName:                      DBColumnIndividualFirstName,
 	FileColumnIndividualMiddleName:                     DBColumnIndividualMiddleName,
 	FileColumnIndividualLastName:                       DBColumnIndividualLastName,
+	FileColumnIndividualNativeName:                     DBColumnIndividualNativeName,
 	FileColumnIndividualMothersName:                    DBColumnIndividualMothersName,
 	FileColumnIndividualFreeField1:                     DBColumnIndividualFreeField1,
 	FileColumnIndividualFreeField2:                     DBColumnIndividualFreeField2,

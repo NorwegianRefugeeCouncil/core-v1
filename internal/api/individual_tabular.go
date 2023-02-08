@@ -230,6 +230,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.MiddleName = cols[idx]
 		case constants.FileColumnIndividualLastName:
 			i.LastName = cols[idx]
+		case constants.FileColumnIndividualNativeName:
+			i.NativeName = cols[idx]
 		case constants.FileColumnIndividualMothersName:
 			i.MothersName = cols[idx]
 		case constants.FileColumnIndividualFreeField1:

@@ -496,6 +496,7 @@ var sortableColumns = containers.NewStringSet(
 	constants.DBColumnIndividualEmail2,
 	constants.DBColumnIndividualEmail3,
 	constants.DBColumnIndividualFullName,
+	constants.DBColumnIndividualNativeName,
 	constants.DBColumnIndividualMothersName,
 	constants.DBColumnIndividualFreeField1,
 	constants.DBColumnIndividualFreeField2,
