@@ -104,6 +104,8 @@ func (f *IndividualForm) build() error {
 		f.buildPresentsProtectionConcerns,
 		f.buildDisplacementStatus,
 		f.buildDisplacementStatusComment,
+		f.buildHasDisability,
+		f.buildPWDComments,
 		f.buildHasVisionDisability,
 		f.buildVisionDisabilityLevel,
 		f.buildHasHearingDisability,
@@ -667,6 +669,20 @@ func (f *IndividualForm) buildVisionDisabilityLevel() error {
 		Options:     getDisabilityLevels(),
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.VisionDisabilityLevel)
+}
+
+func (f *IndividualForm) buildHasDisability() error {
+	return buildField(&forms.CheckboxInputField{
+		Name:        "hasDisability",
+		DisplayName: "Does the participant have any disability (PWD)?",
+	}, f.disabilitiesSection, f.individual.HasDisability)
+}
+
+func (f *IndividualForm) buildPWDComments() error {
+	return buildField(&forms.TextAreaInputField{
+		Name:        "PWDComments",
+		DisplayName: "PWD Comments",
+	}, f.disabilitiesSection, f.individual.PWDComments)
 }
 
 func (f *IndividualForm) buildHasHearingDisability() error {

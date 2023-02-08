@@ -33,6 +33,7 @@ const (
 	FormParamIndividualHasCommunicationDisability     = "HasCommunicationDisability"
 	FormParamIndividualHasConsentedToRGPD             = "HasConsentedToRGPD"
 	FormParamIndividualHasConsentedToReferral         = "HasConsentedToReferral"
+	FormParamIndividualHasDisability                  = "HasDisability"
 	FormParamIndividualHasHearingDisability           = "HasHearingDisability"
 	FormParamIndividualHasMobilityDisability          = "HasMobilityDisability"
 	FormParamIndividualHasSelfCareDisability          = "HasSelfCareDisability"
@@ -68,6 +69,7 @@ const (
 	FormParamIndividualPreferredName                  = "PreferredName"
 	FormParamIndividualPrefersToRemainAnonymous       = "PrefersToRemainAnonymous"
 	FormParamIndividualPresentsProtectionConcerns     = "PresentsProtectionConcerns"
+	FormParamIndividualPWDComments                    = "PWDComments"
 	FormParamIndividualSelfCareDisabilityLevel        = "SelfCareDisabilityLevel"
 	FormParamIndividualSpokenLanguage1                = "SpokenLanguage1"
 	FormParamIndividualSpokenLanguage2                = "SpokenLanguage2"
@@ -149,6 +151,7 @@ const (
 	FormParamsGetIndividualsHasCommunicationDisability     = "has_communication_disability"
 	FormParamsGetIndividualsHasConsentedToReferral         = "has_consented_to_referral"
 	FormParamsGetIndividualsHasConsentedToRgpd             = "has_consented_to_rgpd"
+	FormParamsGetIndividualsHasDisability                  = "has_disability"
 	FormParamsGetIndividualsHasHearingDisability           = "has_hearing_disability"
 	FormParamsGetIndividualsHasMobilityDisability          = "has_mobility_disability"
 	FormParamsGetIndividualsHasSelfCareDisability          = "has_selfcare_disability"
@@ -172,6 +175,7 @@ const (
 	FormParamsGetIndividualsPreferredContactMethod         = "preferred_contact_method"
 	FormParamsGetIndividualsPrefersToRemainAnonymous       = "prefers_to_remain_anonymous"
 	FormParamsGetIndividualsPresentsProtectionConcerns     = "presents_protection_concerns"
+	FormParamsGetIndividualsPWDComments                    = "pwd_comments"
 	FormParamsGetIndividualsSelfCareDisabilityLevel        = "selfcare_disability_level"
 	FormParamsGetIndividualsSkip                           = "skip"
 	FormParamsGetIndividualsSpokenLanguage                 = "spoken_language"
@@ -226,6 +230,7 @@ const (
 	DBColumnIndividualHasCommunicationDisability     = "has_communication_disability"
 	DBColumnIndividualHasConsentedToRGPD             = "has_consented_to_rgpd"
 	DBColumnIndividualHasConsentedToReferral         = "has_consented_to_referral"
+	DBColumnIndividualHasDisability                  = "has_disability"
 	DBColumnIndividualHasHearingDisability           = "has_hearing_disability"
 	DBColumnIndividualHasMobilityDisability          = "has_mobility_disability"
 	DBColumnIndividualHasSelfCareDisability          = "has_selfcare_disability"
@@ -265,6 +270,7 @@ const (
 	DBColumnIndividualPreferredName                  = "preferred_name"
 	DBColumnIndividualPrefersToRemainAnonymous       = "prefers_to_remain_anonymous"
 	DBColumnIndividualPresentsProtectionConcerns     = "presents_protection_concerns"
+	DBColumnIndividualPWDComments                    = "pwd_comments"
 	DBColumnIndividualSelfCareDisabilityLevel        = "selfcare_disability_level"
 	DBColumnIndividualSpokenLanguage1                = "spoken_language_1"
 	DBColumnIndividualSpokenLanguage2                = "spoken_language_2"
@@ -340,6 +346,7 @@ const (
 	FileColumnIndividualHasConsentedToRGPD             = "has_consented_to_rgpd"
 	FileColumnIndividualHasConsentedToReferral         = "has_consented_to_referral"
 	FileColumnIndividualHasHearingDisability           = "has_hearing_disability"
+	FileColumnIndividualHasDisability                  = "has_disability"
 	FileColumnIndividualHasMobilityDisability          = "has_mobility_disability"
 	FileColumnIndividualHasSelfCareDisability          = "has_selfcare_disability"
 	FileColumnIndividualHasVisionDisability            = "has_vision_disability"
@@ -375,6 +382,7 @@ const (
 	FileColumnIndividualPreferredName                  = "preferred_name"
 	FileColumnIndividualPrefersToRemainAnonymous       = "prefers_to_remain_anonymous"
 	FileColumnIndividualPresentsProtectionConcerns     = "presents_protection_concerns"
+	FileColumnIndividualPWDComments                    = "pwd_comments"
 	FileColumnIndividualSelfCareDisabilityLevel        = "selfcare_disability_level"
 	FileColumnIndividualSpokenLanguage1                = "spoken_language_1"
 	FileColumnIndividualSpokenLanguage2                = "spoken_language_2"
@@ -453,6 +461,7 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualHasConsentedToRGPD,
 	DBColumnIndividualHasConsentedToReferral,
 	DBColumnIndividualHasHearingDisability,
+	DBColumnIndividualHasDisability,
 	DBColumnIndividualHasMobilityDisability,
 	DBColumnIndividualHasSelfCareDisability,
 	DBColumnIndividualHasVisionDisability,
@@ -491,6 +500,7 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualPreferredName,
 	DBColumnIndividualPrefersToRemainAnonymous,
 	DBColumnIndividualPresentsProtectionConcerns,
+	DBColumnIndividualPWDComments,
 	DBColumnIndividualSelfCareDisabilityLevel,
 	DBColumnIndividualSpokenLanguage1,
 	DBColumnIndividualSpokenLanguage2,
@@ -580,6 +590,8 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualPresentsProtectionConcerns,
 	FileColumnIndividualDisplacementStatus,
 	FileColumnIndividualDisplacementStatusComment,
+	FileColumnIndividualHasDisability,
+	FileColumnIndividualPWDComments,
 	FileColumnIndividualHasVisionDisability,
 	FileColumnIndividualVisionDisabilityLevel,
 	FileColumnIndividualHasHearingDisability,
@@ -680,6 +692,7 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualHasConsentedToRGPD:             FileColumnIndividualHasConsentedToRGPD,
 	DBColumnIndividualHasConsentedToReferral:         FileColumnIndividualHasConsentedToReferral,
 	DBColumnIndividualHasHearingDisability:           FileColumnIndividualHasHearingDisability,
+	DBColumnIndividualHasDisability:                  FileColumnIndividualHasDisability,
 	DBColumnIndividualHasMobilityDisability:          FileColumnIndividualHasMobilityDisability,
 	DBColumnIndividualHasSelfCareDisability:          FileColumnIndividualHasSelfCareDisability,
 	DBColumnIndividualHasVisionDisability:            FileColumnIndividualHasVisionDisability,
@@ -715,6 +728,7 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualPreferredName:                  FileColumnIndividualPreferredName,
 	DBColumnIndividualPrefersToRemainAnonymous:       FileColumnIndividualPrefersToRemainAnonymous,
 	DBColumnIndividualPresentsProtectionConcerns:     FileColumnIndividualPresentsProtectionConcerns,
+	DBColumnIndividualPWDComments:                    FileColumnIndividualPWDComments,
 	DBColumnIndividualSelfCareDisabilityLevel:        FileColumnIndividualSelfCareDisabilityLevel,
 	DBColumnIndividualSpokenLanguage1:                FileColumnIndividualSpokenLanguage1,
 	DBColumnIndividualSpokenLanguage2:                FileColumnIndividualSpokenLanguage2,
@@ -790,6 +804,7 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualHasCommunicationDisability:     DBColumnIndividualHasCommunicationDisability,
 	FileColumnIndividualHasConsentedToRGPD:             DBColumnIndividualHasConsentedToRGPD,
 	FileColumnIndividualHasConsentedToReferral:         DBColumnIndividualHasConsentedToReferral,
+	FileColumnIndividualHasDisability:                  DBColumnIndividualHasDisability,
 	FileColumnIndividualHasHearingDisability:           DBColumnIndividualHasHearingDisability,
 	FileColumnIndividualHasMobilityDisability:          DBColumnIndividualHasMobilityDisability,
 	FileColumnIndividualHasSelfCareDisability:          DBColumnIndividualHasSelfCareDisability,
@@ -826,6 +841,7 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualPreferredName:                  DBColumnIndividualPreferredName,
 	FileColumnIndividualPrefersToRemainAnonymous:       DBColumnIndividualPrefersToRemainAnonymous,
 	FileColumnIndividualPresentsProtectionConcerns:     DBColumnIndividualPresentsProtectionConcerns,
+	FileColumnIndividualPWDComments:                    DBColumnIndividualPWDComments,
 	FileColumnIndividualSelfCareDisabilityLevel:        DBColumnIndividualSelfCareDisabilityLevel,
 	FileColumnIndividualSpokenLanguage1:                DBColumnIndividualSpokenLanguage1,
 	FileColumnIndividualSpokenLanguage2:                DBColumnIndividualSpokenLanguage2,

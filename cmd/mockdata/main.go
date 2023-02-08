@@ -163,6 +163,7 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualHasCommunicationDisability,
 		constants.FileColumnIndividualHasConsentedToRGPD,
 		constants.FileColumnIndividualHasConsentedToReferral,
+		constants.FileColumnIndividualHasDisability,
 		constants.FileColumnIndividualHasHearingDisability,
 		constants.FileColumnIndividualHasMobilityDisability,
 		constants.FileColumnIndividualHasSelfCareDisability,
@@ -198,6 +199,7 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualPreferredCommunicationLanguage,
 		constants.FileColumnIndividualPrefersToRemainAnonymous,
 		constants.FileColumnIndividualPresentsProtectionConcerns,
+		constants.FileColumnIndividualPWDComments,
 		constants.FileColumnIndividualSelfCareDisabilityLevel,
 		constants.FileColumnIndividualSpokenLanguage1,
 		constants.FileColumnIndividualSpokenLanguage2,
@@ -274,6 +276,8 @@ func Generate(count uint) error {
 		if displacementStatus == "other" {
 			displacementStatusComment = randomText(f)
 		}
+		hasDisability := randomBool()
+		pwdComments := randomText(f)
 
 		var email1 string
 		if randBool(80) {
@@ -512,6 +516,7 @@ func Generate(count uint) error {
 			hasCommunicationDisability,
 			hasConsentedToRgpd,
 			hasConsentedToReferral,
+			hasDisability,
 			hasHearingDisability,
 			hasMobilityDisability,
 			hasSelfCareDisability,
@@ -547,6 +552,7 @@ func Generate(count uint) error {
 			preferredCommunicationLanguage,
 			strconv.FormatBool(prefersToRemainAnonymous),
 			presentsProtectionConcerns,
+			pwdComments,
 			selfCareDisabilityLevel,
 			spokenLanguage1,
 			spokenLanguage2,

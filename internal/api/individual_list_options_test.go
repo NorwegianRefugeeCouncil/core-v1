@@ -223,6 +223,18 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 			args:    url.Values{"has_consented_to_referral": []string{"invalid"}},
 			wantErr: true,
 		}, {
+			name: "hasDisability",
+			args: url.Values{"has_disability": []string{"true"}},
+			want: ListIndividualsOptions{HasDisability: pointers.Bool(true)},
+		}, {
+			name: "hasDisability (false)",
+			args: url.Values{"has_disability": []string{"false"}},
+			want: ListIndividualsOptions{HasDisability: pointers.Bool(false)},
+		}, {
+			name:    "hasDisability (invalid)",
+			args:    url.Values{"has_disability": []string{"invalid"}},
+			wantErr: true,
+		}, {
 			name: "hasHearingDisability",
 			args: url.Values{"has_hearing_disability": []string{"true"}},
 			want: ListIndividualsOptions{HasHearingDisability: pointers.Bool(true)},

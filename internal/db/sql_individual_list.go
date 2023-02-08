@@ -56,6 +56,7 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withHasCommunicationDisability(options.HasCommunicationDisability).
 		withHasConsentedToRgpd(options.HasConsentedToRGPD).
 		withHasConsentedToReferral(options.HasConsentedToReferral).
+		withHasDisability(options.HasDisability).
 		withHasHearingDisability(options.HasHearingDisability).
 		withHasMobilityDisability(options.HasMobilityDisability).
 		withHasSelfCareDisability(options.HasSelfCareDisability).
@@ -78,6 +79,7 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withPreferredCommunicationLanguage(options.PreferredCommunicationLanguage).
 		withPrefersToRemainAnonymous(options.PrefersToRemainAnonymous).
 		withPresentsProtectionConcerns(options.PresentsProtectionConcerns).
+		withPWDComments(options.PWDComments).
 		withSelfCareDisabilityLevel(options.SelfCareDisabilityLevel).
 		withServiceCC(options.ServiceCC, options.ServiceRequestedDateFrom, options.ServiceRequestedDateTo, options.ServiceDeliveredDateFrom, options.ServiceDeliveredDateTo).
 		withSpokenLanguage(options.SpokenLanguage).
@@ -423,6 +425,14 @@ func (g *getAllIndividualsSQLQuery) withHasHearingDisability(hasHearingDisabilit
 	return g
 }
 
+func (g *getAllIndividualsSQLQuery) withHasDisability(hasDisability *bool) *getAllIndividualsSQLQuery {
+	if hasDisability == nil {
+		return g
+	}
+	g.writeString(" AND has_disability = ").writeArg(*hasDisability)
+	return g
+}
+
 func (g *getAllIndividualsSQLQuery) withHasMobilityDisability(hasMobilityDisability *bool) *getAllIndividualsSQLQuery {
 	if hasMobilityDisability == nil {
 		return g
@@ -680,6 +690,14 @@ func (g *getAllIndividualsSQLQuery) withPresentsProtectionConcerns(presentsProte
 	} else {
 		g.writeString(" AND " + constants.DBColumnIndividualPresentsProtectionConcerns + " = ").writeArg(false)
 	}
+	return g
+}
+
+func (g *getAllIndividualsSQLQuery) withPWDComments(pwdComments string) *getAllIndividualsSQLQuery {
+	if len(pwdComments) == 0 {
+		return g
+	}
+	g.writeString(" AND pwd_comments = ").writeArg(pwdComments)
 	return g
 }
 

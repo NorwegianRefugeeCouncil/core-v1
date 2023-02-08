@@ -235,6 +235,16 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND inactive = false AND has_consented_to_referral = $1`,
 			wantArgs: []interface{}{false},
 		}, {
+			name:     "hasDisability",
+			args:     api.ListIndividualsOptions{HasDisability: pointers.Bool(true)},
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND inactive = false AND has_disability = $1`,
+			wantArgs: []interface{}{true},
+		}, {
+			name:     "hasDisability (false)",
+			args:     api.ListIndividualsOptions{HasDisability: pointers.Bool(false)},
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND inactive = false AND has_disability = $1`,
+			wantArgs: []interface{}{false},
+		}, {
 			name:     "hasHearingDisability",
 			args:     api.ListIndividualsOptions{HasHearingDisability: pointers.Bool(true)},
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND inactive = false AND has_hearing_disability = $1`,
