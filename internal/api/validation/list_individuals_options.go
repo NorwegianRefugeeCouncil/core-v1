@@ -2,6 +2,7 @@ package validation
 
 import (
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/api/validation"
 )
@@ -43,7 +44,7 @@ func validateListIndividualsOptionsTake(take int, p *validation.Path) validation
 	return allErrs
 }
 
-func validateListIndividualsOptionsSexes(sexes containers.Set[api.Sex], p *validation.Path) validation.ErrorList {
+func validateListIndividualsOptionsSexes(sexes containers.Set[enumTypes.Sex], p *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
 	for i, g := range sexes.Items() {
 		if !allowedSexes.Contains(g) {
@@ -53,7 +54,7 @@ func validateListIndividualsOptionsSexes(sexes containers.Set[api.Sex], p *valid
 	return allErrs
 }
 
-func validateListIndividualsOptionsDisplacementStatuses(displacementStatuses containers.Set[api.DisplacementStatus], p *validation.Path) validation.ErrorList {
+func validateListIndividualsOptionsDisplacementStatuses(displacementStatuses containers.Set[enumTypes.DisplacementStatus], p *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
 	for i, g := range displacementStatuses.Items() {
 		if !allowedDisplacementStatuses.Contains(g) {

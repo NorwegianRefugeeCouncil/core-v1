@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"html/template"
 	"net/http"
 
-	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
@@ -40,7 +40,7 @@ func HandleCountries(templates map[string]*template.Template) http.Handler {
 			return
 		}
 
-		var allowedCountries []*api.Country
+		var allowedCountries []*enumTypes.Country
 		for _, c := range countries {
 			if allowedCountryIDs.Contains(c.ID) {
 				allowedCountries = append(allowedCountries, c)

@@ -3,8 +3,8 @@ package utils
 import (
 	"context"
 	"fmt"
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 
-	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/auth"
 )
 
@@ -61,14 +61,14 @@ func GetAuthContext(ctx context.Context) (auth.Interface, error) {
 	return nil, fmt.Errorf("failed to get auth context: value not present")
 }
 
-func WithCountries(ctx context.Context, countries []*api.Country) context.Context {
+func WithCountries(ctx context.Context, countries []*enumTypes.Country) context.Context {
 	ctx = context.WithValue(ctx, keyCountries, countries)
 	return ctx
 }
 
-func GetCountries(ctx context.Context) ([]*api.Country, error) {
+func GetCountries(ctx context.Context) ([]*enumTypes.Country, error) {
 	if countriesIntf := ctx.Value(keyCountries); countriesIntf != nil {
-		if countries, ok := countriesIntf.([]*api.Country); ok {
+		if countries, ok := countriesIntf.([]*enumTypes.Country); ok {
 			return countries, nil
 		}
 		return nil, fmt.Errorf("failed to get countries: wrong value type")

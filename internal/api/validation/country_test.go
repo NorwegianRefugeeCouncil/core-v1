@@ -1,22 +1,22 @@
 package validation
 
 import (
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"github.com/nrc-no/notcore/internal/containers"
 	"strings"
 	"testing"
 
-	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/pkg/api/validation"
 	"github.com/stretchr/testify/assert"
 )
 
 type CountryBuilder struct {
-	country *api.Country
+	country *enumTypes.Country
 }
 
 func ValidCountry() *CountryBuilder {
 	return &CountryBuilder{
-		country: &api.Country{
+		country: &enumTypes.Country{
 			ID:               "id",
 			Code:             "code",
 			Name:             "name",
@@ -25,7 +25,7 @@ func ValidCountry() *CountryBuilder {
 	}
 }
 
-func (b *CountryBuilder) Build() *api.Country {
+func (b *CountryBuilder) Build() *enumTypes.Country {
 	return b.country
 }
 
@@ -56,7 +56,7 @@ func TestValidateCountry(t *testing.T) {
 	weirdString := string([]byte{0x7f, 0x7f})
 	tests := []struct {
 		name    string
-		country *api.Country
+		country *enumTypes.Country
 		want    validation.ErrorList
 	}{
 		{
@@ -120,25 +120,25 @@ func TestValidateCountry(t *testing.T) {
 func TestValidateCountryList(t *testing.T) {
 	tests := []struct {
 		name        string
-		countryList *api.CountryList
+		countryList *enumTypes.CountryList
 		want        validation.ErrorList
 	}{
 		{
 			name:        "empty",
-			countryList: &api.CountryList{},
+			countryList: &enumTypes.CountryList{},
 			want:        validation.ErrorList{},
 		}, {
 			name: "valid",
-			countryList: &api.CountryList{
-				Items: []*api.Country{
+			countryList: &enumTypes.CountryList{
+				Items: []*enumTypes.Country{
 					ValidCountry().Build(),
 				},
 			},
 			want: validation.ErrorList{},
 		}, {
 			name: "invalid",
-			countryList: &api.CountryList{
-				Items: []*api.Country{
+			countryList: &enumTypes.CountryList{
+				Items: []*enumTypes.Country{
 					ValidCountry().WithName("").Build(),
 				},
 			},

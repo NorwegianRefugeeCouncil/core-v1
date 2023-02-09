@@ -1,4 +1,4 @@
-package api
+package enumTypes
 
 import (
 	"encoding/json"
@@ -68,21 +68,39 @@ func ParseServiceCC(str string) (ServiceCC, error) {
 	switch str {
 	case string(ServiceCCNone):
 		return ServiceCCNone, nil
+	case ServiceCCNone.String():
+		return ServiceCCNone, nil
 	case string(ServiceCCShelter):
+		return ServiceCCShelter, nil
+	case ServiceCCShelter.String():
 		return ServiceCCShelter, nil
 	case string(ServiceCCWash):
 		return ServiceCCWash, nil
+	case ServiceCCWash.String():
+		return ServiceCCWash, nil
 	case string(ServiceCCProtection):
+		return ServiceCCProtection, nil
+	case ServiceCCProtection.String():
 		return ServiceCCProtection, nil
 	case string(ServiceCCEducation):
 		return ServiceCCEducation, nil
+	case ServiceCCEducation.String():
+		return ServiceCCEducation, nil
 	case string(ServiceCCICLA):
+		return ServiceCCICLA, nil
+	case ServiceCCICLA.String():
 		return ServiceCCICLA, nil
 	case string(ServiceCCLFS):
 		return ServiceCCLFS, nil
+	case ServiceCCLFS.String():
+		return ServiceCCLFS, nil
 	case string(ServiceCCCVA):
 		return ServiceCCCVA, nil
+	case ServiceCCCVA.String():
+		return ServiceCCCVA, nil
 	case string(ServiceCCOther):
+		return ServiceCCOther, nil
+	case ServiceCCOther.String():
 		return ServiceCCOther, nil
 	default:
 		return "", fmt.Errorf("unknown service type: %v", logutils.Escape(str))

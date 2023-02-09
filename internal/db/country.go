@@ -4,15 +4,15 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
-	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"github.com/nrc-no/notcore/internal/logging"
 	"go.uber.org/zap"
 )
 
 type CountryRepo interface {
-	GetAll(ctx context.Context) ([]*api.Country, error)
-	GetByID(ctx context.Context, id string) (*api.Country, error)
-	Put(ctx context.Context, country *api.Country) (*api.Country, error)
+	GetAll(ctx context.Context) ([]*enumTypes.Country, error)
+	GetByID(ctx context.Context, id string) (*enumTypes.Country, error)
+	Put(ctx context.Context, country *enumTypes.Country) (*enumTypes.Country, error)
 }
 
 type countryRepo struct {
@@ -27,7 +27,7 @@ func (c countryRepo) logger(ctx context.Context) *zap.Logger {
 	return logging.NewLogger(ctx)
 }
 
-func (c countryRepo) GetAll(ctx context.Context) ([]*api.Country, error) {
+func (c countryRepo) GetAll(ctx context.Context) ([]*enumTypes.Country, error) {
 	l := c.logger(ctx)
 	l.Debug("getting all countries")
 
@@ -36,7 +36,7 @@ func (c countryRepo) GetAll(ctx context.Context) ([]*api.Country, error) {
 	auditDuration := logDuration(ctx, "get all countries")
 	defer auditDuration()
 
-	var countries []*api.Country
+	var countries []*enumTypes.Country
 	if err := c.db.SelectContext(ctx, &countries, query); err != nil {
 		l.Error("failed to get countries", zap.Error(err))
 		return nil, err
@@ -44,7 +44,7 @@ func (c countryRepo) GetAll(ctx context.Context) ([]*api.Country, error) {
 	return countries, nil
 }
 
-func (c countryRepo) GetByID(ctx context.Context, id string) (*api.Country, error) {
+func (c countryRepo) GetByID(ctx context.Context, id string) (*enumTypes.Country, error) {
 	l := c.logger(ctx).With(zap.String("country_id", id))
 	l.Debug("getting country by id", zap.String("id", id))
 
@@ -54,7 +54,7 @@ func (c countryRepo) GetByID(ctx context.Context, id string) (*api.Country, erro
 	auditDuration := logDuration(ctx, "get country by id")
 	defer auditDuration()
 
-	var country api.Country
+	var country enumTypes.Country
 	if err := c.db.GetContext(ctx, &country, query, args...); err != nil {
 		l.Error("failed to get country by id", zap.Error(err))
 		return nil, err
@@ -62,7 +62,7 @@ func (c countryRepo) GetByID(ctx context.Context, id string) (*api.Country, erro
 	return &country, nil
 }
 
-func (c countryRepo) Put(ctx context.Context, country *api.Country) (*api.Country, error) {
+func (c countryRepo) Put(ctx context.Context, country *enumTypes.Country) (*enumTypes.Country, error) {
 	if country.ID == "" {
 		return c.createCountry(ctx, country)
 	} else {
@@ -70,7 +70,7 @@ func (c countryRepo) Put(ctx context.Context, country *api.Country) (*api.Countr
 	}
 }
 
-func (c countryRepo) updateCountry(ctx context.Context, country *api.Country) (*api.Country, error) {
+func (c countryRepo) updateCountry(ctx context.Context, country *enumTypes.Country) (*enumTypes.Country, error) {
 	l := c.logger(ctx)
 	l.Debug("updating country")
 
@@ -93,7 +93,7 @@ func (c countryRepo) updateCountry(ctx context.Context, country *api.Country) (*
 	return country, nil
 }
 
-func (c countryRepo) createCountry(ctx context.Context, country *api.Country) (*api.Country, error) {
+func (c countryRepo) createCountry(ctx context.Context, country *enumTypes.Country) (*enumTypes.Country, error) {
 	l := c.logger(ctx)
 	l.Debug("creating new country")
 	country.ID = uuid.New().String()

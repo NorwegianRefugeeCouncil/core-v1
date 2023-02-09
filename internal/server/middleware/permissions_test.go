@@ -1,11 +1,11 @@
 package middleware
 
 import (
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"github.com/nrc-no/notcore/internal/utils"
 	"reflect"
 	"testing"
 
-	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 )
 
@@ -16,7 +16,7 @@ func Test_parsePermissions(t *testing.T) {
 		CanWrite:    "can-write",
 	}
 	type args struct {
-		allCountries    []*api.Country
+		allCountries    []*enumTypes.Country
 		jwtGroups       utils.JwtGroupOptions
 		userGroups      []string
 		nrcOrganisation string
@@ -29,7 +29,7 @@ func Test_parsePermissions(t *testing.T) {
 		{
 			name: "global admin. no countries defined",
 			args: args{
-				allCountries:    []*api.Country{},
+				allCountries:    []*enumTypes.Country{},
 				jwtGroups:       jwtGroups,
 				userGroups:      []string{"global-admin"},
 				nrcOrganisation: "NRC HO",
@@ -43,7 +43,7 @@ func Test_parsePermissions(t *testing.T) {
 		}, {
 			name: "global admin. with countries defined",
 			args: args{
-				allCountries: []*api.Country{
+				allCountries: []*enumTypes.Country{
 					{ID: "1", NrcOrganisations: containers.NewStringSet("NRC Country 1")},
 				},
 				jwtGroups:       jwtGroups,
@@ -59,7 +59,7 @@ func Test_parsePermissions(t *testing.T) {
 		}, {
 			name: "country access only, no read or write permissions",
 			args: args{
-				allCountries: []*api.Country{
+				allCountries: []*enumTypes.Country{
 					{ID: "1", NrcOrganisations: containers.NewStringSet("NRC Country 1")},
 					{ID: "2", NrcOrganisations: containers.NewStringSet("NRC Country 2")},
 				},
@@ -76,7 +76,7 @@ func Test_parsePermissions(t *testing.T) {
 		}, {
 			name: "country access only, multiple countries per nrc organisation, no read or write permissions",
 			args: args{
-				allCountries: []*api.Country{
+				allCountries: []*enumTypes.Country{
 					{ID: "1", NrcOrganisations: containers.NewStringSet("NRC Country 1", "NRC Country 3")},
 				},
 				userGroups:      []string{},
@@ -91,7 +91,7 @@ func Test_parsePermissions(t *testing.T) {
 		}, {
 			name: "country access only. no countries",
 			args: args{
-				allCountries:    []*api.Country{},
+				allCountries:    []*enumTypes.Country{},
 				jwtGroups:       jwtGroups,
 				userGroups:      []string{},
 				nrcOrganisation: "NRC Country 1",
@@ -105,7 +105,7 @@ func Test_parsePermissions(t *testing.T) {
 		}, {
 			name: "country access only. no matching countries",
 			args: args{
-				allCountries: []*api.Country{
+				allCountries: []*enumTypes.Country{
 					{ID: "1", NrcOrganisations: containers.NewStringSet("NRC Country 1")},
 					{ID: "2", NrcOrganisations: containers.NewStringSet("NRC Country 2")},
 				},
@@ -122,7 +122,7 @@ func Test_parsePermissions(t *testing.T) {
 		}, {
 			name: "country access only, only read permissions",
 			args: args{
-				allCountries: []*api.Country{
+				allCountries: []*enumTypes.Country{
 					{ID: "1", NrcOrganisations: containers.NewStringSet("NRC Country 1")},
 				},
 				jwtGroups:       jwtGroups,
@@ -138,7 +138,7 @@ func Test_parsePermissions(t *testing.T) {
 		}, {
 			name: "country access only, only write permissions",
 			args: args{
-				allCountries: []*api.Country{
+				allCountries: []*enumTypes.Country{
 					{ID: "1", NrcOrganisations: containers.NewStringSet("NRC Country 1")},
 				},
 				jwtGroups:       jwtGroups,
@@ -154,7 +154,7 @@ func Test_parsePermissions(t *testing.T) {
 		}, {
 			name: "country access only, read and write permissions",
 			args: args{
-				allCountries: []*api.Country{
+				allCountries: []*enumTypes.Country{
 					{ID: "1", NrcOrganisations: containers.NewStringSet("NRC Country 1")},
 				},
 				jwtGroups:       jwtGroups,

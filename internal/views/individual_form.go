@@ -2,6 +2,7 @@ package views
 
 import (
 	"fmt"
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/constants"
@@ -1002,7 +1003,7 @@ func buildField(field forms.InputField, section *forms.FormSection, value interf
 
 func getDisabilityLevels() []forms.SelectInputFieldOption {
 	var ret []forms.SelectInputFieldOption
-	for _, g := range api.AllDisabilityLevels().Items() {
+	for _, g := range enumTypes.AllDisabilityLevels().Items() {
 		ret = append(ret, forms.SelectInputFieldOption{
 			Label: g.String(),
 			Value: string(g),
@@ -1013,7 +1014,7 @@ func getDisabilityLevels() []forms.SelectInputFieldOption {
 
 func getIdentificationTypeOptions() []forms.SelectInputFieldOption {
 	var ret []forms.SelectInputFieldOption
-	for _, g := range api.AllIdentificationTypes().Items() {
+	for _, g := range enumTypes.AllIdentificationTypes().Items() {
 		ret = append(ret, forms.SelectInputFieldOption{
 			Label: g.String(),
 			Value: string(g),
@@ -1024,7 +1025,7 @@ func getIdentificationTypeOptions() []forms.SelectInputFieldOption {
 
 func getEngagementContextOptions() []forms.SelectInputFieldOption {
 	var ret []forms.SelectInputFieldOption
-	for _, g := range api.AllEngagementContexts().Items() {
+	for _, g := range enumTypes.AllEngagementContexts().Items() {
 		ret = append(ret, forms.SelectInputFieldOption{
 			Label: g.String(),
 			Value: string(g),
@@ -1035,7 +1036,7 @@ func getEngagementContextOptions() []forms.SelectInputFieldOption {
 
 func getSexOptions() []forms.SelectInputFieldOption {
 	var ret []forms.SelectInputFieldOption
-	for _, g := range api.AllSexes().Items() {
+	for _, g := range enumTypes.AllSexes().Items() {
 		ret = append(ret, forms.SelectInputFieldOption{
 			Label: g.String(),
 			Value: string(g),
@@ -1046,7 +1047,7 @@ func getSexOptions() []forms.SelectInputFieldOption {
 
 func getDisplacementStatusOptions() []forms.SelectInputFieldOption {
 	var ret []forms.SelectInputFieldOption
-	for _, s := range api.AllDisplacementStatuses().Items() {
+	for _, s := range enumTypes.AllDisplacementStatuses().Items() {
 		ret = append(ret, forms.SelectInputFieldOption{
 			Label: s.String(),
 			Value: string(s),
@@ -1057,7 +1058,7 @@ func getDisplacementStatusOptions() []forms.SelectInputFieldOption {
 
 func getPreferredContactMethodOptions() []forms.SelectInputFieldOption {
 	var ret []forms.SelectInputFieldOption
-	for _, s := range api.AllContactMethods().Items() {
+	for _, s := range enumTypes.AllContactMethods().Items() {
 		ret = append(ret, forms.SelectInputFieldOption{
 			Label: s.String(),
 			Value: string(s),
@@ -1068,7 +1069,7 @@ func getPreferredContactMethodOptions() []forms.SelectInputFieldOption {
 
 func getServiceCCOptions() []forms.SelectInputFieldOption {
 	var ret []forms.SelectInputFieldOption
-	for _, s := range api.AllServiceCCs().Items() {
+	for _, s := range enumTypes.AllServiceCCs().Items() {
 		ret = append(ret, forms.SelectInputFieldOption{
 			Label: s.String(),
 			Value: string(s),
@@ -1111,24 +1112,24 @@ type displacementStatusCodec struct{}
 
 func (d *displacementStatusCodec) Encode(v interface{}) (string, error) {
 	switch v.(type) {
-	case api.DisplacementStatus:
-		switch v.(api.DisplacementStatus) {
-		case api.DisplacementStatusIDP:
-			return string(api.DisplacementStatusIDP), nil
-		case api.DisplacementStatusRefugee:
-			return string(api.DisplacementStatusRefugee), nil
-		case api.DisplacementStatusHostCommunity:
-			return string(api.DisplacementStatusHostCommunity), nil
-		case api.DisplacementStatusReturnee:
-			return string(api.DisplacementStatusReturnee), nil
-		case api.DisplacementStatusAsylumSeeker:
-			return string(api.DisplacementStatusAsylumSeeker), nil
-		case api.DisplacementStatusNonDisplaced:
-			return string(api.DisplacementStatusNonDisplaced), nil
-		case api.DisplacementStatusOther:
-			return string(api.DisplacementStatusOther), nil
-		case api.DisplacementStatusUnspecified:
-			return string(api.DisplacementStatusUnspecified), nil
+	case enumTypes.DisplacementStatus:
+		switch v.(enumTypes.DisplacementStatus) {
+		case enumTypes.DisplacementStatusIDP:
+			return string(enumTypes.DisplacementStatusIDP), nil
+		case enumTypes.DisplacementStatusRefugee:
+			return string(enumTypes.DisplacementStatusRefugee), nil
+		case enumTypes.DisplacementStatusHostCommunity:
+			return string(enumTypes.DisplacementStatusHostCommunity), nil
+		case enumTypes.DisplacementStatusReturnee:
+			return string(enumTypes.DisplacementStatusReturnee), nil
+		case enumTypes.DisplacementStatusAsylumSeeker:
+			return string(enumTypes.DisplacementStatusAsylumSeeker), nil
+		case enumTypes.DisplacementStatusNonDisplaced:
+			return string(enumTypes.DisplacementStatusNonDisplaced), nil
+		case enumTypes.DisplacementStatusOther:
+			return string(enumTypes.DisplacementStatusOther), nil
+		case enumTypes.DisplacementStatusUnspecified:
+			return string(enumTypes.DisplacementStatusUnspecified), nil
 		default:
 			return "", fmt.Errorf("invalid displacement status: %v", v)
 		}
@@ -1139,22 +1140,22 @@ func (d *displacementStatusCodec) Encode(v interface{}) (string, error) {
 
 func (d *displacementStatusCodec) Decode(v string) (interface{}, error) {
 	switch v {
-	case string(api.DisplacementStatusIDP):
-		return api.DisplacementStatusIDP, nil
-	case string(api.DisplacementStatusRefugee):
-		return api.DisplacementStatusRefugee, nil
-	case string(api.DisplacementStatusHostCommunity):
-		return api.DisplacementStatusHostCommunity, nil
-	case string(api.DisplacementStatusReturnee):
-		return api.DisplacementStatusReturnee, nil
-	case string(api.DisplacementStatusAsylumSeeker):
-		return api.DisplacementStatusAsylumSeeker, nil
-	case string(api.DisplacementStatusNonDisplaced):
-		return api.DisplacementStatusNonDisplaced, nil
-	case string(api.DisplacementStatusOther):
-		return api.DisplacementStatusOther, nil
-	case string(api.DisplacementStatusUnspecified):
-		return api.DisplacementStatusUnspecified, nil
+	case string(enumTypes.DisplacementStatusIDP):
+		return enumTypes.DisplacementStatusIDP, nil
+	case string(enumTypes.DisplacementStatusRefugee):
+		return enumTypes.DisplacementStatusRefugee, nil
+	case string(enumTypes.DisplacementStatusHostCommunity):
+		return enumTypes.DisplacementStatusHostCommunity, nil
+	case string(enumTypes.DisplacementStatusReturnee):
+		return enumTypes.DisplacementStatusReturnee, nil
+	case string(enumTypes.DisplacementStatusAsylumSeeker):
+		return enumTypes.DisplacementStatusAsylumSeeker, nil
+	case string(enumTypes.DisplacementStatusNonDisplaced):
+		return enumTypes.DisplacementStatusNonDisplaced, nil
+	case string(enumTypes.DisplacementStatusOther):
+		return enumTypes.DisplacementStatusOther, nil
+	case string(enumTypes.DisplacementStatusUnspecified):
+		return enumTypes.DisplacementStatusUnspecified, nil
 	default:
 		return nil, fmt.Errorf("invalid displacement status: %v", v)
 	}
@@ -1164,18 +1165,18 @@ type identificationTypeCodec struct{}
 
 func (d *identificationTypeCodec) Encode(v interface{}) (string, error) {
 	switch v.(type) {
-	case api.IdentificationType:
-		switch v.(api.IdentificationType) {
-		case api.IdentificationTypeNational:
-			return string(api.IdentificationTypeNational), nil
-		case api.IdentificationTypePassport:
-			return string(api.IdentificationTypePassport), nil
-		case api.IdentificationTypeUNHCR:
-			return string(api.IdentificationTypeUNHCR), nil
-		case api.IdentificationTypeOther:
-			return string(api.IdentificationTypeOther), nil
-		case api.IdentificationTypeUnspecified:
-			return string(api.IdentificationTypeUnspecified), nil
+	case enumTypes.IdentificationType:
+		switch v.(enumTypes.IdentificationType) {
+		case enumTypes.IdentificationTypeNational:
+			return string(enumTypes.IdentificationTypeNational), nil
+		case enumTypes.IdentificationTypePassport:
+			return string(enumTypes.IdentificationTypePassport), nil
+		case enumTypes.IdentificationTypeUNHCR:
+			return string(enumTypes.IdentificationTypeUNHCR), nil
+		case enumTypes.IdentificationTypeOther:
+			return string(enumTypes.IdentificationTypeOther), nil
+		case enumTypes.IdentificationTypeUnspecified:
+			return string(enumTypes.IdentificationTypeUnspecified), nil
 		default:
 			return "", fmt.Errorf("invalid identificationType: %v", v)
 		}
@@ -1186,16 +1187,16 @@ func (d *identificationTypeCodec) Encode(v interface{}) (string, error) {
 
 func (d *identificationTypeCodec) Decode(v string) (interface{}, error) {
 	switch v {
-	case string(api.IdentificationTypeNational):
-		return api.IdentificationTypeNational, nil
-	case string(api.IdentificationTypeUNHCR):
-		return api.IdentificationTypeUNHCR, nil
-	case string(api.IdentificationTypePassport):
-		return api.IdentificationTypePassport, nil
-	case string(api.IdentificationTypeOther):
-		return api.IdentificationTypeOther, nil
-	case string(api.IdentificationTypeUnspecified):
-		return api.IdentificationTypeUnspecified, nil
+	case string(enumTypes.IdentificationTypeNational):
+		return enumTypes.IdentificationTypeNational, nil
+	case string(enumTypes.IdentificationTypeUNHCR):
+		return enumTypes.IdentificationTypeUNHCR, nil
+	case string(enumTypes.IdentificationTypePassport):
+		return enumTypes.IdentificationTypePassport, nil
+	case string(enumTypes.IdentificationTypeOther):
+		return enumTypes.IdentificationTypeOther, nil
+	case string(enumTypes.IdentificationTypeUnspecified):
+		return enumTypes.IdentificationTypeUnspecified, nil
 	default:
 		return nil, fmt.Errorf("invalid identificationType: %v", v)
 	}
@@ -1205,26 +1206,26 @@ type serviceCCCodec struct{}
 
 func (d *serviceCCCodec) Encode(v interface{}) (string, error) {
 	switch v.(type) {
-	case api.ServiceCC:
-		switch v.(api.ServiceCC) {
-		case api.ServiceCCNone:
-			return string(api.ServiceCCNone), nil
-		case api.ServiceCCShelter:
-			return string(api.ServiceCCShelter), nil
-		case api.ServiceCCWash:
-			return string(api.ServiceCCWash), nil
-		case api.ServiceCCProtection:
-			return string(api.ServiceCCProtection), nil
-		case api.ServiceCCEducation:
-			return string(api.ServiceCCEducation), nil
-		case api.ServiceCCICLA:
-			return string(api.ServiceCCICLA), nil
-		case api.ServiceCCLFS:
-			return string(api.ServiceCCLFS), nil
-		case api.ServiceCCCVA:
-			return string(api.ServiceCCCVA), nil
-		case api.ServiceCCOther:
-			return string(api.ServiceCCOther), nil
+	case enumTypes.ServiceCC:
+		switch v.(enumTypes.ServiceCC) {
+		case enumTypes.ServiceCCNone:
+			return string(enumTypes.ServiceCCNone), nil
+		case enumTypes.ServiceCCShelter:
+			return string(enumTypes.ServiceCCShelter), nil
+		case enumTypes.ServiceCCWash:
+			return string(enumTypes.ServiceCCWash), nil
+		case enumTypes.ServiceCCProtection:
+			return string(enumTypes.ServiceCCProtection), nil
+		case enumTypes.ServiceCCEducation:
+			return string(enumTypes.ServiceCCEducation), nil
+		case enumTypes.ServiceCCICLA:
+			return string(enumTypes.ServiceCCICLA), nil
+		case enumTypes.ServiceCCLFS:
+			return string(enumTypes.ServiceCCLFS), nil
+		case enumTypes.ServiceCCCVA:
+			return string(enumTypes.ServiceCCCVA), nil
+		case enumTypes.ServiceCCOther:
+			return string(enumTypes.ServiceCCOther), nil
 		default:
 			return "", fmt.Errorf("invalid service CC: %v", v)
 		}
@@ -1235,24 +1236,24 @@ func (d *serviceCCCodec) Encode(v interface{}) (string, error) {
 
 func (d *serviceCCCodec) Decode(v string) (interface{}, error) {
 	switch v {
-	case string(api.ServiceCCNone):
-		return api.ServiceCCNone, nil
-	case string(api.ServiceCCShelter):
-		return api.ServiceCCShelter, nil
-	case string(api.ServiceCCWash):
-		return api.ServiceCCWash, nil
-	case string(api.ServiceCCProtection):
-		return api.ServiceCCProtection, nil
-	case string(api.ServiceCCEducation):
-		return api.ServiceCCEducation, nil
-	case string(api.ServiceCCICLA):
-		return api.ServiceCCICLA, nil
-	case string(api.ServiceCCLFS):
-		return api.ServiceCCLFS, nil
-	case string(api.ServiceCCCVA):
-		return api.ServiceCCCVA, nil
-	case string(api.ServiceCCOther):
-		return api.ServiceCCOther, nil
+	case string(enumTypes.ServiceCCNone):
+		return enumTypes.ServiceCCNone, nil
+	case string(enumTypes.ServiceCCShelter):
+		return enumTypes.ServiceCCShelter, nil
+	case string(enumTypes.ServiceCCWash):
+		return enumTypes.ServiceCCWash, nil
+	case string(enumTypes.ServiceCCProtection):
+		return enumTypes.ServiceCCProtection, nil
+	case string(enumTypes.ServiceCCEducation):
+		return enumTypes.ServiceCCEducation, nil
+	case string(enumTypes.ServiceCCICLA):
+		return enumTypes.ServiceCCICLA, nil
+	case string(enumTypes.ServiceCCLFS):
+		return enumTypes.ServiceCCLFS, nil
+	case string(enumTypes.ServiceCCCVA):
+		return enumTypes.ServiceCCCVA, nil
+	case string(enumTypes.ServiceCCOther):
+		return enumTypes.ServiceCCOther, nil
 	default:
 		return nil, fmt.Errorf("invalid service CC: %v", v)
 	}
@@ -1262,18 +1263,18 @@ type disabilityLevelCodec struct{}
 
 func (d disabilityLevelCodec) Encode(value interface{}) (string, error) {
 	switch v := value.(type) {
-	case api.DisabilityLevel:
+	case enumTypes.DisabilityLevel:
 		switch v {
-		case api.DisabilityLevelNone:
-			return string(api.DisabilityLevelNone), nil
-		case api.DisabilityLevelMild:
-			return string(api.DisabilityLevelMild), nil
-		case api.DisabilityLevelModerate:
-			return string(api.DisabilityLevelModerate), nil
-		case api.DisabilityLevelSevere:
-			return string(api.DisabilityLevelSevere), nil
-		case api.DisabilityLevelUnspecified:
-			return string(api.DisabilityLevelUnspecified), nil
+		case enumTypes.DisabilityLevelNone:
+			return string(enumTypes.DisabilityLevelNone), nil
+		case enumTypes.DisabilityLevelMild:
+			return string(enumTypes.DisabilityLevelMild), nil
+		case enumTypes.DisabilityLevelModerate:
+			return string(enumTypes.DisabilityLevelModerate), nil
+		case enumTypes.DisabilityLevelSevere:
+			return string(enumTypes.DisabilityLevelSevere), nil
+		case enumTypes.DisabilityLevelUnspecified:
+			return string(enumTypes.DisabilityLevelUnspecified), nil
 		default:
 			return "", fmt.Errorf("unknown disability level: %v", v)
 		}
@@ -1284,16 +1285,16 @@ func (d disabilityLevelCodec) Encode(value interface{}) (string, error) {
 
 func (d disabilityLevelCodec) Decode(value string) (interface{}, error) {
 	switch value {
-	case string(api.DisabilityLevelNone):
-		return api.DisabilityLevelNone, nil
-	case string(api.DisabilityLevelMild):
-		return api.DisabilityLevelMild, nil
-	case string(api.DisabilityLevelModerate):
-		return api.DisabilityLevelModerate, nil
-	case string(api.DisabilityLevelSevere):
-		return api.DisabilityLevelSevere, nil
-	case string(api.DisabilityLevelUnspecified):
-		return api.DisabilityLevelUnspecified, nil
+	case string(enumTypes.DisabilityLevelNone):
+		return enumTypes.DisabilityLevelNone, nil
+	case string(enumTypes.DisabilityLevelMild):
+		return enumTypes.DisabilityLevelMild, nil
+	case string(enumTypes.DisabilityLevelModerate):
+		return enumTypes.DisabilityLevelModerate, nil
+	case string(enumTypes.DisabilityLevelSevere):
+		return enumTypes.DisabilityLevelSevere, nil
+	case string(enumTypes.DisabilityLevelUnspecified):
+		return enumTypes.DisabilityLevelUnspecified, nil
 	default:
 		return nil, fmt.Errorf("unknown disability level: %v", value)
 	}
@@ -1303,22 +1304,22 @@ type engagementContextCodec struct{}
 
 func (d engagementContextCodec) Encode(value interface{}) (string, error) {
 	switch v := value.(type) {
-	case api.EngagementContext:
+	case enumTypes.EngagementContext:
 		switch v {
-		case api.EngagementContextFieldActivity:
-			return string(api.EngagementContextFieldActivity), nil
-		case api.EngagementContextInOffice:
-			return string(api.EngagementContextInOffice), nil
-		case api.EngagementContextHouseVisit:
-			return string(api.EngagementContextHouseVisit), nil
-		case api.EngagementContextReferred:
-			return string(api.EngagementContextReferred), nil
-		case api.EngagementContextRemoteChannels:
-			return string(api.EngagementContextRemoteChannels), nil
-		case api.EngagementContextOther:
-			return string(api.EngagementContextOther), nil
-		case api.EngagementContextUnspecified:
-			return string(api.EngagementContextUnspecified), nil
+		case enumTypes.EngagementContextFieldActivity:
+			return string(enumTypes.EngagementContextFieldActivity), nil
+		case enumTypes.EngagementContextInOffice:
+			return string(enumTypes.EngagementContextInOffice), nil
+		case enumTypes.EngagementContextHouseVisit:
+			return string(enumTypes.EngagementContextHouseVisit), nil
+		case enumTypes.EngagementContextReferred:
+			return string(enumTypes.EngagementContextReferred), nil
+		case enumTypes.EngagementContextRemoteChannels:
+			return string(enumTypes.EngagementContextRemoteChannels), nil
+		case enumTypes.EngagementContextOther:
+			return string(enumTypes.EngagementContextOther), nil
+		case enumTypes.EngagementContextUnspecified:
+			return string(enumTypes.EngagementContextUnspecified), nil
 		default:
 			return "", fmt.Errorf("unknown engagement context: %v", v)
 		}
@@ -1329,20 +1330,20 @@ func (d engagementContextCodec) Encode(value interface{}) (string, error) {
 
 func (d engagementContextCodec) Decode(value string) (interface{}, error) {
 	switch value {
-	case string(api.EngagementContextFieldActivity):
-		return api.EngagementContextFieldActivity, nil
-	case string(api.EngagementContextInOffice):
-		return api.EngagementContextInOffice, nil
-	case string(api.EngagementContextHouseVisit):
-		return api.EngagementContextHouseVisit, nil
-	case string(api.EngagementContextReferred):
-		return api.EngagementContextReferred, nil
-	case string(api.EngagementContextRemoteChannels):
-		return api.EngagementContextRemoteChannels, nil
-	case string(api.EngagementContextOther):
-		return api.EngagementContextOther, nil
-	case string(api.EngagementContextUnspecified):
-		return api.EngagementContextUnspecified, nil
+	case string(enumTypes.EngagementContextFieldActivity):
+		return enumTypes.EngagementContextFieldActivity, nil
+	case string(enumTypes.EngagementContextInOffice):
+		return enumTypes.EngagementContextInOffice, nil
+	case string(enumTypes.EngagementContextHouseVisit):
+		return enumTypes.EngagementContextHouseVisit, nil
+	case string(enumTypes.EngagementContextReferred):
+		return enumTypes.EngagementContextReferred, nil
+	case string(enumTypes.EngagementContextRemoteChannels):
+		return enumTypes.EngagementContextRemoteChannels, nil
+	case string(enumTypes.EngagementContextOther):
+		return enumTypes.EngagementContextOther, nil
+	case string(enumTypes.EngagementContextUnspecified):
+		return enumTypes.EngagementContextUnspecified, nil
 	default:
 		return nil, fmt.Errorf("unknown engagement context: %v", value)
 	}
@@ -1354,20 +1355,20 @@ type preferredContactMethodCodec struct{}
 
 func (d preferredContactMethodCodec) Encode(value interface{}) (string, error) {
 	switch v := value.(type) {
-	case api.ContactMethod:
+	case enumTypes.ContactMethod:
 		switch v {
-		case api.ContactMethodPhone:
-			return string(api.ContactMethodPhone), nil
-		case api.ContactMethodWhatsapp:
-			return string(api.ContactMethodWhatsapp), nil
-		case api.ContactMethodEmail:
-			return string(api.ContactMethodEmail), nil
-		case api.ContactMethodVisit:
-			return string(api.ContactMethodVisit), nil
-		case api.ContactMethodOther:
-			return string(api.ContactMethodOther), nil
-		case api.ContactMethodUnspecified:
-			return string(api.ContactMethodUnspecified), nil
+		case enumTypes.ContactMethodPhone:
+			return string(enumTypes.ContactMethodPhone), nil
+		case enumTypes.ContactMethodWhatsapp:
+			return string(enumTypes.ContactMethodWhatsapp), nil
+		case enumTypes.ContactMethodEmail:
+			return string(enumTypes.ContactMethodEmail), nil
+		case enumTypes.ContactMethodVisit:
+			return string(enumTypes.ContactMethodVisit), nil
+		case enumTypes.ContactMethodOther:
+			return string(enumTypes.ContactMethodOther), nil
+		case enumTypes.ContactMethodUnspecified:
+			return string(enumTypes.ContactMethodUnspecified), nil
 		default:
 			return "", fmt.Errorf("unknown contact method: %v", v)
 		}
@@ -1378,18 +1379,18 @@ func (d preferredContactMethodCodec) Encode(value interface{}) (string, error) {
 
 func (d preferredContactMethodCodec) Decode(value string) (interface{}, error) {
 	switch value {
-	case string(api.ContactMethodPhone):
-		return api.ContactMethodPhone, nil
-	case string(api.ContactMethodWhatsapp):
-		return api.ContactMethodWhatsapp, nil
-	case string(api.ContactMethodEmail):
-		return api.ContactMethodEmail, nil
-	case string(api.ContactMethodVisit):
-		return api.ContactMethodVisit, nil
-	case string(api.ContactMethodOther):
-		return api.ContactMethodOther, nil
-	case string(api.ContactMethodUnspecified):
-		return api.ContactMethodUnspecified, nil
+	case string(enumTypes.ContactMethodPhone):
+		return enumTypes.ContactMethodPhone, nil
+	case string(enumTypes.ContactMethodWhatsapp):
+		return enumTypes.ContactMethodWhatsapp, nil
+	case string(enumTypes.ContactMethodEmail):
+		return enumTypes.ContactMethodEmail, nil
+	case string(enumTypes.ContactMethodVisit):
+		return enumTypes.ContactMethodVisit, nil
+	case string(enumTypes.ContactMethodOther):
+		return enumTypes.ContactMethodOther, nil
+	case string(enumTypes.ContactMethodUnspecified):
+		return enumTypes.ContactMethodUnspecified, nil
 	default:
 		return nil, fmt.Errorf("unknown contact method: %v", value)
 	}
@@ -1401,18 +1402,18 @@ type sexCodec struct{}
 
 func (g sexCodec) Encode(value interface{}) (string, error) {
 	switch v := value.(type) {
-	case api.Sex:
+	case enumTypes.Sex:
 		switch v {
-		case api.SexMale:
-			return string(api.SexMale), nil
-		case api.SexFemale:
-			return string(api.SexFemale), nil
-		case api.SexOther:
-			return string(api.SexOther), nil
-		case api.SexPreferNotToSay:
-			return string(api.SexPreferNotToSay), nil
-		case api.SexUnspecified:
-			return string(api.SexUnspecified), nil
+		case enumTypes.SexMale:
+			return string(enumTypes.SexMale), nil
+		case enumTypes.SexFemale:
+			return string(enumTypes.SexFemale), nil
+		case enumTypes.SexOther:
+			return string(enumTypes.SexOther), nil
+		case enumTypes.SexPreferNotToSay:
+			return string(enumTypes.SexPreferNotToSay), nil
+		case enumTypes.SexUnspecified:
+			return string(enumTypes.SexUnspecified), nil
 		default:
 			return "", fmt.Errorf("unknown sex: %v", v)
 		}
@@ -1423,16 +1424,16 @@ func (g sexCodec) Encode(value interface{}) (string, error) {
 
 func (g sexCodec) Decode(value string) (interface{}, error) {
 	switch value {
-	case string(api.SexMale):
-		return api.SexMale, nil
-	case string(api.SexFemale):
-		return api.SexFemale, nil
-	case string(api.SexOther):
-		return api.SexOther, nil
-	case string(api.SexPreferNotToSay):
-		return api.SexPreferNotToSay, nil
-	case string(api.SexUnspecified):
-		return api.SexUnspecified, nil
+	case string(enumTypes.SexMale):
+		return enumTypes.SexMale, nil
+	case string(enumTypes.SexFemale):
+		return enumTypes.SexFemale, nil
+	case string(enumTypes.SexOther):
+		return enumTypes.SexOther, nil
+	case string(enumTypes.SexPreferNotToSay):
+		return enumTypes.SexPreferNotToSay, nil
+	case string(enumTypes.SexUnspecified):
+		return enumTypes.SexUnspecified, nil
 	default:
 		return nil, fmt.Errorf("unknown sex: %v", value)
 	}

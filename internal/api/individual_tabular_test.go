@@ -1,6 +1,7 @@
 package api_test
 
 import (
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"testing"
 	"time"
 
@@ -21,7 +22,7 @@ var parameters = []struct {
 	{constants.FileColumnIndividualAddress, "123 Fake Alle, Berlin", "123 Fake Alle, Berlin", false},
 	{constants.FileColumnIndividualBirthDate, "1992-07-31", &foo, false},
 	{constants.FileColumnIndividualBirthDate, "31-07-1992", "", true},
-	{constants.FileColumnIndividualDisplacementStatus, "refugee", api.DisplacementStatusRefugee, false},
+	{constants.FileColumnIndividualDisplacementStatus, "refugee", enumTypes.DisplacementStatusRefugee, false},
 	{constants.FileColumnIndividualHasDisability, "yEs", true, false},
 	{constants.FileColumnIndividualEmail1, "person@not-nrc.no", "person@not-nrc.no", false},
 	{constants.FileColumnIndividualFullName, "Hugh Jazz", "Hugh Jazz", false},
@@ -30,7 +31,7 @@ var parameters = []struct {
 	{constants.FileColumnIndividualLastName, "Jazz", "Jazz", false},
 	{constants.FileColumnIndividualNativeName, "جون", "جون", false},
 	{constants.FileColumnIndividualMothersName, "Jane Doe", "Jane Doe", false},
-	{constants.FileColumnIndividualSex, "male", api.SexMale, false},
+	{constants.FileColumnIndividualSex, "male", enumTypes.SexMale, false},
 	{constants.FileColumnIndividualIsMinor, "tRuE", true, false},
 	{constants.FileColumnIndividualIsMinor, "YeS", true, false},
 	{constants.FileColumnIndividualIsMinor, "1", true, false},

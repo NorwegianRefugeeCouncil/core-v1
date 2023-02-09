@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"net/url"
 	"strconv"
 	"time"
@@ -162,7 +163,7 @@ func (p *listIndividualsOptionsEncoder) encodeServiceDeliveredDateTo() {
 }
 
 func (p *listIndividualsOptionsEncoder) encodeCognitiveDisabilityLevel() {
-	if p.values.CognitiveDisabilityLevel != DisabilityLevelUnspecified {
+	if p.values.CognitiveDisabilityLevel != enumTypes.DisabilityLevelUnspecified {
 		p.out.Add(constants.FormParamsGetIndividualsCognitiveDisabilityLevel, string(p.values.CognitiveDisabilityLevel))
 	}
 }
@@ -352,7 +353,7 @@ func (p *listIndividualsOptionsEncoder) encodeHasVisionDisability() {
 }
 
 func (p *listIndividualsOptionsEncoder) encodeHearingDisabilityLevel() {
-	if p.values.HearingDisabilityLevel != DisabilityLevelUnspecified {
+	if p.values.HearingDisabilityLevel != enumTypes.DisabilityLevelUnspecified {
 		p.out.Add(constants.FormParamsGetIndividualsHearingDisabilityLevel, string(p.values.HearingDisabilityLevel))
 	}
 }
@@ -422,7 +423,7 @@ func (p *listIndividualsOptionsEncoder) encodeIsMinor() {
 }
 
 func (p *listIndividualsOptionsEncoder) encodeMobilityDisabilityLevel() {
-	if p.values.MobilityDisabilityLevel != DisabilityLevelUnspecified {
+	if p.values.MobilityDisabilityLevel != enumTypes.DisabilityLevelUnspecified {
 		p.out.Add(constants.FormParamsGetIndividualsMobilityDisabilityLevel, string(p.values.MobilityDisabilityLevel))
 	}
 }
@@ -472,7 +473,7 @@ func (p *listIndividualsOptionsEncoder) encodePresentsProtectionConcerns() {
 }
 
 func (p *listIndividualsOptionsEncoder) encodeSelfCareDisabilityLevel() {
-	if p.values.SelfCareDisabilityLevel != DisabilityLevelUnspecified {
+	if p.values.SelfCareDisabilityLevel != enumTypes.DisabilityLevelUnspecified {
 		p.out.Add(constants.FormParamsGetIndividualsSelfCareDisabilityLevel, string(p.values.SelfCareDisabilityLevel))
 	}
 }
@@ -496,7 +497,7 @@ func (p *listIndividualsOptionsEncoder) encodeUpdatedAtTo() {
 }
 
 func (p *listIndividualsOptionsEncoder) encodeVisionDisabilityLevel() {
-	if p.values.VisionDisabilityLevel != DisabilityLevelUnspecified {
+	if p.values.VisionDisabilityLevel != enumTypes.DisabilityLevelUnspecified {
 		p.out.Add(constants.FormParamsGetIndividualsVisionDisabilityLevel, string(p.values.VisionDisabilityLevel))
 	}
 }

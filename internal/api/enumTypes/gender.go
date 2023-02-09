@@ -1,4 +1,4 @@
-package api
+package enumTypes
 
 import (
 	"encoding/json"
@@ -50,13 +50,23 @@ func ParseSex(str string) (Sex, error) {
 	switch str {
 	case string(SexMale):
 		return SexMale, nil
+	case SexMale.String():
+		return SexMale, nil
 	case string(SexFemale):
+		return SexFemale, nil
+	case SexFemale.String():
 		return SexFemale, nil
 	case string(SexOther):
 		return SexOther, nil
+	case SexOther.String():
+		return SexOther, nil
 	case string(SexPreferNotToSay):
 		return SexPreferNotToSay, nil
+	case SexPreferNotToSay.String():
+		return SexPreferNotToSay, nil
 	case string(SexUnspecified):
+		return SexUnspecified, nil
+	case SexUnspecified.String():
 		return SexUnspecified, nil
 	default:
 		return "", fmt.Errorf("unknown value for %s: %v", constants.FileColumnIndividualSex, logutils.Escape(str))

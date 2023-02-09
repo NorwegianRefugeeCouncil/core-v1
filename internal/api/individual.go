@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"time"
 
 	"github.com/nrc-no/notcore/internal/constants"
@@ -18,7 +19,7 @@ type Individual struct {
 	// BirthDate is the date of birth of the individual.
 	BirthDate *time.Time `json:"birthDate" db:"birth_date"`
 	// CognitiveDisabilityLevel is the cognitive disability level of the individual
-	CognitiveDisabilityLevel DisabilityLevel `json:"cognitiveDisabilityLevel" db:"cognitive_disability_level"`
+	CognitiveDisabilityLevel enumTypes.DisabilityLevel `json:"cognitiveDisabilityLevel" db:"cognitive_disability_level"`
 	// CollectionAdministrativeArea1 is the first administrative area of the collection
 	// For example, in the case of a case in the Democratic Republic of Congo, this would be the province
 	CollectionAdministrativeArea1 string `json:"collectionAdministrativeArea1" db:"collection_administrative_area_1"`
@@ -39,7 +40,7 @@ type Individual struct {
 	// Comments is a free text field for comments
 	Comments string `json:"comments" db:"comments"`
 	// CommunicationDisabilityLevel is the communication disability level of the individual
-	CommunicationDisabilityLevel DisabilityLevel `json:"communicationDisabilityLevel" db:"communication_disability_level"`
+	CommunicationDisabilityLevel enumTypes.DisabilityLevel `json:"communicationDisabilityLevel" db:"communication_disability_level"`
 	// CommunityID is the ID of the community the individual belongs to
 	CommunityID string `json:"communityId" db:"community_id"`
 	// CommunitySize is the size of the community the individual belongs to
@@ -51,7 +52,7 @@ type Individual struct {
 	// DeletedAt is the time the individual record was deleted from the database
 	DeletedAt *time.Time `json:"deletedAt" db:"deleted_at"`
 	// DisplacementStatus is the displacement status of the individual
-	DisplacementStatus DisplacementStatus `json:"displacementStatus" db:"displacement_status"`
+	DisplacementStatus enumTypes.DisplacementStatus `json:"displacementStatus" db:"displacement_status"`
 	// DisplacementStatusComment is a comment about the displacement status of the individual
 	DisplacementStatusComment string `json:"displacementStatusComment" db:"displacement_status_comment"`
 	// Email1 is the email address 1 of the individual
@@ -83,7 +84,7 @@ type Individual struct {
 	// FreeField5 is a free field for the individual
 	FreeField5 string `json:"freeField5" db:"free_field_5"`
 	// Sex is the sex of the individual
-	Sex Sex `json:"sex" db:"sex"`
+	Sex enumTypes.Sex `json:"sex" db:"sex"`
 	// HasCognitiveDisability is true if the individual has a cognitive disability
 	HasCognitiveDisability bool `json:"hasCognitiveDisability" db:"has_cognitive_disability"`
 	// HasCommunicationDisability is true if the individual has a communication disability
@@ -105,7 +106,7 @@ type Individual struct {
 	// HasVisionDisability is true if the individual has a vision disability
 	HasVisionDisability bool `json:"hasVisionDisability" db:"has_vision_disability"`
 	// HearingDisabilityLevel is the hearing disability level of the individual
-	HearingDisabilityLevel DisabilityLevel `json:"hearingDisabilityLevel" db:"hearing_disability_level"`
+	HearingDisabilityLevel enumTypes.DisabilityLevel `json:"hearingDisabilityLevel" db:"hearing_disability_level"`
 	// HouseholdID is the ID of the household the individual belongs to
 	HouseholdID string `json:"householdId" db:"household_id"`
 	// HouseholdSize is the size of the household the individual belongs to
@@ -113,28 +114,28 @@ type Individual struct {
 	// ID is the ID of the individual
 	ID string `json:"id" db:"id"`
 	// IdentificationType1 is the type of primary identification of the individual
-	IdentificationType1 IdentificationType `json:"identificationType1" db:"identification_type_1"`
+	IdentificationType1 enumTypes.IdentificationType `json:"identificationType1" db:"identification_type_1"`
 	// IdentificationTypeExplanation1 is the explanation of the primary identification type of the individual
 	// when the primary identification type is "other"
 	IdentificationTypeExplanation1 string `json:"identificationTypeExplanation1" db:"identification_type_explanation_1"`
 	// IdentificationNumber1 is the primary identification number of the individual
 	IdentificationNumber1 string `json:"identificationNumber1" db:"identification_number_1"`
 	// IdentificationType2 is the type of secondary identification of the individual
-	IdentificationType2 IdentificationType `json:"identificationType2" db:"identification_type_2"`
+	IdentificationType2 enumTypes.IdentificationType `json:"identificationType2" db:"identification_type_2"`
 	// IdentificationTypeExplanation2 is the explanation of the secondary identification type of the individual
 	// when the secondary identification type is "other"
 	IdentificationTypeExplanation2 string `json:"identificationTypeExplanation2" db:"identification_type_explanation_2"`
 	// IdentificationNumber2 is the secondary identification number of the individual
 	IdentificationNumber2 string `json:"identificationNumber2" db:"identification_number_2"`
 	// IdentificationType3 is the type of tertiary identification of the individual
-	IdentificationType3 IdentificationType `json:"identificationType3" db:"identification_type_3"`
+	IdentificationType3 enumTypes.IdentificationType `json:"identificationType3" db:"identification_type_3"`
 	// IdentificationTypeExplanation3 is the explanation of the tertiary identification type of the individual
 	// when the tertiary identification type is "other"
 	IdentificationTypeExplanation3 string `json:"identificationTypeExplanation3" db:"identification_type_explanation_3"`
 	// IdentificationNumber3 is the tertiary identification number of the individual
 	IdentificationNumber3 string `json:"identificationNumber3" db:"identification_number_3"`
 	// EngagementContext is the context of the identification of the individual
-	EngagementContext EngagementContext `json:"engagementContext" db:"engagement_context"`
+	EngagementContext enumTypes.EngagementContext `json:"engagementContext" db:"engagement_context"`
 	// InternalID is the internal ID of the individual. This is used to link individuals across different
 	// systems.
 	InternalID string `json:"internalId" db:"internal_id"`
@@ -149,7 +150,7 @@ type Individual struct {
 	// IsMinor is a flag indicating whether the individual is a minor
 	IsMinor bool `json:"isMinor" db:"is_minor"`
 	// MobilityDisabilityLevel is the mobility disability level of the individual
-	MobilityDisabilityLevel DisabilityLevel `json:"mobilityDisabilityLevel" db:"mobility_disability_level"`
+	MobilityDisabilityLevel enumTypes.DisabilityLevel `json:"mobilityDisabilityLevel" db:"mobility_disability_level"`
 	// Nationality1 is the primary nationality of the individual
 	Nationality1 string `json:"nationality1" db:"nationality_1"`
 	// Nationality2 is the secondary nationality of the individual
@@ -167,7 +168,7 @@ type Individual struct {
 	// PhoneNumber3 is the phone number 3 of the individual
 	PhoneNumber3 string `json:"phoneNumber3" db:"phone_number_3"`
 	// PreferredContactMethod is the preferred contact method of the individual
-	PreferredContactMethod ContactMethod `json:"preferredContactMethod" db:"preferred_contact_method"`
+	PreferredContactMethod enumTypes.ContactMethod `json:"preferredContactMethod" db:"preferred_contact_method"`
 	// PreferredContactMethodComments is the comments on the preferred contact method of the individual
 	PreferredContactMethodComments string `json:"preferredContactMethodComments" db:"preferred_contact_method_comments"`
 	// PreferredName is the preferred name of the individual
@@ -181,7 +182,7 @@ type Individual struct {
 	// PWDComments is the comments on the disability status of the individual
 	PWDComments string `json:"pwdComments" db:"pwd_comments"`
 	// SelfCareDisabilityLevel is the self-care disability level of the individual
-	SelfCareDisabilityLevel DisabilityLevel `json:"selfCareDisabilityLevel" db:"selfcare_disability_level"`
+	SelfCareDisabilityLevel enumTypes.DisabilityLevel `json:"selfCareDisabilityLevel" db:"selfcare_disability_level"`
 	// SpokenLanguage1 is the primary spoken language of the individual
 	SpokenLanguage1 string `json:"spokenLanguage1" db:"spoken_language_1"`
 	// SpokenLanguage2 is the secondary spoken language of the individual
@@ -191,42 +192,42 @@ type Individual struct {
 	// UpdatedAt is the time the individual was last updated in the database
 	UpdatedAt time.Time `json:"updatedAt" db:"updated_at"`
 	// VisionDisabilityLevel is the vision disability level of the individual
-	VisionDisabilityLevel DisabilityLevel `json:"visionDisabilityLevel" db:"vision_disability_level"`
+	VisionDisabilityLevel enumTypes.DisabilityLevel `json:"visionDisabilityLevel" db:"vision_disability_level"`
 
-	ServiceCC1            ServiceCC  `json:"serviceCC1" db:"service_cc_1"`
-	ServiceRequestedDate1 *time.Time `json:"serviceRequestedDate1" db:"service_requested_date_1"`
-	ServiceDeliveredDate1 *time.Time `json:"serviceDeliveredDate1" db:"service_delivered_date_1"`
-	ServiceComments1      string     `json:"serviceComments1" db:"service_comments_1"`
+	ServiceCC1            enumTypes.ServiceCC `json:"serviceCC1" db:"service_cc_1"`
+	ServiceRequestedDate1 *time.Time          `json:"serviceRequestedDate1" db:"service_requested_date_1"`
+	ServiceDeliveredDate1 *time.Time          `json:"serviceDeliveredDate1" db:"service_delivered_date_1"`
+	ServiceComments1      string              `json:"serviceComments1" db:"service_comments_1"`
 
-	ServiceCC2            ServiceCC  `json:"serviceCC2" db:"service_cc_2"`
-	ServiceRequestedDate2 *time.Time `json:"serviceRequestedDate2" db:"service_requested_date_2"`
-	ServiceDeliveredDate2 *time.Time `json:"serviceDeliveredDate2" db:"service_delivered_date_2"`
-	ServiceComments2      string     `json:"serviceComments2" db:"service_comments_2"`
+	ServiceCC2            enumTypes.ServiceCC `json:"serviceCC2" db:"service_cc_2"`
+	ServiceRequestedDate2 *time.Time          `json:"serviceRequestedDate2" db:"service_requested_date_2"`
+	ServiceDeliveredDate2 *time.Time          `json:"serviceDeliveredDate2" db:"service_delivered_date_2"`
+	ServiceComments2      string              `json:"serviceComments2" db:"service_comments_2"`
 
-	ServiceCC3            ServiceCC  `json:"serviceCC3" db:"service_cc_3"`
-	ServiceRequestedDate3 *time.Time `json:"serviceRequestedDate3" db:"service_requested_date_3"`
-	ServiceDeliveredDate3 *time.Time `json:"serviceDeliveredDate3" db:"service_delivered_date_3"`
-	ServiceComments3      string     `json:"serviceComments3" db:"service_comments_3"`
+	ServiceCC3            enumTypes.ServiceCC `json:"serviceCC3" db:"service_cc_3"`
+	ServiceRequestedDate3 *time.Time          `json:"serviceRequestedDate3" db:"service_requested_date_3"`
+	ServiceDeliveredDate3 *time.Time          `json:"serviceDeliveredDate3" db:"service_delivered_date_3"`
+	ServiceComments3      string              `json:"serviceComments3" db:"service_comments_3"`
 
-	ServiceCC4            ServiceCC  `json:"serviceCC4" db:"service_cc_4"`
-	ServiceRequestedDate4 *time.Time `json:"serviceRequestedDate4" db:"service_requested_date_4"`
-	ServiceDeliveredDate4 *time.Time `json:"serviceDeliveredDate4" db:"service_delivered_date_4"`
-	ServiceComments4      string     `json:"serviceComments4" db:"service_comments_4"`
+	ServiceCC4            enumTypes.ServiceCC `json:"serviceCC4" db:"service_cc_4"`
+	ServiceRequestedDate4 *time.Time          `json:"serviceRequestedDate4" db:"service_requested_date_4"`
+	ServiceDeliveredDate4 *time.Time          `json:"serviceDeliveredDate4" db:"service_delivered_date_4"`
+	ServiceComments4      string              `json:"serviceComments4" db:"service_comments_4"`
 
-	ServiceCC5            ServiceCC  `json:"serviceCC5" db:"service_cc_5"`
-	ServiceRequestedDate5 *time.Time `json:"serviceRequestedDate5" db:"service_requested_date_5"`
-	ServiceDeliveredDate5 *time.Time `json:"serviceDeliveredDate5" db:"service_delivered_date_5"`
-	ServiceComments5      string     `json:"serviceComments5" db:"service_comments_5"`
+	ServiceCC5            enumTypes.ServiceCC `json:"serviceCC5" db:"service_cc_5"`
+	ServiceRequestedDate5 *time.Time          `json:"serviceRequestedDate5" db:"service_requested_date_5"`
+	ServiceDeliveredDate5 *time.Time          `json:"serviceDeliveredDate5" db:"service_delivered_date_5"`
+	ServiceComments5      string              `json:"serviceComments5" db:"service_comments_5"`
 
-	ServiceCC6            ServiceCC  `json:"serviceCC6" db:"service_cc_6"`
-	ServiceRequestedDate6 *time.Time `json:"serviceRequestedDate6" db:"service_requested_date_6"`
-	ServiceDeliveredDate6 *time.Time `json:"serviceDeliveredDate6" db:"service_delivered_date_6"`
-	ServiceComments6      string     `json:"serviceComments6" db:"service_comments_6"`
+	ServiceCC6            enumTypes.ServiceCC `json:"serviceCC6" db:"service_cc_6"`
+	ServiceRequestedDate6 *time.Time          `json:"serviceRequestedDate6" db:"service_requested_date_6"`
+	ServiceDeliveredDate6 *time.Time          `json:"serviceDeliveredDate6" db:"service_delivered_date_6"`
+	ServiceComments6      string              `json:"serviceComments6" db:"service_comments_6"`
 
-	ServiceCC7            ServiceCC  `json:"serviceCC7" db:"service_cc_7"`
-	ServiceRequestedDate7 *time.Time `json:"serviceRequestedDate7" db:"service_requested_date_7"`
-	ServiceDeliveredDate7 *time.Time `json:"serviceDeliveredDate7" db:"service_delivered_date_7"`
-	ServiceComments7      string     `json:"serviceComments7" db:"service_comments_7"`
+	ServiceCC7            enumTypes.ServiceCC `json:"serviceCC7" db:"service_cc_7"`
+	ServiceRequestedDate7 *time.Time          `json:"serviceRequestedDate7" db:"service_requested_date_7"`
+	ServiceDeliveredDate7 *time.Time          `json:"serviceDeliveredDate7" db:"service_delivered_date_7"`
+	ServiceComments7      string              `json:"serviceComments7" db:"service_comments_7"`
 }
 
 type IndividualList struct {
@@ -486,7 +487,7 @@ func (i *Individual) Normalize() {
 	i.Comments = trimString(i.Comments)
 	i.CommunityID = trimString(i.CommunityID)
 	i.CountryID = trimString(i.CountryID)
-	i.DisplacementStatus = DisplacementStatus(trimString(string(i.DisplacementStatus)))
+	i.DisplacementStatus = enumTypes.DisplacementStatus(trimString(string(i.DisplacementStatus)))
 	i.DisplacementStatusComment = trimString(i.DisplacementStatusComment)
 	i.Email1 = normalizeEmail(i.Email1)
 	i.Email2 = normalizeEmail(i.Email2)
@@ -504,13 +505,13 @@ func (i *Individual) Normalize() {
 	i.MothersName = trimString(i.MothersName)
 	i.HouseholdID = trimString(i.HouseholdID)
 	i.ID = trimString(i.ID)
-	i.EngagementContext = EngagementContext(trimString(string(i.EngagementContext)))
+	i.EngagementContext = enumTypes.EngagementContext(trimString(string(i.EngagementContext)))
 	i.IdentificationNumber1 = trimString(i.IdentificationNumber1)
 	i.IdentificationNumber2 = trimString(i.IdentificationNumber2)
 	i.IdentificationNumber3 = trimString(i.IdentificationNumber3)
-	i.IdentificationType1 = IdentificationType(trimString(string(i.IdentificationType1)))
-	i.IdentificationType2 = IdentificationType(trimString(string(i.IdentificationType2)))
-	i.IdentificationType3 = IdentificationType(trimString(string(i.IdentificationType3)))
+	i.IdentificationType1 = enumTypes.IdentificationType(trimString(string(i.IdentificationType1)))
+	i.IdentificationType2 = enumTypes.IdentificationType(trimString(string(i.IdentificationType2)))
+	i.IdentificationType3 = enumTypes.IdentificationType(trimString(string(i.IdentificationType3)))
 	i.IdentificationTypeExplanation1 = trimString(i.IdentificationTypeExplanation1)
 	i.IdentificationTypeExplanation2 = trimString(i.IdentificationTypeExplanation2)
 	i.IdentificationTypeExplanation3 = trimString(i.IdentificationTypeExplanation3)
@@ -527,7 +528,7 @@ func (i *Individual) Normalize() {
 	i.NormalizedPhoneNumber1 = NormalizePhoneNumber(i.PhoneNumber1)
 	i.NormalizedPhoneNumber2 = NormalizePhoneNumber(i.PhoneNumber2)
 	i.NormalizedPhoneNumber3 = NormalizePhoneNumber(i.PhoneNumber3)
-	i.PreferredContactMethod = ContactMethod(trimString(string(i.PreferredContactMethod)))
+	i.PreferredContactMethod = enumTypes.ContactMethod(trimString(string(i.PreferredContactMethod)))
 	i.PreferredContactMethodComments = trimString(i.PreferredContactMethodComments)
 	i.PreferredName = trimString(i.PreferredName)
 	if i.PreferredName == "" {
@@ -539,19 +540,19 @@ func (i *Individual) Normalize() {
 	i.SpokenLanguage2 = trimString(i.SpokenLanguage2)
 	i.SpokenLanguage3 = trimString(i.SpokenLanguage3)
 
-	i.ServiceCC1 = ServiceCC(trimString(string(i.ServiceCC1)))
+	i.ServiceCC1 = enumTypes.ServiceCC(trimString(string(i.ServiceCC1)))
 	i.ServiceComments1 = trimString(i.ServiceComments1)
-	i.ServiceCC2 = ServiceCC(trimString(string(i.ServiceCC2)))
+	i.ServiceCC2 = enumTypes.ServiceCC(trimString(string(i.ServiceCC2)))
 	i.ServiceComments2 = trimString(i.ServiceComments2)
-	i.ServiceCC3 = ServiceCC(trimString(string(i.ServiceCC3)))
+	i.ServiceCC3 = enumTypes.ServiceCC(trimString(string(i.ServiceCC3)))
 	i.ServiceComments3 = trimString(i.ServiceComments3)
-	i.ServiceCC4 = ServiceCC(trimString(string(i.ServiceCC4)))
+	i.ServiceCC4 = enumTypes.ServiceCC(trimString(string(i.ServiceCC4)))
 	i.ServiceComments4 = trimString(i.ServiceComments4)
-	i.ServiceCC5 = ServiceCC(trimString(string(i.ServiceCC5)))
+	i.ServiceCC5 = enumTypes.ServiceCC(trimString(string(i.ServiceCC5)))
 	i.ServiceComments5 = trimString(i.ServiceComments5)
-	i.ServiceCC6 = ServiceCC(trimString(string(i.ServiceCC6)))
+	i.ServiceCC6 = enumTypes.ServiceCC(trimString(string(i.ServiceCC6)))
 	i.ServiceComments6 = trimString(i.ServiceComments6)
-	i.ServiceCC7 = ServiceCC(trimString(string(i.ServiceCC7)))
+	i.ServiceCC7 = enumTypes.ServiceCC(trimString(string(i.ServiceCC7)))
 	i.ServiceComments7 = trimString(i.ServiceComments7)
 
 	if i.PrefersToRemainAnonymous {

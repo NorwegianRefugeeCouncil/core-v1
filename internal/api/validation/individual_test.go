@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"testing"
 	"time"
 
@@ -44,7 +45,7 @@ func (i *IndividualBuilder) WithBirthDate(birthDate *time.Time) *IndividualBuild
 	return i
 }
 
-func (i *IndividualBuilder) WithCognitiveDisabilityLevel(level api.DisabilityLevel) *IndividualBuilder {
+func (i *IndividualBuilder) WithCognitiveDisabilityLevel(level enumTypes.DisabilityLevel) *IndividualBuilder {
 	i.individual.CognitiveDisabilityLevel = level
 	return i
 }
@@ -89,7 +90,7 @@ func (i *IndividualBuilder) WithComments(comments string) *IndividualBuilder {
 	return i
 }
 
-func (i *IndividualBuilder) WithCommunicationDisabilityLevel(level api.DisabilityLevel) *IndividualBuilder {
+func (i *IndividualBuilder) WithCommunicationDisabilityLevel(level enumTypes.DisabilityLevel) *IndividualBuilder {
 	i.individual.CommunicationDisabilityLevel = level
 	return i
 }
@@ -114,7 +115,7 @@ func (i *IndividualBuilder) WithDeletedAt(deletedAt *time.Time) *IndividualBuild
 	return i
 }
 
-func (i *IndividualBuilder) WithDisplacementStatus(displacementStatus api.DisplacementStatus) *IndividualBuilder {
+func (i *IndividualBuilder) WithDisplacementStatus(displacementStatus enumTypes.DisplacementStatus) *IndividualBuilder {
 	i.individual.DisplacementStatus = displacementStatus
 	return i
 }
@@ -194,7 +195,7 @@ func (i *IndividualBuilder) WithFreeField5(freeField string) *IndividualBuilder 
 	return i
 }
 
-func (i *IndividualBuilder) WithSex(sex api.Sex) *IndividualBuilder {
+func (i *IndividualBuilder) WithSex(sex enumTypes.Sex) *IndividualBuilder {
 	i.individual.Sex = sex
 	return i
 }
@@ -244,7 +245,7 @@ func (i *IndividualBuilder) WithHasVisionDisability(hasVisionDisability bool) *I
 	return i
 }
 
-func (i *IndividualBuilder) WithHearingDisabilityLevel(level api.DisabilityLevel) *IndividualBuilder {
+func (i *IndividualBuilder) WithHearingDisabilityLevel(level enumTypes.DisabilityLevel) *IndividualBuilder {
 	i.individual.HearingDisabilityLevel = level
 	return i
 }
@@ -259,7 +260,7 @@ func (i *IndividualBuilder) WithID(id string) *IndividualBuilder {
 	return i
 }
 
-func (i *IndividualBuilder) WithIdentificationType1(identificationType api.IdentificationType) *IndividualBuilder {
+func (i *IndividualBuilder) WithIdentificationType1(identificationType enumTypes.IdentificationType) *IndividualBuilder {
 	i.individual.IdentificationType1 = identificationType
 	return i
 }
@@ -274,7 +275,7 @@ func (i *IndividualBuilder) WithIdentificationNumber1(identificationNumber strin
 	return i
 }
 
-func (i *IndividualBuilder) WithIdentificationType2(identificationType api.IdentificationType) *IndividualBuilder {
+func (i *IndividualBuilder) WithIdentificationType2(identificationType enumTypes.IdentificationType) *IndividualBuilder {
 	i.individual.IdentificationType2 = identificationType
 	return i
 }
@@ -289,7 +290,7 @@ func (i *IndividualBuilder) WithIdentificationNumber2(identificationNumber strin
 	return i
 }
 
-func (i *IndividualBuilder) WithIdentificationType3(identificationType api.IdentificationType) *IndividualBuilder {
+func (i *IndividualBuilder) WithIdentificationType3(identificationType enumTypes.IdentificationType) *IndividualBuilder {
 	i.individual.IdentificationType3 = identificationType
 	return i
 }
@@ -304,7 +305,7 @@ func (i *IndividualBuilder) WithIdentificationNumber3(identificationNumber strin
 	return i
 }
 
-func (i *IndividualBuilder) WithEngagementContext(engagementContext string) *IndividualBuilder {
+func (i *IndividualBuilder) WithEngagementContext(engagementContext enumTypes.EngagementContext) *IndividualBuilder {
 	i.individual.EngagementContext = engagementContext
 	return i
 }
@@ -319,7 +320,7 @@ func (i *IndividualBuilder) WithIsMinor(isMinor bool) *IndividualBuilder {
 	return i
 }
 
-func (i *IndividualBuilder) WithMobilityDisabilityLevel(level api.DisabilityLevel) *IndividualBuilder {
+func (i *IndividualBuilder) WithMobilityDisabilityLevel(level enumTypes.DisabilityLevel) *IndividualBuilder {
 	i.individual.MobilityDisabilityLevel = level
 	return i
 }
@@ -364,7 +365,7 @@ func (i *IndividualBuilder) WithPhoneNumber3(phoneNumber string) *IndividualBuil
 	return i
 }
 
-func (i *IndividualBuilder) WithPreferredContactMethod(method api.ContactMethod) *IndividualBuilder {
+func (i *IndividualBuilder) WithPreferredContactMethod(method enumTypes.ContactMethod) *IndividualBuilder {
 	i.individual.PreferredContactMethod = method
 	return i
 }
@@ -399,7 +400,7 @@ func (i *IndividualBuilder) WithPwdComments(pwdComments string) *IndividualBuild
 	return i
 }
 
-func (i *IndividualBuilder) WithSelfCareDisabilityLevel(level api.DisabilityLevel) *IndividualBuilder {
+func (i *IndividualBuilder) WithSelfCareDisabilityLevel(level enumTypes.DisabilityLevel) *IndividualBuilder {
 	i.individual.SelfCareDisabilityLevel = level
 	return i
 }
@@ -424,7 +425,7 @@ func (i *IndividualBuilder) WithUpdatedAt(updatedAt time.Time) *IndividualBuilde
 	return i
 }
 
-func (i *IndividualBuilder) WithVisionDisabilityLevel(level api.DisabilityLevel) *IndividualBuilder {
+func (i *IndividualBuilder) WithVisionDisabilityLevel(level enumTypes.DisabilityLevel) *IndividualBuilder {
 	i.individual.VisionDisabilityLevel = level
 	return i
 }
@@ -485,7 +486,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "cognitiveDisabilityLevel (invalid)",
 			i:    ValidIndividual().WithCognitiveDisabilityLevel("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("cognitiveDisabilityLevel"), api.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath("cognitiveDisabilityLevel"), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
 		}, {
 			name: "collectionAdministrativeArea1 (too long)",
 			i:    ValidIndividual().WithCollectionAdministrativeArea1(bigstr(individualAdministrativeAreaMaxLength + 1)).Build(),
@@ -521,7 +522,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "communicationDisabilityLevel (invalid)",
 			i:    ValidIndividual().WithCommunicationDisabilityLevel("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("communicationDisabilityLevel"), api.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath("communicationDisabilityLevel"), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
 		}, {
 			name: "communityId (too long)",
 			i:    ValidIndividual().WithCommunityID(bigstr(individualCommunityIDMaxLength + 1)).Build(),
@@ -537,7 +538,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "displacementStatus (invalid)",
 			i:    ValidIndividual().WithDisplacementStatus("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(displacementStatusPath, api.DisplacementStatus("invalid"), allowedDisplacementStatusesStr)},
+			want: validation.ErrorList{validation.NotSupported(displacementStatusPath, enumTypes.DisplacementStatus("invalid"), allowedDisplacementStatusesStr)},
 		}, {
 			name: "email1 (too long)",
 			i:    ValidIndividual().WithEmail1(bigstr(individualEmailMaxLength + 1)).Build(),
@@ -609,11 +610,11 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "sex (invalid)",
 			i:    ValidIndividual().WithSex("bla").Build(),
-			want: validation.ErrorList{validation.NotSupported(sexPath, api.Sex("bla"), allowedSexesStr)},
+			want: validation.ErrorList{validation.NotSupported(sexPath, enumTypes.Sex("bla"), allowedSexesStr)},
 		}, {
 			name: "hearingDisabilityLevel (invalid)",
 			i:    ValidIndividual().WithHearingDisabilityLevel("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("hearingDisabilityLevel"), api.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath("hearingDisabilityLevel"), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
 		}, {
 			name: "householdId (too long)",
 			i:    ValidIndividual().WithHouseholdID(bigstr(individualHouseholdIDMaxLength + 1)).Build(),
@@ -655,8 +656,8 @@ func TestValidateIndividual(t *testing.T) {
 			i:    ValidIndividual().WithIdentificationNumber3(bigstr(individualIdentificationNumberMaxLength + 1)).Build(),
 			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("identificationNumber3"), bigstr(individualIdentificationNumberMaxLength+1), individualIdentificationNumberMaxLength)},
 		}, {
-			name: "engagementContext (too long)",
-			i:    ValidIndividual().WithEngagementContext(bigstr(individualEngagementContextMaxLength + 1)).Build(),
+			name: "engagementContext (invalid)",
+			i:    ValidIndividual().WithEngagementContext("invalid").Build(),
 			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("engagementContext"), bigstr(individualEngagementContextMaxLength+1), individualEngagementContextMaxLength)},
 		}, {
 			name: "internalId (too long)",
@@ -665,7 +666,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "mobilityDisabilityLevel (invalid)",
 			i:    ValidIndividual().WithMobilityDisabilityLevel("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("mobilityDisabilityLevel"), api.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath("mobilityDisabilityLevel"), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
 		}, {
 			name: "nationality1 (too long)",
 			i:    ValidIndividual().WithNationality1(bigstr(individualNationalityMaxLength + 1)).Build(),
@@ -705,7 +706,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "selfCareDisabilityLevel (invalid)",
 			i:    ValidIndividual().WithSelfCareDisabilityLevel("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("selfCareDisabilityLevel"), api.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath("selfCareDisabilityLevel"), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
 		}, {
 			name: "spokenLanguage1 (too long)",
 			i:    ValidIndividual().WithSpokenLanguage1(bigstr(individualSpokenLanguageMaxLength + 1)).Build(),
@@ -721,7 +722,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "visionDisabilityLevel (invalid)",
 			i:    ValidIndividual().WithVisionDisabilityLevel("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("visionDisabilityLevel"), api.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath("visionDisabilityLevel"), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
 		},
 	}
 	for _, tt := range tests {
@@ -752,7 +753,7 @@ func TestValidateIndividualList(t *testing.T) {
 			want: validation.ErrorList{
 				validation.NotSupported(
 					validation.NewPath("items[0].displacementStatus"),
-					api.DisplacementStatus("bla"),
+					enumTypes.DisplacementStatus("bla"),
 					allowedDisplacementStatusesStr)},
 		},
 	}

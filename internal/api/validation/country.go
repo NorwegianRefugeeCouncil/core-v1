@@ -1,17 +1,17 @@
 package validation
 
 import (
-	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/api/validation"
 	"regexp"
 )
 
-func ValidateCountry(country *api.Country) validation.ErrorList {
+func ValidateCountry(country *enumTypes.Country) validation.ErrorList {
 	return validateCountry(nil, country)
 }
 
-func ValidateCountryList(countryList *api.CountryList) validation.ErrorList {
+func ValidateCountryList(countryList *enumTypes.CountryList) validation.ErrorList {
 	allErrs := validation.ErrorList{}
 	itemsPath := validation.NewPath("items")
 	for i, country := range countryList.Items {
@@ -20,7 +20,7 @@ func ValidateCountryList(countryList *api.CountryList) validation.ErrorList {
 	return allErrs
 }
 
-func validateCountry(path *validation.Path, country *api.Country) validation.ErrorList {
+func validateCountry(path *validation.Path, country *enumTypes.Country) validation.ErrorList {
 	allErrs := validation.ErrorList{}
 	allErrs = append(allErrs, validateCountryName(country.Name, path.Child("name"))...)
 	allErrs = append(allErrs, validateCountryCode(country.Code, path.Child("code"))...)

@@ -1,4 +1,4 @@
-package api
+package enumTypes
 
 import "github.com/nrc-no/notcore/internal/containers"
 

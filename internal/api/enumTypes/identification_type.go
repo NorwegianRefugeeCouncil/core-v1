@@ -1,4 +1,4 @@
-package api
+package enumTypes
 
 import (
 	"encoding/json"
@@ -53,13 +53,23 @@ func ParseIdentificationType(str string) (IdentificationType, error) {
 	switch str {
 	case string(IdentificationTypePassport):
 		return IdentificationTypePassport, nil
+	case IdentificationTypePassport.String():
+		return IdentificationTypePassport, nil
 	case string(IdentificationTypeUNHCR):
+		return IdentificationTypeUNHCR, nil
+	case IdentificationTypeUNHCR.String():
 		return IdentificationTypeUNHCR, nil
 	case string(IdentificationTypeNational):
 		return IdentificationTypeNational, nil
+	case IdentificationTypeNational.String():
+		return IdentificationTypeNational, nil
 	case string(IdentificationTypeUnspecified):
 		return IdentificationTypeUnspecified, nil
+	case IdentificationTypeUnspecified.String():
+		return IdentificationTypeUnspecified, nil
 	case string(IdentificationTypeOther):
+		return IdentificationTypeOther, nil
+	case IdentificationTypeOther.String():
 		return IdentificationTypeOther, nil
 	default:
 		return "", fmt.Errorf("identification type: invalid type: \"%v\"", logutils.Escape(str))

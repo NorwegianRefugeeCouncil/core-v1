@@ -1,13 +1,13 @@
 package handlers
 
 import (
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"github.com/nrc-no/notcore/internal/containers"
 	"html/template"
 	"net/http"
 	"strings"
 
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"go.uber.org/zap"
@@ -31,7 +31,7 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 			ctx       = r.Context()
 			l         = logging.NewLogger(ctx)
 			err       error
-			country   = &api.Country{}
+			country   = &enumTypes.Country{}
 			countryID = mux.Vars(r)[pathParamCountryID]
 			isNew     = countryID == newId
 		)

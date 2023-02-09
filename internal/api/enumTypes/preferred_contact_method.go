@@ -1,4 +1,4 @@
-package api
+package enumTypes
 
 import (
 	"encoding/json"
@@ -53,15 +53,27 @@ func ParseContactMethod(str string) (ContactMethod, error) {
 	switch str {
 	case string(ContactMethodPhone):
 		return ContactMethodPhone, nil
+	case ContactMethodPhone.String():
+		return ContactMethodPhone, nil
 	case string(ContactMethodWhatsapp):
+		return ContactMethodWhatsapp, nil
+	case ContactMethodWhatsapp.String():
 		return ContactMethodWhatsapp, nil
 	case string(ContactMethodEmail):
 		return ContactMethodEmail, nil
+	case ContactMethodEmail.String():
+		return ContactMethodEmail, nil
 	case string(ContactMethodVisit):
+		return ContactMethodVisit, nil
+	case ContactMethodVisit.String():
 		return ContactMethodVisit, nil
 	case string(ContactMethodOther):
 		return ContactMethodOther, nil
+	case ContactMethodOther.String():
+		return ContactMethodOther, nil
 	case string(ContactMethodUnspecified):
+		return ContactMethodUnspecified, nil
+	case ContactMethodUnspecified.String():
 		return ContactMethodUnspecified, nil
 	default:
 		return "", fmt.Errorf("%s: invalid value \"%v\"", constants.FileColumnIndividualPreferredContactMethod, logutils.Escape(str))
