@@ -622,7 +622,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "identificationType1 (invalid)",
 			i:    ValidIndividual().WithIdentificationType1("invalid").Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("identificationType1"), bigstr(individualIdentificationTypeMaxLength+1), individualIdentificationTypeMaxLength)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath("identificationType1"), enumTypes.IdentificationType("invalid"), allowedIdentificationTypesStr)},
 		}, {
 			name: "identificationTypeExplanation1 (too long)",
 			i:    ValidIndividual().WithIdentificationTypeExplanation1(bigstr(maxTextLength + 1)).Build(),
@@ -634,7 +634,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "identificationType2 (invalid)",
 			i:    ValidIndividual().WithIdentificationType2("invalid").Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("identificationType2"), bigstr(individualIdentificationTypeMaxLength+1), individualIdentificationTypeMaxLength)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath("identificationType2"), enumTypes.IdentificationType("invalid"), allowedIdentificationTypesStr)},
 		}, {
 			name: "identificationTypeExplanation2 (too long)",
 			i:    ValidIndividual().WithIdentificationTypeExplanation2(bigstr(maxTextLength + 1)).Build(),
@@ -646,7 +646,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "identificationType3 (invalid)",
 			i:    ValidIndividual().WithIdentificationType3("invalid").Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("identificationType3"), bigstr(individualIdentificationTypeMaxLength+1), individualIdentificationTypeMaxLength)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath("identificationType3"), enumTypes.IdentificationType("invalid"), allowedIdentificationTypesStr)},
 		}, {
 			name: "identificationTypeExplanation3 (too long)",
 			i:    ValidIndividual().WithIdentificationTypeExplanation3(bigstr(maxTextLength + 1)).Build(),
@@ -658,7 +658,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "engagementContext (invalid)",
 			i:    ValidIndividual().WithEngagementContext("invalid").Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("engagementContext"), bigstr(individualEngagementContextMaxLength+1), individualEngagementContextMaxLength)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath("engagementContext"), enumTypes.EngagementContext("invalid"), allowedEngagementContextsStr)},
 		}, {
 			name: "internalId (too long)",
 			i:    ValidIndividual().WithInternalID(bigstr(individualInternalIDMaxLength + 1)).Build(),
@@ -690,7 +690,7 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "preferredContactMethod (invalid)",
 			i:    ValidIndividual().WithPreferredContactMethod("invalid").Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("preferredContactMethod"), bigstr(individualPreferredContactMethodMaxLength+1), individualPreferredContactMethodMaxLength)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath("preferredContactMethod"), enumTypes.ContactMethod("invalid"), allowedContactMethodsStr)},
 		}, {
 			name: "preferredContactMethodComments (too long)",
 			i:    ValidIndividual().WithPreferredContactMethodComments(bigstr(maxTextLength + 1)).Build(),

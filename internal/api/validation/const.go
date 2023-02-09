@@ -13,6 +13,9 @@ var allowedSexesStr []string
 var allowedIdentificationTypes = enumTypes.AllIdentificationTypes()
 var allowedIdentificationTypesStr []string
 
+var allowedEngagementContexts = enumTypes.AllEngagementContexts()
+var allowedEngagementContextsStr []string
+
 var allowedContactMethods = enumTypes.AllContactMethods()
 var allowedContactMethodsStr []string
 

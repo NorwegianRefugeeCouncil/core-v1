@@ -380,11 +380,13 @@ func validateIndividualIdentificationNumber(number string, path *validation.Path
 }
 
 func validateIndividualEngagementContext(context enumTypes.EngagementContext, path *validation.Path) validation.ErrorList {
-	allErrs := validation.ErrorList{}
-	if len(context) > individualEngagementContextMaxLength {
-		allErrs = append(allErrs, validation.TooLongMaxLength(path, context, individualEngagementContextMaxLength))
+	if context == enumTypes.EngagementContextUnspecified {
+		return nil
 	}
-	return allErrs
+	if allowedEngagementContexts.Contains(context) {
+		return validation.ErrorList{}
+	}
+	return validation.ErrorList{validation.NotSupported(path, context, allowedEngagementContextsStr)}
 }
 
 func validateIndividualInternalID(internalID string, path *validation.Path) validation.ErrorList {
