@@ -353,12 +353,14 @@ func validateIndividualHouseholdID(householdID string, path *validation.Path) va
 	return allErrs
 }
 
-func validateIndividualIdentificationType(identificationType string, path *validation.Path) validation.ErrorList {
-	allErrs := validation.ErrorList{}
-	if len(identificationType) > individualIdentificationTypeMaxLength {
-		allErrs = append(allErrs, validation.TooLongMaxLength(path, identificationType, individualIdentificationTypeMaxLength))
+func validateIndividualIdentificationType(identificationType api.IdentificationType, path *validation.Path) validation.ErrorList {
+	if identificationType == api.IdentificationTypeUnspecified {
+		return nil
 	}
-	return allErrs
+	if allowedIdentificationTypes.Contains(identificationType) {
+		return validation.ErrorList{}
+	}
+	return validation.ErrorList{validation.NotSupported(path, identificationType, allowedIdentificationTypesStr)}
 }
 
 func validateIndividualIdentificationTypeExplanation(explanation string, path *validation.Path) validation.ErrorList {
@@ -376,7 +378,7 @@ func validateIndividualIdentificationNumber(number string, path *validation.Path
 	return allErrs
 }
 
-func validateIndividualEngagementContext(context string, path *validation.Path) validation.ErrorList {
+func validateIndividualEngagementContext(context api.EngagementContext, path *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
 	if len(context) > individualEngagementContextMaxLength {
 		allErrs = append(allErrs, validation.TooLongMaxLength(path, context, individualEngagementContextMaxLength))
@@ -408,12 +410,14 @@ func validateIndividualPhoneNumber(phoneNumber string, path *validation.Path) va
 	return allErrs
 }
 
-func validateIndividualPreferredContactMethod(preferredContactMethod string, path *validation.Path) validation.ErrorList {
-	allErrs := validation.ErrorList{}
-	if len(preferredContactMethod) > individualPreferredContactMethodMaxLength {
-		allErrs = append(allErrs, validation.TooLongMaxLength(path, preferredContactMethod, individualPreferredContactMethodMaxLength))
+func validateIndividualPreferredContactMethod(preferredContactMethod api.ContactMethod, path *validation.Path) validation.ErrorList {
+	if preferredContactMethod == api.ContactMethodUnspecified {
+		return nil
 	}
-	return allErrs
+	if allowedContactMethods.Contains(preferredContactMethod) {
+		return validation.ErrorList{}
+	}
+	return validation.ErrorList{validation.NotSupported(path, preferredContactMethod, allowedContactMethodsStr)}
 }
 
 func validateIndividualPreferredContactMethodComments(comments string, path *validation.Path) validation.ErrorList {
@@ -449,6 +453,9 @@ func validateIndividualSpokenLanguage(language string, path *validation.Path) va
 }
 
 func validateIndividualServiceCC(cc api.ServiceCC, path *validation.Path) validation.ErrorList {
+	if cc == api.ServiceCCNone {
+		return nil
+	}
 	if allowedServiceCCs.Contains(cc) {
 		return validation.ErrorList{}
 	}

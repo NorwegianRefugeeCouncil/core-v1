@@ -21,7 +21,7 @@ const (
 	EngagementContextUnspecified EngagementContext = ""
 )
 
-func AllEngagementContextes() containers.Set[EngagementContext] {
+func AllEngagementContexts() containers.Set[EngagementContext] {
 	return containers.NewSet[EngagementContext](
 		EngagementContextHouseVisit,
 		EngagementContextFieldActivity,

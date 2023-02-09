@@ -259,7 +259,7 @@ func (i *IndividualBuilder) WithID(id string) *IndividualBuilder {
 	return i
 }
 
-func (i *IndividualBuilder) WithIdentificationType1(identificationType string) *IndividualBuilder {
+func (i *IndividualBuilder) WithIdentificationType1(identificationType api.IdentificationType) *IndividualBuilder {
 	i.individual.IdentificationType1 = identificationType
 	return i
 }
@@ -274,7 +274,7 @@ func (i *IndividualBuilder) WithIdentificationNumber1(identificationNumber strin
 	return i
 }
 
-func (i *IndividualBuilder) WithIdentificationType2(identificationType string) *IndividualBuilder {
+func (i *IndividualBuilder) WithIdentificationType2(identificationType api.IdentificationType) *IndividualBuilder {
 	i.individual.IdentificationType2 = identificationType
 	return i
 }
@@ -289,7 +289,7 @@ func (i *IndividualBuilder) WithIdentificationNumber2(identificationNumber strin
 	return i
 }
 
-func (i *IndividualBuilder) WithIdentificationType3(identificationType string) *IndividualBuilder {
+func (i *IndividualBuilder) WithIdentificationType3(identificationType api.IdentificationType) *IndividualBuilder {
 	i.individual.IdentificationType3 = identificationType
 	return i
 }
@@ -364,7 +364,7 @@ func (i *IndividualBuilder) WithPhoneNumber3(phoneNumber string) *IndividualBuil
 	return i
 }
 
-func (i *IndividualBuilder) WithPreferredContactMethod(method string) *IndividualBuilder {
+func (i *IndividualBuilder) WithPreferredContactMethod(method api.ContactMethod) *IndividualBuilder {
 	i.individual.PreferredContactMethod = method
 	return i
 }
@@ -619,8 +619,8 @@ func TestValidateIndividual(t *testing.T) {
 			i:    ValidIndividual().WithHouseholdID(bigstr(individualHouseholdIDMaxLength + 1)).Build(),
 			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("householdId"), bigstr(individualHouseholdIDMaxLength+1), individualHouseholdIDMaxLength)},
 		}, {
-			name: "identificationType1 (too long)",
-			i:    ValidIndividual().WithIdentificationType1(bigstr(individualIdentificationTypeMaxLength + 1)).Build(),
+			name: "identificationType1 (invalid)",
+			i:    ValidIndividual().WithIdentificationType1("invalid").Build(),
 			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("identificationType1"), bigstr(individualIdentificationTypeMaxLength+1), individualIdentificationTypeMaxLength)},
 		}, {
 			name: "identificationTypeExplanation1 (too long)",
@@ -631,8 +631,8 @@ func TestValidateIndividual(t *testing.T) {
 			i:    ValidIndividual().WithIdentificationNumber1(bigstr(individualIdentificationNumberMaxLength + 1)).Build(),
 			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("identificationNumber1"), bigstr(individualIdentificationNumberMaxLength+1), individualIdentificationNumberMaxLength)},
 		}, {
-			name: "identificationType2 (too long)",
-			i:    ValidIndividual().WithIdentificationType2(bigstr(individualIdentificationTypeMaxLength + 1)).Build(),
+			name: "identificationType2 (invalid)",
+			i:    ValidIndividual().WithIdentificationType2("invalid").Build(),
 			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("identificationType2"), bigstr(individualIdentificationTypeMaxLength+1), individualIdentificationTypeMaxLength)},
 		}, {
 			name: "identificationTypeExplanation2 (too long)",
@@ -643,8 +643,8 @@ func TestValidateIndividual(t *testing.T) {
 			i:    ValidIndividual().WithIdentificationNumber2(bigstr(individualIdentificationNumberMaxLength + 1)).Build(),
 			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("identificationNumber2"), bigstr(individualIdentificationNumberMaxLength+1), individualIdentificationNumberMaxLength)},
 		}, {
-			name: "identificationType3 (too long)",
-			i:    ValidIndividual().WithIdentificationType3(bigstr(individualIdentificationTypeMaxLength + 1)).Build(),
+			name: "identificationType3 (invalid)",
+			i:    ValidIndividual().WithIdentificationType3("invalid").Build(),
 			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("identificationType3"), bigstr(individualIdentificationTypeMaxLength+1), individualIdentificationTypeMaxLength)},
 		}, {
 			name: "identificationTypeExplanation3 (too long)",
@@ -687,8 +687,8 @@ func TestValidateIndividual(t *testing.T) {
 			i:    ValidIndividual().WithPhoneNumber3(bigstr(individualPhoneNumberMaxLength + 1)).Build(),
 			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("phoneNumber3"), bigstr(individualPhoneNumberMaxLength+1), individualPhoneNumberMaxLength)},
 		}, {
-			name: "preferredContactMethod (too long)",
-			i:    ValidIndividual().WithPreferredContactMethod(bigstr(individualPreferredContactMethodMaxLength + 1)).Build(),
+			name: "preferredContactMethod (invalid)",
+			i:    ValidIndividual().WithPreferredContactMethod("invalid").Build(),
 			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("preferredContactMethod"), bigstr(individualPreferredContactMethodMaxLength+1), individualPreferredContactMethodMaxLength)},
 		}, {
 			name: "preferredContactMethodComments (too long)",

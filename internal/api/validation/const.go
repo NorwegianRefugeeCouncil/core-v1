@@ -8,6 +8,12 @@ var allowedSexes = api.AllSexes()
 var allowedDisplacementStatusesStr []string
 var allowedSexesStr []string
 
+var allowedIdentificationTypes = api.AllIdentificationTypes()
+var allowedIdentificationTypesStr []string
+
+var allowedContactMethods = api.AllContactMethods()
+var allowedContactMethodsStr []string
+
 var allowedDisabilityLevels = api.AllDisabilityLevels()
 var allowedDisabilityLevelsStr []string
 

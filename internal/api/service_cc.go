@@ -24,7 +24,6 @@ const (
 
 func AllServiceCCs() containers.Set[ServiceCC] {
 	return containers.NewSet[ServiceCC](
-		ServiceCCNone,
 		ServiceCCShelter,
 		ServiceCCWash,
 		ServiceCCProtection,

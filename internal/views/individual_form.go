@@ -97,7 +97,7 @@ func (f *IndividualForm) build() error {
 		f.buildEmailAddress2,
 		f.buildEmailAddress3,
 		f.buildAddress,
-		f.buildPreferredMeansOfContact,
+		f.buildPreferredContactMethod,
 		f.buildContactInstructions,
 		f.buildHasConsentedToRgpd,
 		f.buildHasConsentedToReferral,
@@ -324,14 +324,9 @@ func (f *IndividualForm) buildPrefersToRemainAnonymous() error {
 
 func (f *IndividualForm) buildSex() error {
 	sexOptions := getSexOptions()
-	if f.isNew() {
-		sexOptions = append([]forms.SelectInputFieldOption{
-			{
-				Value: "",
-				Label: "",
-			},
-		}, sexOptions...)
-	}
+	sexOptions = append([]forms.SelectInputFieldOption{
+		{Value: "", Label: "Select a value"},
+	}, sexOptions...)
 	return buildField(&forms.SelectInputField{
 		Name:        "sex",
 		DisplayName: "Sex",
@@ -379,10 +374,13 @@ func (f *IndividualForm) buildNationality2() error {
 }
 
 func (f *IndividualForm) buildIdentification1Type() error {
+	options := getIdentificationTypeOptions()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "identificationType1",
 		DisplayName: "Identification Type 1",
-		Options:     getIdentificationTypeOptions(),
+		Options:     options,
+		Codec:       &identificationTypeCodec{},
 	}, f.personalInfoSection, f.individual.IdentificationType1)
 }
 
@@ -401,10 +399,13 @@ func (f *IndividualForm) buildIdentification1Number() error {
 }
 
 func (f *IndividualForm) buildIdentification2Type() error {
+	options := getIdentificationTypeOptions()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "identificationType2",
 		DisplayName: "Identification Type 2",
-		Options:     getIdentificationTypeOptions(),
+		Options:     options,
+		Codec:       &identificationTypeCodec{},
 	}, f.personalInfoSection, f.individual.IdentificationType2)
 }
 
@@ -422,10 +423,13 @@ func (f *IndividualForm) buildIdentification2Number() error {
 	}, f.personalInfoSection, f.individual.IdentificationNumber2)
 }
 func (f *IndividualForm) buildIdentification3Type() error {
+	options := getIdentificationTypeOptions()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "identificationType3",
 		DisplayName: "Identification Type 3",
-		Options:     getIdentificationTypeOptions(),
+		Options:     options,
+		Codec:       &identificationTypeCodec{},
 	}, f.personalInfoSection, f.individual.IdentificationType3)
 }
 
@@ -587,23 +591,14 @@ func (f *IndividualForm) buildAddress() error {
 	}, f.contactInfoSection, f.individual.Address)
 }
 
-func (f *IndividualForm) buildPreferredMeansOfContact() error {
-	options := []forms.SelectInputFieldOption{
-		{Label: "Phone", Value: "phone"},
-		{Label: "WhatsApp", Value: "whatsapp"},
-		{Label: "Email", Value: "email"},
-		{Label: "Visit", Value: "visit"},
-		{Label: "Other", Value: "other"},
-	}
-	if f.isNew() {
-		options = append([]forms.SelectInputFieldOption{
-			{Label: "Select Preferred Means of Contact", Value: ""},
-		}, options...)
-	}
+func (f *IndividualForm) buildPreferredContactMethod() error {
+	options := getPreferredContactMethodOptions()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "preferredContactMethod",
 		DisplayName: "Preferred contact method",
 		Options:     options,
+		Codec:       &preferredContactMethodCodec{},
 	}, f.contactInfoSection, f.individual.PreferredContactMethod)
 }
 
@@ -637,9 +632,7 @@ func (f *IndividualForm) buildPresentsProtectionConcerns() error {
 
 func (f *IndividualForm) buildDisplacementStatus() error {
 	options := getDisplacementStatusOptions()
-	if f.isNew() {
-		options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
-	}
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "displacementStatus",
 		DisplayName: "Displacement Status",
@@ -663,10 +656,12 @@ func (f *IndividualForm) buildHasVisionDisability() error {
 }
 
 func (f *IndividualForm) buildVisionDisabilityLevel() error {
+	options := getDisabilityLevels()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "visionDisabilityLevel",
 		DisplayName: "Vision disability",
-		Options:     getDisabilityLevels(),
+		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.VisionDisabilityLevel)
 }
@@ -693,10 +688,12 @@ func (f *IndividualForm) buildHasHearingDisability() error {
 }
 
 func (f *IndividualForm) buildHearingDisabilityLevel() error {
+	options := getDisabilityLevels()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "hearingDisabilityLevel",
 		DisplayName: "Hearing disability level",
-		Options:     getDisabilityLevels(),
+		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.HearingDisabilityLevel)
 }
@@ -709,10 +706,12 @@ func (f *IndividualForm) buildHasMobilityDisability() error {
 }
 
 func (f *IndividualForm) buildMobilityDisabilityLevel() error {
+	options := getDisabilityLevels()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "mobilityDisabilityLevel",
 		DisplayName: "Mobility disability level",
-		Options:     getDisabilityLevels(),
+		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.MobilityDisabilityLevel)
 }
@@ -725,10 +724,12 @@ func (f *IndividualForm) buildHasCognitiveDisability() error {
 }
 
 func (f *IndividualForm) buildCognitiveDisabilityLevel() error {
+	options := getDisabilityLevels()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "cognitiveDisabilityLevel",
 		DisplayName: "Cognitive disability level",
-		Options:     getDisabilityLevels(),
+		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.CognitiveDisabilityLevel)
 }
@@ -741,10 +742,12 @@ func (f *IndividualForm) buildHasSelfCareDisability() error {
 }
 
 func (f *IndividualForm) buildSelfCareDisabilityLevel() error {
+	options := getDisabilityLevels()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "selfCareDisabilityLevel",
 		DisplayName: "SelfCare disability level",
-		Options:     getDisabilityLevels(),
+		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.SelfCareDisabilityLevel)
 }
@@ -757,27 +760,24 @@ func (f *IndividualForm) buildHasCommunicationDisability() error {
 }
 
 func (f *IndividualForm) buildCommunicationDisabilityLevel() error {
+	options := getDisabilityLevels()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "communicationDisabilityLevel",
 		DisplayName: "Communication disability level",
-		Options:     getDisabilityLevels(),
+		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.CommunicationDisabilityLevel)
 }
 
 func (f *IndividualForm) buildEngagementContext() error {
+	options := getEngagementContextOptions()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "engagementContext",
 		DisplayName: "Context of Engagement",
-		Options: []forms.SelectInputFieldOption{
-			{Label: "", Value: ""},
-			{Label: "House Visit", Value: "houseVisit"},
-			{Label: "Field Activity", Value: "fieldActivity"},
-			{Label: "In-Office", Value: "inOffice"},
-			{Label: "Remote Channels", Value: "remoteChannels"},
-			{Label: "Referred", Value: "referred"},
-			{Label: "Other", Value: "other"},
-		},
+		Options:     options,
+		Codec:       &engagementContextCodec{},
 	}, f.dataCollectionSection, f.individual.EngagementContext)
 }
 
@@ -895,9 +895,7 @@ func (f *IndividualForm) buildServiceCC(idx int) func() error {
 		}
 
 		options := getServiceCCOptions()
-		if f.isNew() {
-			options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
-		}
+		options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 		return buildField(&forms.SelectInputField{
 			Name:        fmt.Sprintf("serviceCC%d", idx),
 			DisplayName: fmt.Sprintf("Service %d CC", idx),
@@ -1003,22 +1001,36 @@ func buildField(field forms.InputField, section *forms.FormSection, value interf
 }
 
 func getDisabilityLevels() []forms.SelectInputFieldOption {
-	return []forms.SelectInputFieldOption{
-		{Value: "0", Label: "No disability"},
-		{Value: "1", Label: "Mild"},
-		{Value: "2", Label: "Moderate"},
-		{Value: "3", Label: "Severe"},
+	var ret []forms.SelectInputFieldOption
+	for _, g := range api.AllDisabilityLevels().Items() {
+		ret = append(ret, forms.SelectInputFieldOption{
+			Label: g.String(),
+			Value: string(g),
+		})
 	}
+	return ret
 }
 
 func getIdentificationTypeOptions() []forms.SelectInputFieldOption {
-	return []forms.SelectInputFieldOption{
-		{Label: "", Value: ""},
-		{Label: "Passport", Value: "passport"},
-		{Label: "UNHCR ID", Value: "unhcr_id"},
-		{Label: "National ID", Value: "national_id"},
-		{Label: "Other", Value: "other"},
+	var ret []forms.SelectInputFieldOption
+	for _, g := range api.AllIdentificationTypes().Items() {
+		ret = append(ret, forms.SelectInputFieldOption{
+			Label: g.String(),
+			Value: string(g),
+		})
 	}
+	return ret
+}
+
+func getEngagementContextOptions() []forms.SelectInputFieldOption {
+	var ret []forms.SelectInputFieldOption
+	for _, g := range api.AllEngagementContexts().Items() {
+		ret = append(ret, forms.SelectInputFieldOption{
+			Label: g.String(),
+			Value: string(g),
+		})
+	}
+	return ret
 }
 
 func getSexOptions() []forms.SelectInputFieldOption {
@@ -1043,6 +1055,17 @@ func getDisplacementStatusOptions() []forms.SelectInputFieldOption {
 	return ret
 }
 
+func getPreferredContactMethodOptions() []forms.SelectInputFieldOption {
+	var ret []forms.SelectInputFieldOption
+	for _, s := range api.AllContactMethods().Items() {
+		ret = append(ret, forms.SelectInputFieldOption{
+			Label: s.String(),
+			Value: string(s),
+		})
+	}
+	return ret
+}
+
 func getServiceCCOptions() []forms.SelectInputFieldOption {
 	var ret []forms.SelectInputFieldOption
 	for _, s := range api.AllServiceCCs().Items() {
@@ -1058,7 +1081,7 @@ func buildCountryOptions() []forms.SelectInputFieldOption {
 	var opts = make([]forms.SelectInputFieldOption, 0, len(constants.Countries))
 	opts = append(opts, forms.SelectInputFieldOption{
 		Value: "",
-		Label: "",
+		Label: "Select a value",
 	})
 	for _, country := range constants.Countries {
 		opts = append(opts, forms.SelectInputFieldOption{
@@ -1073,7 +1096,7 @@ func buildLanguageOptions() []forms.SelectInputFieldOption {
 	var opts = make([]forms.SelectInputFieldOption, 0, len(constants.Languages))
 	opts = append(opts, forms.SelectInputFieldOption{
 		Value: "",
-		Label: "",
+		Label: "Select a value",
 	})
 	for _, lang := range constants.Languages {
 		opts = append(opts, forms.SelectInputFieldOption{
@@ -1134,6 +1157,47 @@ func (d *displacementStatusCodec) Decode(v string) (interface{}, error) {
 		return api.DisplacementStatusUnspecified, nil
 	default:
 		return nil, fmt.Errorf("invalid displacement status: %v", v)
+	}
+}
+
+type identificationTypeCodec struct{}
+
+func (d *identificationTypeCodec) Encode(v interface{}) (string, error) {
+	switch v.(type) {
+	case api.IdentificationType:
+		switch v.(api.IdentificationType) {
+		case api.IdentificationTypeNational:
+			return string(api.IdentificationTypeNational), nil
+		case api.IdentificationTypePassport:
+			return string(api.IdentificationTypePassport), nil
+		case api.IdentificationTypeUNHCR:
+			return string(api.IdentificationTypeUNHCR), nil
+		case api.IdentificationTypeOther:
+			return string(api.IdentificationTypeOther), nil
+		case api.IdentificationTypeUnspecified:
+			return string(api.IdentificationTypeUnspecified), nil
+		default:
+			return "", fmt.Errorf("invalid identificationType: %v", v)
+		}
+	default:
+		return "", fmt.Errorf("invalid identificationType type: %T", v)
+	}
+}
+
+func (d *identificationTypeCodec) Decode(v string) (interface{}, error) {
+	switch v {
+	case string(api.IdentificationTypeNational):
+		return api.IdentificationTypeNational, nil
+	case string(api.IdentificationTypeUNHCR):
+		return api.IdentificationTypeUNHCR, nil
+	case string(api.IdentificationTypePassport):
+		return api.IdentificationTypePassport, nil
+	case string(api.IdentificationTypeOther):
+		return api.IdentificationTypeOther, nil
+	case string(api.IdentificationTypeUnspecified):
+		return api.IdentificationTypeUnspecified, nil
+	default:
+		return nil, fmt.Errorf("invalid identificationType: %v", v)
 	}
 }
 
@@ -1201,15 +1265,15 @@ func (d disabilityLevelCodec) Encode(value interface{}) (string, error) {
 	case api.DisabilityLevel:
 		switch v {
 		case api.DisabilityLevelNone:
-			return "0", nil
+			return string(api.DisabilityLevelNone), nil
 		case api.DisabilityLevelMild:
-			return "1", nil
+			return string(api.DisabilityLevelMild), nil
 		case api.DisabilityLevelModerate:
-			return "2", nil
+			return string(api.DisabilityLevelModerate), nil
 		case api.DisabilityLevelSevere:
-			return "3", nil
+			return string(api.DisabilityLevelSevere), nil
 		case api.DisabilityLevelUnspecified:
-			return "", nil
+			return string(api.DisabilityLevelUnspecified), nil
 		default:
 			return "", fmt.Errorf("unknown disability level: %v", v)
 		}
@@ -1220,22 +1284,118 @@ func (d disabilityLevelCodec) Encode(value interface{}) (string, error) {
 
 func (d disabilityLevelCodec) Decode(value string) (interface{}, error) {
 	switch value {
-	case "0":
+	case string(api.DisabilityLevelNone):
 		return api.DisabilityLevelNone, nil
-	case "1":
+	case string(api.DisabilityLevelMild):
 		return api.DisabilityLevelMild, nil
-	case "2":
+	case string(api.DisabilityLevelModerate):
 		return api.DisabilityLevelModerate, nil
-	case "3":
+	case string(api.DisabilityLevelSevere):
 		return api.DisabilityLevelSevere, nil
-	case "":
+	case string(api.DisabilityLevelUnspecified):
 		return api.DisabilityLevelUnspecified, nil
 	default:
 		return nil, fmt.Errorf("unknown disability level: %v", value)
 	}
 }
 
+type engagementContextCodec struct{}
+
+func (d engagementContextCodec) Encode(value interface{}) (string, error) {
+	switch v := value.(type) {
+	case api.EngagementContext:
+		switch v {
+		case api.EngagementContextFieldActivity:
+			return string(api.EngagementContextFieldActivity), nil
+		case api.EngagementContextInOffice:
+			return string(api.EngagementContextInOffice), nil
+		case api.EngagementContextHouseVisit:
+			return string(api.EngagementContextHouseVisit), nil
+		case api.EngagementContextReferred:
+			return string(api.EngagementContextReferred), nil
+		case api.EngagementContextRemoteChannels:
+			return string(api.EngagementContextRemoteChannels), nil
+		case api.EngagementContextOther:
+			return string(api.EngagementContextOther), nil
+		case api.EngagementContextUnspecified:
+			return string(api.EngagementContextUnspecified), nil
+		default:
+			return "", fmt.Errorf("unknown engagement context: %v", v)
+		}
+	default:
+		return "", fmt.Errorf("invalid type %T", value)
+	}
+}
+
+func (d engagementContextCodec) Decode(value string) (interface{}, error) {
+	switch value {
+	case string(api.EngagementContextFieldActivity):
+		return api.EngagementContextFieldActivity, nil
+	case string(api.EngagementContextInOffice):
+		return api.EngagementContextInOffice, nil
+	case string(api.EngagementContextHouseVisit):
+		return api.EngagementContextHouseVisit, nil
+	case string(api.EngagementContextReferred):
+		return api.EngagementContextReferred, nil
+	case string(api.EngagementContextRemoteChannels):
+		return api.EngagementContextRemoteChannels, nil
+	case string(api.EngagementContextOther):
+		return api.EngagementContextOther, nil
+	case string(api.EngagementContextUnspecified):
+		return api.EngagementContextUnspecified, nil
+	default:
+		return nil, fmt.Errorf("unknown engagement context: %v", value)
+	}
+}
+
 var _ forms.Codec = &disabilityLevelCodec{}
+
+type preferredContactMethodCodec struct{}
+
+func (d preferredContactMethodCodec) Encode(value interface{}) (string, error) {
+	switch v := value.(type) {
+	case api.ContactMethod:
+		switch v {
+		case api.ContactMethodPhone:
+			return string(api.ContactMethodPhone), nil
+		case api.ContactMethodWhatsapp:
+			return string(api.ContactMethodWhatsapp), nil
+		case api.ContactMethodEmail:
+			return string(api.ContactMethodEmail), nil
+		case api.ContactMethodVisit:
+			return string(api.ContactMethodVisit), nil
+		case api.ContactMethodOther:
+			return string(api.ContactMethodOther), nil
+		case api.ContactMethodUnspecified:
+			return string(api.ContactMethodUnspecified), nil
+		default:
+			return "", fmt.Errorf("unknown contact method: %v", v)
+		}
+	default:
+		return "", fmt.Errorf("invalid type %T", value)
+	}
+}
+
+func (d preferredContactMethodCodec) Decode(value string) (interface{}, error) {
+	switch value {
+	case string(api.ContactMethodPhone):
+		return api.ContactMethodPhone, nil
+	case string(api.ContactMethodWhatsapp):
+		return api.ContactMethodWhatsapp, nil
+	case string(api.ContactMethodEmail):
+		return api.ContactMethodEmail, nil
+	case string(api.ContactMethodVisit):
+		return api.ContactMethodVisit, nil
+	case string(api.ContactMethodOther):
+		return api.ContactMethodOther, nil
+	case string(api.ContactMethodUnspecified):
+		return api.ContactMethodUnspecified, nil
+	default:
+		return nil, fmt.Errorf("unknown contact method: %v", value)
+	}
+}
+
+var _ forms.Codec = &preferredContactMethodCodec{}
 
 type sexCodec struct{}
 

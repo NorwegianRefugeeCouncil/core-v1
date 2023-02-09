@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/nrc-no/notcore/internal/constants"
 
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/logutils"
@@ -58,7 +59,7 @@ func ParseSex(str string) (Sex, error) {
 	case string(SexUnspecified):
 		return SexUnspecified, nil
 	default:
-		return "", fmt.Errorf("unknown sex type: %v", logutils.Escape(str))
+		return "", fmt.Errorf("unknown value for %s: %v", constants.FileColumnIndividualSex, logutils.Escape(str))
 	}
 }
 

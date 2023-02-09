@@ -80,7 +80,7 @@ func ParseDisplacementStatus(str string) (DisplacementStatus, error) {
 	case string(DisplacementStatusOther):
 		return DisplacementStatusOther, nil
 	default:
-		return "", fmt.Errorf("unknown displacement status type: \"%v\"", logutils.Escape(str))
+		return "", fmt.Errorf("displacement status type: invalid type: \"%v\"", logutils.Escape(str))
 	}
 }
 

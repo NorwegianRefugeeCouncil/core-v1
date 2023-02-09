@@ -113,28 +113,28 @@ type Individual struct {
 	// ID is the ID of the individual
 	ID string `json:"id" db:"id"`
 	// IdentificationType1 is the type of primary identification of the individual
-	IdentificationType1 string `json:"identificationType1" db:"identification_type_1"`
+	IdentificationType1 IdentificationType `json:"identificationType1" db:"identification_type_1"`
 	// IdentificationTypeExplanation1 is the explanation of the primary identification type of the individual
 	// when the primary identification type is "other"
 	IdentificationTypeExplanation1 string `json:"identificationTypeExplanation1" db:"identification_type_explanation_1"`
 	// IdentificationNumber1 is the primary identification number of the individual
 	IdentificationNumber1 string `json:"identificationNumber1" db:"identification_number_1"`
 	// IdentificationType2 is the type of secondary identification of the individual
-	IdentificationType2 string `json:"identificationType2" db:"identification_type_2"`
+	IdentificationType2 IdentificationType `json:"identificationType2" db:"identification_type_2"`
 	// IdentificationTypeExplanation2 is the explanation of the secondary identification type of the individual
 	// when the secondary identification type is "other"
 	IdentificationTypeExplanation2 string `json:"identificationTypeExplanation2" db:"identification_type_explanation_2"`
 	// IdentificationNumber2 is the secondary identification number of the individual
 	IdentificationNumber2 string `json:"identificationNumber2" db:"identification_number_2"`
 	// IdentificationType3 is the type of tertiary identification of the individual
-	IdentificationType3 string `json:"identificationType3" db:"identification_type_3"`
+	IdentificationType3 IdentificationType `json:"identificationType3" db:"identification_type_3"`
 	// IdentificationTypeExplanation3 is the explanation of the tertiary identification type of the individual
 	// when the tertiary identification type is "other"
 	IdentificationTypeExplanation3 string `json:"identificationTypeExplanation3" db:"identification_type_explanation_3"`
 	// IdentificationNumber3 is the tertiary identification number of the individual
 	IdentificationNumber3 string `json:"identificationNumber3" db:"identification_number_3"`
 	// EngagementContext is the context of the identification of the individual
-	EngagementContext string `json:"engagementContext" db:"engagement_context"`
+	EngagementContext EngagementContext `json:"engagementContext" db:"engagement_context"`
 	// InternalID is the internal ID of the individual. This is used to link individuals across different
 	// systems.
 	InternalID string `json:"internalId" db:"internal_id"`
@@ -167,7 +167,7 @@ type Individual struct {
 	// PhoneNumber3 is the phone number 3 of the individual
 	PhoneNumber3 string `json:"phoneNumber3" db:"phone_number_3"`
 	// PreferredContactMethod is the preferred contact method of the individual
-	PreferredContactMethod string `json:"preferredContactMethod" db:"preferred_contact_method"`
+	PreferredContactMethod ContactMethod `json:"preferredContactMethod" db:"preferred_contact_method"`
 	// PreferredContactMethodComments is the comments on the preferred contact method of the individual
 	PreferredContactMethodComments string `json:"preferredContactMethodComments" db:"preferred_contact_method_comments"`
 	// PreferredName is the preferred name of the individual
@@ -504,13 +504,13 @@ func (i *Individual) Normalize() {
 	i.MothersName = trimString(i.MothersName)
 	i.HouseholdID = trimString(i.HouseholdID)
 	i.ID = trimString(i.ID)
-	i.EngagementContext = trimString(i.EngagementContext)
+	i.EngagementContext = EngagementContext(trimString(string(i.EngagementContext)))
 	i.IdentificationNumber1 = trimString(i.IdentificationNumber1)
 	i.IdentificationNumber2 = trimString(i.IdentificationNumber2)
 	i.IdentificationNumber3 = trimString(i.IdentificationNumber3)
-	i.IdentificationType1 = trimString(i.IdentificationType1)
-	i.IdentificationType2 = trimString(i.IdentificationType2)
-	i.IdentificationType3 = trimString(i.IdentificationType3)
+	i.IdentificationType1 = IdentificationType(trimString(string(i.IdentificationType1)))
+	i.IdentificationType2 = IdentificationType(trimString(string(i.IdentificationType2)))
+	i.IdentificationType3 = IdentificationType(trimString(string(i.IdentificationType3)))
 	i.IdentificationTypeExplanation1 = trimString(i.IdentificationTypeExplanation1)
 	i.IdentificationTypeExplanation2 = trimString(i.IdentificationTypeExplanation2)
 	i.IdentificationTypeExplanation3 = trimString(i.IdentificationTypeExplanation3)
@@ -527,7 +527,7 @@ func (i *Individual) Normalize() {
 	i.NormalizedPhoneNumber1 = NormalizePhoneNumber(i.PhoneNumber1)
 	i.NormalizedPhoneNumber2 = NormalizePhoneNumber(i.PhoneNumber2)
 	i.NormalizedPhoneNumber3 = NormalizePhoneNumber(i.PhoneNumber3)
-	i.PreferredContactMethod = trimString(i.PreferredContactMethod)
+	i.PreferredContactMethod = ContactMethod(trimString(string(i.PreferredContactMethod)))
 	i.PreferredContactMethodComments = trimString(i.PreferredContactMethodComments)
 	i.PreferredName = trimString(i.PreferredName)
 	if i.PreferredName == "" {

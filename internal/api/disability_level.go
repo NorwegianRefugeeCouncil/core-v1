@@ -39,7 +39,7 @@ func (g DisabilityLevel) String() string {
 	case DisabilityLevelSevere:
 		return "Severe"
 	case DisabilityLevelUnspecified:
-		return "Unspecified"
+		return ""
 	default:
 		return ""
 	}
