@@ -42,6 +42,8 @@
                 </select>
             </div>
             <!-- End Sex -->
+        </div>
+        <div class="row">
 
             <!-- Is Minor -->
             <div class="form-group col-3">
@@ -780,7 +782,8 @@
                 </select>
             </div>
             <!-- End Service CC -->
-
+        </div>
+        <div class="row">
             <!-- Service Requested Date  -->
             <div class="col-6">
                 <label class="form-label">Service Requested Date </label>
@@ -789,7 +792,7 @@
                         <div class="input-group-prepend">
                             <div class="input-group-text">From</div>
                         </div>
-                        <input type="date" name="service_requested_date__from" class="form-control"
+                        <input type="date" name="service_requested_date_from" class="form-control"
                                id="ServiceRequestedDateFrom"
                                value="{{if .Options.ServiceRequestedDateFrom}}{{.Options.ServiceRequestedDateFrom.Format "2006-01-02"}}{{end}}">
                     </div>
@@ -798,9 +801,9 @@
                         <div class="input-group-prepend">
                             <div class="input-group-text">To</div>
                         </div>
-                        <input type="date" name="service_requested_date__to" class="form-control"
+                        <input type="date" name="service_requested_date_to" class="form-control"
                                id="ServiceRequestedDateTo"
-                               value="{{if .Options.ServiceRequestedDateTo}}{{.Options.ServiceRequestedDateTo}}{{end}}">
+                               value="{{if .Options.ServiceRequestedDateTo}}{{.Options.ServiceRequestedDateTo.Format "2006-01-02"}}{{end}}">
                     </div>
                 </div>
             </div>
@@ -825,7 +828,7 @@
                         </div>
                         <input type="date" name="service_delivered_date_to" class="form-control"
                                id="ServiceDeliveredDateTo"
-                               value="{{if .Options.ServiceDeliveredDateTo}}{{.Options.ServiceDeliveredDateTo}}{{end}}">
+                               value="{{if .Options.ServiceDeliveredDateTo}}{{.Options.ServiceDeliveredDateTo.Format "2006-01-02"}}{{end}}">
                     </div>
                 </div>
             </div>

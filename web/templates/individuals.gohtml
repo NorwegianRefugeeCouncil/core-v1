@@ -275,8 +275,8 @@
     {{$selectWidth := "1.5rem"}}
     {{$idWidth := "20rem"}}
     {{$nameWidth := "10rem"}}
-    {{$idOffset := "2rem"}}
-    {{$nameOffset := "22rem"}}
+    {{$idOffset := "3rem"}}
+    {{$nameOffset := "23rem"}}
     {{if not .RequestContext.HasSelectedCountryWritePermission}}
         {{$idOffset = "0rem"}}
         {{$nameOffset = "20rem"}}
@@ -346,7 +346,7 @@
             <table class="table table-individuals mb-0">
                 <thead>
                 <tr>
-                    <th class="sticky-column">
+                    <th class="sticky-column" style="width: {{$selectWidth}};">
                         <i class="bi bi-eye-slash-fill"
                            data-toggle="tooltip" data-placement="top" title="Is Inactive"></i>
                     </th>
