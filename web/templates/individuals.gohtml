@@ -1167,7 +1167,7 @@
 
                             <!-- ServiceRequestedDate1 -->
                             <td>
-                                <div class="datetime-text" style="width: {{$createdAtWidth}}">
+                                <div style="width: {{$createdAtWidth}}">
                                     {{ if .ServiceRequestedDate1}}
                                         {{.ServiceRequestedDate1.Format "2006-01-02 15:04:05"}}
                                     {{end}}
@@ -1177,7 +1177,7 @@
 
                             <!-- ServiceDeliveredDate1 -->
                             <td>
-                                <div class="datetime-text" style="width: {{$createdAtWidth}}">
+                                <div style="width: {{$createdAtWidth}}">
                                     {{ if .ServiceDeliveredDate1}}
                                         {{.ServiceDeliveredDate1.Format "2006-01-02 15:04:05"}}
                                     {{end}}
@@ -1195,9 +1195,9 @@
 
                             <!-- ServiceRequestedDate2 -->
                             <td>
-                                <div class="datetime-text" style="width: {{$createdAtWidth}}">
+                                <div class="" style="width: {{$createdAtWidth}}">
                                     {{ if .ServiceRequestedDate2}}
-                                        {{.ServiceRequestedDate2.Format "2006-01-02 25:04:05"}}
+                                        <span title="{{.ServiceRequestedDate2.Format "2006-01-02 15:04:05"}}">{{.ServiceRequestedDate2.Format "2006-01-02 15:04:05"}}</span>
                                     {{end}}
                                 </div>
                             </td>
@@ -1205,9 +1205,9 @@
 
                             <!-- ServiceDeliveredDate2 -->
                             <td>
-                                <div class="datetime-text" style="width: {{$createdAtWidth}}">
+                                <div style="width: {{$createdAtWidth}}">
                                     {{ if .ServiceDeliveredDate2}}
-                                        {{.ServiceDeliveredDate2.Format "2006-01-02 25:04:05"}}
+                                        {{.ServiceDeliveredDate2}}
                                     {{end}}
                                 </div>
                             </td>
@@ -1223,7 +1223,7 @@
 
                             <!-- ServiceRequestedDate3 -->
                             <td>
-                                <div class="datetime-text" style="width: {{$createdAtWidth}}">
+                                <div style="width: {{$createdAtWidth}}">
                                     {{ if .ServiceRequestedDate3}}
                                         {{.ServiceRequestedDate3.Format "2006-01-02 15:04:05"}}
                                     {{end}}
@@ -1233,7 +1233,7 @@
 
                             <!-- ServiceDeliveredDate3 -->
                             <td>
-                                <div class="datetime-text" style="width: {{$createdAtWidth}}">
+                                <div style="width: {{$createdAtWidth}}">
                                     {{ if .ServiceDeliveredDate3}}
                                         {{.ServiceDeliveredDate3.Format "2006-01-02 15:04:05"}}
                                     {{end}}
@@ -1251,7 +1251,7 @@
 
                             <!-- ServiceRequestedDate4 -->
                             <td>
-                                <div class="datetime-text" style="width: {{$createdAtWidth}}">
+                                <div style="width: {{$createdAtWidth}}">
                                     {{ if .ServiceRequestedDate4}}
                                         {{.ServiceRequestedDate4.Format "2006-01-02 15:04:05"}}
                                     {{end}}
@@ -1261,7 +1261,7 @@
 
                             <!-- ServiceDeliveredDate4 -->
                             <td>
-                                <div class="datetime-text" style="width: {{$createdAtWidth}}">
+                                <div style="width: {{$createdAtWidth}}">
                                     {{ if .ServiceDeliveredDate4}}
                                         {{.ServiceDeliveredDate4.Format "2006-01-02 15:04:05"}}
                                     {{end}}
@@ -1279,7 +1279,7 @@
 
                             <!-- ServiceRequestedDate5 -->
                             <td>
-                                <div class="datetime-text" style="width: {{$createdAtWidth}}">
+                                <div style="width: {{$createdAtWidth}}">
                                     {{ if .ServiceRequestedDate5}}
                                         {{.ServiceRequestedDate5.Format "2006-01-02 15:04:05"}}
                                     {{end}}
@@ -1289,7 +1289,7 @@
 
                             <!-- ServiceDeliveredDate5 -->
                             <td>
-                                <div class="datetime-text" style="width: {{$createdAtWidth}}">
+                                <div style="width: {{$createdAtWidth}}">
                                     {{ if .ServiceDeliveredDate5}}
                                         {{.ServiceDeliveredDate5.Format "2006-01-02 15:04:05"}}
                                     {{end}}
@@ -1307,7 +1307,7 @@
 
                             <!-- ServiceRequestedDate6 -->
                             <td>
-                                <div class="datetime-text" style="width: {{$createdAtWidth}}">
+                                <div style="width: {{$createdAtWidth}}">
                                     {{ if .ServiceRequestedDate6}}
                                         {{.ServiceRequestedDate6.Format "2006-01-02 15:04:05"}}
                                     {{end}}
@@ -1317,7 +1317,7 @@
 
                             <!-- ServiceDeliveredDate6 -->
                             <td>
-                                <div class="datetime-text" style="width: {{$createdAtWidth}}">
+                                <div style="width: {{$createdAtWidth}}">
                                     {{ if .ServiceDeliveredDate6}}
                                         {{.ServiceDeliveredDate6.Format "2006-01-02 15:04:05"}}
                                     {{end}}
@@ -1335,7 +1335,7 @@
 
                             <!-- ServiceRequestedDate7 -->
                             <td>
-                                <div class="datetime-text" style="width: {{$createdAtWidth}}">
+                                <div style="width: {{$createdAtWidth}}">
                                     {{ if .ServiceRequestedDate7}}
                                         {{.ServiceRequestedDate7.Format "2006-01-02 15:04:05"}}
                                     {{end}}
@@ -1345,7 +1345,7 @@
 
                             <!-- ServiceDeliveredDate7 -->
                             <td>
-                                <div class="datetime-text" style="width: {{$createdAtWidth}}">
+                                <div style="width: {{$createdAtWidth}}">
                                     {{ if .ServiceDeliveredDate7}}
                                         {{.ServiceDeliveredDate7.Format "2006-01-02 15:04:05"}}
                                     {{end}}

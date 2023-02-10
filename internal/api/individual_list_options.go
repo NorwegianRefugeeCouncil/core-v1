@@ -71,41 +71,11 @@ type ListIndividualsOptions struct {
 	Skip                           int
 	Take                           int
 	Sort                           SortTerms
-	ServiceCC1                     ServiceCC
-	ServiceRequestedDate1From      *time.Time
-	ServiceRequestedDate1To        *time.Time
-	ServiceDeliveredDate1From      *time.Time
-	ServiceDeliveredDate1To        *time.Time
-	ServiceCC2                     ServiceCC
-	ServiceRequestedDate2From      *time.Time
-	ServiceRequestedDate2To        *time.Time
-	ServiceDeliveredDate2From      *time.Time
-	ServiceDeliveredDate2To        *time.Time
-	ServiceCC3                     ServiceCC
-	ServiceRequestedDate3From      *time.Time
-	ServiceRequestedDate3To        *time.Time
-	ServiceDeliveredDate3From      *time.Time
-	ServiceDeliveredDate3To        *time.Time
-	ServiceCC4                     ServiceCC
-	ServiceRequestedDate4From      *time.Time
-	ServiceRequestedDate4To        *time.Time
-	ServiceDeliveredDate4From      *time.Time
-	ServiceDeliveredDate4To        *time.Time
-	ServiceCC5                     ServiceCC
-	ServiceRequestedDate5From      *time.Time
-	ServiceRequestedDate5To        *time.Time
-	ServiceDeliveredDate5From      *time.Time
-	ServiceDeliveredDate5To        *time.Time
-	ServiceCC6                     ServiceCC
-	ServiceRequestedDate6From      *time.Time
-	ServiceRequestedDate6To        *time.Time
-	ServiceDeliveredDate6From      *time.Time
-	ServiceDeliveredDate6To        *time.Time
-	ServiceCC7                     ServiceCC
-	ServiceRequestedDate7From      *time.Time
-	ServiceRequestedDate7To        *time.Time
-	ServiceDeliveredDate7From      *time.Time
-	ServiceDeliveredDate7To        *time.Time
+	ServiceCC                      containers.Set[ServiceCC]
+	ServiceRequestedDateFrom       *time.Time
+	ServiceRequestedDateTo         *time.Time
+	ServiceDeliveredDateFrom       *time.Time
+	ServiceDeliveredDateTo         *time.Time
 	VisionDisabilityLevel          DisabilityLevel
 }
 
@@ -191,8 +161,16 @@ func (o ListIndividualsOptions) IsMinorHeadedHouseholdSelected() bool {
 	return o.IsMinorHeadedHousehold != nil && *o.IsMinorHeadedHousehold
 }
 
+func (o ListIndividualsOptions) IsNotMinorHeadedHouseholdSelected() bool {
+	return o.IsMinorHeadedHousehold != nil && !*o.IsMinorHeadedHousehold
+}
+
 func (o ListIndividualsOptions) IsFemaleHeadedHouseholdSelected() bool {
 	return o.IsFemaleHeadedHousehold != nil && *o.IsFemaleHeadedHousehold
+}
+
+func (o ListIndividualsOptions) IsNotFemaleHeadedHouseholdSelected() bool {
+	return o.IsFemaleHeadedHousehold != nil && !*o.IsFemaleHeadedHousehold
 }
 
 func (o ListIndividualsOptions) IsNotMinorSelected() bool {

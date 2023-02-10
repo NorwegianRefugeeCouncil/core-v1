@@ -77,6 +77,9 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withPrefersToRemainAnonymous(options.PrefersToRemainAnonymous).
 		withPresentsProtectionConcerns(options.PresentsProtectionConcerns).
 		withSelfCareDisabilityLevel(options.SelfCareDisabilityLevel).
+		withServiceCC(options.ServiceCC).
+		withServiceRequestedDate(options.ServiceRequestedDateFrom, options.ServiceRequestedDateTo).
+		withServiceDeliveredDate(options.ServiceDeliveredDateFrom, options.ServiceDeliveredDateTo).
 		withSpokenLanguage(options.SpokenLanguage).
 		withUpdatedAtFrom(options.UpdatedAtFrom).
 		withUpdatedAtTo(options.UpdatedAtTo).
@@ -469,6 +472,137 @@ func (g *getAllIndividualsSQLQuery) withIdentificationNumber(identificationNumbe
 	return g
 }
 
+func (g *getAllIndividualsSQLQuery) withServiceCC(serviceCC containers.Set[api.ServiceCC]) *getAllIndividualsSQLQuery {
+	if serviceCC.IsEmpty() {
+		return g
+	}
+
+	items := "'"
+	for i, ds := range serviceCC.Items() {
+		if i != 0 {
+			items += "','"
+		}
+		items += string(ds)
+	}
+	items += "')"
+
+	g.writeString(" AND (service_cc_1 IN (")
+	g.writeString(items)
+	g.writeString(" OR service_cc_2 IN (")
+	g.writeString(items)
+	g.writeString(" OR service_cc_3 IN (")
+	g.writeString(items)
+	g.writeString(" OR service_cc_4 IN (")
+	g.writeString(items)
+	g.writeString(" OR service_cc_5 IN (")
+	g.writeString(items)
+	g.writeString(" OR service_cc_6 IN (")
+	g.writeString(items)
+	g.writeString(" OR service_cc_7 IN (")
+	g.writeString(items)
+	g.writeString(")")
+	return g
+}
+
+func (g *getAllIndividualsSQLQuery) withServiceRequestedDate(from *time.Time, to *time.Time) *getAllIndividualsSQLQuery {
+	zero := &time.Time{}
+	toIsUndefined := to == nil || to.IsZero() || to == zero
+	fromIsUndefined := from == nil || from.IsZero() || from == zero
+	if fromIsUndefined && toIsUndefined {
+		return g
+	}
+	if fromIsUndefined && !toIsUndefined {
+		g.writeString(" AND (")
+		g.writeString(" service_requested_date_1 <= ").writeArg(*to)
+		g.writeString(" OR service_requested_date_2 <= ").writeLastArg()
+		g.writeString(" OR service_requested_date_3 <= ").writeLastArg()
+		g.writeString(" OR service_requested_date_4 <= ").writeLastArg()
+		g.writeString(" OR service_requested_date_5 <= ").writeLastArg()
+		g.writeString(" OR service_requested_date_6 <= ").writeLastArg()
+		g.writeString(" OR service_requested_date_7 <= ").writeLastArg()
+		g.writeString(")")
+		return g
+	} else if !fromIsUndefined && toIsUndefined {
+		g.writeString(" AND (")
+		g.writeString(" service_requested_date_1 >= ").writeArg(*from)
+		g.writeString(" OR service_requested_date_2 >= ").writeLastArg()
+		g.writeString(" OR service_requested_date_3 >= ").writeLastArg()
+		g.writeString(" OR service_requested_date_4 >= ").writeLastArg()
+		g.writeString(" OR service_requested_date_5 >= ").writeLastArg()
+		g.writeString(" OR service_requested_date_6 >= ").writeLastArg()
+		g.writeString(" OR service_requested_date_7 >= ").writeLastArg()
+		g.writeString(")")
+		return g
+	} else {
+		g.writeString(" AND (")
+		g.writeString(" service_requested_date_1 >= ").writeArg(*from)
+		g.writeString(" AND service_requested_date_1 <= ").writeArg(*to)
+		g.writeString(" OR service_requested_date_2 >= ").writeArg(*from)
+		g.writeString(" AND service_requested_date_2 <= ").writeArg(*to)
+		g.writeString(" OR service_requested_date_3 >= ").writeArg(*from)
+		g.writeString(" AND service_requested_date_3 <= ").writeArg(*to)
+		g.writeString(" OR service_requested_date_4 >= ").writeArg(*from)
+		g.writeString(" AND service_requested_date_4 <= ").writeArg(*to)
+		g.writeString(" OR service_requested_date_5 >= ").writeArg(*from)
+		g.writeString(" AND service_requested_date_5 <= ").writeArg(*to)
+		g.writeString(" OR service_requested_date_6 >= ").writeArg(*from)
+		g.writeString(" AND service_requested_date_6 <= ").writeArg(*to)
+		g.writeString(" OR service_requested_date_7 >= ").writeArg(*from)
+		g.writeString(" AND service_requested_date_7 <= ").writeArg(*to)
+		g.writeString(")")
+		return g
+	}
+}
+
+func (g *getAllIndividualsSQLQuery) withServiceDeliveredDate(from *time.Time, to *time.Time) *getAllIndividualsSQLQuery {
+	zero := &time.Time{}
+	toIsUndefined := to == nil || to.IsZero() || to == zero
+	fromIsUndefined := from == nil || from.IsZero() || from == zero
+	if fromIsUndefined && toIsUndefined {
+		return g
+	}
+	if fromIsUndefined && !toIsUndefined {
+		g.writeString(" AND (")
+		g.writeString(" service_delivered_date_1 <= ").writeArg(*to)
+		g.writeString(" OR service_delivered_date_2 <= ").writeLastArg()
+		g.writeString(" OR service_delivered_date_3 <= ").writeLastArg()
+		g.writeString(" OR service_delivered_date_4 <= ").writeLastArg()
+		g.writeString(" OR service_delivered_date_5 <= ").writeLastArg()
+		g.writeString(" OR service_delivered_date_6 <= ").writeLastArg()
+		g.writeString(" OR service_delivered_date_7 <= ").writeLastArg()
+		g.writeString(")")
+		return g
+	} else if !fromIsUndefined && toIsUndefined {
+		g.writeString(" AND (")
+		g.writeString(" service_delivered_date_1 >= ").writeArg(*from)
+		g.writeString(" OR service_delivered_date_2 >= ").writeLastArg()
+		g.writeString(" OR service_delivered_date_3 >= ").writeLastArg()
+		g.writeString(" OR service_delivered_date_4 >= ").writeLastArg()
+		g.writeString(" OR service_delivered_date_5 >= ").writeLastArg()
+		g.writeString(" OR service_delivered_date_6 >= ").writeLastArg()
+		g.writeString(" OR service_delivered_date_7 >= ").writeLastArg()
+		g.writeString(")")
+		return g
+	} else {
+		g.writeString(" AND (")
+		g.writeString(" service_delivered_date_1 >= ").writeArg(*from)
+		g.writeString(" AND service_delivered_date_1 <= ").writeArg(*to)
+		g.writeString(" OR service_delivered_date_2 >= ").writeArg(*from)
+		g.writeString(" AND service_delivered_date_2 <= ").writeArg(*to)
+		g.writeString(" OR service_delivered_date_3 >= ").writeArg(*from)
+		g.writeString(" AND service_delivered_date_3 <= ").writeArg(*to)
+		g.writeString(" OR service_delivered_date_4 >= ").writeArg(*from)
+		g.writeString(" AND service_delivered_date_4 <= ").writeArg(*to)
+		g.writeString(" OR service_delivered_date_5 >= ").writeArg(*from)
+		g.writeString(" AND service_delivered_date_5 <= ").writeArg(*to)
+		g.writeString(" OR service_delivered_date_6 >= ").writeArg(*from)
+		g.writeString(" AND service_delivered_date_6 <= ").writeArg(*to)
+		g.writeString(" OR service_delivered_date_7 >= ").writeArg(*from)
+		g.writeString(" AND service_delivered_date_7 <= ").writeArg(*to)
+		g.writeString(")")
+		return g
+	}
+}
 func (g *getAllIndividualsSQLQuery) withEngagementContext(engagementContext containers.Set[api.EngagementContext]) *getAllIndividualsSQLQuery {
 	if engagementContext.IsEmpty() {
 		return g

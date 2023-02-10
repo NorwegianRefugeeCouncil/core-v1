@@ -98,7 +98,7 @@
                     <div class="form-check form-check-inline mb-3">
                         <input class="form-check-input" type="radio" value="false" id="IsMinorHoHNo"
                                name="is_minor_headed_household"
-                               {{if not .Options.IsMinorHeadedHouseholdSelected }}checked="checked"{{end}}>
+                               {{if .Options.IsNotMinorHeadedHouseholdSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsMinorHoHNo">
                             No
                         </label>
@@ -130,7 +130,7 @@
                     <div class="form-check form-check-inline mb-3">
                         <input class="form-check-input" type="radio" value="false" id="IsFemaleHoHNo"
                                name="is_female_headed_household"
-                               {{if not .Options.IsFemaleHeadedHouseholdSelected }}checked="checked"{{end}}>
+                               {{if .Options.IsNotFemaleHeadedHouseholdSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsFemaleHoHNo">
                             No
                         </label>
@@ -739,469 +739,97 @@
 
         <h6 class="mt-2">Services</h6>
         <div class="row">
-            <!-- Service CC 1-->
+            <!-- Service CC -->
             <div class="form-group mb-3 col-3">
-                <label class="form-label" for="ServiceCC1">Service CC 1</label>
-                <select id="ServiceCC1" name="service_cc_1" class="form-control">
-                    <option value="" {{if .Options.ServiceCC1.IsEmpty }}selected{{end}}>
+                <label class="form-label" for="ServiceCC">Service CC </label>
+                <select id="ServiceCC" name="service_cc" class="form-control">
+                    <option value="" {{if .Options.ServiceCC.IsEmpty }}selected{{end}}>
                     </option>
                     <option value="shelter_and_settlements"
-                            {{if .Options.ServiceCC1.Contains "shelter_and_settlements" }}selected{{end}}>
+                            {{if .Options.ServiceCC.Contains "shelter_and_settlements" }}selected{{end}}>
                         Shelter & Settlements
                     </option>
                     <option value="wash"
-                            {{if .Options.ServiceCC1.Contains "wash" }}selected{{end}}>
+                            {{if .Options.ServiceCC.Contains "wash" }}selected{{end}}>
                         WASH
                     </option>
                     <option value="protection"
-                            {{if .Options.ServiceCC1.Contains "protection" }}selected{{end}}>
+                            {{if .Options.ServiceCC.Contains "protection" }}selected{{end}}>
                         Protection
                     </option>
                     <option value="education"
-                            {{if .Options.ServiceCC1.Contains "education" }}selected{{end}}>
+                            {{if .Options.ServiceCC.Contains "education" }}selected{{end}}>
                         Education
                     </option>
                     <option value="icla"
-                            {{if .Options.ServiceCC1.Contains "icla" }}selected{{end}}>
+                            {{if .Options.ServiceCC.Contains "icla" }}selected{{end}}>
                         ICLA
                     </option>
                     <option value="lfs"
-                            {{if .Options.ServiceCC1.Contains "lfs" }}selected{{end}}>
+                            {{if .Options.ServiceCC.Contains "lfs" }}selected{{end}}>
                         LFS
                     </option>
                     <option value="cva"
-                            {{if .Options.ServiceCC1.Contains "cva" }}selected{{end}}>
+                            {{if .Options.ServiceCC.Contains "cva" }}selected{{end}}>
                         CVA
                     </option>
                     <option value="other"
-                            {{if .Options.ServiceCC1.Contains "other" }}selected{{end}}>
+                            {{if .Options.ServiceCC.Contains "other" }}selected{{end}}>
                         Other
                     </option>
                 </select>
             </div>
-            <!-- End Service CC 1-->
+            <!-- End Service CC -->
 
-            <!-- Service Requested Date 1 -->
+            <!-- Service Requested Date  -->
             <div class="col-6">
-                <label class="form-label">Service Requested Date 1</label>
+                <label class="form-label">Service Requested Date </label>
                 <div class="row">
                     <div class="col-3 input-group mb-2 w-50">
                         <div class="input-group-prepend">
                             <div class="input-group-text">From</div>
                         </div>
-                        <input type="date" name="service_requested_date_1_from" class="form-control"
-                               id="ServiceRequestedDate1From"
-                               value="{{if .Options.ServiceRequestedDate1From}}{{.Options.ServiceRequestedDate1From.Format "2006-01-02"}}{{end}}">
+                        <input type="date" name="service_requested_date__from" class="form-control"
+                               id="ServiceRequestedDateFrom"
+                               value="{{if .Options.ServiceRequestedDateFrom}}{{.Options.ServiceRequestedDateFrom.Format "2006-01-02"}}{{end}}">
                     </div>
 
                     <div class="col-3 input-group mb-2 w-50">
                         <div class="input-group-prepend">
                             <div class="input-group-text">To</div>
                         </div>
-                        <input type="date" name="service_requested_date_1_to" class="form-control"
-                               id="ServiceRequestedDate1To"
-                               value="{{if .Options.ServiceRequestedDate1To}}{{.Options.ServiceRequestedDate1To}}{{end}}">
+                        <input type="date" name="service_requested_date__to" class="form-control"
+                               id="ServiceRequestedDateTo"
+                               value="{{if .Options.ServiceRequestedDateTo}}{{.Options.ServiceRequestedDateTo}}{{end}}">
                     </div>
                 </div>
             </div>
-            <!-- End Service Requested Date 1 -->
-            <!-- Service CC 2-->
-            <div class="form-group mb-3 col-3">
-                <label class="form-label" for="ServiceCC2">Service CC 2</label>
-                <select id="ServiceCC2" name="service_cc_2" class="form-control">
-                    <option value="" {{if .Options.ServiceCC2.IsEmpty }}selected{{end}}>
-                    </option>
-                    <option value="shelter_and_settlements"
-                            {{if .Options.ServiceCC2.Contains "shelter_and_settlements" }}selected{{end}}>
-                        Shelter & Settlements
-                    </option>
-                    <option value="wash"
-                            {{if .Options.ServiceCC2.Contains "wash" }}selected{{end}}>
-                        WASH
-                    </option>
-                    <option value="protection"
-                            {{if .Options.ServiceCC2.Contains "protection" }}selected{{end}}>
-                        Protection
-                    </option>
-                    <option value="education"
-                            {{if .Options.ServiceCC2.Contains "education" }}selected{{end}}>
-                        Education
-                    </option>
-                    <option value="icla"
-                            {{if .Options.ServiceCC2.Contains "icla" }}selected{{end}}>
-                        ICLA
-                    </option>
-                    <option value="lfs"
-                            {{if .Options.ServiceCC2.Contains "lfs" }}selected{{end}}>
-                        LFS
-                    </option>
-                    <option value="cva"
-                            {{if .Options.ServiceCC2.Contains "cva" }}selected{{end}}>
-                        CVA
-                    </option>
-                    <option value="other"
-                            {{if .Options.ServiceCC2.Contains "other" }}selected{{end}}>
-                        Other
-                    </option>
-                </select>
-            </div>
-            <!-- End Service CC 2-->
+            <!-- End Service Requested Date  -->
 
-            <!-- Service Requested Date 2 -->
+            <!-- Service Delivered Date  -->
             <div class="col-6">
-                <label class="form-label">Service Requested Date 2</label>
+                <label class="form-label">Service Delivered Date </label>
                 <div class="row">
                     <div class="col-3 input-group mb-2 w-50">
                         <div class="input-group-prepend">
                             <div class="input-group-text">From</div>
                         </div>
-                        <input type="date" name="service_requested_date_2_from" class="form-control"
-                               id="ServiceRequestedDate2From"
-                               value="{{if .Options.ServiceRequestedDate2From}}{{.Options.ServiceRequestedDate2From.Format "2006-02-02"}}{{end}}">
+                        <input type="date" name="service_delivered_date_from" class="form-control"
+                               id="ServiceDeliveredDateFrom"
+                               value="{{if .Options.ServiceDeliveredDateFrom}}{{.Options.ServiceDeliveredDateFrom.Format "2006-01-02"}}{{end}}">
                     </div>
 
                     <div class="col-3 input-group mb-2 w-50">
                         <div class="input-group-prepend">
                             <div class="input-group-text">To</div>
                         </div>
-                        <input type="date" name="service_requested_date_2_to" class="form-control"
-                               id="ServiceRequestedDate2To"
-                               value="{{if .Options.ServiceRequestedDate2To}}{{.Options.ServiceRequestedDate2To}}{{end}}">
+                        <input type="date" name="service_delivered_date_to" class="form-control"
+                               id="ServiceDeliveredDateTo"
+                               value="{{if .Options.ServiceDeliveredDateTo}}{{.Options.ServiceDeliveredDateTo}}{{end}}">
                     </div>
                 </div>
             </div>
-            <!-- End Service Requested Date 2 -->
-            <!-- Service CC 3-->
-            <div class="form-group mb-3 col-3">
-                <label class="form-label" for="ServiceCC3">Service CC 1</label>
-                <select id="ServiceCC3" name="service_cc_1" class="form-control">
-                    <option value="" {{if .Options.ServiceCC3.IsEmpty }}selected{{end}}>
-                    </option>
-                    <option value="shelter_and_settlements"
-                            {{if .Options.ServiceCC3.Contains "shelter_and_settlements" }}selected{{end}}>
-                        Shelter & Settlements
-                    </option>
-                    <option value="wash"
-                            {{if .Options.ServiceCC3.Contains "wash" }}selected{{end}}>
-                        WASH
-                    </option>
-                    <option value="protection"
-                            {{if .Options.ServiceCC3.Contains "protection" }}selected{{end}}>
-                        Protection
-                    </option>
-                    <option value="education"
-                            {{if .Options.ServiceCC3.Contains "education" }}selected{{end}}>
-                        Education
-                    </option>
-                    <option value="icla"
-                            {{if .Options.ServiceCC3.Contains "icla" }}selected{{end}}>
-                        ICLA
-                    </option>
-                    <option value="lfs"
-                            {{if .Options.ServiceCC3.Contains "lfs" }}selected{{end}}>
-                        LFS
-                    </option>
-                    <option value="cva"
-                            {{if .Options.ServiceCC3.Contains "cva" }}selected{{end}}>
-                        CVA
-                    </option>
-                    <option value="other"
-                            {{if .Options.ServiceCC3.Contains "other" }}selected{{end}}>
-                        Other
-                    </option>
-                </select>
-            </div>
-            <!-- End Service CC 3-->
-
-            <!-- Service Requested Date 3 -->
-            <div class="col-6">
-                <label class="form-label">Service Requested Date 3</label>
-                <div class="row">
-                    <div class="col-3 input-group mb-2 w-50">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">From</div>
-                        </div>
-                        <input type="date" name="service_requested_date_3_from" class="form-control"
-                               id="ServiceRequestedDate3From"
-                               value="{{if .Options.ServiceRequestedDate3From}}{{.Options.ServiceRequestedDate1From.Format "2006-01-02"}}{{end}}">
-                    </div>
-
-                    <div class="col-3 input-group mb-2 w-50">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">To</div>
-                        </div>
-                        <input type="date" name="service_requested_date_3_to" class="form-control"
-                               id="ServiceRequestedDate3To"
-                               value="{{if .Options.ServiceRequestedDate3To}}{{.Options.ServiceRequestedDate1To}}{{end}}">
-                    </div>
-                </div>
-            </div>
-            <!-- End Service Requested Date 3 -->
-            <!-- Service CC 4-->
-            <div class="form-group mb-3 col-3">
-                <label class="form-label" for="ServiceCC4">Service CC 1</label>
-                <select id="ServiceCC4" name="service_cc_1" class="form-control">
-                    <option value="" {{if .Options.ServiceCC4.IsEmpty }}selected{{end}}>
-                    </option>
-                    <option value="shelter_and_settlements"
-                            {{if .Options.ServiceCC4.Contains "shelter_and_settlements" }}selected{{end}}>
-                        Shelter & Settlements
-                    </option>
-                    <option value="wash"
-                            {{if .Options.ServiceCC4.Contains "wash" }}selected{{end}}>
-                        WASH
-                    </option>
-                    <option value="protection"
-                            {{if .Options.ServiceCC4.Contains "protection" }}selected{{end}}>
-                        Protection
-                    </option>
-                    <option value="education"
-                            {{if .Options.ServiceCC4.Contains "education" }}selected{{end}}>
-                        Education
-                    </option>
-                    <option value="icla"
-                            {{if .Options.ServiceCC4.Contains "icla" }}selected{{end}}>
-                        ICLA
-                    </option>
-                    <option value="lfs"
-                            {{if .Options.ServiceCC4.Contains "lfs" }}selected{{end}}>
-                        LFS
-                    </option>
-                    <option value="cva"
-                            {{if .Options.ServiceCC4.Contains "cva" }}selected{{end}}>
-                        CVA
-                    </option>
-                    <option value="other"
-                            {{if .Options.ServiceCC4.Contains "other" }}selected{{end}}>
-                        Other
-                    </option>
-                </select>
-            </div>
-            <!-- End Service CC 4-->
-
-            <!-- Service Requested Date 4 -->
-            <div class="col-6">
-                <label class="form-label">Service Requested Date 4</label>
-                <div class="row">
-                    <div class="col-3 input-group mb-2 w-50">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">From</div>
-                        </div>
-                        <input type="date" name="service_requested_date_4_from" class="form-control"
-                               id="ServiceRequestedDate4From"
-                               value="{{if .Options.ServiceRequestedDate4From}}{{.Options.ServiceRequestedDate1From.Format "2006-01-02"}}{{end}}">
-                    </div>
-
-                    <div class="col-3 input-group mb-2 w-50">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">To</div>
-                        </div>
-                        <input type="date" name="service_requested_date_4_to" class="form-control"
-                               id="ServiceRequestedDate4To"
-                               value="{{if .Options.ServiceRequestedDate4To}}{{.Options.ServiceRequestedDate1To}}{{end}}">
-                    </div>
-                </div>
-            </div>
-            <!-- End Service Requested Date 4 -->
-            <!-- Service CC 5-->
-            <div class="form-group mb-3 col-3">
-                <label class="form-label" for="ServiceCC5">Service CC 1</label>
-                <select id="ServiceCC5" name="service_cc_1" class="form-control">
-                    <option value="" {{if .Options.ServiceCC5.IsEmpty }}selected{{end}}>
-                    </option>
-                    <option value="shelter_and_settlements"
-                            {{if .Options.ServiceCC5.Contains "shelter_and_settlements" }}selected{{end}}>
-                        Shelter & Settlements
-                    </option>
-                    <option value="wash"
-                            {{if .Options.ServiceCC5.Contains "wash" }}selected{{end}}>
-                        WASH
-                    </option>
-                    <option value="protection"
-                            {{if .Options.ServiceCC5.Contains "protection" }}selected{{end}}>
-                        Protection
-                    </option>
-                    <option value="education"
-                            {{if .Options.ServiceCC5.Contains "education" }}selected{{end}}>
-                        Education
-                    </option>
-                    <option value="icla"
-                            {{if .Options.ServiceCC5.Contains "icla" }}selected{{end}}>
-                        ICLA
-                    </option>
-                    <option value="lfs"
-                            {{if .Options.ServiceCC5.Contains "lfs" }}selected{{end}}>
-                        LFS
-                    </option>
-                    <option value="cva"
-                            {{if .Options.ServiceCC5.Contains "cva" }}selected{{end}}>
-                        CVA
-                    </option>
-                    <option value="other"
-                            {{if .Options.ServiceCC5.Contains "other" }}selected{{end}}>
-                        Other
-                    </option>
-                </select>
-            </div>
-            <!-- End Service CC 5-->
-
-            <!-- Service Requested Date 5 -->
-            <div class="col-6">
-                <label class="form-label">Service Requested Date 5</label>
-                <div class="row">
-                    <div class="col-3 input-group mb-2 w-50">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">From</div>
-                        </div>
-                        <input type="date" name="service_requested_date_5_from" class="form-control"
-                               id="ServiceRequestedDate5From"
-                               value="{{if .Options.ServiceRequestedDate5From}}{{.Options.ServiceRequestedDate1From.Format "2006-01-02"}}{{end}}">
-                    </div>
-
-                    <div class="col-3 input-group mb-2 w-50">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">To</div>
-                        </div>
-                        <input type="date" name="service_requested_date_5_to" class="form-control"
-                               id="ServiceRequestedDate5To"
-                               value="{{if .Options.ServiceRequestedDate5To}}{{.Options.ServiceRequestedDate1To}}{{end}}">
-                    </div>
-                </div>
-            </div>
-            <!-- End Service Requested Date 5 -->
-            <!-- Service CC 6-->
-            <div class="form-group mb-3 col-3">
-                <label class="form-label" for="ServiceCC6">Service CC 1</label>
-                <select id="ServiceCC6" name="service_cc_1" class="form-control">
-                    <option value="" {{if .Options.ServiceCC6.IsEmpty }}selected{{end}}>
-                    </option>
-                    <option value="shelter_and_settlements"
-                            {{if .Options.ServiceCC6.Contains "shelter_and_settlements" }}selected{{end}}>
-                        Shelter & Settlements
-                    </option>
-                    <option value="wash"
-                            {{if .Options.ServiceCC6.Contains "wash" }}selected{{end}}>
-                        WASH
-                    </option>
-                    <option value="protection"
-                            {{if .Options.ServiceCC6.Contains "protection" }}selected{{end}}>
-                        Protection
-                    </option>
-                    <option value="education"
-                            {{if .Options.ServiceCC6.Contains "education" }}selected{{end}}>
-                        Education
-                    </option>
-                    <option value="icla"
-                            {{if .Options.ServiceCC6.Contains "icla" }}selected{{end}}>
-                        ICLA
-                    </option>
-                    <option value="lfs"
-                            {{if .Options.ServiceCC6.Contains "lfs" }}selected{{end}}>
-                        LFS
-                    </option>
-                    <option value="cva"
-                            {{if .Options.ServiceCC6.Contains "cva" }}selected{{end}}>
-                        CVA
-                    </option>
-                    <option value="other"
-                            {{if .Options.ServiceCC6.Contains "other" }}selected{{end}}>
-                        Other
-                    </option>
-                </select>
-            </div>
-            <!-- End Service CC 6-->
-
-            <!-- Service Requested Date 6 -->
-            <div class="col-6">
-                <label class="form-label">Service Requested Date 6</label>
-                <div class="row">
-                    <div class="col-3 input-group mb-2 w-50">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">From</div>
-                        </div>
-                        <input type="date" name="service_requested_date_6_from" class="form-control"
-                               id="ServiceRequestedDate6From"
-                               value="{{if .Options.ServiceRequestedDate6From}}{{.Options.ServiceRequestedDate1From.Format "2006-01-02"}}{{end}}">
-                    </div>
-
-                    <div class="col-3 input-group mb-2 w-50">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">To</div>
-                        </div>
-                        <input type="date" name="service_requested_date_6_to" class="form-control"
-                               id="ServiceRequestedDate6To"
-                               value="{{if .Options.ServiceRequestedDate6To}}{{.Options.ServiceRequestedDate1To}}{{end}}">
-                    </div>
-                </div>
-            </div>
-            <!-- End Service Requested Date 6 -->
-            <!-- Service CC 7-->
-            <div class="form-group mb-3 col-3">
-                <label class="form-label" for="ServiceCC7">Service CC 1</label>
-                <select id="ServiceCC7" name="service_cc_1" class="form-control">
-                    <option value="" {{if .Options.ServiceCC7.IsEmpty }}selected{{end}}>
-                    </option>
-                    <option value="shelter_and_settlements"
-                            {{if .Options.ServiceCC7.Contains "shelter_and_settlements" }}selected{{end}}>
-                        Shelter & Settlements
-                    </option>
-                    <option value="wash"
-                            {{if .Options.ServiceCC7.Contains "wash" }}selected{{end}}>
-                        WASH
-                    </option>
-                    <option value="protection"
-                            {{if .Options.ServiceCC7.Contains "protection" }}selected{{end}}>
-                        Protection
-                    </option>
-                    <option value="education"
-                            {{if .Options.ServiceCC7.Contains "education" }}selected{{end}}>
-                        Education
-                    </option>
-                    <option value="icla"
-                            {{if .Options.ServiceCC7.Contains "icla" }}selected{{end}}>
-                        ICLA
-                    </option>
-                    <option value="lfs"
-                            {{if .Options.ServiceCC7.Contains "lfs" }}selected{{end}}>
-                        LFS
-                    </option>
-                    <option value="cva"
-                            {{if .Options.ServiceCC7.Contains "cva" }}selected{{end}}>
-                        CVA
-                    </option>
-                    <option value="other"
-                            {{if .Options.ServiceCC7.Contains "other" }}selected{{end}}>
-                        Other
-                    </option>
-                </select>
-            </div>
-            <!-- End Service CC 7-->
-
-            <!-- Service Requested Date 7 -->
-            <div class="col-6">
-                <label class="form-label">Service Requested Date 7</label>
-                <div class="row">
-                    <div class="col-3 input-group mb-2 w-50">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">From</div>
-                        </div>
-                        <input type="date" name="service_requested_date_7_from" class="form-control"
-                               id="ServiceRequestedDate7From"
-                               value="{{if .Options.ServiceRequestedDate7From}}{{.Options.ServiceRequestedDate1From.Format "2006-01-02"}}{{end}}">
-                    </div>
-
-                    <div class="col-3 input-group mb-2 w-50">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">To</div>
-                        </div>
-                        <input type="date" name="service_requested_date_7_to" class="form-control"
-                               id="ServiceRequestedDate7To"
-                               value="{{if .Options.ServiceRequestedDate7To}}{{.Options.ServiceRequestedDate1To}}{{end}}">
-                    </div>
-                </div>
-            </div>
-            <!-- End Service Requested Date 7 -->
-
+            <!-- End Service Delivered Date  -->
         </div>
     </form>
 
