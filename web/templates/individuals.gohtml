@@ -153,13 +153,14 @@
              */
             function refreshActionButtons() {
                 const checkedCount = getSelectedIndividualCount()
+
                 if (checkedCount > 0) {
-                    deleteButton.classList.remove('disabled')
-                    deactivateButton.classList.remove('disabled')
+                    deleteButton && deleteButton.classList.remove('disabled')
+                    deactivateButton && deactivateButton.classList.remove('disabled')
                     activateButton && activateButton.classList.remove('disabled')
                 } else {
-                    deleteButton.classList.add('disabled')
-                    deactivateButton.classList.add('disabled')
+                    deleteButton && deleteButton.classList.add('disabled')
+                    deactivateButton && deactivateButton.classList.add('disabled')
                     activateButton && activateButton.classList.add('disabled')
                 }
             }
@@ -277,10 +278,6 @@
     {{$nameWidth := "10rem"}}
     {{$idOffset := "4rem"}}
     {{$nameOffset := "22rem"}}
-    {{if not .RequestContext.HasSelectedCountryWritePermission}}
-        {{$idOffset = "0rem"}}
-        {{$nameOffset = "20rem"}}
-    {{end}}
     {{$sexWidth := "8rem"}}
     {{$ageWidth := "4rem"}}
     {{$birthDateWidth := $dateWidth}}
@@ -351,11 +348,9 @@
                            data-toggle="tooltip" data-placement="top" title="Is Inactive"></i>
                     </th>
 
-                    {{if $canWrite}}
                     <th class="sticky-column text-center" style="width: {{$selectWidth}}; left: {{$selectWidth}}">
                         <input class="form-check-input" type="checkbox" id="selectAllCheckbox"/>
                     </th>
-                    {{end}}
 
                     {{template "columnHeader" (dict
                     "Options" .Options
@@ -635,7 +630,7 @@
                                     </div>
                                 {{end}}
                             </td>
-                            {{if $canWrite}}
+
                             <td class="sticky-column text-center" style="width: {{$selectWidth}}; left: {{$selectWidth}};">
                                 <div>
                                     <input class="form-check-input select-row-checkbox"
@@ -645,7 +640,6 @@
                                            name="individual_id"/>
                                 </div>
                             </td>
-                            {{end}}
 
                             <!-- ID -->
                             <td class="sticky-column" style="left: {{$idOffset}}">
