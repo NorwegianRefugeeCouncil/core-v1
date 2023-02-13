@@ -269,6 +269,17 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.HearingDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualHouseholdID:
 			i.HouseholdID = cols[idx]
+		case constants.FileColumnIndividualHouseholdSize:
+			var householdSizeStr = cols[idx]
+			if householdSizeStr == "" {
+				continue
+			}
+			householdSize, err := strconv.Atoi(householdSizeStr)
+			if err != nil {
+				errors = append(errors, err)
+				break
+			}
+			i.CommunitySize = &householdSize
 		case constants.FileColumnIndividualIdentificationType1:
 			i.IdentificationType1 = cols[idx]
 		case constants.FileColumnIndividualIdentificationTypeExplanation1:
