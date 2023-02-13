@@ -61,7 +61,7 @@ func buildRouter(
 		middleware.HasGlobalAdminPermission(),
 	))
 
-	individualsRouter := countryRouter.PathPrefix("/individuals").Subrouter()
+	individualsRouter := countryRouter.PathPrefix("/participants").Subrouter()
 	individualsRouter.Path("").Methods(http.MethodGet).Handler(withMiddleware(
 		handlers.HandleIndividuals(renderer, individualRepo),
 		middleware.EnsureSelectedCountry(),

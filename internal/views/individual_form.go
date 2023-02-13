@@ -249,7 +249,7 @@ func (f *IndividualForm) buildIdField() error {
 		return buildField(&forms.IDField{
 			Name:        "id",
 			DisplayName: "ID",
-			QRCodeURL:   fmt.Sprintf("/countries/%s/individuals/%s", f.individual.CountryID, f.individual.ID),
+			QRCodeURL:   fmt.Sprintf("/countries/%s/participants/%s", f.individual.CountryID, f.individual.ID),
 		}, f.personalInfoSection, f.individual.ID)
 	}
 	return nil

@@ -67,7 +67,7 @@ func HandleIndividualsAction(repo db.IndividualRepo, action string) http.Handler
 			return
 		}
 
-		r.URL.Path = fmt.Sprintf("/countries/%s/individuals", countryID)
+		r.URL.Path = fmt.Sprintf("/countries/%s/participants", countryID)
 		r.Form.Del("individual_id")
 		http.Redirect(w, r, r.URL.String(), http.StatusFound)
 

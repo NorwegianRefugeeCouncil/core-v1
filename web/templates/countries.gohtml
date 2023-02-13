@@ -29,7 +29,7 @@
                             <tbody>
                                 {{range .AllowedCountries}}
                                     <tr>
-                                        <td><a href="/countries/{{.ID}}/individuals">{{.Name}}</a></td>
+                                        <td><a href="/countries/{{.ID}}/participants">{{.Name}}</a></td>
                                         {{ if $isGlobalAdmin }}
                                             <td><a href="/countries/{{.ID}}">Edit<i class="bi bi-pencil-square d-lg-inline-block ms-2"></i></a></td>
                                         {{end}}
