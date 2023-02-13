@@ -77,6 +77,7 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withPrefersToRemainAnonymous(options.PrefersToRemainAnonymous).
 		withPresentsProtectionConcerns(options.PresentsProtectionConcerns).
 		withSelfCareDisabilityLevel(options.SelfCareDisabilityLevel).
+		withServiceCC(options.ServiceCC, options.ServiceRequestedDateFrom, options.ServiceRequestedDateTo, options.ServiceDeliveredDateFrom, options.ServiceDeliveredDateTo).
 		withSpokenLanguage(options.SpokenLanguage).
 		withUpdatedAtFrom(options.UpdatedAtFrom).
 		withUpdatedAtTo(options.UpdatedAtTo).
@@ -466,6 +467,56 @@ func (g *getAllIndividualsSQLQuery) withIdentificationNumber(identificationNumbe
 	g.writeString(" OR identification_number_2 = ").writeLastArg()
 	g.writeString(" OR identification_number_3 = ").writeLastArg()
 	g.writeString(")")
+	return g
+}
+
+func (g *getAllIndividualsSQLQuery) withServiceCC(serviceCC containers.Set[api.ServiceCC], requestedFrom *time.Time, requestedTo *time.Time, deliveredFrom *time.Time, deliveredTo *time.Time) *getAllIndividualsSQLQuery {
+	zero := &time.Time{}
+	requestedFromIsUndefined := requestedFrom == nil || requestedFrom.IsZero() || requestedFrom == zero
+	requestedToIsUndefined := requestedTo == nil || requestedTo.IsZero() || requestedTo == zero
+	deliveredFromIsUndefined := deliveredFrom == nil || deliveredFrom.IsZero() || deliveredFrom == zero
+	deliveredToIsUndefined := deliveredTo == nil || deliveredTo.IsZero() || deliveredTo == zero
+
+	if requestedFromIsUndefined && requestedToIsUndefined && deliveredFromIsUndefined && deliveredToIsUndefined && serviceCC.IsEmpty() {
+		return g
+	}
+
+	items := "'"
+	for i, ds := range serviceCC.Items() {
+		if i != 0 {
+			items += "','"
+		}
+		items += string(ds)
+	}
+	items += "'"
+
+	query := " AND ("
+	for i := 1; i <= 7; i++ {
+		if i != 1 {
+			query += " OR "
+		}
+		query += "("
+		var conditions []string
+		if !serviceCC.IsEmpty() {
+			conditions = append(conditions, fmt.Sprintf("service_cc_%d IN (%s)", i, items))
+		}
+		if !requestedToIsUndefined {
+			conditions = append(conditions, fmt.Sprintf("service_requested_date_%d <= '%s'", i, requestedTo.Format("2006-01-02")))
+		}
+		if !requestedFromIsUndefined {
+			conditions = append(conditions, fmt.Sprintf("service_requested_date_%d >= '%s'", i, requestedFrom.Format("2006-01-02")))
+		}
+		if !deliveredToIsUndefined {
+			conditions = append(conditions, fmt.Sprintf("service_delivered_date_%d <= '%s'", i, deliveredTo.Format("2006-01-02")))
+		}
+		if !deliveredFromIsUndefined {
+			conditions = append(conditions, fmt.Sprintf("service_delivered_date_%d >= '%s'", i, deliveredFrom.Format("2006-01-02")))
+		}
+		query += strings.Join(conditions, " AND ")
+		query += ")"
+	}
+	query += ")"
+	g.writeString(query)
 	return g
 }
 

@@ -74,6 +74,11 @@ func (p *listIndividualsOptionsDecoder) parse() error {
 		p.parsePresentsProtectionConcerns,
 		p.parseSelfCareDisabilityLevel,
 		p.parseSpokenLanguage,
+		p.parseServiceCCType,
+		p.parseServiceRequestedDateFrom,
+		p.parseServiceRequestedDateTo,
+		p.parseServiceDeliveredDateFrom,
+		p.parseServiceDeliveredDateTo,
 		p.parseUpdatedAtFrom,
 		p.parseUpdatedAtTo,
 		p.parseSkip,
@@ -133,6 +138,42 @@ func (p *listIndividualsOptionsDecoder) parseBirthDateTo() error {
 		return err
 	}
 	p.out.BirthDateTo = birthDateTo
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseServiceRequestedDateFrom() error {
+	serviceRequestedDateFrom, err := parseOptionalDate(p.values.Get(constants.FormParamsGetIndividualsServiceRequestedDateFrom))
+	if err != nil || serviceRequestedDateFrom == nil {
+		return err
+	}
+	p.out.ServiceRequestedDateFrom = serviceRequestedDateFrom
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseServiceRequestedDateTo() error {
+	serviceRequestedDateTo, err := parseOptionalDate(p.values.Get(constants.FormParamsGetIndividualsServiceRequestedDateTo))
+	if err != nil || serviceRequestedDateTo == nil {
+		return err
+	}
+	p.out.ServiceRequestedDateTo = serviceRequestedDateTo
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseServiceDeliveredDateFrom() error {
+	serviceDeliveredDateFrom, err := parseOptionalDate(p.values.Get(constants.FormParamsGetIndividualsServiceDeliveredDateFrom))
+	if err != nil || serviceDeliveredDateFrom == nil {
+		return err
+	}
+	p.out.ServiceDeliveredDateFrom = serviceDeliveredDateFrom
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseServiceDeliveredDateTo() error {
+	serviceDeliveredDateTo, err := parseOptionalDate(p.values.Get(constants.FormParamsGetIndividualsServiceDeliveredDateTo))
+	if err != nil || serviceDeliveredDateTo == nil {
+		return err
+	}
+	p.out.ServiceDeliveredDateTo = serviceDeliveredDateTo
 	return nil
 }
 
@@ -363,6 +404,22 @@ func (p *listIndividualsOptionsDecoder) parseEngagementContext() error {
 		ecSet.Add(parsedEc)
 	}
 	p.out.EngagementContext = ecSet
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseServiceCCType() error {
+	if len(p.values[constants.FormParamsGetIndividualsServiceCC]) == 0 {
+		return nil
+	}
+	ccSet := containers.NewSet[ServiceCC]()
+	for _, ec := range p.values[constants.FormParamsGetIndividualsServiceCC] {
+		parsedEc, err := ParseServiceCC(ec)
+		if err != nil {
+			return err
+		}
+		ccSet.Add(parsedEc)
+	}
+	p.out.ServiceCC = ccSet
 	return nil
 }
 

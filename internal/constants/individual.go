@@ -171,6 +171,11 @@ const (
 	FormParamsGetIndividualsUpdatedAtFrom                  = "updated_at_from"
 	FormParamsGetIndividualsUpdatedAtTo                    = "updated_at_to"
 	FormParamsGetIndividualsVisionDisabilityLevel          = "vision_disability_level"
+	FormParamsGetIndividualsServiceCC                      = "service_cc"
+	FormParamsGetIndividualsServiceRequestedDateFrom       = "service_requested_date_from"
+	FormParamsGetIndividualsServiceRequestedDateTo         = "service_requested_date_to"
+	FormParamsGetIndividualsServiceDeliveredDateFrom       = "service_delivered_date_from"
+	FormParamsGetIndividualsServiceDeliveredDateTo         = "service_delivered_date_to"
 	FormParamsGetIndividualsSort                           = "sort"
 
 	DBColumnIndividualInactive                       = "inactive"

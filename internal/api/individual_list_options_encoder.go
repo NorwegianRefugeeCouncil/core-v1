@@ -80,6 +80,11 @@ func (p *listIndividualsOptionsEncoder) encode() url.Values {
 		p.encodePrefersToRemainAnonymous,
 		p.encodePresentsProtectionConcerns,
 		p.encodeSelfCareDisabilityLevel,
+		p.encodeServiceCC,
+		p.encodeServiceRequestedDateFrom,
+		p.encodeServiceRequestedDateTo,
+		p.encodeServiceDeliveredDateFrom,
+		p.encodeServiceDeliveredDateTo,
 		p.encodeSpokenLanguage,
 		p.encodeUpdatedAtFrom,
 		p.encodeUpdatedAtTo,
@@ -127,6 +132,30 @@ func (p *listIndividualsOptionsEncoder) encodeBirthDateFrom() {
 func (p *listIndividualsOptionsEncoder) encodeBirthDateTo() {
 	if p.values.BirthDateTo != nil {
 		p.out.Add(constants.FormParamsGetIndividualsBirthDateTo, p.values.BirthDateTo.Format("2006-01-02"))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeServiceRequestedDateFrom() {
+	if p.values.ServiceRequestedDateFrom != nil {
+		p.out.Add(constants.FormParamsGetIndividualsServiceRequestedDateFrom, p.values.ServiceRequestedDateFrom.Format("2006-01-02"))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeServiceRequestedDateTo() {
+	if p.values.ServiceRequestedDateTo != nil {
+		p.out.Add(constants.FormParamsGetIndividualsServiceRequestedDateTo, p.values.ServiceRequestedDateTo.Format("2006-01-02"))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeServiceDeliveredDateFrom() {
+	if p.values.ServiceDeliveredDateFrom != nil {
+		p.out.Add(constants.FormParamsGetIndividualsServiceDeliveredDateFrom, p.values.ServiceDeliveredDateFrom.Format("2006-01-02"))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeServiceDeliveredDateTo() {
+	if p.values.ServiceDeliveredDateTo != nil {
+		p.out.Add(constants.FormParamsGetIndividualsServiceDeliveredDateTo, p.values.ServiceDeliveredDateTo.Format("2006-01-02"))
 	}
 }
 
@@ -381,6 +410,14 @@ func (p *listIndividualsOptionsEncoder) encodeIsMinor() {
 func (p *listIndividualsOptionsEncoder) encodeMobilityDisabilityLevel() {
 	if p.values.MobilityDisabilityLevel != DisabilityLevelUnspecified {
 		p.out.Add(constants.FormParamsGetIndividualsMobilityDisabilityLevel, string(p.values.MobilityDisabilityLevel))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeServiceCC() {
+	if len(p.values.ServiceCC) > 0 {
+		for _, ds := range p.values.ServiceCC.Items() {
+			p.out.Add(constants.FormParamsGetIndividualsServiceCC, string(ds))
+		}
 	}
 }
 

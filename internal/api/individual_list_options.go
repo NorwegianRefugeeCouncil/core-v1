@@ -71,6 +71,11 @@ type ListIndividualsOptions struct {
 	Skip                           int
 	Take                           int
 	Sort                           SortTerms
+	ServiceCC                      containers.Set[ServiceCC]
+	ServiceRequestedDateFrom       *time.Time
+	ServiceRequestedDateTo         *time.Time
+	ServiceDeliveredDateFrom       *time.Time
+	ServiceDeliveredDateTo         *time.Time
 	VisionDisabilityLevel          DisabilityLevel
 }
 
@@ -150,6 +155,22 @@ func (o ListIndividualsOptions) IsInactiveSelected() bool {
 
 func (o ListIndividualsOptions) IsMinorSelected() bool {
 	return o.IsMinor != nil && *o.IsMinor
+}
+
+func (o ListIndividualsOptions) IsMinorHeadedHouseholdSelected() bool {
+	return o.IsMinorHeadedHousehold != nil && *o.IsMinorHeadedHousehold
+}
+
+func (o ListIndividualsOptions) IsNotMinorHeadedHouseholdSelected() bool {
+	return o.IsMinorHeadedHousehold != nil && !*o.IsMinorHeadedHousehold
+}
+
+func (o ListIndividualsOptions) IsFemaleHeadedHouseholdSelected() bool {
+	return o.IsFemaleHeadedHousehold != nil && *o.IsFemaleHeadedHousehold
+}
+
+func (o ListIndividualsOptions) IsNotFemaleHeadedHouseholdSelected() bool {
+	return o.IsFemaleHeadedHousehold != nil && !*o.IsFemaleHeadedHousehold
 }
 
 func (o ListIndividualsOptions) IsNotMinorSelected() bool {
