@@ -389,10 +389,54 @@
                     {{template "columnHeader" (dict
                     "Options" .Options
                     "Sortable" true
+                    "SortKey" "first_name"
+                    "Label" "First Name"
+                    "Title" "First Name"
+                    "Width" $nameWidth
+                    "MinWidth" $nameWidth
+                    "MaxWidth" $nameWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "middle_name"
+                    "Label" "Middle Name"
+                    "Title" "Middle Name"
+                    "Width" $nameWidth
+                    "MinWidth" $nameWidth
+                    "MaxWidth" $nameWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "last_name"
+                    "Label" "Last Name"
+                    "Title" "Last Name"
+                    "Width" $nameWidth
+                    "MinWidth" $nameWidth
+                    "MaxWidth" $nameWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
                     "SortKey" "native_name"
                     "Label" "Native Name"
                     "Scope" "col"
                     "Title" "Native Name"
+                    "Width" $nameWidth
+                    "MinWidth" $nameWidth
+                    "MaxWidth" $nameWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "mothers_name"
+                    "Label" "Mother's Name"
+                    "Title" "Mother's Name"
                     "Width" $nameWidth
                     "MinWidth" $nameWidth
                     "MaxWidth" $nameWidth
@@ -429,17 +473,6 @@
                     "Width" $birthDateWidth
                     "MinWidth" $birthDateWidth
                     "MaxWidth" $birthDateWidth
-                    )}}
-
-                    {{template "columnHeader" (dict
-                    "Options" .Options
-                    "Sortable" true
-                    "SortKey" "mothers_name"
-                    "Label" "Mother's Name"
-                    "Title" "Mother's Name"
-                    "Width" $nameWidth
-                    "MinWidth" $nameWidth
-                    "MaxWidth" $nameWidth
                     )}}
 
                     {{template "columnHeader" (dict
@@ -693,6 +726,42 @@
                             </td>
                             <!-- End Name -->
 
+                            <!-- First Name -->
+                            <td>
+                                <div style="width: {{$nameWidth}}">
+                                    {{if not .PrefersToRemainAnonymous}}
+                                        {{.FirstName}}
+                                    {{else}}
+                                        <span class="text-muted"><em>anonymous</em></span>
+                                    {{end}}
+                                </div>
+                            </td>
+                            <!-- End First Name -->
+
+                            <!-- Middle Name -->
+                            <td>
+                                <div style="width: {{$nameWidth}}">
+                                    {{if not .PrefersToRemainAnonymous}}
+                                        {{.MiddleName}}
+                                    {{else}}
+                                        <span class="text-muted"><em>anonymous</em></span>
+                                    {{end}}
+                                </div>
+                            </td>
+                            <!-- End Middle Name -->
+
+                            <!-- Last Name -->
+                            <td>
+                                <div style="width: {{$nameWidth}}">
+                                    {{if not .PrefersToRemainAnonymous}}
+                                        {{.LastName}}
+                                    {{else}}
+                                        <span class="text-muted"><em>anonymous</em></span>
+                                    {{end}}
+                                </div>
+                            </td>
+                            <!-- End Last Name -->
+
                             <!-- Native Name -->
                             <td>
                                 <div style="width: {{$nameWidth}}">
@@ -704,6 +773,14 @@
                                 </div>
                             </td>
                             <!-- End Native Name -->
+
+                            <!-- Mothers Name -->
+                            <td>
+                                <div style="width: {{$nameWidth}}">
+                                    {{.MothersName}}
+                                </div>
+                            </td>
+                            <!-- End Mothers Name -->
 
                             <!-- Sex -->
                             <td>
@@ -732,14 +809,6 @@
                                 </div>
                             </td>
                             <!-- End BirthDate -->
-
-                            <!-- Mothers Name -->
-                            <td>
-                                <div style="width: {{$nameWidth}}">
-                                        {{.MothersName}}
-                                </div>
-                            </td>
-                            <!-- End Mothers Name -->
 
                             <!-- HouseholdID -->
                             <td>
@@ -905,7 +974,7 @@
                     {{end}}
                 {{else}}
                     <tr>
-                        <td colspan="{{if not $canWrite}}24{{else}}25{{end}}">No individuals found</td>
+                        <td colspan="{{if not $canWrite}}30{{else}}31{{end}}">No individuals found</td>
                     </tr>
                 {{end}}
                 </tbody>
