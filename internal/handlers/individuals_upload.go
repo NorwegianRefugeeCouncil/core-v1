@@ -14,7 +14,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func UploadHandler(renderer Renderer, individualRepo db.IndividualRepo) http.Handler {
+func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Handler {
 
 	const (
 		templateName  = "error.gohtml"
