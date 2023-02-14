@@ -52,6 +52,7 @@ func (p *listIndividualsOptionsEncoder) encode() url.Values {
 		p.encodeFreeField4,
 		p.encodeFreeField5,
 		p.encodeFullName,
+		p.encodeMothersName,
 		p.encodeSexes,
 		p.encodeHasCognitiveDisability,
 		p.encodeHasCommunicationDisability,
@@ -278,6 +279,12 @@ func (p *listIndividualsOptionsEncoder) encodeFreeField5() {
 func (p *listIndividualsOptionsEncoder) encodeFullName() {
 	if len(p.values.FullName) != 0 {
 		p.out.Add(constants.FormParamsGetIndividualsFullName, p.values.FullName)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeMothersName() {
+	if len(p.values.MothersName) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsMothersName, p.values.MothersName)
 	}
 }
 
@@ -526,6 +533,8 @@ var sortableColumns = containers.NewStringSet(
 	constants.DBColumnIndividualEmail2,
 	constants.DBColumnIndividualEmail3,
 	constants.DBColumnIndividualFullName,
+	constants.DBColumnIndividualNativeName,
+	constants.DBColumnIndividualMothersName,
 	constants.DBColumnIndividualFreeField1,
 	constants.DBColumnIndividualFreeField2,
 	constants.DBColumnIndividualFreeField3,

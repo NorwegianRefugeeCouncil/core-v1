@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"github.com/nrc-no/notcore/internal/constants"
 	"strings"
 	"time"
 
@@ -49,6 +50,7 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withFreeField4(options.FreeField4).
 		withFreeField5(options.FreeField5).
 		withFullName(options.FullName).
+		withMothersName(options.MothersName).
 		withSexes(options.Sexes).
 		withHasCognitiveDisability(options.HasCognitiveDisability).
 		withHasCommunicationDisability(options.HasCommunicationDisability).
@@ -93,7 +95,7 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 
 func (g *getAllIndividualsSQLQuery) withInactive(inactive *bool) *getAllIndividualsSQLQuery {
 	if inactive == nil || *inactive != true {
-		g.writeString(" AND inactive = false")
+		g.writeString(" AND " + constants.DBColumnIndividualInactive + " = false")
 	}
 	return g
 }
@@ -103,9 +105,9 @@ func (g *getAllIndividualsSQLQuery) withAddress(address string) *getAllIndividua
 		return g
 	}
 	if g.driverName == "sqlite" {
-		g.writeString(" AND address LIKE ").writeArg("%" + address + "%")
+		g.writeString(" AND " + constants.DBColumnIndividualAddress + " LIKE ").writeArg("%" + address + "%")
 	} else if g.driverName == "postgres" {
-		g.writeString(" AND address ILIKE ").writeArg("%" + address + "%")
+		g.writeString(" AND " + constants.DBColumnIndividualAddress + " ILIKE ").writeArg("%" + address + "%")
 	}
 	return g
 }
@@ -114,7 +116,7 @@ func (g *getAllIndividualsSQLQuery) withAgeFrom(from *int) *getAllIndividualsSQL
 	if from == nil {
 		return g
 	}
-	g.writeString(" AND age >= ").writeArg(*from)
+	g.writeString(" AND " + constants.DBColumnIndividualAge + " >= ").writeArg(*from)
 	return g
 }
 
@@ -122,7 +124,7 @@ func (g *getAllIndividualsSQLQuery) withAgeTo(to *int) *getAllIndividualsSQLQuer
 	if to == nil {
 		return g
 	}
-	g.writeString(" AND age <= ").writeArg(*to)
+	g.writeString(" AND " + constants.DBColumnIndividualAge + " <= ").writeArg(*to)
 	return g
 }
 
@@ -140,7 +142,7 @@ func (g *getAllIndividualsSQLQuery) withBirthDateTo(to *time.Time) *getAllIndivi
 	if to == nil || to.IsZero() || to == zero {
 		return g
 	}
-	g.writeString(" AND birth_date <= ").writeArg(to)
+	g.writeString(" AND " + constants.DBColumnIndividualBirthDate + " <= ").writeArg(to)
 	return g
 }
 
@@ -148,7 +150,7 @@ func (g *getAllIndividualsSQLQuery) withCognitiveDisabilityLevel(c api.Disabilit
 	if c == api.DisabilityLevelUnspecified {
 		return g
 	}
-	g.writeString(" AND cognitive_disability_level = ").writeArg(string(c))
+	g.writeString(" AND " + constants.DBColumnIndividualCognitiveDisabilityLevel + " = ").writeArg(string(c))
 	return g
 }
 
@@ -156,7 +158,7 @@ func (g *getAllIndividualsSQLQuery) withCollectionAdministrativeArea1(area strin
 	if len(area) == 0 {
 		return g
 	}
-	g.writeString(" AND collection_administrative_area_1 = ").writeArg(area)
+	g.writeString(" AND " + constants.DBColumnIndividualCollectionAdministrativeArea1 + " = ").writeArg(area)
 	return g
 }
 
@@ -164,7 +166,7 @@ func (g *getAllIndividualsSQLQuery) withCollectionAdministrativeArea2(area strin
 	if len(area) == 0 {
 		return g
 	}
-	g.writeString(" AND collection_administrative_area_2 = ").writeArg(area)
+	g.writeString(" AND " + constants.DBColumnIndividualCollectionAdministrativeArea2 + " = ").writeArg(area)
 	return g
 }
 
@@ -172,7 +174,7 @@ func (g *getAllIndividualsSQLQuery) withCollectionAdministrativeArea3(area strin
 	if len(area) == 0 {
 		return g
 	}
-	g.writeString(" AND collection_administrative_area_3 = ").writeArg(area)
+	g.writeString(" AND " + constants.DBColumnIndividualCollectionAdministrativeArea3 + " = ").writeArg(area)
 	return g
 }
 
@@ -180,7 +182,7 @@ func (g *getAllIndividualsSQLQuery) withCollectionOffice(office string) *getAllI
 	if len(office) == 0 {
 		return g
 	}
-	g.writeString(" AND collection_office = ").writeArg(office)
+	g.writeString(" AND " + constants.DBColumnIndividualCollectionOffice + " = ").writeArg(office)
 	return g
 }
 
@@ -188,7 +190,7 @@ func (g *getAllIndividualsSQLQuery) withCollectionAgentName(name string) *getAll
 	if len(name) == 0 {
 		return g
 	}
-	g.writeString(" AND collection_agent_name = ").writeArg(name)
+	g.writeString(" AND " + constants.DBColumnIndividualCollectionAgentName + " = ").writeArg(name)
 	return g
 }
 
@@ -196,7 +198,7 @@ func (g *getAllIndividualsSQLQuery) withCollectionAgentTitle(title string) *getA
 	if len(title) == 0 {
 		return g
 	}
-	g.writeString(" AND collection_agent_title = ").writeArg(title)
+	g.writeString(" AND " + constants.DBColumnIndividualCollectionAgentTitle + " = ").writeArg(title)
 	return g
 }
 
@@ -204,7 +206,7 @@ func (g *getAllIndividualsSQLQuery) withCollectionTimeFrom(d *time.Time) *getAll
 	if d == nil {
 		return g
 	}
-	g.writeString(" AND collection_time >= ").writeArg(d)
+	g.writeString(" AND " + constants.DBColumnIndividualCollectionTime + " >= ").writeArg(d)
 	return g
 }
 
@@ -212,7 +214,7 @@ func (g *getAllIndividualsSQLQuery) withCollectionTimeTo(d *time.Time) *getAllIn
 	if d == nil {
 		return g
 	}
-	g.writeString(" AND collection_time <= ").writeArg(d)
+	g.writeString(" AND " + constants.DBColumnIndividualCollectionTime + " <= ").writeArg(d)
 	return g
 }
 
@@ -220,7 +222,7 @@ func (g *getAllIndividualsSQLQuery) withCommunityID(id string) *getAllIndividual
 	if len(id) == 0 {
 		return g
 	}
-	g.writeString(" AND community_id = ").writeArg(id)
+	g.writeString(" AND " + constants.DBColumnIndividualCommunityID + " = ").writeArg(id)
 	return g
 }
 
@@ -228,7 +230,7 @@ func (g *getAllIndividualsSQLQuery) withCountryID(countryID string) *getAllIndiv
 	if len(countryID) == 0 {
 		return g
 	}
-	g.writeString(" AND country_id = ").writeArg(countryID)
+	g.writeString(" AND " + constants.DBColumnIndividualCountryID + " = ").writeArg(countryID)
 	return g
 }
 
@@ -236,7 +238,7 @@ func (g *getAllIndividualsSQLQuery) withCreatedAtFrom(t *time.Time) *getAllIndiv
 	if t == nil {
 		return g
 	}
-	g.writeString(" AND created_at >= ").writeArg(t)
+	g.writeString(" AND " + constants.DBColumnIndividualCreatedAt + " >= ").writeArg(t)
 	return g
 }
 
@@ -244,7 +246,7 @@ func (g *getAllIndividualsSQLQuery) withCreatedAtTo(t *time.Time) *getAllIndivid
 	if t == nil {
 		return g
 	}
-	g.writeString(" AND created_at <= ").writeArg(t)
+	g.writeString(" AND " + constants.DBColumnIndividualCreatedAt + " <= ").writeArg(t)
 	return g
 }
 
@@ -252,7 +254,7 @@ func (g *getAllIndividualsSQLQuery) withDisplacementStatuses(displacementStatuse
 	if displacementStatuses.IsEmpty() {
 		return g
 	}
-	g.writeString(" AND displacement_status IN (")
+	g.writeString(" AND " + constants.DBColumnIndividualDisplacementStatus + " IN (")
 	for i, ds := range displacementStatuses.Items() {
 		if i != 0 {
 			g.writeString(",")
@@ -269,9 +271,9 @@ func (g *getAllIndividualsSQLQuery) withEmail(email string) *getAllIndividualsSQ
 	}
 	normalizedEmail := strings.ToLower(email)
 	g.writeString(" AND (")
-	g.writeString("email_1 = ").writeArg(normalizedEmail).writeString(" OR ")
-	g.writeString("email_2 = ").writeLastArg().writeString(" OR ")
-	g.writeString("email_3 = ").writeLastArg()
+	g.writeString(constants.DBColumnIndividualEmail1 + " = ").writeArg(normalizedEmail).writeString(" OR ")
+	g.writeString(constants.DBColumnIndividualEmail2 + " = ").writeLastArg().writeString(" OR ")
+	g.writeString(constants.DBColumnIndividualEmail3 + " = ").writeLastArg()
 	g.writeString(")")
 	return g
 }
@@ -280,7 +282,7 @@ func (g *getAllIndividualsSQLQuery) withFreeField1(freeField1 string) *getAllInd
 	if len(freeField1) == 0 {
 		return g
 	}
-	g.writeString(" AND free_field_1 = ").writeArg(freeField1)
+	g.writeString(" AND " + constants.DBColumnIndividualFreeField1 + " = ").writeArg(freeField1)
 	return g
 }
 
@@ -288,7 +290,7 @@ func (g *getAllIndividualsSQLQuery) withFreeField2(freeField2 string) *getAllInd
 	if len(freeField2) == 0 {
 		return g
 	}
-	g.writeString(" AND free_field_2 = ").writeArg(freeField2)
+	g.writeString(" AND " + constants.DBColumnIndividualFreeField2 + " = ").writeArg(freeField2)
 	return g
 }
 
@@ -296,7 +298,7 @@ func (g *getAllIndividualsSQLQuery) withFreeField3(freeField3 string) *getAllInd
 	if len(freeField3) == 0 {
 		return g
 	}
-	g.writeString(" AND free_field_3 = ").writeArg(freeField3)
+	g.writeString(" AND " + constants.DBColumnIndividualFreeField3 + " = ").writeArg(freeField3)
 	return g
 }
 
@@ -304,7 +306,7 @@ func (g *getAllIndividualsSQLQuery) withFreeField4(freeField4 string) *getAllInd
 	if len(freeField4) == 0 {
 		return g
 	}
-	g.writeString(" AND free_field_4 = ").writeArg(freeField4)
+	g.writeString(" AND " + constants.DBColumnIndividualFreeField4 + " = ").writeArg(freeField4)
 	return g
 }
 
@@ -312,7 +314,21 @@ func (g *getAllIndividualsSQLQuery) withFreeField5(freeField5 string) *getAllInd
 	if len(freeField5) == 0 {
 		return g
 	}
-	g.writeString(" AND free_field_5 = ").writeArg(freeField5)
+	g.writeString(" AND " + constants.DBColumnIndividualFreeField5 + " = ").writeArg(freeField5)
+	return g
+}
+
+func (g *getAllIndividualsSQLQuery) withMothersName(mothersName string) *getAllIndividualsSQLQuery {
+	if len(mothersName) == 0 {
+		return g
+	}
+	if g.driverName == "sqlite" {
+		g.writeString(" AND " + constants.DBColumnIndividualMothersName + " LIKE ")
+		g.writeArg("%" + mothersName + "%")
+	} else if g.driverName == "postgres" {
+		g.writeString(" AND " + constants.DBColumnIndividualMothersName + " ILIKE ")
+		g.writeArg("%" + mothersName + "%")
+	}
 	return g
 }
 
@@ -321,27 +337,31 @@ func (g *getAllIndividualsSQLQuery) withFullName(name string) *getAllIndividuals
 		return g
 	}
 	if g.driverName == "sqlite" {
-		g.writeString(" AND (full_name LIKE ")
+		g.writeString(" AND (" + constants.DBColumnIndividualFullName + " LIKE ")
 		g.writeArg("%" + name + "%")
-		g.writeString(" OR preferred_name LIKE ")
+		g.writeString(" OR " + constants.DBColumnIndividualPreferredName + " LIKE ")
 		g.writeArg("%" + name + "%")
-		g.writeString(" OR first_name LIKE ")
+		g.writeString(" OR " + constants.DBColumnIndividualFirstName + " LIKE ")
 		g.writeArg("%" + name + "%")
-		g.writeString(" OR middle_name LIKE ")
+		g.writeString(" OR " + constants.DBColumnIndividualMiddleName + " LIKE ")
 		g.writeArg("%" + name + "%")
-		g.writeString(" OR last_name LIKE ")
+		g.writeString(" OR " + constants.DBColumnIndividualLastName + " LIKE ")
+		g.writeArg("%" + name + "%")
+		g.writeString(" OR " + constants.DBColumnIndividualNativeName + " LIKE ")
 		g.writeArg("%" + name + "%")
 		g.writeString(")")
 	} else if g.driverName == "postgres" {
-		g.writeString(" AND (full_name ILIKE ")
+		g.writeString(" AND (" + constants.DBColumnIndividualFullName + " ILIKE ")
 		g.writeArg("%" + name + "%")
-		g.writeString(" OR preferred_name ILIKE ")
+		g.writeString(" OR " + constants.DBColumnIndividualPreferredName + " ILIKE ")
 		g.writeArg("%" + name + "%")
-		g.writeString(" OR first_name ILIKE ")
+		g.writeString(" OR " + constants.DBColumnIndividualFirstName + " ILIKE ")
 		g.writeArg("%" + name + "%")
-		g.writeString(" OR middle_name ILIKE ")
+		g.writeString(" OR " + constants.DBColumnIndividualMiddleName + " ILIKE ")
 		g.writeArg("%" + name + "%")
-		g.writeString(" OR last_name ILIKE ")
+		g.writeString(" OR " + constants.DBColumnIndividualLastName + " ILIKE ")
+		g.writeArg("%" + name + "%")
+		g.writeString(" OR " + constants.DBColumnIndividualNativeName + " ILIKE ")
 		g.writeArg("%" + name + "%")
 		g.writeString(")")
 	}
@@ -352,7 +372,7 @@ func (g *getAllIndividualsSQLQuery) withSexes(sexes containers.Set[api.Sex]) *ge
 	if len(sexes) == 0 {
 		return g
 	}
-	g.writeString(" AND sex IN (")
+	g.writeString(" AND " + constants.DBColumnIndividualSex + " IN (")
 	for i, sex := range sexes.Items() {
 		if i != 0 {
 			g.writeString(",")
@@ -367,7 +387,7 @@ func (g *getAllIndividualsSQLQuery) withHasCognitiveDisability(hasCognitiveDisab
 	if hasCognitiveDisability == nil {
 		return g
 	}
-	g.writeString(" AND has_cognitive_disability = ").writeArg(*hasCognitiveDisability)
+	g.writeString(" AND " + constants.DBColumnIndividualHasCognitiveDisability + " = ").writeArg(*hasCognitiveDisability)
 	return g
 }
 
@@ -375,7 +395,7 @@ func (g *getAllIndividualsSQLQuery) withHasCommunicationDisability(hasCommunicat
 	if hasCommunicationDisability == nil {
 		return g
 	}
-	g.writeString(" AND has_communication_disability = ").writeArg(*hasCommunicationDisability)
+	g.writeString(" AND " + constants.DBColumnIndividualHasCommunicationDisability + " = ").writeArg(*hasCommunicationDisability)
 	return g
 }
 
@@ -383,7 +403,7 @@ func (g *getAllIndividualsSQLQuery) withHasConsentedToRgpd(hasConsentedToRgpd *b
 	if hasConsentedToRgpd == nil {
 		return g
 	}
-	g.writeString(" AND has_consented_to_rgpd = ").writeArg(*hasConsentedToRgpd)
+	g.writeString(" AND " + constants.DBColumnIndividualHasConsentedToRGPD + " = ").writeArg(*hasConsentedToRgpd)
 	return g
 }
 
@@ -391,7 +411,7 @@ func (g *getAllIndividualsSQLQuery) withHasConsentedToReferral(hasConsentedToRef
 	if hasConsentedToReferral == nil {
 		return g
 	}
-	g.writeString(" AND has_consented_to_referral = ").writeArg(*hasConsentedToReferral)
+	g.writeString(" AND " + constants.DBColumnIndividualHasConsentedToReferral + " = ").writeArg(*hasConsentedToReferral)
 	return g
 }
 
@@ -399,7 +419,7 @@ func (g *getAllIndividualsSQLQuery) withHasHearingDisability(hasHearingDisabilit
 	if hasHearingDisability == nil {
 		return g
 	}
-	g.writeString(" AND has_hearing_disability = ").writeArg(*hasHearingDisability)
+	g.writeString(" AND " + constants.DBColumnIndividualHasHearingDisability + " = ").writeArg(*hasHearingDisability)
 	return g
 }
 
@@ -407,7 +427,7 @@ func (g *getAllIndividualsSQLQuery) withHasMobilityDisability(hasMobilityDisabil
 	if hasMobilityDisability == nil {
 		return g
 	}
-	g.writeString(" AND has_mobility_disability = ").writeArg(*hasMobilityDisability)
+	g.writeString(" AND " + constants.DBColumnIndividualHasMobilityDisability + " = ").writeArg(*hasMobilityDisability)
 	return g
 }
 
@@ -415,7 +435,7 @@ func (g *getAllIndividualsSQLQuery) withHasSelfCareDisability(hasSelfCareDisabil
 	if hasSelfCareDisability == nil {
 		return g
 	}
-	g.writeString(" AND has_selfcare_disability = ").writeArg(*hasSelfCareDisability)
+	g.writeString(" AND " + constants.DBColumnIndividualHasSelfCareDisability + " = ").writeArg(*hasSelfCareDisability)
 	return g
 }
 
@@ -423,7 +443,7 @@ func (g *getAllIndividualsSQLQuery) withHasVisionDisability(hasVisionDisability 
 	if hasVisionDisability == nil {
 		return g
 	}
-	g.writeString(" AND has_vision_disability = ").writeArg(*hasVisionDisability)
+	g.writeString(" AND " + constants.DBColumnIndividualHasVisionDisability + " = ").writeArg(*hasVisionDisability)
 	return g
 }
 
@@ -431,7 +451,7 @@ func (g *getAllIndividualsSQLQuery) withHearingDisabilityLevel(hearingDisability
 	if hearingDisabilityLevel == api.DisabilityLevelUnspecified {
 		return g
 	}
-	g.writeString(" AND hearing_disability_level = ").writeArg(string(hearingDisabilityLevel))
+	g.writeString(" AND " + constants.DBColumnIndividualHearingDisabilityLevel + " = ").writeArg(string(hearingDisabilityLevel))
 	return g
 }
 
@@ -439,7 +459,7 @@ func (g *getAllIndividualsSQLQuery) withHouseholdID(householdID string) *getAllI
 	if len(householdID) == 0 {
 		return g
 	}
-	g.writeString(" AND household_id = ").writeArg(householdID)
+	g.writeString(" AND " + constants.DBColumnIndividualHouseholdID + " = ").writeArg(householdID)
 	return g
 }
 
@@ -447,7 +467,7 @@ func (g *getAllIndividualsSQLQuery) withIds(ids containers.StringSet) *getAllInd
 	if ids.Len() == 0 {
 		return g
 	}
-	g.writeString(" AND id IN (")
+	g.writeString(" AND " + constants.DBColumnIndividualID + " IN (")
 	for i, id := range ids.Items() {
 		if i != 0 {
 			g.writeString(",")
@@ -463,9 +483,9 @@ func (g *getAllIndividualsSQLQuery) withIdentificationNumber(identificationNumbe
 		return g
 	}
 	g.writeString(" AND (")
-	g.writeString("identification_number_1 = ").writeArg(identificationNumber)
-	g.writeString(" OR identification_number_2 = ").writeLastArg()
-	g.writeString(" OR identification_number_3 = ").writeLastArg()
+	g.writeString(constants.DBColumnIndividualIdentificationNumber1 + " = ").writeArg(identificationNumber)
+	g.writeString(" OR " + constants.DBColumnIndividualIdentificationNumber2 + " = ").writeLastArg()
+	g.writeString(" OR " + constants.DBColumnIndividualIdentificationNumber3 + " = ").writeLastArg()
 	g.writeString(")")
 	return g
 }
@@ -524,7 +544,7 @@ func (g *getAllIndividualsSQLQuery) withEngagementContext(engagementContext cont
 	if engagementContext.IsEmpty() {
 		return g
 	}
-	g.writeString(" AND engagement_context IN (")
+	g.writeString(" AND " + constants.DBColumnIndividualEngagementContext + " IN (")
 	for i, ds := range engagementContext.Items() {
 		if i != 0 {
 			g.writeString(",")
@@ -539,7 +559,7 @@ func (g *getAllIndividualsSQLQuery) withInternalID(internalID string) *getAllInd
 	if len(internalID) == 0 {
 		return g
 	}
-	g.writeString(" AND internal_id = ").writeArg(internalID)
+	g.writeString(" AND " + constants.DBColumnIndividualInternalID + " = ").writeArg(internalID)
 	return g
 }
 
@@ -547,7 +567,7 @@ func (g *getAllIndividualsSQLQuery) withIsHeadOfCommunity(isHeadOfCommunity *boo
 	if isHeadOfCommunity == nil {
 		return g
 	}
-	g.writeString(" AND is_head_of_community = ").writeArg(*isHeadOfCommunity)
+	g.writeString(" AND " + constants.DBColumnIndividualIsHeadOfCommunity + " = ").writeArg(*isHeadOfCommunity)
 	return g
 }
 
@@ -555,7 +575,7 @@ func (g *getAllIndividualsSQLQuery) withIsHeadOfHousehold(isHeadOfHousehold *boo
 	if isHeadOfHousehold == nil {
 		return g
 	}
-	g.writeString(" AND is_head_of_household = ").writeArg(*isHeadOfHousehold)
+	g.writeString(" AND " + constants.DBColumnIndividualIsHeadOfHousehold + " = ").writeArg(*isHeadOfHousehold)
 	return g
 }
 
@@ -563,7 +583,7 @@ func (g *getAllIndividualsSQLQuery) withIsFemaleHeadedHousehold(isFemaleHeadedHo
 	if isFemaleHeadedHousehold == nil {
 		return g
 	}
-	g.writeString(" AND is_female_headed_household = ").writeArg(*isFemaleHeadedHousehold)
+	g.writeString(" AND " + constants.DBColumnIndividualIsFemaleHeadedHousehold + " = ").writeArg(*isFemaleHeadedHousehold)
 	return g
 }
 
@@ -571,7 +591,7 @@ func (g *getAllIndividualsSQLQuery) withIsMinorHeadedHousehold(isMinorHeadedHous
 	if isMinorHeadedHousehold == nil {
 		return g
 	}
-	g.writeString(" AND is_minor_headed_household = ").writeArg(*isMinorHeadedHousehold)
+	g.writeString(" AND " + constants.DBColumnIndividualIsMinorHeadedHousehold + " = ").writeArg(*isMinorHeadedHousehold)
 	return g
 }
 
@@ -580,9 +600,9 @@ func (g *getAllIndividualsSQLQuery) withIsMinor(isMinor *bool) *getAllIndividual
 		return g
 	}
 	if *isMinor {
-		g.writeString(" AND is_minor = ").writeArg(true)
+		g.writeString(" AND " + constants.DBColumnIndividualIsMinor + " = ").writeArg(true)
 	} else {
-		g.writeString(" AND is_minor = ").writeArg(false)
+		g.writeString(" AND " + constants.DBColumnIndividualIsMinor + " = ").writeArg(false)
 	}
 	return g
 }
@@ -591,7 +611,7 @@ func (g *getAllIndividualsSQLQuery) withMobilityDisabilityLevel(mobilityDisabili
 	if mobilityDisabilityLevel == api.DisabilityLevelUnspecified {
 		return g
 	}
-	g.writeString(" AND mobility_disability_level = ").writeArg(string(mobilityDisabilityLevel))
+	g.writeString(" AND " + constants.DBColumnIndividualMobilityDisabilityLevel + " = ").writeArg(string(mobilityDisabilityLevel))
 	return g
 }
 
@@ -600,8 +620,8 @@ func (g *getAllIndividualsSQLQuery) withNationality(nationality string) *getAllI
 		return g
 	}
 	g.writeString(" AND (")
-	g.writeString("nationality_1 = ").writeArg(nationality)
-	g.writeString(" OR nationality_2 = ").writeLastArg()
+	g.writeString(constants.DBColumnIndividualNationality1 + " = ").writeArg(nationality)
+	g.writeString(" OR " + constants.DBColumnIndividualNationality2 + " = ").writeLastArg()
 	g.writeString(")")
 	return g
 }
@@ -613,15 +633,15 @@ func (g *getAllIndividualsSQLQuery) withPhoneNumber(phoneNumber string) *getAllI
 	normalizedPhoneNumber := api.NormalizePhoneNumber(phoneNumber)
 	if g.driverName == "sqlite" {
 		g.writeString(" AND (")
-		g.writeString(" normalized_phone_number_1 LIKE ").writeArg("%" + normalizedPhoneNumber + "%").writeString(" OR ")
-		g.writeString(" normalized_phone_number_2 LIKE ").writeLastArg().writeString(" OR ")
-		g.writeString(" normalized_phone_number_3 LIKE ").writeLastArg()
+		g.writeString(" " + constants.DBColumnIndividualNormalizedPhoneNumber1 + " LIKE ").writeArg("%" + normalizedPhoneNumber + "%").writeString(" OR ")
+		g.writeString(" " + constants.DBColumnIndividualNormalizedPhoneNumber2 + " LIKE ").writeLastArg().writeString(" OR ")
+		g.writeString(" " + constants.DBColumnIndividualNormalizedPhoneNumber3 + " LIKE ").writeLastArg()
 		g.writeString(")")
 	} else if g.driverName == "postgres" {
 		g.writeString(" AND (")
-		g.writeString("normalized_phone_number_1 ILIKE ").writeArg("%" + normalizedPhoneNumber + "%").writeString(" OR ")
-		g.writeString("normalized_phone_number_2 ILIKE ").writeLastArg().writeString(" OR ")
-		g.writeString("normalized_phone_number_3 ILIKE ").writeLastArg()
+		g.writeString(constants.DBColumnIndividualNormalizedPhoneNumber1 + " ILIKE ").writeArg("%" + normalizedPhoneNumber + "%").writeString(" OR ")
+		g.writeString(constants.DBColumnIndividualNormalizedPhoneNumber2 + " ILIKE ").writeLastArg().writeString(" OR ")
+		g.writeString(constants.DBColumnIndividualNormalizedPhoneNumber3 + " ILIKE ").writeLastArg()
 		g.writeString(")")
 	}
 	return g
@@ -631,7 +651,7 @@ func (g *getAllIndividualsSQLQuery) withPreferredContactMethod(preferredContactM
 	if len(preferredContactMethod) == 0 {
 		return g
 	}
-	g.writeString(" AND preferred_contact_method = ").writeArg(preferredContactMethod)
+	g.writeString(" AND " + constants.DBColumnIndividualPreferredContactMethod + " = ").writeArg(preferredContactMethod)
 	return g
 }
 
@@ -639,7 +659,7 @@ func (g *getAllIndividualsSQLQuery) withPreferredCommunicationLanguage(language 
 	if len(language) == 0 {
 		return g
 	}
-	g.writeString(" AND preferred_communication_language = ").writeArg(language)
+	g.writeString(" AND " + constants.DBColumnIndividualPreferredCommunicationLanguage + " = ").writeArg(language)
 	return g
 }
 
@@ -647,7 +667,7 @@ func (g *getAllIndividualsSQLQuery) withPrefersToRemainAnonymous(prefersToRemain
 	if prefersToRemainAnonymous == nil {
 		return g
 	}
-	g.writeString(" AND prefers_to_remain_anonymous = ").writeArg(*prefersToRemainAnonymous)
+	g.writeString(" AND " + constants.DBColumnIndividualPrefersToRemainAnonymous + " = ").writeArg(*prefersToRemainAnonymous)
 	return g
 }
 
@@ -656,9 +676,9 @@ func (g *getAllIndividualsSQLQuery) withPresentsProtectionConcerns(presentsProte
 		return g
 	}
 	if *presentsProtectionConcerns {
-		g.writeString(" AND presents_protection_concerns = ").writeArg(true)
+		g.writeString(" AND " + constants.DBColumnIndividualPresentsProtectionConcerns + " = ").writeArg(true)
 	} else {
-		g.writeString(" AND presents_protection_concerns = ").writeArg(false)
+		g.writeString(" AND " + constants.DBColumnIndividualPresentsProtectionConcerns + " = ").writeArg(false)
 	}
 	return g
 }
@@ -667,7 +687,7 @@ func (g *getAllIndividualsSQLQuery) withSelfCareDisabilityLevel(selfCareDisabili
 	if selfCareDisabilityLevel == api.DisabilityLevelUnspecified {
 		return g
 	}
-	g.writeString(" AND selfcare_disability_level = ").writeArg(string(selfCareDisabilityLevel))
+	g.writeString(" AND " + constants.DBColumnIndividualSelfCareDisabilityLevel + " = ").writeArg(string(selfCareDisabilityLevel))
 	return g
 }
 
@@ -676,9 +696,9 @@ func (g *getAllIndividualsSQLQuery) withSpokenLanguage(language string) *getAllI
 		return g
 	}
 	g.writeString(" AND (")
-	g.writeString("spoken_language_1 = ").writeArg(language)
-	g.writeString(" OR spoken_language_2 = ").writeLastArg()
-	g.writeString(" OR spoken_language_3 = ").writeLastArg()
+	g.writeString(constants.DBColumnIndividualSpokenLanguage1 + " = ").writeArg(language)
+	g.writeString(" OR " + constants.DBColumnIndividualSpokenLanguage2 + " = ").writeLastArg()
+	g.writeString(" OR " + constants.DBColumnIndividualSpokenLanguage3 + " = ").writeLastArg()
 	g.writeString(")")
 	return g
 }
@@ -687,7 +707,7 @@ func (g *getAllIndividualsSQLQuery) withUpdatedAtFrom(updatedAtFrom *time.Time) 
 	if updatedAtFrom == nil {
 		return g
 	}
-	g.writeString(" AND updated_at >= ").writeArg(*updatedAtFrom)
+	g.writeString(" AND " + constants.DBColumnIndividualUpdatedAt + " >= ").writeArg(*updatedAtFrom)
 	return g
 }
 
@@ -695,7 +715,7 @@ func (g *getAllIndividualsSQLQuery) withUpdatedAtTo(updatedAtTo *time.Time) *get
 	if updatedAtTo == nil {
 		return g
 	}
-	g.writeString(" AND updated_at <= ").writeArg(*updatedAtTo)
+	g.writeString(" AND " + constants.DBColumnIndividualUpdatedAt + " <= ").writeArg(*updatedAtTo)
 	return g
 }
 
@@ -703,7 +723,7 @@ func (g *getAllIndividualsSQLQuery) withVisionDisabilityLevel(visionDisabilityLe
 	if visionDisabilityLevel == api.DisabilityLevelUnspecified {
 		return g
 	}
-	g.writeString(" AND vision_disability_level = ").writeArg(string(visionDisabilityLevel))
+	g.writeString(" AND " + constants.DBColumnIndividualVisionDisabilityLevel + " = ").writeArg(string(visionDisabilityLevel))
 	return g
 }
 

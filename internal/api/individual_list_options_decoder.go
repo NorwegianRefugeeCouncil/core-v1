@@ -45,6 +45,7 @@ func (p *listIndividualsOptionsDecoder) parse() error {
 		p.parseFreeField4,
 		p.parseFreeField5,
 		p.parseFullName,
+		p.parseMothersName,
 		p.parseSexes,
 		p.parseHasCognitiveDisability,
 		p.parseHasCommunicationDisability,
@@ -295,6 +296,11 @@ func (p *listIndividualsOptionsDecoder) parseFreeField5() error {
 
 func (p *listIndividualsOptionsDecoder) parseFullName() error {
 	p.out.FullName = p.values.Get(constants.FormParamsGetIndividualsFullName)
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseMothersName() error {
+	p.out.MothersName = p.values.Get(constants.FormParamsGetIndividualsMothersName)
 	return nil
 }
 

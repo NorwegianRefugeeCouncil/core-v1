@@ -58,6 +58,7 @@ type ListIndividualsOptions struct {
 	IsMinorHeadedHousehold         *bool
 	IsMinor                        *bool
 	MobilityDisabilityLevel        DisabilityLevel
+	MothersName                    string
 	Nationality                    string
 	PhoneNumber                    string
 	PreferredContactMethod         string

@@ -59,6 +59,8 @@ func (f *IndividualForm) build() error {
 		f.buildFirstName,
 		f.buildMiddleName,
 		f.buildLastName,
+		f.buildNativeName,
+		f.buildMothersName,
 		f.buildPrefersToRemainAnonymous,
 		f.buildSex,
 		f.buildBirthDate,
@@ -77,10 +79,12 @@ func (f *IndividualForm) build() error {
 		f.buildIdentification3Number,
 		f.buildInternalID,
 		f.buildHouseholdID,
+		f.buildHouseholdSize,
 		f.buildIsHeadOfHousehold,
 		f.buildIsFemaleHeadedHousehold,
 		f.buildIsMinorHeadedHousehold,
 		f.buildCommunityID,
+		f.buildCommunitySize,
 		f.buildIsHeadOfCommunity,
 		f.buildSpokenLanguage1,
 		f.buildSpokenLanguage2,
@@ -295,6 +299,20 @@ func (f *IndividualForm) buildLastName() error {
 	}, f.personalInfoSection, f.individual.LastName)
 }
 
+func (f *IndividualForm) buildMothersName() error {
+	return buildField(&forms.TextInputField{
+		Name:        "mothersName",
+		DisplayName: "Mother's Name",
+	}, f.personalInfoSection, f.individual.MothersName)
+}
+
+func (f *IndividualForm) buildNativeName() error {
+	return buildField(&forms.TextInputField{
+		Name:        "nativeName",
+		DisplayName: "Native Name",
+	}, f.personalInfoSection, f.individual.NativeName)
+}
+
 func (f *IndividualForm) buildPrefersToRemainAnonymous() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "prefersToRemainAnonymous",
@@ -437,6 +455,13 @@ func (f *IndividualForm) buildHouseholdID() error {
 	}, f.personalInfoSection, f.individual.HouseholdID)
 }
 
+func (f *IndividualForm) buildHouseholdSize() error {
+	return buildField(&forms.NumberInputField{
+		Name:        "householdSize",
+		DisplayName: "Household Size",
+	}, f.personalInfoSection, f.individual.HouseholdSize)
+}
+
 func (f *IndividualForm) buildIsHeadOfHousehold() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "isHeadOfHousehold",
@@ -463,6 +488,13 @@ func (f *IndividualForm) buildCommunityID() error {
 		Name:        "communityId",
 		DisplayName: "Community ID",
 	}, f.personalInfoSection, f.individual.CommunityID)
+}
+
+func (f *IndividualForm) buildCommunitySize() error {
+	return buildField(&forms.NumberInputField{
+		Name:        "communitySize",
+		DisplayName: "Community Size",
+	}, f.personalInfoSection, f.individual.CommunitySize)
 }
 
 func (f *IndividualForm) buildIsHeadOfCommunity() error {

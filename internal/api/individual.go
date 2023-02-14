@@ -42,6 +42,8 @@ type Individual struct {
 	CommunicationDisabilityLevel DisabilityLevel `json:"communicationDisabilityLevel" db:"communication_disability_level"`
 	// CommunityID is the ID of the community the individual belongs to
 	CommunityID string `json:"communityId" db:"community_id"`
+	// CommunitySize is the size of the community the individual belongs to
+	CommunitySize *int `json:"communitySize" db:"community_size"`
 	// CountryID is the ID of the country the individual belongs to
 	CountryID string `json:"countryId" db:"country_id"`
 	// CreatedAt is the time the individual record was created in the database
@@ -64,8 +66,12 @@ type Individual struct {
 	FirstName string `json:"firstName" db:"first_name"`
 	// MiddleName is the middle name of the individual
 	MiddleName string `json:"middleName" db:"middle_name"`
+	// MothersName is the name of the individuals mother
+	MothersName string `json:"mothersName" db:"mothers_name"`
 	// LastName is the last name of the individual
 	LastName string `json:"lastName" db:"last_name"`
+	// NativeName is the name of the individual in their native language
+	NativeName string `json:"nativeName" db:"native_name"`
 	// FreeField1 is a free field for the individual
 	FreeField1 string `json:"freeField1" db:"free_field_1"`
 	// FreeField2 is a free field for the individual
@@ -100,6 +106,8 @@ type Individual struct {
 	HearingDisabilityLevel DisabilityLevel `json:"hearingDisabilityLevel" db:"hearing_disability_level"`
 	// HouseholdID is the ID of the household the individual belongs to
 	HouseholdID string `json:"householdId" db:"household_id"`
+	// HouseholdSize is the size of the household the individual belongs to
+	HouseholdSize *int `json:"householdSize" db:"household_size"`
 	// ID is the ID of the individual
 	ID string `json:"id" db:"id"`
 	// IdentificationType1 is the type of primary identification of the individual
@@ -249,6 +257,8 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.Comments, nil
 	case constants.DBColumnIndividualCommunityID:
 		return i.CommunityID, nil
+	case constants.DBColumnIndividualCommunitySize:
+		return i.CommunitySize, nil
 	case constants.DBColumnIndividualCountryID:
 		return i.CountryID, nil
 	case constants.DBColumnIndividualCreatedAt:
@@ -283,6 +293,10 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.MiddleName, nil
 	case constants.DBColumnIndividualLastName:
 		return i.LastName, nil
+	case constants.DBColumnIndividualNativeName:
+		return i.NativeName, nil
+	case constants.DBColumnIndividualMothersName:
+		return i.MothersName, nil
 	case constants.DBColumnIndividualSex:
 		return i.Sex, nil
 	case constants.DBColumnIndividualHasCognitiveDisability:
@@ -303,6 +317,8 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.HasConsentedToReferral, nil
 	case constants.DBColumnIndividualHouseholdID:
 		return i.HouseholdID, nil
+	case constants.DBColumnIndividualHouseholdSize:
+		return i.HouseholdSize, nil
 	case constants.DBColumnIndividualID:
 		return i.ID, nil
 	case constants.DBColumnIndividualIdentificationType1:
@@ -476,6 +492,8 @@ func (i *Individual) Normalize() {
 	i.FirstName = trimString(i.FirstName)
 	i.MiddleName = trimString(i.MiddleName)
 	i.LastName = trimString(i.LastName)
+	i.NativeName = trimString(i.NativeName)
+	i.MothersName = trimString(i.MothersName)
 	i.HouseholdID = trimString(i.HouseholdID)
 	i.ID = trimString(i.ID)
 	i.EngagementContext = trimString(i.EngagementContext)
@@ -533,5 +551,6 @@ func (i *Individual) Normalize() {
 		i.FirstName = ""
 		i.MiddleName = ""
 		i.LastName = ""
+		i.NativeName = ""
 	}
 }

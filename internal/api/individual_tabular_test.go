@@ -27,6 +27,8 @@ var parameters = []struct {
 	{constants.FileColumnIndividualFirstName, "Hugh", "Hugh", false},
 	{constants.FileColumnIndividualMiddleName, "James", "James", false},
 	{constants.FileColumnIndividualLastName, "Jazz", "Jazz", false},
+	{constants.FileColumnIndividualNativeName, "جون", "جون", false},
+	{constants.FileColumnIndividualMothersName, "Jane Doe", "Jane Doe", false},
 	{constants.FileColumnIndividualSex, "male", api.SexMale, false},
 	{constants.FileColumnIndividualIsMinor, "tRuE", true, false},
 	{constants.FileColumnIndividualIsMinor, "YeS", true, false},
