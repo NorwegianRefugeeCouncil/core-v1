@@ -59,33 +59,19 @@ func (g EngagementContext) String() string {
 
 func ParseEngagementContext(str string) (EngagementContext, error) {
 	switch str {
-	case string(EngagementContextHouseVisit):
+	case string(EngagementContextHouseVisit), EngagementContextHouseVisit.String():
 		return EngagementContextHouseVisit, nil
-	case EngagementContextHouseVisit.String():
-		return EngagementContextHouseVisit, nil
-	case string(EngagementContextFieldActivity):
+	case string(EngagementContextFieldActivity), EngagementContextFieldActivity.String():
 		return EngagementContextFieldActivity, nil
-	case EngagementContextFieldActivity.String():
-		return EngagementContextFieldActivity, nil
-	case string(EngagementContextInOffice):
+	case string(EngagementContextInOffice), EngagementContextInOffice.String():
 		return EngagementContextInOffice, nil
-	case EngagementContextInOffice.String():
-		return EngagementContextInOffice, nil
-	case string(EngagementContextRemoteChannels):
+	case string(EngagementContextRemoteChannels), EngagementContextRemoteChannels.String():
 		return EngagementContextRemoteChannels, nil
-	case EngagementContextRemoteChannels.String():
-		return EngagementContextRemoteChannels, nil
-	case string(EngagementContextReferred):
+	case string(EngagementContextReferred), EngagementContextReferred.String():
 		return EngagementContextReferred, nil
-	case EngagementContextReferred.String():
-		return EngagementContextReferred, nil
-	case string(EngagementContextOther):
+	case string(EngagementContextOther), EngagementContextOther.String():
 		return EngagementContextOther, nil
-	case EngagementContextOther.String():
-		return EngagementContextOther, nil
-	case string(EngagementContextUnspecified):
-		return EngagementContextUnspecified, nil
-	case EngagementContextUnspecified.String():
+	case string(EngagementContextUnspecified), EngagementContextUnspecified.String():
 		return EngagementContextUnspecified, nil
 	default:
 		return "", fmt.Errorf("unknown engagement context type: %v", logutils.Escape(str))

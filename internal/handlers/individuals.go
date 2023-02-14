@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"net/http"
 
 	"github.com/nrc-no/notcore/internal/api"
@@ -30,7 +29,7 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			ctx           = r.Context()
 			err           error
 			l             = logging.NewLogger(ctx)
-			allCountries  []*enumTypes.Country
+			allCountries  []*api.Country
 		)
 
 		selectedCountryID, err := utils.GetSelectedCountryID(ctx)

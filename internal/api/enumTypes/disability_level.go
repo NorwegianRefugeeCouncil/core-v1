@@ -47,25 +47,15 @@ func (g DisabilityLevel) String() string {
 
 func ParseDisabilityLevel(str string) (DisabilityLevel, error) {
 	switch str {
-	case string(DisabilityLevelNone):
+	case string(DisabilityLevelNone), DisabilityLevelNone.String():
 		return DisabilityLevelNone, nil
-	case DisabilityLevelNone.String():
-		return DisabilityLevelNone, nil
-	case string(DisabilityLevelMild):
+	case string(DisabilityLevelMild), DisabilityLevelMild.String():
 		return DisabilityLevelMild, nil
-	case DisabilityLevelMild.String():
-		return DisabilityLevelMild, nil
-	case string(DisabilityLevelModerate):
+	case string(DisabilityLevelModerate), DisabilityLevelModerate.String():
 		return DisabilityLevelModerate, nil
-	case DisabilityLevelModerate.String():
-		return DisabilityLevelModerate, nil
-	case string(DisabilityLevelSevere):
+	case string(DisabilityLevelSevere), DisabilityLevelSevere.String():
 		return DisabilityLevelSevere, nil
-	case DisabilityLevelSevere.String():
-		return DisabilityLevelSevere, nil
-	case string(DisabilityLevelUnspecified):
-		return DisabilityLevelUnspecified, nil
-	case DisabilityLevelUnspecified.String():
+	case string(DisabilityLevelUnspecified), DisabilityLevelUnspecified.String():
 		return DisabilityLevelUnspecified, nil
 	default:
 		return "", fmt.Errorf("unknown disability level: \"%v\"", logutils.Escape(str))

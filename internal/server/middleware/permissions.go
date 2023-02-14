@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/nrc-no/notcore/internal/api/enumTypes"
+	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/auth"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/logging"
@@ -59,7 +59,7 @@ func ComputePermissions(
 
 // parsePermissions will retrieve the country ids from the user's groups
 // and determine if the user is a global admin
-func parsePermissions(allCountries []*enumTypes.Country, jwtGroups utils.JwtGroupOptions, userGroups []string, nrcOrganisation string) *ParsedPermissions {
+func parsePermissions(allCountries []*api.Country, jwtGroups utils.JwtGroupOptions, userGroups []string, nrcOrganisation string) *ParsedPermissions {
 	countryIds := containers.NewStringSet()
 
 	for _, c := range allCountries {

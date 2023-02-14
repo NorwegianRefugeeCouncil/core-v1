@@ -425,9 +425,9 @@ func (p *listIndividualsOptionsDecoder) parseServiceCCType() error {
 	if len(p.values[constants.FormParamsGetIndividualsServiceCC]) == 0 {
 		return nil
 	}
-	ccSet := containers.NewSet[ServiceCC]()
+	ccSet := containers.NewSet[enumTypes.ServiceCC]()
 	for _, ec := range p.values[constants.FormParamsGetIndividualsServiceCC] {
-		parsedEc, err := ParseServiceCC(ec)
+		parsedEc, err := enumTypes.ParseServiceCC(ec)
 		if err != nil {
 			return err
 		}

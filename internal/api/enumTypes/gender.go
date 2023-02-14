@@ -48,25 +48,15 @@ func (g Sex) String() string {
 
 func ParseSex(str string) (Sex, error) {
 	switch str {
-	case string(SexMale):
+	case string(SexMale), SexMale.String():
 		return SexMale, nil
-	case SexMale.String():
-		return SexMale, nil
-	case string(SexFemale):
+	case string(SexFemale), SexFemale.String():
 		return SexFemale, nil
-	case SexFemale.String():
-		return SexFemale, nil
-	case string(SexOther):
+	case string(SexOther), SexOther.String():
 		return SexOther, nil
-	case SexOther.String():
-		return SexOther, nil
-	case string(SexPreferNotToSay):
+	case string(SexPreferNotToSay), SexPreferNotToSay.String():
 		return SexPreferNotToSay, nil
-	case SexPreferNotToSay.String():
-		return SexPreferNotToSay, nil
-	case string(SexUnspecified):
-		return SexUnspecified, nil
-	case SexUnspecified.String():
+	case string(SexUnspecified), SexUnspecified.String():
 		return SexUnspecified, nil
 	default:
 		return "", fmt.Errorf("unknown value for %s: %v", constants.FileColumnIndividualSex, logutils.Escape(str))

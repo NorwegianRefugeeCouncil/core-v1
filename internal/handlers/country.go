@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/nrc-no/notcore/internal/api/enumTypes"
+	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 	"html/template"
 	"net/http"
@@ -31,7 +31,7 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 			ctx       = r.Context()
 			l         = logging.NewLogger(ctx)
 			err       error
-			country   = &enumTypes.Country{}
+			country   = &api.Country{}
 			countryID = mux.Vars(r)[pathParamCountryID]
 			isNew     = countryID == newId
 		)

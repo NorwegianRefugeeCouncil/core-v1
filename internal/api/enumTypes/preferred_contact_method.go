@@ -51,29 +51,17 @@ func (g ContactMethod) String() string {
 
 func ParseContactMethod(str string) (ContactMethod, error) {
 	switch str {
-	case string(ContactMethodPhone):
+	case string(ContactMethodPhone), ContactMethodPhone.String():
 		return ContactMethodPhone, nil
-	case ContactMethodPhone.String():
-		return ContactMethodPhone, nil
-	case string(ContactMethodWhatsapp):
+	case string(ContactMethodWhatsapp), ContactMethodWhatsapp.String():
 		return ContactMethodWhatsapp, nil
-	case ContactMethodWhatsapp.String():
-		return ContactMethodWhatsapp, nil
-	case string(ContactMethodEmail):
+	case string(ContactMethodEmail), ContactMethodEmail.String():
 		return ContactMethodEmail, nil
-	case ContactMethodEmail.String():
-		return ContactMethodEmail, nil
-	case string(ContactMethodVisit):
+	case string(ContactMethodVisit), ContactMethodVisit.String():
 		return ContactMethodVisit, nil
-	case ContactMethodVisit.String():
-		return ContactMethodVisit, nil
-	case string(ContactMethodOther):
+	case string(ContactMethodOther), ContactMethodOther.String():
 		return ContactMethodOther, nil
-	case ContactMethodOther.String():
-		return ContactMethodOther, nil
-	case string(ContactMethodUnspecified):
-		return ContactMethodUnspecified, nil
-	case ContactMethodUnspecified.String():
+	case string(ContactMethodUnspecified), ContactMethodUnspecified.String():
 		return ContactMethodUnspecified, nil
 	default:
 		return "", fmt.Errorf("%s: invalid value \"%v\"", constants.FileColumnIndividualPreferredContactMethod, logutils.Escape(str))

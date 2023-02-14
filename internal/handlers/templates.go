@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/nrc-no/notcore/internal/api/enumTypes"
+	"github.com/nrc-no/notcore/internal/api"
 	"html/template"
 	"net/http"
 
@@ -98,9 +98,9 @@ type RequestContext struct {
 	// Auth is the auth.Interface
 	Auth auth.Interface
 	// Countries is the list of all countries
-	Countries []*enumTypes.Country
+	Countries []*api.Country
 	// SelectedCountry is the selected country. May be nil
-	SelectedCountry *enumTypes.Country
+	SelectedCountry *api.Country
 	// Session is the current user session
 	Session auth.Session
 }
@@ -191,7 +191,7 @@ func renderView(
 		return
 	}
 
-	var selectedCountry *enumTypes.Country
+	var selectedCountry *api.Country
 	if len(selectedCountryID) != 0 {
 		for _, c := range countries {
 			if c.ID == selectedCountryID {
