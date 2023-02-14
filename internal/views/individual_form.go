@@ -173,9 +173,9 @@ func (f *IndividualForm) build() error {
 
 func (f *IndividualForm) buildTitle() error {
 	if f.isNew() {
-		f.Form.Title = "New Individual"
+		f.Form.Title = "New Participant"
 	} else if f.individual.FullName == "" {
-		f.Form.Title = "Anonymous Individual"
+		f.Form.Title = "Anonymous Participant"
 	} else {
 		f.Form.Title = f.individual.FullName
 	}
