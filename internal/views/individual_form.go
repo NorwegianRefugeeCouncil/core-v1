@@ -347,7 +347,7 @@ func (f *IndividualForm) buildBirthDate() error {
 func (f *IndividualForm) buildAge() error {
 	return buildField(&forms.NumberInputField{
 		Name:        "age",
-		DisplayName: "Age of individual",
+		DisplayName: "Age of participant",
 	}, f.personalInfoSection, f.individual.Age)
 }
 
