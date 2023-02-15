@@ -68,7 +68,7 @@ func buildRouter(
 		middleware.HasCountryPermission(auth.PermissionRead),
 	))
 	individualsRouter.Path("/upload").Methods(http.MethodPost).Handler(withMiddleware(
-		handlers.UploadHandler(renderer, individualRepo),
+		handlers.HandleUpload(renderer, individualRepo),
 		middleware.EnsureSelectedCountry(),
 		middleware.HasCountryPermission(auth.PermissionWrite),
 	))
@@ -78,17 +78,17 @@ func buildRouter(
 		middleware.HasCountryPermission(auth.PermissionRead),
 	))
 	individualsRouter.Path("/delete").Methods(http.MethodPost).Handler(withMiddleware(
-		handlers.HandleIndividualsAction(individualRepo, db.DeleteAction),
+		handlers.HandleIndividualsAction(renderer, individualRepo, db.DeleteAction),
 		middleware.EnsureSelectedCountry(),
 		middleware.HasCountryPermission(auth.PermissionWrite),
 	))
 	individualsRouter.Path("/deactivate").Methods(http.MethodPost).Handler(withMiddleware(
-		handlers.HandleIndividualsAction(individualRepo, db.DeactivateAction),
+		handlers.HandleIndividualsAction(renderer, individualRepo, db.DeactivateAction),
 		middleware.EnsureSelectedCountry(),
 		middleware.HasCountryPermission(auth.PermissionWrite),
 	))
 	individualsRouter.Path("/activate").Methods(http.MethodPost).Handler(withMiddleware(
-		handlers.HandleIndividualsAction(individualRepo, db.ActivateAction),
+		handlers.HandleIndividualsAction(renderer, individualRepo, db.ActivateAction),
 		middleware.EnsureSelectedCountry(),
 		middleware.HasCountryPermission(auth.PermissionWrite),
 	))
