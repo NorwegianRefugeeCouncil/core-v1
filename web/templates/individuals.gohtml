@@ -113,25 +113,13 @@
                     .map(getIndividualIdFromSelectCheckbox)
 
             const idSearchString = '?id=' + selectedIds.join('&id=')
-            const downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + idSearchString {{if .Options.Inactive}}+ "&inactive=true" {{end}}
+            const downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + idSearchString + "&inactive={{.Options.Inactive}}"
             goToURL(downloadURL)
         }
 
         function downloadFilteredFunc() {
             const downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + searchParams
             goToURL(downloadURL)
-        }
-
-        function toggleInactiveIndividuals() {
-            let params = new URLSearchParams(document.location.search);
-            let inactive = params.get("inactive");
-            if (inactive === "true") {
-                params.delete("inactive");
-            } else {
-                params.set("inactive", "true");
-            }
-            const url = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + params
-            goToURL(url)
         }
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -346,9 +334,57 @@
             <table class="table table-individuals mb-0">
                 <thead>
                 <tr>
-                    <th class="sticky-column" style="width: {{$selectWidth}};">
+                    {{$sortable := .Sortable}}
+                    {{$sortKey := .SortKey}}
+                    {{$sortOnClick := ""}}
+                    {{$sortDirection := ""}}
+                    {{$sortDirectionForLink := ""}}
+                    {{$sorted := false}}
+                    {{$sortDirection = .Options.GetSortDirection "inactive"}}
+                    {{if eq $sortDirection "ascending"}}
+                        {{$sorted = true}}
+                        {{$sortDirectionForLink = "descending"}}
+                    {{ else if eq $sortDirection "descending"}}
+                        {{$sorted = true}}
+                        {{$sortDirectionForLink = "ascending"}}
+                    {{else}}
+                        {{$sortDirectionForLink = "ascending"}}
+                    {{end}}
+                    {{$sortLinkUrl := (.Options.WithSort "inactive" $sortDirectionForLink).QueryParams }}
+                    {{$sortOnClick = concat "onclick=\"goToURL('" $sortLinkUrl "')\"" }}
+                    <th class="sticky-column sortable {{if $sorted}}sorted{{end}}"
+                        {{$sortOnClick | attr}}
+                        {{if eq $sortDirection ""}}
+                            aria-sort="none"
+                        {{ else if eq $sortDirection "ascending"}}
+                            aria-sort="ascending"
+                        {{ else if eq $sortDirection "descending"}}
+                            aria-sort="descending"
+                        {{end}}
+                    >
                         <i class="bi bi-eye-slash-fill"
                            data-toggle="tooltip" data-placement="top" title="Is Inactive"></i>
+
+                        <!-- print current sorting direction icon -->
+                        <span class="ms-1 me-1 sort-icon-current">
+                            {{- if eq $sortDirection "ascending" -}}
+                                <i class="bi bi-sort-up"></i>
+                            {{- else if eq $sortDirection "descending" -}}
+                                <i class="bi bi-sort-down"></i>
+                            {{- end -}}
+                        </span>
+
+                            <!-- print next sorting direction icon -->
+                            <span class="ms-1 me-1 sort-icon-next text-primary">
+                            {{- if eq $sortDirectionForLink "ascending" -}}
+                                <i class="bi bi-sort-up"></i>
+                            {{- else if eq $sortDirectionForLink "descending" -}}
+                                <i class="bi bi-sort-down"></i>
+                            {{- end -}}
+                        </span>
+
+                        <!-- print sortable icon -->
+                        <span class="ms-1 me-1 sort-icon-sortable"><i class="bi bi-list"></i></span>
                     </th>
 
                     {{if $canWrite}}
@@ -943,7 +979,7 @@
                             id="individual-row-{{.ID}}"
                             class="individual-row"
                             data-individual-id="{{.ID}}">
-                            <td class="sticky-column text-center" style="width: {{$selectWidth}}">
+                            <td class="sticky-column" style="width: {{$selectWidth}}">
                                 {{if .Inactive}}
                                     <div class="">
                                         <i class="bi bi-eye-slash-fill "></i>

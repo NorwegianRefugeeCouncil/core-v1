@@ -22,7 +22,6 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		defaultTake := 20
-		defaultInactive := false
 
 		var (
 			individuals   []*api.Individual
@@ -69,10 +68,6 @@ func HandleIndividuals(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			l.Error("failed to parse options", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
-		}
-
-		if getAllOptions.Inactive == nil {
-			getAllOptions.Inactive = &defaultInactive
 		}
 
 		if getAllOptions.Take <= 0 || getAllOptions.Take > 100 {

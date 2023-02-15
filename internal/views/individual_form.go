@@ -1028,7 +1028,6 @@ func getDisplacementStatusOptions() []forms.SelectInputFieldOption {
 }
 
 func getServiceCCOptions() []forms.SelectInputFieldOption {
-	fmt.Println(api.AllServiceCCs().Items())
 	var ret []forms.SelectInputFieldOption
 	for _, s := range api.AllServiceCCs().Items() {
 		ret = append(ret, forms.SelectInputFieldOption{
