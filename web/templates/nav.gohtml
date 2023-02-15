@@ -84,7 +84,7 @@
                                             aria-expanded="false">
                                         Files
                                     </button>
-                                    <div class="dropdown-menu">
+                                    <div class="dropdown-menu dropdown-menu-end">
                                          <a href="/static/nrc_grf_template.xlsx"
                                             download="nrc-grf-template.xlsx"
                                             class="dropdown-item"
@@ -125,7 +125,7 @@
                                     aria-expanded="false">
                                 {{if .RequestContext.SelectedCountry}} {{.RequestContext.SelectedCountry.Name}} {{else}} Select Country {{end}}
                             </button>
-                            <div class="dropdown-menu">
+                            <div class="dropdown-menu dropdown-menu-end">
                                 {{range $ci, $c := .RequestContext.Countries}}
                                     <a class="dropdown-item" href="/countries/{{$c.ID}}/participants">{{$c.Name}}</a>
                                 {{end}}
