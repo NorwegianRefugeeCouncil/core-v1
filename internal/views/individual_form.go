@@ -298,7 +298,7 @@ func (f *IndividualForm) buildMiddleName() error {
 func (f *IndividualForm) buildLastName() error {
 	return buildField(&forms.TextInputField{
 		Name:        "lastName",
-		DisplayName: "Last Name",
+		DisplayName: "Surname",
 	}, f.personalInfoSection, f.individual.LastName)
 }
 
@@ -319,7 +319,7 @@ func (f *IndividualForm) buildNativeName() error {
 func (f *IndividualForm) buildPrefersToRemainAnonymous() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "prefersToRemainAnonymous",
-		DisplayName: "Prefers to Remain Anonymous",
+		DisplayName: "The person prefers to remain anonymous",
 	}, f.personalInfoSection, f.individual.PrefersToRemainAnonymous)
 }
 
@@ -339,7 +339,7 @@ func (f *IndividualForm) buildSex() error {
 func (f *IndividualForm) buildBirthDate() error {
 	return buildField(&forms.DateInputField{
 		Name:        "birthDate",
-		DisplayName: "Birth Date",
+		DisplayName: "Date of Birth",
 		MinValue:    "1900-01-01",
 	}, f.personalInfoSection, f.individual.BirthDate)
 }
@@ -347,21 +347,21 @@ func (f *IndividualForm) buildBirthDate() error {
 func (f *IndividualForm) buildAge() error {
 	return buildField(&forms.NumberInputField{
 		Name:        "age",
-		DisplayName: "Age",
+		DisplayName: "Age of participant",
 	}, f.personalInfoSection, f.individual.Age)
 }
 
 func (f *IndividualForm) buildIsMinor() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "isMinor",
-		DisplayName: "Is Minor",
+		DisplayName: "Is the person a minor",
 	}, f.personalInfoSection, f.individual.IsMinor)
 }
 
 func (f *IndividualForm) buildNationality1() error {
 	return buildField(&forms.SelectInputField{
 		Name:        "nationality1",
-		DisplayName: "Nationality 1",
+		DisplayName: "Nationality (main)",
 		Options:     buildCountryOptions(),
 	}, f.personalInfoSection, f.individual.Nationality1)
 }
@@ -369,7 +369,7 @@ func (f *IndividualForm) buildNationality1() error {
 func (f *IndividualForm) buildNationality2() error {
 	return buildField(&forms.SelectInputField{
 		Name:        "nationality2",
-		DisplayName: "Nationality 2",
+		DisplayName: "Nationality (secondary)",
 		Options:     buildCountryOptions(),
 	}, f.personalInfoSection, f.individual.Nationality2)
 }
@@ -379,7 +379,7 @@ func (f *IndividualForm) buildIdentification1Type() error {
 	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "identificationType1",
-		DisplayName: "Identification Type 1",
+		DisplayName: "Type of primary identification",
 		Options:     options,
 		Codec:       &identificationTypeCodec{},
 	}, f.personalInfoSection, f.individual.IdentificationType1)
@@ -388,14 +388,14 @@ func (f *IndividualForm) buildIdentification1Type() error {
 func (f *IndividualForm) buildIdentification1Other() error {
 	return buildField(&forms.TextAreaInputField{
 		Name:        "identificationTypeExplanation1",
-		DisplayName: "If Other, please explain",
+		DisplayName: "If other, please explain",
 	}, f.personalInfoSection, f.individual.IdentificationTypeExplanation1)
 }
 
 func (f *IndividualForm) buildIdentification1Number() error {
 	return buildField(&forms.TextInputField{
 		Name:        "identificationNumber1",
-		DisplayName: "Identification Number 1",
+		DisplayName: "Primary Identification number",
 	}, f.personalInfoSection, f.individual.IdentificationNumber1)
 }
 
@@ -404,23 +404,23 @@ func (f *IndividualForm) buildIdentification2Type() error {
 	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "identificationType2",
-		DisplayName: "Identification Type 2",
 		Options:     options,
 		Codec:       &identificationTypeCodec{},
+		DisplayName: "Type of secondary identification",
 	}, f.personalInfoSection, f.individual.IdentificationType2)
 }
 
 func (f *IndividualForm) buildIdentification2Other() error {
 	return buildField(&forms.TextAreaInputField{
 		Name:        "identificationTypeExplanation2",
-		DisplayName: "If Other, please explain",
+		DisplayName: "If other, please explain",
 	}, f.personalInfoSection, f.individual.IdentificationTypeExplanation2)
 }
 
 func (f *IndividualForm) buildIdentification2Number() error {
 	return buildField(&forms.TextInputField{
 		Name:        "identificationNumber2",
-		DisplayName: "Identification Number 2",
+		DisplayName: "Secondary Identification number",
 	}, f.personalInfoSection, f.individual.IdentificationNumber2)
 }
 func (f *IndividualForm) buildIdentification3Type() error {
@@ -428,7 +428,7 @@ func (f *IndividualForm) buildIdentification3Type() error {
 	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "identificationType3",
-		DisplayName: "Identification Type 3",
+		DisplayName: "Type of tertiary identification",
 		Options:     options,
 		Codec:       &identificationTypeCodec{},
 	}, f.personalInfoSection, f.individual.IdentificationType3)
@@ -437,28 +437,28 @@ func (f *IndividualForm) buildIdentification3Type() error {
 func (f *IndividualForm) buildIdentification3Other() error {
 	return buildField(&forms.TextAreaInputField{
 		Name:        "identificationTypeExplanation3",
-		DisplayName: "If Other, please explain",
+		DisplayName: "If other, please explain",
 	}, f.personalInfoSection, f.individual.IdentificationTypeExplanation3)
 }
 
 func (f *IndividualForm) buildIdentification3Number() error {
 	return buildField(&forms.TextInputField{
 		Name:        "identificationNumber3",
-		DisplayName: "Identification Number 3",
+		DisplayName: "Tertiary Identification number",
 	}, f.personalInfoSection, f.individual.IdentificationNumber3)
 }
 
 func (f *IndividualForm) buildInternalID() error {
 	return buildField(&forms.TextInputField{
 		Name:        "internalId",
-		DisplayName: "Internal ID",
+		DisplayName: "NRC ID number (if any)",
 	}, f.personalInfoSection, f.individual.InternalID)
 }
 
 func (f *IndividualForm) buildHouseholdID() error {
 	return buildField(&forms.TextInputField{
 		Name:        "householdId",
-		DisplayName: "Household ID",
+		DisplayName: "Household ID Number",
 	}, f.personalInfoSection, f.individual.HouseholdID)
 }
 
@@ -472,28 +472,28 @@ func (f *IndividualForm) buildHouseholdSize() error {
 func (f *IndividualForm) buildIsHeadOfHousehold() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "isHeadOfHousehold",
-		DisplayName: "Is Head of Household",
+		DisplayName: "Is the person the head of the household",
 	}, f.personalInfoSection, f.individual.IsHeadOfHousehold)
 }
 
 func (f *IndividualForm) buildIsFemaleHeadedHousehold() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "isFemaleHeadedHousehold",
-		DisplayName: "Is Female Headed Household",
+		DisplayName: "Is the household headed by a female",
 	}, f.personalInfoSection, f.individual.IsFemaleHeadedHousehold)
 }
 
 func (f *IndividualForm) buildIsMinorHeadedHousehold() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "isMinorHeadedHousehold",
-		DisplayName: "Is Minor Headed Household",
+		DisplayName: "Is the household headed by a minor",
 	}, f.personalInfoSection, f.individual.IsMinorHeadedHousehold)
 }
 
 func (f *IndividualForm) buildCommunityID() error {
 	return buildField(&forms.TextInputField{
 		Name:        "communityId",
-		DisplayName: "Community ID",
+		DisplayName: "Community ID number",
 	}, f.personalInfoSection, f.individual.CommunityID)
 }
 
@@ -507,7 +507,7 @@ func (f *IndividualForm) buildCommunitySize() error {
 func (f *IndividualForm) buildIsHeadOfCommunity() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "isHeadOfCommunity",
-		DisplayName: "Is Head of Community",
+		DisplayName: "Is the person the representative of the community",
 	}, f.personalInfoSection, f.individual.IsHeadOfCommunity)
 }
 
@@ -538,7 +538,7 @@ func (f *IndividualForm) buildSpokenLanguage3() error {
 func (f *IndividualForm) buildPreferredCommunicationLanguage() error {
 	return buildField(&forms.SelectInputField{
 		Name:        "preferredCommunicationLanguage",
-		DisplayName: "Preferred Communication Language",
+		DisplayName: "Spoken Preferred Language",
 		Options:     buildLanguageOptions(),
 	}, f.personalInfoSection, f.individual.PreferredCommunicationLanguage)
 }
@@ -546,42 +546,42 @@ func (f *IndividualForm) buildPreferredCommunicationLanguage() error {
 func (f *IndividualForm) buildPhoneNumber1() error {
 	return buildField(&forms.TextInputField{
 		Name:        "phoneNumber1",
-		DisplayName: "Phone Number 1",
+		DisplayName: "Phone Number #1",
 	}, f.contactInfoSection, f.individual.PhoneNumber1)
 }
 
 func (f *IndividualForm) buildPhoneNumber2() error {
 	return buildField(&forms.TextInputField{
 		Name:        "phoneNumber2",
-		DisplayName: "Phone Number 2",
+		DisplayName: "Phone Number #2",
 	}, f.contactInfoSection, f.individual.PhoneNumber2)
 }
 
 func (f *IndividualForm) buildPhoneNumber3() error {
 	return buildField(&forms.TextInputField{
 		Name:        "phoneNumber3",
-		DisplayName: "Phone Number 3",
+		DisplayName: "Phone Number #3",
 	}, f.contactInfoSection, f.individual.PhoneNumber3)
 }
 
 func (f *IndividualForm) buildEmailAddress1() error {
 	return buildField(&forms.TextInputField{
 		Name:        "email1",
-		DisplayName: "Email Address 1",
+		DisplayName: "Email Address #1",
 	}, f.contactInfoSection, f.individual.Email1)
 }
 
 func (f *IndividualForm) buildEmailAddress2() error {
 	return buildField(&forms.TextInputField{
 		Name:        "email2",
-		DisplayName: "Email Address 2",
+		DisplayName: "Email Address #2",
 	}, f.contactInfoSection, f.individual.Email2)
 }
 
 func (f *IndividualForm) buildEmailAddress3() error {
 	return buildField(&forms.TextInputField{
 		Name:        "email3",
-		DisplayName: "Email Address 3",
+		DisplayName: "Email Address #3",
 	}, f.contactInfoSection, f.individual.Email3)
 }
 
@@ -597,7 +597,7 @@ func (f *IndividualForm) buildPreferredContactMethod() error {
 	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "preferredContactMethod",
-		DisplayName: "Preferred contact method",
+		DisplayName: "Preferred means of contact ",
 		Options:     options,
 		Codec:       &preferredContactMethodCodec{},
 	}, f.contactInfoSection, f.individual.PreferredContactMethod)
@@ -627,7 +627,7 @@ func (f *IndividualForm) buildHasConsentedToReferral() error {
 func (f *IndividualForm) buildPresentsProtectionConcerns() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "presentsProtectionConcerns",
-		DisplayName: "Presents protection concerns",
+		DisplayName: "The person presents protection concerns",
 	}, f.protectionSection, f.individual.PresentsProtectionConcerns)
 }
 
@@ -645,14 +645,14 @@ func (f *IndividualForm) buildDisplacementStatus() error {
 func (f *IndividualForm) buildDisplacementStatusComment() error {
 	return buildField(&forms.TextAreaInputField{
 		Name:        "displacementStatusComment",
-		DisplayName: "If Other, please explain",
+		DisplayName: "If other, please explain",
 	}, f.protectionSection, f.individual.DisplacementStatusComment)
 }
 
 func (f *IndividualForm) buildHasVisionDisability() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "hasVisionDisability",
-		DisplayName: "Has Vision disability",
+		DisplayName: "Does the person have difficulty seeing, even if wearing glasses?",
 	}, f.disabilitiesSection, f.individual.HasVisionDisability)
 }
 
@@ -661,7 +661,7 @@ func (f *IndividualForm) buildVisionDisabilityLevel() error {
 	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "visionDisabilityLevel",
-		DisplayName: "Vision disability",
+		DisplayName: "Would you say:",
 		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.VisionDisabilityLevel)
@@ -684,7 +684,7 @@ func (f *IndividualForm) buildPWDComments() error {
 func (f *IndividualForm) buildHasHearingDisability() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "hasHearingDisability",
-		DisplayName: "Has Hearing Disability",
+		DisplayName: "Does the person have difficulty hearing, even if using a hearing aid?",
 	}, f.disabilitiesSection, f.individual.HasHearingDisability)
 }
 
@@ -693,7 +693,7 @@ func (f *IndividualForm) buildHearingDisabilityLevel() error {
 	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "hearingDisabilityLevel",
-		DisplayName: "Hearing disability level",
+		DisplayName: "Would you say:",
 		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.HearingDisabilityLevel)
@@ -702,7 +702,7 @@ func (f *IndividualForm) buildHearingDisabilityLevel() error {
 func (f *IndividualForm) buildHasMobilityDisability() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "hasMobilityDisability",
-		DisplayName: "Has Mobility Disability",
+		DisplayName: "Do you have difficulty walking or climbing steps?",
 	}, f.disabilitiesSection, f.individual.HasMobilityDisability)
 }
 
@@ -711,7 +711,7 @@ func (f *IndividualForm) buildMobilityDisabilityLevel() error {
 	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "mobilityDisabilityLevel",
-		DisplayName: "Mobility disability level",
+		DisplayName: "Would you say:",
 		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.MobilityDisabilityLevel)
@@ -720,7 +720,7 @@ func (f *IndividualForm) buildMobilityDisabilityLevel() error {
 func (f *IndividualForm) buildHasCognitiveDisability() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "hasCognitiveDisability",
-		DisplayName: "Has Cognitive Disability",
+		DisplayName: "Does the person have difficulty remembering or concentrating?",
 	}, f.disabilitiesSection, f.individual.HasCognitiveDisability)
 }
 
@@ -729,7 +729,7 @@ func (f *IndividualForm) buildCognitiveDisabilityLevel() error {
 	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "cognitiveDisabilityLevel",
-		DisplayName: "Cognitive disability level",
+		DisplayName: "Would you say:",
 		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.CognitiveDisabilityLevel)
@@ -738,7 +738,7 @@ func (f *IndividualForm) buildCognitiveDisabilityLevel() error {
 func (f *IndividualForm) buildHasSelfCareDisability() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "hasSelfCareDisability",
-		DisplayName: "Has SelfCare Disability",
+		DisplayName: "Does the person have difficulty with self-care such as washing all over or dressing?",
 	}, f.disabilitiesSection, f.individual.HasSelfCareDisability)
 }
 
@@ -747,7 +747,7 @@ func (f *IndividualForm) buildSelfCareDisabilityLevel() error {
 	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "selfCareDisabilityLevel",
-		DisplayName: "SelfCare disability level",
+		DisplayName: "Would you say:",
 		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.SelfCareDisabilityLevel)
@@ -756,7 +756,7 @@ func (f *IndividualForm) buildSelfCareDisabilityLevel() error {
 func (f *IndividualForm) buildHasCommunicationDisability() error {
 	return buildField(&forms.CheckboxInputField{
 		Name:        "hasCommunicationDisability",
-		DisplayName: "Has Communication Disability",
+		DisplayName: "Using their usual (customary) language, do they have difficulty communicating, for example understanding or being understood?",
 	}, f.disabilitiesSection, f.individual.HasCommunicationDisability)
 }
 
@@ -765,7 +765,7 @@ func (f *IndividualForm) buildCommunicationDisabilityLevel() error {
 	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "communicationDisabilityLevel",
-		DisplayName: "Communication disability level",
+		DisplayName: "Would you say:",
 		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.CommunicationDisabilityLevel)
@@ -785,21 +785,21 @@ func (f *IndividualForm) buildEngagementContext() error {
 func (f *IndividualForm) buildCollectionAgent() error {
 	return buildField(&forms.TextInputField{
 		Name:        "collectionAgentName",
-		DisplayName: "Collection Agent Name",
+		DisplayName: "NRC agent responsible for data collection",
 	}, f.dataCollectionSection, f.individual.CollectionAgentName)
 }
 
 func (f *IndividualForm) buildCollectionAgentTitle() error {
 	return buildField(&forms.TextInputField{
 		Name:        "collectionAgentTitle",
-		DisplayName: "Collection Agent Title",
+		DisplayName: "Title of NRC agent responsible for data collection",
 	}, f.dataCollectionSection, f.individual.CollectionAgentTitle)
 }
 
 func (f *IndividualForm) buildCollectionDate() error {
 	return buildField(&forms.DateInputField{
 		Name:        "collectionTime",
-		DisplayName: "Collection Date",
+		DisplayName: "Date of registration",
 	}, f.dataCollectionSection, f.individual.CollectionTime)
 }
 
@@ -827,7 +827,7 @@ func (f *IndividualForm) buildCollectionLocation3() error {
 func (f *IndividualForm) buildCollectionOffice() error {
 	return buildField(&forms.TextInputField{
 		Name:        "collectionOffice",
-		DisplayName: "Collection Office",
+		DisplayName: "Main office where the individual is linked to",
 	}, f.dataCollectionSection, f.individual.CollectionOffice)
 }
 
@@ -899,7 +899,7 @@ func (f *IndividualForm) buildServiceCC(idx int) func() error {
 		options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 		return buildField(&forms.SelectInputField{
 			Name:        fmt.Sprintf("serviceCC%d", idx),
-			DisplayName: fmt.Sprintf("Service %d CC", idx),
+			DisplayName: fmt.Sprintf("Type of service #%d", idx),
 			Options:     options,
 			Codec:       &serviceCCCodec{},
 		}, f.serviceSection, value)
@@ -930,7 +930,7 @@ func (f *IndividualForm) buildServiceRequestedDate(idx int) func() error {
 
 		return buildField(&forms.DateInputField{
 			Name:        fmt.Sprintf("serviceRequestedDate%d", idx),
-			DisplayName: fmt.Sprintf("Service %d Requested Date", idx),
+			DisplayName: fmt.Sprintf("Date of service #%d requested", idx),
 		}, f.serviceSection, value)
 	}
 }
@@ -959,7 +959,7 @@ func (f *IndividualForm) buildServiceDeliveredDate(idx int) func() error {
 
 		return buildField(&forms.DateInputField{
 			Name:        fmt.Sprintf("serviceDeliveredDate%d", idx),
-			DisplayName: fmt.Sprintf("Service %d Delivered Date", idx),
+			DisplayName: fmt.Sprintf("Date of service #%d delivered", idx),
 		}, f.serviceSection, value)
 	}
 }
