@@ -243,12 +243,12 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 		}, {
 			name:     "hasDisability",
 			args:     api.ListIndividualsOptions{HasDisability: pointers.Bool(true)},
-			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND inactive = false AND has_disability = $1`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND has_disability = $1`,
 			wantArgs: []interface{}{true},
 		}, {
 			name:     "hasDisability (false)",
 			args:     api.ListIndividualsOptions{HasDisability: pointers.Bool(false)},
-			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND inactive = false AND has_disability = $1`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND has_disability = $1`,
 			wantArgs: []interface{}{false},
 		}, {
 			name:     "hasHearingDisability",
