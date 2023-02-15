@@ -1564,6 +1564,7 @@
                     Delete
                 </button>
                 <div class="btn-group me-2">
+                    {{if or .Options.IsNotInactiveSelected (eq .Options.Inactive nil)}}
                     <button type="button"
                             id="deactivateButton"
                             class="btn btn-sm btn-outline-secondary disabled"
@@ -1572,7 +1573,8 @@
                         <i class="bi bi-eye-slash-fill"></i>
                         Deactivate
                     </button>
-                    {{if .Options.IsInactiveSelected}}
+                    {{end}}
+                    {{if or .Options.IsInactiveSelected (eq .Options.Inactive nil)}}
                     <button type="button"
                             id="activateButton"
                             class="btn btn-sm btn-outline-secondary disabled"
