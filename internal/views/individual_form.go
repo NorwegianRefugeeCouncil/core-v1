@@ -676,7 +676,7 @@ func (f *IndividualForm) buildHasDisability() error {
 
 func (f *IndividualForm) buildPWDComments() error {
 	return buildField(&forms.TextAreaInputField{
-		Name:        "PWDComments",
+		Name:        "pwdComments",
 		DisplayName: "PWD Comments",
 	}, f.disabilitiesSection, f.individual.PWDComments)
 }
