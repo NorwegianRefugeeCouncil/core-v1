@@ -170,20 +170,27 @@ html, body {
 }
 
 body {
-    display: flex;
-    flex-direction: column;
+    height: 100%;
+    width: 100%;
 }
 
 header {
     height: $header-height;
-    width: 100%;
-    flex: none;
+    min-width: 850px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
 }
 
 main {
-    flex: auto;
-    height: calc(100% - $header-height - $footer-height - 20px);
-    width: 100%;
+    position: fixed;
+    top: $header-height;
+    bottom: $footer-height;
+    left: 0;
+    right: 0;
+    height: calc(100% - $header-height - $footer-height);
+    min-width: 850px;
     display: flex;
     flex-direction: column;
 
@@ -197,10 +204,13 @@ main {
 
 footer {
     height: $footer-height;
-    width: 100%;
+    min-width: 850px;
     padding: 0 25px;
     margin: auto;
-    flex: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
 };
 
 #filters {

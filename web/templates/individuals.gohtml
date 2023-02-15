@@ -307,7 +307,7 @@
 
     {{$canWrite := .RequestContext.HasSelectedCountryWritePermission}}
 
-    <main class="container-fluid p-5 pt-0">
+    <main class="container-fluid px-5 pt-0">
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="my-4">{{ $.RequestContext.SelectedCountry.Name }}</h1>
 
@@ -1484,7 +1484,7 @@
                     {{end}}
                 {{else}}
                     <tr>
-                        <td colspan="{{if not $canWrite}}30{{else}}31{{end}}">No individuals found</td>
+                        <td colspan="{{if not $canWrite}}30{{else}}31{{end}}">No participants found</td>
                     </tr>
                 {{end}}
                 </tbody>
