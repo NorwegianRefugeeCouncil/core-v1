@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"net/url"
 	"strings"
 	"time"
@@ -16,7 +17,7 @@ type ListIndividualsOptions struct {
 	AgeTo                          *int
 	BirthDateFrom                  *time.Time
 	BirthDateTo                    *time.Time
-	CognitiveDisabilityLevel       DisabilityLevel
+	CognitiveDisabilityLevel       enumTypes.DisabilityLevel
 	CollectionAdministrativeArea1  string
 	CollectionAdministrativeArea2  string
 	CollectionAdministrativeArea3  string
@@ -29,7 +30,7 @@ type ListIndividualsOptions struct {
 	CountryID                      string
 	CreatedAtFrom                  *time.Time
 	CreatedAtTo                    *time.Time
-	DisplacementStatuses           containers.Set[DisplacementStatus]
+	DisplacementStatuses           containers.Set[enumTypes.DisplacementStatus]
 	Email                          string
 	FreeField1                     string
 	FreeField2                     string
@@ -37,7 +38,7 @@ type ListIndividualsOptions struct {
 	FreeField4                     string
 	FreeField5                     string
 	FullName                       string
-	Sexes                          containers.Set[Sex]
+	Sexes                          containers.Set[enumTypes.Sex]
 	HasCognitiveDisability         *bool
 	HasCommunicationDisability     *bool
 	HasConsentedToRGPD             *bool
@@ -47,18 +48,18 @@ type ListIndividualsOptions struct {
 	HasMobilityDisability          *bool
 	HasSelfCareDisability          *bool
 	HasVisionDisability            *bool
-	HearingDisabilityLevel         DisabilityLevel
+	HearingDisabilityLevel         enumTypes.DisabilityLevel
 	HouseholdID                    string
 	IDs                            containers.StringSet
 	IdentificationNumber           string
-	EngagementContext              containers.Set[EngagementContext]
+	EngagementContext              containers.Set[enumTypes.EngagementContext]
 	InternalID                     string
 	IsHeadOfCommunity              *bool
 	IsHeadOfHousehold              *bool
 	IsFemaleHeadedHousehold        *bool
 	IsMinorHeadedHousehold         *bool
 	IsMinor                        *bool
-	MobilityDisabilityLevel        DisabilityLevel
+	MobilityDisabilityLevel        enumTypes.DisabilityLevel
 	MothersName                    string
 	Nationality                    string
 	PhoneNumber                    string
@@ -67,19 +68,19 @@ type ListIndividualsOptions struct {
 	PrefersToRemainAnonymous       *bool
 	PresentsProtectionConcerns     *bool
 	PWDComments                    string
-	SelfCareDisabilityLevel        DisabilityLevel
+	SelfCareDisabilityLevel        enumTypes.DisabilityLevel
 	SpokenLanguage                 string
 	UpdatedAtFrom                  *time.Time
 	UpdatedAtTo                    *time.Time
 	Skip                           int
 	Take                           int
 	Sort                           SortTerms
-	ServiceCC                      containers.Set[ServiceCC]
+	ServiceCC                      containers.Set[enumTypes.ServiceCC]
 	ServiceRequestedDateFrom       *time.Time
 	ServiceRequestedDateTo         *time.Time
 	ServiceDeliveredDateFrom       *time.Time
 	ServiceDeliveredDateTo         *time.Time
-	VisionDisabilityLevel          DisabilityLevel
+	VisionDisabilityLevel          enumTypes.DisabilityLevel
 }
 
 type SortDirection string

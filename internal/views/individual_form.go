@@ -2,6 +2,7 @@ package views
 
 import (
 	"fmt"
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/constants"
@@ -97,7 +98,7 @@ func (f *IndividualForm) build() error {
 		f.buildEmailAddress2,
 		f.buildEmailAddress3,
 		f.buildAddress,
-		f.buildPreferredMeansOfContact,
+		f.buildPreferredContactMethod,
 		f.buildContactInstructions,
 		f.buildHasConsentedToRgpd,
 		f.buildHasConsentedToReferral,
@@ -324,14 +325,9 @@ func (f *IndividualForm) buildPrefersToRemainAnonymous() error {
 
 func (f *IndividualForm) buildSex() error {
 	sexOptions := getSexOptions()
-	if f.isNew() {
-		sexOptions = append([]forms.SelectInputFieldOption{
-			{
-				Value: "",
-				Label: "",
-			},
-		}, sexOptions...)
-	}
+	sexOptions = append([]forms.SelectInputFieldOption{
+		{Value: "", Label: "Select a value"},
+	}, sexOptions...)
 	return buildField(&forms.SelectInputField{
 		Name:        "sex",
 		DisplayName: "Sex",
@@ -379,10 +375,13 @@ func (f *IndividualForm) buildNationality2() error {
 }
 
 func (f *IndividualForm) buildIdentification1Type() error {
+	options := getIdentificationTypeOptions()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "identificationType1",
 		DisplayName: "Identification Type 1",
-		Options:     getIdentificationTypeOptions(),
+		Options:     options,
+		Codec:       &identificationTypeCodec{},
 	}, f.personalInfoSection, f.individual.IdentificationType1)
 }
 
@@ -401,10 +400,13 @@ func (f *IndividualForm) buildIdentification1Number() error {
 }
 
 func (f *IndividualForm) buildIdentification2Type() error {
+	options := getIdentificationTypeOptions()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "identificationType2",
 		DisplayName: "Identification Type 2",
-		Options:     getIdentificationTypeOptions(),
+		Options:     options,
+		Codec:       &identificationTypeCodec{},
 	}, f.personalInfoSection, f.individual.IdentificationType2)
 }
 
@@ -422,10 +424,13 @@ func (f *IndividualForm) buildIdentification2Number() error {
 	}, f.personalInfoSection, f.individual.IdentificationNumber2)
 }
 func (f *IndividualForm) buildIdentification3Type() error {
+	options := getIdentificationTypeOptions()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "identificationType3",
 		DisplayName: "Identification Type 3",
-		Options:     getIdentificationTypeOptions(),
+		Options:     options,
+		Codec:       &identificationTypeCodec{},
 	}, f.personalInfoSection, f.individual.IdentificationType3)
 }
 
@@ -587,23 +592,14 @@ func (f *IndividualForm) buildAddress() error {
 	}, f.contactInfoSection, f.individual.Address)
 }
 
-func (f *IndividualForm) buildPreferredMeansOfContact() error {
-	options := []forms.SelectInputFieldOption{
-		{Label: "Phone", Value: "phone"},
-		{Label: "WhatsApp", Value: "whatsapp"},
-		{Label: "Email", Value: "email"},
-		{Label: "Visit", Value: "visit"},
-		{Label: "Other", Value: "other"},
-	}
-	if f.isNew() {
-		options = append([]forms.SelectInputFieldOption{
-			{Label: "Select Preferred Means of Contact", Value: ""},
-		}, options...)
-	}
+func (f *IndividualForm) buildPreferredContactMethod() error {
+	options := getPreferredContactMethodOptions()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "preferredContactMethod",
 		DisplayName: "Preferred contact method",
 		Options:     options,
+		Codec:       &preferredContactMethodCodec{},
 	}, f.contactInfoSection, f.individual.PreferredContactMethod)
 }
 
@@ -637,9 +633,7 @@ func (f *IndividualForm) buildPresentsProtectionConcerns() error {
 
 func (f *IndividualForm) buildDisplacementStatus() error {
 	options := getDisplacementStatusOptions()
-	if f.isNew() {
-		options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
-	}
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "displacementStatus",
 		DisplayName: "Displacement Status",
@@ -663,10 +657,12 @@ func (f *IndividualForm) buildHasVisionDisability() error {
 }
 
 func (f *IndividualForm) buildVisionDisabilityLevel() error {
+	options := getDisabilityLevels()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "visionDisabilityLevel",
 		DisplayName: "Vision disability",
-		Options:     getDisabilityLevels(),
+		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.VisionDisabilityLevel)
 }
@@ -693,10 +689,12 @@ func (f *IndividualForm) buildHasHearingDisability() error {
 }
 
 func (f *IndividualForm) buildHearingDisabilityLevel() error {
+	options := getDisabilityLevels()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "hearingDisabilityLevel",
 		DisplayName: "Hearing disability level",
-		Options:     getDisabilityLevels(),
+		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.HearingDisabilityLevel)
 }
@@ -709,10 +707,12 @@ func (f *IndividualForm) buildHasMobilityDisability() error {
 }
 
 func (f *IndividualForm) buildMobilityDisabilityLevel() error {
+	options := getDisabilityLevels()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "mobilityDisabilityLevel",
 		DisplayName: "Mobility disability level",
-		Options:     getDisabilityLevels(),
+		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.MobilityDisabilityLevel)
 }
@@ -725,10 +725,12 @@ func (f *IndividualForm) buildHasCognitiveDisability() error {
 }
 
 func (f *IndividualForm) buildCognitiveDisabilityLevel() error {
+	options := getDisabilityLevels()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "cognitiveDisabilityLevel",
 		DisplayName: "Cognitive disability level",
-		Options:     getDisabilityLevels(),
+		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.CognitiveDisabilityLevel)
 }
@@ -741,10 +743,12 @@ func (f *IndividualForm) buildHasSelfCareDisability() error {
 }
 
 func (f *IndividualForm) buildSelfCareDisabilityLevel() error {
+	options := getDisabilityLevels()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "selfCareDisabilityLevel",
 		DisplayName: "SelfCare disability level",
-		Options:     getDisabilityLevels(),
+		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.SelfCareDisabilityLevel)
 }
@@ -757,27 +761,24 @@ func (f *IndividualForm) buildHasCommunicationDisability() error {
 }
 
 func (f *IndividualForm) buildCommunicationDisabilityLevel() error {
+	options := getDisabilityLevels()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "communicationDisabilityLevel",
 		DisplayName: "Communication disability level",
-		Options:     getDisabilityLevels(),
+		Options:     options,
 		Codec:       &disabilityLevelCodec{},
 	}, f.disabilitiesSection, f.individual.CommunicationDisabilityLevel)
 }
 
 func (f *IndividualForm) buildEngagementContext() error {
+	options := getEngagementContextOptions()
+	options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 	return buildField(&forms.SelectInputField{
 		Name:        "engagementContext",
 		DisplayName: "Context of Engagement",
-		Options: []forms.SelectInputFieldOption{
-			{Label: "", Value: ""},
-			{Label: "House Visit", Value: "houseVisit"},
-			{Label: "Field Activity", Value: "fieldActivity"},
-			{Label: "In-Office", Value: "inOffice"},
-			{Label: "Remote Channels", Value: "remoteChannels"},
-			{Label: "Referred", Value: "referred"},
-			{Label: "Other", Value: "other"},
-		},
+		Options:     options,
+		Codec:       &engagementContextCodec{},
 	}, f.dataCollectionSection, f.individual.EngagementContext)
 }
 
@@ -895,9 +896,7 @@ func (f *IndividualForm) buildServiceCC(idx int) func() error {
 		}
 
 		options := getServiceCCOptions()
-		if f.isNew() {
-			options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
-		}
+		options = append([]forms.SelectInputFieldOption{{Value: "", Label: "Select a value"}}, options...)
 		return buildField(&forms.SelectInputField{
 			Name:        fmt.Sprintf("serviceCC%d", idx),
 			DisplayName: fmt.Sprintf("Service %d CC", idx),
@@ -1003,27 +1002,41 @@ func buildField(field forms.InputField, section *forms.FormSection, value interf
 }
 
 func getDisabilityLevels() []forms.SelectInputFieldOption {
-	return []forms.SelectInputFieldOption{
-		{Value: "0", Label: "No disability"},
-		{Value: "1", Label: "Mild"},
-		{Value: "2", Label: "Moderate"},
-		{Value: "3", Label: "Severe"},
+	var ret []forms.SelectInputFieldOption
+	for _, g := range enumTypes.AllDisabilityLevels().Items() {
+		ret = append(ret, forms.SelectInputFieldOption{
+			Label: g.String(),
+			Value: string(g),
+		})
 	}
+	return ret
 }
 
 func getIdentificationTypeOptions() []forms.SelectInputFieldOption {
-	return []forms.SelectInputFieldOption{
-		{Label: "", Value: ""},
-		{Label: "Passport", Value: "passport"},
-		{Label: "UNHCR ID", Value: "unhcr_id"},
-		{Label: "National ID", Value: "national_id"},
-		{Label: "Other", Value: "other"},
+	var ret []forms.SelectInputFieldOption
+	for _, g := range enumTypes.AllIdentificationTypes().Items() {
+		ret = append(ret, forms.SelectInputFieldOption{
+			Label: g.String(),
+			Value: string(g),
+		})
 	}
+	return ret
+}
+
+func getEngagementContextOptions() []forms.SelectInputFieldOption {
+	var ret []forms.SelectInputFieldOption
+	for _, g := range enumTypes.AllEngagementContexts().Items() {
+		ret = append(ret, forms.SelectInputFieldOption{
+			Label: g.String(),
+			Value: string(g),
+		})
+	}
+	return ret
 }
 
 func getSexOptions() []forms.SelectInputFieldOption {
 	var ret []forms.SelectInputFieldOption
-	for _, g := range api.AllSexes().Items() {
+	for _, g := range enumTypes.AllSexes().Items() {
 		ret = append(ret, forms.SelectInputFieldOption{
 			Label: g.String(),
 			Value: string(g),
@@ -1034,7 +1047,18 @@ func getSexOptions() []forms.SelectInputFieldOption {
 
 func getDisplacementStatusOptions() []forms.SelectInputFieldOption {
 	var ret []forms.SelectInputFieldOption
-	for _, s := range api.AllDisplacementStatuses().Items() {
+	for _, s := range enumTypes.AllDisplacementStatuses().Items() {
+		ret = append(ret, forms.SelectInputFieldOption{
+			Label: s.String(),
+			Value: string(s),
+		})
+	}
+	return ret
+}
+
+func getPreferredContactMethodOptions() []forms.SelectInputFieldOption {
+	var ret []forms.SelectInputFieldOption
+	for _, s := range enumTypes.AllContactMethods().Items() {
 		ret = append(ret, forms.SelectInputFieldOption{
 			Label: s.String(),
 			Value: string(s),
@@ -1045,7 +1069,7 @@ func getDisplacementStatusOptions() []forms.SelectInputFieldOption {
 
 func getServiceCCOptions() []forms.SelectInputFieldOption {
 	var ret []forms.SelectInputFieldOption
-	for _, s := range api.AllServiceCCs().Items() {
+	for _, s := range enumTypes.AllServiceCCs().Items() {
 		ret = append(ret, forms.SelectInputFieldOption{
 			Label: s.String(),
 			Value: string(s),
@@ -1058,7 +1082,7 @@ func buildCountryOptions() []forms.SelectInputFieldOption {
 	var opts = make([]forms.SelectInputFieldOption, 0, len(constants.Countries))
 	opts = append(opts, forms.SelectInputFieldOption{
 		Value: "",
-		Label: "",
+		Label: "Select a value",
 	})
 	for _, country := range constants.Countries {
 		opts = append(opts, forms.SelectInputFieldOption{
@@ -1073,7 +1097,7 @@ func buildLanguageOptions() []forms.SelectInputFieldOption {
 	var opts = make([]forms.SelectInputFieldOption, 0, len(constants.Languages))
 	opts = append(opts, forms.SelectInputFieldOption{
 		Value: "",
-		Label: "",
+		Label: "Select a value",
 	})
 	for _, lang := range constants.Languages {
 		opts = append(opts, forms.SelectInputFieldOption{
@@ -1088,24 +1112,24 @@ type displacementStatusCodec struct{}
 
 func (d *displacementStatusCodec) Encode(v interface{}) (string, error) {
 	switch v.(type) {
-	case api.DisplacementStatus:
-		switch v.(api.DisplacementStatus) {
-		case api.DisplacementStatusIDP:
-			return string(api.DisplacementStatusIDP), nil
-		case api.DisplacementStatusRefugee:
-			return string(api.DisplacementStatusRefugee), nil
-		case api.DisplacementStatusHostCommunity:
-			return string(api.DisplacementStatusHostCommunity), nil
-		case api.DisplacementStatusReturnee:
-			return string(api.DisplacementStatusReturnee), nil
-		case api.DisplacementStatusAsylumSeeker:
-			return string(api.DisplacementStatusAsylumSeeker), nil
-		case api.DisplacementStatusNonDisplaced:
-			return string(api.DisplacementStatusNonDisplaced), nil
-		case api.DisplacementStatusOther:
-			return string(api.DisplacementStatusOther), nil
-		case api.DisplacementStatusUnspecified:
-			return string(api.DisplacementStatusUnspecified), nil
+	case enumTypes.DisplacementStatus:
+		switch v.(enumTypes.DisplacementStatus) {
+		case enumTypes.DisplacementStatusIDP:
+			return string(enumTypes.DisplacementStatusIDP), nil
+		case enumTypes.DisplacementStatusRefugee:
+			return string(enumTypes.DisplacementStatusRefugee), nil
+		case enumTypes.DisplacementStatusHostCommunity:
+			return string(enumTypes.DisplacementStatusHostCommunity), nil
+		case enumTypes.DisplacementStatusReturnee:
+			return string(enumTypes.DisplacementStatusReturnee), nil
+		case enumTypes.DisplacementStatusAsylumSeeker:
+			return string(enumTypes.DisplacementStatusAsylumSeeker), nil
+		case enumTypes.DisplacementStatusNonDisplaced:
+			return string(enumTypes.DisplacementStatusNonDisplaced), nil
+		case enumTypes.DisplacementStatusOther:
+			return string(enumTypes.DisplacementStatusOther), nil
+		case enumTypes.DisplacementStatusUnspecified:
+			return string(enumTypes.DisplacementStatusUnspecified), nil
 		default:
 			return "", fmt.Errorf("invalid displacement status: %v", v)
 		}
@@ -1116,24 +1140,65 @@ func (d *displacementStatusCodec) Encode(v interface{}) (string, error) {
 
 func (d *displacementStatusCodec) Decode(v string) (interface{}, error) {
 	switch v {
-	case string(api.DisplacementStatusIDP):
-		return api.DisplacementStatusIDP, nil
-	case string(api.DisplacementStatusRefugee):
-		return api.DisplacementStatusRefugee, nil
-	case string(api.DisplacementStatusHostCommunity):
-		return api.DisplacementStatusHostCommunity, nil
-	case string(api.DisplacementStatusReturnee):
-		return api.DisplacementStatusReturnee, nil
-	case string(api.DisplacementStatusAsylumSeeker):
-		return api.DisplacementStatusAsylumSeeker, nil
-	case string(api.DisplacementStatusNonDisplaced):
-		return api.DisplacementStatusNonDisplaced, nil
-	case string(api.DisplacementStatusOther):
-		return api.DisplacementStatusOther, nil
-	case string(api.DisplacementStatusUnspecified):
-		return api.DisplacementStatusUnspecified, nil
+	case string(enumTypes.DisplacementStatusIDP):
+		return enumTypes.DisplacementStatusIDP, nil
+	case string(enumTypes.DisplacementStatusRefugee):
+		return enumTypes.DisplacementStatusRefugee, nil
+	case string(enumTypes.DisplacementStatusHostCommunity):
+		return enumTypes.DisplacementStatusHostCommunity, nil
+	case string(enumTypes.DisplacementStatusReturnee):
+		return enumTypes.DisplacementStatusReturnee, nil
+	case string(enumTypes.DisplacementStatusAsylumSeeker):
+		return enumTypes.DisplacementStatusAsylumSeeker, nil
+	case string(enumTypes.DisplacementStatusNonDisplaced):
+		return enumTypes.DisplacementStatusNonDisplaced, nil
+	case string(enumTypes.DisplacementStatusOther):
+		return enumTypes.DisplacementStatusOther, nil
+	case string(enumTypes.DisplacementStatusUnspecified):
+		return enumTypes.DisplacementStatusUnspecified, nil
 	default:
 		return nil, fmt.Errorf("invalid displacement status: %v", v)
+	}
+}
+
+type identificationTypeCodec struct{}
+
+func (d *identificationTypeCodec) Encode(v interface{}) (string, error) {
+	switch v.(type) {
+	case enumTypes.IdentificationType:
+		switch v.(enumTypes.IdentificationType) {
+		case enumTypes.IdentificationTypeNational:
+			return string(enumTypes.IdentificationTypeNational), nil
+		case enumTypes.IdentificationTypePassport:
+			return string(enumTypes.IdentificationTypePassport), nil
+		case enumTypes.IdentificationTypeUNHCR:
+			return string(enumTypes.IdentificationTypeUNHCR), nil
+		case enumTypes.IdentificationTypeOther:
+			return string(enumTypes.IdentificationTypeOther), nil
+		case enumTypes.IdentificationTypeUnspecified:
+			return string(enumTypes.IdentificationTypeUnspecified), nil
+		default:
+			return "", fmt.Errorf("invalid identificationType: %v", v)
+		}
+	default:
+		return "", fmt.Errorf("invalid identificationType type: %T", v)
+	}
+}
+
+func (d *identificationTypeCodec) Decode(v string) (interface{}, error) {
+	switch v {
+	case string(enumTypes.IdentificationTypeNational):
+		return enumTypes.IdentificationTypeNational, nil
+	case string(enumTypes.IdentificationTypeUNHCR):
+		return enumTypes.IdentificationTypeUNHCR, nil
+	case string(enumTypes.IdentificationTypePassport):
+		return enumTypes.IdentificationTypePassport, nil
+	case string(enumTypes.IdentificationTypeOther):
+		return enumTypes.IdentificationTypeOther, nil
+	case string(enumTypes.IdentificationTypeUnspecified):
+		return enumTypes.IdentificationTypeUnspecified, nil
+	default:
+		return nil, fmt.Errorf("invalid identificationType: %v", v)
 	}
 }
 
@@ -1141,26 +1206,26 @@ type serviceCCCodec struct{}
 
 func (d *serviceCCCodec) Encode(v interface{}) (string, error) {
 	switch v.(type) {
-	case api.ServiceCC:
-		switch v.(api.ServiceCC) {
-		case api.ServiceCCNone:
-			return string(api.ServiceCCNone), nil
-		case api.ServiceCCShelter:
-			return string(api.ServiceCCShelter), nil
-		case api.ServiceCCWash:
-			return string(api.ServiceCCWash), nil
-		case api.ServiceCCProtection:
-			return string(api.ServiceCCProtection), nil
-		case api.ServiceCCEducation:
-			return string(api.ServiceCCEducation), nil
-		case api.ServiceCCICLA:
-			return string(api.ServiceCCICLA), nil
-		case api.ServiceCCLFS:
-			return string(api.ServiceCCLFS), nil
-		case api.ServiceCCCVA:
-			return string(api.ServiceCCCVA), nil
-		case api.ServiceCCOther:
-			return string(api.ServiceCCOther), nil
+	case enumTypes.ServiceCC:
+		switch v.(enumTypes.ServiceCC) {
+		case enumTypes.ServiceCCNone:
+			return string(enumTypes.ServiceCCNone), nil
+		case enumTypes.ServiceCCShelter:
+			return string(enumTypes.ServiceCCShelter), nil
+		case enumTypes.ServiceCCWash:
+			return string(enumTypes.ServiceCCWash), nil
+		case enumTypes.ServiceCCProtection:
+			return string(enumTypes.ServiceCCProtection), nil
+		case enumTypes.ServiceCCEducation:
+			return string(enumTypes.ServiceCCEducation), nil
+		case enumTypes.ServiceCCICLA:
+			return string(enumTypes.ServiceCCICLA), nil
+		case enumTypes.ServiceCCLFS:
+			return string(enumTypes.ServiceCCLFS), nil
+		case enumTypes.ServiceCCCVA:
+			return string(enumTypes.ServiceCCCVA), nil
+		case enumTypes.ServiceCCOther:
+			return string(enumTypes.ServiceCCOther), nil
 		default:
 			return "", fmt.Errorf("invalid service CC: %v", v)
 		}
@@ -1171,24 +1236,24 @@ func (d *serviceCCCodec) Encode(v interface{}) (string, error) {
 
 func (d *serviceCCCodec) Decode(v string) (interface{}, error) {
 	switch v {
-	case string(api.ServiceCCNone):
-		return api.ServiceCCNone, nil
-	case string(api.ServiceCCShelter):
-		return api.ServiceCCShelter, nil
-	case string(api.ServiceCCWash):
-		return api.ServiceCCWash, nil
-	case string(api.ServiceCCProtection):
-		return api.ServiceCCProtection, nil
-	case string(api.ServiceCCEducation):
-		return api.ServiceCCEducation, nil
-	case string(api.ServiceCCICLA):
-		return api.ServiceCCICLA, nil
-	case string(api.ServiceCCLFS):
-		return api.ServiceCCLFS, nil
-	case string(api.ServiceCCCVA):
-		return api.ServiceCCCVA, nil
-	case string(api.ServiceCCOther):
-		return api.ServiceCCOther, nil
+	case string(enumTypes.ServiceCCNone):
+		return enumTypes.ServiceCCNone, nil
+	case string(enumTypes.ServiceCCShelter):
+		return enumTypes.ServiceCCShelter, nil
+	case string(enumTypes.ServiceCCWash):
+		return enumTypes.ServiceCCWash, nil
+	case string(enumTypes.ServiceCCProtection):
+		return enumTypes.ServiceCCProtection, nil
+	case string(enumTypes.ServiceCCEducation):
+		return enumTypes.ServiceCCEducation, nil
+	case string(enumTypes.ServiceCCICLA):
+		return enumTypes.ServiceCCICLA, nil
+	case string(enumTypes.ServiceCCLFS):
+		return enumTypes.ServiceCCLFS, nil
+	case string(enumTypes.ServiceCCCVA):
+		return enumTypes.ServiceCCCVA, nil
+	case string(enumTypes.ServiceCCOther):
+		return enumTypes.ServiceCCOther, nil
 	default:
 		return nil, fmt.Errorf("invalid service CC: %v", v)
 	}
@@ -1198,18 +1263,18 @@ type disabilityLevelCodec struct{}
 
 func (d disabilityLevelCodec) Encode(value interface{}) (string, error) {
 	switch v := value.(type) {
-	case api.DisabilityLevel:
+	case enumTypes.DisabilityLevel:
 		switch v {
-		case api.DisabilityLevelNone:
-			return "0", nil
-		case api.DisabilityLevelMild:
-			return "1", nil
-		case api.DisabilityLevelModerate:
-			return "2", nil
-		case api.DisabilityLevelSevere:
-			return "3", nil
-		case api.DisabilityLevelUnspecified:
-			return "", nil
+		case enumTypes.DisabilityLevelNone:
+			return string(enumTypes.DisabilityLevelNone), nil
+		case enumTypes.DisabilityLevelMild:
+			return string(enumTypes.DisabilityLevelMild), nil
+		case enumTypes.DisabilityLevelModerate:
+			return string(enumTypes.DisabilityLevelModerate), nil
+		case enumTypes.DisabilityLevelSevere:
+			return string(enumTypes.DisabilityLevelSevere), nil
+		case enumTypes.DisabilityLevelUnspecified:
+			return string(enumTypes.DisabilityLevelUnspecified), nil
 		default:
 			return "", fmt.Errorf("unknown disability level: %v", v)
 		}
@@ -1220,39 +1285,135 @@ func (d disabilityLevelCodec) Encode(value interface{}) (string, error) {
 
 func (d disabilityLevelCodec) Decode(value string) (interface{}, error) {
 	switch value {
-	case "0":
-		return api.DisabilityLevelNone, nil
-	case "1":
-		return api.DisabilityLevelMild, nil
-	case "2":
-		return api.DisabilityLevelModerate, nil
-	case "3":
-		return api.DisabilityLevelSevere, nil
-	case "":
-		return api.DisabilityLevelUnspecified, nil
+	case string(enumTypes.DisabilityLevelNone):
+		return enumTypes.DisabilityLevelNone, nil
+	case string(enumTypes.DisabilityLevelMild):
+		return enumTypes.DisabilityLevelMild, nil
+	case string(enumTypes.DisabilityLevelModerate):
+		return enumTypes.DisabilityLevelModerate, nil
+	case string(enumTypes.DisabilityLevelSevere):
+		return enumTypes.DisabilityLevelSevere, nil
+	case string(enumTypes.DisabilityLevelUnspecified):
+		return enumTypes.DisabilityLevelUnspecified, nil
 	default:
 		return nil, fmt.Errorf("unknown disability level: %v", value)
 	}
 }
 
+type engagementContextCodec struct{}
+
+func (d engagementContextCodec) Encode(value interface{}) (string, error) {
+	switch v := value.(type) {
+	case enumTypes.EngagementContext:
+		switch v {
+		case enumTypes.EngagementContextFieldActivity:
+			return string(enumTypes.EngagementContextFieldActivity), nil
+		case enumTypes.EngagementContextInOffice:
+			return string(enumTypes.EngagementContextInOffice), nil
+		case enumTypes.EngagementContextHouseVisit:
+			return string(enumTypes.EngagementContextHouseVisit), nil
+		case enumTypes.EngagementContextReferred:
+			return string(enumTypes.EngagementContextReferred), nil
+		case enumTypes.EngagementContextRemoteChannels:
+			return string(enumTypes.EngagementContextRemoteChannels), nil
+		case enumTypes.EngagementContextOther:
+			return string(enumTypes.EngagementContextOther), nil
+		case enumTypes.EngagementContextUnspecified:
+			return string(enumTypes.EngagementContextUnspecified), nil
+		default:
+			return "", fmt.Errorf("unknown engagement context: %v", v)
+		}
+	default:
+		return "", fmt.Errorf("invalid type %T", value)
+	}
+}
+
+func (d engagementContextCodec) Decode(value string) (interface{}, error) {
+	switch value {
+	case string(enumTypes.EngagementContextFieldActivity):
+		return enumTypes.EngagementContextFieldActivity, nil
+	case string(enumTypes.EngagementContextInOffice):
+		return enumTypes.EngagementContextInOffice, nil
+	case string(enumTypes.EngagementContextHouseVisit):
+		return enumTypes.EngagementContextHouseVisit, nil
+	case string(enumTypes.EngagementContextReferred):
+		return enumTypes.EngagementContextReferred, nil
+	case string(enumTypes.EngagementContextRemoteChannels):
+		return enumTypes.EngagementContextRemoteChannels, nil
+	case string(enumTypes.EngagementContextOther):
+		return enumTypes.EngagementContextOther, nil
+	case string(enumTypes.EngagementContextUnspecified):
+		return enumTypes.EngagementContextUnspecified, nil
+	default:
+		return nil, fmt.Errorf("unknown engagement context: %v", value)
+	}
+}
+
 var _ forms.Codec = &disabilityLevelCodec{}
+
+type preferredContactMethodCodec struct{}
+
+func (d preferredContactMethodCodec) Encode(value interface{}) (string, error) {
+	switch v := value.(type) {
+	case enumTypes.ContactMethod:
+		switch v {
+		case enumTypes.ContactMethodPhone:
+			return string(enumTypes.ContactMethodPhone), nil
+		case enumTypes.ContactMethodWhatsapp:
+			return string(enumTypes.ContactMethodWhatsapp), nil
+		case enumTypes.ContactMethodEmail:
+			return string(enumTypes.ContactMethodEmail), nil
+		case enumTypes.ContactMethodVisit:
+			return string(enumTypes.ContactMethodVisit), nil
+		case enumTypes.ContactMethodOther:
+			return string(enumTypes.ContactMethodOther), nil
+		case enumTypes.ContactMethodUnspecified:
+			return string(enumTypes.ContactMethodUnspecified), nil
+		default:
+			return "", fmt.Errorf("unknown contact method: %v", v)
+		}
+	default:
+		return "", fmt.Errorf("invalid type %T", value)
+	}
+}
+
+func (d preferredContactMethodCodec) Decode(value string) (interface{}, error) {
+	switch value {
+	case string(enumTypes.ContactMethodPhone):
+		return enumTypes.ContactMethodPhone, nil
+	case string(enumTypes.ContactMethodWhatsapp):
+		return enumTypes.ContactMethodWhatsapp, nil
+	case string(enumTypes.ContactMethodEmail):
+		return enumTypes.ContactMethodEmail, nil
+	case string(enumTypes.ContactMethodVisit):
+		return enumTypes.ContactMethodVisit, nil
+	case string(enumTypes.ContactMethodOther):
+		return enumTypes.ContactMethodOther, nil
+	case string(enumTypes.ContactMethodUnspecified):
+		return enumTypes.ContactMethodUnspecified, nil
+	default:
+		return nil, fmt.Errorf("unknown contact method: %v", value)
+	}
+}
+
+var _ forms.Codec = &preferredContactMethodCodec{}
 
 type sexCodec struct{}
 
 func (g sexCodec) Encode(value interface{}) (string, error) {
 	switch v := value.(type) {
-	case api.Sex:
+	case enumTypes.Sex:
 		switch v {
-		case api.SexMale:
-			return string(api.SexMale), nil
-		case api.SexFemale:
-			return string(api.SexFemale), nil
-		case api.SexOther:
-			return string(api.SexOther), nil
-		case api.SexPreferNotToSay:
-			return string(api.SexPreferNotToSay), nil
-		case api.SexUnspecified:
-			return string(api.SexUnspecified), nil
+		case enumTypes.SexMale:
+			return string(enumTypes.SexMale), nil
+		case enumTypes.SexFemale:
+			return string(enumTypes.SexFemale), nil
+		case enumTypes.SexOther:
+			return string(enumTypes.SexOther), nil
+		case enumTypes.SexPreferNotToSay:
+			return string(enumTypes.SexPreferNotToSay), nil
+		case enumTypes.SexUnspecified:
+			return string(enumTypes.SexUnspecified), nil
 		default:
 			return "", fmt.Errorf("unknown sex: %v", v)
 		}
@@ -1263,16 +1424,16 @@ func (g sexCodec) Encode(value interface{}) (string, error) {
 
 func (g sexCodec) Decode(value string) (interface{}, error) {
 	switch value {
-	case string(api.SexMale):
-		return api.SexMale, nil
-	case string(api.SexFemale):
-		return api.SexFemale, nil
-	case string(api.SexOther):
-		return api.SexOther, nil
-	case string(api.SexPreferNotToSay):
-		return api.SexPreferNotToSay, nil
-	case string(api.SexUnspecified):
-		return api.SexUnspecified, nil
+	case string(enumTypes.SexMale):
+		return enumTypes.SexMale, nil
+	case string(enumTypes.SexFemale):
+		return enumTypes.SexFemale, nil
+	case string(enumTypes.SexOther):
+		return enumTypes.SexOther, nil
+	case string(enumTypes.SexPreferNotToSay):
+		return enumTypes.SexPreferNotToSay, nil
+	case string(enumTypes.SexUnspecified):
+		return enumTypes.SexUnspecified, nil
 	default:
 		return nil, fmt.Errorf("unknown sex: %v", value)
 	}

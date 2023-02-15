@@ -2,6 +2,7 @@ package mockdata
 
 import (
 	"encoding/csv"
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"math/rand"
 	"os"
 	"strconv"
@@ -9,7 +10,6 @@ import (
 	"time"
 
 	"github.com/manveru/faker"
-	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/utils"
 )
@@ -28,14 +28,14 @@ func randomIdentificationType() string {
 	return pick(
 		"",
 		"passport",
-		"nationalId",
+		"national_id",
 		"other",
 	)
 }
 
 func randomDisabilityLevel() string {
 	var g []string
-	for _, d := range api.AllDisabilityLevels().Items() {
+	for _, d := range enumTypes.AllDisabilityLevels().Items() {
 		g = append(g, string(d))
 	}
 	return pick(g...)
@@ -43,7 +43,7 @@ func randomDisabilityLevel() string {
 
 func randomSex() string {
 	var g []string
-	for _, d := range api.AllSexes().Items() {
+	for _, d := range enumTypes.AllSexes().Items() {
 		g = append(g, string(d))
 	}
 	return pick(g...)
@@ -51,7 +51,7 @@ func randomSex() string {
 
 func randomDisplacementStatus() string {
 	var ds []string
-	for _, d := range api.AllDisplacementStatuses().Items() {
+	for _, d := range enumTypes.AllDisplacementStatuses().Items() {
 		ds = append(ds, string(d))
 	}
 	return pick(ds...)
@@ -96,7 +96,7 @@ func randomContactMethod() string {
 		"phone",
 		"email",
 		"whatsapp",
-		"sms",
+		"visit",
 		"other",
 	)
 }
@@ -451,31 +451,31 @@ func Generate(count uint) error {
 		spokenLanguage2 := randomLanguage()
 		spokenLanguage3 := randomLanguage()
 
-		serviceCC1 := string(api.ServiceCCShelter)
+		serviceCC1 := string(enumTypes.ServiceCCShelter)
 		serviceRequested1 := randomDate()
 		serviceDelivered1 := randomDate()
 
-		serviceCC2 := string(api.ServiceCCWash)
+		serviceCC2 := string(enumTypes.ServiceCCWash)
 		serviceRequested2 := randomDate()
 		serviceDelivered2 := randomDate()
 
-		serviceCC3 := string(api.ServiceCCProtection)
+		serviceCC3 := string(enumTypes.ServiceCCProtection)
 		serviceRequested3 := randomDate()
 		serviceDelivered3 := randomDate()
 
-		serviceCC4 := string(api.ServiceCCEducation)
+		serviceCC4 := string(enumTypes.ServiceCCEducation)
 		serviceRequested4 := randomDate()
 		serviceDelivered4 := randomDate()
 
-		serviceCC5 := string(api.ServiceCCICLA)
+		serviceCC5 := string(enumTypes.ServiceCCICLA)
 		serviceRequested5 := randomDate()
 		serviceDelivered5 := randomDate()
 
-		serviceCC6 := string(api.ServiceCCLFS)
+		serviceCC6 := string(enumTypes.ServiceCCLFS)
 		serviceRequested6 := randomDate()
 		serviceDelivered6 := randomDate()
 
-		serviceCC7 := string(api.ServiceCCCVA)
+		serviceCC7 := string(enumTypes.ServiceCCCVA)
 		serviceRequested7 := randomDate()
 		serviceDelivered7 := randomDate()
 

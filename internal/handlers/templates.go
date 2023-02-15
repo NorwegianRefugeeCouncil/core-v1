@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"github.com/nrc-no/notcore/internal/api"
 	"html/template"
 	"net/http"
 
-	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/auth"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"

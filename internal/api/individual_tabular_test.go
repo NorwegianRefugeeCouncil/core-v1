@@ -1,6 +1,7 @@
 package api_test
 
 import (
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"testing"
 	"time"
 
@@ -21,8 +22,13 @@ var parameters = []struct {
 	{constants.FileColumnIndividualAddress, "123 Fake Alle, Berlin", "123 Fake Alle, Berlin", false},
 	{constants.FileColumnIndividualBirthDate, "1992-07-31", &foo, false},
 	{constants.FileColumnIndividualBirthDate, "31-07-1992", "", true},
-	{constants.FileColumnIndividualDisplacementStatus, "refugee", api.DisplacementStatusRefugee, false},
+	{constants.FileColumnIndividualDisplacementStatus, "refugee", enumTypes.DisplacementStatusRefugee, false},
 	{constants.FileColumnIndividualHasDisability, "yEs", true, false},
+	{constants.FileColumnIndividualDisplacementStatus, "Refugee", enumTypes.DisplacementStatusRefugee, false},
+	{constants.FileColumnIndividualDisplacementStatus, "nothing", enumTypes.DisplacementStatusRefugee, true},
+	{constants.FileColumnIndividualServiceCC1, "shelter_and_settlements", enumTypes.ServiceCCShelter, false},
+	{constants.FileColumnIndividualServiceCC1, "Shelter & Settlements", enumTypes.ServiceCCShelter, false},
+	{constants.FileColumnIndividualServiceCC1, "nothing", enumTypes.ServiceCCShelter, true},
 	{constants.FileColumnIndividualEmail1, "person@not-nrc.no", "person@not-nrc.no", false},
 	{constants.FileColumnIndividualFullName, "Hugh Jazz", "Hugh Jazz", false},
 	{constants.FileColumnIndividualFirstName, "Hugh", "Hugh", false},
@@ -30,17 +36,17 @@ var parameters = []struct {
 	{constants.FileColumnIndividualLastName, "Jazz", "Jazz", false},
 	{constants.FileColumnIndividualNativeName, "جون", "جون", false},
 	{constants.FileColumnIndividualMothersName, "Jane Doe", "Jane Doe", false},
-	{constants.FileColumnIndividualSex, "male", api.SexMale, false},
+	{constants.FileColumnIndividualSex, "male", enumTypes.SexMale, false},
 	{constants.FileColumnIndividualIsMinor, "tRuE", true, false},
 	{constants.FileColumnIndividualIsMinor, "YeS", true, false},
 	{constants.FileColumnIndividualIsMinor, "1", true, false},
-	{constants.FileColumnIndividualIsMinor, "anything-else", false, false},
+	{constants.FileColumnIndividualIsMinor, "anything-else", false, true},
 	{constants.FileColumnIndividualPhoneNumber1, "01234", "01234", false},
 	{constants.FileColumnIndividualPreferredName, "Hughie", "Hughie", false},
 	{constants.FileColumnIndividualPresentsProtectionConcerns, "tRuE", true, false},
 	{constants.FileColumnIndividualPresentsProtectionConcerns, "YeS", true, false},
 	{constants.FileColumnIndividualPresentsProtectionConcerns, "1", true, false},
-	{constants.FileColumnIndividualPresentsProtectionConcerns, "anything-else", false, false},
+	{constants.FileColumnIndividualPresentsProtectionConcerns, "anything-else", "anything-else", true},
 }
 
 func TestUnmarshalIndividualsTabularData(t *testing.T) {

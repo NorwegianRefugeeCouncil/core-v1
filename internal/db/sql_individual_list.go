@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"github.com/nrc-no/notcore/internal/constants"
 	"strings"
 	"time"
@@ -149,8 +150,8 @@ func (g *getAllIndividualsSQLQuery) withBirthDateTo(to *time.Time) *getAllIndivi
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withCognitiveDisabilityLevel(c api.DisabilityLevel) *getAllIndividualsSQLQuery {
-	if c == api.DisabilityLevelUnspecified {
+func (g *getAllIndividualsSQLQuery) withCognitiveDisabilityLevel(c enumTypes.DisabilityLevel) *getAllIndividualsSQLQuery {
+	if c == enumTypes.DisabilityLevelUnspecified {
 		return g
 	}
 	g.writeString(" AND " + constants.DBColumnIndividualCognitiveDisabilityLevel + " = ").writeArg(string(c))
@@ -253,7 +254,7 @@ func (g *getAllIndividualsSQLQuery) withCreatedAtTo(t *time.Time) *getAllIndivid
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withDisplacementStatuses(displacementStatuses containers.Set[api.DisplacementStatus]) *getAllIndividualsSQLQuery {
+func (g *getAllIndividualsSQLQuery) withDisplacementStatuses(displacementStatuses containers.Set[enumTypes.DisplacementStatus]) *getAllIndividualsSQLQuery {
 	if displacementStatuses.IsEmpty() {
 		return g
 	}
@@ -371,7 +372,7 @@ func (g *getAllIndividualsSQLQuery) withFullName(name string) *getAllIndividuals
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withSexes(sexes containers.Set[api.Sex]) *getAllIndividualsSQLQuery {
+func (g *getAllIndividualsSQLQuery) withSexes(sexes containers.Set[enumTypes.Sex]) *getAllIndividualsSQLQuery {
 	if len(sexes) == 0 {
 		return g
 	}
@@ -458,8 +459,8 @@ func (g *getAllIndividualsSQLQuery) withHasVisionDisability(hasVisionDisability 
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withHearingDisabilityLevel(hearingDisabilityLevel api.DisabilityLevel) *getAllIndividualsSQLQuery {
-	if hearingDisabilityLevel == api.DisabilityLevelUnspecified {
+func (g *getAllIndividualsSQLQuery) withHearingDisabilityLevel(hearingDisabilityLevel enumTypes.DisabilityLevel) *getAllIndividualsSQLQuery {
+	if hearingDisabilityLevel == enumTypes.DisabilityLevelUnspecified {
 		return g
 	}
 	g.writeString(" AND " + constants.DBColumnIndividualHearingDisabilityLevel + " = ").writeArg(string(hearingDisabilityLevel))
@@ -501,7 +502,7 @@ func (g *getAllIndividualsSQLQuery) withIdentificationNumber(identificationNumbe
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withServiceCC(serviceCC containers.Set[api.ServiceCC], requestedFrom *time.Time, requestedTo *time.Time, deliveredFrom *time.Time, deliveredTo *time.Time) *getAllIndividualsSQLQuery {
+func (g *getAllIndividualsSQLQuery) withServiceCC(serviceCC containers.Set[enumTypes.ServiceCC], requestedFrom *time.Time, requestedTo *time.Time, deliveredFrom *time.Time, deliveredTo *time.Time) *getAllIndividualsSQLQuery {
 	zero := &time.Time{}
 	requestedFromIsUndefined := requestedFrom == nil || requestedFrom.IsZero() || requestedFrom == zero
 	requestedToIsUndefined := requestedTo == nil || requestedTo.IsZero() || requestedTo == zero
@@ -551,7 +552,7 @@ func (g *getAllIndividualsSQLQuery) withServiceCC(serviceCC containers.Set[api.S
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withEngagementContext(engagementContext containers.Set[api.EngagementContext]) *getAllIndividualsSQLQuery {
+func (g *getAllIndividualsSQLQuery) withEngagementContext(engagementContext containers.Set[enumTypes.EngagementContext]) *getAllIndividualsSQLQuery {
 	if engagementContext.IsEmpty() {
 		return g
 	}
@@ -618,8 +619,8 @@ func (g *getAllIndividualsSQLQuery) withIsMinor(isMinor *bool) *getAllIndividual
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withMobilityDisabilityLevel(mobilityDisabilityLevel api.DisabilityLevel) *getAllIndividualsSQLQuery {
-	if mobilityDisabilityLevel == api.DisabilityLevelUnspecified {
+func (g *getAllIndividualsSQLQuery) withMobilityDisabilityLevel(mobilityDisabilityLevel enumTypes.DisabilityLevel) *getAllIndividualsSQLQuery {
+	if mobilityDisabilityLevel == enumTypes.DisabilityLevelUnspecified {
 		return g
 	}
 	g.writeString(" AND " + constants.DBColumnIndividualMobilityDisabilityLevel + " = ").writeArg(string(mobilityDisabilityLevel))
@@ -702,8 +703,8 @@ func (g *getAllIndividualsSQLQuery) withPWDComments(pwdComments string) *getAllI
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withSelfCareDisabilityLevel(selfCareDisabilityLevel api.DisabilityLevel) *getAllIndividualsSQLQuery {
-	if selfCareDisabilityLevel == api.DisabilityLevelUnspecified {
+func (g *getAllIndividualsSQLQuery) withSelfCareDisabilityLevel(selfCareDisabilityLevel enumTypes.DisabilityLevel) *getAllIndividualsSQLQuery {
+	if selfCareDisabilityLevel == enumTypes.DisabilityLevelUnspecified {
 		return g
 	}
 	g.writeString(" AND " + constants.DBColumnIndividualSelfCareDisabilityLevel + " = ").writeArg(string(selfCareDisabilityLevel))
@@ -738,8 +739,8 @@ func (g *getAllIndividualsSQLQuery) withUpdatedAtTo(updatedAtTo *time.Time) *get
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withVisionDisabilityLevel(visionDisabilityLevel api.DisabilityLevel) *getAllIndividualsSQLQuery {
-	if visionDisabilityLevel == api.DisabilityLevelUnspecified {
+func (g *getAllIndividualsSQLQuery) withVisionDisabilityLevel(visionDisabilityLevel enumTypes.DisabilityLevel) *getAllIndividualsSQLQuery {
+	if visionDisabilityLevel == enumTypes.DisabilityLevelUnspecified {
 		return g
 	}
 	g.writeString(" AND " + constants.DBColumnIndividualVisionDisabilityLevel + " = ").writeArg(string(visionDisabilityLevel))

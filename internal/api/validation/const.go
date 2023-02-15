@@ -1,17 +1,28 @@
 package validation
 
-import "github.com/nrc-no/notcore/internal/api"
+import (
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
+)
 
-var allowedDisplacementStatuses = api.AllDisplacementStatuses()
-var allowedSexes = api.AllSexes()
+var allowedDisplacementStatuses = enumTypes.AllDisplacementStatuses()
+var allowedSexes = enumTypes.AllSexes()
 
 var allowedDisplacementStatusesStr []string
 var allowedSexesStr []string
 
-var allowedDisabilityLevels = api.AllDisabilityLevels()
+var allowedIdentificationTypes = enumTypes.AllIdentificationTypes()
+var allowedIdentificationTypesStr []string
+
+var allowedEngagementContexts = enumTypes.AllEngagementContexts()
+var allowedEngagementContextsStr []string
+
+var allowedContactMethods = enumTypes.AllContactMethods()
+var allowedContactMethodsStr []string
+
+var allowedDisabilityLevels = enumTypes.AllDisabilityLevels()
 var allowedDisabilityLevelsStr []string
 
-var allowedServiceCCs = api.AllServiceCCs()
+var allowedServiceCCs = enumTypes.AllServiceCCs()
 var allowedServiceCCsStr []string
 
 func init() {

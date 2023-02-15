@@ -1,4 +1,4 @@
-package api
+package enumTypes
 
 import (
 	"encoding/json"
@@ -39,7 +39,7 @@ func (g DisabilityLevel) String() string {
 	case DisabilityLevelSevere:
 		return "Severe"
 	case DisabilityLevelUnspecified:
-		return "Unspecified"
+		return ""
 	default:
 		return ""
 	}
@@ -47,15 +47,15 @@ func (g DisabilityLevel) String() string {
 
 func ParseDisabilityLevel(str string) (DisabilityLevel, error) {
 	switch str {
-	case string(DisabilityLevelNone):
+	case string(DisabilityLevelNone), DisabilityLevelNone.String():
 		return DisabilityLevelNone, nil
-	case string(DisabilityLevelMild):
+	case string(DisabilityLevelMild), DisabilityLevelMild.String():
 		return DisabilityLevelMild, nil
-	case string(DisabilityLevelModerate):
+	case string(DisabilityLevelModerate), DisabilityLevelModerate.String():
 		return DisabilityLevelModerate, nil
-	case string(DisabilityLevelSevere):
+	case string(DisabilityLevelSevere), DisabilityLevelSevere.String():
 		return DisabilityLevelSevere, nil
-	case string(DisabilityLevelUnspecified):
+	case string(DisabilityLevelUnspecified), DisabilityLevelUnspecified.String():
 		return DisabilityLevelUnspecified, nil
 	default:
 		return "", fmt.Errorf("unknown disability level: \"%v\"", logutils.Escape(str))

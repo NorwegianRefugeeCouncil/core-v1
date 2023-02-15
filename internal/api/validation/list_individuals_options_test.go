@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"testing"
 	"time"
 
@@ -23,8 +24,8 @@ func TestValidateListIndividualsOptions(t *testing.T) {
 			opts: api.ListIndividualsOptions{
 				Take:                 10,
 				Skip:                 10,
-				Sexes:                containers.NewSet[api.Sex](api.SexFemale, api.SexMale, api.SexOther, api.SexPreferNotToSay),
-				DisplacementStatuses: containers.NewSet[api.DisplacementStatus](api.DisplacementStatusIDP, api.DisplacementStatusRefugee, api.DisplacementStatusHostCommunity),
+				Sexes:                containers.NewSet[enumTypes.Sex](enumTypes.SexFemale, enumTypes.SexMale, enumTypes.SexOther, enumTypes.SexPreferNotToSay),
+				DisplacementStatuses: containers.NewSet[enumTypes.DisplacementStatus](enumTypes.DisplacementStatusIDP, enumTypes.DisplacementStatusRefugee, enumTypes.DisplacementStatusHostCommunity),
 				BirthDateFrom:        &fromDate,
 				BirthDateTo:          &toDate,
 				CountryID:            "countryId",
@@ -52,19 +53,19 @@ func TestValidateListIndividualsOptions(t *testing.T) {
 			name: "invalid sex",
 			opts: api.ListIndividualsOptions{
 				CountryID: "countryId",
-				Sexes:     containers.NewSet[api.Sex]("invalid"),
+				Sexes:     containers.NewSet[enumTypes.Sex]("invalid"),
 			},
 			want: validation.ErrorList{
-				validation.NotSupported(validation.NewPath("sexes").Index(0), api.Sex("invalid"), allowedSexesStr),
+				validation.NotSupported(validation.NewPath("sexes").Index(0), enumTypes.Sex("invalid"), allowedSexesStr),
 			},
 		}, {
 			name: "invalid displacement status",
 			opts: api.ListIndividualsOptions{
 				CountryID:            "countryId",
-				DisplacementStatuses: containers.NewSet[api.DisplacementStatus]("invalid"),
+				DisplacementStatuses: containers.NewSet[enumTypes.DisplacementStatus]("invalid"),
 			},
 			want: validation.ErrorList{
-				validation.NotSupported(validation.NewPath("displacementStatuses").Index(0), api.DisplacementStatus("invalid"), allowedDisplacementStatusesStr),
+				validation.NotSupported(validation.NewPath("displacementStatuses").Index(0), enumTypes.DisplacementStatus("invalid"), allowedDisplacementStatusesStr),
 			},
 		}, {
 			name: "from birthdate after to birthdate",

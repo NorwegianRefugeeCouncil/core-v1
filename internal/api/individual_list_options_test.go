@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"net/url"
 	"testing"
 	"time"
@@ -61,7 +62,7 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 		}, {
 			name: "cognitiveDisabilityLevel",
 			args: url.Values{"cognitive_disability_level": []string{"mild"}},
-			want: ListIndividualsOptions{CognitiveDisabilityLevel: DisabilityLevelMild},
+			want: ListIndividualsOptions{CognitiveDisabilityLevel: enumTypes.DisabilityLevelMild},
 		}, {
 			name:    "cognitiveDisabilityLevel (invalid)",
 			args:    url.Values{"cognitive_disability_level": []string{"invalid"}},
@@ -129,11 +130,11 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 		}, {
 			name: "displacementStatus",
 			args: url.Values{"displacement_status": []string{"idp"}},
-			want: ListIndividualsOptions{DisplacementStatuses: containers.NewSet[DisplacementStatus](DisplacementStatusIDP)},
+			want: ListIndividualsOptions{DisplacementStatuses: containers.NewSet[enumTypes.DisplacementStatus](enumTypes.DisplacementStatusIDP)},
 		}, {
 			name: "displacementStatus (multiple)",
 			args: url.Values{"displacement_status": []string{"idp", "refugee"}},
-			want: ListIndividualsOptions{DisplacementStatuses: containers.NewSet[DisplacementStatus](DisplacementStatusIDP, DisplacementStatusRefugee)},
+			want: ListIndividualsOptions{DisplacementStatuses: containers.NewSet[enumTypes.DisplacementStatus](enumTypes.DisplacementStatusIDP, enumTypes.DisplacementStatusRefugee)},
 		}, {
 			name:    "displacementStatus (invalid)",
 			args:    url.Values{"displacement_status": []string{"invalidd"}},
@@ -169,11 +170,11 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 		}, {
 			name: "sex",
 			args: url.Values{"sex": []string{"female"}},
-			want: ListIndividualsOptions{Sexes: containers.NewSet[Sex](SexFemale)},
+			want: ListIndividualsOptions{Sexes: containers.NewSet[enumTypes.Sex](enumTypes.SexFemale)},
 		}, {
 			name: "sex (multiple)",
 			args: url.Values{"sex": []string{"female", "male"}},
-			want: ListIndividualsOptions{Sexes: containers.NewSet[Sex](SexFemale, SexMale)},
+			want: ListIndividualsOptions{Sexes: containers.NewSet[enumTypes.Sex](enumTypes.SexFemale, enumTypes.SexMale)},
 		}, {
 			name:    "sex (invalid)",
 			args:    url.Values{"sex": []string{"invalid"}},
@@ -285,7 +286,7 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 		}, {
 			name: "hearingDisabilityLevel",
 			args: url.Values{"hearing_disability_level": []string{"mild"}},
-			want: ListIndividualsOptions{HearingDisabilityLevel: DisabilityLevelMild},
+			want: ListIndividualsOptions{HearingDisabilityLevel: enumTypes.DisabilityLevelMild},
 		}, {
 			name:    "hearingDisabilityLevel (invalid)",
 			args:    url.Values{"hearing_disability_level": []string{"invalid"}},
@@ -309,7 +310,7 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 		}, {
 			name: "engagementContext",
 			args: url.Values{"engagement_context": []string{"inOffice"}},
-			want: ListIndividualsOptions{EngagementContext: containers.NewSet[EngagementContext](EngagementContextInOffice)},
+			want: ListIndividualsOptions{EngagementContext: containers.NewSet[enumTypes.EngagementContext](enumTypes.EngagementContextInOffice)},
 		}, {
 			name: "internalId",
 			args: url.Values{"internal_id": []string{"internal-id"}},
@@ -377,7 +378,7 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 		}, {
 			name: "mobilityDisabilityLevel",
 			args: url.Values{"mobility_disability_level": []string{"mild"}},
-			want: ListIndividualsOptions{MobilityDisabilityLevel: DisabilityLevelMild},
+			want: ListIndividualsOptions{MobilityDisabilityLevel: enumTypes.DisabilityLevelMild},
 		}, {
 			name:    "mobilityDisabilityLevel (invalid)",
 			args:    url.Values{"mobility_disability_level": []string{"invalid"}},
@@ -425,7 +426,7 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 		}, {
 			name: "selfCareDisabilityLevel",
 			args: url.Values{"selfcare_disability_level": []string{"mild"}},
-			want: ListIndividualsOptions{SelfCareDisabilityLevel: DisabilityLevelMild},
+			want: ListIndividualsOptions{SelfCareDisabilityLevel: enumTypes.DisabilityLevelMild},
 		}, {
 			name:    "selfCareDisabilityLevel (invalid)",
 			args:    url.Values{"selfcare_disability_level": []string{"invalid"}},
@@ -493,7 +494,7 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 		}, {
 			name: "visionDisabilityLevel",
 			args: url.Values{"vision_disability_level": []string{"mild"}},
-			want: ListIndividualsOptions{VisionDisabilityLevel: DisabilityLevelMild},
+			want: ListIndividualsOptions{VisionDisabilityLevel: enumTypes.DisabilityLevelMild},
 		}, {
 			name:    "visionDisabilityLevel (invalid)",
 			args:    url.Values{"vision_disability_level": []string{"invalid"}},
@@ -551,7 +552,7 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			want: "/countries/usa/participants?birth_date_to=2000-01-01",
 		}, {
 			name: "cognitiveDisabilityLevel",
-			o:    ListIndividualsOptions{CountryID: countryId, CognitiveDisabilityLevel: DisabilityLevelNone},
+			o:    ListIndividualsOptions{CountryID: countryId, CognitiveDisabilityLevel: enumTypes.DisabilityLevelNone},
 			want: "/countries/usa/participants?cognitive_disability_level=none",
 		}, {
 			name: "collectionAdministrativeArea1",
@@ -599,11 +600,11 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			want: "/countries/usa/participants?created_at_to=2000-01-01T10%3A30%3A05Z",
 		}, {
 			name: "displacement status",
-			o:    ListIndividualsOptions{CountryID: countryId, DisplacementStatuses: containers.NewSet[DisplacementStatus](DisplacementStatusIDP)},
+			o:    ListIndividualsOptions{CountryID: countryId, DisplacementStatuses: containers.NewSet[enumTypes.DisplacementStatus](enumTypes.DisplacementStatusIDP)},
 			want: "/countries/usa/participants?displacement_status=idp",
 		}, {
 			name: "displacement status (multiple)",
-			o:    ListIndividualsOptions{CountryID: countryId, DisplacementStatuses: containers.NewSet[DisplacementStatus](DisplacementStatusIDP, DisplacementStatusRefugee)},
+			o:    ListIndividualsOptions{CountryID: countryId, DisplacementStatuses: containers.NewSet[enumTypes.DisplacementStatus](enumTypes.DisplacementStatusIDP, enumTypes.DisplacementStatusRefugee)},
 			want: "/countries/usa/participants?displacement_status=idp&displacement_status=refugee",
 		}, {
 			name: "email",
@@ -635,11 +636,11 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			want: "/countries/usa/participants?full_name=fullName",
 		}, {
 			name: "sex",
-			o:    ListIndividualsOptions{CountryID: countryId, Sexes: containers.NewSet[Sex]("male")},
+			o:    ListIndividualsOptions{CountryID: countryId, Sexes: containers.NewSet[enumTypes.Sex](enumTypes.SexMale)},
 			want: "/countries/usa/participants?sex=male",
 		}, {
 			name: "sex (multiple)",
-			o:    ListIndividualsOptions{CountryID: countryId, Sexes: containers.NewSet[Sex](SexMale, SexFemale)},
+			o:    ListIndividualsOptions{CountryID: countryId, Sexes: containers.NewSet[enumTypes.Sex](enumTypes.SexMale, enumTypes.SexFemale)},
 			want: "/countries/usa/participants?sex=female&sex=male",
 		}, {
 			name: "hasCognitiveDisability",
@@ -707,7 +708,7 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			want: "/countries/usa/participants?has_vision_disability=false",
 		}, {
 			name: "hearingDisabilityLevel",
-			o:    ListIndividualsOptions{CountryID: countryId, HearingDisabilityLevel: DisabilityLevelMild},
+			o:    ListIndividualsOptions{CountryID: countryId, HearingDisabilityLevel: enumTypes.DisabilityLevelMild},
 			want: "/countries/usa/participants?hearing_disability_level=mild",
 		}, {
 			name: "householdID",
@@ -723,7 +724,7 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			want: "/countries/usa/participants?identification_number=identificationNumber",
 		}, {
 			name: "engagementContext",
-			o:    ListIndividualsOptions{CountryID: countryId, EngagementContext: containers.NewSet[EngagementContext](EngagementContextInOffice)},
+			o:    ListIndividualsOptions{CountryID: countryId, EngagementContext: containers.NewSet[enumTypes.EngagementContext](enumTypes.EngagementContextInOffice)},
 			want: "/countries/usa/participants?engagement_context=inOffice",
 		}, {
 			name: "internalID",
@@ -771,7 +772,7 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			want: "/countries/usa/participants?is_minor=false",
 		}, {
 			name: "mobilityDisabilityLevel",
-			o:    ListIndividualsOptions{CountryID: countryId, MobilityDisabilityLevel: DisabilityLevelMild},
+			o:    ListIndividualsOptions{CountryID: countryId, MobilityDisabilityLevel: enumTypes.DisabilityLevelMild},
 			want: "/countries/usa/participants?mobility_disability_level=mild",
 		}, {
 			name: "nationality",
@@ -807,7 +808,7 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			want: "/countries/usa/participants?presents_protection_concerns=false",
 		}, {
 			name: "selfCareDisabilityLevel",
-			o:    ListIndividualsOptions{CountryID: countryId, SelfCareDisabilityLevel: DisabilityLevelMild},
+			o:    ListIndividualsOptions{CountryID: countryId, SelfCareDisabilityLevel: enumTypes.DisabilityLevelMild},
 			want: "/countries/usa/participants?selfcare_disability_level=mild",
 		}, {
 			name: "spokenLanguage",
@@ -831,7 +832,7 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			want: "/countries/usa/participants?take=1",
 		}, {
 			name: "visionDisabilityLevel",
-			o:    ListIndividualsOptions{CountryID: countryId, VisionDisabilityLevel: DisabilityLevelMild},
+			o:    ListIndividualsOptions{CountryID: countryId, VisionDisabilityLevel: enumTypes.DisabilityLevelMild},
 			want: "/countries/usa/participants?vision_disability_level=mild",
 		}, {
 			name: "empty",

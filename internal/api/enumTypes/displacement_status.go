@@ -1,4 +1,4 @@
-package api
+package enumTypes
 
 import (
 	"encoding/json"
@@ -63,24 +63,24 @@ func (g DisplacementStatus) String() string {
 
 func ParseDisplacementStatus(str string) (DisplacementStatus, error) {
 	switch str {
-	case string(DisplacementStatusRefugee):
+	case string(DisplacementStatusRefugee), DisplacementStatusRefugee.String():
 		return DisplacementStatusRefugee, nil
-	case string(DisplacementStatusIDP):
+	case string(DisplacementStatusIDP), DisplacementStatusIDP.String():
 		return DisplacementStatusIDP, nil
-	case string(DisplacementStatusHostCommunity):
+	case string(DisplacementStatusHostCommunity), DisplacementStatusHostCommunity.String():
 		return DisplacementStatusHostCommunity, nil
-	case string(DisplacementStatusReturnee):
+	case string(DisplacementStatusReturnee), DisplacementStatusReturnee.String():
 		return DisplacementStatusReturnee, nil
-	case string(DisplacementStatusAsylumSeeker):
+	case string(DisplacementStatusAsylumSeeker), DisplacementStatusAsylumSeeker.String():
 		return DisplacementStatusAsylumSeeker, nil
-	case string(DisplacementStatusNonDisplaced):
+	case string(DisplacementStatusNonDisplaced), DisplacementStatusNonDisplaced.String():
 		return DisplacementStatusNonDisplaced, nil
-	case string(DisplacementStatusUnspecified):
+	case string(DisplacementStatusUnspecified), DisplacementStatusUnspecified.String():
 		return DisplacementStatusUnspecified, nil
-	case string(DisplacementStatusOther):
+	case string(DisplacementStatusOther), DisplacementStatusOther.String():
 		return DisplacementStatusOther, nil
 	default:
-		return "", fmt.Errorf("unknown displacement status type: \"%v\"", logutils.Escape(str))
+		return "", fmt.Errorf("displacement status type: invalid type: \"%v\"", logutils.Escape(str))
 	}
 }
 

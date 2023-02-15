@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"net/url"
 	"strconv"
 	"time"
@@ -181,7 +182,7 @@ func (p *listIndividualsOptionsDecoder) parseServiceDeliveredDateTo() error {
 
 func (p *listIndividualsOptionsDecoder) parseCognitiveDisabilityLevel() error {
 	var err error
-	p.out.CognitiveDisabilityLevel, err = ParseDisabilityLevel(p.values.Get(constants.FormParamsGetIndividualsCognitiveDisabilityLevel))
+	p.out.CognitiveDisabilityLevel, err = enumTypes.ParseDisabilityLevel(p.values.Get(constants.FormParamsGetIndividualsCognitiveDisabilityLevel))
 	return err
 }
 
@@ -253,9 +254,9 @@ func (p *listIndividualsOptionsDecoder) parseDisplacementStatuses() error {
 	if len(p.values[constants.FormParamsGetIndividualsDisplacementStatus]) == 0 {
 		return nil
 	}
-	dsSet := containers.NewSet[DisplacementStatus]()
+	dsSet := containers.NewSet[enumTypes.DisplacementStatus]()
 	for _, ds := range p.values[constants.FormParamsGetIndividualsDisplacementStatus] {
-		parsedDs, err := ParseDisplacementStatus(ds)
+		parsedDs, err := enumTypes.ParseDisplacementStatus(ds)
 		if err != nil {
 			return err
 		}
@@ -309,9 +310,9 @@ func (p *listIndividualsOptionsDecoder) parseSexes() error {
 	if len(p.values[constants.FormParamsGetIndividualsSex]) == 0 {
 		return nil
 	}
-	sexSet := containers.NewSet[Sex]()
+	sexSet := containers.NewSet[enumTypes.Sex]()
 	for _, g := range p.values[constants.FormParamsGetIndividualsSex] {
-		sex, err := ParseSex(g)
+		sex, err := enumTypes.ParseSex(g)
 		if err != nil {
 			return err
 		}
@@ -377,7 +378,7 @@ func (p *listIndividualsOptionsDecoder) parseHasVisionDisability() error {
 
 func (p *listIndividualsOptionsDecoder) parseHearingDisabilityLevel() error {
 	var err error
-	p.out.HearingDisabilityLevel, err = ParseDisabilityLevel(p.values.Get(constants.FormParamsGetIndividualsHearingDisabilityLevel))
+	p.out.HearingDisabilityLevel, err = enumTypes.ParseDisabilityLevel(p.values.Get(constants.FormParamsGetIndividualsHearingDisabilityLevel))
 	return err
 }
 
@@ -408,9 +409,9 @@ func (p *listIndividualsOptionsDecoder) parseEngagementContext() error {
 	if len(p.values[constants.FormParamsGetIndividualsEngagementContext]) == 0 {
 		return nil
 	}
-	ecSet := containers.NewSet[EngagementContext]()
+	ecSet := containers.NewSet[enumTypes.EngagementContext]()
 	for _, ec := range p.values[constants.FormParamsGetIndividualsEngagementContext] {
-		parsedEc, err := ParseEngagementContext(ec)
+		parsedEc, err := enumTypes.ParseEngagementContext(ec)
 		if err != nil {
 			return err
 		}
@@ -424,9 +425,9 @@ func (p *listIndividualsOptionsDecoder) parseServiceCCType() error {
 	if len(p.values[constants.FormParamsGetIndividualsServiceCC]) == 0 {
 		return nil
 	}
-	ccSet := containers.NewSet[ServiceCC]()
+	ccSet := containers.NewSet[enumTypes.ServiceCC]()
 	for _, ec := range p.values[constants.FormParamsGetIndividualsServiceCC] {
-		parsedEc, err := ParseServiceCC(ec)
+		parsedEc, err := enumTypes.ParseServiceCC(ec)
 		if err != nil {
 			return err
 		}
@@ -472,7 +473,7 @@ func (p *listIndividualsOptionsDecoder) parseIsMinor() (err error) {
 
 func (p *listIndividualsOptionsDecoder) parseMobilityDisabilityLevel() error {
 	var err error
-	p.out.MobilityDisabilityLevel, err = ParseDisabilityLevel(p.values.Get(constants.FormParamsGetIndividualsMobilityDisabilityLevel))
+	p.out.MobilityDisabilityLevel, err = enumTypes.ParseDisabilityLevel(p.values.Get(constants.FormParamsGetIndividualsMobilityDisabilityLevel))
 	return err
 }
 
@@ -509,7 +510,7 @@ func (p *listIndividualsOptionsDecoder) parsePresentsProtectionConcerns() (err e
 
 func (p *listIndividualsOptionsDecoder) parseSelfCareDisabilityLevel() error {
 	var err error
-	p.out.SelfCareDisabilityLevel, err = ParseDisabilityLevel(p.values.Get(constants.FormParamsGetIndividualsSelfCareDisabilityLevel))
+	p.out.SelfCareDisabilityLevel, err = enumTypes.ParseDisabilityLevel(p.values.Get(constants.FormParamsGetIndividualsSelfCareDisabilityLevel))
 	return err
 }
 
@@ -531,7 +532,7 @@ func (p *listIndividualsOptionsDecoder) parseUpdatedAtTo() error {
 }
 
 func (p *listIndividualsOptionsDecoder) parseVisionDisabilityLevel() (err error) {
-	p.out.VisionDisabilityLevel, err = ParseDisabilityLevel(p.values.Get(constants.FormParamsGetIndividualsVisionDisabilityLevel))
+	p.out.VisionDisabilityLevel, err = enumTypes.ParseDisabilityLevel(p.values.Get(constants.FormParamsGetIndividualsVisionDisabilityLevel))
 	return err
 }
 

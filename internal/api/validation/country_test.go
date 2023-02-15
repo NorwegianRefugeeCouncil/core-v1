@@ -1,11 +1,11 @@
 package validation
 
 import (
+	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 	"strings"
 	"testing"
 
-	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/pkg/api/validation"
 	"github.com/stretchr/testify/assert"
 )

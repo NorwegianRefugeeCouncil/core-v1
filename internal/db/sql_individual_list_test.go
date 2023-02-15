@@ -1,6 +1,7 @@
 package db
 
 import (
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"testing"
 	"time"
 
@@ -72,7 +73,7 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantSql: defaultQuery,
 		}, {
 			name:     "cognitiveDisabilityLevel",
-			args:     api.ListIndividualsOptions{CognitiveDisabilityLevel: api.DisabilityLevelMild},
+			args:     api.ListIndividualsOptions{CognitiveDisabilityLevel: enumTypes.DisabilityLevelMild},
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND cognitive_disability_level = $1`,
 			wantArgs: []interface{}{"mild"},
 		}, {
@@ -137,17 +138,17 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantArgs: []interface{}{&someDate},
 		}, {
 			name:     "displacementStatus (single)",
-			args:     api.ListIndividualsOptions{DisplacementStatuses: containers.NewSet[api.DisplacementStatus](api.DisplacementStatusIDP, api.DisplacementStatusRefugee)},
+			args:     api.ListIndividualsOptions{DisplacementStatuses: containers.NewSet[enumTypes.DisplacementStatus](enumTypes.DisplacementStatusIDP, enumTypes.DisplacementStatusRefugee)},
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND displacement_status IN ($1,$2)`,
 			wantArgs: []interface{}{"idp", "refugee"},
 		}, {
 			name:     "displacementStatus (all)",
-			args:     api.ListIndividualsOptions{DisplacementStatuses: api.AllDisplacementStatuses()},
+			args:     api.ListIndividualsOptions{DisplacementStatuses: enumTypes.AllDisplacementStatuses()},
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND displacement_status IN ($1,$2,$3,$4,$5,$6,$7)`,
 			wantArgs: []interface{}{"asylum_seeker", "host_community", "idp", "non_displaced", "other", "refugee", "returnee"},
 		}, {
 			name:    "displacementStatus (none)",
-			args:    api.ListIndividualsOptions{DisplacementStatuses: containers.NewSet[api.DisplacementStatus]()},
+			args:    api.ListIndividualsOptions{DisplacementStatuses: containers.NewSet[enumTypes.DisplacementStatus]()},
 			wantSql: `SELECT * FROM individual_registrations WHERE deleted_at IS NULL`,
 		}, {
 			name:     "email",
@@ -191,12 +192,12 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantArgs: []interface{}{"%Jane Doe%"},
 		}, {
 			name:     "sex (single)",
-			args:     api.ListIndividualsOptions{Sexes: containers.NewSet[api.Sex](api.SexMale, api.SexFemale)},
+			args:     api.ListIndividualsOptions{Sexes: containers.NewSet[enumTypes.Sex](enumTypes.SexMale, enumTypes.SexFemale)},
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND sex IN ($1,$2)`,
 			wantArgs: []interface{}{"female", "male"},
 		}, {
 			name:     "sex (all)",
-			args:     api.ListIndividualsOptions{Sexes: api.AllSexes()},
+			args:     api.ListIndividualsOptions{Sexes: enumTypes.AllSexes()},
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND sex IN ($1,$2,$3,$4)`,
 			wantArgs: []interface{}{"female", "male", "other", "prefers_not_to_say"},
 		}, {
@@ -242,12 +243,12 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 		}, {
 			name:     "hasDisability",
 			args:     api.ListIndividualsOptions{HasDisability: pointers.Bool(true)},
-			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND inactive = false AND has_disability = $1`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND has_disability = $1`,
 			wantArgs: []interface{}{true},
 		}, {
 			name:     "hasDisability (false)",
 			args:     api.ListIndividualsOptions{HasDisability: pointers.Bool(false)},
-			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND inactive = false AND has_disability = $1`,
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND has_disability = $1`,
 			wantArgs: []interface{}{false},
 		}, {
 			name:     "hasHearingDisability",
@@ -291,7 +292,7 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantArgs: []interface{}{false},
 		}, {
 			name:     "hearingDisabilityLevel",
-			args:     api.ListIndividualsOptions{HearingDisabilityLevel: api.DisabilityLevelMild},
+			args:     api.ListIndividualsOptions{HearingDisabilityLevel: enumTypes.DisabilityLevelMild},
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND hearing_disability_level = $1`,
 			wantArgs: []interface{}{"mild"},
 		}, {
@@ -316,7 +317,7 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantArgs: []interface{}{"123456789"},
 		}, {
 			name:     "engagementContext",
-			args:     api.ListIndividualsOptions{EngagementContext: containers.NewSet[api.EngagementContext](api.EngagementContextInOffice)},
+			args:     api.ListIndividualsOptions{EngagementContext: containers.NewSet[enumTypes.EngagementContext](enumTypes.EngagementContextInOffice)},
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND engagement_context IN ($1)`,
 			wantArgs: []interface{}{"inOffice"},
 		}, {
@@ -376,7 +377,7 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantArgs: []interface{}{false},
 		}, {
 			name:     "mobilityDisabilityLevel",
-			args:     api.ListIndividualsOptions{MobilityDisabilityLevel: api.DisabilityLevelMild},
+			args:     api.ListIndividualsOptions{MobilityDisabilityLevel: enumTypes.DisabilityLevelMild},
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND mobility_disability_level = $1`,
 			wantArgs: []interface{}{"mild"},
 		}, {
@@ -421,7 +422,7 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantArgs: []interface{}{false},
 		}, {
 			name:     "selfCareDisabilityLevel",
-			args:     api.ListIndividualsOptions{SelfCareDisabilityLevel: api.DisabilityLevelMild},
+			args:     api.ListIndividualsOptions{SelfCareDisabilityLevel: enumTypes.DisabilityLevelMild},
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND selfcare_disability_level = $1`,
 			wantArgs: []interface{}{"mild"},
 		}, {
@@ -441,7 +442,7 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 			wantArgs: []interface{}{time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)},
 		}, {
 			name:     "visionDisabilityLevel",
-			args:     api.ListIndividualsOptions{VisionDisabilityLevel: api.DisabilityLevelMild},
+			args:     api.ListIndividualsOptions{VisionDisabilityLevel: enumTypes.DisabilityLevelMild},
 			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND vision_disability_level = $1`,
 			wantArgs: []interface{}{"mild"},
 		}, {

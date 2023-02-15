@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"net/mail"
 	"time"
 
@@ -270,11 +271,11 @@ func validateIndividualCountryID(countryID string, path *validation.Path) valida
 	return allErrs
 }
 
-func validateIndividualDisplacementStatus(ds api.DisplacementStatus, path *validation.Path) validation.ErrorList {
+func validateIndividualDisplacementStatus(ds enumTypes.DisplacementStatus, path *validation.Path) validation.ErrorList {
 	switch {
 	case allowedDisplacementStatuses.Contains(ds):
 		return validation.ErrorList{}
-	case ds == api.DisplacementStatusUnspecified:
+	case ds == enumTypes.DisplacementStatusUnspecified:
 		return validation.ErrorList{}
 	default:
 		return validation.ErrorList{validation.NotSupported(path, ds, allowedDisplacementStatusesStr)}
@@ -289,11 +290,11 @@ func validateIndividualDisplacementStatusComment(dsc string, path *validation.Pa
 	return allErrs
 }
 
-func validateIndividualSex(sex api.Sex, path *validation.Path) validation.ErrorList {
+func validateIndividualSex(sex enumTypes.Sex, path *validation.Path) validation.ErrorList {
 	switch {
 	case allowedSexes.Contains(sex):
 		return validation.ErrorList{}
-	case sex == api.SexUnspecified:
+	case sex == enumTypes.SexUnspecified:
 		return validation.ErrorList{}
 	default:
 		return validation.ErrorList{validation.NotSupported(path, sex, allowedSexesStr)}
@@ -333,10 +334,10 @@ func validateIndividualFreeField(freeField string, path *validation.Path) valida
 	return allErrs
 }
 
-func validateIndividualDisabilityLevel(disabilityLevel api.DisabilityLevel, path *validation.Path) validation.ErrorList {
+func validateIndividualDisabilityLevel(disabilityLevel enumTypes.DisabilityLevel, path *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
 	// disability level is optional
-	if disabilityLevel == api.DisabilityLevelUnspecified {
+	if disabilityLevel == enumTypes.DisabilityLevelUnspecified {
 		return nil
 	}
 	if !allowedDisabilityLevels.Contains(disabilityLevel) {
@@ -353,12 +354,14 @@ func validateIndividualHouseholdID(householdID string, path *validation.Path) va
 	return allErrs
 }
 
-func validateIndividualIdentificationType(identificationType string, path *validation.Path) validation.ErrorList {
-	allErrs := validation.ErrorList{}
-	if len(identificationType) > individualIdentificationTypeMaxLength {
-		allErrs = append(allErrs, validation.TooLongMaxLength(path, identificationType, individualIdentificationTypeMaxLength))
+func validateIndividualIdentificationType(identificationType enumTypes.IdentificationType, path *validation.Path) validation.ErrorList {
+	if identificationType == enumTypes.IdentificationTypeUnspecified {
+		return nil
 	}
-	return allErrs
+	if allowedIdentificationTypes.Contains(identificationType) {
+		return validation.ErrorList{}
+	}
+	return validation.ErrorList{validation.NotSupported(path, identificationType, allowedIdentificationTypesStr)}
 }
 
 func validateIndividualIdentificationTypeExplanation(explanation string, path *validation.Path) validation.ErrorList {
@@ -376,12 +379,14 @@ func validateIndividualIdentificationNumber(number string, path *validation.Path
 	return allErrs
 }
 
-func validateIndividualEngagementContext(context string, path *validation.Path) validation.ErrorList {
-	allErrs := validation.ErrorList{}
-	if len(context) > individualEngagementContextMaxLength {
-		allErrs = append(allErrs, validation.TooLongMaxLength(path, context, individualEngagementContextMaxLength))
+func validateIndividualEngagementContext(context enumTypes.EngagementContext, path *validation.Path) validation.ErrorList {
+	if context == enumTypes.EngagementContextUnspecified {
+		return nil
 	}
-	return allErrs
+	if allowedEngagementContexts.Contains(context) {
+		return validation.ErrorList{}
+	}
+	return validation.ErrorList{validation.NotSupported(path, context, allowedEngagementContextsStr)}
 }
 
 func validateIndividualInternalID(internalID string, path *validation.Path) validation.ErrorList {
@@ -408,12 +413,14 @@ func validateIndividualPhoneNumber(phoneNumber string, path *validation.Path) va
 	return allErrs
 }
 
-func validateIndividualPreferredContactMethod(preferredContactMethod string, path *validation.Path) validation.ErrorList {
-	allErrs := validation.ErrorList{}
-	if len(preferredContactMethod) > individualPreferredContactMethodMaxLength {
-		allErrs = append(allErrs, validation.TooLongMaxLength(path, preferredContactMethod, individualPreferredContactMethodMaxLength))
+func validateIndividualPreferredContactMethod(preferredContactMethod enumTypes.ContactMethod, path *validation.Path) validation.ErrorList {
+	if preferredContactMethod == enumTypes.ContactMethodUnspecified {
+		return nil
 	}
-	return allErrs
+	if allowedContactMethods.Contains(preferredContactMethod) {
+		return validation.ErrorList{}
+	}
+	return validation.ErrorList{validation.NotSupported(path, preferredContactMethod, allowedContactMethodsStr)}
 }
 
 func validateIndividualPreferredContactMethodComments(comments string, path *validation.Path) validation.ErrorList {
@@ -448,7 +455,10 @@ func validateIndividualSpokenLanguage(language string, path *validation.Path) va
 	return allErrs
 }
 
-func validateIndividualServiceCC(cc api.ServiceCC, path *validation.Path) validation.ErrorList {
+func validateIndividualServiceCC(cc enumTypes.ServiceCC, path *validation.Path) validation.ErrorList {
+	if cc == enumTypes.ServiceCCNone {
+		return nil
+	}
 	if allowedServiceCCs.Contains(cc) {
 		return validation.ErrorList{}
 	}

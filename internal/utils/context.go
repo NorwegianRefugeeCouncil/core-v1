@@ -3,7 +3,6 @@ package utils
 import (
 	"context"
 	"fmt"
-
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/auth"
 )

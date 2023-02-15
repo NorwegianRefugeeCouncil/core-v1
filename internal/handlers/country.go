@@ -1,13 +1,13 @@
 package handlers
 
 import (
+	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 	"html/template"
 	"net/http"
 	"strings"
 
 	"github.com/gorilla/mux"
-	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"go.uber.org/zap"

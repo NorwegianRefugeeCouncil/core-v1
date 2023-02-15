@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"errors"
 	"fmt"
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"github.com/nrc-no/notcore/pkg/logutils"
 	"io"
 	"net/mail"
@@ -115,32 +116,32 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualID:
 			i.ID = cols[idx]
 		case constants.FileColumnIndividualInactive:
-			i.Inactive = isTrue(cols[idx])
+			inactive, err := getValidatedBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualInactive, err))
+			}
+			i.Inactive = inactive
 		case constants.FileColumnIndividualAddress:
 			i.Address = cols[idx]
 		case constants.FileColumnIndividualAge:
-			var ageStr = cols[idx]
-			if ageStr == "" {
-				continue
-			}
-			age, err := strconv.Atoi(ageStr)
+			age, err := ParseAge(cols[idx])
 			if err != nil {
 				errors = append(errors, err)
 				break
 			}
-			i.Age = &age
+			i.Age = age
 		case constants.FileColumnIndividualBirthDate:
 			var birthDate *time.Time
-			birthDate, err := ParseDate(cols[idx])
+			birthDate, err := ParseBirthdate(cols[idx])
 			if err != nil {
 				errors = append(errors, err)
 				break
 			}
 			i.BirthDate = birthDate
 		case constants.FileColumnIndividualCognitiveDisabilityLevel:
-			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
+			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualCognitiveDisabilityLevel, err, enumTypes.AllDisabilityLevels().String()))
 				break
 			}
 			i.CognitiveDisabilityLevel = disabilityLevel
@@ -162,14 +163,14 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			var collectionTime *time.Time
 			collectionTime, err := ParseDate(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualCollectionTime, err))
 				break
 			}
 			i.CollectionTime = *collectionTime
 		case constants.FileColumnIndividualCommunicationDisabilityLevel:
-			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
+			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualCommunicationDisabilityLevel, err, enumTypes.AllDisabilityLevels().String()))
 				break
 			}
 			i.CommunicationDisabilityLevel = disabilityLevel
@@ -187,9 +188,9 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			}
 			i.CommunitySize = &communitySize
 		case constants.FileColumnIndividualDisplacementStatus:
-			displacementStatus, err := ParseDisplacementStatus(cols[idx])
+			displacementStatus, err := enumTypes.ParseDisplacementStatus(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualDisplacementStatus, err, enumTypes.AllDisplacementStatuses().String()))
 				break
 			}
 			i.DisplacementStatus = displacementStatus
@@ -199,7 +200,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			if cols[idx] != "" {
 				email, err := mail.ParseAddress(cols[idx])
 				if err != nil {
-					errors = append(errors, err)
+					errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualEmail1, err))
 					break
 				}
 				i.Email1 = email.Address
@@ -208,7 +209,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			if cols[idx] != "" {
 				email, err := mail.ParseAddress(cols[idx])
 				if err != nil {
-					errors = append(errors, err)
+					errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualEmail2, err))
 					break
 				}
 				i.Email2 = email.Address
@@ -217,7 +218,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			if cols[idx] != "" {
 				email, err := mail.ParseAddress(cols[idx])
 				if err != nil {
-					errors = append(errors, err)
+					errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualEmail3, err))
 					break
 				}
 				i.Email3 = email.Address
@@ -245,29 +246,65 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualFreeField5:
 			i.FreeField5 = cols[idx]
 		case constants.FileColumnIndividualSex:
-			i.Sex = Sex(cols[idx])
+			i.Sex = enumTypes.Sex(cols[idx])
 		case constants.FileColumnIndividualHasCognitiveDisability:
-			i.HasCognitiveDisability = isTrue(cols[idx])
-		case constants.FileColumnIndividualHasCommunicationDisability:
-			i.HasCommunicationDisability = isTrue(cols[idx])
-		case constants.FileColumnIndividualHasConsentedToRGPD:
-			i.HasConsentedToRGPD = isTrue(cols[idx])
-		case constants.FileColumnIndividualHasConsentedToReferral:
-			i.HasConsentedToReferral = isTrue(cols[idx])
-		case constants.FileColumnIndividualHasDisability:
-			i.HasDisability = isTrue(cols[idx])
-		case constants.FileColumnIndividualHasHearingDisability:
-			i.HasHearingDisability = isTrue(cols[idx])
-		case constants.FileColumnIndividualHasMobilityDisability:
-			i.HasMobilityDisability = isTrue(cols[idx])
-		case constants.FileColumnIndividualHasSelfCareDisability:
-			i.HasSelfCareDisability = isTrue(cols[idx])
-		case constants.FileColumnIndividualHasVisionDisability:
-			i.HasVisionDisability = isTrue(cols[idx])
-		case constants.FileColumnIndividualHearingDisabilityLevel:
-			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
+			hasCognitiveDisability, err := getValidatedBoolean(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualHasCognitiveDisability, err))
+			}
+			i.HasCognitiveDisability = hasCognitiveDisability
+		case constants.FileColumnIndividualHasCommunicationDisability:
+			hasCommunicationDisability, err := getValidatedBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualHasCommunicationDisability, err))
+			}
+			i.HasCommunicationDisability = hasCommunicationDisability
+		case constants.FileColumnIndividualHasConsentedToRGPD:
+			hasConsentedToRGPD, err := getValidatedBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualHasConsentedToRGPD, err))
+			}
+			i.HasConsentedToRGPD = hasConsentedToRGPD
+		case constants.FileColumnIndividualHasConsentedToReferral:
+			hasConsentedToReferral, err := getValidatedBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualHasConsentedToReferral, err))
+			}
+			i.HasConsentedToReferral = hasConsentedToReferral
+		case constants.FileColumnIndividualHasDisability:
+			hasDisability, err := getValidatedBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualHasDisability, err))
+			}
+			i.HasDisability = hasDisability
+		case constants.FileColumnIndividualHasHearingDisability:
+			hasHearingDisability, err := getValidatedBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualHasHearingDisability, err))
+			}
+			i.HasHearingDisability = hasHearingDisability
+		case constants.FileColumnIndividualHasMobilityDisability:
+			hasMobilityDisability, err := getValidatedBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualHasMobilityDisability, err))
+			}
+			i.HasMobilityDisability = hasMobilityDisability
+		case constants.FileColumnIndividualHasSelfCareDisability:
+			hasSelfCareDisability, err := getValidatedBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualHasSelfCareDisability, err))
+			}
+			i.HasSelfCareDisability = hasSelfCareDisability
+		case constants.FileColumnIndividualHasVisionDisability:
+			hasVisionDisability, err := getValidatedBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualHasVisionDisability, err))
+			}
+			i.HasVisionDisability = hasVisionDisability
+		case constants.FileColumnIndividualHearingDisabilityLevel:
+			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHearingDisabilityLevel, err, enumTypes.AllDisabilityLevels().String()))
 				break
 			}
 			i.HearingDisabilityLevel = disabilityLevel
@@ -285,41 +322,81 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			}
 			i.CommunitySize = &householdSize
 		case constants.FileColumnIndividualIdentificationType1:
-			i.IdentificationType1 = cols[idx]
+			identificationType, err := enumTypes.ParseIdentificationType(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualIdentificationType1, err, enumTypes.AllIdentificationTypes().String()))
+				break
+			}
+			i.IdentificationType1 = identificationType
 		case constants.FileColumnIndividualIdentificationTypeExplanation1:
 			i.IdentificationTypeExplanation1 = cols[idx]
 		case constants.FileColumnIndividualIdentificationNumber1:
 			i.IdentificationNumber1 = cols[idx]
 		case constants.FileColumnIndividualIdentificationType2:
-			i.IdentificationType2 = cols[idx]
+			identificationType, err := enumTypes.ParseIdentificationType(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualIdentificationType2, err, enumTypes.AllIdentificationTypes().String()))
+				break
+			}
+			i.IdentificationType2 = identificationType
 		case constants.FileColumnIndividualIdentificationTypeExplanation2:
 			i.IdentificationTypeExplanation2 = cols[idx]
 		case constants.FileColumnIndividualIdentificationNumber2:
 			i.IdentificationNumber2 = cols[idx]
 		case constants.FileColumnIndividualIdentificationType3:
-			i.IdentificationType3 = cols[idx]
+			identificationType, err := enumTypes.ParseIdentificationType(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualIdentificationType3, err, enumTypes.AllIdentificationTypes().String()))
+				break
+			}
+			i.IdentificationType3 = identificationType
 		case constants.FileColumnIndividualIdentificationTypeExplanation3:
 			i.IdentificationTypeExplanation3 = cols[idx]
 		case constants.FileColumnIndividualIdentificationNumber3:
 			i.IdentificationNumber3 = cols[idx]
 		case constants.FileColumnIndividualEngagementContext:
-			i.EngagementContext = cols[idx]
+			engagementContext, err := enumTypes.ParseEngagementContext(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualEngagementContext, err, enumTypes.AllEngagementContexts().String()))
+				break
+			}
+			i.EngagementContext = engagementContext
 		case constants.FileColumnIndividualInternalID:
 			i.InternalID = cols[idx]
 		case constants.FileColumnIndividualIsHeadOfCommunity:
-			i.IsHeadOfCommunity = isTrue(cols[idx])
-		case constants.FileColumnIndividualIsHeadOfHousehold:
-			i.IsHeadOfHousehold = isTrue(cols[idx])
-		case constants.FileColumnIndividualIsFemaleHeadedHousehold:
-			i.IsFemaleHeadedHousehold = isTrue(cols[idx])
-		case constants.FileColumnIndividualIsMinorHeadedHousehold:
-			i.IsMinorHeadedHousehold = isTrue(cols[idx])
-		case constants.FileColumnIndividualIsMinor:
-			i.IsMinor = isTrue(cols[idx])
-		case constants.FileColumnIndividualMobilityDisabilityLevel:
-			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
+			isHeadOfCommunity, err := getValidatedBoolean(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualIsHeadOfCommunity, err))
+			}
+			i.IsHeadOfCommunity = isHeadOfCommunity
+		case constants.FileColumnIndividualIsHeadOfHousehold:
+			isHeadOfHousehold, err := getValidatedBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualIsHeadOfHousehold, err))
+			}
+			i.IsHeadOfHousehold = isHeadOfHousehold
+		case constants.FileColumnIndividualIsFemaleHeadedHousehold:
+			isFemaleHeadedHousehold, err := getValidatedBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualIsFemaleHeadedHousehold, err))
+			}
+			i.IsFemaleHeadedHousehold = isFemaleHeadedHousehold
+		case constants.FileColumnIndividualIsMinorHeadedHousehold:
+			isMinorHeadedHousehold, err := getValidatedBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualIsMinorHeadedHousehold, err))
+			}
+			i.IsMinorHeadedHousehold = isMinorHeadedHousehold
+		case constants.FileColumnIndividualIsMinor:
+			isMinor, err := getValidatedBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualIsMinor, err))
+			}
+			i.IsMinor = isMinor
+		case constants.FileColumnIndividualMobilityDisabilityLevel:
+			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualMobilityDisabilityLevel, err, enumTypes.AllDisabilityLevels().String()))
 				break
 			}
 			i.MobilityDisabilityLevel = disabilityLevel
@@ -330,7 +407,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				} else if c := constants.CountriesByName[cols[idx]].Name; c != "" {
 					i.Nationality1 = constants.CountriesByName[cols[idx]].ISO3166Alpha3
 				} else {
-					errors = append(errors, fmt.Errorf("invalid value for nationality 1: %s", cols[idx]))
+					errors = append(errors, fmt.Errorf("%s: invalid value \"%s\". valid values adhere to the ISO3166Alpha3 norm", constants.FileColumnIndividualNationality1, cols[idx]))
 					break
 				}
 			}
@@ -341,7 +418,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				} else if c := constants.CountriesByName[cols[idx]].Name; c != "" {
 					i.Nationality2 = constants.CountriesByName[cols[idx]].ISO3166Alpha3
 				} else {
-					errors = append(errors, fmt.Errorf("invalid value for nationality 2: %s", cols[idx]))
+					errors = append(errors, fmt.Errorf("%s: invalid value \"%s\". valid values adhere to the ISO3166Alpha3 norm", constants.FileColumnIndividualNationality2, cols[idx]))
 					break
 				}
 			}
@@ -352,7 +429,12 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualPhoneNumber3:
 			i.PhoneNumber3 = cols[idx]
 		case constants.FileColumnIndividualPreferredContactMethod:
-			i.PreferredContactMethod = cols[idx]
+			preferredContactMethod, err := enumTypes.ParseContactMethod(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualPreferredContactMethod, err, enumTypes.AllContactMethods().String()))
+				break
+			}
+			i.PreferredContactMethod = preferredContactMethod
 		case constants.FileColumnIndividualPreferredContactMethodComments:
 			i.PreferredContactMethodComments = cols[idx]
 		case constants.FileColumnIndividualPreferredName:
@@ -364,20 +446,28 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
 					i.PreferredCommunicationLanguage = constants.LanguagesByName[cols[idx]].ID
 				} else {
-					errors = append(errors, fmt.Errorf("invalid value for preferred communication language: %s", cols[idx]))
+					errors = append(errors, fmt.Errorf("%s: invalid value \"%s\"", constants.FileColumnIndividualPreferredCommunicationLanguage, cols[idx]))
 					break
 				}
 			}
 		case constants.FileColumnIndividualPrefersToRemainAnonymous:
-			i.PrefersToRemainAnonymous = isTrue(cols[idx])
+			prefersToRemainAnonymous, err := getValidatedBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualPrefersToRemainAnonymous, err))
+			}
+			i.PrefersToRemainAnonymous = prefersToRemainAnonymous
 		case constants.FileColumnIndividualPresentsProtectionConcerns:
-			i.PresentsProtectionConcerns = isTrue(cols[idx])
+			presentsProtectionConcerns, err := getValidatedBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualPresentsProtectionConcerns, err))
+			}
+			i.PresentsProtectionConcerns = presentsProtectionConcerns
 		case constants.FileColumnIndividualPWDComments:
 			i.PWDComments = cols[idx]
 		case constants.FileColumnIndividualSelfCareDisabilityLevel:
-			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
+			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualSelfCareDisabilityLevel, err, enumTypes.AllDisabilityLevels().String()))
 				break
 			}
 			i.SelfCareDisabilityLevel = disabilityLevel
@@ -388,7 +478,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
 					i.SpokenLanguage1 = constants.LanguagesByName[cols[idx]].ID
 				} else {
-					errors = append(errors, fmt.Errorf("invalid value for spoken language 1: %s", cols[idx]))
+					errors = append(errors, fmt.Errorf("%s: invalid value \"%s\"", constants.FileColumnIndividualSpokenLanguage1, cols[idx]))
 					break
 				}
 			}
@@ -399,7 +489,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
 					i.SpokenLanguage2 = constants.LanguagesByName[cols[idx]].ID
 				} else {
-					errors = append(errors, fmt.Errorf("invalid value for spoken language 2: %s", cols[idx]))
+					errors = append(errors, fmt.Errorf("%s: invalid value \"%s\"", constants.FileColumnIndividualSpokenLanguage2, cols[idx]))
 					break
 				}
 			}
@@ -410,21 +500,21 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
 					i.SpokenLanguage3 = constants.LanguagesByName[cols[idx]].ID
 				} else {
-					errors = append(errors, fmt.Errorf("invalid value for spoken language 3: %s", cols[idx]))
+					errors = append(errors, fmt.Errorf("%s: invalid value \"%s\"", constants.FileColumnIndividualSpokenLanguage3, cols[idx]))
 					break
 				}
 			}
 		case constants.FileColumnIndividualVisionDisabilityLevel:
-			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
+			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualVisionDisabilityLevel, err, enumTypes.AllDisabilityLevels().String()))
 				break
 			}
 			i.VisionDisabilityLevel = disabilityLevel
 		case constants.FileColumnIndividualServiceCC1:
-			cc, err := ParseServiceCC(cols[idx])
+			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualServiceCC1, err, enumTypes.AllServiceCCs().String()))
 				break
 			}
 			i.ServiceCC1 = cc
@@ -432,7 +522,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceRequestedDate1, err))
 				break
 			}
 			i.ServiceRequestedDate1 = date
@@ -440,16 +530,16 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceDeliveredDate1, err))
 				break
 			}
 			i.ServiceDeliveredDate1 = date
 		case constants.FileColumnIndividualServiceComments1:
 			i.ServiceComments1 = cols[idx]
 		case constants.FileColumnIndividualServiceCC2:
-			cc, err := ParseServiceCC(cols[idx])
+			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualServiceCC2, err, enumTypes.AllServiceCCs().String()))
 				break
 			}
 			i.ServiceCC2 = cc
@@ -457,7 +547,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceRequestedDate2, err))
 				break
 			}
 			i.ServiceRequestedDate2 = date
@@ -465,16 +555,16 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceDeliveredDate2, err))
 				break
 			}
 			i.ServiceDeliveredDate2 = date
 		case constants.FileColumnIndividualServiceComments2:
 			i.ServiceComments2 = cols[idx]
 		case constants.FileColumnIndividualServiceCC3:
-			cc, err := ParseServiceCC(cols[idx])
+			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualServiceCC3, err, enumTypes.AllServiceCCs().String()))
 				break
 			}
 			i.ServiceCC3 = cc
@@ -482,7 +572,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceRequestedDate3, err))
 				break
 			}
 			i.ServiceRequestedDate3 = date
@@ -490,16 +580,16 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceDeliveredDate3, err))
 				break
 			}
 			i.ServiceDeliveredDate3 = date
 		case constants.FileColumnIndividualServiceComments3:
 			i.ServiceComments3 = cols[idx]
 		case constants.FileColumnIndividualServiceCC4:
-			cc, err := ParseServiceCC(cols[idx])
+			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualServiceCC4, err, enumTypes.AllServiceCCs().String()))
 				break
 			}
 			i.ServiceCC4 = cc
@@ -507,7 +597,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceRequestedDate4, err))
 				break
 			}
 			i.ServiceRequestedDate4 = date
@@ -515,16 +605,16 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceDeliveredDate4, err))
 				break
 			}
 			i.ServiceDeliveredDate4 = date
 		case constants.FileColumnIndividualServiceComments4:
 			i.ServiceComments4 = cols[idx]
 		case constants.FileColumnIndividualServiceCC5:
-			cc, err := ParseServiceCC(cols[idx])
+			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualServiceCC5, err, enumTypes.AllServiceCCs().String()))
 				break
 			}
 			i.ServiceCC5 = cc
@@ -532,7 +622,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceRequestedDate5, err))
 				break
 			}
 			i.ServiceRequestedDate5 = date
@@ -540,16 +630,16 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceDeliveredDate5, err))
 				break
 			}
 			i.ServiceDeliveredDate5 = date
 		case constants.FileColumnIndividualServiceComments5:
 			i.ServiceComments5 = cols[idx]
 		case constants.FileColumnIndividualServiceCC6:
-			cc, err := ParseServiceCC(cols[idx])
+			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualServiceCC6, err, enumTypes.AllServiceCCs().String()))
 				break
 			}
 			i.ServiceCC6 = cc
@@ -557,7 +647,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceRequestedDate6, err))
 				break
 			}
 			i.ServiceRequestedDate6 = date
@@ -565,16 +655,16 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceDeliveredDate6, err))
 				break
 			}
 			i.ServiceDeliveredDate6 = date
 		case constants.FileColumnIndividualServiceComments6:
 			i.ServiceComments6 = cols[idx]
 		case constants.FileColumnIndividualServiceCC7:
-			cc, err := ParseServiceCC(cols[idx])
+			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualServiceCC7, err, enumTypes.AllServiceCCs().String()))
 				break
 			}
 			i.ServiceCC7 = cc
@@ -582,7 +672,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceRequestedDate7, err))
 				break
 			}
 			i.ServiceRequestedDate7 = date
@@ -590,7 +680,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceDeliveredDate7, err))
 				break
 			}
 			i.ServiceDeliveredDate7 = date
@@ -725,13 +815,13 @@ func (i *Individual) marshalTabularData() ([]string, error) {
 			if v != nil {
 				row[j] = v.Format(getTimeFormatForField(field))
 			}
-		case DisabilityLevel:
+		case enumTypes.DisabilityLevel:
 			row[j] = string(v)
-		case DisplacementStatus:
+		case enumTypes.DisplacementStatus:
 			row[j] = string(v)
-		case ServiceCC:
+		case enumTypes.ServiceCC:
 			row[j] = string(v)
-		case Sex:
+		case enumTypes.Sex:
 			row[j] = string(v)
 		default:
 			row[j] = fmt.Sprintf("%v", v)
@@ -741,9 +831,15 @@ func (i *Individual) marshalTabularData() ([]string, error) {
 }
 
 var TRUE_VALUES = []string{"true", "yes", "1"}
+var FALSE_VALUES = []string{"false", "no", "0"}
 
-func isTrue(value string) bool {
-	return slices.Contains(TRUE_VALUES, strings.ToLower(value))
+func getValidatedBoolean(value string) (bool, error) {
+	isExplicitlyTrue := slices.Contains(TRUE_VALUES, strings.ToLower(value))
+	isExplicitlyFalse := slices.Contains(FALSE_VALUES, strings.ToLower(value))
+	if !isExplicitlyTrue && !isExplicitlyFalse {
+		return false, fmt.Errorf("invalid boolean value \"%s\". Valid values are: \"%s\", \"%s\"", value, strings.Join(TRUE_VALUES, "\", \""), strings.Join(FALSE_VALUES, "\", \""))
+	}
+	return isExplicitlyTrue, nil
 }
 
 func stringArrayToInterfaceArray(row []string) []interface{} {

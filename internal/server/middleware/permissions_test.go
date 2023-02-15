@@ -1,11 +1,11 @@
 package middleware
 
 import (
+	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/utils"
 	"reflect"
 	"testing"
 
-	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 )
 
