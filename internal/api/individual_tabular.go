@@ -254,6 +254,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.HasConsentedToRGPD = isTrue(cols[idx])
 		case constants.FileColumnIndividualHasConsentedToReferral:
 			i.HasConsentedToReferral = isTrue(cols[idx])
+		case constants.FileColumnIndividualHasDisability:
+			i.HasDisability = isTrue(cols[idx])
 		case constants.FileColumnIndividualHasHearingDisability:
 			i.HasHearingDisability = isTrue(cols[idx])
 		case constants.FileColumnIndividualHasMobilityDisability:
@@ -370,6 +372,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.PrefersToRemainAnonymous = isTrue(cols[idx])
 		case constants.FileColumnIndividualPresentsProtectionConcerns:
 			i.PresentsProtectionConcerns = isTrue(cols[idx])
+		case constants.FileColumnIndividualPWDComments:
+			i.PWDComments = cols[idx]
 		case constants.FileColumnIndividualSelfCareDisabilityLevel:
 			disabilityLevel, err := ParseDisabilityLevel(cols[idx])
 			if err != nil {

@@ -94,6 +94,8 @@ type Individual struct {
 	// HasConsentedToReferral is a flag indicating whether the individual has consented to be referred
 	// to internal or external services
 	HasConsentedToReferral bool `json:"hasConsentedToReferral" db:"has_consented_to_referral"`
+	// HasDisability is true if the individual has a disability
+	HasDisability bool `json:"hasDisability" db:"has_disability"`
 	// HasHearingDisability is true if the individual has a hearing disability
 	HasHearingDisability bool `json:"hasHearingDisability" db:"has_hearing_disability"`
 	// HasMobilityDisability is true if the individual has a mobility disability
@@ -176,6 +178,8 @@ type Individual struct {
 	PrefersToRemainAnonymous bool `json:"prefersToRemainAnonymous" db:"prefers_to_remain_anonymous"`
 	// PresentsProtectionConcerns is a flag indicating whether the individual presents protection concerns
 	PresentsProtectionConcerns bool `json:"presentsProtectionConcerns" db:"presents_protection_concerns"`
+	// PWDComments is the comments on the disability status of the individual
+	PWDComments string `json:"pwdComments" db:"pwd_comments"`
 	// SelfCareDisabilityLevel is the self-care disability level of the individual
 	SelfCareDisabilityLevel DisabilityLevel `json:"selfCareDisabilityLevel" db:"selfcare_disability_level"`
 	// SpokenLanguage1 is the primary spoken language of the individual
@@ -305,6 +309,8 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.HasCommunicationDisability, nil
 	case constants.DBColumnIndividualHasConsentedToRGPD:
 		return i.HasConsentedToRGPD, nil
+	case constants.DBColumnIndividualHasDisability:
+		return i.HasDisability, nil
 	case constants.DBColumnIndividualHasHearingDisability:
 		return i.HasHearingDisability, nil
 	case constants.DBColumnIndividualHasMobilityDisability:
@@ -381,6 +387,8 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.PrefersToRemainAnonymous, nil
 	case constants.DBColumnIndividualPresentsProtectionConcerns:
 		return i.PresentsProtectionConcerns, nil
+	case constants.DBColumnIndividualPWDComments:
+		return i.PWDComments, nil
 	case constants.DBColumnIndividualSpokenLanguage1:
 		return i.SpokenLanguage1, nil
 	case constants.DBColumnIndividualSpokenLanguage2:
@@ -526,6 +534,7 @@ func (i *Individual) Normalize() {
 		i.PreferredName = i.FullName
 	}
 	i.PreferredCommunicationLanguage = trimString(i.PreferredCommunicationLanguage)
+	i.PWDComments = trimString(i.PWDComments)
 	i.SpokenLanguage1 = trimString(i.SpokenLanguage1)
 	i.SpokenLanguage2 = trimString(i.SpokenLanguage2)
 	i.SpokenLanguage3 = trimString(i.SpokenLanguage3)

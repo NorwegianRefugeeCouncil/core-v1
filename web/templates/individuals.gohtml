@@ -630,6 +630,14 @@
                     {{template "columnHeader" (dict
                     "Options" .Options
                     "Sortable" true
+                    "SortKey" "has_disability"
+                    "Label" "Has PWD"
+                    "Title" "Has PWD"
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
                     "SortKey" "collection_time"
                     "Label" "Registration"
                     "Title" "Registration Date"
@@ -1222,6 +1230,19 @@
                                 </div>
                             </td>
                             <!-- End Email -->
+
+                            <!-- HasDisability -->
+                            <td>
+                                <div class="text-center" style="width: {{$isHeadOfHouseholdWidth}}">
+                                    {{if .HasDisability}}
+                                        <input class="form-check-input marker-only"
+                                               type="checkbox"
+                                               checked="checked"
+                                               disabled="disabled"/>
+                                    {{end}}
+                                </div>
+                            </td>
+                            <!-- End HasDisability -->
 
                             <!-- Registration Date -->
                             <td>

@@ -219,6 +219,11 @@ func (i *IndividualBuilder) WithHasConsentedToReferral(hasConsentedToReferral bo
 	return i
 }
 
+func (i *IndividualBuilder) WithHasDisability(hasDisability bool) *IndividualBuilder {
+	i.individual.HasDisability = hasDisability
+	return i
+}
+
 func (i *IndividualBuilder) WithHasHearingDisability(hasHearingDisability bool) *IndividualBuilder {
 	i.individual.HasHearingDisability = hasHearingDisability
 	return i
@@ -386,6 +391,11 @@ func (i *IndividualBuilder) WithPrefersToRemainAnonymous(prefersToRemainAnonymou
 
 func (i *IndividualBuilder) WithPresentsProtectionConcerns(presentsProtectionConcerns bool) *IndividualBuilder {
 	i.individual.PresentsProtectionConcerns = presentsProtectionConcerns
+	return i
+}
+
+func (i *IndividualBuilder) WithPwdComments(pwdComments string) *IndividualBuilder {
+	i.individual.PWDComments = pwdComments
 	return i
 }
 

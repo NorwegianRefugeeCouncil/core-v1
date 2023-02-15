@@ -58,6 +58,7 @@ func (p *listIndividualsOptionsEncoder) encode() url.Values {
 		p.encodeHasCommunicationDisability,
 		p.encodeHasConsentedToRGPD,
 		p.encodeHasConsentedToReferral,
+		p.encodeHasDisability,
 		p.encodeHasHearingDisability,
 		p.encodeHasMobilityDisability,
 		p.encodeHasSelfCareDisability,
@@ -320,6 +321,12 @@ func (p *listIndividualsOptionsEncoder) encodeHasConsentedToReferral() {
 	}
 }
 
+func (p *listIndividualsOptionsEncoder) encodeHasDisability() {
+	if p.values.HasDisability != nil {
+		p.out.Add(constants.FormParamsGetIndividualsHasDisability, strconv.FormatBool(*p.values.HasDisability))
+	}
+}
+
 func (p *listIndividualsOptionsEncoder) encodeHasHearingDisability() {
 	if p.values.HasHearingDisability != nil {
 		p.out.Add(constants.FormParamsGetIndividualsHasHearingDisability, strconv.FormatBool(*p.values.HasHearingDisability))
@@ -544,6 +551,7 @@ var sortableColumns = containers.NewStringSet(
 	constants.DBColumnIndividualHasCommunicationDisability,
 	constants.DBColumnIndividualHasConsentedToRGPD,
 	constants.DBColumnIndividualHasConsentedToReferral,
+	constants.DBColumnIndividualHasDisability,
 	constants.DBColumnIndividualHasHearingDisability,
 	constants.DBColumnIndividualHasMobilityDisability,
 	constants.DBColumnIndividualHasSelfCareDisability,

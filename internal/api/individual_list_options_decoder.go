@@ -51,6 +51,7 @@ func (p *listIndividualsOptionsDecoder) parse() error {
 		p.parseHasCommunicationDisability,
 		p.parseHasConsentedToRgpd,
 		p.parseHasConsentedToReferral,
+		p.parseHasDisability,
 		p.parseHasHearingDisability,
 		p.parseHasMobilityDisability,
 		p.parseHasSelfCareDisability,
@@ -347,6 +348,12 @@ func (p *listIndividualsOptionsDecoder) parseHasConsentedToReferral() error {
 func (p *listIndividualsOptionsDecoder) parseHasHearingDisability() error {
 	var err error
 	p.out.HasHearingDisability, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsHasHearingDisability))
+	return err
+}
+
+func (p *listIndividualsOptionsDecoder) parseHasDisability() error {
+	var err error
+	p.out.HasDisability, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsHasDisability))
 	return err
 }
 

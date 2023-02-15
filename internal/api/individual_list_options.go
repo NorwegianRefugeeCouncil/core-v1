@@ -42,6 +42,7 @@ type ListIndividualsOptions struct {
 	HasCommunicationDisability     *bool
 	HasConsentedToRGPD             *bool
 	HasConsentedToReferral         *bool
+	HasDisability                  *bool
 	HasHearingDisability           *bool
 	HasMobilityDisability          *bool
 	HasSelfCareDisability          *bool
@@ -65,6 +66,7 @@ type ListIndividualsOptions struct {
 	PreferredCommunicationLanguage string
 	PrefersToRemainAnonymous       *bool
 	PresentsProtectionConcerns     *bool
+	PWDComments                    string
 	SelfCareDisabilityLevel        DisabilityLevel
 	SpokenLanguage                 string
 	UpdatedAtFrom                  *time.Time
@@ -212,6 +214,14 @@ func (o ListIndividualsOptions) IsHasCommunicationDisabilitySelected() bool {
 
 func (o ListIndividualsOptions) IsNotHasCommunicationDisabilitySelected() bool {
 	return o.HasCommunicationDisability != nil && !*o.HasCommunicationDisability
+}
+
+func (o ListIndividualsOptions) IsHasDisabilitySelected() bool {
+	return o.HasDisability != nil && *o.HasDisability
+}
+
+func (o ListIndividualsOptions) IsNotHasDisabilitySelected() bool {
+	return o.HasDisability != nil && !*o.HasDisability
 }
 
 func (o ListIndividualsOptions) IsHasHearingDisabilitySelected() bool {
