@@ -139,6 +139,19 @@
 
             downloadButton.addEventListener('click', downloadFunc)
 
+            if (window.location.search.length > 0) {
+                const heading = document.createElement("h5")
+                heading.innerText = "No participants fit your search query."
+                const span = document.createElement("span")
+                span.innerText = "Try adjusting your search criteria."
+                document.getElementById('empty-text').appendChild(heading)
+                document.getElementById('empty-text').appendChild(span)
+            } else {
+                const heading = document.createElement("h5")
+                heading.innerText = "No participants uploaded yet."
+                document.getElementById('empty-text').appendChild(heading)
+            }
+
             /**
              * Refreshes the disabled state of the action buttons as well as the text of the buttons
              */
@@ -329,6 +342,7 @@
             </div>
         </div>
 
+        {{ if .Individuals }}
         <!-- INDIVIDUALS TABLE -->
         <form id="individuals-action-form" class="table-responsive scroll-body" method="post">
             <table class="table table-individuals mb-0">
@@ -980,7 +994,6 @@
                 </tr>
                 </thead>
                 <tbody>
-                {{ if .Individuals }}
                     {{range .Individuals}}
                         <tr aria-selected="false"
                             id="individual-row-{{.ID}}"
@@ -1537,14 +1550,12 @@
                             <!-- End UpdatedAt -->
                         </tr>
                     {{end}}
-                {{else}}
-                    <tr>
-                        <td colspan="{{if not $canWrite}}30{{else}}31{{end}}">No participants found</td>
-                    </tr>
-                {{end}}
                 </tbody>
             </table>
         </form>
+        {{else}}
+            <div class="d-flex justify-content-center align-items-center h-25 flex-column" id="empty-text"></div>
+        {{end}}
         <!-- END INDIVIDUALS TABLE -->
     </main>
 
