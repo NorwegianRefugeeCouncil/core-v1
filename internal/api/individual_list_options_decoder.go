@@ -99,7 +99,7 @@ func (p *listIndividualsOptionsDecoder) parse() error {
 
 func (p *listIndividualsOptionsDecoder) parseInactive() error {
 	var err error
-	p.out.Inactive, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsActive))
+	p.out.Inactive, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsInactive))
 	return err
 }
 

@@ -113,7 +113,10 @@
                     .map(getIndividualIdFromSelectCheckbox)
 
             const idSearchString = '?id=' + selectedIds.join('&id=')
-            const downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + idSearchString + "&inactive={{.Options.Inactive}}"
+
+            const params = new URLSearchParams(document.location.search);
+            const inactive = params.get('inactive')
+            const downloadURL = window.location.protocol + "//" + window.location.host + window.location.pathname + "/download" + idSearchString + (inactive ? "&inactive={{.Options.Inactive}}": "")
             goToURL(downloadURL)
         }
 
@@ -141,13 +144,14 @@
              */
             function refreshActionButtons() {
                 const checkedCount = getSelectedIndividualCount()
+
                 if (checkedCount > 0) {
-                    deleteButton.classList.remove('disabled')
-                    deactivateButton.classList.remove('disabled')
+                    deleteButton && deleteButton.classList.remove('disabled')
+                    deactivateButton && deactivateButton.classList.remove('disabled')
                     activateButton && activateButton.classList.remove('disabled')
                 } else {
-                    deleteButton.classList.add('disabled')
-                    deactivateButton.classList.add('disabled')
+                    deleteButton && deleteButton.classList.add('disabled')
+                    deactivateButton && deactivateButton.classList.add('disabled')
                     activateButton && activateButton.classList.add('disabled')
                 }
             }
@@ -259,16 +263,12 @@
     {{$dateWidth := "8rem"}}
     {{$dateTimeWidth := "13rem"}}
     {{$identWidth := "8rem"}}
-
+    {{$inactiveWidth := "4rem"}}
     {{$selectWidth := "2rem"}}
     {{$idWidth := "20rem"}}
+    {{$idOffset := "6rem"}}
     {{$nameWidth := "10rem"}}
-    {{$idOffset := "4rem"}}
-    {{$nameOffset := "25rem"}}
-    {{if not .RequestContext.HasSelectedCountryWritePermission}}
-        {{$idOffset = "0rem"}}
-        {{$nameOffset = "20rem"}}
-    {{end}}
+    {{$nameOffset := "27rem"}}
     {{$sexWidth := "8rem"}}
     {{$ageWidth := "4rem"}}
     {{$birthDateWidth := $dateWidth}}
@@ -361,6 +361,7 @@
                         {{ else if eq $sortDirection "descending"}}
                             aria-sort="descending"
                         {{end}}
+                        style="width: {{$inactiveWidth}}"
                     >
                         <i class="bi bi-eye-slash-fill"
                            data-toggle="tooltip" data-placement="top" title="Is Inactive"></i>
@@ -387,11 +388,9 @@
                         <span class="ms-1 me-1 sort-icon-sortable"><i class="bi bi-list"></i></span>
                     </th>
 
-                    {{if $canWrite}}
-                    <th class="sticky-column text-center" style="width: {{$selectWidth}}; left: {{$selectWidth}}">
+                    <th class="sticky-column text-center" style="width: {{$selectWidth}}; left: {{$inactiveWidth}}">
                         <input class="form-check-input" type="checkbox" id="selectAllCheckbox"/>
                     </th>
-                    {{end}}
 
                     {{template "columnHeader" (dict
                     "Options" .Options
@@ -987,15 +986,15 @@
                             id="individual-row-{{.ID}}"
                             class="individual-row"
                             data-individual-id="{{.ID}}">
-                            <td class="sticky-column" style="width: {{$selectWidth}}">
+                            <td class="sticky-column" style="width: {{$inactiveWidth}}">
                                 {{if .Inactive}}
                                     <div class="">
                                         <i class="bi bi-eye-slash-fill "></i>
                                     </div>
                                 {{end}}
                             </td>
-                            {{if $canWrite}}
-                            <td class="sticky-column text-center" style="width: {{$selectWidth}}; left: {{$selectWidth}};">
+
+                            <td class="sticky-column text-center" style="width: {{$selectWidth}}; left: {{$inactiveWidth}};">
                                 <div>
                                     <input class="form-check-input select-row-checkbox"
                                            type="checkbox"
@@ -1004,7 +1003,6 @@
                                            name="individual_id"/>
                                 </div>
                             </td>
-                            {{end}}
 
                             <!-- ID -->
                             <td class="sticky-column" style="left: {{$idOffset}}">

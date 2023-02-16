@@ -104,7 +104,7 @@ func (p *listIndividualsOptionsEncoder) encode() url.Values {
 
 func (p *listIndividualsOptionsEncoder) encodeInactive() {
 	if p.values.Inactive != nil {
-		p.out.Add(constants.FormParamsGetIndividualsActive, strconv.FormatBool(*p.values.Inactive))
+		p.out.Add(constants.FormParamsGetIndividualsInactive, strconv.FormatBool(*p.values.Inactive))
 	}
 }
 
