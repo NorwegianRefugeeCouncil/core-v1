@@ -41,7 +41,16 @@
         }
         const uploadFileInput = document.getElementById(uploadIndividualFileInputId)
         uploadFileInput.addEventListener('change', submitAndResetUploadInput);
+
+        const path = new URL(document.location).pathname;
+        const parts = path.split('/');
+        const lastPathComponent = parts[parts.length - 1];
+        if (lastPathComponent === 'participants') {
+            const participantNavlink = document.getElementById('participants');
+            participantNavlink.classList.add('text-primary');
+        }
     })
+
 </script>
 
 <header class="sticky-top">
@@ -59,7 +68,7 @@
 
                        {{ if .RequestContext.SelectedCountry}}
                             <div class="btn btn-sm btn-link text-decoration-none px-2">
-                                <a class="nav-link" href="{{if eq "" .RequestContext.SelectedCountryID}}/{{else}}/countries/{{.RequestContext.SelectedCountryID}}/participants{{end}}">
+                                <a id="participants" class="nav-link" href="{{if eq "" .RequestContext.SelectedCountryID}}/{{else}}/countries/{{.RequestContext.SelectedCountryID}}/participants{{end}}">
                                     Participants
                                 </a>
                             </div>
