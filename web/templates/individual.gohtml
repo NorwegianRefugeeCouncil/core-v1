@@ -105,35 +105,38 @@
                         Delete
                     </button>
 
-                    {{if not .Individual.Inactive}}
-                        <form class="w-100"
-                              id="deactivate-individual-form"
-                              action="/countries/{{.Individual.CountryID}}/participants/{{.Individual.ID}}/deactivate"
-                              method="post">
-                            <button type="submit"
-                                    id="deactivateButton"
-                                    class="btn btn-sm btn-outline-secondary"
-                                    data-toggle="tooltip" data-placement="top" title="Deactivate individual">
-                                <i class="bi bi-eye-slash-fill"></i>
-                                Deactivate
-                            </button>
-                        </form>
-                    {{end}}
 
-                    {{if .Individual.Inactive}}
-                        <form class="w-100"
-                              id="activate-individual-form"
-                              action="/countries/{{.Individual.CountryID}}/participants/{{.Individual.ID}}/activate"
-                              method="post">
-                            <button type="submit"
-                                    id="activateButton"
-                                    class="btn btn-sm btn-outline-secondary"
-                                    data-toggle="tooltip" data-placement="top" title="Activate Participant">
-                                <i class="bi bi-eye"></i>
-                                Activate
-                            </button>
-                        </form>
-                    {{end}}
+<div>
+
+                    <form class="w-100"
+                          id="deactivate-individual-form"
+                          action="/countries/{{.Individual.CountryID}}/participants/{{.Individual.ID}}/deactivate"
+                          method="post">
+                    </form>
+                    <form class="w-100"
+                          id="activate-individual-form"
+                          action="/countries/{{.Individual.CountryID}}/participants/{{.Individual.ID}}/activate"
+                          method="post">
+                    </form>
+                    <div class="btn-group me-2">
+                        <button type="submit"
+                                id="deactivateButton"
+                                form="deactivate-individual-form"
+                                class="btn btn-sm btn-outline-secondary{{if .Individual.Inactive}} disabled{{end}}"
+                                data-toggle="tooltip" data-placement="top" title="Deactivate participant">
+                            <i class="bi bi-eye-slash-fill"></i>
+                            Deactivate
+                        </button>
+                        <button type="submit"
+                                form="activate-individual-form"
+                                id="activateButton"
+                                class="btn btn-sm btn-outline-secondary{{if not .Individual.Inactive}} disabled{{end}}"
+                                data-toggle="tooltip" data-placement="top" title="Activate participant">
+                            <i class="bi bi-eye"></i>
+                            Activate
+                        </button>
+                    </div>
+</div>
                 {{end}}
             {{end}}
             <div class="flex-grow-1"></div>

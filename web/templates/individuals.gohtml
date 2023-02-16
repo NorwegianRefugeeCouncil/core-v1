@@ -144,18 +144,17 @@
              */
             function refreshActionButtons() {
                 const checkedCount = getSelectedIndividualCount()
+                const params = new URLSearchParams(document.location.search);
+                const inactive = params.get('inactive')
 
                 if (checkedCount > 0) {
                     deleteButton && deleteButton.classList.remove('disabled')
-                    {{if eq .Options.Inactive nil}}
-                        {{if .Options.IsNotInactiveSelected}}
+                    if (inactive === 'true' || inactive === null) {
+                        activateButton && activateButton.classList.remove('disabled')
+                    }
+                    if (inactive === 'false' || inactive === null) {
                         deactivateButton && deactivateButton.classList.remove('disabled')
-                        {{end}}
-                        {{if .Options.IsNotInactiveSelected}}
-                        // deactivateButton && deactivateButton.classList.remove('disabled')
-                    activateButton && activateButton.classList.remove('disabled')
-                        {{end}}
-                    {{end}}
+                    }
                 } else {
                     deleteButton && deleteButton.classList.add('disabled')
                     deactivateButton && deactivateButton.classList.add('disabled')
