@@ -51,7 +51,7 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 	s := &Server{address: o.Address}
 
 	// parse html templates
-	tpl, err := parseTemplates(o.LoginURL, o.LogoutURL, o.TokenRefreshURL, o.TokenRefreshInterval)
+	tpl, err := parseTemplates(o.LoginURL, o.TokenRefreshURL, o.TokenRefreshInterval)
 	if err != nil {
 		l.Error("failed to parse templates", zap.Error(err))
 		return nil, err

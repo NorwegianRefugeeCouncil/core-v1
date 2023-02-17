@@ -63,7 +63,6 @@ serve: prerequisites
 		--access-token-header-format="jwt" \
 		--oidc-issuer="https://localhost:10000" \
 		--oauth-client-id="foo" \
-		--logout-url="https://localhost:10000/oauth2/sign_out?rd=https%3A%2F%2Flocalhost:10000%2Fsession%2Fend" \
 		--login-url="https://localhost:10000/oauth2/start" \
 		--token-refresh-url=https://localhost:10000/oauth2/start \
 		--token-refresh-interval=15m \

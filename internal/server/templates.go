@@ -13,7 +13,6 @@ type templates map[string]*template.Template
 
 func parseTemplates(
 	loginURL string,
-	logoutURL string,
 	refreshURL string,
 	tokenRefreshInterval time.Duration,
 ) (templates, error) {
@@ -51,9 +50,6 @@ func parseTemplates(
 					}
 				}
 				return false
-			},
-			"logoutURL": func() string {
-				return logoutURL
 			},
 			"loginURL": func() string {
 				return loginURL
