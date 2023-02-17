@@ -33,7 +33,7 @@
             <div class="form-group col-3">
                 <label class="form-text">Sex</label>
                 <select id="Sexes" name="sex" class="form-control">
-                    <option value="" {{if .Options.Sexes.IsEmpty }}selected{{end}}>
+                    <option value="" {{if .Options.Sexes.IsEmpty }}selected{{end}}>All
                     </option>
                     <option value="male"
                             {{if .Options.Sexes.Contains "male" }}selected{{end}}>
@@ -575,8 +575,7 @@
             <div class="col-6">
                 <label class="form-label" for="DisplacementStatus">Displacement Status</label>
                 <select id="DisplacementStatus" name="displacement_status" class="form-control">
-                    <option value="" {{if .Options.DisplacementStatuses.IsEmpty }}selected{{end}}>
-
+                    <option value="" {{if .Options.DisplacementStatuses.IsEmpty }}selected{{end}}>All
                     </option>
                     <option value="idp"
                             {{if .Options.DisplacementStatuses.Contains "idp" }}selected{{end}}>
@@ -656,7 +655,7 @@
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="EngagementContext">Engagement Context</label>
                 <select id="EngagementContext" name="engagement_context" class="form-control">
-                    <option value="" {{if .Options.EngagementContext.IsEmpty }}selected{{end}}>
+                    <option value="" {{if .Options.EngagementContext.IsEmpty }}selected{{end}}>All
                     </option>
                     <option value="houseVisit"
                             {{if .Options.EngagementContext.Contains "houseVisit" }}selected{{end}}>
@@ -809,7 +808,7 @@
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="ServiceCC">Service CC </label>
                 <select id="ServiceCC" name="service_cc" class="form-control">
-                    <option value="" {{if .Options.ServiceCC.IsEmpty }}selected{{end}}>
+                    <option value="" {{if .Options.ServiceCC.IsEmpty }}selected{{end}}>All
                     </option>
                     <option value="shelter_and_settlements"
                             {{if .Options.ServiceCC.Contains "shelter_and_settlements" }}selected{{end}}>
