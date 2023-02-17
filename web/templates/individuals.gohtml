@@ -29,6 +29,7 @@
         const downloadSelectedButtonID = "download-selected"
         const downloadToggleID = "download-toggle"
         const dateTimeTextClass = "datetime-text"
+        const emptyTextID = "empty-text"
 
         let searchParams = window.location.search.replace(/\??skip=[0-9]+&?/, '')
         searchParams = searchParams.replace(/\??take=[0-9]+&?/, '')
@@ -136,8 +137,24 @@
             const selectCheckboxes = Array.from(document.getElementsByClassName(selectIndividualCheckboxClass))
             const selectAllCheckbox = document.getElementById(selectAllIndividualsCheckboxId);
             const tableContainer = document.getElementById(individualTableContainerId)
+            const emptyText = document.getElementById(emptyTextID)
 
             downloadButton.addEventListener('click', downloadFunc)
+
+            if (emptyText) {
+                if (window.location.search.length > 0) {
+                        const heading = document.createElement("h5")
+                        heading.innerText = "No participants fit your search query."
+                        const span = document.createElement("span")
+                        span.innerText = "Try adjusting your search criteria."
+                        emptyText.appendChild(heading)
+                        emptyText.appendChild(span)
+                } else {
+                    const heading = document.createElement("h5")
+                    heading.innerText = "No participants uploaded yet."
+                    emptyText.appendChild(heading)
+                }
+            }
 
             /**
              * Refreshes the disabled state of the action buttons as well as the text of the buttons
@@ -210,7 +227,7 @@
 
             // Handles the change of the select all checkbox
             // Checks or unchecks all checkboxes when the select all checkbox is clicked
-            selectAllCheckbox.addEventListener("change", function (event) {
+            selectAllCheckbox && selectAllCheckbox.addEventListener("change", function (event) {
                 const isChecked = event.target.checked;
                 for (let i = 0; i < selectCheckboxes.length; i++) {
                     selectCheckboxes[i].checked = isChecked
@@ -224,7 +241,7 @@
             // Handles the change of a single individual select checkbox
             // Selects or unselects a single row
             for (const selectCheckbox of selectCheckboxes) {
-                selectCheckbox.addEventListener("change", function (event) {
+                selectCheckbox && selectCheckbox.addEventListener("change", function (event) {
                     refreshIndividualRow(getIndividualIdFromSelectCheckbox(event.target))
                     refreshSelectAllCheckbox()
                     refreshActionButtons()
@@ -234,12 +251,12 @@
 
             // restore the horizontal scroll position
             const horizontalScrollStr = sessionStorage.getItem(individualTableHorizontalScrollKey)
-            if (horizontalScrollStr) {
+            if (horizontalScrollStr && tableContainer) {
                 tableContainer.scrollLeft = parseInt(horizontalScrollStr)
             }
 
             // store the horizontal scroll position of the table
-            tableContainer.addEventListener("scroll", function (event) {
+            tableContainer && tableContainer.addEventListener("scroll", function (event) {
                 const scrollLeft = event.target.scrollLeft;
                 sessionStorage.setItem(individualTableHorizontalScrollKey, scrollLeft);
             });
@@ -329,6 +346,7 @@
             </div>
         </div>
 
+        {{ if .Individuals }}
         <!-- INDIVIDUALS TABLE -->
         <form id="individuals-action-form" class="table-responsive scroll-body" method="post">
             <table class="table table-individuals mb-0">
@@ -980,7 +998,6 @@
                 </tr>
                 </thead>
                 <tbody>
-                {{ if .Individuals }}
                     {{range .Individuals}}
                         <tr aria-selected="false"
                             id="individual-row-{{.ID}}"
@@ -1537,14 +1554,12 @@
                             <!-- End UpdatedAt -->
                         </tr>
                     {{end}}
-                {{else}}
-                    <tr>
-                        <td colspan="{{if not $canWrite}}30{{else}}31{{end}}">No participants found</td>
-                    </tr>
-                {{end}}
                 </tbody>
             </table>
         </form>
+        {{else}}
+            <div class="d-flex justify-content-center align-items-center h-25 flex-column" id="empty-text"></div>
+        {{end}}
         <!-- END INDIVIDUALS TABLE -->
     </main>
 
