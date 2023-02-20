@@ -352,6 +352,9 @@ nav.navbar {
             color: $nav-link-hover-color;
         }
     }
+    .nav-link.active {
+        color: $nav-link-hover-color;
+    }
 
     .home-link {
         color: $nav-link-color;
