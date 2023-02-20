@@ -55,7 +55,6 @@ resource "azurerm_linux_web_app" "app" {
     CORE_TOKEN_REFRESH_INTERVAL     = "15m"
     CORE_LOG_LEVEL                  = var.log_level
 
-    CORE_LOGOUT_URL        = "https://${var.backend_host_name}/.auth/logout"
     CORE_LOGIN_URL         = "https://${var.backend_host_name}/.auth/login/oidc"
     CORE_TOKEN_REFRESH_URL = "https://${var.backend_host_name}/.auth/refresh"
 

@@ -23,11 +23,6 @@ func (o Options) WithDatabaseDSN(databaseDSN string) Options {
 	return o
 }
 
-func (o Options) WithLogoutURL(logoutURL string) Options {
-	o.LogoutURL = logoutURL
-	return o
-}
-
 func (o Options) WithTokenRefreshURL(tokenRefreshURL string) Options {
 	o.TokenRefreshURL = tokenRefreshURL
 	return o
@@ -86,7 +81,6 @@ func validOptions() Options {
 		Address:              ":8080",
 		DatabaseDriver:       "postgres",
 		DatabaseDSN:          "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable",
-		LogoutURL:            "http://localhost:8080",
 		TokenRefreshURL:      "http://localhost:8080",
 		TokenRefreshInterval: 5 * time.Minute,
 		JwtGroups: utils.JwtGroupOptions{
@@ -145,16 +139,6 @@ func TestOptions_validate(t *testing.T) {
 		{
 			name:    "database DSN is required",
 			options: validOptions().WithDatabaseDSN(""),
-			wantErr: true,
-		},
-		{
-			name:    "logout URL is required",
-			options: validOptions().WithLogoutURL(""),
-			wantErr: true,
-		},
-		{
-			name:    "logout URL is invalid",
-			options: validOptions().WithLogoutURL(string([]byte{0x7f})),
 			wantErr: true,
 		},
 		{

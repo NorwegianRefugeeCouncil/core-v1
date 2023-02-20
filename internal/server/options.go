@@ -15,7 +15,6 @@ type Options struct {
 	Address                 string
 	DatabaseDriver          string
 	DatabaseDSN             string
-	LogoutURL               string
 	LoginURL                string
 	JwtGroups               utils.JwtGroupOptions
 	IdTokenAuthHeaderName   string
@@ -53,9 +52,6 @@ func (o Options) validate() error {
 	}
 	if len(o.DatabaseDSN) == 0 {
 		return fmt.Errorf("database DSN is required")
-	}
-	if err := o.validateRequiredURLOption(o.LogoutURL, "Logout URL"); err != nil {
-		return err
 	}
 	if err := o.validateRequiredURLOption(o.TokenRefreshURL, "Refresh URL"); err != nil {
 		return err

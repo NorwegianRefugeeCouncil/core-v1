@@ -20,7 +20,6 @@ const (
 	envDbDSN                   = "CORE_DB_DSN"
 	envDbDriver                = "CORE_DB_DRIVER"
 	envListenAddress           = "CORE_LISTEN_ADDRESS"
-	envLogoutURL               = "CORE_LOGOUT_URL"
 	envLoginURL                = "CORE_LOGIN_URL"
 	envTokenRefreshURL         = "CORE_TOKEN_REFRESH_URL"
 	envTokenRefreshInterval    = "CORE_TOKEN_REFRESH_INTERVAL"
@@ -41,7 +40,6 @@ const (
 	flagDbDSN                   = "db-dsn"
 	flagDbDriver                = "db-driver"
 	flagListenAddress           = "listen-address"
-	flagLogoutURL               = "logout-url"
 	flagLoginURL                = "login-url"
 	flagTokenRefreshURL         = "token-refresh-url"
 	flagTokenRefreshInterval    = "token-refresh-interval"
@@ -108,13 +106,8 @@ var serveCmd = &cobra.Command{
 			return fmt.Errorf("--%s is required", flagListenAddress)
 		}
 
-		logoutURL := getFlagOrEnv(cmd, flagLogoutURL, envLogoutURL)
-		if len(logoutURL) == 0 {
-			return fmt.Errorf("--%s is required", flagLogoutURL)
-		}
-
 		loginURL := getFlagOrEnv(cmd, flagLoginURL, envLoginURL)
-		if len(logoutURL) == 0 {
+		if len(loginURL) == 0 {
 			return fmt.Errorf("--%s is required", flagLoginURL)
 		}
 
@@ -187,7 +180,6 @@ var serveCmd = &cobra.Command{
 			Address:              listenAddress,
 			DatabaseDriver:       dbDriver,
 			DatabaseDSN:          dbDsn,
-			LogoutURL:            logoutURL,
 			LoginURL:             loginURL,
 			TokenRefreshURL:      refreshURL,
 			TokenRefreshInterval: tokenRefreshInterval,
@@ -243,12 +235,6 @@ Allowed values are
 `, envDbDriver)))
 
 	serveCmd.PersistentFlags().String(flagDbDSN, "", fmt.Sprintf("database dsn. Can also be set with %s", envDbDSN))
-
-	serveCmd.PersistentFlags().String(flagLogoutURL, "", cleanDoc(fmt.Sprintf(`
-logout url. Can also be set with %s
-
-The URL is used to populate the "href" attribute of the logout button.
-`, envLogoutURL)))
 
 	serveCmd.PersistentFlags().String(flagLoginURL, "", cleanDoc(fmt.Sprintf(`
 login url. Can also be set with %s
