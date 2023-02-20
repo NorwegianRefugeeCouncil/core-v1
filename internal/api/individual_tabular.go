@@ -74,16 +74,13 @@ func GetRecordsFromFile(filename string, reader io.Reader) ([][]string, error) {
 func FindDuplicatesInUpload(columns []string, records [][]string) containers.Set[string] {
 	duplicates := containers.NewSet[string]()
 
-	df := dataframe.LoadRecords(records, dataframe.DetectTypes(false), dataframe.DefaultType(series.String), dataframe.HasHeader(true))
+	df := dataframe.LoadRecords(records, dataframe.DetectTypes(false), dataframe.DefaultType(series.String), dataframe.HasHeader(true), dataframe.NaNValues([]string{"", " ", "NA", "NaN", "N/A"}))
 
 	selectedColumns := df.Select(columns)
 
 	for c, column := range columns {
 		thisColumn := dataframe.New(series.New(selectedColumns.Col(columns[c]), series.String, column))
-		nextColumn := dataframe.New(series.New(selectedColumns.Col(columns[(c+1)%(len(columns))]), series.String, column))
 
-		// compare to next column
-		crossJoin := thisColumn.InnerJoin(nextColumn, column)
 		// compare to self
 		selfJoin := thisColumn.InnerJoin(thisColumn, column)
 
@@ -113,11 +110,18 @@ func FindDuplicatesInUpload(columns []string, records [][]string) containers.Set
 			}
 		}
 
-		for j := 0; j < crossJoin.Nrow(); j++ {
-			duplicates.Add(crossJoin.Elem(j, 0).String())
+		if len(columns) > 1 {
+			nextColumn := dataframe.New(series.New(selectedColumns.Col(columns[(c+1)%(len(columns))]), series.String, column))
+			// compare to next column
+			crossJoin := thisColumn.InnerJoin(nextColumn, column)
+
+			for j := 0; j < crossJoin.Nrow(); j++ {
+				duplicates.Add(crossJoin.Elem(j, 0).String())
+			}
 		}
 
 	}
+	duplicates.Remove("NaN")
 	return duplicates
 }
 

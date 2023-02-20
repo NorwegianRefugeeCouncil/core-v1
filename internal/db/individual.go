@@ -41,6 +41,12 @@ func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.I
 	return ret.([]*api.Individual), nil
 }
 
+type ValueGroup struct {
+	Values              []string
+	DeduplicationOption DeduplicationOptionValue
+	IsFirst             bool
+}
+
 // TODO no deduplication if no deduplication types are specified
 func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, newIndividuals []*api.Individual, deduplicationTypes []string) ([]*api.Individual, error) {
 	args := make([]interface{}, 0)
@@ -70,7 +76,9 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 		if !ok {
 			return nil, fmt.Errorf("invalid deduplication type %s", deduplicationType)
 		}
-		for i, field := range DeduplicationOptions[d].Value.Columns {
+		deduplicationConfig := DeduplicationOptions[d].Value
+		valueGroups := make(map[string]ValueGroup)
+		for i, field := range deduplicationConfig.Columns {
 			values := make([]string, 0, len(uncheckedIndividuals))
 			for _, individual := range uncheckedIndividuals {
 				val, err := individual.GetFieldValue(field)
@@ -80,20 +88,24 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 			}
 			if len(values) == 0 {
 				continue
-			}
-
-			if i == 0 {
-				query += " AND ("
 			} else {
-				query += " " + DeduplicationOptions[d].Value.Condition + " "
-			}
-
-			query += field + " IN ('" + strings.Join(values, "','") + "')"
-
-			if i == len(DeduplicationOptions[d].Value.Columns)-1 {
-				query += ")"
+				valueGroups[field] = ValueGroup{
+					Values:              values,
+					DeduplicationOption: deduplicationConfig,
+					IsFirst:             i == 0,
+				}
 			}
 		}
+
+		for v := range valueGroups {
+			if valueGroups[v].IsFirst {
+				query += " AND ("
+			} else {
+				query += " " + deduplicationConfig.Condition + " "
+			}
+			query += v + " IN ('" + strings.Join(valueGroups[v].Values, "','") + "')"
+		}
+		query += ")"
 	}
 
 	out := make([]*api.Individual, 0)

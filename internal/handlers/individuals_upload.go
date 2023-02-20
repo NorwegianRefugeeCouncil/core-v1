@@ -133,7 +133,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 				renderError(
 					"Found duplicates within your uploaded file: ",
 					[]api.FileError{{
-						Message: fmt.Sprintf("When checking for duplicates in the columns %s, we found the following duplicated values: ", deduplicationTypes),
+						Message: fmt.Sprintf("When checking for duplicates in the columns %s, we found the following duplicated values: ", strings.Join(deduplicationTypes, ", ")),
 						Err:     errors}},
 				)
 				return
