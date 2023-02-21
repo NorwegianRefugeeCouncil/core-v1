@@ -1,7 +1,7 @@
 {{define "head"}}
 {{end}}
 {{define "body"}}
-<main class="container my-5 mx-auto">
+<main class="container py-5 mx-auto">
     <div class="row mb-5">
         <h1 class="text-danger">
             <i class="bi bi-exclamation-circle me-2"></i>
@@ -14,7 +14,7 @@
         </h5>
     </div>
 
-    <div class="row">
+    <div class="d-flex flex-column scroll-body">
         {{range .Errors}}
             <div class="alert alert-danger" role="alert">
                 <b>{{.Message}}</b>
@@ -27,7 +27,10 @@
             </div>
         {{end}}
     </div>
-    <div class="row mt-5">
+</main>
+
+<footer class="mt-5 container">
+    <div class="row">
         <div class="d-flex flex-row justify-content-end">
             <a class="btn btn-secondary"
                href="/countries/{{.RequestContext.SelectedCountryID}}/participants"
@@ -37,5 +40,5 @@
             </a>
         </div>
     </div>
-</main>
+</footer>
 {{end}}
