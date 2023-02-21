@@ -3,17 +3,16 @@ package handlers
 import (
 	"errors"
 	"fmt"
-	"github.com/nrc-no/notcore/internal/constants"
-	"net/http"
-	"strconv"
-	"strings"
-
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
+	"net/http"
+	"strconv"
+	"strings"
 )
 
 var UPLOAD_LIMIT = 10000
@@ -61,6 +60,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		var fields []string
 
 		fileErrors, records, err := api.UnmarshalIndividualsFile(filename, formFile, &individuals, &fields)
+
 		if err != nil {
 			l.Error("failed to parse file", zap.Error(err))
 			renderError("Failed to parse input file: "+err.Error(), nil)
@@ -96,6 +96,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		}
 
 		invalidIndividualIds := validateIndividualsExistInCountry(individualIds, existingIndividuals, selectedCountryID)
+
 		if len(invalidIndividualIds) > 0 {
 			l.Warn("user trying to update individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
 			renderError(fmt.Sprintf("Could not update participants %s, they do not exist in the database for the selected country.", strings.Join(invalidIndividualIds, ",")), nil)
@@ -107,14 +108,14 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		// TODO find duplicates within the file
 		if len(deduplicationTypes) > 0 {
 
-			structProperties := make([]string, 0)
+			optionNames := make([]db.DeduplicationOptionName, 0)
 			fileColumns := make([]string, 0)
 			for _, d := range deduplicationTypes {
 				dt, ok := db.ParseString(d)
 				if ok {
 					for _, vc := range db.DeduplicationOptions[dt].Value.Columns {
 						fileColumns = append(fileColumns, constants.IndividualDBToFileMap[vc])
-						structProperties = append(structProperties, constants.IndividualFileToStructMap[vc])
+						optionNames = append(optionNames, dt)
 					}
 				} else {
 					l.Error("invalid deduplication type", zap.String("deduplication_type", d))
@@ -139,7 +140,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 				return
 			}
 
-			duplicates, err := individualRepo.FindDuplicates(r.Context(), individuals, deduplicationTypes)
+			duplicates, err := individualRepo.FindDuplicates(r.Context(), individuals, optionNames)
 			if err != nil {
 				renderError("An error occurred while trying to check for duplicates: "+err.Error(), nil)
 				return
@@ -147,6 +148,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 
 			// TODO make this a function
 			if len(duplicates) > 0 || duplicatesInFile.Len() > 0 {
+				//if len(duplicates) > 0 {
 				duplicateErrors := make([]api.FileError, 0, len(duplicates))
 				for _, duplicate := range duplicates {
 					errorList := make([]error, 0)

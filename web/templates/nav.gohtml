@@ -23,12 +23,12 @@
             }
             document.getElementById(uploadIndividualFileFormId).submit();
 
-            // open upload modal
-            const modal = new bootstrap.Modal(document.getElementById('uploadInProgressModal'), {
-                keyboard: false,
-                backdrop: 'static',
-            });
-            modal.show();
+            const uploadInProgressDiv = document.getElementById('upload-in-progress')
+            const deduplicationStepDiv = document.getElementById('deduplication-step')
+            deduplicationStepDiv.classList.add('d-none')
+            deduplicationStepDiv.classList.remove('d-block')
+            uploadInProgressDiv.classList.add('d-block')
+            uploadInProgressDiv.classList.remove('d-none')
         }
 
         function submitAndResetUploadInput(e) {
@@ -232,33 +232,44 @@
                     <div class="modal-content">
                         <div class="modal-header"><h5>Upload</h5></div>
                         <div class="modal-body">
-                            <p>
-                                If you want to prevent duplicate participants from being uploaded,
-                                please pick one or more of the criteria, so we know how to recognize someone.
-                            </p>
+                            <div id="deduplication-step" class="d-block">
+                                <p>
+                                    If you want to prevent duplicate participants from being uploaded,
+                                    please pick one or more of the criteria, so we know how to recognize someone.
+                                    This process can take a few minutes, so please be patient.
+                                </p>
 
-                            <div class="row">
-                                {{range .DeduplicationOptions}}
-                                    <div class="form-check col-4">
-                                        <input class="form-check-input"
-                                               type="checkbox"
-                                               value="{{.ID}}"
-                                               {{if .Default}}checked{{end}}
-                                               name="deduplicationType">
-                                        <label class="form-check-label">
-                                            {{.Label}}
-                                        </label>
-                                    </div>
-                                {{end}}
+                                <div class="row">
+                                    {{range .DeduplicationOptions}}
+                                        <div class="form-check col-4">
+                                            <input class="form-check-input"
+                                                   type="checkbox"
+                                                   value="{{.ID}}"
+                                                   {{if .Default}}checked{{end}}
+                                                   name="deduplicationType">
+                                            <label class="form-check-label">
+                                                {{.Label}}
+                                            </label>
+                                        </div>
+                                    {{end}}
+                                </div>
+
+                                <input
+                                        hidden
+                                        id="individual-upload--file"
+                                        name="file"
+                                        type="file"
+                                        class="form-control"
+                                        accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
                             </div>
 
-                            <input
-                                    hidden
-                                    id="individual-upload--file"
-                                    name="file"
-                                    type="file"
-                                    class="form-control"
-                                    accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                            <div class="d-flex flex-column align-items-center d-none" id="upload-in-progress">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Uploading...</span>
+                                </div>
+                                <div class="mt-3">Uploading...</div>
+                                <div class="mt-3">Navigating away from this page will stop the file upload</div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button id="individual-upload--button" type="button" class="btn btn-primary">

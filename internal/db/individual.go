@@ -24,14 +24,14 @@ type IndividualRepo interface {
 	PutMany(ctx context.Context, individuals []*api.Individual, fields containers.StringSet) ([]*api.Individual, error)
 	PerformAction(ctx context.Context, id string, action string) error
 	PerformActionMany(ctx context.Context, ids containers.StringSet, action string) error
-	FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationTypes []string) ([]*api.Individual, error)
+	FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationTypes []DeduplicationOptionName) ([]*api.Individual, error)
 }
 
 type individualRepo struct {
 	db *sqlx.DB
 }
 
-func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationTypes []string) ([]*api.Individual, error) {
+func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationTypes []DeduplicationOptionName) ([]*api.Individual, error) {
 	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		return i.findDuplicatesInternal(ctx, tx, individuals, deduplicationTypes)
 	})
@@ -47,8 +47,7 @@ type ValueGroup struct {
 	IsFirst             bool
 }
 
-// TODO no deduplication if no deduplication types are specified
-func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, newIndividuals []*api.Individual, deduplicationTypes []string) ([]*api.Individual, error) {
+func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, newIndividuals []*api.Individual, deduplicationTypes []DeduplicationOptionName) ([]*api.Individual, error) {
 	args := make([]interface{}, 0)
 	existingIndividualIds := containers.NewStringSet()
 	var uncheckedIndividuals []*api.Individual
@@ -67,16 +66,16 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 
 	query := "SELECT * FROM individual_registrations WHERE "
 	if existingIndividualIds.Len() > 0 {
-		query += fmt.Sprintf("id NOT IN ('%s') AND ", strings.Join(existingIndividualIds.Items(), "','"))
+		if i.driverName() == "postgres" {
+			query += fmt.Sprintf("id NOT IN (SELECT * FROM UNNEST ('{\"%s\"}'::uuid[])) AND ", strings.Join(existingIndividualIds.Items(), "\",\""))
+		} else {
+			query += fmt.Sprintf("id NOT IN ('%s') AND ", strings.Join(existingIndividualIds.Items(), "','"))
+		}
 	}
 	query += "deleted_at IS NULL"
 
 	for _, deduplicationType := range deduplicationTypes {
-		d, ok := ParseString(deduplicationType)
-		if !ok {
-			return nil, fmt.Errorf("invalid deduplication type %s", deduplicationType)
-		}
-		deduplicationConfig := DeduplicationOptions[d].Value
+		deduplicationConfig := DeduplicationOptions[deduplicationType].Value
 		valueGroups := make(map[string]ValueGroup)
 		for i, field := range deduplicationConfig.Columns {
 			values := make([]string, 0, len(uncheckedIndividuals))
