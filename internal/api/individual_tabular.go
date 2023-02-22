@@ -60,6 +60,7 @@ func GetRecordsFromFile(filename string, reader io.Reader) ([][]string, error) {
 			err := errors.New("no rows found")
 			return nil, err
 		}
+		f.Close()
 		return rows, err
 	} else {
 		fileNameParts := strings.Split(filename, ".")

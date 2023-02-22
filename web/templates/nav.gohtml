@@ -48,6 +48,7 @@
             const modal = new bootstrap.Modal(document.getElementById('uploadModal'));
             modal.show();
         }
+<<<<<<< HEAD
         const uploadFileInput = document.getElementById(uploadIndividualFileInputId)
         uploadFileInput.addEventListener('change', submitAndResetUploadInput);
 
@@ -58,6 +59,8 @@
             const participantNavlink = document.getElementById('participants');
             participantNavlink.classList.add('active');
         }
+=======
+>>>>>>> e94606d (COR-687: limit file deduplication to 10.000 entries)
 
         document.addEventListener("DOMContentLoaded", function () {
             const uploadButton = document.getElementById(uploadIndividualFileButtonId)
@@ -66,6 +69,14 @@
             }
             const uploadFileInput = document.getElementById(uploadIndividualFileInputId)
             uploadFileInput.addEventListener('change', submitAndResetUploadInput);
+
+            const path = new URL(document.location).pathname;
+            const parts = path.split('/');
+            const lastPathComponent = parts[parts.length - 1];
+            if (lastPathComponent === 'participants') {
+                const participantNavlink = document.getElementById('participants');
+                participantNavlink.classList.add('active');
+            }
         })
 
     </script>
@@ -83,44 +94,85 @@
                     <div class="me-auto w-100">
                         <div class="d-flex flex-row w-100 align-items-center">
 
-                       {{ if .RequestContext.SelectedCountry }}
-                            <div class="btn btn-sm btn-link text-decoration-none px-2">
-                                <a id="participants" class="nav-link" href="{{if eq "" .RequestContext.SelectedCountryID}}/{{else}}/countries/{{.RequestContext.SelectedCountryID}}/participants{{end}}">
-                                    {{.RequestContext.Locales.Translate "participants"}}
-                                </a>
-                            </div>
+                           {{ if .RequestContext.SelectedCountry }}
+                                <div class="btn btn-sm btn-link text-decoration-none px-2">
+                                    <a id="participants" class="nav-link" href="{{if eq "" .RequestContext.SelectedCountryID}}/{{else}}/countries/{{.RequestContext.SelectedCountryID}}/participants{{end}}">
+                                        {{.RequestContext.Locales.Translate "participants"}}
+                                    </a>
+                                </div>
 
-                            <div class="btn-group ms-3">
-                                <button data-bs-toggle="collapse"
-                                        data-bs-target="#filters"
-                                        id="search-button"
-                                        type="button"
-                                        class="btn btn-sm btn-link dropdown-toggle text-decoration-none px-2"
-                                        aria-haspopup="true"
-                                        aria-expanded="false">
-                                    {{.RequestContext.Locales.Translate "search"}}
-                                </button>
-                            </div>
+                                <div class="btn-group ms-3">
+                                    <button data-bs-toggle="collapse"
+                                            data-bs-target="#filters"
+                                            id="search-button"
+                                            type="button"
+                                            class="btn btn-sm btn-link dropdown-toggle text-decoration-none px-2"
+                                            aria-haspopup="true"
+                                            aria-expanded="false">
+                                        {{.RequestContext.Locales.Translate "search"}}
+                                    </button>
+                                </div>
 
-                                {{if .RequestContext.HasSelectedCountryWritePermission }}
+                                    {{if .RequestContext.HasSelectedCountryWritePermission }}
+                                        <div class="btn-group ms-3">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-link dropdown-toggle text-decoration-none px-2"
+                                                    data-bs-toggle="dropdown"
+                                                    aria-haspopup="true"
+                                                    aria-expanded="false">
+                                                Files
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a href="/static/nrc_grf_template.xlsx"
+                                                   download="nrc-grf-template.xlsx"
+                                                   class="dropdown-item"
+                                                >
+                                                    Download template
+                                                </a>
+                                                <button onclick="openUploadForm()" type="button" class="dropdown-item">
+                                                    Upload {{.RequestContext.SelectedCountry.Name}} data
+                                                </button>
+                                            </div>
+                                        </div>
+                                    {{end}}
+                                {{end}}
+
+                                {{ $auth := .RequestContext.Auth }}
+                                {{ $countries := $auth.GetAllowedCountries }}
+                                {{ $countryLength := $countries.Len }}
+                                {{if or (gt $countryLength 1) ($auth.IsGlobalAdmin)}}
                                     <div class="btn-group ms-3">
                                         <button type="button"
                                                 class="btn btn-sm btn-link dropdown-toggle text-decoration-none px-2"
                                                 data-bs-toggle="dropdown"
                                                 aria-haspopup="true"
                                                 aria-expanded="false">
-                                            Files
+                                            {{.RequestContext.Locales.Translate "files"}}
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-end">
-                                            <a href="/static/nrc_grf_template.xlsx"
-                                               download="nrc-grf-template.xlsx"
-                                               class="dropdown-item"
-                                            >
-                                                Download template
+                                             <a href="/static/nrc_grf_template.xlsx"
+                                                download="nrc-grf-template.xlsx"
+                                                class="dropdown-item"
+                                             >
+                                                 {{.RequestContext.Locales.Translate "download_template"}}
                                             </a>
-                                            <button onclick="openUploadForm()" type="button" class="dropdown-item">
-                                                Upload {{.RequestContext.SelectedCountry.Name}} data
-                                            </button>
+                                            <form id="individual-upload--form"
+                                                  action="/countries/{{.RequestContext.SelectedCountryID}}/participants/upload"
+                                                  enctype="multipart/form-data"
+                                                  method="post"
+                                            >
+                                                <input
+                                                        hidden
+                                                        id="individual-upload--file"
+                                                        name="file"
+                                                        type="file"
+                                                        class="form-control"
+                                                        accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                                >
+                                                <button id="individual-upload--button" type="button" class="dropdown-item">
+                                                    {{.RequestContext.Locales.Translate "upload_data" .RequestContext.SelectedCountry.Name}}
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
                                 {{end}}
@@ -130,63 +182,23 @@
                             {{ $countries := $auth.GetAllowedCountries }}
                             {{ $countryLength := $countries.Len }}
                             {{if or (gt $countryLength 1) ($auth.IsGlobalAdmin)}}
-                                <div class="btn-group ms-3">
-                                    <button type="button"
-                                            class="btn btn-sm btn-link dropdown-toggle text-decoration-none px-2"
-                                            data-bs-toggle="dropdown"
-                                            aria-haspopup="true"
-                                            aria-expanded="false">
-                                        {{.RequestContext.Locales.Translate "files"}}
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-end">
-                                         <a href="/static/nrc_grf_template.xlsx"
-                                            download="nrc-grf-template.xlsx"
-                                            class="dropdown-item"
-                                         >
-                                             {{.RequestContext.Locales.Translate "download_template"}}
-                                        </a>
-                                        <form id="individual-upload--form"
-                                              action="/countries/{{.RequestContext.SelectedCountryID}}/participants/upload"
-                                              enctype="multipart/form-data"
-                                              method="post"
-                                        >
-                                            <input
-                                                    hidden
-                                                    id="individual-upload--file"
-                                                    name="file"
-                                                    type="file"
-                                                    class="form-control"
-                                                    accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                            >
-                                            <button id="individual-upload--button" type="button" class="dropdown-item">
-                                                {{.RequestContext.Locales.Translate "upload_data" .RequestContext.SelectedCountry.Name}}
-                                            </button>
-                                        </form>
-                                    </div>
+                            <div class="btn-group ms-3">
+                                <button type="button"
+                                        class="btn btn-sm btn-link dropdown-toggle text-decoration-none px-2"
+                                        data-bs-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false">
+                                    {{if .RequestContext.SelectedCountry}} {{.RequestContext.SelectedCountry.Name}} {{else}} {{.RequestContext.Locales.Translate "select_country"}} {{end}}
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    {{range $ci, $c := .RequestContext.Countries}}
+                                        <a class="dropdown-item" href="/countries/{{$c.ID}}/participants">{{$c.Name}}</a>
+                                    {{end}}
+                                    {{if $auth.IsGlobalAdmin}}
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="/countries">{{.RequestContext.Locales.Translate "edit_countries"}}</a>
+                                    {{end}}
                                 </div>
-                            {{end}}
-                        {{end}}
-
-                        {{ $auth := .RequestContext.Auth }}
-                        {{ $countries := $auth.GetAllowedCountries }}
-                        {{ $countryLength := $countries.Len }}
-                        {{if or (gt $countryLength 1) ($auth.IsGlobalAdmin)}}
-                        <div class="btn-group ms-3">
-                            <button type="button"
-                                    class="btn btn-sm btn-link dropdown-toggle text-decoration-none px-2"
-                                    data-bs-toggle="dropdown"
-                                    aria-haspopup="true"
-                                    aria-expanded="false">
-                                {{if .RequestContext.SelectedCountry}} {{.RequestContext.SelectedCountry.Name}} {{else}} {{.RequestContext.Locales.Translate "select_country"}} {{end}}
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                {{range $ci, $c := .RequestContext.Countries}}
-                                    <a class="dropdown-item" href="/countries/{{$c.ID}}/participants">{{$c.Name}}</a>
-                                {{end}}
-                                {{if $auth.IsGlobalAdmin}}
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="/countries">{{.RequestContext.Locales.Translate "edit_countries"}}</a>
-                                {{end}}
                             </div>
                         </div>
                         {{end}}
@@ -235,7 +247,8 @@
                             <div id="deduplication-step" class="d-block">
                                 <p>
                                     If you want to prevent duplicate participants from being uploaded,
-                                    please pick one or more of the criteria, so we know how to recognize someone.
+                                    please pick one or more of the criteria, so we know how to recognize duplicates.
+                                    <br/>
                                     This process can take a few minutes, so please be patient.
                                 </p>
 
@@ -252,6 +265,18 @@
                                             </label>
                                         </div>
                                     {{end}}
+                                </div>
+
+                                <div class="form-check mt-5">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           value="true"
+                                           name="fileDeduplication">
+                                    <label class="form-check-label">
+                                        Also check for duplicates within the file
+                                    </label>
+                                    <br/>
+                                    <small><i class="bi bi-info-circle me-1"></i>This limits the uploaded file to 10.000 lines.</small>
                                 </div>
 
                                 <input

@@ -62,7 +62,7 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	if len(uncheckedIndividuals) == 0 {
 		return []*api.Individual{}, nil
 	}
-	ret := make([]*api.Individual, 0, len(uncheckedIndividuals))
+	ret := make([]*api.Individual, 0)
 
 	query := "SELECT * FROM individual_registrations WHERE "
 	if existingIndividualIds.Len() > 0 {
