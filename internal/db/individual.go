@@ -41,12 +41,6 @@ func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.I
 	return ret.([]*api.Individual), nil
 }
 
-type ValueGroup struct {
-	Values              []string
-	DeduplicationOption DeduplicationOptionValue
-	IsFirst             bool
-}
-
 func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, newIndividuals []*api.Individual, deduplicationTypes []DeduplicationOptionName) ([]*api.Individual, error) {
 	args := make([]interface{}, 0)
 	existingIndividualIds := containers.NewStringSet()
