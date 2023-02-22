@@ -142,7 +142,7 @@ var deduplicationOptionNames = map[string]DeduplicationOptionName{
 	"FreeField5":   DeduplicationOptionNameFreeField5,
 }
 
-func ParseString(str string) (DeduplicationOptionName, bool) {
+func ParseDeduplicationOptionName(str string) (DeduplicationOptionName, bool) {
 	c, ok := deduplicationOptionNames[str]
 	return c, ok
 }

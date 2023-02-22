@@ -2,6 +2,7 @@ package api_test
 
 import (
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
+	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/handlers"
 	"testing"
 	"time"
@@ -89,4 +90,77 @@ func TestUnmarshalIndividualsTabularData(t *testing.T) {
 			assert.Equal(t, constants.IndividualFileToDBMap[param.column], fields[0])
 		}
 	}
+}
+
+func TestFindDuplicatesInUpload(t *testing.T) {
+	tests := []struct {
+		name             string
+		columns          []string
+		records          [][]string
+		want             containers.Set[string]
+		wantResultLength int
+	}{
+		{
+			name: "check 1 column, 1 duplicate",
+			records: [][]string{
+				{constants.FileColumnIndividualID, constants.FileColumnIndividualFullName},
+				{"unique-user-id", "Hugh Jazz"},
+				{"unique-user-id", "Hugh Jazz"},
+			},
+			columns:          []string{constants.FileColumnIndividualID},
+			want:             containers.NewSet[string]("unique-user-id"),
+			wantResultLength: 1,
+		},
+		{
+			name: "check 2 columns, 1 duplicate",
+			records: [][]string{
+				{constants.FileColumnIndividualID, constants.FileColumnIndividualFullName},
+				{"unique-user-id", "Hugh Jazz"},
+				{"unique-user-id", "Hugh Jazz"},
+			},
+			columns:          []string{constants.FileColumnIndividualID, constants.FileColumnIndividualFullName},
+			want:             containers.NewSet[string]("Hugh Jazz", "unique-user-id"),
+			wantResultLength: 2,
+		},
+		{
+			name: "check 2 columns, 0 duplicates",
+			records: [][]string{
+				{constants.FileColumnIndividualID, constants.FileColumnIndividualFullName},
+				{"unique-user-id-1", "Hugh Jazz"},
+				{"unique-user-id-2", "Jazz Hugh"},
+			},
+			columns:          []string{constants.FileColumnIndividualID, constants.FileColumnIndividualFullName},
+			want:             containers.NewSet[string](),
+			wantResultLength: 0,
+		},
+		{
+			name: "check 1 column, 0 duplicates",
+			records: [][]string{
+				{constants.FileColumnIndividualID, constants.FileColumnIndividualFullName},
+				{"unique-user-id-1", "Hugh Jazz"},
+				{"unique-user-id-2", "Jazz Hugh"},
+			},
+			columns:          []string{constants.FileColumnIndividualID},
+			want:             containers.NewSet[string](),
+			wantResultLength: 0,
+		},
+		{
+			name: "empty values",
+			records: [][]string{
+				{constants.FileColumnIndividualID, constants.FileColumnIndividualFullName},
+				{"unique-user-id-1", ""},
+			},
+			columns:          []string{constants.FileColumnIndividualID, constants.FileColumnIndividualFullName},
+			want:             containers.NewSet[string](),
+			wantResultLength: 0,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			duplicates := api.FindDuplicatesInUpload(tt.columns, tt.records)
+			assert.Len(t, duplicates, tt.wantResultLength)
+			assert.Equal(t, tt.want, duplicates)
+		})
+	}
+
 }

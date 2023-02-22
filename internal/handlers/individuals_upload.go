@@ -11,7 +11,6 @@ import (
 	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
@@ -75,9 +74,10 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 
 		fileDeduplication := r.MultipartForm.Value[formParamFileDeduplication]
 		deduplicationTypes := r.MultipartForm.Value[formParamDeduplicationType]
-		if fileDeduplication != nil && fileDeduplication[0] == "true" && len(deduplicationTypes) > 0 && len(records[1:]) > FILE_DEDUPLICATION_LIMIT {
+
+		if fileDeduplication != nil && len(deduplicationTypes) > 0 && len(records[1:]) > FILE_DEDUPLICATION_LIMIT {
 			renderError("Input file has too many entries for deduplication within the file.", []api.FileError{
-				{Message: fmt.Sprintf("If you want to run deduplication on the uploaded file itself, please limit the file to a %d records.", FILE_DEDUPLICATION_LIMIT)},
+				{fmt.Sprintf("If you want to run deduplication on the uploaded file itself, please limit the file to a %d records.", FILE_DEDUPLICATION_LIMIT), nil},
 			})
 			return
 		}
@@ -119,7 +119,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			optionNames := make([]db.DeduplicationOptionName, 0)
 			fileColumns := make([]string, 0)
 			for _, d := range deduplicationTypes {
-				dt, ok := db.ParseString(d)
+				dt, ok := db.ParseDeduplicationOptionName(d)
 				if ok {
 					for _, vc := range db.DeduplicationOptions[dt].Value.Columns {
 						fileColumns = append(fileColumns, constants.IndividualDBToFileMap[vc])
@@ -132,57 +132,28 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 				}
 			}
 
-			duplicatesInFile := containers.Set[string]{}
-
-			if fileDeduplication != nil && len(fileDeduplication) > 0 {
-				duplicatesInFile = api.FindDuplicatesInUpload(fileColumns, records)
+			if fileDeduplication != nil {
+				duplicatesInFile := api.FindDuplicatesInUpload(fileColumns, records)
 
 				if duplicatesInFile.Len() > 0 {
-					errors := make([]error, 0)
-					for _, duplicate := range duplicatesInFile.Items() {
-						errors = append(errors, fmt.Errorf(duplicate))
-					}
+					errors := formatFileDeduplicationErrors(duplicatesInFile, deduplicationTypes)
 					renderError(
 						"Found duplicates within your uploaded file: ",
-						[]api.FileError{{
-							Message: fmt.Sprintf("When checking for duplicates in the columns %s, we found the following duplicated values: ", strings.Join(deduplicationTypes, ", ")),
-							Err:     errors}},
+						errors,
 					)
 					return
 				}
 			}
 
-			duplicates, err := individualRepo.FindDuplicates(r.Context(), individuals, optionNames)
+			duplicatesInDB, err := individualRepo.FindDuplicates(r.Context(), individuals, optionNames)
 			if err != nil {
 				renderError("An error occurred while trying to check for duplicates: "+err.Error(), nil)
 				return
 			}
 
-			// TODO make this a function
-			if len(duplicates) > 0 {
-				duplicateErrors := make([]api.FileError, 0)
-				for _, duplicate := range duplicates {
-					errorList := make([]error, 0)
-					for _, field := range deduplicationTypes {
-						f, ok := db.ParseString(field)
-						if !ok {
-							renderError("Can not deduplicate by "+field, nil)
-						}
-						for _, col := range db.DeduplicationOptions[f].Value.Columns {
-							val, err := duplicate.GetFieldValue(constants.IndividualDBToFileMap[col])
-							if err != nil {
-								errorList = append(errorList, errors.New(fmt.Sprintf("Unknown value for %s", col)))
-							} else if val != "" {
-								errorList = append(errorList, errors.New(fmt.Sprintf("Duplicate value for %s: %s", col, val)))
-							}
-						}
-					}
-					duplicateErrors = append(duplicateErrors, api.FileError{
-						Message: fmt.Sprintf("Participant %s has values that are duplicated in your upload", duplicate.ID),
-						Err:     errorList,
-					})
-				}
-				renderError(fmt.Sprintf("%d duplicates found in database", len(duplicates)), duplicateErrors)
+			dbDuplicationErrors := formatDbDeduplicationErrors(duplicatesInDB, optionNames)
+			if len(dbDuplicationErrors) > 0 {
+				renderError(fmt.Sprintf("%d duplicates found in database", len(dbDuplicationErrors)), dbDuplicationErrors)
 				return
 			}
 		}
@@ -200,14 +171,34 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 	})
 }
 
-func parseQryParamInt(r *http.Request, key string) (int, error) {
-	strValue := r.URL.Query().Get(key)
-	if len(strValue) != 0 {
-		intValue, err := strconv.Atoi(strValue)
-		if err != nil {
-			return 0, err
+func formatDbDeduplicationErrors(duplicates []*api.Individual, deduplicationTypes []db.DeduplicationOptionName) []api.FileError {
+	duplicateErrors := make([]api.FileError, 0)
+	for _, duplicate := range duplicates {
+		errorList := make([]error, 0)
+		for _, deduplicationType := range deduplicationTypes {
+			for _, col := range db.DeduplicationOptions[deduplicationType].Value.Columns {
+				val, err := duplicate.GetFieldValue(constants.IndividualDBToFileMap[col])
+				if err != nil {
+					errorList = append(errorList, errors.New(fmt.Sprintf("Unknown value for %s", col)))
+				} else if val != "" {
+					errorList = append(errorList, errors.New(fmt.Sprintf("Duplicate value for %s: %s", col, val)))
+				}
+			}
 		}
-		return intValue, nil
+		duplicateErrors = append(duplicateErrors, api.FileError{
+			Message: fmt.Sprintf("Participant %s has values that are duplicated in your upload", duplicate.ID),
+			Err:     errorList,
+		})
 	}
-	return 0, nil
+	return duplicateErrors
+}
+
+func formatFileDeduplicationErrors(duplicates containers.Set[string], deduplicationTypes []string) []api.FileError {
+	errors := make([]error, 0)
+	for _, duplicate := range duplicates.Items() {
+		errors = append(errors, fmt.Errorf(duplicate))
+	}
+	return []api.FileError{{
+		fmt.Sprintf("When checking for duplicates in the columns %s, we found the following duplicated values: ", strings.Join(deduplicationTypes, ", ")),
+		errors}}
 }

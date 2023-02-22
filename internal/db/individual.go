@@ -64,9 +64,21 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	}
 	ret := make([]*api.Individual, 0)
 
+	query := buildDeduplicationQuery(i.driverName(), existingIndividualIds, uncheckedIndividuals, deduplicationTypes)
+	out := make([]*api.Individual, 0)
+
+	err := tx.SelectContext(ctx, &out, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	ret = append(ret, out...)
+	return ret, nil
+}
+
+func buildDeduplicationQuery(driverName string, existingIndividualIds containers.StringSet, uncheckedIndividuals []*api.Individual, deduplicationTypes []DeduplicationOptionName) string {
 	query := "SELECT * FROM individual_registrations WHERE "
 	if existingIndividualIds.Len() > 0 {
-		if i.driverName() == "postgres" {
+		if driverName == "postgres" {
 			query += fmt.Sprintf("id NOT IN (SELECT * FROM UNNEST ('{\"%s\"}'::uuid[])) AND ", strings.Join(existingIndividualIds.Items(), "\",\""))
 		} else {
 			query += fmt.Sprintf("id NOT IN ('%s') AND ", strings.Join(existingIndividualIds.Items(), "','"))
@@ -76,45 +88,32 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 
 	for _, deduplicationType := range deduplicationTypes {
 		deduplicationConfig := DeduplicationOptions[deduplicationType].Value
-		valueGroups := make(map[string]ValueGroup)
-		for i, field := range deduplicationConfig.Columns {
+		skipBracket := false
+		for i := 0; i < len(deduplicationConfig.Columns); i++ {
 			values := make([]string, 0, len(uncheckedIndividuals))
 			for _, individual := range uncheckedIndividuals {
-				val, err := individual.GetFieldValue(field)
+				val, err := individual.GetFieldValue(deduplicationConfig.Columns[i])
 				if err == nil && val != "" {
 					values = append(values, val.(string))
 				}
 			}
 			if len(values) == 0 {
+				skipBracket = true
 				continue
 			} else {
-				valueGroups[field] = ValueGroup{
-					Values:              values,
-					DeduplicationOption: deduplicationConfig,
-					IsFirst:             i == 0,
+				if i == 0 {
+					query += " AND ("
+				} else {
+					query += " " + deduplicationConfig.Condition + " "
 				}
+				query += deduplicationConfig.Columns[i] + " IN ('" + strings.Join(values, "','") + "')"
 			}
 		}
-
-		for v := range valueGroups {
-			if valueGroups[v].IsFirst {
-				query += " AND ("
-			} else {
-				query += " " + deduplicationConfig.Condition + " "
-			}
-			query += v + " IN ('" + strings.Join(valueGroups[v].Values, "','") + "')"
+		if !skipBracket {
+			query += ")"
 		}
-		query += ")"
 	}
-
-	out := make([]*api.Individual, 0)
-
-	err := tx.SelectContext(ctx, &out, query, args...)
-	if err != nil {
-		return nil, err
-	}
-	ret = append(ret, out...)
-	return ret, nil
+	return query
 }
 
 func (i individualRepo) driverName() string {
