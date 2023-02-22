@@ -246,7 +246,12 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualFreeField5:
 			i.FreeField5 = cols[idx]
 		case constants.FileColumnIndividualSex:
-			i.Sex = enumTypes.Sex(cols[idx])
+			sex, err := enumTypes.ParseSex(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualSex, err, enumTypes.AllSexes().String()))
+				break
+			}
+			i.Sex = sex
 		case constants.FileColumnIndividualHasCognitiveDisability:
 			hasCognitiveDisability, err := getValidatedBoolean(cols[idx])
 			if err != nil {
