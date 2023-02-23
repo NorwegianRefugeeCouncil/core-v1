@@ -48,19 +48,6 @@
             const modal = new bootstrap.Modal(document.getElementById('uploadModal'));
             modal.show();
         }
-<<<<<<< HEAD
-        const uploadFileInput = document.getElementById(uploadIndividualFileInputId)
-        uploadFileInput.addEventListener('change', submitAndResetUploadInput);
-
-        const path = new URL(document.location).pathname;
-        const parts = path.split('/');
-        const lastPathComponent = parts[parts.length - 1];
-        if (lastPathComponent === 'participants') {
-            const participantNavlink = document.getElementById('participants');
-            participantNavlink.classList.add('active');
-        }
-=======
->>>>>>> e94606d (COR-687: limit file deduplication to 10.000 entries)
 
         document.addEventListener("DOMContentLoaded", function () {
             const uploadButton = document.getElementById(uploadIndividualFileButtonId)
@@ -306,20 +293,4 @@
             </form>
         </div>
     {{end}}
-
-    <div class="modal" id="uploadInProgressModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">{{.RequestContext.Locales.Translate "uploading"}}</span>
-                        </div>
-                        <div class="mt-3">{{.RequestContext.Locales.Translate "uploading"}}</div>
-                        <div class="mt-3">{{.RequestContext.Locales.Translate "navigating_away"}}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 {{end}}
