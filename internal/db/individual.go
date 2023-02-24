@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"github.com/lib/pq"
 	"strings"
 	"time"
 
@@ -58,7 +59,7 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	}
 	ret := make([]*api.Individual, 0)
 
-	query := buildDeduplicationQuery(i.driverName(), existingIndividualIds, uncheckedIndividuals, deduplicationTypes)
+	query, args := buildDeduplicationQuery(i.driverName(), existingIndividualIds, uncheckedIndividuals, deduplicationTypes)
 	out := make([]*api.Individual, 0)
 
 	err := tx.SelectContext(ctx, &out, query, args...)
@@ -69,45 +70,82 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	return ret, nil
 }
 
-func buildDeduplicationQuery(driverName string, existingIndividualIds containers.StringSet, uncheckedIndividuals []*api.Individual, deduplicationTypes []DeduplicationOptionName) string {
-	query := "SELECT * FROM individual_registrations WHERE "
+func buildDeduplicationQuery(driverName string, existingIndividualIds containers.StringSet, uncheckedIndividuals []*api.Individual, deduplicationTypes []DeduplicationOptionName) (string, []interface{}) {
+	args := make([]interface{}, 0)
+	b := &strings.Builder{}
+
+	b.WriteString("SELECT * FROM individual_registrations WHERE ")
 	if existingIndividualIds.Len() > 0 {
 		if driverName == "postgres" {
-			query += fmt.Sprintf("id NOT IN (SELECT * FROM UNNEST ('{\"%s\"}'::uuid[])) AND ", strings.Join(existingIndividualIds.Items(), "\",\""))
+			args = append(args, pq.Array(existingIndividualIds.Items()))
+			b.WriteString("id NOT IN (SELECT * FROM UNNEST (")
+			b.WriteString(fmt.Sprintf("$%d", len(args)))
+			b.WriteString("::uuid[])) AND ")
 		} else {
-			query += fmt.Sprintf("id NOT IN ('%s') AND ", strings.Join(existingIndividualIds.Items(), "','"))
+			args = append(args, strings.Join(existingIndividualIds.Items(), "','"))
+			b.WriteString("id NOT IN ('")
+			b.WriteString(fmt.Sprintf("$%d", len(args)))
+			b.WriteString("') AND ")
 		}
 	}
-	query += "deleted_at IS NULL"
+	b.WriteString("deleted_at IS NULL")
 
+	dmap := make(map[DeduplicationOptionName]map[string][]string)
 	for _, deduplicationType := range deduplicationTypes {
 		deduplicationConfig := DeduplicationOptions[deduplicationType].Value
-		for i := 0; i < len(deduplicationConfig.Columns); i++ {
-			skipBracket := false
+		valueMap := make(map[string][]string)
+		if deduplicationConfig.Condition == LOGICAL_OPERATOR_OR {
 			values := make([]string, 0, len(uncheckedIndividuals))
-			for _, individual := range uncheckedIndividuals {
-				val, err := individual.GetFieldValue(deduplicationConfig.Columns[i])
-				if err == nil && val != "" {
-					values = append(values, val.(string))
+			for i := 0; i < len(deduplicationConfig.Columns); i++ {
+				for _, individual := range uncheckedIndividuals {
+					val, err := individual.GetFieldValue(deduplicationConfig.Columns[i])
+					if err == nil && val != "" {
+						values = append(values, val.(string))
+					}
 				}
 			}
-			if len(values) == 0 {
-				skipBracket = true
-				continue
-			} else {
-				if i == 0 {
-					query += " AND ("
-				} else {
-					query += " " + deduplicationConfig.Condition + " "
+			if len(values) > 0 {
+				for i := 0; i < len(deduplicationConfig.Columns); i++ {
+					valueMap[deduplicationConfig.Columns[i]] = values
 				}
-				query += deduplicationConfig.Columns[i] + " IN ('" + strings.Join(values, "','") + "')"
 			}
-			if !skipBracket {
-				query += ")"
+		} else if deduplicationConfig.Condition == LOGICAL_OPERATOR_AND {
+			for i := 0; i < len(deduplicationConfig.Columns); i++ {
+				values := make([]string, 0, len(uncheckedIndividuals))
+				for _, individual := range uncheckedIndividuals {
+					val, err := individual.GetFieldValue(deduplicationConfig.Columns[i])
+					if err == nil && val != "" {
+						values = append(values, val.(string))
+					}
+				}
+				if len(values) > 0 {
+					valueMap[deduplicationConfig.Columns[i]] = values
+				}
 			}
 		}
+		dmap[deduplicationType] = valueMap
 	}
-	return query
+	for deduplicationType, valueMap := range dmap {
+		i := 0
+		for col, values := range valueMap {
+			if i == 0 {
+				b.WriteString(" AND (")
+			}
+			if i > 0 {
+				b.WriteString(" " + DeduplicationOptions[deduplicationType].Value.Condition + " ")
+			}
+			args = append(args, pq.Array(values))
+			b.WriteString(col + " IN (SELECT * FROM UNNEST (")
+			b.WriteString(fmt.Sprintf("$%d", len(args)))
+			b.WriteString("::text[]))")
+			if i == len(valueMap)-1 {
+				b.WriteString(")")
+			}
+			i++
+		}
+	}
+
+	return b.String(), args
 }
 
 func (i individualRepo) driverName() string {

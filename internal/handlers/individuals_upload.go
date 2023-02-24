@@ -72,16 +72,6 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			return
 		}
 
-		fileDeduplication := r.MultipartForm.Value[formParamFileDeduplication]
-		deduplicationTypes := r.MultipartForm.Value[formParamDeduplicationType]
-
-		if fileDeduplication != nil && len(deduplicationTypes) > 0 && len(records[1:]) > FILE_DEDUPLICATION_LIMIT {
-			renderError("Input file has too many entries for deduplication within the file.", []api.FileError{
-				{fmt.Sprintf("If you want to run deduplication on the uploaded file itself, please limit the file to a %d records.", FILE_DEDUPLICATION_LIMIT), nil},
-			})
-			return
-		}
-
 		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
 		if err != nil {
 			l.Error("failed to get selected country id", zap.Error(err))
@@ -114,6 +104,9 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			renderError(fmt.Sprintf("Could not update participants %s, they do not exist in the database for the selected country.", strings.Join(invalidIndividualIds, ",")), nil)
 			return
 		}
+
+		fileDeduplication := r.MultipartForm.Value[formParamFileDeduplication]
+		deduplicationTypes := r.MultipartForm.Value[formParamDeduplicationType]
 
 		if len(deduplicationTypes) > 0 {
 

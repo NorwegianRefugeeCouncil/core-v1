@@ -1,6 +1,7 @@
 package db
 
 import (
+	"github.com/lib/pq"
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/stretchr/testify/assert"
@@ -14,7 +15,8 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 		deduplicationTypes   []DeduplicationOptionName
 		uncheckedIndividuals []*api.Individual
 		driver               string
-		want                 string
+		wantQuery            string
+		wantArgs             []interface{}
 	}{
 		{
 			name:                "3 existing individuals, 1 unchecked individual, 1 deduplication type",
@@ -23,8 +25,9 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 			uncheckedIndividuals: []*api.Individual{
 				{ID: "1", IdentificationNumber1: "ID1", IdentificationNumber2: "ID2", IdentificationNumber3: "ID3"},
 			},
-			driver: "postgres",
-			want:   "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ('{\"1\",\"2\",\"3\"}'::uuid[])) AND deleted_at IS NULL AND (identification_number_1 IN ('1','2','3') OR identification_number_2 IN ('2') OR identification_number_3 IN ('3'))",
+			driver:    "postgres",
+			wantQuery: "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ($1::uuid[])) AND deleted_at IS NULL AND (identification_number_1 IN (SELECT * FROM UNNEST ($2::text[])) OR identification_number_2 IN (SELECT * FROM UNNEST ($3::text[])) OR identification_number_3 IN (SELECT * FROM UNNEST ($4::text[])))",
+			wantArgs:  []interface{}{pq.Array([]string{"1", "2", "3"}), pq.Array([]string{"ID1", "ID2", "ID3"}), pq.Array([]string{"ID1", "ID2", "ID3"}), pq.Array([]string{"ID1", "ID2", "ID3"})},
 		},
 		{
 			name:                "3 existing individuals, 2 unchecked individuals, 1 deduplication type",
@@ -34,8 +37,9 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 				{ID: "1", IdentificationNumber1: "ID1", IdentificationNumber2: "ID2", IdentificationNumber3: "ID3"},
 				{ID: "4", IdentificationNumber1: "ID4", IdentificationNumber2: "ID5", IdentificationNumber3: "ID6"},
 			},
-			driver: "postgres",
-			want:   "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ('{\"1\",\"2\",\"3\"}'::uuid[])) AND deleted_at IS NULL AND (identification_number_1 IN ('1','4') OR identification_number_2 IN ('2','5') OR identification_number_3 IN ('3','6'))",
+			driver:    "postgres",
+			wantQuery: "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ($1::uuid[])) AND deleted_at IS NULL AND (identification_number_1 IN (SELECT * FROM UNNEST ($2::text[])) OR identification_number_2 IN (SELECT * FROM UNNEST ($3::text[])) OR identification_number_3 IN (SELECT * FROM UNNEST ($4::text[])))",
+			wantArgs:  []interface{}{pq.Array([]string{"1", "2", "3"}), pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}), pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}), pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"})},
 		},
 		{
 			name:                "3 existing individuals, 2 unchecked individuals, 2 deduplication types, empty values",
@@ -45,8 +49,9 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 				{ID: "1", IdentificationNumber1: "ID1", IdentificationNumber2: "ID2", IdentificationNumber3: "ID3"},
 				{ID: "4", IdentificationNumber1: "ID4", IdentificationNumber2: "ID5", IdentificationNumber3: "ID6"},
 			},
-			driver: "postgres",
-			want:   "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ('{\"1\",\"2\",\"3\"}'::uuid[])) AND deleted_at IS NULL AND (identification_number_1 IN ('1','4') OR identification_number_2 IN ('2','5') OR identification_number_3 IN ('3','6'))",
+			driver:    "postgres",
+			wantQuery: "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ($1::uuid[])) AND deleted_at IS NULL AND (identification_number_1 IN (SELECT * FROM UNNEST ($2::text[])) OR identification_number_2 IN (SELECT * FROM UNNEST ($3::text[])) OR identification_number_3 IN (SELECT * FROM UNNEST ($4::text[])))",
+			wantArgs:  []interface{}{pq.Array([]string{"1", "2", "3"}), pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}), pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}), pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"})},
 		},
 		{
 			name:                "3 existing individuals, 2 unchecked individuals, 2 deduplication types",
@@ -56,8 +61,9 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 				{ID: "1", IdentificationNumber1: "ID1", IdentificationNumber2: "ID2", IdentificationNumber3: "ID3", FirstName: "John", LastName: "Doe"},
 				{ID: "4", IdentificationNumber1: "ID4", IdentificationNumber2: "ID5", IdentificationNumber3: "ID6", FirstName: "Jane", LastName: "Doe"},
 			},
-			driver: "postgres",
-			want:   "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ('{\"1\",\"2\",\"3\"}'::uuid[])) AND deleted_at IS NULL AND (identification_number_1 IN ('1','4') OR identification_number_2 IN ('2','5') OR identification_number_3 IN ('3','6')) AND (full_name IN ('John Doe','Jane Doe'))",
+			driver:    "postgres",
+			wantQuery: "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ($1::uuid[])) AND deleted_at IS NULL AND (identification_number_1 IN (SELECT * FROM UNNEST ($2::text[])) OR identification_number_2 IN (SELECT * FROM UNNEST ($3::text[])) OR identification_number_3 IN (SELECT * FROM UNNEST ($4::text[]))) AND (first_name IN (SELECT * FROM UNNEST ($5::text[])) AND last_name IN (SELECT * FROM UNNEST ($6::text[])))",
+			wantArgs:  []interface{}{pq.Array([]string{"1", "2", "3"}), pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}), pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}), pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}), pq.Array([]string{"John", "Jane"}), pq.Array([]string{"Doe", "Doe"})},
 		},
 		{
 			name:                 "3 existing individuals, 0 unchecked individuals, 1 deduplication type",
@@ -65,21 +71,23 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 			deduplicationTypes:   []DeduplicationOptionName{DeduplicationOptionNameIds},
 			uncheckedIndividuals: []*api.Individual{},
 			driver:               "postgres",
-			want:                 "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ('{\"1\",\"2\",\"3\"}'::uuid[])) AND deleted_at IS NULL",
-		},
+			wantQuery:            "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ($1::uuid[])) AND deleted_at IS NULL",
+			wantArgs:             []interface{}{pq.Array([]string{"1", "2", "3"})}},
 		{
 			name:                 "sqlite3",
 			existingIndividuals:  containers.NewStringSet("1", "2", "3"),
 			deduplicationTypes:   []DeduplicationOptionName{DeduplicationOptionNameIds},
 			uncheckedIndividuals: []*api.Individual{},
 			driver:               "sqlite3",
-			want:                 "SELECT * FROM individual_registrations WHERE id NOT IN ('1','2','3') AND deleted_at IS NULL",
+			wantQuery:            "SELECT * FROM individual_registrations WHERE id NOT IN ('$1') AND deleted_at IS NULL",
+			wantArgs:             []interface{}{"1','2','3"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			query := buildDeduplicationQuery(tt.driver, tt.existingIndividuals, tt.uncheckedIndividuals, tt.deduplicationTypes)
-			assert.Equal(t, tt.want, query)
+			query, args := buildDeduplicationQuery(tt.driver, tt.existingIndividuals, tt.uncheckedIndividuals, tt.deduplicationTypes)
+			assert.Equal(t, tt.wantQuery, query)
+			assert.Equal(t, tt.wantArgs, args)
 		})
 	}
 }

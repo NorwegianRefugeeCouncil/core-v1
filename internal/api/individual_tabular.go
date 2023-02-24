@@ -70,51 +70,6 @@ func GetRecordsFromFile(filename string, reader io.Reader) ([][]string, error) {
 	}
 }
 
-func FindDuplicatesInUpload(columns []string, records [][]string) containers.Set[string] {
-	duplicates := containers.NewSet[string]()
-
-	df := dataframe.LoadRecords(records, dataframe.DetectTypes(false), dataframe.DefaultType(series.String), dataframe.HasHeader(true), dataframe.NaNValues([]string{"", " ", "NA", "NaN", "N/A"}))
-
-	selectedColumns := df.Select(columns)
-
-	for c, column := range columns {
-		thisColumn := dataframe.New(series.New(selectedColumns.Col(columns[c]), series.String, column))
-
-		for i := 0; i < thisColumn.Nrow(); i++ {
-			indices := makeIndexSetWithSkip(thisColumn.Nrow(), i).Items()
-
-			result := thisColumn.Subset(indices).Filter(dataframe.F{
-				Colidx:     0,
-				Colname:    column,
-				Comparando: thisColumn.Elem(i, 0),
-				Comparator: series.In,
-			})
-			for j := 0; j < result.Nrow(); j++ {
-				duplicates.Add(result.Elem(j, 0).String())
-			}
-		}
-
-		if len(columns) > 1 {
-			nextColumn := dataframe.New(series.New(selectedColumns.Col(columns[(c+1)%(len(columns))]), series.String, column))
-
-			for i := 0; i < thisColumn.Nrow(); i++ {
-				result := nextColumn.Filter(dataframe.F{
-					Colidx:     0,
-					Colname:    column,
-					Comparando: thisColumn.Elem(i, 0),
-					Comparator: series.In,
-				})
-				for j := 0; j < result.Nrow(); j++ {
-					duplicates.Add(result.Elem(j, 0).String())
-				}
-			}
-		}
-
-	}
-	duplicates.Remove("NaN")
-	return duplicates
-}
-
 // Unmarshal
 
 func UnmarshalIndividualsFile(filename string, reader io.Reader, individuals *[]*Individual, fields *[]string, rowLimit *int) ([]FileError, [][]string, error) {
@@ -835,4 +790,49 @@ func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
 	}
 
 	return nil
+}
+
+func FindDuplicatesInUpload(columns []string, records [][]string) containers.Set[string] {
+	duplicates := containers.NewSet[string]()
+
+	df := dataframe.LoadRecords(records, dataframe.DetectTypes(false), dataframe.DefaultType(series.String), dataframe.HasHeader(true), dataframe.NaNValues([]string{"", " ", "NA", "NaN", "N/A"}))
+
+	selectedColumns := df.Select(columns)
+
+	for c, column := range columns {
+		thisColumn := dataframe.New(series.New(selectedColumns.Col(columns[c]), series.String, column))
+
+		for i := 0; i < thisColumn.Nrow(); i++ {
+			indices := makeIndexSetWithSkip(thisColumn.Nrow(), i).Items()
+
+			result := thisColumn.Subset(indices).Filter(dataframe.F{
+				Colidx:     0,
+				Colname:    column,
+				Comparando: thisColumn.Elem(i, 0),
+				Comparator: series.In,
+			})
+			for j := 0; j < result.Nrow(); j++ {
+				duplicates.Add(result.Elem(j, 0).String())
+			}
+		}
+
+		if len(columns) > 1 {
+			nextColumn := dataframe.New(series.New(selectedColumns.Col(columns[(c+1)%(len(columns))]), series.String, column))
+
+			for i := 0; i < thisColumn.Nrow(); i++ {
+				result := nextColumn.Filter(dataframe.F{
+					Colidx:     0,
+					Colname:    column,
+					Comparando: thisColumn.Elem(i, 0),
+					Comparator: series.In,
+				})
+				for j := 0; j < result.Nrow(); j++ {
+					duplicates.Add(result.Elem(j, 0).String())
+				}
+			}
+		}
+
+	}
+	duplicates.Remove("NaN")
+	return duplicates
 }
