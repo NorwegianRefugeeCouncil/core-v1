@@ -24,6 +24,8 @@ type FileError struct {
 	Err     []error
 }
 
+const UPLOAD_LIMIT = 10000
+
 func UnmarshalIndividualsCSV(reader io.Reader, individuals *[]*Individual, fields *[]string) ([]FileError, error) {
 	csvReader := csv.NewReader(reader)
 	csvReader.TrimLeadingSpace = true
@@ -66,6 +68,11 @@ func UnmarshalIndividualsExcel(reader io.Reader, individuals *[]*Individual, fie
 }
 
 func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual, fields *[]string) []FileError {
+
+	if len(data[1:]) > UPLOAD_LIMIT {
+		return []FileError{{fmt.Sprintf("Your file contains %d participants, which exceeds the upload limit of %d participants at a time.", len(data[1:]), UPLOAD_LIMIT), nil}}
+	}
+
 	colMapping := map[string]int{}
 	headerRow := data[0]
 	var fileErrors []FileError

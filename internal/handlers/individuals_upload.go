@@ -19,7 +19,6 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 	const (
 		templateName  = "error.gohtml"
 		formParamFile = "file"
-		UPLOAD_LIMIT  = 10000
 	)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -78,14 +77,6 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			var contentType = r.Header.Get("Content-Type")
 			l.Error(fmt.Sprintf("unsupported content type: %s", contentType))
 			renderError(fmt.Sprintf("Could not process uploaded file of filetype %s, please upload a .csv or a .xls(x) file.", contentType), nil)
-			return
-		}
-
-		if len(individuals) > UPLOAD_LIMIT {
-			renderError(fmt.Sprintf("Could not process uploaded file, the upload is limited to %d participants at a time.", UPLOAD_LIMIT), []api.FileError{{
-				fmt.Sprintf("Your upload contained %d participants", len(individuals)),
-				nil,
-			}})
 			return
 		}
 
