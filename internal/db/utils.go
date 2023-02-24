@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"github.com/nrc-no/notcore/internal/constants"
 	"time"
 
 	"github.com/nrc-no/notcore/internal/logging"
@@ -37,4 +38,21 @@ func logDuration(ctx context.Context, name string, fields ...zap.Field) func() {
 		}, fields...)
 		logger.Debug("duration audit", fields...)
 	}
+}
+
+func GetDeduplicationOptionNames(deduplicationTypes []string) ([]DeduplicationOptionName, []string, error) {
+	optionNames := make([]DeduplicationOptionName, 0)
+	fileColumns := make([]string, 0)
+	for _, d := range deduplicationTypes {
+		dt, ok := ParseDeduplicationOptionName(d)
+		optionNames = append(optionNames, dt)
+		if ok {
+			for _, vc := range DeduplicationOptions[dt].Value.Columns {
+				fileColumns = append(fileColumns, constants.IndividualDBToFileMap[vc])
+			}
+		} else {
+			return nil, nil, fmt.Errorf("invalid deduplication type: %s", d)
+		}
+	}
+	return optionNames, fileColumns, nil
 }

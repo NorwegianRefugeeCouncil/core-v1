@@ -82,8 +82,8 @@ func buildDeduplicationQuery(driverName string, existingIndividualIds containers
 
 	for _, deduplicationType := range deduplicationTypes {
 		deduplicationConfig := DeduplicationOptions[deduplicationType].Value
-		skipBracket := false
 		for i := 0; i < len(deduplicationConfig.Columns); i++ {
+			skipBracket := false
 			values := make([]string, 0, len(uncheckedIndividuals))
 			for _, individual := range uncheckedIndividuals {
 				val, err := individual.GetFieldValue(deduplicationConfig.Columns[i])
@@ -102,9 +102,9 @@ func buildDeduplicationQuery(driverName string, existingIndividualIds containers
 				}
 				query += deduplicationConfig.Columns[i] + " IN ('" + strings.Join(values, "','") + "')"
 			}
-		}
-		if !skipBracket {
-			query += ")"
+			if !skipBracket {
+				query += ")"
+			}
 		}
 	}
 	return query

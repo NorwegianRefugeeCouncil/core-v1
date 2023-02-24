@@ -116,20 +116,12 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		}
 
 		if len(deduplicationTypes) > 0 {
-			optionNames := make([]db.DeduplicationOptionName, 0)
-			fileColumns := make([]string, 0)
-			for _, d := range deduplicationTypes {
-				dt, ok := db.ParseDeduplicationOptionName(d)
-				if ok {
-					for _, vc := range db.DeduplicationOptions[dt].Value.Columns {
-						fileColumns = append(fileColumns, constants.IndividualDBToFileMap[vc])
-						optionNames = append(optionNames, dt)
-					}
-				} else {
-					l.Error("invalid deduplication type", zap.String("deduplication_type", d))
-					renderError("Invalid deduplication type: "+d, nil)
-					return
-				}
+
+			optionNames, fileColumns, err := db.GetDeduplicationOptionNames(deduplicationTypes)
+			if err != nil {
+				l.Error("invalid deduplication type", zap.String("deduplication_type", strings.Join(deduplicationTypes, ",")), zap.Error(err))
+				renderError(fmt.Sprintf("Invalid deduplication type: %s", strings.Join(deduplicationTypes, ",")), nil)
+				return
 			}
 
 			if fileDeduplication != nil {

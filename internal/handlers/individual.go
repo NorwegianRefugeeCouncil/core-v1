@@ -23,10 +23,11 @@ import (
 func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 	const (
-		templateName          = "individual.gohtml"
-		templateParamAlerts   = "Alerts"
-		pathParamIndividualID = "individual_id"
-		newID                 = "new"
+		templateName           = "individual.gohtml"
+		templateParamAlerts    = "Alerts"
+		pathParamIndividualID  = "individual_id"
+		formDeduplicationParam = "deduplicationType"
+		newID                  = "new"
 	)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -118,6 +119,41 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 				Title:       "Failed to save individual",
 				Icon:        "exclamation-triangle",
 				Content:     template.HTML("There were errors with your submission. Please correct them and try again."),
+				Dismissible: true,
+			})
+			render()
+			return
+		}
+
+		deduplicationTypes := r.Form[formDeduplicationParam]
+		d, _, err := db.GetDeduplicationOptionNames(deduplicationTypes)
+		if err != nil {
+			alerts = append(alerts, alert.Alert{
+				Type:        bootstrap.StyleDanger,
+				Title:       "An Error Occurred during Deduplication",
+				Icon:        "exclamation-triangle",
+				Dismissible: true,
+			})
+			render()
+		}
+
+		duplicates, err := repo.FindDuplicates(ctx, []*api.Individual{individual}, d)
+
+		if len(duplicates) > 0 {
+			for _, dType := range d {
+				for _, field := range db.DeduplicationOptions[dType].Value.Columns {
+					value, err := individual.GetFieldValue(field)
+					if err != nil {
+						continue
+					}
+					validationErrors = append(validationErrors, validation.Duplicate(validation.NewPath(field), value, fmt.Sprintf("in %d participants", len(duplicates))))
+				}
+			}
+
+			alerts = append(alerts, alert.Alert{
+				Type:        bootstrap.StyleDanger,
+				Title:       "Found duplicates",
+				Icon:        "exclamation-triangle",
 				Dismissible: true,
 			})
 			render()
