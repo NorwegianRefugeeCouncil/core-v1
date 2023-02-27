@@ -43,6 +43,10 @@ func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.I
 }
 
 func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, newIndividuals []*api.Individual, deduplicationTypes []DeduplicationOptionName) ([]*api.Individual, error) {
+	if i.driverName() != "postgres" {
+		return nil, fmt.Errorf("deduplication is only implemented for postgres")
+	}
+
 	args := make([]interface{}, 0)
 	existingIndividualIds := containers.NewStringSet()
 	var uncheckedIndividuals []*api.Individual
@@ -59,7 +63,7 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	}
 	ret := make([]*api.Individual, 0)
 
-	query, args := buildDeduplicationQuery(i.driverName(), existingIndividualIds, uncheckedIndividuals, deduplicationTypes)
+	query, args := buildDeduplicationQuery(existingIndividualIds, uncheckedIndividuals, deduplicationTypes)
 	out := make([]*api.Individual, 0)
 
 	err := tx.SelectContext(ctx, &out, query, args...)
@@ -70,78 +74,92 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	return ret, nil
 }
 
-func buildDeduplicationQuery(driverName string, existingIndividualIds containers.StringSet, uncheckedIndividuals []*api.Individual, deduplicationTypes []DeduplicationOptionName) (string, []interface{}) {
+func buildDeduplicationQuery(existingIndividualIds containers.StringSet, uncheckedIndividuals []*api.Individual, deduplicationTypes []DeduplicationOptionName) (string, []interface{}) {
 	args := make([]interface{}, 0)
 	b := &strings.Builder{}
 
+	argIndex := 0
 	b.WriteString("SELECT * FROM individual_registrations WHERE ")
 	if existingIndividualIds.Len() > 0 {
-		if driverName == "postgres" {
-			args = append(args, pq.Array(existingIndividualIds.Items()))
-			b.WriteString("id NOT IN (SELECT * FROM UNNEST (")
-			b.WriteString(fmt.Sprintf("$%d", len(args)))
-			b.WriteString("::uuid[])) AND ")
-		} else {
-			args = append(args, strings.Join(existingIndividualIds.Items(), "','"))
-			b.WriteString("id NOT IN ('")
-			b.WriteString(fmt.Sprintf("$%d", len(args)))
-			b.WriteString("') AND ")
-		}
+		argIndex++
+		args = append(args, pq.Array(existingIndividualIds.Items()))
+		b.WriteString("id NOT IN (SELECT * FROM UNNEST (")
+		b.WriteString(fmt.Sprintf("$%d", argIndex))
+		b.WriteString("::uuid[])) AND ")
+
 	}
 	b.WriteString("deleted_at IS NULL")
 
-	dmap := make(map[DeduplicationOptionName]map[string][]string)
-	for _, deduplicationType := range deduplicationTypes {
-		deduplicationConfig := DeduplicationOptions[deduplicationType].Value
-		valueMap := make(map[string][]string)
+	// building a map of values and parameters first to avoid empty values
+	var paramMap []map[DeduplicationOptionName][]map[string][]string
+
+	for di := 0; di < len(deduplicationTypes); di++ {
+		dType := deduplicationTypes[di]
+		deduplicationConfig := DeduplicationOptions[dType].Value
+		// if the condition is OR, we need to collect all values of all columns before adding them to the map
 		if deduplicationConfig.Condition == LOGICAL_OPERATOR_OR {
+			var allValuesPerColumns []map[string][]string
 			values := make([]string, 0, len(uncheckedIndividuals))
-			for i := 0; i < len(deduplicationConfig.Columns); i++ {
+			for ci := 0; ci < len(deduplicationConfig.Columns); ci++ {
+				column := deduplicationConfig.Columns[ci]
 				for _, individual := range uncheckedIndividuals {
-					val, err := individual.GetFieldValue(deduplicationConfig.Columns[i])
-					if err == nil && val != "" {
+					val, err := individual.GetFieldValue(column)
+					if err == nil && val != "" && val != nil {
 						values = append(values, val.(string))
 					}
 				}
 			}
 			if len(values) > 0 {
-				for i := 0; i < len(deduplicationConfig.Columns); i++ {
-					valueMap[deduplicationConfig.Columns[i]] = values
+				for c := 0; c < len(deduplicationConfig.Columns); c++ {
+					column := deduplicationConfig.Columns[c]
+					valuesPerColumn := map[string][]string{column: values}
+					allValuesPerColumns = append(allValuesPerColumns, valuesPerColumn)
 				}
 			}
+			if len(allValuesPerColumns) > 0 {
+				paramPerType := map[DeduplicationOptionName][]map[string][]string{dType: allValuesPerColumns}
+				paramMap = append(paramMap, paramPerType)
+			}
+			// if the condition is AND, we only collect the values per column
 		} else if deduplicationConfig.Condition == LOGICAL_OPERATOR_AND {
-			for i := 0; i < len(deduplicationConfig.Columns); i++ {
+			var allValuesPerColumns []map[string][]string
+			for ci := 0; ci < len(deduplicationConfig.Columns); ci++ {
 				values := make([]string, 0, len(uncheckedIndividuals))
+				column := deduplicationConfig.Columns[ci]
 				for _, individual := range uncheckedIndividuals {
-					val, err := individual.GetFieldValue(deduplicationConfig.Columns[i])
-					if err == nil && val != "" {
+					val, err := individual.GetFieldValue(column)
+					if err == nil && val != "" && val != nil {
 						values = append(values, val.(string))
 					}
 				}
 				if len(values) > 0 {
-					valueMap[deduplicationConfig.Columns[i]] = values
+					valuesPerColumn := map[string][]string{column: values}
+					allValuesPerColumns = append(allValuesPerColumns, valuesPerColumn)
 				}
 			}
+			if len(allValuesPerColumns) > 0 {
+				paramPerType := map[DeduplicationOptionName][]map[string][]string{dType: allValuesPerColumns}
+				paramMap = append(paramMap, paramPerType)
+			}
 		}
-		dmap[deduplicationType] = valueMap
 	}
-	for deduplicationType, valueMap := range dmap {
-		i := 0
-		for col, values := range valueMap {
-			if i == 0 {
-				b.WriteString(" AND (")
+
+	for pi, _ := range paramMap {
+		paramType := paramMap[pi]
+		for paramTypeKey, paramTypeValue := range paramType {
+			b.WriteString(" AND (")
+			for p, paramTypeValueItem := range paramTypeValue {
+				if p > 0 {
+					b.WriteString(" " + DeduplicationOptions[paramTypeKey].Value.Condition + " ")
+				}
+				for col, paramTypeValueItemKey := range paramTypeValueItem {
+					args = append(args, pq.Array(paramTypeValueItemKey))
+					b.WriteString(col + " IN (SELECT * FROM UNNEST (")
+					b.WriteString(fmt.Sprintf("$%d", len(args)))
+					b.WriteString("::text[]))")
+				}
 			}
-			if i > 0 {
-				b.WriteString(" " + DeduplicationOptions[deduplicationType].Value.Condition + " ")
-			}
-			args = append(args, pq.Array(values))
-			b.WriteString(col + " IN (SELECT * FROM UNNEST (")
-			b.WriteString(fmt.Sprintf("$%d", len(args)))
-			b.WriteString("::text[]))")
-			if i == len(valueMap)-1 {
-				b.WriteString(")")
-			}
-			i++
+			b.WriteString(")")
 		}
 	}
 
