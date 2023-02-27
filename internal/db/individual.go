@@ -63,10 +63,14 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	}
 	ret := make([]*api.Individual, 0)
 
-	query, args := buildDeduplicationQuery(existingIndividualIds, uncheckedIndividuals, deduplicationTypes)
+	selectedCountryID, err := utils.GetSelectedCountryID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	query, args := buildDeduplicationQuery(selectedCountryID, existingIndividualIds, uncheckedIndividuals, deduplicationTypes)
 	out := make([]*api.Individual, 0)
 
-	err := tx.SelectContext(ctx, &out, query, args...)
+	err = tx.SelectContext(ctx, &out, query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +78,7 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	return ret, nil
 }
 
-func buildDeduplicationQuery(existingIndividualIds containers.StringSet, uncheckedIndividuals []*api.Individual, deduplicationTypes []DeduplicationOptionName) (string, []interface{}) {
+func buildDeduplicationQuery(selectedCountryID string, existingIndividualIds containers.StringSet, uncheckedIndividuals []*api.Individual, deduplicationTypes []DeduplicationOptionName) (string, []interface{}) {
 	args := make([]interface{}, 0)
 	b := &strings.Builder{}
 
@@ -88,7 +92,9 @@ func buildDeduplicationQuery(existingIndividualIds containers.StringSet, uncheck
 		b.WriteString("::uuid[])) AND ")
 
 	}
-	b.WriteString("deleted_at IS NULL")
+	b.WriteString("country_id = '")
+	b.WriteString(selectedCountryID)
+	b.WriteString("' AND deleted_at IS NULL")
 
 	// building a map of values and parameters first to avoid empty values
 	var paramMap []map[DeduplicationOptionName][]map[string][]string

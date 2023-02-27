@@ -24,7 +24,7 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 			uncheckedIndividuals: []*api.Individual{
 				{ID: "1", IdentificationNumber1: "ID1", IdentificationNumber2: "ID2", IdentificationNumber3: "ID3"},
 			},
-			wantQuery: "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ($1::uuid[])) AND deleted_at IS NULL AND (identification_number_1 IN (SELECT * FROM UNNEST ($2::text[])) OR identification_number_2 IN (SELECT * FROM UNNEST ($3::text[])) OR identification_number_3 IN (SELECT * FROM UNNEST ($4::text[])))",
+			wantQuery: "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ($1::uuid[])) AND country_id = 'countryId' AND deleted_at IS NULL AND (identification_number_1 IN (SELECT * FROM UNNEST ($2::text[])) OR identification_number_2 IN (SELECT * FROM UNNEST ($3::text[])) OR identification_number_3 IN (SELECT * FROM UNNEST ($4::text[])))",
 			wantArgs: []interface{}{
 				pq.Array([]string{"1", "2", "3"}),
 				pq.Array([]string{"ID1", "ID2", "ID3"}),
@@ -40,7 +40,7 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 				{ID: "1", IdentificationNumber1: "ID1", IdentificationNumber2: "ID2", IdentificationNumber3: "ID3"},
 				{ID: "4", IdentificationNumber1: "ID4", IdentificationNumber2: "ID5", IdentificationNumber3: "ID6"},
 			},
-			wantQuery: "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ($1::uuid[])) AND deleted_at IS NULL AND (identification_number_1 IN (SELECT * FROM UNNEST ($2::text[])) OR identification_number_2 IN (SELECT * FROM UNNEST ($3::text[])) OR identification_number_3 IN (SELECT * FROM UNNEST ($4::text[])))",
+			wantQuery: "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ($1::uuid[])) AND country_id = 'countryId' AND deleted_at IS NULL AND (identification_number_1 IN (SELECT * FROM UNNEST ($2::text[])) OR identification_number_2 IN (SELECT * FROM UNNEST ($3::text[])) OR identification_number_3 IN (SELECT * FROM UNNEST ($4::text[])))",
 			wantArgs: []interface{}{
 				pq.Array([]string{"1", "2", "3"}),
 				pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}),
@@ -56,7 +56,7 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 				{ID: "1", IdentificationNumber1: "ID1", IdentificationNumber2: "ID2", IdentificationNumber3: "ID3"},
 				{ID: "4", IdentificationNumber1: "ID4", IdentificationNumber2: "ID5", IdentificationNumber3: "ID6"},
 			},
-			wantQuery: "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ($1::uuid[])) AND deleted_at IS NULL AND (identification_number_1 IN (SELECT * FROM UNNEST ($2::text[])) OR identification_number_2 IN (SELECT * FROM UNNEST ($3::text[])) OR identification_number_3 IN (SELECT * FROM UNNEST ($4::text[])))",
+			wantQuery: "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ($1::uuid[])) AND country_id = 'countryId' AND deleted_at IS NULL AND (identification_number_1 IN (SELECT * FROM UNNEST ($2::text[])) OR identification_number_2 IN (SELECT * FROM UNNEST ($3::text[])) OR identification_number_3 IN (SELECT * FROM UNNEST ($4::text[])))",
 			wantArgs: []interface{}{
 				pq.Array([]string{"1", "2", "3"}),
 				pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}),
@@ -72,7 +72,7 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 				{ID: "1", IdentificationNumber1: "ID1", IdentificationNumber2: "ID2", IdentificationNumber3: "ID3", FirstName: "John", LastName: "Doe"},
 				{ID: "4", IdentificationNumber1: "ID4", IdentificationNumber2: "ID5", IdentificationNumber3: "ID6", FirstName: "Jane", LastName: "Doe"},
 			},
-			wantQuery: "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ($1::uuid[])) AND deleted_at IS NULL AND (identification_number_1 IN (SELECT * FROM UNNEST ($2::text[])) OR identification_number_2 IN (SELECT * FROM UNNEST ($3::text[])) OR identification_number_3 IN (SELECT * FROM UNNEST ($4::text[]))) AND (first_name IN (SELECT * FROM UNNEST ($5::text[])) AND last_name IN (SELECT * FROM UNNEST ($6::text[])))",
+			wantQuery: "SELECT * FROM individual_registrations WHERE id NOT IN (SELECT * FROM UNNEST ($1::uuid[])) AND country_id = 'countryId' AND deleted_at IS NULL AND (identification_number_1 IN (SELECT * FROM UNNEST ($2::text[])) OR identification_number_2 IN (SELECT * FROM UNNEST ($3::text[])) OR identification_number_3 IN (SELECT * FROM UNNEST ($4::text[]))) AND (first_name IN (SELECT * FROM UNNEST ($5::text[])) AND last_name IN (SELECT * FROM UNNEST ($6::text[])))",
 			wantArgs: []interface{}{
 				pq.Array([]string{"1", "2", "3"}),
 				pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}),
@@ -85,7 +85,7 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			query, args := buildDeduplicationQuery(tt.existingIndividuals, tt.uncheckedIndividuals, tt.deduplicationTypes)
+			query, args := buildDeduplicationQuery("countryId", tt.existingIndividuals, tt.uncheckedIndividuals, tt.deduplicationTypes)
 			assert.Equal(t, tt.wantQuery, query)
 			assert.Equal(t, tt.wantArgs, args)
 		})
