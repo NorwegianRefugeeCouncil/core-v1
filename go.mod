@@ -14,7 +14,7 @@ require (
 	github.com/manveru/faker v0.0.0-20171103152722-9fbc68a78c4d
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/spf13/cobra v1.6.1
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.2
 	github.com/xuri/excelize/v2 v2.7.0
 	go.uber.org/zap v1.24.0
 	golang.org/x/exp v0.0.0-20220613132600-b0d781184e0d
