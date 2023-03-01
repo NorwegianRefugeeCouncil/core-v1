@@ -24,19 +24,17 @@ type FileError struct {
 	Err     []error
 }
 
-const UPLOAD_LIMIT = 10000
-
-func UnmarshalIndividualsCSV(reader io.Reader, individuals *[]*Individual, fields *[]string) ([]FileError, error) {
+func UnmarshalIndividualsCSV(reader io.Reader, individuals *[]*Individual, fields *[]string, rowLimit *int) ([]FileError, error) {
 	csvReader := csv.NewReader(reader)
 	csvReader.TrimLeadingSpace = true
 	records, err := csvReader.ReadAll()
 	if err != nil {
 		return []FileError{}, err
 	}
-	return UnmarshalIndividualsTabularData(records, individuals, fields), err
+	return UnmarshalIndividualsTabularData(records, individuals, fields, rowLimit), err
 }
 
-func UnmarshalIndividualsExcel(reader io.Reader, individuals *[]*Individual, fields *[]string) ([]FileError, error) {
+func UnmarshalIndividualsExcel(reader io.Reader, individuals *[]*Individual, fields *[]string, rowLimit *int) ([]FileError, error) {
 	f, err := excelize.OpenReader(reader)
 	var fileErrors []FileError
 	if err != nil {
@@ -64,13 +62,13 @@ func UnmarshalIndividualsExcel(reader io.Reader, individuals *[]*Individual, fie
 		return fileErrors, err
 	}
 
-	return UnmarshalIndividualsTabularData(rows, individuals, fields), err
+	return UnmarshalIndividualsTabularData(rows, individuals, fields, rowLimit), err
 }
 
-func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual, fields *[]string) []FileError {
+func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual, fields *[]string, rowLimit *int) []FileError {
 
-	if len(data[1:]) > UPLOAD_LIMIT {
-		return []FileError{{fmt.Sprintf("Your file contains %d participants, which exceeds the upload limit of %d participants at a time.", len(data[1:]), UPLOAD_LIMIT), nil}}
+	if rowLimit != nil && len(data[1:]) > *rowLimit {
+		return []FileError{{fmt.Sprintf("Your file contains %d participants, which exceeds the upload limit of %d participants at a time.", len(data[1:]), *rowLimit), nil}}
 	}
 
 	colMapping := map[string]int{}

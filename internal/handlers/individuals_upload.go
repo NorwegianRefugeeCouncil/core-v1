@@ -14,6 +14,8 @@ import (
 	"go.uber.org/zap"
 )
 
+var UPLOAD_LIMIT = 10000
+
 func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Handler {
 
 	const (
@@ -56,7 +58,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		var fields []string
 
 		if strings.HasSuffix(filename, ".csv") {
-			fileErrors, err := api.UnmarshalIndividualsCSV(formFile, &individuals, &fields)
+			fileErrors, err := api.UnmarshalIndividualsCSV(formFile, &individuals, &fields, &UPLOAD_LIMIT)
 			if err != nil {
 				l.Error("failed to parse csv", zap.Error(err))
 			}
@@ -65,7 +67,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 				return
 			}
 		} else if strings.HasSuffix(filename, ".xlsx") || strings.HasSuffix(filename, ".xls") {
-			fileErrors, err := api.UnmarshalIndividualsExcel(formFile, &individuals, &fields)
+			fileErrors, err := api.UnmarshalIndividualsExcel(formFile, &individuals, &fields, &UPLOAD_LIMIT)
 			if err != nil {
 				l.Error("failed to parse excel file", zap.Error(err))
 			}
