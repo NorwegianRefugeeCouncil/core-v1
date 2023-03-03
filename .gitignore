@@ -103,7 +103,8 @@ fabric.properties
 certs/*
 !certs/.gitkeep
 
-generated.csv
+generated**.csv
+**~lock.**
 
 # Apple
 .DS_Store

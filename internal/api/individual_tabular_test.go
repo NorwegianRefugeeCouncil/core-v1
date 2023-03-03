@@ -2,6 +2,7 @@ package api_test
 
 import (
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
+	"github.com/nrc-no/notcore/internal/handlers"
 	"testing"
 	"time"
 
@@ -50,6 +51,20 @@ var parameters = []struct {
 }
 
 func TestUnmarshalIndividualsTabularData(t *testing.T) {
+	// test upload limit
+	var tooMuchData [][]string
+	var tooManyIndividuals []*api.Individual
+	var fields []string
+	var uploadLimit = 20
+
+	for _, p := range parameters {
+		tooMuchData = append(tooMuchData, []string{p.column, p.value})
+	}
+	uploadLimitError := api.UnmarshalIndividualsTabularData(tooMuchData, &tooManyIndividuals, &fields, &uploadLimit)
+	assert.Len(t, uploadLimitError, 1)
+	assert.Equal(t, uploadLimitError[0].Message, "Your file contains 28 participants, which exceeds the upload limit of 20 participants at a time.")
+
+	// test unmarshalling
 	for _, param := range parameters {
 		headerRow := []string{param.column}
 		dataRow := []string{param.value}
@@ -58,7 +73,7 @@ func TestUnmarshalIndividualsTabularData(t *testing.T) {
 		var individuals []*api.Individual
 		var fields []string
 
-		fileErrors := api.UnmarshalIndividualsTabularData(data, &individuals, &fields)
+		fileErrors := api.UnmarshalIndividualsTabularData(data, &individuals, &fields, &handlers.UPLOAD_LIMIT)
 
 		if param.error {
 			assert.Greater(t, len(fileErrors), 0)
