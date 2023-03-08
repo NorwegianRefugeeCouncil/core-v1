@@ -1,5 +1,5 @@
 trigger:
-- main
+- COR-755_monitoring
 
 resources:
 - repo: self
