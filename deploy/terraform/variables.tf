@@ -324,3 +324,13 @@ variable "frontdoor_sku_name" {
   description = "The sku name of the frontdoor."
   default     = "Standard_AzureFrontDoor"
 }
+
+variable "api_connection_teams_channel_id" {
+  type        = string
+  description = "The channel id of the MS teams channel that the azure alerts should be sent to with the logic app."
+}
+
+variable "api_connection_teams_group_id" {
+  type        = string
+  description = "The group id of the MS teams channel that the azure alerts should be sent to with the logic app"
+}
