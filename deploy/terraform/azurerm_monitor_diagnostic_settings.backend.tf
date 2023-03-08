@@ -4,28 +4,28 @@ resource "azurerm_monitor_diagnostic_setting" "backend" {
   target_resource_id         = azurerm_linux_web_app.app.id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
 
-  log {
+  enabled_log {
     category = "AppServiceAntivirusScanAuditLogs"
   }
-  log {
+  enabled_log {
     category = "AppServiceHTTPLogs"
   }
-  log {
+  enabled_log {
     category = "AppServiceConsoleLogs"
   }
-  log {
+  enabled_log {
     category = "AppServiceAppLogs"
   }
-  log {
+  enabled_log {
     category = "AppServiceFileAuditLogs"
   }
-  log {
+  enabled_log {
     category = "AppServiceAuditLogs"
   }
-  log {
+  enabled_log {
     category = "AppServiceIPSecAuditLogs"
   }
-  log {
+  enabled_log {
     category = "AppServicePlatformLogs"
   }
   metric {
