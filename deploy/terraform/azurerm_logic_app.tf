@@ -1,12 +1,12 @@
-resource "azurerm_logic_app_workflow" "law" {
-  name                = "send-alerts-to-teams"
+resource "azurerm_logic_app_workflow" "logic-app-teams" {
+  name                = "send-core-alerts-to-teams"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 }
 
 resource "azurerm_logic_app_trigger_http_request" "send-alerts-to-teams" {
-  name         = "send-alerts-to-teams-trigger"
-  logic_app_id = azurerm_logic_app_workflow.law.id
+  name         = "send-core-alerts-to-teams-trigger"
+  logic_app_id = azurerm_logic_app_workflow.logic-app-teams.id
 
   schema = <<SCHEMA
 {
@@ -62,17 +62,17 @@ SCHEMA
 }
 
 locals {
-  arm_file_path = "logic_app_workflow_schema.json"
+  arm_file_path_logic_app = "azurerm_logic_app_workflow.logic-app-teams.json"
 }
 
-data "template_file" "workflow" {
-  template = file(local.arm_file_path)
+data "template_file" "logic_app_schema" {
+  template = file(local.arm_file_path_logic_app)
 }
 
-resource "azurerm_resource_group_template_deployment" "workflow" {
-  depends_on = [azurerm_logic_app_workflow.law]
+resource "azurerm_resource_group_template_deployment" "logic_app_deployment" {
+  depends_on = [azurerm_logic_app_workflow.logic-app-teams]
   resource_group_name = azurerm_resource_group.rg.name
   deployment_mode = "Incremental"
-  name = "azurerm_resource_group_template_deployment-workflow"
-  template_content = data.template_file.workflow.rendered
+  name = "logic_app_deployment"
+  template_content = data.template_file.logic_app_schema.rendered
 }

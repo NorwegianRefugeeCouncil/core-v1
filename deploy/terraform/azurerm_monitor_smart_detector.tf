@@ -1,20 +1,20 @@
 resource "azurerm_application_insights" "aisd" {
-  name                = "example-appinsights"
+  name                = "appinsights"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   application_type    = "web"
 }
 
-resource "azurerm_monitor_action_group" "teams" {
-  name                = "notify-teams"
+resource "azurerm_monitor_action_group" "ag-teams" {
+  name                = "send-notification-to-teams"
   resource_group_name = azurerm_resource_group.rg.name
   short_name          = "notify-teams"
 
   logic_app_receiver {
-    name                    = azurerm_logic_app_workflow.law.name
+    name                    = azurerm_logic_app_workflow.logic-app-teams.name
     use_common_alert_schema = true
-    resource_id             = azurerm_logic_app_workflow.law.id
-    callback_url            = azurerm_logic_app_workflow.law.access_endpoint
+    resource_id             = azurerm_logic_app_workflow.logic-app-teams.id
+    callback_url            = azurerm_logic_app_workflow.logic-app-teams.access_endpoint
   }
 }
 
@@ -27,7 +27,7 @@ resource "azurerm_monitor_smart_detector_alert_rule" "dep-latency" {
   detector_type       = "DependencyPerformanceDegradationDetector"
 
   action_group {
-    ids = [azurerm_monitor_action_group.teams.id]
+    ids = [azurerm_monitor_action_group.ag-teams.id]
   }
 }
 
@@ -40,7 +40,7 @@ resource "azurerm_monitor_smart_detector_alert_rule" "exceptions" {
   detector_type       = "ExceptionVolumeChangedDetector"
 
   action_group {
-    ids = [azurerm_monitor_action_group.teams.id]
+    ids = [azurerm_monitor_action_group.ag-teams.id]
   }
 }
 
@@ -53,7 +53,7 @@ resource "azurerm_monitor_smart_detector_alert_rule" "failures" {
   detector_type       = "FailureAnomaliesDetector"
 
   action_group {
-    ids = [azurerm_monitor_action_group.teams.id]
+    ids = [azurerm_monitor_action_group.ag-teams.id]
   }
 }
 
@@ -66,7 +66,7 @@ resource "azurerm_monitor_smart_detector_alert_rule" "mem-leak" {
   detector_type       = "MemoryLeakDetector"
 
   action_group {
-    ids = [azurerm_monitor_action_group.teams.id]
+    ids = [azurerm_monitor_action_group.ag-teams.id]
   }
 }
 
@@ -79,7 +79,7 @@ resource "azurerm_monitor_smart_detector_alert_rule" "resp-latency" {
   detector_type       = "RequestPerformanceDegradationDetector"
 
   action_group {
-    ids = [azurerm_monitor_action_group.teams.id]
+    ids = [azurerm_monitor_action_group.ag-teams.id]
   }
 }
 
@@ -92,6 +92,6 @@ resource "azurerm_monitor_smart_detector_alert_rule" "trace-severity" {
   detector_type       = "TraceSeverityDetector"
 
   action_group {
-    ids = [azurerm_monitor_action_group.teams.id]
+    ids = [azurerm_monitor_action_group.ag-teams.id]
   }
 }
