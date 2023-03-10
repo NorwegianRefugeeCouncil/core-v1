@@ -34,7 +34,6 @@
             submitButton.addEventListener("click", function () {
                 form.submit()
                 deleteButton.disabled = true
-                confirmDeleteButton.disabled = true
                 startSubmitProcessButton.disabled = true
             })
             confirmDeleteButton.addEventListener("click", function () {
@@ -216,13 +215,12 @@
                         </p>
 
                         <div class="row">
-                            {{range .DeduplicationOptions}}
-                                <div class="form-check col-4">
+                            {{range .DeduplicationTypes}}
+                                <div class="form-check col-6" style="order: {{.Order}}">
                                     <input class="form-check-input"
                                            type="checkbox"
-                                           value="{{.ID}}"
                                            form="individualForm"
-                                           {{if .Default}}checked{{end}}
+                                           value="{{.ID}}"
                                            name="deduplicationType">
                                     <label class="form-check-label">
                                         {{.Label}}

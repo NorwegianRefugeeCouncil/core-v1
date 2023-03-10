@@ -2,7 +2,6 @@ package api
 
 import (
 	"fmt"
-	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
 	"golang.org/x/exp/slices"
@@ -91,62 +90,6 @@ func getTimeFormatForField(field string) string {
 	default:
 		return "2006-01-02"
 	}
-}
-
-func (i *Individual) marshalTabularData() ([]string, error) {
-	row := make([]string, len(constants.IndividualFileColumns))
-	for j, col := range constants.IndividualFileColumns {
-		field, ok := constants.IndividualDBToFileMap[col]
-		if !ok {
-			return nil, fmt.Errorf("unknown column %s", col) // should not happen but we never know.
-		}
-		value, err := i.GetFieldValue(field)
-		if err != nil {
-			return nil, err
-		}
-
-		switch v := value.(type) {
-		case bool:
-			row[j] = strconv.FormatBool(v)
-		case *bool:
-			if v != nil {
-				row[j] = strconv.FormatBool(*v)
-			}
-		case int:
-			row[j] = strconv.Itoa(v)
-		case *int:
-			if v != nil {
-				row[j] = strconv.Itoa(*value.(*int))
-			}
-		case string:
-			if (field == constants.DBColumnIndividualNationality1 || field == constants.DBColumnIndividualNationality2) && v != "" {
-				row[j] = constants.CountriesByCode[v].Name
-				break
-			}
-			if (field == constants.DBColumnIndividualSpokenLanguage1 || field == constants.DBColumnIndividualSpokenLanguage2 || field == constants.DBColumnIndividualSpokenLanguage3 || field == constants.DBColumnIndividualPreferredCommunicationLanguage) && v != "" {
-				row[j] = constants.LanguagesByCode[v].Name
-				break
-			}
-			row[j] = v
-		case time.Time:
-			row[j] = v.Format(getTimeFormatForField(field))
-		case *time.Time:
-			if v != nil {
-				row[j] = v.Format(getTimeFormatForField(field))
-			}
-		case enumTypes.DisabilityLevel:
-			row[j] = string(v)
-		case enumTypes.DisplacementStatus:
-			row[j] = string(v)
-		case enumTypes.ServiceCC:
-			row[j] = string(v)
-		case enumTypes.Sex:
-			row[j] = string(v)
-		default:
-			row[j] = fmt.Sprintf("%v", v)
-		}
-	}
-	return row, nil
 }
 
 var TRUE_VALUES = []string{"true", "yes", "1"}

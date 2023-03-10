@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/lib/pq"
+	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"strings"
 	"time"
 
@@ -25,14 +26,14 @@ type IndividualRepo interface {
 	PutMany(ctx context.Context, individuals []*api.Individual, fields containers.StringSet) ([]*api.Individual, error)
 	PerformAction(ctx context.Context, id string, action string) error
 	PerformActionMany(ctx context.Context, ids containers.StringSet, action string) error
-	FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationTypes []DeduplicationOptionName) ([]*api.Individual, error)
+	FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) ([]*api.Individual, error)
 }
 
 type individualRepo struct {
 	db *sqlx.DB
 }
 
-func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationTypes []DeduplicationOptionName) ([]*api.Individual, error) {
+func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) ([]*api.Individual, error) {
 	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		return i.findDuplicatesInternal(ctx, tx, individuals, deduplicationTypes)
 	})
@@ -42,32 +43,19 @@ func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.I
 	return ret.([]*api.Individual), nil
 }
 
-func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, newIndividuals []*api.Individual, deduplicationTypes []DeduplicationOptionName) ([]*api.Individual, error) {
+func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, newIndividuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) ([]*api.Individual, error) {
 	if i.driverName() != "postgres" {
 		return nil, fmt.Errorf("deduplication is only implemented for postgres")
 	}
 
 	args := make([]interface{}, 0)
-	existingIndividualIds := containers.NewStringSet()
-	var uncheckedIndividuals []*api.Individual
-	for _, individual := range newIndividuals {
-		if individual.ID == "" {
-			uncheckedIndividuals = append(uncheckedIndividuals, individual)
-		} else {
-			existingIndividualIds.Add(individual.ID)
-		}
-	}
-
-	if len(uncheckedIndividuals) == 0 {
-		return []*api.Individual{}, nil
-	}
 	ret := make([]*api.Individual, 0)
 
 	selectedCountryID, err := utils.GetSelectedCountryID(ctx)
 	if err != nil {
 		return nil, err
 	}
-	query, args := buildDeduplicationQuery(selectedCountryID, existingIndividualIds, uncheckedIndividuals, deduplicationTypes)
+	query, args := buildDeduplicationQuery(selectedCountryID, newIndividuals, deduplicationTypes)
 	out := make([]*api.Individual, 0)
 
 	err = tx.SelectContext(ctx, &out, query, args...)
@@ -78,37 +66,28 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	return ret, nil
 }
 
-func buildDeduplicationQuery(selectedCountryID string, existingIndividualIds containers.StringSet, uncheckedIndividuals []*api.Individual, deduplicationTypes []DeduplicationOptionName) (string, []interface{}) {
+func buildDeduplicationQuery(selectedCountryID string, newIndividuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) (string, []interface{}) {
 	args := make([]interface{}, 0)
 	b := &strings.Builder{}
 
-	argIndex := 0
 	b.WriteString("SELECT * FROM individual_registrations WHERE ")
-	if existingIndividualIds.Len() > 0 {
-		argIndex++
-		args = append(args, pq.Array(existingIndividualIds.Items()))
-		b.WriteString("id NOT IN (SELECT * FROM UNNEST (")
-		b.WriteString(fmt.Sprintf("$%d", argIndex))
-		b.WriteString("::uuid[])) AND ")
-
-	}
 	b.WriteString("country_id = '")
 	b.WriteString(selectedCountryID)
 	b.WriteString("' AND deleted_at IS NULL")
 
 	// building a map of values and parameters first to avoid empty values
-	var paramMap []map[DeduplicationOptionName][]map[string][]string
+	var paramMap []map[deduplication.DeduplicationTypeName][]map[string][]string
 
 	for di := 0; di < len(deduplicationTypes); di++ {
 		dType := deduplicationTypes[di]
-		deduplicationConfig := DeduplicationOptions[dType].Value
+		deduplicationConfig := deduplication.DeduplicationTypes[dType].Value
 		// if the condition is OR, we need to collect all values of all columns before adding them to the map
-		if deduplicationConfig.Condition == LOGICAL_OPERATOR_OR {
+		if deduplicationConfig.Condition == deduplication.LOGICAL_OPERATOR_OR {
 			var allValuesPerColumns []map[string][]string
-			values := make([]string, 0, len(uncheckedIndividuals))
+			values := make([]string, 0, len(newIndividuals))
 			for ci := 0; ci < len(deduplicationConfig.Columns); ci++ {
 				column := deduplicationConfig.Columns[ci]
-				for _, individual := range uncheckedIndividuals {
+				for _, individual := range newIndividuals {
 					val, err := individual.GetFieldValue(column)
 					if err == nil && val != "" && val != nil {
 						values = append(values, val.(string))
@@ -123,16 +102,16 @@ func buildDeduplicationQuery(selectedCountryID string, existingIndividualIds con
 				}
 			}
 			if len(allValuesPerColumns) > 0 {
-				paramPerType := map[DeduplicationOptionName][]map[string][]string{dType: allValuesPerColumns}
+				paramPerType := map[deduplication.DeduplicationTypeName][]map[string][]string{dType: allValuesPerColumns}
 				paramMap = append(paramMap, paramPerType)
 			}
 			// if the condition is AND, we only collect the values per column
-		} else if deduplicationConfig.Condition == LOGICAL_OPERATOR_AND {
+		} else if deduplicationConfig.Condition == deduplication.LOGICAL_OPERATOR_AND {
 			var allValuesPerColumns []map[string][]string
 			for ci := 0; ci < len(deduplicationConfig.Columns); ci++ {
-				values := make([]string, 0, len(uncheckedIndividuals))
+				values := make([]string, 0, len(newIndividuals))
 				column := deduplicationConfig.Columns[ci]
-				for _, individual := range uncheckedIndividuals {
+				for _, individual := range newIndividuals {
 					val, err := individual.GetFieldValue(column)
 					if err == nil && val != "" && val != nil {
 						values = append(values, val.(string))
@@ -144,7 +123,7 @@ func buildDeduplicationQuery(selectedCountryID string, existingIndividualIds con
 				}
 			}
 			if len(allValuesPerColumns) > 0 {
-				paramPerType := map[DeduplicationOptionName][]map[string][]string{dType: allValuesPerColumns}
+				paramPerType := map[deduplication.DeduplicationTypeName][]map[string][]string{dType: allValuesPerColumns}
 				paramMap = append(paramMap, paramPerType)
 			}
 		}
@@ -156,7 +135,7 @@ func buildDeduplicationQuery(selectedCountryID string, existingIndividualIds con
 			b.WriteString(" AND (")
 			for p, paramTypeValueItem := range paramTypeValue {
 				if p > 0 {
-					b.WriteString(" " + DeduplicationOptions[paramTypeKey].Value.Condition + " ")
+					b.WriteString(" " + deduplication.DeduplicationTypes[paramTypeKey].Value.Condition + " ")
 				}
 				for col, paramTypeValueItemKey := range paramTypeValueItem {
 					args = append(args, pq.Array(paramTypeValueItemKey))

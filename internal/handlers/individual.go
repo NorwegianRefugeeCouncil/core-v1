@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"html/template"
 	"net/http"
 
@@ -126,7 +127,7 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 		}
 
 		deduplicationTypes := r.Form[formDeduplicationParam]
-		d, _, err := db.GetDeduplicationOptionNames(deduplicationTypes)
+		optionName, err := deduplication.GetDeduplicationTypeNames(deduplicationTypes)
 		if err != nil {
 			alerts = append(alerts, alert.Alert{
 				Type:        bootstrap.StyleDanger,
@@ -137,13 +138,13 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			render()
 		}
 
-		duplicates, err := repo.FindDuplicates(ctx, []*api.Individual{individual}, d)
+		duplicates, err := repo.FindDuplicates(ctx, []*api.Individual{individual}, optionName)
 
 		if len(duplicates) > 0 {
-			for _, dType := range d {
-				for _, field := range db.DeduplicationOptions[dType].Value.Columns {
+			for _, dType := range optionName {
+				for _, field := range deduplication.DeduplicationTypes[dType].Value.Columns {
 					value, err := individual.GetFieldValue(field)
-					if err != nil {
+					if err != nil || value == "" {
 						continue
 					}
 					validationErrors = append(validationErrors, validation.Duplicate(validation.NewPath(field), value, fmt.Sprintf("in %d participants", len(duplicates))))

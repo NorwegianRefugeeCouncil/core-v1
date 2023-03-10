@@ -4,10 +4,7 @@ import (
 	"encoding/csv"
 	"errors"
 	"fmt"
-	"github.com/go-gota/gota/dataframe"
-	"github.com/go-gota/gota/series"
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
-	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/logutils"
 	"io"
 	"net/mail"
@@ -24,19 +21,24 @@ type FileError struct {
 	Err     []error
 }
 
-func GetRecordsFromFile(filename string, reader io.Reader) ([][]string, error) {
+// Unmarshal
+
+func UnmarshallRecordsFromFile(records *[][]string, filename string, reader io.Reader) error {
 	if strings.HasSuffix(filename, ".csv") {
 		csvReader := csv.NewReader(reader)
 		csvReader.TrimLeadingSpace = true
 		csvReader.Comma = ','
 		csvReader.LazyQuotes = false
 		csvReader.Comment = 0
-		records, err := csvReader.ReadAll()
-		return records, err
+		output, err := csvReader.ReadAll()
+		if err == nil {
+			*records = output
+		}
+		return err
 	} else if strings.HasSuffix(filename, ".xlsx") || strings.HasSuffix(filename, ".xls") {
 		f, err := excelize.OpenReader(reader)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		defer func() {
@@ -48,36 +50,29 @@ func GetRecordsFromFile(filename string, reader io.Reader) ([][]string, error) {
 		sheets := f.GetSheetList()
 		if len(sheets) == 0 {
 			err := errors.New("no sheets found")
-			return nil, err
+			return err
 		}
 
 		rows, err := f.GetRows(sheets[0])
 		if err != nil {
-			return nil, err
+			return err
 		}
 		if len(rows) == 0 {
 			err := errors.New("no rows found")
-			return nil, err
+			return err
 		}
 		f.Close()
-		return rows, err
+		if err == nil {
+			*records = rows
+		}
+		return err
 	} else {
 		fileNameParts := strings.Split(filename, ".")
 		fileType := fileNameParts[len(fileNameParts)-1]
 
 		err := errors.New(fmt.Sprintf("Could not process uploaded file of filetype %s, please upload a .csv or a .xls(x) file.", fileType))
-		return nil, err
+		return err
 	}
-}
-
-// Unmarshal
-
-func UnmarshalIndividualsFile(filename string, reader io.Reader, individuals *[]*Individual, fields *[]string, rowLimit *int) ([]FileError, [][]string, error) {
-	records, err := GetRecordsFromFile(filename, reader)
-	if err != nil {
-		return nil, nil, err
-	}
-	return UnmarshalIndividualsTabularData(records, individuals, fields, rowLimit), records, err
 }
 
 func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual, fields *[]string, rowLimit *int) []FileError {
@@ -792,47 +787,58 @@ func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
 	return nil
 }
 
-func FindDuplicatesInUpload(columns []string, records [][]string) containers.Set[string] {
-	duplicates := containers.NewSet[string]()
-
-	df := dataframe.LoadRecords(records, dataframe.DetectTypes(false), dataframe.DefaultType(series.String), dataframe.HasHeader(true), dataframe.NaNValues([]string{"", " ", "NA", "NaN", "N/A"}))
-
-	selectedColumns := df.Select(columns)
-
-	for c, column := range columns {
-		thisColumn := dataframe.New(series.New(selectedColumns.Col(columns[c]), series.String, column))
-
-		for i := 0; i < thisColumn.Nrow(); i++ {
-			indices := makeIndexSetWithSkip(thisColumn.Nrow(), i).Items()
-
-			result := thisColumn.Subset(indices).Filter(dataframe.F{
-				Colidx:     0,
-				Colname:    column,
-				Comparando: thisColumn.Elem(i, 0),
-				Comparator: series.In,
-			})
-			for j := 0; j < result.Nrow(); j++ {
-				duplicates.Add(result.Elem(j, 0).String())
-			}
+func (i *Individual) marshalTabularData() ([]string, error) {
+	row := make([]string, len(constants.IndividualFileColumns))
+	for j, col := range constants.IndividualFileColumns {
+		field, ok := constants.IndividualDBToFileMap[col]
+		if !ok {
+			return nil, fmt.Errorf("unknown column %s", col) // should not happen but we never know.
+		}
+		value, err := i.GetFieldValue(field)
+		if err != nil {
+			return nil, err
 		}
 
-		if len(columns) > 1 {
-			nextColumn := dataframe.New(series.New(selectedColumns.Col(columns[(c+1)%(len(columns))]), series.String, column))
-
-			for i := 0; i < thisColumn.Nrow(); i++ {
-				result := nextColumn.Filter(dataframe.F{
-					Colidx:     0,
-					Colname:    column,
-					Comparando: thisColumn.Elem(i, 0),
-					Comparator: series.In,
-				})
-				for j := 0; j < result.Nrow(); j++ {
-					duplicates.Add(result.Elem(j, 0).String())
-				}
+		switch v := value.(type) {
+		case bool:
+			row[j] = strconv.FormatBool(v)
+		case *bool:
+			if v != nil {
+				row[j] = strconv.FormatBool(*v)
 			}
+		case int:
+			row[j] = strconv.Itoa(v)
+		case *int:
+			if v != nil {
+				row[j] = strconv.Itoa(*value.(*int))
+			}
+		case string:
+			if (field == constants.DBColumnIndividualNationality1 || field == constants.DBColumnIndividualNationality2) && v != "" {
+				row[j] = constants.CountriesByCode[v].Name
+				break
+			}
+			if (field == constants.DBColumnIndividualSpokenLanguage1 || field == constants.DBColumnIndividualSpokenLanguage2 || field == constants.DBColumnIndividualSpokenLanguage3 || field == constants.DBColumnIndividualPreferredCommunicationLanguage) && v != "" {
+				row[j] = constants.LanguagesByCode[v].Name
+				break
+			}
+			row[j] = v
+		case time.Time:
+			row[j] = v.Format(getTimeFormatForField(field))
+		case *time.Time:
+			if v != nil {
+				row[j] = v.Format(getTimeFormatForField(field))
+			}
+		case enumTypes.DisabilityLevel:
+			row[j] = string(v)
+		case enumTypes.DisplacementStatus:
+			row[j] = string(v)
+		case enumTypes.ServiceCC:
+			row[j] = string(v)
+		case enumTypes.Sex:
+			row[j] = string(v)
+		default:
+			row[j] = fmt.Sprintf("%v", v)
 		}
-
 	}
-	duplicates.Remove("NaN")
-	return duplicates
+	return row, nil
 }
