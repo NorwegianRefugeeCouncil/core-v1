@@ -1,11 +1,13 @@
 resource "azurerm_logic_app_workflow" "logic-app-teams" {
   name                = "send-core-alerts-to-teams"
+  provider            = azurerm.runtime
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 }
 
 resource "azurerm_logic_app_trigger_http_request" "send-alerts-to-teams" {
   name         = "send-core-alerts-to-teams-trigger"
+  provider            = azurerm.runtime
   logic_app_id = azurerm_logic_app_workflow.logic-app-teams.id
 
   schema = <<SCHEMA
@@ -70,6 +72,7 @@ data "template_file" "logic_app_schema" {
 }
 
 resource "azurerm_resource_group_template_deployment" "logic_app_deployment" {
+  provider            = azurerm.runtime
   depends_on = [azurerm_logic_app_workflow.logic-app-teams]
   resource_group_name = azurerm_resource_group.rg.name
   deployment_mode = "Incremental"

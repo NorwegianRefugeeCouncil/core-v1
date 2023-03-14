@@ -1,5 +1,6 @@
 resource "azurerm_application_insights" "aisd" {
   name                = "appinsights"
+  provider            = azurerm.runtime
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   application_type    = "web"
@@ -7,6 +8,7 @@ resource "azurerm_application_insights" "aisd" {
 
 resource "azurerm_monitor_action_group" "ag-teams" {
   name                = "send-notification-to-teams"
+  provider            = azurerm.runtime
   resource_group_name = azurerm_resource_group.rg.name
   short_name          = "notify-teams"
 
@@ -20,6 +22,7 @@ resource "azurerm_monitor_action_group" "ag-teams" {
 
 resource "azurerm_monitor_smart_detector_alert_rule" "dep-latency" {
   name                = "Dependency Latency Degradation"
+  provider            = azurerm.runtime
   resource_group_name = azurerm_resource_group.rg.name
   severity            = "Sev3"
   scope_resource_ids  = [azurerm_application_insights.aisd.id]
@@ -33,6 +36,7 @@ resource "azurerm_monitor_smart_detector_alert_rule" "dep-latency" {
 
 resource "azurerm_monitor_smart_detector_alert_rule" "exceptions" {
   name                = "Exception Anomalies detected"
+  provider            = azurerm.runtime
   resource_group_name = azurerm_resource_group.rg.name
   severity            = "Sev3"
   scope_resource_ids  = [azurerm_application_insights.aisd.id]
@@ -46,6 +50,7 @@ resource "azurerm_monitor_smart_detector_alert_rule" "exceptions" {
 
 resource "azurerm_monitor_smart_detector_alert_rule" "failures" {
   name                = "Failure Anomalies"
+  provider            = azurerm.runtime
   resource_group_name = azurerm_resource_group.rg.name
   severity            = "Sev3"
   scope_resource_ids  = [azurerm_application_insights.aisd.id]
@@ -59,6 +64,7 @@ resource "azurerm_monitor_smart_detector_alert_rule" "failures" {
 
 resource "azurerm_monitor_smart_detector_alert_rule" "mem-leak" {
   name                = "Potential Memory Leak"
+  provider            = azurerm.runtime
   resource_group_name = azurerm_resource_group.rg.name
   severity            = "Sev3"
   scope_resource_ids  = [azurerm_application_insights.aisd.id]
@@ -72,6 +78,7 @@ resource "azurerm_monitor_smart_detector_alert_rule" "mem-leak" {
 
 resource "azurerm_monitor_smart_detector_alert_rule" "resp-latency" {
   name                = "Response Latency Degradation"
+  provider            = azurerm.runtime
   resource_group_name = azurerm_resource_group.rg.name
   severity            = "Sev3"
   scope_resource_ids  = [azurerm_application_insights.aisd.id]
@@ -85,6 +92,7 @@ resource "azurerm_monitor_smart_detector_alert_rule" "resp-latency" {
 
 resource "azurerm_monitor_smart_detector_alert_rule" "trace-severity" {
   name                = "Trace Severity Degradation"
+  provider            = azurerm.runtime
   resource_group_name = azurerm_resource_group.rg.name
   severity            = "Sev3"
   scope_resource_ids  = [azurerm_application_insights.aisd.id]
