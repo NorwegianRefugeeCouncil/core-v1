@@ -77,5 +77,5 @@ resource "azurerm_resource_group_template_deployment" "logic_app_deployment" {
   resource_group_name = azurerm_resource_group.rg.name
   deployment_mode = "Incremental"
   name = "logic_app_deployment"
-  template_content = data.template_file.logic_app_schema
+  template_content = data.template_file.logic_app_schema.template
 }
