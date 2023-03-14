@@ -7,7 +7,7 @@
       "type": "String"
     },
     "connections_teams_externalid": {
-      "defaultValue": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/rg-core-dev/providers/Microsoft.Web/connections/teams']",
+      "defaultValue": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Web/connections/teams')]",
       "type": "String"
     }
   },
@@ -253,7 +253,7 @@
               "teams": {
                 "connectionId": "[parameters('connections_teams_externalid')]",
                 "connectionName": "teams",
-                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/westeurope/managedApis/teams']",
+                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/westeurope/managedApis/teams')]"
               }
             }
           }

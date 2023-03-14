@@ -1,5 +1,5 @@
 resource "azurerm_logic_app_workflow" "logic-app-teams" {
-  name                = "send-core-alerts-to-teams"
+  name                = "send-alerts-to-teams"
   provider            = azurerm.runtime
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
