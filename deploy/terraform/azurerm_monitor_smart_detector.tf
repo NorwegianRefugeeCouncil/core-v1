@@ -3,6 +3,7 @@ resource "azurerm_application_insights" "aisd" {
   provider            = azurerm.runtime
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
+  internet_ingestion_enabled = false
   internet_query_enabled = false
   application_type    = "web"
 }
