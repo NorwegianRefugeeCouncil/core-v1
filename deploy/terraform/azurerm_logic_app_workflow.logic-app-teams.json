@@ -2,8 +2,12 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "workflows_send_alerts_to_teams_name": {
-      "defaultValue": "send-alerts-to-teams",
+    "workflows_send_alerts_to_teams_thread_name": {
+      "defaultValue": "send-alerts-to-teams-thread",
+      "type": "String"
+    },
+    "virtualmachines_wcus_r2_gen2_externalid": {
+      "defaultValue": "/subscriptions/<subscription ID>/resourceGroups/pipelinealertrg/providers/microsoft.compute/virtualmachines/wcus-r2-gen2",
       "type": "String"
     },
     "connections_teams_externalid": {
@@ -16,8 +20,8 @@
     {
       "type": "Microsoft.Logic/workflows",
       "apiVersion": "2017-07-01",
-      "name": "[parameters('workflows_send_alerts_to_teams_name')]",
-      "location": "westeurope",
+      "name": "[parameters('workflows_send_alerts_to_teams_thread_name')]",
+      "location": "resourceGroup().location",
       "properties": {
         "state": "Enabled",
         "definition": {
@@ -35,140 +39,52 @@
               "kind": "Http",
               "inputs": {
                 "schema": {
-                  "properties": {
-                    "data": {
-                      "properties": {
-                        "alertContext": {
-                          "properties": {
-                            "condition": {
-                              "properties": {
-                                "allOf": {
-                                  "items": {
-                                    "properties": {
-                                      "dimensions": {
-                                        "items": {
-                                          "properties": {
-                                            "name": {
-                                              "type": "string"
-                                            },
-                                            "value": {
-                                              "type": "string"
-                                            }
-                                          },
-                                          "required": [
-                                            "name",
-                                            "value"
-                                          ],
-                                          "type": "object"
-                                        },
-                                        "type": "array"
-                                      },
-                                      "metricName": {
-                                        "type": "string"
-                                      },
-                                      "metricNamespace": {
-                                        "type": "string"
-                                      },
-                                      "metricValue": {
-                                        "type": "number"
-                                      },
-                                      "operator": {
-                                        "type": "string"
-                                      },
-                                      "threshold": {
-                                        "type": "string"
-                                      },
-                                      "timeAggregation": {
-                                        "type": "string"
-                                      }
-                                    },
-                                    "required": [
-                                      "metricName",
-                                      "metricNamespace",
-                                      "operator",
-                                      "threshold",
-                                      "timeAggregation",
-                                      "dimensions",
-                                      "metricValue"
-                                    ],
-                                    "type": "object"
-                                  },
-                                  "type": "array"
-                                },
-                                "windowSize": {
-                                  "type": "string"
-                                }
-                              },
-                              "type": "object"
-                            },
-                            "conditionType": {
-                              "type": "string"
-                            },
-                            "properties": {}
-                          },
-                          "type": "object"
-                        },
-                        "essentials": {
-                          "properties": {
-                            "alertContextVersion": {
-                              "type": "string"
-                            },
-                            "alertId": {
-                              "type": "string"
-                            },
-                            "alertRule": {
-                              "type": "string"
-                            },
-                            "alertTargetIDs": {
-                              "items": {
-                                "type": "string"
-                              },
-                              "type": "array"
-                            },
-                            "configurationItems": {
-                              "items": {
-                                "type": "string"
-                              },
-                              "type": "array"
-                            },
-                            "description": {
-                              "type": "string"
-                            },
-                            "essentialsVersion": {
-                              "type": "string"
-                            },
-                            "firedDateTime": {
-                              "type": "string"
-                            },
-                            "monitorCondition": {
-                              "type": "string"
-                            },
-                            "monitoringService": {
-                              "type": "string"
-                            },
-                            "originAlertId": {
-                              "type": "string"
-                            },
-                            "resolvedDateTime": {
-                              "type": "string"
-                            },
-                            "severity": {
-                              "type": "string"
-                            },
-                            "signalType": {
-                              "type": "string"
-                            }
-                          },
-                          "type": "object"
-                        }
+                  "data": {
+                    "alertContext": {
+                      "condition": {
+                        "allOf": [
+                          {
+                            "dimensions": [
+                              {
+                                "name": "ResourceId",
+                                "value": "3efad9dc-3d50-4eac-9c87-8b3fd6f97e4e"
+                              }
+                            ],
+                            "metricName": "Percentage CPU",
+                            "metricNamespace": "Microsoft.Compute/virtualMachines",
+                            "metricValue": 7.727,
+                            "operator": "GreaterThan",
+                            "threshold": "25",
+                            "timeAggregation": "Average"
+                          }
+                        ],
+                        "windowSize": "PT5M"
                       },
-                      "type": "object"
+                      "conditionType": "SingleResourceMultipleMetricCriteria",
+                      "properties": null
                     },
-                    "schemaId": {
-                      "type": "string"
+                    "essentials": {
+                      "alertContextVersion": "1.0",
+                      "alertId": "/subscriptions/<subscription ID>/providers/Microsoft.AlertsManagement/alerts/b9569717-bc32-442f-add5-83a997729330",
+                      "alertRule": "WCUS-R2-Gen2",
+                      "alertTargetIDs": [
+                        "[parameters('virtualmachines_wcus_r2_gen2_externalid')]"
+                      ],
+                      "configurationItems": [
+                        "wcus-r2-gen2"
+                      ],
+                      "description": "",
+                      "essentialsVersion": "1.0",
+                      "firedDateTime": "2019-03-22T13:58:24.3713213Z",
+                      "monitorCondition": "Resolved",
+                      "monitoringService": "Platform",
+                      "originAlertId": "3f2d4487-b0fc-4125-8bd5-7ad17384221e_PipeLineAlertRG_microsoft.insights_metricAlerts_WCUS-R2-Gen2_-117781227",
+                      "resolvedDateTime": "2019-03-22T14:03:16.2246313Z",
+                      "severity": "Sev3",
+                      "signalType": "Metric"
                     }
                   },
-                  "type": "object"
+                  "schemaId": "azureMonitorCommonAlertSchema"
                 }
               }
             }
@@ -186,12 +102,13 @@
                         "For_each_2": {
                           "foreach": "@items('For_each')['dimensions']",
                           "actions": {
-                            "Post_message_in_a_chat_or_channel": {
+                            "Reply_with_a_message_in_a_channel": {
                               "runAfter": {},
                               "type": "ApiConnection",
                               "inputs": {
                                 "body": {
-                                  "messageBody": "<p><span style=\"font-size: 16px\"><strong>CORE DEV Alert<br>\n</strong></span><span style=\"font-size: 14px\">Category: Metric<br>\n</span><br>\n<span style=\"color: rgb(209,72,65)\">Severity: </span><span style=\"color: rgb(209,72,65)\">@{triggerBody()?['data']?['essentials']?['severity']}</span><span style=\"color: rgb(209,72,65)\"></span><br>\n<br>\n@{triggerBody()?['data']?['essentials']?['alertRule']}<br>\n@{triggerBody()?['data']?['essentials']?['description']}<br>\n@{triggerBody()?['data']?['essentials']?['alertId']}<br>\n<br>\n<span style=\"font-size: 14px\"><strong>Metric info<br>\n</strong></span>Namespace @{items('For_each')?['metricNamespace']}<br>\nCondition for Alert: @{items('For_each')?['metricName']} @{items('For_each')?['operator']} @{items('For_each')?['threshold']}<br>\nActual Value: @{items('For_each')?['metricValue']}<br>\n<br>\n<br>\n<span style=\"font-size: 14px\"><strong>Additional Info<br>\n</strong></span><span style=\"font-size: 12px\">Name: </span><span style=\"font-size: 12px\">@{items('For_each_2')?['name']}</span><span style=\"font-size: 12px\"></span><br>\n<br>\nContext: @{triggerBody()?['data']?['alertContext']}<br>\n<br>\nEssentials: @{triggerBody()?['data']?['essentials']}</p>",
+                                  "messageBody": "<p><span style=\"font-size: 16px\"><strong>CORE DEV Alert </strong></span><span style=\"font-size: 16px\"><strong>@{triggerBody()?['data']?['essentials']?['severity']}</strong></span><span style=\"font-size: 16px\"><strong><br>\n</strong></span><span style=\"font-size: 14px\">Category: Metric<br>\n</span><br>\n@{triggerBody()?['data']?['essentials']?['alertRule']}<br>\n@{triggerBody()?['data']?['essentials']?['description']}<br>\n@{triggerBody()?['data']?['essentials']?['alertId']}<br>\n<br>\n<span style=\"font-size: 14px\"><strong>Metric info<br>\n</strong></span>Namespace @{items('For_each')?['metricNamespace']}<br>\nCondition for Alert: @{items('For_each')?['metricName']} @{items('For_each')?['operator']} @{items('For_each')?['threshold']}<br>\nActual Value: @{items('For_each')?['metricValue']}<br>\n<br>\n<br>\n<span style=\"font-size: 14px\"><strong>Additional Info<br>\n</strong></span>Name: @{items('For_each_2')?['name']}<br>\n<br>\nContext: @{triggerBody()?['data']?['alertContext']}<br>\n<br>\nEssentials: @{triggerBody()?['data']?['essentials']}</p>",
+                                  "parentMessageId": "1677858323853",
                                   "recipient": {
                                     "channelId": "19:bb8a025fc1c94ba687c9fab89ccd7832@thread.tacv2",
                                     "groupId": "6aade50d-a999-4eb6-9686-942c941717a5"
@@ -203,7 +120,7 @@
                                   }
                                 },
                                 "method": "post",
-                                "path": "/beta/teams/conversation/message/poster/Flow bot/location/@{encodeURIComponent('Channel')}"
+                                "path": "/v1.0/teams/conversation/replyWithMessage/poster/@{encodeURIComponent('User')}/location/@{encodeURIComponent('Channel')}"
                               }
                             }
                           },
@@ -219,12 +136,13 @@
               },
               "default": {
                 "actions": {
-                  "Post_message_in_a_chat_or_channel_6": {
+                  "Reply_with_a_message_in_a_channel_2": {
                     "runAfter": {},
                     "type": "ApiConnection",
                     "inputs": {
                       "body": {
-                        "messageBody": "<p><span style=\"font-size: 16px\"><strong>CORE DEV Alert<br>\n</strong></span><span style=\"font-size: 14px\">Category: </span><span style=\"font-size: 14px\">@{triggerBody()?['data']?['essentials']?['monitoringService']}</span><span style=\"font-size: 14px\"> - </span><span style=\"font-size: 14px\">@{triggerBody()?['data']?['essentials']?['signalType']}</span><span style=\"font-size: 14px\"><br>\n</span><br>\n<span style=\"color: rgb(209,72,65)\">Severity </span><span style=\"color: rgb(209,72,65)\">@{triggerBody()?['data']?['essentials']?['severity']}</span><span style=\"color: rgb(209,72,65)\"></span><br>\n<br>\n@{triggerBody()?['data']?['essentials']?['alertRule']}<br>\n@{triggerBody()?['data']?['essentials']?['description']}<br>\n@{triggerBody()?['data']?['essentials']?['alertId']}<br>\n<br>\n<span style=\"font-size: 14px\">Context<br>\n</span><br>\n@{triggerBody()?['data']?['alertContext']}<br>\n<br>\n<span style=\"font-size: 14px\">Essentials<br>\n</span><br>\n@{triggerBody()?['data']?['essentials']}<br>\n</p>",
+                        "messageBody": "<p><span style=\"font-size: 16px\"><strong>CORE DEV Alert </strong></span><span style=\"font-size: 16px\"><strong>@{triggerBody()?['data']?['essentials']?['severity']}</strong></span><span style=\"font-size: 16px\"><strong></strong></span><span style=\"color: rgb(0,0,0)\"><br>\nCategory: @{triggerBody()?['data']?['essentials']?['monitoringService']}<br>\n<br>\n</span><span style=\"color: rgb(0,0,0)\">@{triggerBody()?['data']?['essentials']?['alertRule']}</span><span style=\"color: rgb(0,0,0)\"><br>\n</span><span style=\"color: rgb(0,0,0)\">@{triggerBody()?['data']?['essentials']?['description']}</span><span style=\"color: rgb(0,0,0)\"><br>\n</span><span style=\"color: rgb(0,0,0)\">@{triggerBody()?['data']?['essentials']?['alertId']}</span><span style=\"color: rgb(0,0,0)\"><br>\n<br>\n<br>\n</span><span style=\"color: rgb(0,0,0)\"><strong>Additional Info<br>\n</strong></span><span style=\"color: rgb(0,0,0)\">Name:<br>\n<br>\nContext: </span><span style=\"color: rgb(0,0,0)\">@{triggerBody()?['data']?['alertContext']}</span><span style=\"color: rgb(0,0,0)\"><br>\n<br>\nEssentials: </span><span style=\"color: rgb(0,0,0)\">@{triggerBody()?['data']?['essentials']}</span><span style=\"color: rgb(0,0,0)\"></span></p>",
+                        "parentMessageId": "1677858323853",
                         "recipient": {
                           "channelId": "19:bb8a025fc1c94ba687c9fab89ccd7832@thread.tacv2",
                           "groupId": "6aade50d-a999-4eb6-9686-942c941717a5"
@@ -236,7 +154,7 @@
                         }
                       },
                       "method": "post",
-                      "path": "/beta/teams/conversation/message/poster/Flow bot/location/@{encodeURIComponent('Channel')}"
+                      "path": "/v1.0/teams/conversation/replyWithMessage/poster/@{encodeURIComponent('User')}/location/@{encodeURIComponent('Channel')}"
                     }
                   }
                 }
@@ -253,7 +171,7 @@
               "teams": {
                 "connectionId": "[parameters('connections_teams_externalid')]",
                 "connectionName": "teams",
-                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/westeurope/managedApis/teams')]"
+                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'/managedApis/teams')]"
               }
             }
           }
