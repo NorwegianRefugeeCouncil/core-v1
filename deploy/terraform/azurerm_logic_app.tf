@@ -7,7 +7,7 @@ resource "azurerm_logic_app_workflow" "logic-app-teams" {
 
 resource "azurerm_logic_app_trigger_http_request" "send-alerts-to-teams-thread" {
   name         = "send-core-alerts-to-teams-trigger"
-  provider            = azurerm.runtime
+  provider     = azurerm.runtime
   logic_app_id = azurerm_logic_app_workflow.logic-app-teams.id
 
   schema = <<SCHEMA
