@@ -21,7 +21,7 @@
       "type": "Microsoft.Logic/workflows",
       "apiVersion": "2017-07-01",
       "name": "[parameters('workflows_send_alerts_to_teams_thread_name')]",
-      "location": "resourceGroup().location",
+      "location": "westeurope",
       "properties": {
         "state": "Enabled",
         "definition": {
