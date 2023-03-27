@@ -53,10 +53,10 @@ func GetDuplicationScoresForRecord(optionNames []deduplication.DeduplicationType
 		copy(duplicationScoreByType, zeros)
 
 		// when the condition is OR, we need to compare all elements in the respective columns to all other elements
-		if option.Value.Condition == deduplication.LOGICAL_OPERATOR_OR {
+		if option.Config.Condition == deduplication.LOGICAL_OPERATOR_OR {
 
 			// e.g. identification_number_1, identification_number_2, identification_number_3
-			for _, column := range option.Value.Columns {
+			for _, column := range option.Config.Columns {
 				// the whole column, which we are about to use, including the line number, so we can map scores properly
 				thisColumn := df.Select([]string{column, "index"})
 
@@ -84,9 +84,9 @@ func GetDuplicationScoresForRecord(optionNames []deduplication.DeduplicationType
 
 				// if there are multiple columns to check, we'll check the next one as well. we're wrapping around the indices, so that all combinations are checked
 				// NOTE: this only works this way because all types with OR only have 3 columns at most
-				if len(option.Value.Columns) > 1 {
+				if len(option.Config.Columns) > 1 {
 					filters := []dataframe.F{}
-					for _, c := range option.Value.Columns {
+					for _, c := range option.Config.Columns {
 						if c != column {
 							filters = append(filters, dataframe.F{
 								Colname:    c,
@@ -119,7 +119,7 @@ func GetDuplicationScoresForRecord(optionNames []deduplication.DeduplicationType
 			result := df.Subset(otherElements).Filter()
 
 			// e.g. first_name, middle_name, last_name, native_name
-			for _, column := range option.Value.Columns {
+			for _, column := range option.Config.Columns {
 				current := df.Select(column).Elem(currentIndex, 0)
 				result = result.Filter(dataframe.F{
 					Colidx:     0,
@@ -149,7 +149,7 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []
 	for _, duplicate := range duplicates {
 		errorList := make([]error, 0)
 		for _, deduplicationType := range deduplicationTypes {
-			for _, col := range deduplication.DeduplicationTypes[deduplicationType].Value.Columns {
+			for _, col := range deduplication.DeduplicationTypes[deduplicationType].Config.Columns {
 				val, err := duplicate.GetFieldValue(constants.IndividualDBToFileMap[col])
 				if err != nil {
 					errorList = append(errorList, errors.New(fmt.Sprintf("Unknown value for %s", col)))
@@ -169,7 +169,7 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []
 func FormatFileDeduplicationErrors(duplicates map[int]containers.Set[int], deduplicationTypes []deduplication.DeduplicationTypeName, records [][]string) []FileError {
 	deduplicationTypesStrings := make([]string, 0)
 	for _, deduplicationType := range deduplicationTypes {
-		for _, col := range deduplication.DeduplicationTypes[deduplicationType].Value.Columns {
+		for _, col := range deduplication.DeduplicationTypes[deduplicationType].Config.Columns {
 			deduplicationTypesStrings = append(deduplicationTypesStrings, col)
 		}
 	}

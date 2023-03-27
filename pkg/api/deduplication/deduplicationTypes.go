@@ -31,17 +31,17 @@ type DeduplicationTypeValue struct {
 }
 
 type DeduplicationType struct {
-	ID    DeduplicationTypeName
-	Value DeduplicationTypeValue
-	Label string
-	Order int
+	ID     DeduplicationTypeName
+	Config DeduplicationTypeValue
+	Label  string
+	Order  int
 }
 
 var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	DeduplicationTypeNamePhoneNumbers: {
 		ID:    DeduplicationTypeNamePhoneNumbers,
 		Label: "Phone numbers",
-		Value: DeduplicationTypeValue{
+		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualPhoneNumber1, constants.DBColumnIndividualPhoneNumber2, constants.DBColumnIndividualPhoneNumber3},
 			Condition: LOGICAL_OPERATOR_OR,
 		},
@@ -50,7 +50,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	DeduplicationTypeNameEmails: {
 		ID:    DeduplicationTypeNameEmails,
 		Label: "E-Mails",
-		Value: DeduplicationTypeValue{
+		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualEmail1, constants.DBColumnIndividualEmail2, constants.DBColumnIndividualEmail3},
 			Condition: LOGICAL_OPERATOR_OR,
 		},
@@ -59,7 +59,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	DeduplicationTypeNameIds: {
 		ID:    DeduplicationTypeNameIds,
 		Label: "Identification numbers",
-		Value: DeduplicationTypeValue{
+		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualIdentificationNumber1, constants.DBColumnIndividualIdentificationNumber2, constants.DBColumnIndividualIdentificationNumber3},
 			Condition: LOGICAL_OPERATOR_OR,
 		},
@@ -68,7 +68,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	DeduplicationTypeNameNames: {
 		ID:    DeduplicationTypeNameNames,
 		Label: "Names (First, Middle, Last, Native)",
-		Value: DeduplicationTypeValue{
+		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFirstName, constants.DBColumnIndividualMiddleName, constants.DBColumnIndividualLastName, constants.DBColumnIndividualNativeName},
 			Condition: LOGICAL_OPERATOR_AND,
 		},
@@ -77,7 +77,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	DeduplicationTypeNameFullName: {
 		ID:    DeduplicationTypeNameFullName,
 		Label: "Full Name",
-		Value: DeduplicationTypeValue{
+		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFullName},
 			Condition: LOGICAL_OPERATOR_OR,
 		},
@@ -86,7 +86,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	DeduplicationTypeNameFreeField1: {
 		ID:    DeduplicationTypeNameFreeField1,
 		Label: "Free Field 1",
-		Value: DeduplicationTypeValue{
+		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField1},
 			Condition: LOGICAL_OPERATOR_OR,
 		},
@@ -95,7 +95,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	DeduplicationTypeNameFreeField2: {
 		ID:    DeduplicationTypeNameFreeField2,
 		Label: "Free Field 2",
-		Value: DeduplicationTypeValue{
+		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField2},
 			Condition: LOGICAL_OPERATOR_OR,
 		},
@@ -104,7 +104,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	DeduplicationTypeNameFreeField3: {
 		ID:    DeduplicationTypeNameFreeField3,
 		Label: "Free Field 3",
-		Value: DeduplicationTypeValue{
+		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField3},
 			Condition: LOGICAL_OPERATOR_OR,
 		},
@@ -113,7 +113,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	DeduplicationTypeNameFreeField4: {
 		ID:    DeduplicationTypeNameFreeField4,
 		Label: "Free Field 4",
-		Value: DeduplicationTypeValue{
+		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField4},
 			Condition: LOGICAL_OPERATOR_OR,
 		},
@@ -122,7 +122,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	DeduplicationTypeNameFreeField5: {
 		ID:    DeduplicationTypeNameFreeField5,
 		Label: "Free Field 5",
-		Value: DeduplicationTypeValue{
+		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField5},
 			Condition: LOGICAL_OPERATOR_OR,
 		},
@@ -145,14 +145,10 @@ var deduplicationTypeNames = map[string]DeduplicationTypeName{
 
 func GetDeduplicationTypeNames(deduplicationTypes []string) ([]DeduplicationTypeName, error) {
 	optionNames := make([]DeduplicationTypeName, 0)
-	fileColumns := make([]string, 0)
 	for _, d := range deduplicationTypes {
 		dt, ok := deduplicationTypeNames[d]
-		optionNames = append(optionNames, dt)
 		if ok {
-			for _, vc := range DeduplicationTypes[dt].Value.Columns {
-				fileColumns = append(fileColumns, constants.IndividualDBToFileMap[vc])
-			}
+			optionNames = append(optionNames, dt)
 		} else {
 			return nil, fmt.Errorf("invalid deduplication type: %s", d)
 		}

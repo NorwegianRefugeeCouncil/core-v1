@@ -142,7 +142,7 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 		if len(duplicates) > 0 {
 			for _, dType := range optionName {
-				for _, field := range deduplication.DeduplicationTypes[dType].Value.Columns {
+				for _, field := range deduplication.DeduplicationTypes[dType].Config.Columns {
 					value, err := individual.GetFieldValue(field)
 					if err != nil || value == "" {
 						continue
