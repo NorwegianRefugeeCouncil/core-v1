@@ -108,7 +108,6 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		deduplicationTypes := r.MultipartForm.Value[formParamDeduplicationType]
 
 		if len(deduplicationTypes) > 0 {
-
 			optionNames, err := deduplication.GetDeduplicationTypeNames(deduplicationTypes)
 			if err != nil {
 				l.Error("invalid deduplication type", zap.String("deduplication_type", strings.Join(deduplicationTypes, ",")), zap.Error(err))
@@ -117,16 +116,13 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			}
 
 			duplicatesInFile := api.FindDuplicatesInUpload(optionNames, records)
-
-			errors := api.FormatFileDeduplicationErrors(duplicatesInFile, optionNames, records)
-			if errors != nil && len(errors) > 0 {
-				renderError(
-					"Found duplicates within your uploaded file: ",
-					errors,
-				)
-				return
+			if len(duplicatesInFile) > 0 {
+				errors := api.FormatFileDeduplicationErrors(duplicatesInFile, optionNames, records)
+				if errors != nil {
+					renderError("Found duplicates within your uploaded file: ", errors)
+					return
+				}
 			}
-			fmt.Sprintf("Found duplicates within your uploaded file: %s", duplicatesInFile)
 
 			duplicatesInDB, err := individualRepo.FindDuplicates(r.Context(), individuals, optionNames)
 			if err != nil {

@@ -66,21 +66,33 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	return ret, nil
 }
 
-type columnValues = map[string][]string
-type queryValues = map[deduplication.DeduplicationTypeName]columnValues
+type ColumnArgsGroups = map[string][]string
+type OrTypeArgsGroups = map[deduplication.DeduplicationTypeName]ColumnArgsGroups
+
+type RowArgsGroups = []*api.Individual
+type AndTypeArgsGroups = map[deduplication.DeduplicationTypeName]RowArgsGroups
+
+type QueryArgs struct {
+	And AndTypeArgsGroups
+	Or  OrTypeArgsGroups
+}
 
 /*
-example of queryValues:
+example of QueryArgs:
 {
-  "IDs": {
-    "id_1": ["ID1","ID2","ID3","ID4","ID5","ID6"],
-    "id_2": ["ID1","ID2","ID3","ID4","ID5","ID6"],
-    "id_3": ["ID1","ID2","ID3","ID4","ID5","ID6"],
-  },
-  "Names": {
-    "firstName": ["John","Jane"],
-    "lastName": ["Doe","Doe"]
-  }
+	Or: {
+		"IDs": {
+		  "id_1": ["ID1", "ID2", "ID3", "ID4", "ID5","ID6"],
+		  "id_2": ["ID1", "ID2", "ID3", "ID4", "ID5","ID6"],
+		  "id_3": ["ID1", "ID2", "ID3", "ID4", "ID5","ID6"],
+		},
+	},
+	And: {
+		"Names": [
+		  {"firstName": "John","lastName": "Doe"},
+		  {"firstName": "Jane","lastName": "Doe"}
+		]
+	}
 }
 */
 
@@ -91,83 +103,105 @@ func buildDeduplicationQuery(selectedCountryID string, newIndividuals []*api.Ind
 	b.WriteString(selectedCountryID)
 	b.WriteString("' AND deleted_at IS NULL")
 
-	params := collectParams(newIndividuals, deduplicationTypes)
-	args := fillQueryWithParameters(params, b)
+	argsMap := collectArgs(newIndividuals, deduplicationTypes)
+	args := fillQueryWithArgs(argsMap, b)
 	return b.String(), args
 }
 
-// building a map of values and parameters first to avoid empty values
-func collectParams(individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) queryValues {
-	params := queryValues{}
+func collectArgs(individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) QueryArgs {
+	argsMap := QueryArgs{
+		Or:  OrTypeArgsGroups{},
+		And: AndTypeArgsGroups{},
+	}
 	for d := 0; d < len(deduplicationTypes); d++ {
-		valuesPerColumn := columnValues{}
 		deduplicationType := deduplicationTypes[d]
 		deduplicationConfig := deduplication.DeduplicationTypes[deduplicationType].Config
 		if deduplicationConfig.Condition == deduplication.LOGICAL_OPERATOR_OR {
-			collectParamsForOrQuery(individuals, deduplicationConfig, valuesPerColumn)
+			orQueryArgs := collectOrQueryArgs(individuals, deduplicationConfig)
+			if len(orQueryArgs) > 0 {
+				argsMap.Or[deduplicationType] = orQueryArgs
+			}
 		} else if deduplicationConfig.Condition == deduplication.LOGICAL_OPERATOR_AND {
-			collectParamsForAndQuery(individuals, deduplicationConfig, valuesPerColumn)
-		}
-
-		if len(valuesPerColumn) > 0 {
-			params[deduplicationType] = valuesPerColumn
+			argsMap.And[deduplicationType] = individuals
 		}
 	}
-	return params
+	return argsMap
 }
 
-func collectParamsForOrQuery(individuals []*api.Individual, deduplicationConfig deduplication.DeduplicationTypeValue, allValuesPerColumns columnValues) columnValues {
-	values := make([]string, 0, len(individuals))
+func collectOrQueryArgs(individuals []*api.Individual, deduplicationConfig deduplication.DeduplicationTypeValue) ColumnArgsGroups {
+	colGroups := ColumnArgsGroups{}
+	args := make([]string, 0, len(individuals))
 	for c := 0; c < len(deduplicationConfig.Columns); c++ {
 		column := deduplicationConfig.Columns[c]
 		for _, individual := range individuals {
 			v, err := individual.GetFieldValue(column)
 			if err == nil && v != "" && v != nil {
-				values = append(values, v.(string))
+				args = append(args, v.(string))
 			}
 		}
 	}
-	if len(values) > 0 {
+	if len(args) > 0 {
 		for c := 0; c < len(deduplicationConfig.Columns); c++ {
 			column := deduplicationConfig.Columns[c]
-			allValuesPerColumns[column] = values
+			colGroups[column] = args
 		}
 	}
-	return allValuesPerColumns
+	return colGroups
 }
 
-func collectParamsForAndQuery(individuals []*api.Individual, deduplicationConfig deduplication.DeduplicationTypeValue, allValuesPerColumns columnValues) columnValues {
-
-	for c := 0; c < len(deduplicationConfig.Columns); c++ {
-		values := make([]string, 0, len(individuals))
-		column := deduplicationConfig.Columns[c]
-		for _, individual := range individuals {
-			v, err := individual.GetFieldValue(column)
-			if err == nil && v != "" && v != nil {
-				values = append(values, v.(string))
-			}
-		}
-		if len(values) > 0 {
-			allValuesPerColumns[column] = values
-		}
-	}
-	return allValuesPerColumns
-}
-
-func fillQueryWithParameters(paramMap queryValues, b *strings.Builder) []interface{} {
+func fillQueryWithArgs(argMap QueryArgs, b *strings.Builder) []interface{} {
 	args := make([]interface{}, 0)
 
-	for typeKey, typeValues := range paramMap {
-		b.WriteString(" AND (")
-		queryParts := make([]string, 0)
-		for colKey, colValues := range typeValues {
-			args = append(args, pq.Array(colValues))
-			queryParts = append(queryParts, fmt.Sprintf("%s IN (SELECT * FROM UNNEST ($%d::text[]))", colKey, len(args)))
-		}
-		b.WriteString(strings.Join(queryParts, " "+deduplication.DeduplicationTypes[typeKey].Config.Condition+" "))
-		b.WriteString(")")
+	for _, typeValues := range argMap.Or {
+		args = fillOrQueryWithArgs(b, args, typeValues)
+	}
+	for typeKey, typeValues := range argMap.And {
+		args = fillAndQueryWithArgs(b, args, typeValues, typeKey)
 	}
 
+	return args
+}
+
+func fillOrQueryWithArgs(b *strings.Builder, args []interface{}, colGroups ColumnArgsGroups) []interface{} {
+	subQueries := make([]string, 0)
+	arg := []string{}
+
+	for groupKey, groupArgs := range colGroups {
+		arg = groupArgs
+		subQueries = append(subQueries, fmt.Sprintf("%s IN (SELECT * FROM UNNEST ($%d::text[]))", groupKey, len(args)+1))
+	}
+
+	if len(subQueries) > 0 {
+		args = append(args, pq.Array(arg))
+		b.WriteString(" AND (")
+		b.WriteString(strings.Join(subQueries, " OR "))
+		b.WriteString(")")
+	}
+	return args
+}
+
+func fillAndQueryWithArgs(b *strings.Builder, args []interface{}, rowGroups RowArgsGroups, typeKey deduplication.DeduplicationTypeName) []interface{} {
+	columns := deduplication.DeduplicationTypes[typeKey].Config.Columns
+	subQueries := make([]string, 0)
+
+	for _, row := range rowGroups {
+		subQueryParts := []string{}
+		for _, c := range columns {
+			v, err := row.GetFieldValue(c)
+			if err != nil || v == "" || v == nil {
+				continue
+			}
+			args = append(args, v)
+			subQueryParts = append(subQueryParts, fmt.Sprintf("%s = $%d", c, len(args)))
+		}
+		subQueries = append(subQueries, strings.Join(subQueryParts, " AND "))
+	}
+
+	if len(subQueries) > 0 {
+		b.WriteString(" AND ((")
+		b.WriteString(strings.Join(subQueries, ") OR ("))
+		b.WriteString("))")
+	}
 	return args
 }
 

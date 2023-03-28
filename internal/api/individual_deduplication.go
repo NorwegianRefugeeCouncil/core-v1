@@ -11,24 +11,19 @@ import (
 	"strings"
 )
 
-func FindDuplicatesInUpload(optionNames []deduplication.DeduplicationTypeName, records [][]string) map[int]containers.Set[int] {
+func FindDuplicatesInUpload(optionNames []deduplication.DeduplicationTypeName, records [][]string) []containers.Set[int] {
 	df := dataframe.LoadRecords(records,
 		dataframe.DetectTypes(false),
 		dataframe.DefaultType(series.String),
 		dataframe.HasHeader(true),
 	)
 
-	duplicates := map[int]containers.Set[int]{}
+	duplicateScores := []containers.Set[int]{}
 	for i := 0; i < df.Nrow(); i++ {
-		duplicates[i] = containers.NewSet[int]()
+		duplicateScores = append(duplicateScores, containers.NewSet[int]())
+		GetDuplicationScoresForRecord(optionNames, df, i, duplicateScores[i])
 	}
-	for i := 0; i < df.Nrow(); i++ {
-		GetDuplicationScoresForRecord(optionNames, df, i, duplicates[i])
-		// if all sub-criteria of all deduplicationTypes have been fulfilled, this counts as a duplicate
-
-	}
-
-	return duplicates
+	return duplicateScores
 }
 
 func GetDuplicationScoresForRecord(optionNames []deduplication.DeduplicationTypeName, df dataframe.DataFrame, currentIndex int, duplicates containers.Set[int]) {
@@ -42,6 +37,7 @@ func GetDuplicationScoresForRecord(optionNames []deduplication.DeduplicationType
 		zeros = append(zeros, 0)
 	}
 	copy(duplicationScore, zeros)
+	// adding indices to the records so we can recognize them in the filtered results
 	df = df.Mutate(series.New(indexes, series.String, "index"))
 
 	// e.g. IDs, Names, FullName
@@ -66,7 +62,7 @@ func GetDuplicationScoresForRecord(optionNames []deduplication.DeduplicationType
 					continue
 				}
 
-				// we can exclude the current row, to prevent a false positive
+				// we exclude the current row, to prevent a false positive
 				otherElements := makeIndexSetWithSkip(thisColumn.Nrow(), currentIndex).Items()
 
 				// check for duplicates of the current value within its own column
@@ -82,8 +78,7 @@ func GetDuplicationScoresForRecord(optionNames []deduplication.DeduplicationType
 					}
 				}
 
-				// if there are multiple columns to check, we'll check the next one as well. we're wrapping around the indices, so that all combinations are checked
-				// NOTE: this only works this way because all types with OR only have 3 columns at most
+				// if there are multiple columns to check, we also filter all the other columns
 				if len(option.Config.Columns) > 1 {
 					filters := []dataframe.F{}
 					for _, c := range option.Config.Columns {
@@ -166,7 +161,7 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []
 	return duplicateErrors
 }
 
-func FormatFileDeduplicationErrors(duplicates map[int]containers.Set[int], deduplicationTypes []deduplication.DeduplicationTypeName, records [][]string) []FileError {
+func FormatFileDeduplicationErrors(duplicates []containers.Set[int], deduplicationTypes []deduplication.DeduplicationTypeName, records [][]string) []FileError {
 	deduplicationTypesStrings := make([]string, 0)
 	for _, deduplicationType := range deduplicationTypes {
 		for _, col := range deduplication.DeduplicationTypes[deduplicationType].Config.Columns {

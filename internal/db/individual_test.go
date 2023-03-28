@@ -1,9 +1,9 @@
 package db
 
 import (
-	"fmt"
 	"github.com/lib/pq"
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"github.com/stretchr/testify/assert"
 	"strings"
@@ -11,208 +11,124 @@ import (
 )
 
 var individuals = []*api.Individual{
-	{ID: "1", IdentificationNumber1: "ID1", IdentificationNumber2: "ID2", IdentificationNumber3: "ID3", FirstName: "FN1", MiddleName: "MN1", LastName: "LN1", NativeName: "NN1", FullName: "FN1 MN1 LN1"},
-	{ID: "2", IdentificationNumber1: "ID4", IdentificationNumber2: "ID5", IdentificationNumber3: "ID6", FirstName: "FN2", MiddleName: "MN2", LastName: "LN2", NativeName: "NN2", FullName: "FN2 MN2 LN2"},
-}
-
-func TestCollectParamsForOrQuery(t *testing.T) {
-	tests := []struct {
-		name               string
-		deduplicationTypes deduplication.DeduplicationTypeValue
-		wantValues         columnValues
-	}{
-		{
-			name:               "type: IDs",
-			deduplicationTypes: deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameIds].Config,
-			wantValues: columnValues{
-				"identification_number_1": {"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"},
-				"identification_number_2": {"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"},
-				"identification_number_3": {"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"},
-			},
-		},
-		{
-			name:               "type: Full Name",
-			deduplicationTypes: deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName].Config,
-			wantValues: columnValues{
-				"full_name": {"FN1 MN1 LN1", "FN2 MN2 LN2"},
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			values := map[string][]string{}
-			values = collectParamsForOrQuery(individuals, tt.deduplicationTypes, values)
-			assert.Equal(t, tt.wantValues, values)
-		})
-	}
-}
-
-func TestCollectParamsForAndQuery(t *testing.T) {
-	tests := []struct {
-		name               string
-		deduplicationTypes deduplication.DeduplicationTypeValue
-		wantValues         columnValues
-	}{
-		{
-			name:               "type: Names",
-			deduplicationTypes: deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameNames].Config,
-			wantValues: columnValues{
-				"first_name":  {"FN1", "FN2"},
-				"last_name":   {"LN1", "LN2"},
-				"middle_name": {"MN1", "MN2"},
-				"native_name": {"NN1", "NN2"},
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			values := map[string][]string{}
-			values = collectParamsForAndQuery(individuals, tt.deduplicationTypes, values)
-			assert.Equal(t, tt.wantValues, values)
-		})
-	}
+	{ID: "1", IdentificationNumber1: "ID1", IdentificationNumber2: "ID2", IdentificationNumber3: "ID3", FirstName: "FN1", MiddleName: "", LastName: "LN1", NativeName: "NN1", Email1: "123"},
+	{ID: "2", IdentificationNumber1: "ID4", IdentificationNumber2: "ID5", IdentificationNumber3: "ID6", FirstName: "FN2", MiddleName: "MN2", LastName: "LN2", NativeName: "NN2", Email2: "456"},
+	{ID: "3", IdentificationNumber1: "ID7", IdentificationNumber2: "ID8", FirstName: "FN3", LastName: "LN3", MiddleName: ""},
 }
 
 func TestCollectParams(t *testing.T) {
 	tests := []struct {
 		name               string
 		deduplicationTypes []deduplication.DeduplicationTypeName
-		wantValues         queryValues
+		wantValues         QueryArgs
 	}{
 		{
 			name:               "type: Names, IDs",
-			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds},
-			wantValues: queryValues{
-				"Names": columnValues{
-					"first_name":  {"FN1", "FN2"},
-					"last_name":   {"LN1", "LN2"},
-					"middle_name": {"MN1", "MN2"},
-					"native_name": {"NN1", "NN2"},
+			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds, deduplication.DeduplicationTypeNameEmails, deduplication.DeduplicationTypeNameFullName},
+			wantValues: QueryArgs{
+				And: AndTypeArgsGroups{
+					"Names": individuals,
 				},
-				"Ids": columnValues{
-					"identification_number_1": {"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"},
-					"identification_number_2": {"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"},
-					"identification_number_3": {"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"},
+				Or: OrTypeArgsGroups{
+					"Ids": ColumnArgsGroups{
+						"identification_number_1": {"ID1", "ID4", "ID7", "ID2", "ID5", "ID8", "ID3", "ID6"},
+						"identification_number_2": {"ID1", "ID4", "ID7", "ID2", "ID5", "ID8", "ID3", "ID6"},
+						"identification_number_3": {"ID1", "ID4", "ID7", "ID2", "ID5", "ID8", "ID3", "ID6"},
+					},
+					"Emails": ColumnArgsGroups{
+						"email_1": {"123", "456"},
+						"email_2": {"123", "456"},
+						"email_3": {"123", "456"},
+					},
 				},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			params := collectParams(individuals, tt.deduplicationTypes)
+			params := collectArgs(individuals, tt.deduplicationTypes)
 			assert.Equal(t, tt.wantValues, params)
 		})
 	}
 }
 
-func TestFillQueryWithParameters(t *testing.T) {
-	a := pq.Array([]string{"FN1", "FN2"})
-	b, c := a.Value()
-	fmt.Println(b, c)
+func TestFillOrQueryWithParameters(t *testing.T) {
 	tests := []struct {
-		name         string
-		queryBuilder *strings.Builder
-		params       queryValues
-		wantArgs     []interface{}
-		wantQuery    string
+		name             string
+		queryBuilder     *strings.Builder
+		values           ColumnArgsGroups
+		wantArgs         []interface{}
+		wantedQueryParts containers.Set[string]
 	}{
 		{
-			name:         "type: Names, IDs",
+			name:         "type: IDs",
 			queryBuilder: &strings.Builder{},
-			params:       collectParams(individuals, []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds}),
+			values: ColumnArgsGroups{
+				"identification_number_1": {"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"},
+				"identification_number_2": {"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"},
+				"identification_number_3": {"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"},
+			},
 			wantArgs: []interface{}{
-				pq.Array([]string{"LN1", "LN2"}),
-				pq.Array([]string{"FN1", "FN2"}),
-				pq.Array([]string{"LN1", "LN2"}),
-				pq.Array([]string{"MN1", "MN2"}),
-				pq.Array([]string{"NN1", "NN2"}),
-				pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}),
-				pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}),
 				pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}),
 			},
-			wantQuery: " AND (last_name IN (SELECT * FROM UNNEST ($1::text[])) AND native_name IN (SELECT * FROM UNNEST ($2::text[])) AND first_name IN (SELECT * FROM UNNEST ($3::text[])) AND middle_name IN (SELECT * FROM UNNEST ($4::text[]))) AND (identification_number_1 IN (SELECT * FROM UNNEST ($5::text[])) OR identification_number_2 IN (SELECT * FROM UNNEST ($6::text[])) OR identification_number_3 IN (SELECT * FROM UNNEST ($7::text[])))\n",
+			wantedQueryParts: containers.NewSet[string]([]string{
+				"identification_number_1 IN (SELECT * FROM UNNEST ($1::text[]))",
+				"identification_number_2 IN (SELECT * FROM UNNEST ($1::text[]))",
+				"identification_number_3 IN (SELECT * FROM UNNEST ($1::text[]))",
+			}...),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			args := fillQueryWithParameters(tt.params, tt.queryBuilder)
+			args := []interface{}{}
+			args = fillOrQueryWithArgs(tt.queryBuilder, args, tt.values)
 			assert.Equal(t, tt.wantArgs, args)
-			assert.Equal(t, tt.wantQuery, tt.queryBuilder.String())
+
+			query := tt.queryBuilder.String()
+			query = strings.TrimPrefix(query, " AND (")
+			query = strings.TrimSuffix(query, ")")
+			assert.Equal(t, containers.NewSet[string](strings.Split(query, " OR ")...), tt.wantedQueryParts)
 		})
 	}
 }
 
-func TestBuildDeduplicationQuery(t *testing.T) {
+func TestFillAndQueryWithParameters(t *testing.T) {
 	tests := []struct {
-		name               string
-		deduplicationTypes []deduplication.DeduplicationTypeName
-		individuals        []*api.Individual
-		wantQuery          string
-		wantArgs           []interface{}
+		name             string
+		queryBuilder     *strings.Builder
+		values           RowArgsGroups
+		wantArgs         []interface{}
+		wantedQueryParts [][]string
+		typeKey          deduplication.DeduplicationTypeName
 	}{
 		{
-			name:               "3 existing individuals, 1 unchecked individual, 1 deduplication type",
-			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameIds},
-			individuals: []*api.Individual{
-				{ID: "1", IdentificationNumber1: "ID1", IdentificationNumber2: "ID2", IdentificationNumber3: "ID3"},
-			},
-			wantQuery: "SELECT * FROM individual_registrations WHERE country_id = 'countryId' AND deleted_at IS NULL AND (identification_number_1 IN (SELECT * FROM UNNEST ($1::text[])) OR identification_number_2 IN (SELECT * FROM UNNEST ($2::text[])) OR identification_number_3 IN (SELECT * FROM UNNEST ($3::text[])))",
+			name:         "type: Names",
+			queryBuilder: &strings.Builder{},
+			values:       individuals,
+			typeKey:      deduplication.DeduplicationTypeNameNames,
 			wantArgs: []interface{}{
-				pq.Array([]string{"ID1", "ID2", "ID3"}),
-				pq.Array([]string{"ID1", "ID2", "ID3"}),
-				pq.Array([]string{"ID1", "ID2", "ID3"}),
+				"FN1", "LN1", "NN1", "FN2", "MN2", "LN2", "NN2", "FN3", "LN3",
 			},
-		},
-		{
-			name:               "3 existing individuals, 2 unchecked individuals, 1 deduplication type",
-			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameIds},
-			individuals: []*api.Individual{
-				{ID: "1", IdentificationNumber1: "ID1", IdentificationNumber2: "ID2", IdentificationNumber3: "ID3"},
-				{ID: "4", IdentificationNumber1: "ID4", IdentificationNumber2: "ID5", IdentificationNumber3: "ID6"},
-			},
-			wantQuery: "SELECT * FROM individual_registrations WHERE country_id = 'countryId' AND deleted_at IS NULL AND (identification_number_1 IN (SELECT * FROM UNNEST ($1::text[])) OR identification_number_2 IN (SELECT * FROM UNNEST ($2::text[])) OR identification_number_3 IN (SELECT * FROM UNNEST ($3::text[])))",
-			wantArgs: []interface{}{
-				pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}),
-				pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}),
-				pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}),
-			},
-		},
-		{
-			name:               "3 existing individuals, 2 unchecked individuals, 2 deduplication types, empty values",
-			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameIds, deduplication.DeduplicationTypeNameFullName},
-			individuals: []*api.Individual{
-				{ID: "1", IdentificationNumber1: "ID1", IdentificationNumber2: "ID2", IdentificationNumber3: "ID3"},
-				{ID: "4", IdentificationNumber1: "ID4", IdentificationNumber2: "ID5", IdentificationNumber3: "ID6"},
-			},
-			wantQuery: "SELECT * FROM individual_registrations WHERE country_id = 'countryId' AND deleted_at IS NULL AND (identification_number_1 IN (SELECT * FROM UNNEST ($1::text[])) OR identification_number_2 IN (SELECT * FROM UNNEST ($2::text[])) OR identification_number_3 IN (SELECT * FROM UNNEST ($3::text[])))",
-			wantArgs: []interface{}{
-				pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}),
-				pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}),
-				pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}),
-			},
-		},
-		{
-			name:               "3 existing individuals, 2 unchecked individuals, 2 deduplication types",
-			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameIds, deduplication.DeduplicationTypeNameNames},
-			individuals: []*api.Individual{
-				{ID: "1", IdentificationNumber1: "ID1", IdentificationNumber2: "ID2", IdentificationNumber3: "ID3", FirstName: "John", LastName: "Doe"},
-				{ID: "4", IdentificationNumber1: "ID4", IdentificationNumber2: "ID5", IdentificationNumber3: "ID6", FirstName: "Jane", LastName: "Doe"},
-			},
-			wantQuery: "SELECT * FROM individual_registrations WHERE country_id = 'countryId' AND deleted_at IS NULL AND (identification_number_1 IN (SELECT * FROM UNNEST ($1::text[])) OR identification_number_2 IN (SELECT * FROM UNNEST ($2::text[])) OR identification_number_3 IN (SELECT * FROM UNNEST ($3::text[]))) AND (first_name IN (SELECT * FROM UNNEST ($4::text[])) AND last_name IN (SELECT * FROM UNNEST ($5::text[])))",
-			wantArgs: []interface{}{
-				pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}),
-				pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}),
-				pq.Array([]string{"ID1", "ID4", "ID2", "ID5", "ID3", "ID6"}),
-				pq.Array([]string{"John", "Jane"}),
-				pq.Array([]string{"Doe", "Doe"}),
+			wantedQueryParts: [][]string{
+				{"first_name = $1", "last_name = $2", "native_name = $3"},
+				{"first_name = $4", "middle_name = $5", "last_name = $6", "native_name = $7"},
+				{"first_name = $8", "last_name = $9"},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			query, args := buildDeduplicationQuery("countryId", tt.individuals, tt.deduplicationTypes)
-			assert.Equal(t, tt.wantQuery, query)
+			args := []interface{}{}
+			args = fillAndQueryWithArgs(tt.queryBuilder, args, tt.values, deduplication.DeduplicationTypeNameNames)
 			assert.Equal(t, tt.wantArgs, args)
+
+			query := tt.queryBuilder.String()
+			query = strings.TrimPrefix(query, " AND ((")
+			query = strings.TrimSuffix(query, "))")
+			queries := strings.Split(query, ") OR (")
+			for q := 0; q < len(queries); q++ {
+				assert.Equal(t, strings.Split(queries[q], " AND "), tt.wantedQueryParts[q])
+			}
 		})
 	}
 }
