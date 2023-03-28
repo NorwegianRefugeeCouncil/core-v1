@@ -67,21 +67,21 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 }
 
 type columnValues = map[string][]string
-type deduplicationTypeValues = []columnValues
-type queryValues = map[deduplication.DeduplicationTypeName]deduplicationTypeValues
+type queryValues = map[deduplication.DeduplicationTypeName]columnValues
 
 /*
 example of queryValues:
-  {
-    "Names": [
-      {
-        "firstName": ["John","Jane"]
-      }, --> type columnValues
-      {
-        "lastName": ["Doe","Doe"]
-      } --> type columnValues
-    ]
+{
+  "IDs": {
+    "id_1": ["ID1","ID2","ID3","ID4","ID5","ID6"],
+    "id_2": ["ID1","ID2","ID3","ID4","ID5","ID6"],
+    "id_3": ["ID1","ID2","ID3","ID4","ID5","ID6"],
+  },
+  "Names": {
+    "firstName": ["John","Jane"],
+    "lastName": ["Doe","Doe"]
   }
+}
 */
 
 func buildDeduplicationQuery(selectedCountryID string, newIndividuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) (string, []interface{}) {
@@ -97,30 +97,29 @@ func buildDeduplicationQuery(selectedCountryID string, newIndividuals []*api.Ind
 }
 
 // building a map of values and parameters first to avoid empty values
-func collectParams(individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) []queryValues {
-	params := []queryValues{}
+func collectParams(individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) queryValues {
+	params := queryValues{}
 	for d := 0; d < len(deduplicationTypes); d++ {
-		valuesPerType := deduplicationTypeValues{}
+		valuesPerColumn := columnValues{}
 		deduplicationType := deduplicationTypes[d]
 		deduplicationConfig := deduplication.DeduplicationTypes[deduplicationType].Config
 		if deduplicationConfig.Condition == deduplication.LOGICAL_OPERATOR_OR {
-			valuesPerType = collectParamsForOrQuery(individuals, deduplicationConfig, valuesPerType)
+			collectParamsForOrQuery(individuals, deduplicationConfig, valuesPerColumn)
 		} else if deduplicationConfig.Condition == deduplication.LOGICAL_OPERATOR_AND {
-			valuesPerType = collectParamsForAndQuery(individuals, deduplicationConfig, valuesPerType)
+			collectParamsForAndQuery(individuals, deduplicationConfig, valuesPerColumn)
 		}
 
-		if len(valuesPerType) > 0 {
-			paramPerType := queryValues{deduplicationType: valuesPerType}
-			params = append(params, paramPerType)
+		if len(valuesPerColumn) > 0 {
+			params[deduplicationType] = valuesPerColumn
 		}
 	}
 	return params
 }
 
-func collectParamsForOrQuery(individuals []*api.Individual, deduplicationConfig deduplication.DeduplicationTypeValue, allValuesPerColumns deduplicationTypeValues) deduplicationTypeValues {
+func collectParamsForOrQuery(individuals []*api.Individual, deduplicationConfig deduplication.DeduplicationTypeValue, allValuesPerColumns columnValues) columnValues {
 	values := make([]string, 0, len(individuals))
-	for ci := 0; ci < len(deduplicationConfig.Columns); ci++ {
-		column := deduplicationConfig.Columns[ci]
+	for c := 0; c < len(deduplicationConfig.Columns); c++ {
+		column := deduplicationConfig.Columns[c]
 		for _, individual := range individuals {
 			v, err := individual.GetFieldValue(column)
 			if err == nil && v != "" && v != nil {
@@ -131,17 +130,17 @@ func collectParamsForOrQuery(individuals []*api.Individual, deduplicationConfig 
 	if len(values) > 0 {
 		for c := 0; c < len(deduplicationConfig.Columns); c++ {
 			column := deduplicationConfig.Columns[c]
-			valuesPerColumn := columnValues{column: values}
-			allValuesPerColumns = append(allValuesPerColumns, valuesPerColumn)
+			allValuesPerColumns[column] = values
 		}
 	}
 	return allValuesPerColumns
 }
 
-func collectParamsForAndQuery(individuals []*api.Individual, deduplicationConfig deduplication.DeduplicationTypeValue, allValuesPerColumns deduplicationTypeValues) deduplicationTypeValues {
-	for ci := 0; ci < len(deduplicationConfig.Columns); ci++ {
+func collectParamsForAndQuery(individuals []*api.Individual, deduplicationConfig deduplication.DeduplicationTypeValue, allValuesPerColumns columnValues) columnValues {
+
+	for c := 0; c < len(deduplicationConfig.Columns); c++ {
 		values := make([]string, 0, len(individuals))
-		column := deduplicationConfig.Columns[ci]
+		column := deduplicationConfig.Columns[c]
 		for _, individual := range individuals {
 			v, err := individual.GetFieldValue(column)
 			if err == nil && v != "" && v != nil {
@@ -149,34 +148,26 @@ func collectParamsForAndQuery(individuals []*api.Individual, deduplicationConfig
 			}
 		}
 		if len(values) > 0 {
-			valuesPerColumn := columnValues{column: values}
-			allValuesPerColumns = append(allValuesPerColumns, valuesPerColumn)
+			allValuesPerColumns[column] = values
 		}
 	}
 	return allValuesPerColumns
 }
 
-func fillQueryWithParameters(paramMap []queryValues, b *strings.Builder) []interface{} {
+func fillQueryWithParameters(paramMap queryValues, b *strings.Builder) []interface{} {
 	args := make([]interface{}, 0)
 
-	for pi, _ := range paramMap {
-		paramType := paramMap[pi]
-		for paramTypeKey, paramTypeValue := range paramType {
-			b.WriteString(" AND (")
-			for p, paramTypeValueItem := range paramTypeValue {
-				if p > 0 {
-					b.WriteString(" " + deduplication.DeduplicationTypes[paramTypeKey].Config.Condition + " ")
-				}
-				for col, paramTypeValueItemKey := range paramTypeValueItem {
-					args = append(args, pq.Array(paramTypeValueItemKey))
-					b.WriteString(col + " IN (SELECT * FROM UNNEST (")
-					b.WriteString(fmt.Sprintf("$%d", len(args)))
-					b.WriteString("::text[]))")
-				}
-			}
-			b.WriteString(")")
+	for typeKey, typeValues := range paramMap {
+		b.WriteString(" AND (")
+		queryParts := make([]string, 0)
+		for colKey, colValues := range typeValues {
+			args = append(args, pq.Array(colValues))
+			queryParts = append(queryParts, fmt.Sprintf("%s IN (SELECT * FROM UNNEST ($%d::text[]))", colKey, len(args)))
 		}
+		b.WriteString(strings.Join(queryParts, " "+deduplication.DeduplicationTypes[typeKey].Config.Condition+" "))
+		b.WriteString(")")
 	}
+
 	return args
 }
 
