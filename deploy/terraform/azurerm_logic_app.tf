@@ -72,10 +72,30 @@ data "template_file" "logic_app_schema" {
 }
 
 resource "azurerm_resource_group_template_deployment" "logic_app_deployment" {
-  provider            = azurerm.runtime
-  depends_on = [azurerm_logic_app_workflow.logic-app-teams]
-  resource_group_name = azurerm_resource_group.rg.name
-  deployment_mode = "Incremental"
-  name = "logic_app_deployment"
-  template_content = data.template_file.logic_app_schema.template
+  provider                      = azurerm.runtime
+  depends_on                    = [azurerm_logic_app_workflow.logic-app-teams]
+  resource_group_name           = azurerm_resource_group.rg.name
+  deployment_mode               = "Incremental"
+  name                          = "logic_app_deployment"
+  template_content              = data.template_file.logic_app_schema.template
+  parameters_content = jsonencode({
+    "coreChannelParentMessage" = {
+      value =  var.teams_core_alerts_channel_thread_parent_message_id
+    },
+    "ictChannelParentMessage" = {
+      value =  var.teams_ict_service_alerts_channel_thread_parent_message_id
+    },
+    "coreChannelId" = {
+      value =  var.teams_d_team_core_alerts_channel_id
+    },
+    "ictChannelId" = {
+      value =  var.teams_global_ict_ict_service_alerts_channel_id
+    },
+    "coreTeamId" = {
+      value =  var.teams_d_team_team_id
+    },
+    "ictTeamId" = {
+      value =  var.teams_global_ict_team_id
+    },
+  })
 }

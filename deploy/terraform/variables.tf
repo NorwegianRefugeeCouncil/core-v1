@@ -324,3 +324,32 @@ variable "frontdoor_sku_name" {
   description = "The sku name of the frontdoor."
   default     = "Standard_AzureFrontDoor"
 }
+
+variable "teams_ict_service_alerts_channel_thread_parent_message_id" {
+  type        = string
+  description = "The parent message id of the teams thread that alerts will be sent to, in the ICT Service Alerts channel."
+}
+
+variable "teams_core_alerts_channel_thread_parent_message_id" {
+  type        = string
+  description = "The parent message id of the teams thread that alerts will be sent to, in the CORE Alerts channel."
+}
+
+variable "teams_d_team_core_alerts_channel_id" {
+  type        = string
+  description = "The parent message id of the teams thread that alerts will be sent to, in the ICT Service Alerts channel."
+}
+
+variable "teams_global_ict_ict_service_alerts_channel_id" {
+  type        = string
+  description = "The parent message id of the teams thread that alerts will be sent to, in the CORE Alerts channel."
+}
+variable "teams_d_team_team_id" {
+  type        = string
+  description = "The parent message id of the teams thread that alerts will be sent to, in the ICT Service Alerts channel."
+}
+
+variable "teams_global_ict_team_id" {
+  type        = string
+  description = "The parent message id of the teams thread that alerts will be sent to, in the CORE Alerts channel."
+}
