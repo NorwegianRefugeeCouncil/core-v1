@@ -80,7 +80,7 @@ func TestGetDuplicationScoresForRecord(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			duplicates := map[int]containers.Set[int]{0: containers.NewSet[int]()}
+			duplicates := []containers.Set[int]{0: containers.NewSet[int]()}
 			api.GetDuplicationScoresForRecord(tt.deduplicationTypes, tt.records, tt.index, duplicates[0])
 			assert.Equal(t, tt.want, duplicates[0])
 		})
@@ -92,13 +92,13 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 		name               string
 		deduplicationTypes []deduplication.DeduplicationTypeName
 		records            [][]string
-		want               map[int]containers.Set[int]
+		want               []containers.Set[int]
 	}{
 		{
 			name:               "check IDs",
 			records:            testRecords,
 			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameIds},
-			want: map[int]containers.Set[int]{
+			want: []containers.Set[int]{
 				0: containers.NewSet[int](2, 3, 4, 6, 7),
 				1: containers.NewSet[int](5, 8),
 				2: containers.NewSet[int](0, 7),
@@ -115,7 +115,7 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 			name:               "check Names",
 			records:            testRecords,
 			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames},
-			want: map[int]containers.Set[int]{
+			want: []containers.Set[int]{
 				0: containers.NewSet[int](6, 7, 8),
 				1: containers.NewSet[int](),
 				2: containers.NewSet[int](),
@@ -132,7 +132,7 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 			name:               "check Names and IDs",
 			records:            testRecords,
 			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds},
-			want: map[int]containers.Set[int]{
+			want: []containers.Set[int]{
 				0: containers.NewSet[int](6, 7),
 				1: containers.NewSet[int](),
 				2: containers.NewSet[int](),
@@ -149,7 +149,7 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 			name:               "check Full Name",
 			records:            testRecords,
 			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameFullName},
-			want: map[int]containers.Set[int]{
+			want: []containers.Set[int]{
 				0: containers.NewSet[int](5),
 				1: containers.NewSet[int](),
 				2: containers.NewSet[int](),
@@ -166,7 +166,7 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 			name:               "check Names and IDs and Full Name",
 			records:            testRecords,
 			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds, deduplication.DeduplicationTypeNameFullName},
-			want: map[int]containers.Set[int]{
+			want: []containers.Set[int]{
 				0: containers.NewSet[int](),
 				1: containers.NewSet[int](),
 				2: containers.NewSet[int](),
