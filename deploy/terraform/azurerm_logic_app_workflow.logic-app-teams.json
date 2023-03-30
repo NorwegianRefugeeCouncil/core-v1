@@ -15,27 +15,21 @@
       "type": "String"
     },
     "coreChannelParentMessage": {
-      "coreChannelParentMessage": "",
       "type": "String"
     },
     "ictChannelParentMessage": {
-      "coreChannelParentMessage": "",
       "type": "String"
     },
     "coreChannelId": {
-      "coreChannelParentMessage": "",
       "type": "String"
     },
     "ictChannelId": {
-      "coreChannelParentMessage": "",
       "type": "String"
     },
     "coreTeamId": {
-      "coreChannelParentMessage": "",
       "type": "String"
     },
     "ictTeamId": {
-      "coreChannelParentMessage": "",
       "type": "String"
     }
   },
@@ -135,7 +129,7 @@
                                   "parentMessageId": "parameters('coreChannelParentMessage')",
                                   "recipient": {
                                     "channelId": "parameters('coreTeamId')",
-                                    "groupId": "parameters('coreChannelId')
+                                    "groupId": "parameters('coreChannelId')"
                                   }
                                 },
                                 "host": {
@@ -160,7 +154,7 @@
                                   "parentMessageId": "parameters('ictChannelParentMessage')",
                                   "recipient": {
                                     "channelId": "parameters('ictTeamId')",
-                                    "groupId": "parameters('ictChannelId')
+                                    "groupId": "parameters('ictChannelId')"
                                   }
                                 },
                                 "host": {
@@ -194,7 +188,7 @@
                         "parentMessageId": "parameters('coreChannelParentMessage')",
                         "recipient": {
                           "channelId": "parameters('coreTeamId')",
-                          "groupId": "parameters('coreChannelId')
+                          "groupId": "parameters('coreChannelId')"
                         }
                       },
                       "host": {
@@ -219,7 +213,7 @@
                         "parentMessageId": "parameters('ictChannelParentMessage')",
                         "recipient": {
                           "channelId": "parameters('ictTeamId')",
-                          "groupId": "parameters('ictChannelId')
+                          "groupId": "parameters('ictChannelId')"
                         }
                       },
                       "host": {
