@@ -16,7 +16,7 @@ resource "azurerm_monitor_metric_alert" "postgresCpuOverThreshold" {
   severity            = 3
 
   criteria {
-    metric_namespace = "Microsoft.DBforPostgreSQL/flexibleServers/databases"
+    metric_namespace = "Microsoft.DBforPostgreSQL/flexibleServers"
     metric_name      = "cpu_percent"
     aggregation      = "Average"
     operator         = "GreaterThan"
@@ -40,7 +40,7 @@ resource "azurerm_monitor_metric_alert" "postgresMemoryUsage" {
 
 
   criteria {
-    metric_namespace = "Microsoft.DBforPostgreSQL/flexibleServers/databases"
+    metric_namespace = "Microsoft.DBforPostgreSQL/flexibleServers"
     metric_name      = "MemoryUsage"
     aggregation      = "Average"
     operator         = "GreaterThan"
