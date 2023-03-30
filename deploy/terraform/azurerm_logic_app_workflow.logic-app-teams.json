@@ -126,10 +126,10 @@
                               "inputs": {
                                 "body": {
                                   "messageBody": "<p><span style=\"font-size: 16px\"><strong>CORE Alert </strong></span><span style=\"font-size: 16px\"><strong>@{triggerBody()?['data']?['essentials']?['severity']}</strong></span><span style=\"font-size: 16px\"><strong><br>\n</strong></span><span style=\"font-size: 14px\">Category: Metric<br>\n</span><br>\n@{triggerBody()?['data']?['essentials']?['alertRule']}<br>\n@{triggerBody()?['data']?['essentials']?['description']}<br>\n@{triggerBody()?['data']?['essentials']?['alertId']}<br>\n<br>\n<span style=\"font-size: 14px\"><strong>Metric info<br>\n</strong></span>Namespace @{items('For_each')?['metricNamespace']}<br>\nCondition for Alert: @{items('For_each')?['metricName']} @{items('For_each')?['operator']} @{items('For_each')?['threshold']}<br>\nActual Value: @{items('For_each')?['metricValue']}<br>\n<br>\n<br>\n<span style=\"font-size: 14px\"><strong>Additional Info<br>\n</strong></span>Name: @{items('For_each_2')?['name']}<br>\n<br>\nContext: @{triggerBody()?['data']?['alertContext']}<br>\n<br>\nEssentials: @{triggerBody()?['data']?['essentials']}</p>",
-                                  "parentMessageId": "parameters('coreChannelParentMessage')",
+                                  "parentMessageId": "@parameters('coreChannelParentMessage')",
                                   "recipient": {
-                                    "channelId": "parameters('coreTeamId')",
-                                    "groupId": "parameters('coreChannelId')"
+                                    "channelId": "@parameters('coreTeamId')",
+                                    "groupId": "@parameters('coreChannelId')"
                                   }
                                 },
                                 "host": {
@@ -151,10 +151,10 @@
                               "inputs": {
                                 "body": {
                                   "messageBody": "<p><span style=\"font-size: 16px\"><strong>CORE Alert </strong></span><span style=\"font-size: 16px\"><strong>@{triggerBody()?['data']?['essentials']?['severity']}</strong></span><span style=\"font-size: 16px\"><strong></strong></span><br>\n<span style=\"font-size: 14px\"><strong>Category: Metric</strong></span><br>\n<br>\n@{triggerBody()?['data']?['essentials']?['alertRule']}<br>\n@{triggerBody()?['data']?['essentials']?['description']}<br>\n@{triggerBody()?['data']?['essentials']?['alertId']}<br>\n<br>\n<span style=\"font-size: 14px\"><strong>Metric info</strong></span><br>\nNamespace @{items('For_each')?['metricNamespace']}<br>\nCondition for Alert: @{items('For_each')?['metricName']} @{items('For_each')?['operator']} @{items('For_each')?['threshold']}<br>\nActual Value: @{items('For_each')?['metricValue']}<br>\n<br>\n<br>\n<span style=\"font-size: 14px\"><strong>Additional Info</strong></span><br>\nName: @{items('For_each_2')?['name']}<br>\n<br>\nContext: @{triggerBody()?['data']?['alertContext']}<br>\n<br>\nEssentials: @{triggerBody()?['data']?['essentials']}</p>",
-                                  "parentMessageId": "parameters('ictChannelParentMessage')",
+                                  "parentMessageId": "@parameters('ictChannelParentMessage')",
                                   "recipient": {
-                                    "channelId": "parameters('ictTeamId')",
-                                    "groupId": "parameters('ictChannelId')"
+                                    "channelId": "@parameters('ictTeamId')",
+                                    "groupId": "@parameters('ictChannelId')"
                                   }
                                 },
                                 "host": {
@@ -185,10 +185,10 @@
                     "inputs": {
                       "body": {
                         "messageBody": "<p><span style=\"font-size: 16px\"><strong>CORE Alert </strong></span><span style=\"font-size: 16px\"><strong>@{triggerBody()?['data']?['essentials']?['severity']}</strong></span><span style=\"font-size: 16px\"><strong></strong></span><span><br>\nCategory: </span><span>@{triggerBody()?['data']?['essentials']?['monitoringService']}</span><span><br>\n<br>\n</span><span>@{triggerBody()?['data']?['essentials']?['alertRule']}</span><span><br>\n</span><span>@{triggerBody()?['data']?['essentials']?['description']}</span><span><br>\n</span><span>@{triggerBody()?['data']?['essentials']?['alertId']}</span><span><br>\n<br>\n<br>\n</span><span><strong>Additional Info<br>\n</strong></span><span>Name:<br>\n<br>\nContext: </span><span>@{triggerBody()?['data']?['alertContext']}</span><span><br>\n<br>\nEssentials: </span><span>@{triggerBody()?['data']?['essentials']}</span><span></span></p>",
-                        "parentMessageId": "parameters('coreChannelParentMessage')",
+                        "parentMessageId": "@parameters('coreChannelParentMessage')",
                         "recipient": {
-                          "channelId": "parameters('coreTeamId')",
-                          "groupId": "parameters('coreChannelId')"
+                          "channelId": "@parameters('coreTeamId')",
+                          "groupId": "@parameters('coreChannelId')"
                         }
                       },
                       "host": {
@@ -210,10 +210,10 @@
                     "inputs": {
                       "body": {
                         "messageBody": "<p><span style=\"font-size: 16px\"><strong>CORE Alert </strong></span><span style=\"font-size: 16px\"><strong>@{triggerBody()?['data']?['essentials']?['severity']}</strong></span><span style=\"font-size: 16px\"><strong></strong></span><br>\n<span style=\"font-size: 14px\"><strong>Category: </strong></span><span style=\"font-size: 14px\"><strong>@{triggerBody()?['data']?['essentials']?['monitoringService']}</strong></span><span style=\"font-size: 14px\"><strong></strong></span><br>\n<br>\n@{triggerBody()?['data']?['essentials']?['alertRule']}<br>\n@{triggerBody()?['data']?['essentials']?['description']}<br>\n@{triggerBody()?['data']?['essentials']?['alertId']}<br>\n<br>\n<br>\n<span style=\"font-size: 14px\"><strong>Additional Info<br>\n</strong></span>Context: @{triggerBody()?['data']?['alertContext']}<br>\n<br>\nEssentials: @{triggerBody()?['data']?['essentials']}</p>",
-                        "parentMessageId": "parameters('ictChannelParentMessage')",
+                        "parentMessageId": "@parameters('ictChannelParentMessage')",
                         "recipient": {
-                          "channelId": "parameters('ictTeamId')",
-                          "groupId": "parameters('ictChannelId')"
+                          "channelId": "@parameters('ictTeamId')",
+                          "groupId": "@parameters('ictChannelId')"
                         }
                       },
                       "host": {
