@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "workflows_send_alerts_to_teams_thread_name": {
-      "defaultValue": "send-alerts-to-teams-thread",
+      "defaultValue": "send-alerts-to-teams-thread-dev",
       "type": "String"
     },
     "virtualmachines_wcus_r2_gen2_externalid": {
