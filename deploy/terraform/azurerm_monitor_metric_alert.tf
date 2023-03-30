@@ -59,6 +59,7 @@ resource "azurerm_monitor_metric_alert" "appHealthCheck" {
   description         = "Action will be triggered when the HealthCheckStatus is less than 100% okay."
   severity            = 1
   frequency           = "PT1M"
+  enabled             = false
 
   criteria {
     threshold         = 1
