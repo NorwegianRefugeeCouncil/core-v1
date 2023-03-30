@@ -16,7 +16,7 @@ resource "azurerm_monitor_metric_alert" "postgresCpuOverThreshold" {
   severity            = 3
 
   criteria {
-    metric_namespace = "Microsoft.DBforPostgreSQL/flexibleServers"
+    metric_namespace = "Microsoft.DBforPostgreSQL/flexibleServers/databases"
     metric_name      = "cpu_percent"
     aggregation      = "Average"
     operator         = "GreaterThan"
@@ -35,10 +35,12 @@ resource "azurerm_monitor_metric_alert" "postgresMemoryUsage" {
   scopes              = [azurerm_postgresql_flexible_server_database.db.id]
   description         = "Action will be triggered when the memory usage average is greater than 80."
   severity            = 3
-  frequency           = "PT1H"
+  window_size         = "PT1H"
+  frequency           = "PT30M"
+
 
   criteria {
-    metric_namespace = "Microsoft.DBforPostgreSQL/flexibleServers"
+    metric_namespace = "Microsoft.DBforPostgreSQL/flexibleServers/databases"
     metric_name      = "MemoryUsage"
     aggregation      = "Average"
     operator         = "GreaterThan"
@@ -70,6 +72,7 @@ resource "azurerm_monitor_metric_alert" "appHealthCheck" {
     aggregation       = "Average"
     metric_name       = "Microsoft.Web/sites"
     metric_namespace  = "HealthCheckStatus"
+    skip_metric_validation = true
   }
 
   action {
@@ -89,9 +92,10 @@ resource "azurerm_monitor_metric_alert" "appCpuOverThreshold" {
   criteria {
     metric_namespace = "Microsoft.Web/sites"
     metric_name      = "CpuTime"
-    aggregation      = "Average"
+    aggregation      = "Maximum"
     operator         = "GreaterThan"
     threshold        = 0.4
+    skip_metric_validation = true
   }
 
   action {
@@ -114,6 +118,7 @@ resource "azurerm_monitor_metric_alert" "appMemoryOverThreshold" {
     aggregation      = "Average"
     operator         = "GreaterThan"
     threshold        = 300000000
+    skip_metric_validation = true
   }
 
   action {
@@ -136,6 +141,7 @@ resource "azurerm_monitor_metric_alert" "appResponseTime" {
     aggregation      = "Average"
     operator         = "GreaterThan"
     threshold        = 5
+    skip_metric_validation = true
   }
 
   action {
@@ -159,6 +165,7 @@ resource "azurerm_monitor_metric_alert" "app4xxStatusCodes" {
     aggregation      = "Count"
     operator         = "GreaterThan"
     threshold        = 10
+    skip_metric_validation = true
   }
 
   action {
@@ -182,6 +189,7 @@ resource "azurerm_monitor_metric_alert" "app5xxStatusCodes" {
     aggregation      = "Count"
     operator         = "GreaterThan"
     threshold        = 10
+    skip_metric_validation = true
   }
 
   action {
