@@ -7,6 +7,7 @@
 # metric_names https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftdbforpostgresqlflexibleservers
 ##################
 resource "azurerm_monitor_metric_alert" "postgresCpuOverThreshold" {
+  provider            = azurerm.runtime
   name                = "postgres-cpu-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_postgresql_flexible_server_database.db.id]
@@ -28,6 +29,7 @@ resource "azurerm_monitor_metric_alert" "postgresCpuOverThreshold" {
 }
 
 resource "azurerm_monitor_metric_alert" "postgresMemoryUsage" {
+  provider            = azurerm.runtime
   name                = "postgres-memory-usage-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_postgresql_flexible_server_database.db.id]
@@ -53,6 +55,7 @@ resource "azurerm_monitor_metric_alert" "postgresMemoryUsage" {
 # metric_names https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftwebsites
 #################
 resource "azurerm_monitor_metric_alert" "appHealthCheck" {
+  provider            = azurerm.runtime
   name                = "health-check-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_linux_web_app.app.id]
@@ -75,6 +78,7 @@ resource "azurerm_monitor_metric_alert" "appHealthCheck" {
 }
 
 resource "azurerm_monitor_metric_alert" "appCpuOverThreshold" {
+  provider            = azurerm.runtime
   name                = "app-cpu-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_linux_web_app.app.id]
@@ -96,6 +100,7 @@ resource "azurerm_monitor_metric_alert" "appCpuOverThreshold" {
 }
 
 resource "azurerm_monitor_metric_alert" "appMemoryOverThreshold" {
+  provider            = azurerm.runtime
   name                = "app-memory-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_linux_web_app.app.id]
@@ -117,6 +122,7 @@ resource "azurerm_monitor_metric_alert" "appMemoryOverThreshold" {
 }
 
 resource "azurerm_monitor_metric_alert" "appResponseTime" {
+  provider            = azurerm.runtime
   name                = "app-response-time-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_linux_web_app.app.id]
@@ -138,6 +144,7 @@ resource "azurerm_monitor_metric_alert" "appResponseTime" {
 }
 
 resource "azurerm_monitor_metric_alert" "app4xxStatusCodes" {
+  provider            = azurerm.runtime
   name                = "app-4xx-status-codes-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_linux_web_app.app.id]
@@ -160,6 +167,7 @@ resource "azurerm_monitor_metric_alert" "app4xxStatusCodes" {
 }
 
 resource "azurerm_monitor_metric_alert" "app5xxStatusCodes" {
+  provider            = azurerm.runtime
   name                = "app-5xx-status-codes${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_linux_web_app.app.id]
