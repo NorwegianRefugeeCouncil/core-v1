@@ -10,13 +10,13 @@ resource "azurerm_monitor_metric_alert" "postgresCpuOverThreshold" {
   provider            = azurerm.runtime
   name                = "postgres-cpu-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
-  scopes              = [azurerm_postgresql_flexible_server_database.db.id]
+  scopes              = [azurerm_postgresql_flexible_server.postgres.id]
   description         = "Action will be triggered when the CPU percentage average is greater than 80."
   frequency           = "PT1M"
   severity            = 3
 
   criteria {
-    metric_namespace = "Microsoft.DBforPostgreSQL/flexibleServers"
+    metric_namespace = "Microsoft.DBforPostgreSQL/servers"
     metric_name      = "cpu_percent"
     aggregation      = "Average"
     operator         = "GreaterThan"
@@ -32,19 +32,19 @@ resource "azurerm_monitor_metric_alert" "postgresMemoryUsage" {
   provider            = azurerm.runtime
   name                = "postgres-memory-usage-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
-  scopes              = [azurerm_postgresql_flexible_server_database.db.id]
-  description         = "Action will be triggered when the memory usage average is greater than 80."
+  scopes              = [azurerm_postgresql_flexible_server.postgres.id]
+  description         = "Action will be triggered when the memory usage average is greater than 70%."
   severity            = 3
   window_size         = "PT1H"
   frequency           = "PT30M"
 
 
   criteria {
-    metric_namespace = "Microsoft.DBforPostgreSQL/flexibleServers"
-    metric_name      = "MemoryUsage"
+    metric_namespace = "Microsoft.DBforPostgreSQL/servers"
+    metric_name      = "memory_percent"
     aggregation      = "Average"
     operator         = "GreaterThan"
-    threshold        = 80
+    threshold        = 70
   }
 
   action {
