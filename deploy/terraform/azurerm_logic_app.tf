@@ -1,5 +1,5 @@
 resource "azurerm_logic_app_workflow" "logic-app-teams" {
-  name                = "send-alerts-to-teams-thread"
+  name                = "send-alerts-to-teams-thread-${var.environment}"
   provider            = azurerm.runtime
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
@@ -76,7 +76,7 @@ resource "azurerm_resource_group_template_deployment" "logic_app_deployment" {
   depends_on                    = [azurerm_logic_app_workflow.logic-app-teams]
   resource_group_name           = azurerm_resource_group.rg.name
   deployment_mode               = "Incremental"
-  name                          = "logic_app_deployment"
+  name                          = "logic_app_deployment-${var.environment}"
   template_content              = data.template_file.logic_app_schema.template
   parameters_content = jsonencode({
     "coreChannelParentMessage" = {
