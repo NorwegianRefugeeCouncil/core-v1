@@ -294,6 +294,7 @@
     {{$nameOffset := "27rem"}}
     {{$sexWidth := "8rem"}}
     {{$ageWidth := "4rem"}}
+    {{$displacementStatusWidth := "11rem"}}
     {{$birthDateWidth := $dateWidth}}
     {{$householdIDWidth := $identWidth}}
     {{$isHeadOfHouseholdWidth := $checkBoxWidth}}
@@ -656,6 +657,17 @@
                     "SortKey" "has_disability"
                     "Label" "Has PWD"
                     "Title" "Has PWD"
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "displacement_status"
+                    "Label" "Displacement Status"
+                    "Title" "Displacement Status"
+                    "Width" $displacementStatusWidth
+                    "MinWidth" $displacementStatusWidth
+                    "MaxWidth" $displacementStatusWidth
                     )}}
 
                     {{template "columnHeader" (dict
@@ -1264,6 +1276,13 @@
                                 </div>
                             </td>
                             <!-- End HasDisability -->
+
+                            <!-- DisplacementStatus -->
+                            <td>
+                                <div style="width: {{$displacementStatusWidth}}">
+                                    {{.DisplacementStatus}}
+                                </div>
+                            </td>
 
                             <!-- Registration Date -->
                             <td>
