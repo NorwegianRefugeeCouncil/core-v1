@@ -6,7 +6,7 @@
 # monitor database
 # metric_names https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftdbforpostgresqlflexibleservers
 ##################
-resource "azurerm_monitor_metric_alert" "postgresCpuOverThreshold" {
+resource "azurerm_monitor_metric_alert" "postgres_cpu_over_threshold" {
   provider            = azurerm.runtime
   name                = "postgres-cpu-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
@@ -24,11 +24,11 @@ resource "azurerm_monitor_metric_alert" "postgresCpuOverThreshold" {
   }
 
   action {
-    action_group_id = azurerm_monitor_action_group.ag-teams.id
+    action_group_id = azurerm_monitor_action_group.ag_teams.id
   }
 }
 
-resource "azurerm_monitor_metric_alert" "postgresMemoryUsage" {
+resource "azurerm_monitor_metric_alert" "postgres_memory_usage" {
   provider            = azurerm.runtime
   name                = "postgres-memory-usage-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
@@ -48,7 +48,7 @@ resource "azurerm_monitor_metric_alert" "postgresMemoryUsage" {
   }
 
   action {
-    action_group_id = azurerm_monitor_action_group.ag-teams.id
+    action_group_id = azurerm_monitor_action_group.ag_teams.id
   }
 }
 
@@ -56,7 +56,7 @@ resource "azurerm_monitor_metric_alert" "postgresMemoryUsage" {
 # monitor web app
 # metric_names https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftwebsites
 #################
-resource "azurerm_monitor_metric_alert" "appHealthCheck" {
+resource "azurerm_monitor_metric_alert" "app_health_check" {
   provider            = azurerm.runtime
   name                = "health-check-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
@@ -76,11 +76,11 @@ resource "azurerm_monitor_metric_alert" "appHealthCheck" {
   }
 
   action {
-    action_group_id = azurerm_monitor_action_group.ag-teams.id
+    action_group_id = azurerm_monitor_action_group.ag_teams.id
   }
 }
 
-resource "azurerm_monitor_metric_alert" "appCpuOverThreshold" {
+resource "azurerm_monitor_metric_alert" "app_cpu_over_threshold" {
   provider            = azurerm.runtime
   name                = "app-cpu-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
@@ -99,11 +99,11 @@ resource "azurerm_monitor_metric_alert" "appCpuOverThreshold" {
   }
 
   action {
-    action_group_id = azurerm_monitor_action_group.ag-teams.id
+    action_group_id = azurerm_monitor_action_group.ag_teams.id
   }
 }
 
-resource "azurerm_monitor_metric_alert" "appMemoryOverThreshold" {
+resource "azurerm_monitor_metric_alert" "app_memory_over_threshold" {
   provider            = azurerm.runtime
   name                = "app-memory-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
@@ -122,11 +122,11 @@ resource "azurerm_monitor_metric_alert" "appMemoryOverThreshold" {
   }
 
   action {
-    action_group_id = azurerm_monitor_action_group.ag-teams.id
+    action_group_id = azurerm_monitor_action_group.ag_teams.id
   }
 }
 
-resource "azurerm_monitor_metric_alert" "appResponseTime" {
+resource "azurerm_monitor_metric_alert" "app_response_time" {
   provider            = azurerm.runtime
   name                = "app-response-time-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
@@ -145,11 +145,11 @@ resource "azurerm_monitor_metric_alert" "appResponseTime" {
   }
 
   action {
-    action_group_id = azurerm_monitor_action_group.ag-teams.id
+    action_group_id = azurerm_monitor_action_group.ag_teams.id
   }
 }
 
-resource "azurerm_monitor_metric_alert" "app4xxStatusCodes" {
+resource "azurerm_monitor_metric_alert" "app_4xx_status_codes" {
   provider            = azurerm.runtime
   name                = "app-4xx-status-codes-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
@@ -169,11 +169,11 @@ resource "azurerm_monitor_metric_alert" "app4xxStatusCodes" {
   }
 
   action {
-    action_group_id = azurerm_monitor_action_group.ag-teams.id
+    action_group_id = azurerm_monitor_action_group.ag_teams.id
   }
 }
 
-resource "azurerm_monitor_metric_alert" "app5xxStatusCodes" {
+resource "azurerm_monitor_metric_alert" "app_5xx_status_codes" {
   provider            = azurerm.runtime
   name                = "app-5xx-status-codes${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
@@ -193,6 +193,6 @@ resource "azurerm_monitor_metric_alert" "app5xxStatusCodes" {
   }
 
   action {
-    action_group_id = azurerm_monitor_action_group.ag-teams.id
+    action_group_id = azurerm_monitor_action_group.ag_teams.id
   }
 }
