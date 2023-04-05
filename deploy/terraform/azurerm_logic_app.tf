@@ -97,5 +97,8 @@ resource "azurerm_resource_group_template_deployment" "logic_app_deployment" {
     "ictTeamId" = {
       value =  var.teams_global_ict_team_id
     },
+    "workflows_send_alerts_to_teams_thread_name" = {
+      value = "send-alerts-to-teams-thread-${var.environment}"
+    },
   })
 }

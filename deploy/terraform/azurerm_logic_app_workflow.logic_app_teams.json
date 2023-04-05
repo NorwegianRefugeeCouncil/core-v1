@@ -2,16 +2,15 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "workflows_send_alerts_to_teams_thread_name": {
-      "defaultValue": "send_alerts_to_teams_thread-dev",
-      "type": "String"
-    },
     "virtualmachines_wcus_r2_gen2_externalid": {
       "defaultValue": "/subscriptions/<subscription ID>/resourceGroups/pipelinealertrg/providers/microsoft.compute/virtualmachines/wcus-r2-gen2",
       "type": "String"
     },
     "connections_teams_externalid": {
       "defaultValue": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Web/connections/teams')]",
+      "type": "String"
+    },
+    "workflows_send_alerts_to_teams_thread_name": {
       "type": "String"
     },
     "coreChannelParentMessage": {
