@@ -13,7 +13,7 @@ require (
 	github.com/lib/pq v1.10.7
 	github.com/manveru/faker v0.0.0-20171103152722-9fbc68a78c4d
 	github.com/mattn/go-sqlite3 v1.14.16
-	github.com/spf13/cobra v1.6.1
+	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.2
 	github.com/xuri/excelize/v2 v2.7.0
 	go.uber.org/zap v1.24.0
@@ -27,7 +27,7 @@ require (
 	github.com/go-jose/go-jose/v3 v3.0.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
-	github.com/inconshreveable/mousetrap v1.0.1 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/manveru/gobdd v0.0.0-20131210092515-f1a17fdd710b // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
