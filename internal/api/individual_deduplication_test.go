@@ -1,8 +1,7 @@
-package api_test
+package api
 
 import (
 	"github.com/go-gota/gota/dataframe"
-	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
@@ -81,7 +80,7 @@ func TestGetDuplicationScoresForRecord(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			duplicates := []containers.Set[int]{0: containers.NewSet[int]()}
-			api.GetDuplicationScoresForRecord(tt.deduplicationTypes, tt.records, tt.index, duplicates[0])
+			getDuplicationScoresForRecord(tt.deduplicationTypes, tt.records, tt.index, duplicates[0])
 			assert.Equal(t, tt.want, duplicates[0])
 		})
 	}
@@ -182,7 +181,7 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			duplicates := api.FindDuplicatesInUpload(tt.deduplicationTypes, tt.records)
+			duplicates := FindDuplicatesInUpload(tt.deduplicationTypes, tt.records)
 			assert.Equal(t, tt.want, duplicates)
 		})
 	}

@@ -81,12 +81,10 @@ func TestFillOrQueryWithParameters(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			args := []interface{}{}
-			args = fillOrQueryWithArgs(tt.queryBuilder, args, tt.values)
+			query := ""
+			query, args = getOrSubQueriesWithArgs(args, tt.values)
 			assert.Equal(t, tt.wantArgs, args)
 
-			query := tt.queryBuilder.String()
-			query = strings.TrimPrefix(query, " AND (")
-			query = strings.TrimSuffix(query, ")")
 			assert.Equal(t, containers.NewSet[string](strings.Split(query, " OR ")...), tt.wantedQueryParts)
 		})
 	}
@@ -119,12 +117,12 @@ func TestFillAndQueryWithParameters(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			args := []interface{}{}
-			args = fillAndQueryWithArgs(tt.queryBuilder, args, tt.values, deduplication.DeduplicationTypeNameNames)
+			query := ""
+			query, args = getAndSubQueriesWithArgs(args, tt.values, deduplication.DeduplicationTypeNameNames)
 			assert.Equal(t, tt.wantArgs, args)
 
-			query := tt.queryBuilder.String()
-			query = strings.TrimPrefix(query, " AND ((")
-			query = strings.TrimSuffix(query, "))")
+			query = strings.TrimPrefix(query, "(")
+			query = strings.TrimSuffix(query, ")")
 			queries := strings.Split(query, ") OR (")
 			for q := 0; q < len(queries); q++ {
 				assert.Equal(t, strings.Split(queries[q], " AND "), tt.wantedQueryParts[q])

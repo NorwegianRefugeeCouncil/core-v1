@@ -43,7 +43,7 @@ func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.I
 	return ret.([]*api.Individual), nil
 }
 
-func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, newIndividuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) ([]*api.Individual, error) {
+func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) ([]*api.Individual, error) {
 	if i.driverName() != "postgres" {
 		return nil, fmt.Errorf("deduplication is only implemented for postgres")
 	}
@@ -55,7 +55,7 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	if err != nil {
 		return nil, err
 	}
-	query, args := buildDeduplicationQuery(selectedCountryID, newIndividuals, deduplicationTypes)
+	query, args := buildDeduplicationQuery(selectedCountryID, individuals, deduplicationTypes)
 	out := make([]*api.Individual, 0)
 
 	err = tx.SelectContext(ctx, &out, query, args...)
@@ -96,15 +96,20 @@ example of QueryArgs:
 }
 */
 
-func buildDeduplicationQuery(selectedCountryID string, newIndividuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) (string, []interface{}) {
+func buildDeduplicationQuery(selectedCountryID string, individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) (string, []interface{}) {
 	b := &strings.Builder{}
-	b.WriteString("SELECT * FROM individual_registrations WHERE ")
-	b.WriteString("country_id = '")
-	b.WriteString(selectedCountryID)
-	b.WriteString("' AND deleted_at IS NULL")
+	subQueries := []string{}
+	args := []interface{}{selectedCountryID}
 
-	argsMap := collectArgs(newIndividuals, deduplicationTypes)
-	args := fillQueryWithArgs(argsMap, b)
+	argsMap := collectArgs(individuals, deduplicationTypes)
+	subQueries, args = getSubQueriesWithArgs(args, argsMap)
+
+	b.WriteString("SELECT * FROM individual_registrations WHERE country_id = $1 AND deleted_at IS NULL")
+	for q := 0; q < len(subQueries); q++ {
+		b.WriteString(" AND (")
+		b.WriteString(subQueries[q])
+		b.WriteString(")")
+	}
 	return b.String(), args
 }
 
@@ -149,20 +154,23 @@ func collectOrQueryArgs(individuals []*api.Individual, deduplicationConfig dedup
 	return colGroups
 }
 
-func fillQueryWithArgs(argMap QueryArgs, b *strings.Builder) []interface{} {
-	args := make([]interface{}, 0)
-
+func getSubQueriesWithArgs(args []interface{}, argMap QueryArgs) ([]string, []interface{}) {
+	query := []string{}
 	for _, typeValues := range argMap.Or {
-		args = fillOrQueryWithArgs(b, args, typeValues)
+		var orQuery string
+		orQuery, args = getOrSubQueriesWithArgs(args, typeValues)
+		query = append(query, orQuery)
 	}
 	for typeKey, typeValues := range argMap.And {
-		args = fillAndQueryWithArgs(b, args, typeValues, typeKey)
+		var andQuery string
+		andQuery, args = getAndSubQueriesWithArgs(args, typeValues, typeKey)
+		query = append(query, andQuery)
 	}
 
-	return args
+	return query, args
 }
 
-func fillOrQueryWithArgs(b *strings.Builder, args []interface{}, colGroups ColumnArgsGroups) []interface{} {
+func getOrSubQueriesWithArgs(args []interface{}, colGroups ColumnArgsGroups) (string, []interface{}) {
 	subQueries := make([]string, 0)
 	arg := []string{}
 
@@ -173,14 +181,11 @@ func fillOrQueryWithArgs(b *strings.Builder, args []interface{}, colGroups Colum
 
 	if len(subQueries) > 0 {
 		args = append(args, pq.Array(arg))
-		b.WriteString(" AND (")
-		b.WriteString(strings.Join(subQueries, " OR "))
-		b.WriteString(")")
 	}
-	return args
+	return strings.Join(subQueries, " OR "), args
 }
 
-func fillAndQueryWithArgs(b *strings.Builder, args []interface{}, rowGroups RowArgsGroups, typeKey deduplication.DeduplicationTypeName) []interface{} {
+func getAndSubQueriesWithArgs(args []interface{}, rowGroups RowArgsGroups, typeKey deduplication.DeduplicationTypeName) (string, []interface{}) {
 	columns := deduplication.DeduplicationTypes[typeKey].Config.Columns
 	subQueries := make([]string, 0)
 
@@ -196,13 +201,9 @@ func fillAndQueryWithArgs(b *strings.Builder, args []interface{}, rowGroups RowA
 		}
 		subQueries = append(subQueries, strings.Join(subQueryParts, " AND "))
 	}
+	subQuery := fmt.Sprintf("(%s)", strings.Join(subQueries, ") OR ("))
 
-	if len(subQueries) > 0 {
-		b.WriteString(" AND ((")
-		b.WriteString(strings.Join(subQueries, ") OR ("))
-		b.WriteString("))")
-	}
-	return args
+	return subQuery, args
 }
 
 func (i individualRepo) driverName() string {

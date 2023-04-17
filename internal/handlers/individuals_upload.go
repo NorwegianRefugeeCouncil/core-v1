@@ -124,7 +124,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 				}
 			}
 
-			duplicatesInDB, err := individualRepo.FindDuplicates(r.Context(), individuals, optionNames)
+			duplicatesInDB, err := individualRepo.FindDuplicates(ctx, individuals, optionNames)
 			if err != nil {
 				renderError("An error occurred while trying to check for duplicates: "+err.Error(), nil)
 				return
