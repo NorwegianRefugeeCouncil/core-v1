@@ -324,3 +324,8 @@ variable "frontdoor_sku_name" {
   description = "The sku name of the frontdoor."
   default     = "Standard_AzureFrontDoor"
 }
+
+variable "action_group_webhook_url" {
+  type        = string
+  description = "The url of the webhook for the action group."
+}

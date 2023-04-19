@@ -20,7 +20,7 @@ resource "azurerm_monitor_metric_alert" "postgres_cpu_over_threshold" {
     metric_name      = "cpu_percent"
     aggregation      = "Average"
     operator         = "GreaterThan"
-    threshold        = 80
+    threshold        = 90
   }
 
   action {
