@@ -11,7 +11,7 @@ resource "azurerm_monitor_metric_alert" "postgres_cpu_over_threshold" {
   name                = "postgres-cpu-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_postgresql_flexible_server.postgres.id]
-  description         = "Action will be triggered when the CPU percentage average is greater than 80."
+  description         = "${var.environment} - Postgres server: CPU percentage average is greater than 90."
   frequency           = "PT1M"
   severity            = 3
 
@@ -33,7 +33,7 @@ resource "azurerm_monitor_metric_alert" "postgres_memory_usage" {
   name                = "postgres-memory-usage-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_postgresql_flexible_server.postgres.id]
-  description         = "Action will be triggered when the memory usage average is greater than 70%."
+  description         = "${var.environment} - Postgres server: Memory usage average is greater than 70%."
   severity            = 3
   window_size         = "PT1H"
   frequency           = "PT30M"
@@ -61,7 +61,7 @@ resource "azurerm_monitor_metric_alert" "app_health_check" {
   name                = "health-check-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_linux_web_app.app.id]
-  description         = "Action will be triggered when the HealthCheckStatus is less than 100% okay."
+  description         = "${var.environment} - Web App: HealthCheckStatus is less than 100% okay."
   severity            = 1
   frequency           = "PT1M"
   enabled             = false
@@ -85,7 +85,7 @@ resource "azurerm_monitor_metric_alert" "app_cpu_over_threshold" {
   name                = "app-cpu-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_linux_web_app.app.id]
-  description         = "Action will be triggered when the CPU percentage average is greater than 80."
+  description         = "${var.environment} - Web App: CPU percentage average is greater than 80."
   severity            = 2
   frequency           = "PT1M"
 
@@ -108,7 +108,7 @@ resource "azurerm_monitor_metric_alert" "app_memory_over_threshold" {
   name                = "app-memory-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_linux_web_app.app.id]
-  description         = "Action will be triggered when the Memory working set average is greater than 300MB."
+  description         = "${var.environment} - Web App: Memory working set average is greater than 300MB."
   severity            = 2
   frequency           = "PT1M"
 
@@ -131,7 +131,7 @@ resource "azurerm_monitor_metric_alert" "app_response_time" {
   name                = "app-response-time-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_linux_web_app.app.id]
-  description         = "Action will be triggered when the Response time average is greater than 5s."
+  description         = "${var.environment} - Web App: Response time average is greater than 5s."
   severity            = 3
   frequency           = "PT5M"
 
@@ -154,7 +154,7 @@ resource "azurerm_monitor_metric_alert" "app_4xx_status_codes" {
   name                = "app-4xx-status-codes-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_linux_web_app.app.id]
-  description         = "Action will be triggered when more than 10 4xx Errors are returned per hour."
+  description         = "${var.environment} - Web App: more than 10 4xx Errors are returned per hour."
   severity            = 3
   frequency           = "PT1H"
   window_size         = "PT1H"
@@ -178,7 +178,7 @@ resource "azurerm_monitor_metric_alert" "app_5xx_status_codes" {
   name                = "app-5xx-status-codes${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_linux_web_app.app.id]
-  description         = "Action will be triggered when more than 10 5xx Errors are returned per hour."
+  description         = "${var.environment} - Web App: more than 10 5xx Errors are returned per hour."
   severity            = 1
   frequency           = "PT1H"
   window_size         = "PT1H"
