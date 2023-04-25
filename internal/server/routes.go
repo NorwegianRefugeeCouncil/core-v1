@@ -41,6 +41,8 @@ func buildRouter(
 	staticRouter := r.PathPrefix("/static").Subrouter()
 	staticRouter.HandleFunc("/{file:.*}", web.ServeStatic)
 
+	r.Path("/health").Handler(handlers.HandleHealth())
+
 	webRouter := r.PathPrefix("").Subrouter()
 	webRouter.Use(
 		noCache,
