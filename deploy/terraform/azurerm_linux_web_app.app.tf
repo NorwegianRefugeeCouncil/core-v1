@@ -92,7 +92,7 @@ resource "azapi_update_resource" "app_auth" {
           excludedPaths = [
             "healthz",
           ]
-          requireAuthentication       = true
+          requireAuthentication       = false
           unauthenticatedClientAction = "RedirectToLoginPage"
           redirectToProvider          = "oidc"
         }
