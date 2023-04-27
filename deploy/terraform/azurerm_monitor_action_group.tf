@@ -6,7 +6,7 @@ resource "azurerm_monitor_action_group" "ag_teams" {
 
   webhook_receiver {
     name                    = "send_alert_to_okta_workflows"
-    service_uri             = "https://nrc.workflows.oktapreview.com/api/flo/bb459c9dcfe01856889a5882639cdea2/invoke?clientToken=fdbde6450a07740538547a2749139ea1703bd5f84d44bcee5b9ca33885f9f530"
+    service_uri             = var.action_group_webhook_url
     use_common_alert_schema = true
   }
 }
