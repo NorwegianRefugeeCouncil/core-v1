@@ -11,16 +11,17 @@ resource "azurerm_monitor_metric_alert" "postgres_cpu_over_threshold" {
   name                = "postgres-cpu-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_postgresql_flexible_server.postgres.id]
-  description         = "${var.environment} - Postgres server: CPU percentage average is greater than 90."
-  frequency           = "PT1M"
+  description         = "${var.environment} - Postgres server: CPU percentage average is greater than 95 in the last 5 minutes."
+  frequency           = "PT5M"
   severity            = 3
+  window_size         = "PT5M"
 
   criteria {
     metric_namespace = "Microsoft.DBforPostgreSQL/flexibleServers"
     metric_name      = "cpu_percent"
     aggregation      = "Average"
     operator         = "GreaterThan"
-    threshold        = 90
+    threshold        = 95
   }
 
   action {
@@ -33,11 +34,10 @@ resource "azurerm_monitor_metric_alert" "postgres_memory_usage" {
   name                = "postgres-memory-usage-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_postgresql_flexible_server.postgres.id]
-  description         = "${var.environment} - Postgres server: Memory usage average is greater than 70%."
+  description         = "${var.environment} - Postgres server: Memory usage average is greater than 70% within the last hour."
   severity            = 3
   window_size         = "PT1H"
   frequency           = "PT30M"
-
 
   criteria {
     metric_namespace = "Microsoft.DBforPostgreSQL/flexibleServers"
@@ -85,7 +85,7 @@ resource "azurerm_monitor_metric_alert" "app_cpu_over_threshold" {
   name                = "app-cpu-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_linux_web_app.app.id]
-  description         = "${var.environment} - Web App: CPU percentage average is greater than 80."
+  description         = "${var.environment} - Web App: CPU time maximum is greater than 0.4 seconds in the last minute."
   severity            = 2
   frequency           = "PT1M"
 
