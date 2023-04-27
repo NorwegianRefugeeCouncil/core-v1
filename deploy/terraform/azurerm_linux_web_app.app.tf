@@ -89,6 +89,9 @@ resource "azapi_update_resource" "app_auth" {
           runtimeVersion = "~1"
         }
         globalValidation = {
+          excludedPaths = [
+            "healthz",
+          ]
           requireAuthentication       = true
           unauthenticatedClientAction = "RedirectToLoginPage"
           redirectToProvider          = "oidc"
