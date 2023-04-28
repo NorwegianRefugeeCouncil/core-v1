@@ -57,14 +57,14 @@ resource "azurerm_monitor_metric_alert" "postgres_memory_usage" {
 ##########################
 
 
-resource "azurerm_monitor_metric_alert" "app_cpu_over_threshold" {
+resource "azurerm_monitor_metric_alert" "asp_cpu_over_threshold" {
   provider            = azurerm.runtime
-  name                = "app-cpu-over-threshold-${var.environment}"
+  name                = "asp-cpu-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_service_plan.plan.id]
   description         = "${var.environment} - App Service Plan: CPU percentage average is greater than 15%."
   severity            = 2
-  frequency           = "P1D"
+  frequency           = "PT1H"
 
   criteria {
     metric_namespace = "Microsoft.Web/serverfarms"
@@ -80,14 +80,14 @@ resource "azurerm_monitor_metric_alert" "app_cpu_over_threshold" {
   }
 }
 
-resource "azurerm_monitor_metric_alert" "app_memory_over_threshold" {
+resource "azurerm_monitor_metric_alert" "asp_memory_over_threshold" {
   provider            = azurerm.runtime
-  name                = "app-memory-over-threshold-${var.environment}"
+  name                = "asp-memory-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_service_plan.plan.id]
   description         = "${var.environment} - App Service Plan: Memory percentage average is greater than 40%."
   severity            = 2
-  frequency           = "P1D"
+  frequency           = "PT1H"
 
   criteria {
     metric_namespace = "Microsoft.Web/serverfarms"
