@@ -17,6 +17,8 @@ resource "azurerm_linux_web_app" "app" {
     remote_debugging_enabled                      = false
     websockets_enabled                            = false
     http2_enabled                                 = true
+    health_check_path = "/healthz"
+    health_check_eviction_time_in_min = 10
     application_stack {
       docker_image     = var.container_image
       docker_image_tag = var.container_image_tag
@@ -30,6 +32,7 @@ resource "azurerm_linux_web_app" "app" {
       service_tag = "AzureFrontDoor.Backend"
       headers {
         x_azure_fdid = [azurerm_cdn_frontdoor_profile.fd.resource_guid]
+        x_fd_health_probe = 1
       }
       name = "Only Allow Azure Front Door"
     }
@@ -89,10 +92,7 @@ resource "azapi_update_resource" "app_auth" {
           runtimeVersion = "~1"
         }
         globalValidation = {
-          excludedPaths = [
-            "healthz",
-          ]
-          requireAuthentication       = false
+          requireAuthentication       = true
           unauthenticatedClientAction = "RedirectToLoginPage"
           redirectToProvider          = "oidc"
         }
