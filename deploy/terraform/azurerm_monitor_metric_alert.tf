@@ -65,6 +65,7 @@ resource "azurerm_monitor_metric_alert" "asp_cpu_over_threshold" {
   description         = "${var.environment} - App Service Plan: CPU percentage average is greater than 15%."
   severity            = 2
   frequency           = "PT1H"
+  window_size         = "PT1H"
 
   criteria {
     metric_namespace = "Microsoft.Web/serverfarms"
@@ -88,6 +89,7 @@ resource "azurerm_monitor_metric_alert" "asp_memory_over_threshold" {
   description         = "${var.environment} - App Service Plan: Memory percentage average is greater than 40%."
   severity            = 2
   frequency           = "PT1H"
+  window_size         = "PT1H"
 
   criteria {
     metric_namespace = "Microsoft.Web/serverfarms"
