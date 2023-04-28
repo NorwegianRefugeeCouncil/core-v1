@@ -52,6 +52,57 @@ resource "azurerm_monitor_metric_alert" "postgres_memory_usage" {
   }
 }
 
+##########################
+# monitor app service plan
+##########################
+
+
+resource "azurerm_monitor_metric_alert" "app_cpu_over_threshold" {
+  provider            = azurerm.runtime
+  name                = "app-cpu-over-threshold-${var.environment}"
+  resource_group_name = azurerm_resource_group.rg.name
+  scopes              = [azurerm_service_plan.plan.id]
+  description         = "${var.environment} - App Service Plan: CPU percentage average is greater than 15%."
+  severity            = 2
+  frequency           = "P1D"
+
+  criteria {
+    metric_namespace = "Microsoft.Web/serverfarms"
+    metric_name      = "CpuPercentage"
+    aggregation      = "Average"
+    operator         = "GreaterThan"
+    threshold        = 15
+    skip_metric_validation = true
+  }
+
+  action {
+    action_group_id = azurerm_monitor_action_group.ag_teams.id
+  }
+}
+
+resource "azurerm_monitor_metric_alert" "app_memory_over_threshold" {
+  provider            = azurerm.runtime
+  name                = "app-memory-over-threshold-${var.environment}"
+  resource_group_name = azurerm_resource_group.rg.name
+  scopes              = [azurerm_service_plan.plan.id]
+  description         = "${var.environment} - App Service Plan: Memory percentage average is greater than 40%."
+  severity            = 2
+  frequency           = "P1D"
+
+  criteria {
+    metric_namespace = "Microsoft.Web/serverfarms"
+    metric_name      = "MemoryPercentage"
+    aggregation      = "Average"
+    operator         = "GreaterThan"
+    threshold        = 40
+    skip_metric_validation = true
+  }
+
+  action {
+    action_group_id = azurerm_monitor_action_group.ag_teams.id
+  }
+}
+
 #################
 # monitor web app
 # metric_names https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftwebsites
@@ -72,52 +123,6 @@ resource "azurerm_monitor_metric_alert" "app_health_check" {
     aggregation       = "Average"
     metric_name       = "Microsoft.Web/sites"
     metric_namespace  = "HealthCheckStatus"
-    skip_metric_validation = true
-  }
-
-  action {
-    action_group_id = azurerm_monitor_action_group.ag_teams.id
-  }
-}
-
-resource "azurerm_monitor_metric_alert" "app_cpu_over_threshold" {
-  provider            = azurerm.runtime
-  name                = "app-cpu-over-threshold-${var.environment}"
-  resource_group_name = azurerm_resource_group.rg.name
-  scopes              = [azurerm_linux_web_app.app.id]
-  description         = "${var.environment} - Web App: CPU time maximum is greater than 0.4 seconds in the last minute."
-  severity            = 2
-  frequency           = "PT1M"
-
-  criteria {
-    metric_namespace = "Microsoft.Web/sites"
-    metric_name      = "CpuTime"
-    aggregation      = "Maximum"
-    operator         = "GreaterThan"
-    threshold        = 0.4
-    skip_metric_validation = true
-  }
-
-  action {
-    action_group_id = azurerm_monitor_action_group.ag_teams.id
-  }
-}
-
-resource "azurerm_monitor_metric_alert" "app_memory_over_threshold" {
-  provider            = azurerm.runtime
-  name                = "app-memory-over-threshold-${var.environment}"
-  resource_group_name = azurerm_resource_group.rg.name
-  scopes              = [azurerm_linux_web_app.app.id]
-  description         = "${var.environment} - Web App: Memory working set average is greater than 300MB."
-  severity            = 2
-  frequency           = "PT1M"
-
-  criteria {
-    metric_namespace = "Microsoft.Web/sites"
-    metric_name      = "MemoryWorkingSet"
-    aggregation      = "Average"
-    operator         = "GreaterThan"
-    threshold        = 300000000
     skip_metric_validation = true
   }
 
