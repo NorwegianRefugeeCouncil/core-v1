@@ -2,16 +2,8 @@
 {{ $locales := .RequestContext.Locales }}
 
     <script>
-        const uploadIndividualFileInputId = "individual-upload--file"
         const uploadIndividualFileButtonId = "individual-upload--button"
         const uploadIndividualFileFormId = "individual-upload--form"
-
-        /**
-         * opens the upload modal
-         */
-        function openUploadDialog() {
-            document.getElementById(uploadIndividualFileInputId).click();
-        }
 
         /**
          * submits the upload form
@@ -29,12 +21,6 @@
             deduplicationStepDiv.classList.remove('d-block')
             uploadInProgressDiv.classList.add('d-block')
             uploadInProgressDiv.classList.remove('d-none')
-            console.log('UPLOAD SUBMITTED')
-        }
-
-        function submitAndResetUploadInput(e) {
-            submitUploadForm()
-            e.target.value = null
         }
 
         function setLanguageCookie(cValue) {
@@ -51,13 +37,6 @@
         }
 
         document.addEventListener("DOMContentLoaded", function () {
-            const uploadButton = document.getElementById(uploadIndividualFileButtonId)
-            if (uploadButton) {
-                uploadButton.addEventListener('click', openUploadDialog);
-            }
-            const uploadFileInput = document.getElementById(uploadIndividualFileInputId)
-            uploadFileInput.addEventListener('change', submitAndResetUploadInput);
-
             const path = new URL(document.location).pathname;
             const parts = path.split('/');
             const lastPathComponent = parts[parts.length - 1];
@@ -260,7 +239,6 @@
                                 </div>
 
                                 <input
-                                    id="individual-upload--file"
                                     name="file"
                                     type="file"
                                     class="form-control mt-5"
@@ -277,7 +255,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button id="individual-upload--button" type="button" class="btn btn-primary">
+                            <button id="individual-upload--button" type="submit" class="btn btn-primary">
                                 Upload {{.RequestContext.SelectedCountry.Name}} data
                             </button>
                         </div>

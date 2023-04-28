@@ -103,6 +103,9 @@ func buildDeduplicationQuery(selectedCountryID string, individuals []*api.Indivi
 
 	argsMap := collectArgs(individuals, deduplicationTypes)
 	subQueries, args = getSubQueriesWithArgs(args, argsMap)
+	if len(args) == 1 {
+		return "", nil
+	}
 
 	b.WriteString("SELECT * FROM individual_registrations WHERE country_id = $1 AND deleted_at IS NULL")
 	for q := 0; q < len(subQueries); q++ {
