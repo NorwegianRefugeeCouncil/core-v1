@@ -32,7 +32,7 @@ resource "azurerm_linux_web_app" "app" {
       service_tag = "AzureFrontDoor.Backend"
       headers {
         x_azure_fdid = [azurerm_cdn_frontdoor_profile.fd.resource_guid]
-        x_fd_health_probe = 1
+        x_fd_health_probe = ["1"]
       }
       name = "Only Allow Azure Front Door"
     }
