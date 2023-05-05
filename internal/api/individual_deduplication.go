@@ -26,6 +26,8 @@ func FindDuplicatesInUpload(optionNames []deduplication.DeduplicationTypeName, r
 	return duplicateScores
 }
 
+var indexColumnName = "index"
+
 func getDuplicationScoresForRecord(optionNames []deduplication.DeduplicationTypeName, df dataframe.DataFrame, currentIndex int, duplicates containers.Set[int]) {
 	// the duplicationScore is a metric to determine if the record is a duplicate, it counts how many sub-criteria have been fulfilled
 	duplicationScore := make([]int, df.Nrow())
@@ -38,7 +40,7 @@ func getDuplicationScoresForRecord(optionNames []deduplication.DeduplicationType
 	}
 	copy(duplicationScore, zeros)
 	// adding indices to the records so we can recognize them in the filtered results
-	df = df.Mutate(series.New(indexes, series.String, "index"))
+	df = df.Mutate(series.New(indexes, series.String, indexColumnName))
 
 	// e.g. IDs, Names, FullName
 	for _, optionName := range optionNames {
@@ -50,91 +52,99 @@ func getDuplicationScoresForRecord(optionNames []deduplication.DeduplicationType
 
 		// when the condition is OR, we need to compare all elements in the respective columns to all other elements
 		if option.Config.Condition == deduplication.LOGICAL_OPERATOR_OR {
-
-			// e.g. identification_number_1, identification_number_2, identification_number_3
-			for _, column := range option.Config.Columns {
-				// the whole column, which we are about to use, including the line number, so we can map scores properly
-				thisColumn := df.Select([]string{column, "index"})
-
-				// empty values are not considered duplicates
-				currentValue := thisColumn.Elem(currentIndex, 0).String()
-				if currentValue == "" {
-					continue
-				}
-
-				// we exclude the current row, to prevent a false positive
-				otherElements := makeIndexSetWithSkip(thisColumn.Nrow(), currentIndex).Items()
-
-				// check for duplicates of the current value within its own column
-				result := thisColumn.Subset(otherElements).Filter(dataframe.F{
-					Colname:    column,
-					Comparando: currentValue,
-					Comparator: series.In,
-				})
-				for r := 0; r < result.Nrow(); r++ {
-					index, err := result.Select("index").Elem(r, 0).Int()
-					if err == nil {
-						duplicationScoreByType[index]++
-					}
-				}
-
-				// if there are multiple columns to check, we also filter all the other columns
-				if len(option.Config.Columns) > 1 {
-					filters := []dataframe.F{}
-					for _, c := range option.Config.Columns {
-						if c != column {
-							filters = append(filters, dataframe.F{
-								Colname:    c,
-								Comparando: currentValue,
-								Comparator: series.In,
-							})
-						}
-					}
-					result = df.Filter(filters...)
-
-					for r := 0; r < result.Nrow(); r++ {
-						index, err := result.Select("index").Elem(r, 0).Int()
-						if err == nil {
-							duplicationScoreByType[index]++
-						}
-					}
-				}
-			}
-
-			// if any of the sub-criteria have been fulfilled, this counts as a duplicate for this deduplicationType
-			for r := range duplicationScoreByType {
-				if duplicationScoreByType[r] > 0 {
-					duplicationScore[r]++
-				}
-			}
+			getOrDuplicationScore(duplicationScoreByType, duplicationScore, df, currentIndex, option)
 		} else {
-			// we can exclude the current row, to prevent a false positive
-			otherElements := makeIndexSetWithSkip(df.Nrow(), currentIndex).Items()
-			// we're chaining the filters, such that only complete combinations of values are counted
-			result := df.Subset(otherElements).Filter()
-
-			// e.g. first_name, middle_name, last_name, native_name
-			for _, column := range option.Config.Columns {
-				current := df.Select(column).Elem(currentIndex, 0)
-				result = result.Filter(dataframe.F{
-					Colidx:     0,
-					Colname:    column,
-					Comparando: current,
-					Comparator: series.Eq,
-				})
-			}
-			// if there are any rows left, they count as duplicates within the current deduplicationType
-			for r := 0; r < result.Nrow(); r++ {
-				ind, err := result.Select("index").Elem(r, 0).Int()
-				if err == nil {
-					duplicationScore[ind]++
-				}
-			}
+			getAndDuplicationScore(duplicationScore, df, currentIndex, option)
 		}
 	}
 	for r := range duplicationScore {
 		if duplicationScore[r] == len(optionNames) {
 			duplicates.Add(r)
+		}
+	}
+}
+
+func getOrDuplicationScore(scoresByType []int, totalScores []int, df dataframe.DataFrame, currentIndex int, option deduplication.DeduplicationType) {
+
+	// e.g. identification_number_1, identification_number_2, identification_number_3
+	for _, column := range option.Config.Columns {
+		// the whole column, which we are about to use, including the line number, so we can map scores properly
+		thisColumn := df.Select([]string{column, indexColumnName})
+
+		// empty values are not considered duplicates
+		currentValue := thisColumn.Elem(currentIndex, 0).String()
+		if currentValue == "" {
+			continue
+		}
+
+		// we exclude the current row, to prevent a false positive
+		otherElements := makeIndexSetWithSkip(thisColumn.Nrow(), currentIndex).Items()
+
+		// check for duplicates of the current value within its own column
+		result := thisColumn.Subset(otherElements).Filter(dataframe.F{
+			Colname:    column,
+			Comparando: currentValue,
+			Comparator: series.In,
+		})
+		for r := 0; r < result.Nrow(); r++ {
+			index, err := result.Select(indexColumnName).Elem(r, 0).Int()
+			if err == nil {
+				scoresByType[index]++
+			}
+		}
+
+		// if there are multiple columns to check, we also filter all the other columns
+		if len(option.Config.Columns) > 1 {
+			filters := []dataframe.F{}
+			for _, c := range option.Config.Columns {
+				if c != column {
+					filters = append(filters, dataframe.F{
+						Colname:    c,
+						Comparando: currentValue,
+						Comparator: series.In,
+					})
+				}
+			}
+			result = df.Filter(filters...)
+
+			for r := 0; r < result.Nrow(); r++ {
+				index, err := result.Select(indexColumnName).Elem(r, 0).Int()
+				if err == nil {
+					scoresByType[index]++
+				}
+			}
+		}
+	}
+
+	// if any of the sub-criteria have been fulfilled, this counts as a duplicate for this deduplicationType
+	for r := range scoresByType {
+		if scoresByType[r] > 0 {
+			totalScores[r]++
+		}
+	}
+}
+
+func getAndDuplicationScore(totalScores []int, df dataframe.DataFrame, currentIndex int, option deduplication.DeduplicationType) {
+	// we can exclude the current row, to prevent a false positive
+	otherElements := makeIndexSetWithSkip(df.Nrow(), currentIndex).Items()
+	// we're chaining the filters, such that only complete combinations of values are counted
+	result := df.Subset(otherElements).Filter()
+
+	// e.g. first_name, middle_name, last_name, native_name
+	for _, column := range option.Config.Columns {
+		current := df.Select(column).Elem(currentIndex, 0)
+		result = result.Filter(dataframe.F{
+			Colidx:     0,
+			Colname:    column,
+			Comparando: current,
+			Comparator: series.Eq,
+		})
+	}
+	// if there are any rows left, they count as duplicates within the current deduplicationType
+	for r := 0; r < result.Nrow(); r++ {
+		ind, err := result.Select(indexColumnName).Elem(r, 0).Int()
+		if err == nil {
+			totalScores[ind]++
 		}
 	}
 }

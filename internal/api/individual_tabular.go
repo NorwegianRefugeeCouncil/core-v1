@@ -23,49 +23,57 @@ type FileError struct {
 
 // Unmarshal
 
-func UnmarshallRecordsFromFile(records *[][]string, filename string, reader io.Reader) error {
+func UnmarshalRecordsFromCSV(records *[][]string, reader io.Reader) error {
+	csvReader := csv.NewReader(reader)
+	csvReader.TrimLeadingSpace = true
+	csvReader.Comma = ','
+	csvReader.LazyQuotes = false
+	csvReader.Comment = 0
+	output, err := csvReader.ReadAll()
+	if err == nil {
+		*records = output
+	}
+	return err
+}
+
+func UnmarshalRecordsFromExcel(records *[][]string, reader io.Reader) error {
+	f, err := excelize.OpenReader(reader)
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if err := f.Close(); err != nil {
+			fmt.Println(err)
+		}
+	}()
+
+	sheets := f.GetSheetList()
+	if len(sheets) == 0 {
+		err := errors.New("no sheets found")
+		return err
+	}
+
+	rows, err := f.GetRows(sheets[0])
+	if err != nil {
+		return err
+	}
+	if len(rows) == 0 {
+		err := errors.New("no rows found")
+		return err
+	}
+	f.Close()
+	if err == nil {
+		*records = rows
+	}
+	return err
+}
+
+func UnmarshallRecordsFromFile(records *[][]string, reader io.Reader, filename string) error {
 	if strings.HasSuffix(filename, ".csv") {
-		csvReader := csv.NewReader(reader)
-		csvReader.TrimLeadingSpace = true
-		csvReader.Comma = ','
-		csvReader.LazyQuotes = false
-		csvReader.Comment = 0
-		output, err := csvReader.ReadAll()
-		if err == nil {
-			*records = output
-		}
-		return err
+		return UnmarshalRecordsFromCSV(records, reader)
 	} else if strings.HasSuffix(filename, ".xlsx") || strings.HasSuffix(filename, ".xls") {
-		f, err := excelize.OpenReader(reader)
-		if err != nil {
-			return err
-		}
-
-		defer func() {
-			if err := f.Close(); err != nil {
-				fmt.Println(err)
-			}
-		}()
-
-		sheets := f.GetSheetList()
-		if len(sheets) == 0 {
-			err := errors.New("no sheets found")
-			return err
-		}
-
-		rows, err := f.GetRows(sheets[0])
-		if err != nil {
-			return err
-		}
-		if len(rows) == 0 {
-			err := errors.New("no rows found")
-			return err
-		}
-		f.Close()
-		if err == nil {
-			*records = rows
-		}
-		return err
+		return UnmarshalRecordsFromExcel(records, reader)
 	} else {
 		fileNameParts := strings.Split(filename, ".")
 		fileType := fileNameParts[len(fileNameParts)-1]

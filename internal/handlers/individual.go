@@ -112,13 +112,15 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 		individual.Normalize()
 
+		warningIcon := "exclamation-triangle"
+
 		// Validate the individual
 		validationErrors = apivalidation.ValidateIndividual(individual)
 		if len(validationErrors) > 0 {
 			alerts = append(alerts, alert.Alert{
 				Type:        bootstrap.StyleDanger,
 				Title:       "Failed to save individual",
-				Icon:        "exclamation-triangle",
+				Icon:        warningIcon,
 				Content:     template.HTML("There were errors with your submission. Please correct them and try again."),
 				Dismissible: true,
 			})
@@ -132,7 +134,7 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			alerts = append(alerts, alert.Alert{
 				Type:        bootstrap.StyleDanger,
 				Title:       "An Error Occurred during Deduplication",
-				Icon:        "exclamation-triangle",
+				Icon:        warningIcon,
 				Dismissible: true,
 			})
 			render()
@@ -154,7 +156,7 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			alerts = append(alerts, alert.Alert{
 				Type:        bootstrap.StyleDanger,
 				Title:       "Found duplicates",
-				Icon:        "exclamation-triangle",
+				Icon:        warningIcon,
 				Dismissible: true,
 			})
 			render()

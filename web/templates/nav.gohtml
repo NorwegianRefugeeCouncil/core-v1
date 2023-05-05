@@ -254,9 +254,10 @@
                                 <div class="mt-3">Navigating away from this page will stop the file upload</div>
                             </div>
                         </div>
-                        <div class="modal-footer">
+                        <div class="modal-footer d-flex flex-row justify-content-between">
+                            <button id="individual-upload--cancel" type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Cancel</button>
                             <button id="individual-upload--button" type="submit" class="btn btn-primary">
-                                Upload {{.RequestContext.SelectedCountry.Name}} data
+                                Upload
                             </button>
                         </div>
                     </div>

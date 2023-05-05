@@ -58,7 +58,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		var fields []string
 		var records [][]string
 
-		err = api.UnmarshallRecordsFromFile(&records, filename, formFile)
+		err = api.UnmarshallRecordsFromFile(&records, formFile, filename)
 		if err != nil {
 			l.Error("failed to parse file", zap.Error(err))
 			renderError("Failed to parse input file: "+err.Error(), nil)

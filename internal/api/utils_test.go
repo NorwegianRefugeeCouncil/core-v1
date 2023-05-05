@@ -223,7 +223,7 @@ func TestParseAge(t *testing.T) {
 		assert.Nil(t, err)
 	})
 
-	t.Run("empty string", func(t *testing.T) {
+	t.Run("not a number", func(t *testing.T) {
 		result, err := ParseAge("abc")
 		assert.Nil(t, result)
 		assert.Equal(t, err.Error(), errors.New("age: strconv.Atoi: parsing \"abc\": invalid syntax").Error())
