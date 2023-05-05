@@ -62,7 +62,7 @@ resource "azurerm_monitor_metric_alert" "asp_cpu_over_threshold" {
   name                = "asp-cpu-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_service_plan.plan.id]
-  description         = "${var.environment} - App Service Plan: CPU percentage average is greater than 15%."
+  description         = "${var.environment} - App Service Plan: CPU percentage average is greater than 70%."
   severity            = 2
   frequency           = "PT1H"
   window_size         = "PT1H"
@@ -72,7 +72,7 @@ resource "azurerm_monitor_metric_alert" "asp_cpu_over_threshold" {
     metric_name      = "CpuPercentage"
     aggregation      = "Average"
     operator         = "GreaterThan"
-    threshold        = 15
+    threshold        = 70
     skip_metric_validation = true
   }
 
@@ -86,7 +86,7 @@ resource "azurerm_monitor_metric_alert" "asp_memory_over_threshold" {
   name                = "asp-memory-over-threshold-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_service_plan.plan.id]
-  description         = "${var.environment} - App Service Plan: Memory percentage average is greater than 40%."
+  description         = "${var.environment} - App Service Plan: Memory percentage average is greater than 70%."
   severity            = 2
   frequency           = "PT1H"
   window_size         = "PT1H"
@@ -96,7 +96,7 @@ resource "azurerm_monitor_metric_alert" "asp_memory_over_threshold" {
     metric_name      = "MemoryPercentage"
     aggregation      = "Average"
     operator         = "GreaterThan"
-    threshold        = 40
+    threshold        = 70
     skip_metric_validation = true
   }
 
