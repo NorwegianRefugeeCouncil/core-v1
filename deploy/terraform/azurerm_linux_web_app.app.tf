@@ -17,6 +17,8 @@ resource "azurerm_linux_web_app" "app" {
     remote_debugging_enabled                      = false
     websockets_enabled                            = false
     http2_enabled                                 = true
+    health_check_path = "/healthz"
+    health_check_eviction_time_in_min = 10
     application_stack {
       docker_image     = var.container_image
       docker_image_tag = var.container_image_tag
