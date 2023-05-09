@@ -64,7 +64,7 @@
             <h1 class="flex-grow-1 text-truncate pe-2">
                 {{if .Individual.Inactive}}
                     <i class="bi bi-eye-slash-fill"
-                       data-toggle="tooltip" data-placement="top" title="Deactivated Participant"></i>
+                       data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "deactivated_individual"}}"></i>
                 {{end}}
                 {{.form.Title}}
             </h1>
@@ -100,7 +100,7 @@
                             class="btn btn-sm btn-outline-danger me-2 d-flex"
                             data-bs-toggle="modal"
                             data-bs-target="#deleteIndividualConfirmationModal"
-                            data-toggle="tooltip" data-placement="top" title="Delete individual">
+                            data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "delete_individual"}}">
                         <i class="bi bi-trash"></i>
                         {{.RequestContext.Locales.Translate "delete_individual"}}
                     </button>
@@ -121,17 +121,17 @@
                                     id="deactivateButton"
                                     form="deactivate-individual-form"
                                     class="btn btn-sm btn-outline-secondary{{if .Individual.Inactive}} disabled{{end}}"
-                                    data-toggle="tooltip" data-placement="top" title="Deactivate participant">
+                                    data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "deactivate_individual"}}">
                                 <i class="bi bi-eye-slash-fill"></i>
-                                Deactivate
+                                {{.RequestContext.Locales.Translate "deactivate_individual"}}
                             </button>
                             <button type="submit"
                                     form="activate-individual-form"
                                     id="activateButton"
                                     class="btn btn-sm btn-outline-secondary{{if not .Individual.Inactive}} disabled{{end}}"
-                                    data-toggle="tooltip" data-placement="top" title="Activate participant">
+                                    data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "activate_individual"}}">
                                 <i class="bi bi-eye"></i>
-                                Activate
+                                {{.RequestContext.Locales.Translate "activate_individual"}}
                             </button>
                         </div>
                     </div>
@@ -139,10 +139,14 @@
             {{end}}
             <div class="flex-grow-1"></div>
             <!-- CANCEL BUTTON -->
-            <button onclick="goBack()" class="btn btn-outline-primary mx-4">Cancel</button>
+            <button onclick="goBack()" class="btn btn-outline-primary mx-4">
+                {{.RequestContext.Locales.Translate "cancel"}}
+            </button>
             <!-- END CANCEL BUTTON -->
             <!-- SAVE BUTTON -->
-            <button id="submitButton" type="submit" tabindex="0" class="btn btn-primary mx-4">{{.RequestContext.Locales.Translate "save"}}e</button>
+            <button id="submitButton" type="submit" tabindex="0" class="btn btn-primary mx-4">
+                {{.RequestContext.Locales.Translate "save"}}
+            </button>
             <!-- END SAVE BUTTON -->
         </div>
     </footer>
@@ -181,7 +185,7 @@
                             <button type="button"
                                     id="confirmDeleteButton"
                                     class="btn btn-danger"
-                                    title="This will delete the participant and all associated data.">
+                                    title="{{.RequestContext.Locales.Translate "deletion_warning"}}">
                                 <i class="bi bi-trash me-2"></i>
                                 {{.RequestContext.Locales.Translate "delete_individual"}}
                             </button>
