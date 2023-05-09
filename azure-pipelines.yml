@@ -1,5 +1,5 @@
 trigger:
-- COR-755_monitoring
+- main
 
 resources:
 - repo: self
@@ -11,7 +11,7 @@ variables:
   GOBIN:  '$(GOPATH)\bin'
   GOPATH: '$(System.DefaultWorkingDirectory)\gopath'
   GO_VERSION: '1.19.2'
-  IS_MAIN: $[eq(variables['Build.SourceBranch'], 'refs/heads/COR-755_monitoring')]
+  IS_MAIN: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
   LDFLAGS: '-w -s'
   REPOSITORY: 'core/webapp'
   REPOSITORY_CACHE : 'core/webapp-cache'
