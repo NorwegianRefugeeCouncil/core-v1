@@ -5,7 +5,7 @@
     <div class="row mb-5">
         <h1 class="text-danger">
             <i class="bi bi-exclamation-circle me-2"></i>
-            Something went wrong
+            {{.RequestContext.Locales.Translate "has_error"}}
         </h1>
     </div>
     <div class="row mb-3">
@@ -36,7 +36,7 @@
                href="/countries/{{.RequestContext.SelectedCountryID}}/participants"
             >
                 <i class="bi bi-house me-2"></i>
-                Go back to Participants List
+                {{.RequestContext.Locales.Translate "go_back_to_participants"}}
             </a>
         </div>
     </div>

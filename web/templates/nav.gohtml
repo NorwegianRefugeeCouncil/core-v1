@@ -69,7 +69,7 @@
                        {{ if .RequestContext.SelectedCountry}}
                             <div class="btn btn-sm btn-link text-decoration-none px-2">
                                 <a id="participants" class="nav-link" href="{{if eq "" .RequestContext.SelectedCountryID}}/{{else}}/countries/{{.RequestContext.SelectedCountryID}}/participants{{end}}">
-                                    Participants
+                                    {{.RequestContext.Locales.Translate "participants"}}
                                 </a>
                             </div>
 
@@ -92,7 +92,7 @@
                                             data-bs-toggle="dropdown"
                                             aria-haspopup="true"
                                             aria-expanded="false">
-                                        Files
+                                        {{.RequestContext.Locales.Translate "files"}}
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-end">
                                          <a href="/static/nrc_grf_template.xlsx"
@@ -115,7 +115,7 @@
                                                     accept="text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                             >
                                             <button id="individual-upload--button" type="button" class="dropdown-item">
-                                                {{.RequestContext.Locales.Translate "upload_data"}}
+                                                {{.RequestContext.Locales.Translate "upload_data" .RequestContext.SelectedCountry.Name}}
                                             </button>
                                         </form>
                                     </div>

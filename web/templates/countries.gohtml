@@ -18,7 +18,7 @@
                         <table class="table">
                             <thead>
                             <tr>
-                                <th style="min-width:12rem">{{.RequestContext.Locales.Translate "name"}}</th>
+                                <th style="min-width:12rem">{{.RequestContext.Locales.Translate "country_name"}}</th>
                                 {{ if $isGlobalAdmin }}
                                 <th>
                                     <span class="" title="Actions">{{.RequestContext.Locales.Translate "actions"}}</span>
@@ -31,14 +31,17 @@
                                     <tr>
                                         <td><a href="/countries/{{.ID}}/participants">{{.Name}}</a></td>
                                         {{ if $isGlobalAdmin }}
-                                            <td><a href="/countries/{{.ID}}">Edit<i class="bi bi-pencil-square d-lg-inline-block ms-2"></i></a></td>
+                                            <td><a href="/countries/{{.ID}}">
+                                                    {{.RequestContext.Locales.Translate "edit"}}
+                                                    <i class="bi bi-pencil-square d-lg-inline-block ms-2"></i>
+                                                </a></td>
                                         {{end}}
                                     </tr>
                                 {{end}}
                             </tbody>
                         </table>
                     {{else}}
-                        <div class="">
+                        <div>
                             {{.RequestContext.Locales.Translate "no_country_found"}}
                         </div>
                     {{end}}
