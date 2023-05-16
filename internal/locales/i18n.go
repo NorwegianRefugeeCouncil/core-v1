@@ -49,6 +49,7 @@ func LoadTranslations() error {
 type Interface interface {
 	Translate(id string, args ...interface{}) string
 	TranslateCount(id string, ct int, args ...interface{}) string
+	GetAvailableLangs() []string
 }
 
 type locales struct {
@@ -98,6 +99,10 @@ func (l locales) TranslateCount(id string, ct int, args ...interface{}) string {
 		return "[TL err: " + err.Error() + "]"
 	}
 	return str
+}
+
+func (l locales) GetAvailableLangs() []string {
+	return AvailableLangs.Items()
 }
 
 type localizerKey struct{}

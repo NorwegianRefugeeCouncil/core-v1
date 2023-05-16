@@ -30,8 +30,14 @@
     }
 
     function submitAndResetUploadInput(e) {
-            submitUploadForm()
-            e.target.value = null
+        submitUploadForm()
+        e.target.value = null
+    }
+
+    function setLocale(lang) {
+        const params = new URLSearchParams(window.location.search);
+        params.set('lang', lang);
+        window.location.search = params.toString();
     }
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -146,6 +152,22 @@
                             </div>
                         </div>
                         {{end}}
+
+                        <div class="btn-group ms-3">
+                            <button type="button"
+                                    class="btn btn-sm btn-link dropdown-toggle text-decoration-none px-2"
+                                    data-bs-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false">
+                                <i class="bi bi-globe"></i>
+                                {{.RequestContext.Locales.Translate "language"}}
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                {{range $li, $l := .RequestContext.Locales.GetAvailableLangs}}
+                                    <button class="dropdown-item" onclick="setLocale({{$l}})">{{$l}}</button>
+                                {{end}}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

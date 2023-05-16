@@ -1,3 +1,5 @@
+language = "es"
+
 # countries.gohtml
 actions = "XXXX"
 countries = "XXXX"
@@ -140,11 +142,10 @@ empty_db = "XXXX"
 # nav.gohtml
 download_template = "XXXX"
 edit_countries = "XXXX"
-files = "XXXX"
-logout = "XXXX"
+files = "Archivos"
 navigating_away = "XXXX"
-participants = "XXXX"
-search = "XXXX"
+participants = "Participantes"
+search = "Buscar"
 select_country = "XXXX"
 upload_data = "XXXX"
 uploading = "XXXX"
