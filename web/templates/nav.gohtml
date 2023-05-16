@@ -36,6 +36,10 @@
         }
 
         document.addEventListener("DOMContentLoaded", function () {
+            const uploadButton = document.getElementById(uploadIndividualFileButtonId)
+            if (uploadButton) {
+                uploadButton.addEventListener('click', openUploadDialog);
+            }
             const path = new URL(document.location).pathname;
             const parts = path.split('/');
             const lastPathComponent = parts[parts.length - 1];
