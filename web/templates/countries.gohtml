@@ -2,13 +2,14 @@
 {{end}}
 {{define "body"}}
     {{ $isGlobalAdmin := .RequestContext.Auth.IsGlobalAdmin }}
+    {{ $locales := .RequestContext.Locales }}
     <main>
         <div class="container mt-4">
             <div class="d-flex justify-content-between align-items-center">
-                <h1 class="my-4">{{.RequestContext.Locales.Translate "countries"}}</h1>
+                <h1 class="my-4">{{$locales.Translate "countries"}}</h1>
                 {{ if $isGlobalAdmin }}
                     <div>
-                        <a href="/countries/new" class="btn btn-primary float-end">{{.RequestContext.Locales.Translate "new_country"}}</a>
+                        <a href="/countries/new" class="btn btn-primary float-end">{{$locales.Translate "new_country"}}</a>
                     </div>
                 {{ end }}
             </div>
@@ -18,10 +19,10 @@
                         <table class="table">
                             <thead>
                             <tr>
-                                <th style="min-width:12rem">{{.RequestContext.Locales.Translate "country_name"}}</th>
+                                <th style="min-width:12rem">{{$locales.Translate "country_name"}}</th>
                                 {{ if $isGlobalAdmin }}
                                 <th>
-                                    <span class="" title="Actions">{{.RequestContext.Locales.Translate "actions"}}</span>
+                                    <span class="" title="Actions">{{$locales.Translate "actions"}}</span>
                                 </th>
                                 {{end}}
                             </tr>
@@ -32,7 +33,7 @@
                                         <td><a href="/countries/{{.ID}}/participants">{{.Name}}</a></td>
                                         {{ if $isGlobalAdmin }}
                                             <td><a href="/countries/{{.ID}}">
-                                                    {{.RequestContext.Locales.Translate "edit"}}
+                                                    {{$locales.Translate "edit"}}
                                                     <i class="bi bi-pencil-square d-lg-inline-block ms-2"></i>
                                                 </a></td>
                                         {{end}}
@@ -42,7 +43,7 @@
                         </table>
                     {{else}}
                         <div>
-                            {{.RequestContext.Locales.Translate "no_country_found"}}
+                            {{$locales.Translate "no_country_found"}}
                         </div>
                     {{end}}
                 </div>
