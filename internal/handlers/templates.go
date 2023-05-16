@@ -106,7 +106,6 @@ type RequestContext struct {
 	Session auth.Session
 
 	Locales locales.Interface
-	Langs   []string
 }
 
 func (r RequestContext) HasSelectedCountryWritePermission() bool {

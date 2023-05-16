@@ -10,7 +10,7 @@ import (
 )
 
 func Localize(next http.Handler) http.Handler {
-	localizationHandler := func(w http.ResponseWriter, r *http.Request) {
+	fn := func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		language := getAppropriateLanguage(r.Header.Get("Accept-Language"), r.URL.Query().Get("lang"), locales.AvailableLangs)
 		localizer := i18n.NewLocalizer(locales.Translations, language)
@@ -18,7 +18,7 @@ func Localize(next http.Handler) http.Handler {
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)
 	}
-	return http.HandlerFunc(localizationHandler)
+	return http.HandlerFunc(fn)
 }
 
 func getAppropriateLanguage(languageHeader string, urlParam string, availableLangs containers.StringSet) string {
