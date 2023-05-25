@@ -202,11 +202,15 @@ func getAndSubQueriesWithArgs(args []interface{}, rowGroups RowArgsGroups, typeK
 			args = append(args, v)
 			subQueryParts = append(subQueryParts, fmt.Sprintf("%s = $%d", c, len(args)))
 		}
-		subQueries = append(subQueries, strings.Join(subQueryParts, " AND "))
+		if len(subQueryParts) > 0 {
+			subQueries = append(subQueries, strings.Join(subQueryParts, " AND "))
+		}
 	}
-	subQuery := fmt.Sprintf("(%s)", strings.Join(subQueries, ") OR ("))
-
-	return subQuery, args
+	if len(subQueries) > 0 {
+		subQuery := fmt.Sprintf("(%s)", strings.Join(subQueries, ") OR ("))
+		return subQuery, args
+	}
+	return "", args
 }
 
 func (i individualRepo) driverName() string {
