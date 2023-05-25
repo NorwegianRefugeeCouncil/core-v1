@@ -34,10 +34,12 @@
         e.target.value = null
     }
 
-    function setLocale(lang) {
-        const params = new URLSearchParams(window.location.search);
-        params.set('lang', lang);
-        window.location.search = params.toString();
+    function setLanguageCookie(cValue) {
+        let date = new Date();
+        date.setTime(date.getTime() + (1000 * 24 * 60 * 60 * 1000));
+        const expires = "expires=" + date.toUTCString();
+        document.cookie = "nrc-core-language=" + cValue + "; " + expires + "; path=/";
+        document.location.reload();
     }
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -164,7 +166,7 @@
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
                                 {{range $li, $l := .RequestContext.Locales.GetAvailableLangs}}
-                                    <button class="dropdown-item" onclick="setLocale({{$l}})">{{$l}}</button>
+                                    <button class="dropdown-item" onclick="setLanguageCookie({{$l}})">{{$l}}</button>
                                 {{end}}
                             </div>
                         </div>
