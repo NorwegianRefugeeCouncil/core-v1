@@ -117,7 +117,7 @@ resource "azurerm_monitor_metric_alert" "app_health_check" {
   description         = "${var.environment} - Web App: HealthCheckStatus is less than 100% okay."
   severity            = 1
   frequency           = "PT1M"
-  enabled             = false
+  enabled             = true
 
   criteria {
     threshold         = 1
@@ -171,7 +171,7 @@ resource "azurerm_monitor_metric_alert" "app_4xx_status_codes" {
     metric_name      = "Http4xx"
     aggregation      = "Count"
     operator         = "GreaterThan"
-    threshold        = 10
+    threshold        = 30
     skip_metric_validation = true
   }
 
