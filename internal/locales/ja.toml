@@ -1,4 +1,6 @@
-language = "es"
+language = "日本"
+en = "English"
+ja = "日本"
 
 # countries.gohtml
 actions = "XXXX"
@@ -142,10 +144,10 @@ empty_db = "XXXX"
 # nav.gohtml
 download_template = "XXXX"
 edit_countries = "XXXX"
-files = "Archivos"
+files = "XXXX"
 navigating_away = "XXXX"
-participants = "Participantes"
-search = "Buscar"
+participants = "XXXX"
+search = "XXXX"
 select_country = "XXXX"
 upload_data = "XXXX"
 uploading = "XXXX"

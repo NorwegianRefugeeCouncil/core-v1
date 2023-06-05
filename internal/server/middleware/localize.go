@@ -9,7 +9,7 @@ import (
 	"github.com/nrc-no/notcore/internal/locales"
 )
 
-var cookieName = "nrc-core-language"
+const cookieName = "nrc-core-language"
 
 func Localize(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
@@ -26,7 +26,9 @@ func Localize(next http.Handler) http.Handler {
 }
 
 func getAppropriateLanguage(languageHeader string, cookie *http.Cookie, availableLangs containers.StringSet) string {
-	language := locales.DefaultLang.String()
+	if cookie != nil && availableLangs.Contains(cookie.Value) {
+		return cookie.Value
+	}
 
 	headerLanguages := []string{}
 	for _, lang := range strings.Split(languageHeader, ",") {
@@ -34,13 +36,9 @@ func getAppropriateLanguage(languageHeader string, cookie *http.Cookie, availabl
 	}
 	for _, l := range headerLanguages {
 		if availableLangs.Contains(l) {
-			language = l
-			break
+			return l
 		}
 	}
 
-	if cookie != nil && availableLangs.Contains(cookie.Value) {
-		language = cookie.Value
-	}
-	return language
+	return locales.DefaultLang.String()
 }
