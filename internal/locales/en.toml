@@ -135,6 +135,9 @@ sex_male = "Male"
 toggle_dropdown = "Toggle dropdown"
 updated_at = "Updated"
 warning_cannot_be_undone = "This action cannot be undone."
+no_results = "No participants fit your search query."
+adjust_filters = "Try adjusting your search criteria."
+empty_db = "No participants uploaded yet."
 
 # nav.gohtml
 download_template = "Download template"

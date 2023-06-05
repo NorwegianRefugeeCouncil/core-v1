@@ -133,6 +133,9 @@ sex_male = "XXXX"
 toggle_dropdown = "XXXX"
 updated_at = "XXXX"
 warning_cannot_be_undone = "XXXX"
+no_results = "XXXX"
+adjust_filters = "XXXX"
+empty_db = "XXXX"
 
 # nav.gohtml
 download_template = "XXXX"

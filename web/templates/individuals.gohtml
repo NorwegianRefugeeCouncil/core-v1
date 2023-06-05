@@ -144,14 +144,14 @@
             if (emptyText) {
                 if (window.location.search.length > 0) {
                         const heading = document.createElement("h5")
-                        heading.innerText = "No participants fit your search query."
+                        heading.innerText = "{{.RequestContext.Locales.Translate "no_results"}}"
                         const span = document.createElement("span")
-                        span.innerText = "Try adjusting your search criteria."
+                        span.innerText = "{{.RequestContext.Locales.Translate "adjust_filters"}}"
                         emptyText.appendChild(heading)
                         emptyText.appendChild(span)
                 } else {
                     const heading = document.createElement("h5")
-                    heading.innerText = "No participants uploaded yet."
+                    heading.innerText = "{{.RequestContext.Locales.Translate "empty_db"}}"
                     emptyText.appendChild(heading)
                 }
             }
