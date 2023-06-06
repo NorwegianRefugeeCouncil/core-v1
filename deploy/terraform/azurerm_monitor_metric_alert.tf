@@ -123,8 +123,8 @@ resource "azurerm_monitor_metric_alert" "app_health_check" {
     threshold         = 1
     operator          = "LessThan"
     aggregation       = "Average"
-    metric_name       = "Microsoft.Web/sites"
-    metric_namespace  = "HealthCheckStatus"
+    metric_namespace  = "Microsoft.Web/sites"
+    metric_name       = "HealthCheckStatus"
     skip_metric_validation = true
   }
 
@@ -161,7 +161,7 @@ resource "azurerm_monitor_metric_alert" "app_4xx_status_codes" {
   name                = "app-4xx-status-codes-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_linux_web_app.app.id]
-  description         = "${var.environment} - Web App: more than 10 4xx Errors are returned per hour."
+  description         = "${var.environment} - Web App: more than 30 4xx Errors are returned per hour."
   severity            = 3
   frequency           = "PT1H"
   window_size         = "PT1H"
@@ -173,6 +173,7 @@ resource "azurerm_monitor_metric_alert" "app_4xx_status_codes" {
     operator         = "GreaterThan"
     threshold        = 30
     skip_metric_validation = true
+
   }
 
   action {
