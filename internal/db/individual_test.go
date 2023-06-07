@@ -16,6 +16,26 @@ var individuals = []*api.Individual{
 	{ID: "3", IdentificationNumber1: "ID7", IdentificationNumber2: "ID8", FirstName: "FN3", LastName: "LN3", MiddleName: ""},
 }
 
+func TestGetEmptyValuesQuery(t *testing.T) {
+	tests := []struct {
+		name               string
+		deduplicationTypes []deduplication.DeduplicationTypeName
+		wantValues         string
+	}{
+		{
+			name:               "type: Names, IDs, Emails",
+			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds, deduplication.DeduplicationTypeNameEmails},
+			wantValues:         "first_name = '' AND middle_name = '' AND last_name = '' AND native_name = '' AND identification_number_1 = '' AND identification_number_2 = '' AND identification_number_3 = '' AND email_1 = '' AND email_2 = '' AND email_3 = ''",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			params := getEmptyValuesQuery(tt.deduplicationTypes)
+			assert.Equal(t, tt.wantValues, params)
+		})
+	}
+}
+
 func TestCollectParams(t *testing.T) {
 	tests := []struct {
 		name               string

@@ -113,6 +113,13 @@ func buildDeduplicationQuery(selectedCountryID string, individuals []*api.Indivi
 		b.WriteString(subQueries[q])
 		b.WriteString(")")
 	}
+
+	emptyValuesQuery := getEmptyValuesQuery(deduplicationTypes)
+
+	b.WriteString(" AND NOT (")
+	b.WriteString(emptyValuesQuery)
+	b.WriteString(")")
+
 	return b.String(), args
 }
 
@@ -159,18 +166,30 @@ func collectOrQueryArgs(individuals []*api.Individual, deduplicationConfig dedup
 
 func getSubQueriesWithArgs(args []interface{}, argMap QueryArgs) ([]string, []interface{}) {
 	query := []string{}
-	for _, typeValues := range argMap.Or {
+	for typeKey, typeValues := range argMap.Or {
 		var orQuery string
 		orQuery, args = getOrSubQueriesWithArgs(args, typeValues)
-		query = append(query, orQuery)
+		emptyValuesQuery := getEmptyValuesQuery([]deduplication.DeduplicationTypeName{typeKey})
+		query = append(query, fmt.Sprintf("%s OR %s", orQuery, emptyValuesQuery))
 	}
 	for typeKey, typeValues := range argMap.And {
 		var andQuery string
 		andQuery, args = getAndSubQueriesWithArgs(args, typeValues, typeKey)
-		query = append(query, andQuery)
+		emptyValuesQuery := getEmptyValuesQuery([]deduplication.DeduplicationTypeName{typeKey})
+		query = append(query, fmt.Sprintf("%s OR %s", andQuery, emptyValuesQuery))
 	}
 
 	return query, args
+}
+
+func getEmptyValuesQuery(deduplicationTypes []deduplication.DeduplicationTypeName) string {
+	subQueries := make([]string, 0)
+	for i, _ := range deduplicationTypes {
+		for j, _ := range deduplication.DeduplicationTypes[deduplicationTypes[i]].Config.Columns {
+			subQueries = append(subQueries, fmt.Sprintf("%s = ''", deduplication.DeduplicationTypes[deduplicationTypes[i]].Config.Columns[j]))
+		}
+	}
+	return strings.Join(subQueries, " AND ")
 }
 
 func getOrSubQueriesWithArgs(args []interface{}, colGroups ColumnArgsGroups) (string, []interface{}) {
