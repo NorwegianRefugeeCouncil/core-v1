@@ -49,6 +49,6 @@ func HandleCountries(templates map[string]*template.Template) http.Handler {
 
 		renderView(templates, templateName, w, r, viewParams{
 			viewParamsAllowedCountries: allowedCountries,
-		})
+		}, "")
 	})
 }

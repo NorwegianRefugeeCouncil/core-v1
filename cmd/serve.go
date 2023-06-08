@@ -36,6 +36,7 @@ const (
 	envBlockKey1               = "CORE_BLOCK_KEY_1"
 	envHashKey2                = "CORE_HASH_KEY_2"
 	envBlockKey2               = "CORE_BLOCK_KEY_2"
+	envEnv                     = "CORE_ENV"
 
 	flagDbDSN                   = "db-dsn"
 	flagDbDriver                = "db-driver"
@@ -56,6 +57,7 @@ const (
 	flagBlockKey1               = "block-key-1"
 	flagHashKey2                = "hash-key-2"
 	flagBlockKey2               = "block-key-2"
+	flagEnv                     = "env"
 )
 
 // serveCmd represents the serve command
@@ -176,6 +178,8 @@ var serveCmd = &cobra.Command{
 			return fmt.Errorf("--%s is required", flagBlockKey2)
 		}
 
+		env := getFlagOrEnv(cmd, flagEnv, envEnv)
+
 		options := server.Options{
 			Address:              listenAddress,
 			DatabaseDriver:       dbDriver,
@@ -198,6 +202,7 @@ var serveCmd = &cobra.Command{
 			BlockKey1:               blockKey1,
 			HashKey2:                hashKey2,
 			BlockKey2:               blockKey2,
+			Env:                     env,
 		}
 
 		srv, err := options.New(ctx)
@@ -369,6 +374,11 @@ The second block key is used to perform smooth key rotation.
 Usually, the first block key is moved to the second block key, and a new first block key is generated.
 Can also be set with %s
 `, envBlockKey2)))
+
+	serveCmd.PersistentFlags().String(flagEnv, "", cleanDoc(fmt.Sprintf(`
+This flag specifies wether the environment is the localhost, and determines if test features will be enabled.
+Can also be set with %s
+`, envEnv)))
 
 }
 

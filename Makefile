@@ -69,7 +69,8 @@ serve: prerequisites
 		--hash-key-1="583ee90ea5821cb8c49ac0a8feeb7d090d597b1502fe653d68918122247d9675" \
 		--block-key-1="1e4254ae1f74406b853193466816ddffd592f8ef3bf9c2299735aec453a34239" \
 		--hash-key-2="28382c602c786507d5a286ff5890f1db12dc638355f50ab7cf91a946b07da670" \
-		--block-key-2="f735998d3da9d8a2b01cba8e9243605a7e02dd5daebefe62e23f2bc0b29787c2"
+		--block-key-2="f735998d3da9d8a2b01cba8e9243605a7e02dd5daebefe62e23f2bc0b29787c2" \
+		--env="local"
 
 .PHONY: bootstrap
 bootstrap:

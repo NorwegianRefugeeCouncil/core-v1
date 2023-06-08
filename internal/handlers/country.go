@@ -39,7 +39,7 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 		render := func() {
 			renderView(templates, templateName, w, r, viewParams{
 				viewParamCountry: country,
-			})
+			}, "")
 		}
 
 		if r.Method == http.MethodGet {

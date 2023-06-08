@@ -24,6 +24,7 @@ func buildRouter(
 	accessTokenHeaderName string,
 	accessTokenHeaderFormat string,
 	loginURL string,
+	env string,
 	provider *oidc.Provider,
 	idTokenVerifier middleware.IDTokenVerifier,
 	sessionStore *sessions.CookieStore,
@@ -36,7 +37,7 @@ func buildRouter(
 		// gorillahandlers.CompressHandler,
 		middleware.RequestId,
 	)
-	renderer := handlers.NewRenderer(tpl)
+	renderer := handlers.NewRenderer(tpl, env)
 
 	staticRouter := r.PathPrefix("/static").Subrouter()
 	staticRouter.HandleFunc("/{file:.*}", web.ServeStatic)
@@ -51,7 +52,7 @@ func buildRouter(
 		middleware.PrefetchCountries(countryRepo),
 		middleware.ComputePermissions(jwtGroups),
 		middleware.SelectedCountry(),
-		middleware.Localize,
+		middleware.Localize(env),
 	)
 
 	countriesRouter := webRouter.PathPrefix("/countries").Subrouter()

@@ -49,7 +49,7 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 				"form":              individualForm,
 				"Individual":        individual,
 				templateParamAlerts: alerts,
-			})
+			}, "")
 			return
 		}
 

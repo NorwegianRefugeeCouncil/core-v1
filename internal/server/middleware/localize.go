@@ -10,19 +10,24 @@ import (
 
 const cookieName = "nrc-core-language"
 
-func Localize(next http.Handler) http.Handler {
-	fn := func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
-		// TODO: activate when translations are available
-		//languageCookie, _ := r.Cookie(cookieName)
-		//languageHeader := r.Header.Get("Accept-Language")
-		//language := getAppropriateLanguage(languageHeader, languageCookie, locales.AvailableLangs)
-		localizer := i18n.NewLocalizer(locales.Translations, locales.DefaultLang.String())
-		ctx = locales.WithLocalizer(ctx, localizer)
-		r = r.WithContext(ctx)
-		next.ServeHTTP(w, r)
+func Localize(env string) func(handler http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := r.Context()
+			language := locales.DefaultLang.String()
+
+			if env == "local" {
+				languageCookie, _ := r.Cookie(cookieName)
+				languageHeader := r.Header.Get("Accept-Language")
+				language = getAppropriateLanguage(languageHeader, languageCookie, locales.AvailableLangs)
+			}
+
+			localizer := i18n.NewLocalizer(locales.Translations, language)
+			ctx = locales.WithLocalizer(ctx, localizer)
+			r = r.WithContext(ctx)
+			next.ServeHTTP(w, r)
+		})
 	}
-	return http.HandlerFunc(fn)
 }
 
 func getAppropriateLanguage(languageHeader string, cookie *http.Cookie, availableLangs containers.StringSet) string {

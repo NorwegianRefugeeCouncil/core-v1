@@ -106,6 +106,8 @@ type RequestContext struct {
 	Session auth.Session
 
 	Locales locales.Interface
+	// turn on dev features
+	Env string
 }
 
 func (r RequestContext) HasSelectedCountryWritePermission() bool {
@@ -132,16 +134,18 @@ type Renderer interface {
 
 type renderer struct {
 	templates map[string]*template.Template
+	env       string
 }
 
-func NewRenderer(templates map[string]*template.Template) Renderer {
+func NewRenderer(templates map[string]*template.Template, env string) Renderer {
 	return &renderer{
 		templates: templates,
+		env:       env,
 	}
 }
 
 func (r *renderer) RenderView(w http.ResponseWriter, req *http.Request, templateName string, data viewParams) {
-	renderView(r.templates, templateName, w, req, data)
+	renderView(r.templates, templateName, w, req, data, r.env)
 }
 
 // renderView renders a view with the given name and data.
@@ -151,6 +155,7 @@ func renderView(
 	w http.ResponseWriter,
 	r *http.Request,
 	data viewParams,
+	env string,
 ) {
 
 	ctx := r.Context()
@@ -213,6 +218,7 @@ func renderView(
 		SelectedCountry: selectedCountry,
 		Session:         session,
 		Locales:         localesInterface,
+		Env:             env,
 	}
 	vd[vd.RequestContextKey()] = rc
 
