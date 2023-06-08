@@ -1,12 +1,11 @@
 package middleware
 
 import (
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/nrc-no/notcore/internal/containers"
+	"github.com/nrc-no/notcore/internal/locales"
 	"net/http"
 	"strings"
-
-	"github.com/nicksnyder/go-i18n/v2/i18n"
-	"github.com/nrc-no/notcore/internal/locales"
 )
 
 const cookieName = "nrc-core-language"
@@ -14,10 +13,11 @@ const cookieName = "nrc-core-language"
 func Localize(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-		languageCookie, _ := r.Cookie(cookieName)
-		languageHeader := r.Header.Get("Accept-Language")
-		language := getAppropriateLanguage(languageHeader, languageCookie, locales.AvailableLangs)
-		localizer := i18n.NewLocalizer(locales.Translations, language)
+		// TODO: activate when translations are available
+		//languageCookie, _ := r.Cookie(cookieName)
+		//languageHeader := r.Header.Get("Accept-Language")
+		//language := getAppropriateLanguage(languageHeader, languageCookie, locales.AvailableLangs)
+		localizer := i18n.NewLocalizer(locales.Translations, locales.DefaultLang.String())
 		ctx = locales.WithLocalizer(ctx, localizer)
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)
