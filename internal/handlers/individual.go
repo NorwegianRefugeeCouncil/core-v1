@@ -24,11 +24,12 @@ import (
 func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 	const (
-		templateName           = "individual.gohtml"
-		templateParamAlerts    = "Alerts"
-		pathParamIndividualID  = "individual_id"
-		formDeduplicationParam = "deduplicationType"
-		newID                  = "new"
+		templateName                        = "individual.gohtml"
+		templateParamAlerts                 = "Alerts"
+		pathParamIndividualID               = "individual_id"
+		formDeduplicationParam              = "deduplicationType"
+		formParamDeduplicationLogicOperator = "deduplicationLogicOperator"
+		newID                               = "new"
 	)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -129,6 +130,7 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 		}
 
 		deduplicationTypes := r.Form[formDeduplicationParam]
+		deduplicationLogicOperator := r.Form[formParamDeduplicationLogicOperator]
 		optionName, err := deduplication.GetDeduplicationTypeNames(deduplicationTypes)
 		if err != nil {
 			alerts = append(alerts, alert.Alert{
@@ -140,7 +142,7 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			render()
 		}
 
-		duplicates, err := repo.FindDuplicates(ctx, []*api.Individual{individual}, optionName)
+		duplicates, err := repo.FindDuplicates(ctx, []*api.Individual{individual}, optionName, deduplicationLogicOperator[0])
 
 		if len(duplicates) > 0 {
 			for _, dType := range optionName {

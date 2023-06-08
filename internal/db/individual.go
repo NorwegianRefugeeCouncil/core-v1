@@ -26,16 +26,16 @@ type IndividualRepo interface {
 	PutMany(ctx context.Context, individuals []*api.Individual, fields containers.StringSet) ([]*api.Individual, error)
 	PerformAction(ctx context.Context, id string, action string) error
 	PerformActionMany(ctx context.Context, ids containers.StringSet, action string) error
-	FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) ([]*api.Individual, error)
+	FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName, deduplicationLogicOperator string) ([]*api.Individual, error)
 }
 
 type individualRepo struct {
 	db *sqlx.DB
 }
 
-func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) ([]*api.Individual, error) {
+func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName, deduplicationLogicOperator string) ([]*api.Individual, error) {
 	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		return i.findDuplicatesInternal(ctx, tx, individuals, deduplicationTypes)
+		return i.findDuplicatesInternal(ctx, tx, individuals, deduplicationTypes, deduplicationLogicOperator)
 	})
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.I
 	return ret.([]*api.Individual), nil
 }
 
-func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) ([]*api.Individual, error) {
+func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName, deduplicationLogicOperator string) ([]*api.Individual, error) {
 	if i.driverName() != "postgres" {
 		return nil, fmt.Errorf("deduplication is only implemented for postgres")
 	}
@@ -55,7 +55,7 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	if err != nil {
 		return nil, err
 	}
-	query, args := buildDeduplicationQuery(selectedCountryID, individuals, deduplicationTypes)
+	query, args := buildDeduplicationQuery(selectedCountryID, individuals, deduplicationTypes, deduplicationLogicOperator)
 	out := make([]*api.Individual, 0)
 
 	err = tx.SelectContext(ctx, &out, query, args...)
@@ -96,7 +96,7 @@ example of QueryArgs:
 }
 */
 
-func buildDeduplicationQuery(selectedCountryID string, individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) (string, []interface{}) {
+func buildDeduplicationQuery(selectedCountryID string, individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName, deduplicationLogicOperator string) (string, []interface{}) {
 	b := &strings.Builder{}
 	subQueries := []string{}
 	args := []interface{}{selectedCountryID}
@@ -108,11 +108,11 @@ func buildDeduplicationQuery(selectedCountryID string, individuals []*api.Indivi
 	}
 
 	b.WriteString("SELECT * FROM individual_registrations WHERE country_id = $1 AND deleted_at IS NULL")
-	for q := 0; q < len(subQueries); q++ {
-		b.WriteString(" AND (")
-		b.WriteString(subQueries[q])
-		b.WriteString(")")
-	}
+	//for q := 0; q < len(subQueries); q++ {
+	b.WriteString(" AND (")
+	b.WriteString(strings.Join(subQueries, fmt.Sprintf(") %s (", deduplicationLogicOperator)))
+	b.WriteString(")")
+	//}
 
 	emptyValuesQuery := getEmptyValuesQuery(deduplicationTypes)
 

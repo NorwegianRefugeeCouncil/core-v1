@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func FindDuplicatesInUpload(optionNames []deduplication.DeduplicationTypeName, records [][]string) []containers.Set[int] {
+func FindDuplicatesInUpload(optionNames []deduplication.DeduplicationTypeName, records [][]string, deduplicationLogicOperator string) []containers.Set[int] {
 	df := dataframe.LoadRecords(records,
 		dataframe.DetectTypes(false),
 		dataframe.DefaultType(series.String),
@@ -21,14 +21,14 @@ func FindDuplicatesInUpload(optionNames []deduplication.DeduplicationTypeName, r
 	duplicateScores := []containers.Set[int]{}
 	for i := 0; i < df.Nrow(); i++ {
 		duplicateScores = append(duplicateScores, containers.NewSet[int]())
-		getDuplicationScoresForRecord(optionNames, df, i, duplicateScores[i])
+		getDuplicationScoresForRecord(optionNames, df, i, duplicateScores[i], deduplicationLogicOperator)
 	}
 	return duplicateScores
 }
 
 var indexColumnName = "index"
 
-func getDuplicationScoresForRecord(optionNames []deduplication.DeduplicationTypeName, df dataframe.DataFrame, currentIndex int, duplicates containers.Set[int]) {
+func getDuplicationScoresForRecord(optionNames []deduplication.DeduplicationTypeName, df dataframe.DataFrame, currentIndex int, duplicates containers.Set[int], deduplicationLogicOperator string) {
 	// the duplicationScore is a metric to determine if the record is a duplicate, it counts how many sub-criteria have been fulfilled
 	duplicationScore := make([]int, df.Nrow())
 
@@ -58,8 +58,14 @@ func getDuplicationScoresForRecord(optionNames []deduplication.DeduplicationType
 		}
 	}
 	for r := range duplicationScore {
-		if duplicationScore[r] == len(optionNames) {
-			duplicates.Add(r)
+		if deduplicationLogicOperator == deduplication.LOGICAL_OPERATOR_OR {
+			if duplicationScore[r] > 0 {
+				duplicates.Add(r)
+			}
+		} else {
+			if duplicationScore[r] == len(optionNames) {
+				duplicates.Add(r)
+			}
 		}
 	}
 }

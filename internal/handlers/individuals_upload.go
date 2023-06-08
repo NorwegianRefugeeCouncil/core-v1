@@ -18,9 +18,10 @@ var UPLOAD_LIMIT = 10000
 func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Handler {
 
 	const (
-		templateName               = "error.gohtml"
-		formParamFile              = "file"
-		formParamDeduplicationType = "deduplicationType"
+		templateName                        = "error.gohtml"
+		formParamFile                       = "file"
+		formParamDeduplicationType          = "deduplicationType"
+		formParamDeduplicationLogicOperator = "deduplicationLogicOperator"
 	)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -106,6 +107,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		}
 
 		deduplicationTypes := r.MultipartForm.Value[formParamDeduplicationType]
+		deduplicationLogicOperator := r.MultipartForm.Value[formParamDeduplicationLogicOperator]
 
 		if len(deduplicationTypes) > 0 {
 			optionNames, err := deduplication.GetDeduplicationTypeNames(deduplicationTypes)
@@ -115,7 +117,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 				return
 			}
 
-			duplicatesInFile := api.FindDuplicatesInUpload(optionNames, records)
+			duplicatesInFile := api.FindDuplicatesInUpload(optionNames, records, deduplicationLogicOperator[0])
 			if len(duplicatesInFile) > 0 {
 				errors := api.FormatFileDeduplicationErrors(duplicatesInFile, optionNames, records)
 				if errors != nil {
@@ -124,7 +126,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 				}
 			}
 
-			duplicatesInDB, err := individualRepo.FindDuplicates(ctx, individuals, optionNames)
+			duplicatesInDB, err := individualRepo.FindDuplicates(ctx, individuals, optionNames, deduplicationLogicOperator[0])
 			if err != nil {
 				renderError("An error occurred while trying to check for duplicates: "+err.Error(), nil)
 				return
