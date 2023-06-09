@@ -155,13 +155,13 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 						if err != nil || value == "" {
 							continue
 						}
-						validationErrors = append(validationErrors, validation.Duplicate(validation.NewPath(field), value, fmt.Sprintf("in %d participants", len(duplicates))))
+						validationErrors = append(validationErrors, validation.Duplicate(validation.NewPath(field), value))
 					}
 				}
 
 				alerts = append(alerts, alert.Alert{
 					Type:        bootstrap.StyleDanger,
-					Title:       "Found duplicates",
+					Title:       fmt.Sprintf("Found %d duplicates", len(duplicates)),
 					Icon:        warningIcon,
 					Dismissible: true,
 				})

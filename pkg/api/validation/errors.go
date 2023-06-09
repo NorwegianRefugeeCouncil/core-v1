@@ -144,8 +144,8 @@ func Required(field *Path, detail string) *Error {
 	return &Error{ErrorTypeRequired, field.String(), "", detail}
 }
 
-func Duplicate(field *Path, value interface{}, detail string) *Error {
-	return &Error{ErrorTypeDuplicate, field.String(), value, detail}
+func Duplicate(field *Path, value interface{}) *Error {
+	return &Error{ErrorTypeDuplicate, field.String(), value, ""}
 }
 
 func Invalid(field *Path, value interface{}, detail string) *Error {

@@ -40,8 +40,8 @@ func TestError_ErrorBody(t *testing.T) {
 			want: "root: Required: detail",
 		}, {
 			name: "Duplicate",
-			err:  Duplicate(NewPath("root"), 2, "detail"),
-			want: "root: Duplicate value: 2: detail",
+			err:  Duplicate(NewPath("root"), 2),
+			want: "root: Duplicate value: 2",
 		}, {
 			name: "Invalid",
 			err:  Invalid(NewPath("root"), 2, "detail"),
