@@ -216,9 +216,7 @@
                                     If you want to prevent duplicate participants from being uploaded,
                                     please pick one or more of the criteria, so we know how to recognize duplicates.
                                     <br/>
-                                    Only records that fulfill all selected criteria will be counted as duplicates.
-                                    <br/>
-                                    This process can take a few minutes, so please be patient.
+                                    Please be patient, this process can take a few minutes.
                                 </p>
 
                                 <div class="container">
@@ -237,11 +235,17 @@
                                     {{end}}
                                     </div>
 
+
+                                        <p>
+                                            Do you want all or any of the criteria to match?
+                                        </p>
                                     <div class="row">
                                         <div class="form-check col-6">
                                             <input class="form-check-input"
                                                    type="radio"
                                                    value="AND"
+                                                   checked
+                                                   form="individual-upload--form"
                                                    name="deduplicationLogicOperator">
                                             <label class="form-check-label">
                                                 All
@@ -251,6 +255,7 @@
                                             <input class="form-check-input"
                                                    type="radio"
                                                    value="OR"
+                                                   form="individual-upload--form"
                                                    name="deduplicationLogicOperator">
                                             <label class="form-check-label">
                                                 Any

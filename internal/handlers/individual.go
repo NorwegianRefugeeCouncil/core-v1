@@ -129,58 +129,62 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		deduplicationTypes := r.Form[formDeduplicationParam]
-		deduplicationLogicOperator := r.Form[formParamDeduplicationLogicOperator]
-		optionName, err := deduplication.GetDeduplicationTypeNames(deduplicationTypes)
-		if err != nil {
-			alerts = append(alerts, alert.Alert{
-				Type:        bootstrap.StyleDanger,
-				Title:       "An Error Occurred during Deduplication",
-				Icon:        warningIcon,
-				Dismissible: true,
-			})
-			render()
-		}
-
-		duplicates, err := repo.FindDuplicates(ctx, []*api.Individual{individual}, optionName, deduplicationLogicOperator[0])
-
-		if len(duplicates) > 0 {
-			for _, dType := range optionName {
-				for _, field := range deduplication.DeduplicationTypes[dType].Config.Columns {
-					value, err := individual.GetFieldValue(field)
-					if err != nil || value == "" {
-						continue
-					}
-					validationErrors = append(validationErrors, validation.Duplicate(validation.NewPath(field), value, fmt.Sprintf("in %d participants", len(duplicates))))
-				}
+		if r.Method == http.MethodPost || r.Method == http.MethodPut {
+			duplicates := []*api.Individual{}
+			deduplicationTypes := r.Form[formDeduplicationParam]
+			deduplicationLogicOperator := r.Form[formParamDeduplicationLogicOperator]
+			optionNames, err := deduplication.GetDeduplicationTypeNames(deduplicationTypes)
+			if err != nil {
+				alerts = append(alerts, alert.Alert{
+					Type:        bootstrap.StyleDanger,
+					Title:       "An Error Occurred during Deduplication",
+					Icon:        warningIcon,
+					Dismissible: true,
+				})
+				render()
 			}
 
-			alerts = append(alerts, alert.Alert{
-				Type:        bootstrap.StyleDanger,
-				Title:       "Found duplicates",
-				Icon:        warningIcon,
-				Dismissible: true,
-			})
-			render()
-			return
-		}
+			if len(optionNames) > 0 {
+				duplicates, err = repo.FindDuplicates(ctx, []*api.Individual{individual}, optionNames, deduplicationLogicOperator[0])
+			}
 
-		// Save the individual
-		individual, err = repo.Put(ctx, individual, constants.IndividualDBColumns)
-		if err != nil {
-			l.Error("failed to put individual", zap.Error(err))
-			err = apierrs.ErrorFrom(err)
-			render()
-			return
-		}
+			if len(duplicates) > 0 {
+				for _, dType := range optionNames {
+					for _, field := range deduplication.DeduplicationTypes[dType].Config.Columns {
+						value, err := individual.GetFieldValue(field)
+						if err != nil || value == "" {
+							continue
+						}
+						validationErrors = append(validationErrors, validation.Duplicate(validation.NewPath(field), value, fmt.Sprintf("in %d participants", len(duplicates))))
+					}
+				}
 
-		if individualId == "new" {
-			http.Redirect(w, r, fmt.Sprintf("/countries/%s/participants/%s", individual.CountryID, individual.ID), http.StatusFound)
-			return
-		} else {
-			render()
-			return
-		}
+				alerts = append(alerts, alert.Alert{
+					Type:        bootstrap.StyleDanger,
+					Title:       "Found duplicates",
+					Icon:        warningIcon,
+					Dismissible: true,
+				})
+				render()
+				return
+			}
 
+			// Save the individual
+			individual, err = repo.Put(ctx, individual, constants.IndividualDBColumns)
+			if err != nil {
+				l.Error("failed to put individual", zap.Error(err))
+				err = apierrs.ErrorFrom(err)
+				render()
+				return
+			}
+
+			if individualId == "new" {
+				http.Redirect(w, r, fmt.Sprintf("/countries/%s/participants/%s", individual.CountryID, individual.ID), http.StatusFound)
+				return
+			} else {
+				render()
+				return
+			}
+		}
 	})
 }

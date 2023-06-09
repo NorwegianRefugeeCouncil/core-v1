@@ -36,51 +36,96 @@ var df = dataframe.LoadRecords(testRecords)
 
 func TestGetDuplicationScoresForRecord(t *testing.T) {
 	tests := []struct {
-		name               string
-		deduplicationTypes []deduplication.DeduplicationTypeName
-		records            dataframe.DataFrame
-		index              int
-		want               containers.Set[int]
+		name                       string
+		deduplicationTypes         []deduplication.DeduplicationTypeName
+		deduplicationLogicOperator string
+		records                    dataframe.DataFrame
+		index                      int
+		want                       containers.Set[int]
 	}{
 		{
-			name:               "check IDs",
-			records:            df,
-			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameIds},
-			index:              0,
-			want:               containers.NewSet[int](2, 3, 4, 6, 7),
+			name:                       "check IDs, AND",
+			records:                    df,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameIds},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_AND,
+			index:                      0,
+			want:                       containers.NewSet[int](2, 3, 4, 6, 7),
 		},
 		{
-			name:               "check Names",
-			records:            df,
-			index:              0,
-			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames},
-			want:               containers.NewSet[int](6, 7, 8),
+			name:                       "check Names, AND",
+			records:                    df,
+			index:                      0,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_AND,
+			want:                       containers.NewSet[int](6, 7, 8),
 		},
 		{
-			name:               "check Names and IDs",
-			records:            df,
-			index:              0,
-			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds},
-			want:               containers.NewSet[int](6, 7),
+			name:                       "check Names and IDs, AND",
+			records:                    df,
+			index:                      0,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_AND,
+			want:                       containers.NewSet[int](6, 7),
 		},
 		{
-			name:               "check Full Name",
-			records:            df,
-			index:              0,
-			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameFullName},
-			want:               containers.NewSet[int](5),
+			name:                       "check Full Name, AND",
+			records:                    df,
+			index:                      0,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameFullName},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_AND,
+			want:                       containers.NewSet[int](5),
 		},
 		{
-			name:               "check Names and IDs and Full Name",
-			records:            df,
-			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds, deduplication.DeduplicationTypeNameFullName},
-			want:               containers.NewSet[int](),
+			name:                       "check Names and IDs and Full Name, AND",
+			records:                    df,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds, deduplication.DeduplicationTypeNameFullName},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_AND,
+			want:                       containers.NewSet[int](),
+		},
+		{
+			name:                       "check IDs, OR",
+			records:                    df,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameIds},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_OR,
+			index:                      0,
+			want:                       containers.NewSet[int](2, 3, 4, 6, 7),
+		},
+		{
+			name:                       "check Names, OR",
+			records:                    df,
+			index:                      0,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_OR,
+			want:                       containers.NewSet[int](6, 7, 8),
+		},
+		{
+			name:                       "check Names and IDs, OR",
+			records:                    df,
+			index:                      0,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_OR,
+			want:                       containers.NewSet[int](2, 3, 4, 6, 7, 8),
+		},
+		{
+			name:                       "check Full Name, OR",
+			records:                    df,
+			index:                      0,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameFullName},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_OR,
+			want:                       containers.NewSet[int](5),
+		},
+		{
+			name:                       "check Names and IDs and Full Name, OR",
+			records:                    df,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds, deduplication.DeduplicationTypeNameFullName},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_OR,
+			want:                       containers.NewSet[int](2, 3, 4, 5, 6, 7, 8),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			duplicates := []containers.Set[int]{0: containers.NewSet[int]()}
-			getDuplicationScoresForRecord(tt.deduplicationTypes, tt.records, tt.index, duplicates[0])
+			getDuplicationScoresForRecord(tt.deduplicationTypes, tt.records, tt.index, duplicates[0], tt.deduplicationLogicOperator)
 			assert.Equal(t, tt.want, duplicates[0])
 		})
 	}
@@ -88,15 +133,17 @@ func TestGetDuplicationScoresForRecord(t *testing.T) {
 
 func TestFindDuplicatesInUpload(t *testing.T) {
 	tests := []struct {
-		name               string
-		deduplicationTypes []deduplication.DeduplicationTypeName
-		records            [][]string
-		want               []containers.Set[int]
+		name                       string
+		deduplicationTypes         []deduplication.DeduplicationTypeName
+		deduplicationLogicOperator string
+		records                    [][]string
+		want                       []containers.Set[int]
 	}{
 		{
-			name:               "check IDs",
-			records:            testRecords,
-			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameIds},
+			name:                       "check IDs, AND",
+			records:                    testRecords,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameIds},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_AND,
 			want: []containers.Set[int]{
 				0: containers.NewSet[int](2, 3, 4, 6, 7),
 				1: containers.NewSet[int](5, 8),
@@ -111,9 +158,10 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 			},
 		},
 		{
-			name:               "check Names",
-			records:            testRecords,
-			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames},
+			name:                       "check Names, AND",
+			records:                    testRecords,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_AND,
 			want: []containers.Set[int]{
 				0: containers.NewSet[int](6, 7, 8),
 				1: containers.NewSet[int](),
@@ -128,9 +176,10 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 			},
 		},
 		{
-			name:               "check Names and IDs",
-			records:            testRecords,
-			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds},
+			name:                       "check Names and IDs, AND",
+			records:                    testRecords,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_AND,
 			want: []containers.Set[int]{
 				0: containers.NewSet[int](6, 7),
 				1: containers.NewSet[int](),
@@ -145,9 +194,10 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 			},
 		},
 		{
-			name:               "check Full Name",
-			records:            testRecords,
-			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameFullName},
+			name:                       "check Full Name, AND",
+			records:                    testRecords,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameFullName},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_AND,
 			want: []containers.Set[int]{
 				0: containers.NewSet[int](5),
 				1: containers.NewSet[int](),
@@ -162,9 +212,10 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 			},
 		},
 		{
-			name:               "check Names and IDs and Full Name",
-			records:            testRecords,
-			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds, deduplication.DeduplicationTypeNameFullName},
+			name:                       "check Names and IDs and Full Name, AND",
+			records:                    testRecords,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds, deduplication.DeduplicationTypeNameFullName},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_AND,
 			want: []containers.Set[int]{
 				0: containers.NewSet[int](),
 				1: containers.NewSet[int](),
@@ -178,10 +229,100 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 				9: containers.NewSet[int](),
 			},
 		},
+		{
+			name:                       "check IDs, OR",
+			records:                    testRecords,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameIds},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_OR,
+			want: []containers.Set[int]{
+				0: containers.NewSet[int](2, 3, 4, 6, 7),
+				1: containers.NewSet[int](5, 8),
+				2: containers.NewSet[int](0, 7),
+				3: containers.NewSet[int](0, 6, 7),
+				4: containers.NewSet[int](0, 6, 7),
+				5: containers.NewSet[int](1, 8),
+				6: containers.NewSet[int](0, 3, 4, 7),
+				7: containers.NewSet[int](0, 2, 3, 4, 6),
+				8: containers.NewSet[int](1, 5),
+				9: containers.NewSet[int](),
+			},
+		},
+		{
+			name:                       "check Names, OR",
+			records:                    testRecords,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_OR,
+			want: []containers.Set[int]{
+				0: containers.NewSet[int](6, 7, 8),
+				1: containers.NewSet[int](),
+				2: containers.NewSet[int](),
+				3: containers.NewSet[int](4),
+				4: containers.NewSet[int](3),
+				5: containers.NewSet[int](),
+				6: containers.NewSet[int](0, 7, 8),
+				7: containers.NewSet[int](0, 6, 8),
+				8: containers.NewSet[int](0, 6, 7),
+				9: containers.NewSet[int](),
+			},
+		},
+		{
+			name:                       "check Names and IDs, OR",
+			records:                    testRecords,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_OR,
+			want: []containers.Set[int]{
+				0: containers.NewSet[int](2, 3, 4, 6, 7, 8),
+				1: containers.NewSet[int](5, 8),
+				2: containers.NewSet[int](0, 7),
+				3: containers.NewSet[int](0, 4, 6, 7),
+				4: containers.NewSet[int](0, 3, 6, 7),
+				5: containers.NewSet[int](1, 8),
+				6: containers.NewSet[int](0, 3, 4, 7, 8),
+				7: containers.NewSet[int](0, 2, 3, 4, 6, 8),
+				8: containers.NewSet[int](0, 1, 5, 6, 7),
+				9: containers.NewSet[int](),
+			},
+		},
+		{
+			name:                       "check Full Name, OR",
+			records:                    testRecords,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameFullName},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_OR,
+			want: []containers.Set[int]{
+				0: containers.NewSet[int](5),
+				1: containers.NewSet[int](),
+				2: containers.NewSet[int](),
+				3: containers.NewSet[int](),
+				4: containers.NewSet[int](),
+				5: containers.NewSet[int](0),
+				6: containers.NewSet[int](),
+				7: containers.NewSet[int](),
+				8: containers.NewSet[int](),
+				9: containers.NewSet[int](),
+			},
+		},
+		{
+			name:                       "check Names and IDs and Full Name, OR",
+			records:                    testRecords,
+			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds, deduplication.DeduplicationTypeNameFullName},
+			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_OR,
+			want: []containers.Set[int]{
+				0: containers.NewSet[int](2, 3, 4, 5, 6, 7, 8),
+				1: containers.NewSet[int](5, 8),
+				2: containers.NewSet[int](0, 7),
+				3: containers.NewSet[int](0, 4, 6, 7),
+				4: containers.NewSet[int](0, 3, 6, 7),
+				5: containers.NewSet[int](0, 1, 8),
+				6: containers.NewSet[int](0, 3, 4, 7, 8),
+				7: containers.NewSet[int](0, 2, 3, 4, 6, 8),
+				8: containers.NewSet[int](0, 1, 5, 6, 7),
+				9: containers.NewSet[int](),
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			duplicates := FindDuplicatesInUpload(tt.deduplicationTypes, tt.records)
+			duplicates := FindDuplicatesInUpload(tt.deduplicationTypes, tt.records, tt.deduplicationLogicOperator)
 			assert.Equal(t, tt.want, duplicates)
 		})
 	}

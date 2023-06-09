@@ -108,17 +108,16 @@ func buildDeduplicationQuery(selectedCountryID string, individuals []*api.Indivi
 	}
 
 	b.WriteString("SELECT * FROM individual_registrations WHERE country_id = $1 AND deleted_at IS NULL")
-	//for q := 0; q < len(subQueries); q++ {
-	b.WriteString(" AND (")
+
+	b.WriteString(" AND ((")
 	b.WriteString(strings.Join(subQueries, fmt.Sprintf(") %s (", deduplicationLogicOperator)))
 	b.WriteString(")")
-	//}
 
 	emptyValuesQuery := getEmptyValuesQuery(deduplicationTypes)
 
 	b.WriteString(" AND NOT (")
 	b.WriteString(emptyValuesQuery)
-	b.WriteString(")")
+	b.WriteString("))")
 
 	return b.String(), args
 }
@@ -170,13 +169,13 @@ func getSubQueriesWithArgs(args []interface{}, argMap QueryArgs) ([]string, []in
 		var orQuery string
 		orQuery, args = getOrSubQueriesWithArgs(args, typeValues)
 		emptyValuesQuery := getEmptyValuesQuery([]deduplication.DeduplicationTypeName{typeKey})
-		query = append(query, fmt.Sprintf("%s OR %s", orQuery, emptyValuesQuery))
+		query = append(query, fmt.Sprintf("%s OR (%s)", orQuery, emptyValuesQuery))
 	}
 	for typeKey, typeValues := range argMap.And {
 		var andQuery string
 		andQuery, args = getAndSubQueriesWithArgs(args, typeValues, typeKey)
 		emptyValuesQuery := getEmptyValuesQuery([]deduplication.DeduplicationTypeName{typeKey})
-		query = append(query, fmt.Sprintf("%s OR %s", andQuery, emptyValuesQuery))
+		query = append(query, fmt.Sprintf("%s OR (%s)", andQuery, emptyValuesQuery))
 	}
 
 	return query, args
