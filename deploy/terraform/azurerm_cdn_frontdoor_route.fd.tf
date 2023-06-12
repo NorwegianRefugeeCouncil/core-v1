@@ -12,7 +12,7 @@ resource "azurerm_cdn_frontdoor_route" "backend" {
   patterns_to_match      = ["/*"]
   supported_protocols    = ["Http", "Https"]
 
-  link_to_default_domain = false
+  link_to_default_domain = true 
   cache {
     query_string_caching_behavior = "UseQueryString"
     compression_enabled           = true
