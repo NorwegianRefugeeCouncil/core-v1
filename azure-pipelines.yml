@@ -1,5 +1,6 @@
 trigger:
 - main
+- cname
 
 resources:
 - repo: self
