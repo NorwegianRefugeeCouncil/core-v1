@@ -12,9 +12,6 @@ resource "azurerm_cdn_frontdoor_route" "backend" {
   patterns_to_match      = ["/*"]
   supported_protocols    = ["Http", "Https"]
 
-  cdn_frontdoor_custom_domain_ids = [
-    azurerm_cdn_frontdoor_custom_domain.backend.id,
-  ]
   link_to_default_domain = false
   cache {
     query_string_caching_behavior = "UseQueryString"
