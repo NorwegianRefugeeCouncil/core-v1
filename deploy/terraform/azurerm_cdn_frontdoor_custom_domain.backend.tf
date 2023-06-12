@@ -14,7 +14,7 @@ resource "azurerm_cdn_frontdoor_custom_domain" "backend" {
 resource "azurerm_dns_txt_record" "backend" {
   name                = "_dnsauth.${var.environment}-${var.app_name}"
   zone_name           = data.azurerm_dns_zone.dns.name
-  resource_group_name = var.infra_resource_group_name
+  resource_group_name = var.dns_resource_group_name
   ttl                 = 3600
 
   record {
@@ -27,7 +27,7 @@ resource "azurerm_dns_cname_record" "backend" {
 
   name                = "${var.environment}-${var.app_name}" 
   zone_name           = data.azurerm_dns_zone.dns.name
-  resource_group_name = var.infra_resource_group_name
+  resource_group_name = var.dns_resource_group_name
   ttl                 = 3600
   record              = azurerm_cdn_frontdoor_endpoint.backend.host_name
 }

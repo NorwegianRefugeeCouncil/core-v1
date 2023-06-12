@@ -35,3 +35,9 @@ provider "azurerm" {
   }
 }
 
+provider "azurerm" {
+  alias           = "dns"
+  subscription_id = var.dns_subscription_id
+  features {
+  }
+}

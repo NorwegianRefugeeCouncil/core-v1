@@ -309,9 +309,19 @@ THe sku name of the app service plan. https://registry.terraform.io/providers/ha
 EOF
 }
 
-variable "infra_dns_zone_name" {
+variable "dns_subscription_id" {
   type        = string
-  description = "The name of the infra dns zone."
+  description = "The subscription id of the dns zone."
+}
+
+variable "dns_resource_group_name" {
+  type        = string
+  description = "The resource group name of the dns zone."
+}
+
+variable "dns_zone_name" {
+  type        = string
+  description = "The name of the dns zone."
 }
 
 variable "backend_host_name" {
