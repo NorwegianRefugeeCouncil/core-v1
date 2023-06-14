@@ -3,8 +3,8 @@ package enumTypes
 import (
 	"encoding/json"
 	"fmt"
-
 	"github.com/nrc-no/notcore/internal/containers"
+	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/pkg/logutils"
 )
 
@@ -33,17 +33,18 @@ List is : Passport, UNHCR ID, National ID, Other
 */
 
 func (g IdentificationType) String() string {
+	l := locales.GetLocales()
 	switch g {
 	case IdentificationTypePassport:
-		return "Passport"
+		return l.Translate("option_identification_type_passport")
 	case IdentificationTypeUNHCR:
-		return "UNHCR ID"
+		return l.Translate("option_identification_type_unhcr")
 	case IdentificationTypeNational:
-		return "National ID"
+		return l.Translate("option_identification_type_national_id")
 	case IdentificationTypeOther:
-		return "Other"
+		return l.Translate("option_other")
 	case IdentificationTypeUnspecified:
-		return ""
+		return l.Translate("option_unspecified")
 	default:
 		return ""
 	}

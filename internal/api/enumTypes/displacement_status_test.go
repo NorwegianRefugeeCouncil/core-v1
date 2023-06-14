@@ -68,13 +68,13 @@ func TestDisplacementStatus_String(t *testing.T) {
 		g    DisplacementStatus
 		want string
 	}{
-		{"refugee", DisplacementStatusRefugee, "Refugee"},
-		{"idp", DisplacementStatusIDP, "IDP"},
-		{"host_community", DisplacementStatusHostCommunity, "Host Community"},
-		{"returnee", DisplacementStatusReturnee, "Returnee"},
-		{"asylum_seeker", DisplacementStatusAsylumSeeker, "Asylum Seeker"},
-		{"non_displaced", DisplacementStatusNonDisplaced, "Non-Displaced"},
-		{"other", DisplacementStatusOther, "Other"},
+		{"refugee", DisplacementStatusRefugee, "option_displacement_status_refugee"},
+		{"idp", DisplacementStatusIDP, "option_displacement_status_idp"},
+		{"host_community", DisplacementStatusHostCommunity, "option_displacement_status_host_community"},
+		{"returnee", DisplacementStatusReturnee, "option_displacement_status_returnee"},
+		{"asylum_seeker", DisplacementStatusAsylumSeeker, "option_displacement_status_asylum_seeker"},
+		{"non_displaced", DisplacementStatusNonDisplaced, "option_displacement_status_non_displaced"},
+		{"other", DisplacementStatusOther, "option_other"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -68,10 +68,10 @@ func TestSex_String(t *testing.T) {
 		g    Sex
 		want string
 	}{
-		{"male", SexMale, "Male"},
-		{"female", SexFemale, "Female"},
-		{"other", SexOther, "Other"},
-		{"prefers_not_to_say", SexPreferNotToSay, "Prefer not to say"},
+		{"male", SexMale, "option_sex_male"},
+		{"female", SexFemale, "option_sex_female"},
+		{"other", SexOther, "option_other"},
+		{"prefers_not_to_say", SexPreferNotToSay, "option_sex_prefers_not_to_say"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

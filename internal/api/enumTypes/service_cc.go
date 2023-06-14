@@ -3,6 +3,7 @@ package enumTypes
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/nrc-no/notcore/internal/locales"
 
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/logutils"
@@ -40,25 +41,26 @@ List is : IDP, Refugee, Host Community, Returnee, Non-Displaced, Other
 */
 
 func (g ServiceCC) String() string {
+	l := locales.GetLocales()
 	switch g {
-	case ServiceCCNone:
-		return ""
 	case ServiceCCShelter:
-		return "Shelter & Settlements"
+		return l.Translate("option_service_shelter")
 	case ServiceCCWash:
-		return "WASH"
+		return l.Translate("option_service_wash")
 	case ServiceCCProtection:
-		return "Protection"
+		return l.Translate("option_service_protection")
 	case ServiceCCEducation:
-		return "Education"
+		return l.Translate("option_service_education")
 	case ServiceCCICLA:
-		return "ICLA"
+		return l.Translate("option_service_icla")
 	case ServiceCCLFS:
-		return "LFS"
+		return l.Translate("option_service_lfs")
 	case ServiceCCCVA:
-		return "CVA"
+		return l.Translate("option_service_cva")
 	case ServiceCCOther:
-		return "Other"
+		return l.Translate("option_other")
+	case ServiceCCNone:
+		return l.Translate("option_unspecified")
 	default:
 		return ""
 	}

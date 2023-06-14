@@ -1,7 +1,6 @@
 package locales
 
 import (
-	"context"
 	_ "embed"
 	"github.com/BurntSushi/toml"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -23,13 +22,22 @@ var localeFiles = map[string]string{
 }
 
 var (
-	DefaultLang = language.English
+	DefaultLang    = language.English
+	AvailableLangs = containers.NewStringSet()
 )
 
 var Translations *i18n.Bundle
 var DefaultLocalizer *i18n.Localizer
+var l *locales
 
-var AvailableLangs = containers.NewStringSet()
+type locales struct {
+	localizer *i18n.Localizer
+}
+
+func New() {
+	loc := locales{localizer: DefaultLocalizer}
+	l = &loc
+}
 
 func LoadTranslations() error {
 	bundle := i18n.NewBundle(DefaultLang)
@@ -48,26 +56,22 @@ func LoadTranslations() error {
 	return nil
 }
 
+func GetLocales() *locales {
+	return l
+}
+
+func SetLocalizer(loc *i18n.Localizer) {
+	l.localizer = loc
+}
+
 type Interface interface {
 	Translate(id string, args ...interface{}) string
 	TranslateCount(id string, ct int, args ...interface{}) string
-	GetAvailableLangs() []string
-}
-
-type locales struct {
-	localizer *i18n.Localizer
-}
-
-func New(ctx context.Context) Interface {
-	localizer, ok := localizerFrom(ctx)
-	if !ok {
-		localizer = DefaultLocalizer
-	}
-	return locales{localizer: localizer}
+	GetAvailableLocales() []string
 }
 
 func (l locales) Translate(id string, args ...interface{}) string {
-	var data map[string]interface{}
+	var data = map[string]interface{}{}
 	if len(args) > 0 {
 		data = make(map[string]interface{}, len(args))
 		for n, iface := range args {
@@ -103,17 +107,6 @@ func (l locales) TranslateCount(id string, ct int, args ...interface{}) string {
 	return str
 }
 
-func (l locales) GetAvailableLangs() []string {
+func (l locales) GetAvailableLocales() []string {
 	return AvailableLangs.Items()
-}
-
-type localizerKey struct{}
-
-func WithLocalizer(ctx context.Context, loc *i18n.Localizer) context.Context {
-	return context.WithValue(ctx, localizerKey{}, loc)
-}
-
-func localizerFrom(ctx context.Context) (*i18n.Localizer, bool) {
-	loc, ok := ctx.Value(localizerKey{}).(*i18n.Localizer)
-	return loc, ok
 }

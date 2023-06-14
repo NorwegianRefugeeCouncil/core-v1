@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/nrc-no/notcore/internal/constants"
+	"github.com/nrc-no/notcore/internal/locales"
 
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/logutils"
@@ -31,19 +32,20 @@ func AllContactMethods() containers.Set[ContactMethod] {
 }
 
 func (g ContactMethod) String() string {
+	l := locales.GetLocales()
 	switch g {
 	case ContactMethodPhone:
-		return "Phone"
+		return l.Translate("option_contact_method_phone")
 	case ContactMethodWhatsapp:
-		return "Whatsapp"
+		return l.Translate("option_contact_method_whatsapp")
 	case ContactMethodEmail:
-		return "Email"
+		return l.Translate("option_contact_method_email")
 	case ContactMethodVisit:
-		return "Visit"
+		return l.Translate("option_contact_method_visit")
 	case ContactMethodOther:
-		return "Other"
+		return l.Translate("option_other")
 	case ContactMethodUnspecified:
-		return ""
+		return l.Translate("option_unspecified")
 	default:
 		return ""
 	}

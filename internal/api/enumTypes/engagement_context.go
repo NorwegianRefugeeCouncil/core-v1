@@ -3,6 +3,7 @@ package enumTypes
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/nrc-no/notcore/internal/locales"
 
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/logutils"
@@ -37,21 +38,22 @@ List is : House Visit, Field Activity, In-Office, Remote Channels, Referred, Oth
 */
 
 func (g EngagementContext) String() string {
+	l := locales.GetLocales()
 	switch g {
 	case EngagementContextHouseVisit:
-		return "House Visit"
+		return l.Translate("option_engagement_context_house_visit")
 	case EngagementContextFieldActivity:
-		return "Field Activity"
+		return l.Translate("option_engagement_context_field_activity")
 	case EngagementContextInOffice:
-		return "In-Office"
+		return l.Translate("option_engagement_context_in_office")
 	case EngagementContextRemoteChannels:
-		return "Remote Channels"
+		return l.Translate("option_engagement_context_remote_channels")
 	case EngagementContextReferred:
-		return "Referred"
+		return l.Translate("option_engagement_context_referred")
 	case EngagementContextOther:
-		return "Other"
+		return l.Translate("option_other")
 	case EngagementContextUnspecified:
-		return "Unspecified"
+		return l.Translate("option_unspecified")
 	default:
 		return ""
 	}

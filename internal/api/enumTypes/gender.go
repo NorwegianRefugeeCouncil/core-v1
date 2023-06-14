@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/nrc-no/notcore/internal/constants"
+	"github.com/nrc-no/notcore/internal/locales"
 
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/logutils"
@@ -30,17 +31,18 @@ func AllSexes() containers.Set[Sex] {
 }
 
 func (g Sex) String() string {
+	l := locales.GetLocales()
 	switch g {
 	case SexMale:
-		return "Male"
+		return l.Translate("option_sex_male")
 	case SexFemale:
-		return "Female"
+		return l.Translate("option_sex_female")
 	case SexOther:
-		return "Other"
+		return l.Translate("option_other")
 	case SexPreferNotToSay:
-		return "Prefer not to say"
+		return l.Translate("option_sex_prefers_not_to_say")
 	case SexUnspecified:
-		return "Unspecified"
+		return l.Translate("option_unspecified")
 	default:
 		return ""
 	}

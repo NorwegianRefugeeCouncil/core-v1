@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
+	"github.com/nrc-no/notcore/internal/locales"
 	"net/url"
 	"testing"
 	"time"
@@ -12,6 +13,8 @@ import (
 )
 
 func TestNewIndividualListFromURLValues(t *testing.T) {
+	locales.LoadTranslations()
+	locales.New()
 
 	tests := []struct {
 		name    string

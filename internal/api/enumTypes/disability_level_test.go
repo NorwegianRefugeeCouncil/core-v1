@@ -2,6 +2,7 @@ package enumTypes
 
 import (
 	"encoding/json"
+	"github.com/golang/mock/gomock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -63,15 +64,20 @@ func TestDisabilityLevel_UnmarshalJSON(t *testing.T) {
 }
 
 func TestDisabilityLevel_String(t *testing.T) {
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	m := NewMockFoo(ctrl)
+
 	tests := []struct {
 		name string
 		g    DisabilityLevel
 		want string
 	}{
-		{"none", DisabilityLevelNone, "None"},
-		{"mild", DisabilityLevelMild, "Mild"},
-		{"moderate", DisabilityLevelModerate, "Moderate"},
-		{"severe", DisabilityLevelSevere, "Severe"},
+		{"none", DisabilityLevelNone, "option_disability_none"},
+		{"mild", DisabilityLevelMild, "option_disability_mild"},
+		{"moderate", DisabilityLevelModerate, "option_disability_moderate"},
+		{"severe", DisabilityLevelSevere, "option_disability_severe"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

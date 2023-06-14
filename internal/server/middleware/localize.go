@@ -13,7 +13,6 @@ const cookieName = "nrc-core-language"
 func Localize(enableBetaFeatures bool) func(handler http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			ctx := r.Context()
 			language := locales.DefaultLang.String()
 
 			if enableBetaFeatures {
@@ -22,9 +21,7 @@ func Localize(enableBetaFeatures bool) func(handler http.Handler) http.Handler {
 				language = getAppropriateLanguage(languageHeader, languageCookie, locales.AvailableLangs)
 			}
 
-			localizer := i18n.NewLocalizer(locales.Translations, language)
-			ctx = locales.WithLocalizer(ctx, localizer)
-			r = r.WithContext(ctx)
+			locales.SetLocalizer(i18n.NewLocalizer(locales.Translations, language))
 			next.ServeHTTP(w, r)
 		})
 	}

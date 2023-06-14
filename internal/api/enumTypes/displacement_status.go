@@ -3,6 +3,7 @@ package enumTypes
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/nrc-no/notcore/internal/locales"
 
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/logutils"
@@ -39,23 +40,24 @@ List is : IDP, Refugee, Host Community, Returnee, Non-Displaced, Other
 */
 
 func (g DisplacementStatus) String() string {
+	l := locales.GetLocales()
 	switch g {
 	case DisplacementStatusRefugee:
-		return "Refugee"
+		return l.Translate("option_displacement_status_refugee")
 	case DisplacementStatusIDP:
-		return "IDP"
+		return l.Translate("option_displacement_status_idp")
 	case DisplacementStatusHostCommunity:
-		return "Host Community"
+		return l.Translate("option_displacement_status_host_community")
 	case DisplacementStatusReturnee:
-		return "Returnee"
+		return l.Translate("option_displacement_status_returnee")
 	case DisplacementStatusAsylumSeeker:
-		return "Asylum Seeker"
+		return l.Translate("option_displacement_status_asylum_seeker")
 	case DisplacementStatusNonDisplaced:
-		return "Non-Displaced"
+		return l.Translate("option_displacement_status_non_displaced")
 	case DisplacementStatusOther:
-		return "Other"
+		return l.Translate("option_other")
 	case DisplacementStatusUnspecified:
-		return "Unspecified"
+		return l.Translate("option_unspecified")
 	default:
 		return ""
 	}

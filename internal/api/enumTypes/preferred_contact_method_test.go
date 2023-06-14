@@ -68,11 +68,11 @@ func TestContactMethod_String(t *testing.T) {
 		g    ContactMethod
 		want string
 	}{
-		{"email", ContactMethodEmail, "Email"},
-		{"whatsapp", ContactMethodWhatsapp, "Whatsapp"},
-		{"phone", ContactMethodPhone, "Phone"},
-		{"visit", ContactMethodVisit, "Visit"},
-		{"other", ContactMethodOther, "Other"},
+		{"email", ContactMethodEmail, "option_contact_method_email"},
+		{"whatsapp", ContactMethodWhatsapp, "option_contact_method_whatsapp"},
+		{"phone", ContactMethodPhone, "option_contact_method_phone"},
+		{"visit", ContactMethodVisit, "option_contact_method_visit"},
+		{"other", ContactMethodOther, "option_other"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

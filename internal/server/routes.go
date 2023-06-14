@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/internal/utils"
 	"net/http"
 
@@ -39,6 +40,7 @@ func buildRouter(
 		middleware.RequestId,
 	)
 	renderer := handlers.NewRenderer(tpl, enableBetaFeatures)
+	locales.New()
 
 	staticRouter := r.PathPrefix("/static").Subrouter()
 	staticRouter.HandleFunc("/{file:.*}", web.ServeStatic)

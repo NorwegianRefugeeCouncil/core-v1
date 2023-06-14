@@ -210,7 +210,7 @@ func renderView(
 		}
 	}
 
-	localesInterface := locales.New(ctx)
+	localesInterface := locales.GetLocales()
 
 	rc := RequestContext{
 		Request:            r,
