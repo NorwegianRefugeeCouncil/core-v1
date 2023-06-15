@@ -186,10 +186,10 @@ resource "azurerm_monitor_metric_alert" "app_5xx_status_codes" {
   name                = "app-5xx-status-codes${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_linux_web_app.app.id]
-  description         = "${var.environment} - Web App: any 5xx Error, hourly"
+  description         = "${var.environment} - Web App: any 5xx Error, per minute"
   severity            = 1
-  frequency           = "PT1H"
-  window_size         = "PT1H"
+  frequency           = "PT1M"
+  window_size         = "PT1M"
 
   criteria {
     metric_namespace = "Microsoft.Web/sites"
