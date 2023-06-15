@@ -116,6 +116,10 @@ func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual
 
 func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []string) []error {
 	var errors []error
+	if len(cols) <= len(colMapping) {
+		filler := make([]string, len(colMapping)-len(cols))
+		cols = append(cols, filler...)
+	}
 	for field, idx := range colMapping {
 		switch field {
 		case constants.FileColumnIndividualID:
@@ -171,7 +175,9 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualCollectionTime, err))
 				break
 			}
-			i.CollectionTime = *collectionTime
+			if collectionTime != nil {
+				i.CollectionTime = *collectionTime
+			}
 		case constants.FileColumnIndividualCommunicationDisabilityLevel:
 			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
 			if err != nil {
