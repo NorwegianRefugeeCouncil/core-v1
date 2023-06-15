@@ -10,13 +10,13 @@ import (
 
 const cookieName = "nrc-core-language"
 
-func Localize(env string) func(handler http.Handler) http.Handler {
+func Localize(enableBetaFeatures bool) func(handler http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()
 			language := locales.DefaultLang.String()
 
-			if env == "local" {
+			if enableBetaFeatures {
 				languageCookie, _ := r.Cookie(cookieName)
 				languageHeader := r.Header.Get("Accept-Language")
 				language = getAppropriateLanguage(languageHeader, languageCookie, locales.AvailableLangs)

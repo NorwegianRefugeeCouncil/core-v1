@@ -20,7 +20,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func HandleIndividual(templates map[string]*template.Template, repo db.IndividualRepo) http.Handler {
+func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 	const (
 		templateName          = "individual.gohtml"
@@ -45,11 +45,11 @@ func HandleIndividual(templates map[string]*template.Template, repo db.Individua
 
 		render := func() {
 			individualForm.SetErrors(validationErrors)
-			renderView(templates, templateName, w, r, viewParams{
+			renderer.RenderView(w, r, templateName, viewParams{
 				"form":              individualForm,
 				"Individual":        individual,
 				templateParamAlerts: alerts,
-			}, "")
+			})
 			return
 		}
 

@@ -122,7 +122,7 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 		o.AccessTokenHeaderName,
 		o.AccessTokenHeaderFormat,
 		o.LoginURL,
-		o.Env,
+		o.EnableBetaFeatures,
 		oidcProvider,
 		idTokenVerifier,
 		sessionStore,

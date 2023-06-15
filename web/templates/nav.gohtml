@@ -157,7 +157,7 @@
                         </div>
                         {{end}}
 
-                        {{if eq .RequestContext.Env "local"}}
+                        {{if .RequestContext.EnableBetaFeatures }}
                         <div class="btn-group ms-3">
                             <button type="button"
                                     class="btn btn-sm btn-link dropdown-toggle text-decoration-none px-2"
