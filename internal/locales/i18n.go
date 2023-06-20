@@ -2,16 +2,25 @@ package locales
 
 import (
 	"context"
-	"os"
-	"path/filepath"
-	"strconv"
-	"strings"
-
+	_ "embed"
 	"github.com/BurntSushi/toml"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/nrc-no/notcore/internal/containers"
 	"golang.org/x/text/language"
+	"path/filepath"
+	"strconv"
 )
+
+//go:embed en.toml
+var localeEN string
+
+//go:embed ja.toml
+var localeJA string
+
+var localeFiles = map[string]string{
+	"en": localeEN,
+	"ja": localeJA,
+}
 
 var (
 	DefaultLang = language.English
@@ -23,22 +32,16 @@ var DefaultLocalizer *i18n.Localizer
 var AvailableLangs = containers.NewStringSet()
 
 func LoadTranslations() error {
-	dir := filepath.Join("internal", "locales")
 	bundle := i18n.NewBundle(DefaultLang)
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+
+	for localeKey, locale := range localeFiles {
+
+		AvailableLangs.Add(localeKey)
+		_, err := bundle.ParseMessageFileBytes([]byte(locale), filepath.Join("internal", "locales", localeKey+".toml"))
 		if err != nil {
 			return err
 		}
-		if info.IsDir() || filepath.Ext(path) != ".toml" {
-			return nil
-		}
-		AvailableLangs.Add(strings.TrimSuffix(filepath.Base(path), filepath.Ext(path)))
-		_, err = bundle.LoadMessageFile(path)
-		return err
-	})
-	if err != nil {
-		return err
 	}
 
 	Translations = bundle
