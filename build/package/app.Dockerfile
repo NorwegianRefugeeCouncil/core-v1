@@ -5,7 +5,7 @@ ENV GO111MODULE=on \
     GOARCH=amd64 \
     GOCACHE=/tmp/.cache
 RUN apt-get install -yq --no-install-recommends curl && \
-    curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -yq --no-install-recommends nodejs && \
     npm install -g yarn
 ARG uid=1000
