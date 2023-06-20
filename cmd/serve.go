@@ -375,7 +375,7 @@ Usually, the first block key is moved to the second block key, and a new first b
 Can also be set with %s
 `, envBlockKey2)))
 
-	serveCmd.PersistentFlags().String(flagEnableBetaFeatures, "", cleanDoc(fmt.Sprintf(`
+	serveCmd.PersistentFlags().Bool(flagEnableBetaFeatures, false, cleanDoc(fmt.Sprintf(`
 This flag specifies whether to enable beta features.
 Can also be set with %s
 `, envEnableBetaFeatures)))
