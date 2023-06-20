@@ -14,6 +14,7 @@ import (
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/nrc-no/notcore/internal/db"
+	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/server/middleware"
 	"go.uber.org/zap"
@@ -39,6 +40,11 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 
 	if err := db.Migrate(context.Background(), sqlDb); err != nil {
 		l.Error("failed to migrate database", zap.Error(err))
+		return nil, err
+	}
+
+	if err := locales.LoadTranslations(); err != nil {
+		l.Error("failed to load translations", zap.Error(err))
 		return nil, err
 	}
 

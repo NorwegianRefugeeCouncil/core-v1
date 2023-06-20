@@ -64,7 +64,7 @@
             <h1 class="flex-grow-1 text-truncate pe-2">
                 {{if .Individual.Inactive}}
                     <i class="bi bi-eye-slash-fill"
-                       data-toggle="tooltip" data-placement="top" title="Deactivated Participant"></i>
+                       data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "deactivated_individual"}}"></i>
                 {{end}}
                 {{.form.Title}}
             </h1>
@@ -73,7 +73,7 @@
                     <a href="/countries/{{.RequestContext.SelectedCountry.ID}}/participants/new"
                        class="btn btn-outline-primary col-4">
                         <i class="bi bi-plus"></i>
-                        New participant
+                        {{.RequestContext.Locales.Translate "create_new_individual"}}
                     </a>
                 {{end}}
             {{end}}
@@ -100,9 +100,9 @@
                             class="btn btn-sm btn-outline-danger me-2 d-flex"
                             data-bs-toggle="modal"
                             data-bs-target="#deleteIndividualConfirmationModal"
-                            data-toggle="tooltip" data-placement="top" title="Delete individual">
+                            data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "delete_individual"}}">
                         <i class="bi bi-trash"></i>
-                        Delete
+                        {{.RequestContext.Locales.Translate "delete_individual"}}
                     </button>
 
                     <div>
@@ -121,17 +121,17 @@
                                     id="deactivateButton"
                                     form="deactivate-individual-form"
                                     class="btn btn-sm btn-outline-secondary{{if .Individual.Inactive}} disabled{{end}}"
-                                    data-toggle="tooltip" data-placement="top" title="Deactivate participant">
+                                    data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "deactivate_individual"}}">
                                 <i class="bi bi-eye-slash-fill"></i>
-                                Deactivate
+                                {{.RequestContext.Locales.Translate "deactivate_individual"}}
                             </button>
                             <button type="submit"
                                     form="activate-individual-form"
                                     id="activateButton"
                                     class="btn btn-sm btn-outline-secondary{{if not .Individual.Inactive}} disabled{{end}}"
-                                    data-toggle="tooltip" data-placement="top" title="Activate participant">
+                                    data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "activate_individual"}}">
                                 <i class="bi bi-eye"></i>
-                                Activate
+                                {{.RequestContext.Locales.Translate "activate_individual"}}
                             </button>
                         </div>
                     </div>
@@ -139,10 +139,14 @@
             {{end}}
             <div class="flex-grow-1"></div>
             <!-- CANCEL BUTTON -->
-            <button onclick="goBack()" class="btn btn-outline-primary mx-4">Cancel</button>
+            <button onclick="goBack()" class="btn btn-outline-primary mx-4">
+                {{.RequestContext.Locales.Translate "cancel"}}
+            </button>
             <!-- END CANCEL BUTTON -->
             <!-- SAVE BUTTON -->
-            <button id="submitButton" type="submit" tabindex="0" class="btn btn-primary mx-4">Save</button>
+            <button id="submitButton" type="submit" tabindex="0" class="btn btn-primary mx-4">
+                {{.RequestContext.Locales.Translate "save"}}
+            </button>
             <!-- END SAVE BUTTON -->
         </div>
     </footer>
@@ -155,16 +159,16 @@
                 <div class="modal-header">
                     <h5 class="modal-title">
                         <i class="bi bi-exclamation-circle me-2 text-danger"></i>
-                        Delete Participant
+                        {{.RequestContext.Locales.Translate "delete_individual"}}
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p>
-                        <span>Are you sure you want to delete this participant?</span>
+                        <span>{{.RequestContext.Locales.Translate "confirm_delete_individual"}}</span>
                         <br/>
-                        <span class="fw-bold text-danger">This action cannot be undone.</span>
+                        <span class="fw-bold text-danger">{{.RequestContext.Locales.Translate "action_cannot_be_undone"}}</span>
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -176,14 +180,14 @@
                             <button type="button"
                                     class="btn btn-outline-secondary"
                                     data-bs-dismiss="modal">
-                                Cancel
+                                {{.RequestContext.Locales.Translate "cancel"}}
                             </button>
                             <button type="button"
                                     id="confirmDeleteButton"
                                     class="btn btn-danger"
-                                    title="This will delete the participant and all associated data.">
+                                    title="{{.RequestContext.Locales.Translate "deletion_warning"}}">
                                 <i class="bi bi-trash me-2"></i>
-                                Delete Participant
+                                {{.RequestContext.Locales.Translate "delete_individual"}}
                             </button>
                         </div>
                     </form>

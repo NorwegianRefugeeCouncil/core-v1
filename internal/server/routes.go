@@ -51,6 +51,7 @@ func buildRouter(
 		middleware.PrefetchCountries(countryRepo),
 		middleware.ComputePermissions(jwtGroups),
 		middleware.SelectedCountry(),
+		middleware.Localize,
 	)
 
 	countriesRouter := webRouter.PathPrefix("/countries").Subrouter()
