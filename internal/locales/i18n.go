@@ -36,9 +36,8 @@ func LoadTranslations() error {
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 
 	for localeKey, locale := range localeFiles {
-
 		AvailableLangs.Add(localeKey)
-		_, err := bundle.ParseMessageFileBytes([]byte(locale), filepath.Join("internal", "locales", localeKey+".toml"))
+		_, err := bundle.ParseMessageFileBytes([]byte(locale), filepath.Join(localeKey+".toml"))
 		if err != nil {
 			return err
 		}
