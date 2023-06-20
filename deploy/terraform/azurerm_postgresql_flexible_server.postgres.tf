@@ -29,7 +29,7 @@ resource "azurerm_postgresql_flexible_server" "postgres" {
     ignore_changes = [
       administrator_password,
       zone,
-      high_availability[0].standby_availability_zone,
+      high_availability.0.standby_availability_zone,
     ]
   }
 }

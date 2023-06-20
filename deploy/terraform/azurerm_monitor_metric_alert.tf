@@ -117,14 +117,14 @@ resource "azurerm_monitor_metric_alert" "app_health_check" {
   description         = "${var.environment} - Web App: HealthCheckStatus is less than 100% okay."
   severity            = 1
   frequency           = "PT1M"
-  enabled             = false
+  enabled             = true
 
   criteria {
     threshold         = 1
     operator          = "LessThan"
     aggregation       = "Average"
-    metric_name       = "Microsoft.Web/sites"
-    metric_namespace  = "HealthCheckStatus"
+    metric_namespace  = "Microsoft.Web/sites"
+    metric_name       = "HealthCheckStatus"
     skip_metric_validation = true
   }
 
@@ -161,7 +161,7 @@ resource "azurerm_monitor_metric_alert" "app_4xx_status_codes" {
   name                = "app-4xx-status-codes-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_linux_web_app.app.id]
-  description         = "${var.environment} - Web App: more than 10 4xx Errors are returned per hour."
+  description         = "${var.environment} - Web App: more than 30 4xx Errors are returned per hour."
   severity            = 3
   frequency           = "PT1H"
   window_size         = "PT1H"
@@ -171,8 +171,9 @@ resource "azurerm_monitor_metric_alert" "app_4xx_status_codes" {
     metric_name      = "Http4xx"
     aggregation      = "Count"
     operator         = "GreaterThan"
-    threshold        = 10
+    threshold        = 30
     skip_metric_validation = true
+
   }
 
   action {
@@ -185,17 +186,17 @@ resource "azurerm_monitor_metric_alert" "app_5xx_status_codes" {
   name                = "app-5xx-status-codes${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_linux_web_app.app.id]
-  description         = "${var.environment} - Web App: more than 10 5xx Errors are returned per hour."
+  description         = "${var.environment} - Web App: any 5xx Error, per minute"
   severity            = 1
-  frequency           = "PT1H"
-  window_size         = "PT1H"
+  frequency           = "PT1M"
+  window_size         = "PT1M"
 
   criteria {
     metric_namespace = "Microsoft.Web/sites"
     metric_name      = "Http5xx"
     aggregation      = "Count"
     operator         = "GreaterThan"
-    threshold        = 10
+    threshold        = 1
     skip_metric_validation = true
   }
 
