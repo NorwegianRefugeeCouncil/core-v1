@@ -36,6 +36,7 @@ const (
 	envBlockKey1               = "CORE_BLOCK_KEY_1"
 	envHashKey2                = "CORE_HASH_KEY_2"
 	envBlockKey2               = "CORE_BLOCK_KEY_2"
+	envEnableBetaFeatures      = "CORE_ENABLE_BETA_FEATURES"
 
 	flagDbDSN                   = "db-dsn"
 	flagDbDriver                = "db-driver"
@@ -56,6 +57,7 @@ const (
 	flagBlockKey1               = "block-key-1"
 	flagHashKey2                = "hash-key-2"
 	flagBlockKey2               = "block-key-2"
+	flagEnableBetaFeatures      = "enable-beta-features"
 )
 
 // serveCmd represents the serve command
@@ -176,6 +178,8 @@ var serveCmd = &cobra.Command{
 			return fmt.Errorf("--%s is required", flagBlockKey2)
 		}
 
+		enableBetaFeatures := getFlagOrEnv(cmd, flagEnableBetaFeatures, envEnableBetaFeatures)
+
 		options := server.Options{
 			Address:              listenAddress,
 			DatabaseDriver:       dbDriver,
@@ -198,6 +202,7 @@ var serveCmd = &cobra.Command{
 			BlockKey1:               blockKey1,
 			HashKey2:                hashKey2,
 			BlockKey2:               blockKey2,
+			EnableBetaFeatures:      enableBetaFeatures == "true",
 		}
 
 		srv, err := options.New(ctx)
@@ -369,6 +374,11 @@ The second block key is used to perform smooth key rotation.
 Usually, the first block key is moved to the second block key, and a new first block key is generated.
 Can also be set with %s
 `, envBlockKey2)))
+
+	serveCmd.PersistentFlags().Bool(flagEnableBetaFeatures, false, cleanDoc(fmt.Sprintf(`
+This flag specifies whether to enable beta features.
+Can also be set with %s
+`, envEnableBetaFeatures)))
 
 }
 

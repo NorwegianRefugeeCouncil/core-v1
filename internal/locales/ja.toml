@@ -1,3 +1,7 @@
+language = "日本"
+en = "English"
+ja = "日本"
+
 # countries.gohtml
 actions = "XXXX"
 countries = "XXXX"
@@ -141,7 +145,6 @@ empty_db = "XXXX"
 download_template = "XXXX"
 edit_countries = "XXXX"
 files = "XXXX"
-logout = "XXXX"
 navigating_away = "XXXX"
 participants = "XXXX"
 search = "XXXX"

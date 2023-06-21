@@ -1,4 +1,6 @@
 {{define "nav"}}
+{{ $locales := .RequestContext.Locales }}
+
 <script>
     const uploadIndividualFileInputId = "individual-upload--file"
     const uploadIndividualFileButtonId = "individual-upload--button"
@@ -30,8 +32,16 @@
     }
 
     function submitAndResetUploadInput(e) {
-            submitUploadForm()
-            e.target.value = null
+        submitUploadForm()
+        e.target.value = null
+    }
+
+    function setLanguageCookie(cValue) {
+        let date = new Date();
+        date.setTime(date.getTime() + (1000 * 24 * 60 * 60 * 1000));
+        const expires = "expires=" + date.toUTCString();
+        document.cookie = "nrc-core-language=" + cValue + "; " + expires + "; path=/";
+        document.location.reload();
     }
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -142,6 +152,26 @@
                                 {{if $auth.IsGlobalAdmin}}
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="/countries">{{.RequestContext.Locales.Translate "edit_countries"}}</a>
+                                {{end}}
+                            </div>
+                        </div>
+                        {{end}}
+
+                        {{if .RequestContext.EnableBetaFeatures }}
+                        <div class="btn-group ms-3">
+                            <button type="button"
+                                    class="btn btn-sm btn-link dropdown-toggle text-decoration-none px-2"
+                                    data-bs-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false">
+                                <i class="bi bi-globe"></i>
+                                {{.RequestContext.Locales.Translate "language"}}
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                {{range $li, $l := .RequestContext.Locales.GetAvailableLangs}}
+                                    <button class="dropdown-item" onclick="setLanguageCookie({{$l}})">
+                                        {{$locales.Translate $l}}
+                                    </button>
                                 {{end}}
                             </div>
                         </div>

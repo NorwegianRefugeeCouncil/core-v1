@@ -106,6 +106,8 @@ type RequestContext struct {
 	Session auth.Session
 
 	Locales locales.Interface
+	// turn on dev features
+	EnableBetaFeatures bool
 }
 
 func (r RequestContext) HasSelectedCountryWritePermission() bool {
@@ -131,17 +133,19 @@ type Renderer interface {
 }
 
 type renderer struct {
-	templates map[string]*template.Template
+	templates          map[string]*template.Template
+	enableBetaFeatures bool
 }
 
-func NewRenderer(templates map[string]*template.Template) Renderer {
+func NewRenderer(templates map[string]*template.Template, enableBetaFeatures bool) Renderer {
 	return &renderer{
-		templates: templates,
+		templates:          templates,
+		enableBetaFeatures: enableBetaFeatures,
 	}
 }
 
 func (r *renderer) RenderView(w http.ResponseWriter, req *http.Request, templateName string, data viewParams) {
-	renderView(r.templates, templateName, w, req, data)
+	renderView(r.templates, templateName, w, req, data, r.enableBetaFeatures)
 }
 
 // renderView renders a view with the given name and data.
@@ -151,6 +155,7 @@ func renderView(
 	w http.ResponseWriter,
 	r *http.Request,
 	data viewParams,
+	enableBetaFeatures bool,
 ) {
 
 	ctx := r.Context()
@@ -207,12 +212,13 @@ func renderView(
 	localesInterface := locales.New(ctx)
 
 	rc := RequestContext{
-		Request:         r,
-		Auth:            authIntf,
-		Countries:       countries,
-		SelectedCountry: selectedCountry,
-		Session:         session,
-		Locales:         localesInterface,
+		Request:            r,
+		Auth:               authIntf,
+		Countries:          countries,
+		SelectedCountry:    selectedCountry,
+		Session:            session,
+		Locales:            localesInterface,
+		EnableBetaFeatures: enableBetaFeatures,
 	}
 	vd[vd.RequestContextKey()] = rc
 

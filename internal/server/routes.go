@@ -24,6 +24,7 @@ func buildRouter(
 	accessTokenHeaderName string,
 	accessTokenHeaderFormat string,
 	loginURL string,
+	enableBetaFeatures bool,
 	provider *oidc.Provider,
 	idTokenVerifier middleware.IDTokenVerifier,
 	sessionStore *sessions.CookieStore,
@@ -36,7 +37,7 @@ func buildRouter(
 		// gorillahandlers.CompressHandler,
 		middleware.RequestId,
 	)
-	renderer := handlers.NewRenderer(tpl)
+	renderer := handlers.NewRenderer(tpl, enableBetaFeatures)
 
 	staticRouter := r.PathPrefix("/static").Subrouter()
 	staticRouter.HandleFunc("/{file:.*}", web.ServeStatic)
@@ -51,15 +52,15 @@ func buildRouter(
 		middleware.PrefetchCountries(countryRepo),
 		middleware.ComputePermissions(jwtGroups),
 		middleware.SelectedCountry(),
-		middleware.Localize,
+		middleware.Localize(enableBetaFeatures),
 	)
 
 	countriesRouter := webRouter.PathPrefix("/countries").Subrouter()
-	countriesRouter.Path("").Handler(handlers.HandleCountries(tpl))
+	countriesRouter.Path("").Handler(handlers.HandleCountries(renderer))
 
 	countryRouter := countriesRouter.PathPrefix("/{country_id}").Subrouter()
 	countryRouter.Path("").Handler(withMiddleware(
-		handlers.HandleCountry(tpl, countryRepo),
+		handlers.HandleCountry(renderer, countryRepo),
 		middleware.HasGlobalAdminPermission(),
 	))
 
@@ -97,12 +98,12 @@ func buildRouter(
 
 	individualRouter := individualsRouter.PathPrefix("/{individual_id}").Subrouter()
 	individualRouter.Path("").Methods(http.MethodGet).Handler(withMiddleware(
-		handlers.HandleIndividual(tpl, individualRepo),
+		handlers.HandleIndividual(renderer, individualRepo),
 		middleware.EnsureSelectedCountry(),
 		middleware.HasCountryPermission(auth.PermissionRead),
 	))
 	individualRouter.Path("").Methods(http.MethodPost).Handler(withMiddleware(
-		handlers.HandleIndividual(tpl, individualRepo),
+		handlers.HandleIndividual(renderer, individualRepo),
 		middleware.EnsureSelectedCountry(),
 		middleware.HasCountryPermission(auth.PermissionWrite),
 	))
@@ -122,7 +123,7 @@ func buildRouter(
 		middleware.HasCountryPermission(auth.PermissionWrite),
 	))
 
-	webRouter.PathPrefix("").Handler(handlers.HandleHome(tpl))
+	webRouter.PathPrefix("").Handler(handlers.HandleHome(renderer))
 
 	return r
 }

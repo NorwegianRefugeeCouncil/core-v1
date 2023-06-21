@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
 
 	"github.com/nrc-no/notcore/internal/logging"
@@ -10,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func HandleHome(templates map[string]*template.Template) http.Handler {
+func HandleHome(renderer Renderer) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var (
 			ctx = r.Context()

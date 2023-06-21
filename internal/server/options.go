@@ -29,6 +29,7 @@ type Options struct {
 	BlockKey1               string
 	HashKey2                string
 	BlockKey2               string
+	EnableBetaFeatures      bool
 }
 
 var jwtGroupRegex = regexp.MustCompile(`^[A-Za-z0-9_-]+(?: +[A-Za-z0-9_-]+)*$`)

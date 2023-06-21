@@ -3,7 +3,6 @@ package handlers
 import (
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
-	"html/template"
 	"net/http"
 	"strings"
 
@@ -13,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo) http.Handler {
+func HandleCountry(renderer Renderer, repo db.CountryRepo) http.Handler {
 
 	const (
 		templateName             = "country.gohtml"
@@ -37,7 +36,7 @@ func HandleCountry(templates map[string]*template.Template, repo db.CountryRepo)
 		)
 
 		render := func() {
-			renderView(templates, templateName, w, r, viewParams{
+			renderer.RenderView(w, r, templateName, viewParams{
 				viewParamCountry: country,
 			})
 		}
