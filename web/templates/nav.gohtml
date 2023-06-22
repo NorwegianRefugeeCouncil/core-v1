@@ -1,5 +1,4 @@
 {{define "nav"}}
-{{ $locales := .RequestContext.Locales }}
 
     <script>
         const uploadIndividualFileButtonId = "individual-upload--button"
@@ -181,6 +180,7 @@
                                 {{.RequestContext.Locales.Translate "language"}}
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
+                                {{$locales := .RequestContext.Locales}}
                                 {{range $li, $l := .RequestContext.Locales.GetAvailableLangs}}
                                     <button class="dropdown-item" onclick="setLanguageCookie({{$l}})">
                                         {{$locales.Translate $l}}
