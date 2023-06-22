@@ -329,3 +329,8 @@ variable "action_group_webhook_url" {
   type        = string
   description = "The url of the webhook for the action group."
 }
+
+variable "dns_text_record_value" {
+  type        = string
+  description = "The value of the DNS txt record"
+}

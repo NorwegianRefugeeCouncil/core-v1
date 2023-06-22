@@ -1,5 +1,6 @@
 trigger:
 - main
+- fix/dns
 
 resources:
 - repo: self
