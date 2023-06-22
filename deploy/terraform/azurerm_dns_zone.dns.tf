@@ -14,6 +14,7 @@ resource "azurerm_dns_a_record" "dns_a_record" {
 }
 
 resource "azurerm_dns_txt_record" "example" {
+  provider            = azurerm.runtime
   name                = "_dnsauth"
   zone_name           = azurerm_dns_zone.dns.name
   resource_group_name = azurerm_resource_group.rg.name
