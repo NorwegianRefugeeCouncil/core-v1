@@ -13,7 +13,7 @@ resource "azurerm_dns_a_record" "dns_a_record" {
   target_resource_id  = azurerm_cdn_frontdoor_endpoint.backend.id
 }
 
-resource "azurerm_dns_txt_record" "example" {
+resource "azurerm_dns_txt_record" "dns_txt_record" {
   provider            = azurerm.runtime
   name                = "_dnsauth"
   zone_name           = azurerm_dns_zone.dns.name

@@ -1,6 +1,5 @@
 trigger:
 - main
-- fix/dns
 
 resources:
 - repo: self
@@ -12,7 +11,7 @@ variables:
   GOBIN:  '$(GOPATH)\bin'
   GOPATH: '$(System.DefaultWorkingDirectory)\gopath'
   GO_VERSION: '1.19.2'
-  IS_MAIN: $[eq(variables['Build.SourceBranch'], 'refs/heads/fix/dns')]
+  IS_MAIN: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
   LDFLAGS: '-w -s'
   REPOSITORY: 'core/webapp'
   REPOSITORY_CACHE : 'core/webapp-cache'
