@@ -9,6 +9,7 @@ import (
 
 func HandleHealth(healthzRepo db.HealthzRepo) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
 		l := logging.NewLogger(ctx)
 
 		err := healthzRepo.Check(r.Context())
@@ -18,7 +19,7 @@ func HandleHealth(healthzRepo db.HealthzRepo) http.Handler {
 			return
 		}
 
-		l.Info("health check ok")
+		l.Debug("health check ok")
 
 		w.WriteHeader(http.StatusOK)
 	})
