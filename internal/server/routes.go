@@ -16,6 +16,7 @@ import (
 )
 
 func buildRouter(
+	healthzRepo db.HealthzRepo,
 	individualRepo db.IndividualRepo,
 	countryRepo db.CountryRepo,
 	jwtGroups utils.JwtGroupOptions,
@@ -42,7 +43,7 @@ func buildRouter(
 	staticRouter := r.PathPrefix("/static").Subrouter()
 	staticRouter.HandleFunc("/{file:.*}", web.ServeStatic)
 
-	r.Path("/healthz").Handler(handlers.HandleHealth())
+	r.Path("/healthz").Handler(handlers.HandleHealth(healthzRepo))
 
 	webRouter := r.PathPrefix("").Subrouter()
 	webRouter.Use(

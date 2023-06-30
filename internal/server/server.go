@@ -48,6 +48,9 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 		return nil, err
 	}
 
+	// create the healthz db repository
+	healthzRepo := db.NewHealthzRepo(sqlDb)
+
 	// create the individual db repository
 	individualRepo := db.NewIndividualRepo(sqlDb)
 
@@ -114,6 +117,7 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 
 	// build the router
 	s.router = buildRouter(
+		healthzRepo,
 		individualRepo,
 		countryRepo,
 		o.JwtGroups,
