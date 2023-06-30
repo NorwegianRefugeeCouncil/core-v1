@@ -26,7 +26,6 @@ func (h healthzRepo) logger(ctx context.Context) *zap.Logger {
 func (h healthzRepo) Check(ctx context.Context) error {
 	l := h.logger(ctx)
 
-// check if the database is alive
 	if err := h.db.PingContext(ctx); err != nil {
 		l.Error("failed to ping database", zap.Error(err))
 		return err
