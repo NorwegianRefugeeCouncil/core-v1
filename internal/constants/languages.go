@@ -6,6 +6,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"sort"
 )
 
 //go:embed languages.json
@@ -33,6 +34,10 @@ func init() {
 	if err := json.Unmarshal([]byte(macroLanguageMapping), &MacroLanguageMappings); err != nil {
 		panic(err)
 	}
+
+	sort.SliceStable(Languages, func(i, j int) bool {
+		return Languages[i].Name < Languages[j].Name
+	})
 
 	for _, l := range Languages {
 		LanguagesByCode[l.ID] = l
