@@ -83,16 +83,10 @@ func UnmarshallRecordsFromFile(records *[][]string, reader io.Reader, filename s
 	}
 }
 
-func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual, fields *[]string, rowLimit *int) []FileError {
-
-	if rowLimit != nil && len(data[1:]) > *rowLimit {
-		return []FileError{{fmt.Sprintf("Your file contains %d participants, which exceeds the upload limit of %d participants at a time.", len(data[1:]), *rowLimit), nil}}
-	}
-
+func GetColumnMapping(data [][]string, fields *[]string) (map[string]int, []FileError) {
 	colMapping := map[string]int{}
+	errors := []error{}
 	headerRow := data[0]
-	var fileErrors []FileError
-	var columnErrors []error
 	for i, col := range headerRow {
 		col = trimString(col)
 		field, ok := constants.IndividualFileToDBMap[col]
@@ -101,18 +95,27 @@ func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual
 			if ok {
 				continue
 			}
-			columnErrors = append(columnErrors, fmt.Errorf("unknown column: \"%s\"	", logutils.Escape(col)))
+			errors = append(errors, fmt.Errorf("column: \"%s\"	", logutils.Escape(col)))
 		}
 		*fields = append(*fields, field)
 		col = trimString(col)
 		colMapping[strings.Trim(col, " \n\t\r")] = i
 	}
-	if len(columnErrors) > 0 {
-		fileErrors = append(fileErrors, FileError{
+	if len(errors) > 0 {
+		return nil, []FileError{FileError{
 			Message: fmt.Sprintf("Unknown columns"),
-			Err:     columnErrors,
-		})
+			Err:     errors,
+		}}
 	}
+	return colMapping, nil
+}
+
+func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual, colMapping map[string]int, rowLimit *int) []FileError {
+
+	if rowLimit != nil && len(data[1:]) > *rowLimit {
+		return []FileError{{fmt.Sprintf("Your file contains %d participants, which exceeds the upload limit of %d participants at a time.", len(data[1:]), *rowLimit), nil}}
+	}
+	var fileErrors []FileError
 
 	for row, cols := range data[1:] {
 		individual := &Individual{}

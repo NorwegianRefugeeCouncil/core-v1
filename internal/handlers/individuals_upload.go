@@ -58,6 +58,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		var individuals []*api.Individual
 		var fields []string
 		var records [][]string
+		fileErrors := []api.FileError{}
 
 		err = api.UnmarshallRecordsFromFile(&records, formFile, filename)
 		if err != nil {
@@ -66,7 +67,23 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			return
 		}
 
-		fileErrors := api.UnmarshalIndividualsTabularData(records, &individuals, &fields, &UPLOAD_LIMIT)
+		colMapping, fileErrors := api.GetColumnMapping(records, &fields)
+
+		if fileErrors != nil {
+			renderError("Could not parse uploaded file", fileErrors)
+			return
+		}
+
+		fileErrors = api.UnmarshalIndividualsTabularData(records, &individuals, colMapping, &UPLOAD_LIMIT)
+
+		if fileErrors != nil {
+			renderError("Could not parse uploaded file", fileErrors)
+			return
+		}
+
+		df := api.GetDataframeFromRecords(records)
+		df = api.AddIndexColumn(df)
+		fileErrors = api.CheckForDuplicateUUIDs(df)
 
 		if fileErrors != nil {
 			renderError("Could not parse uploaded file", fileErrors)
@@ -117,11 +134,11 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 				return
 			}
 
-			duplicatesInFile := api.FindDuplicatesInUpload(optionNames, records, deduplicationLogicOperator[0])
+			duplicatesInFile := api.FindDuplicatesInUpload(optionNames, df, deduplicationLogicOperator[0])
 			if len(duplicatesInFile) > 0 {
-				errors := api.FormatFileDeduplicationErrors(duplicatesInFile, optionNames, records)
+				errors := api.FormatFileDeduplicationErrors(duplicatesInFile, optionNames, records, colMapping)
 				if errors != nil {
-					renderError("Found duplicates within your uploaded file: ", errors)
+					renderError(fmt.Sprintf("Found %d duplicates within your uploaded file: ", len(errors)), errors)
 					return
 				}
 			}
@@ -132,7 +149,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 				return
 			}
 
-			dbDuplicationErrors := api.FormatDbDeduplicationErrors(duplicatesInDB, optionNames)
+			dbDuplicationErrors := api.FormatDbDeduplicationErrors(duplicatesInDB, optionNames, df, deduplicationLogicOperator[0])
 			if len(dbDuplicationErrors) > 0 {
 				renderError(fmt.Sprintf("%d duplicates found in database", len(dbDuplicationErrors)), dbDuplicationErrors)
 				return

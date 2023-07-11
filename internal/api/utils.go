@@ -2,6 +2,8 @@ package api
 
 import (
 	"fmt"
+	"github.com/go-gota/gota/dataframe"
+	"github.com/go-gota/gota/series"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
 	"golang.org/x/exp/slices"
@@ -110,4 +112,32 @@ func stringArrayToInterfaceArray(row []string) []interface{} {
 		result = append(result, col)
 	}
 	return result
+}
+
+var indexColumnName = "index"
+
+func GetDataframeFromRecords(records [][]string) dataframe.DataFrame {
+	return dataframe.LoadRecords(records,
+		dataframe.DetectTypes(false),
+		dataframe.DefaultType(series.String),
+		dataframe.HasHeader(true),
+	)
+}
+
+func AddIndexColumn(df dataframe.DataFrame) dataframe.DataFrame {
+	indexes := []int{}
+	for i := 0; i < df.Nrow(); i++ {
+		indexes = append(indexes, i)
+	}
+	// adding indices to the records so we can recognize them in the filtered results
+	dfMutated := df.Mutate(series.New(indexes, series.String, indexColumnName))
+	return dfMutated
+}
+
+func ExcludeSelfFromDataframe(df dataframe.DataFrame, selfIndex int) dataframe.DataFrame {
+	// we exclude the current row, to prevent a false positive
+	otherElements := makeIndexSetWithSkip(df.Nrow(), selfIndex).Items()
+
+	// check for duplicates of the current value within its own column
+	return df.Subset(otherElements)
 }
