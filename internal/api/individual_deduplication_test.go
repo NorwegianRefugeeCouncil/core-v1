@@ -11,6 +11,7 @@ import (
 
 var testRecords = [][]string{
 	{
+		"index",
 		constants.FileColumnIndividualIdentificationNumber1,
 		constants.FileColumnIndividualIdentificationNumber2,
 		constants.FileColumnIndividualIdentificationNumber3,
@@ -20,16 +21,16 @@ var testRecords = [][]string{
 		constants.FileColumnIndividualNativeName,
 		constants.FileColumnIndividualFullName,
 	},
-	{"1", "2", "3", "A", "B", "C", "D", "E"}, //0
-	{"4", "5", "6", "F", "G", "H", "I", "J"}, //1
-	{"1", "", "", "A", "B", "C", "", ""},     //2
-	{"2", "", "", "A", "B", "", "", ""},      //3
-	{"3", "", "", "A", "B", "", "", ""},      //4
-	{"", "5", "", "A", "Z", "C", "", "E"},    //5
-	{"3", "2", "", "A", "B", "C", "D", ""},   //6
-	{"1", "2", "3", "A", "B", "C", "D", "K"}, //7
-	{"", "", "5", "A", "B", "C", "D", ""},    //8
-	{"7", "", "9", "A", "", "", "", ""},      //9
+	{"0", "1", "2", "3", "A", "B", "C", "D", "E"},
+	{"1", "4", "5", "6", "F", "G", "H", "I", "J"},
+	{"2", "1", "", "", "A", "B", "C", "", ""},
+	{"3", "2", "", "", "A", "B", "", "", ""},
+	{"4", "3", "", "", "A", "B", "", "", ""},
+	{"5", "", "5", "", "A", "Z", "C", "", "E"},
+	{"6", "3", "2", "", "A", "B", "C", "D", ""},
+	{"7", "1", "2", "3", "A", "B", "C", "D", "K"},
+	{"8", "", "", "5", "A", "B", "C", "D", ""},
+	{"9", "7", "", "9", "A", "", "", "", ""},
 }
 
 var df = dataframe.LoadRecords(testRecords)
@@ -136,12 +137,10 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 		name                       string
 		deduplicationTypes         []deduplication.DeduplicationTypeName
 		deduplicationLogicOperator string
-		records                    [][]string
 		want                       []containers.Set[int]
 	}{
 		{
 			name:                       "check IDs, AND",
-			records:                    testRecords,
 			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameIds},
 			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_AND,
 			want: []containers.Set[int]{
@@ -159,7 +158,6 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 		},
 		{
 			name:                       "check Names, AND",
-			records:                    testRecords,
 			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames},
 			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_AND,
 			want: []containers.Set[int]{
@@ -177,7 +175,6 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 		},
 		{
 			name:                       "check Names and IDs, AND",
-			records:                    testRecords,
 			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds},
 			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_AND,
 			want: []containers.Set[int]{
@@ -195,7 +192,6 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 		},
 		{
 			name:                       "check Full Name, AND",
-			records:                    testRecords,
 			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameFullName},
 			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_AND,
 			want: []containers.Set[int]{
@@ -213,7 +209,6 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 		},
 		{
 			name:                       "check Names and IDs and Full Name, AND",
-			records:                    testRecords,
 			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds, deduplication.DeduplicationTypeNameFullName},
 			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_AND,
 			want: []containers.Set[int]{
@@ -231,7 +226,6 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 		},
 		{
 			name:                       "check IDs, OR",
-			records:                    testRecords,
 			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameIds},
 			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_OR,
 			want: []containers.Set[int]{
@@ -249,7 +243,6 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 		},
 		{
 			name:                       "check Names, OR",
-			records:                    testRecords,
 			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames},
 			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_OR,
 			want: []containers.Set[int]{
@@ -267,7 +260,6 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 		},
 		{
 			name:                       "check Names and IDs, OR",
-			records:                    testRecords,
 			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds},
 			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_OR,
 			want: []containers.Set[int]{
@@ -285,7 +277,6 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 		},
 		{
 			name:                       "check Full Name, OR",
-			records:                    testRecords,
 			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameFullName},
 			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_OR,
 			want: []containers.Set[int]{
@@ -303,7 +294,6 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 		},
 		{
 			name:                       "check Names and IDs and Full Name, OR",
-			records:                    testRecords,
 			deduplicationTypes:         []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds, deduplication.DeduplicationTypeNameFullName},
 			deduplicationLogicOperator: deduplication.LOGICAL_OPERATOR_OR,
 			want: []containers.Set[int]{
@@ -322,7 +312,7 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			duplicates := FindDuplicatesInUpload(tt.deduplicationTypes, tt.records, tt.deduplicationLogicOperator)
+			duplicates := FindDuplicatesInUpload(tt.deduplicationTypes, df, tt.deduplicationLogicOperator)
 			assert.Equal(t, tt.want, duplicates)
 		})
 	}

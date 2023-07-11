@@ -60,7 +60,7 @@ func TestUnmarshalIndividualsTabularData(t *testing.T) {
 	for _, p := range parameters {
 		tooMuchData = append(tooMuchData, []string{p.column, p.value})
 	}
-	uploadLimitError := api.UnmarshalIndividualsTabularData(tooMuchData, &tooManyIndividuals, &fields, &uploadLimit)
+	uploadLimitError := api.UnmarshalIndividualsTabularData(tooMuchData, &tooManyIndividuals, map[string]int{}, &uploadLimit)
 	assert.Len(t, uploadLimitError, 1)
 	assert.Equal(t, uploadLimitError[0].Message, "Your file contains 28 participants, which exceeds the upload limit of 20 participants at a time.")
 
@@ -69,11 +69,11 @@ func TestUnmarshalIndividualsTabularData(t *testing.T) {
 		headerRow := []string{param.column}
 		dataRow := []string{param.value}
 		data := [][]string{headerRow, dataRow}
+		colMapping, _ := api.GetColumnMapping(data, &fields)
 
 		var individuals []*api.Individual
-		var fields []string
 
-		fileErrors := api.UnmarshalIndividualsTabularData(data, &individuals, &fields, &handlers.UPLOAD_LIMIT)
+		fileErrors := api.UnmarshalIndividualsTabularData(data, &individuals, colMapping, &handlers.UPLOAD_LIMIT)
 
 		if param.error {
 			assert.Greater(t, len(fileErrors), 0)
@@ -84,9 +84,6 @@ func TestUnmarshalIndividualsTabularData(t *testing.T) {
 			value, err := individuals[0].GetFieldValue(param.column)
 			assert.NoError(t, err)
 			assert.Equal(t, param.out, value)
-
-			assert.Len(t, fields, 1)
-			assert.Equal(t, constants.IndividualFileToDBMap[param.column], fields[0])
 		}
 	}
 }
