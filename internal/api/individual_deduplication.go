@@ -12,43 +12,52 @@ import (
 )
 
 func FindDuplicatesInUUIDColumn(df dataframe.DataFrame) []FileError {
-	uuidColumn := df.Select([]string{indexColumnName, constants.FileColumnIndividualID, constants.FileColumnIndividualLastName})
+	filteredDf := df.Select([]string{indexColumnName, constants.FileColumnIndividualID, constants.FileColumnIndividualLastName})
 	fileErrors := []FileError{}
-	duplicateRows := map[string]containers.Set[int]{}
 
-	for i := 0; i < uuidColumn.Nrow(); i++ {
-		uuid := uuidColumn.Elem(i, 1).String()
-		duplicates := ExcludeSelfFromDataframe(uuidColumn, i).Filter(dataframe.F{
-			Colname:    "id",
-			Comparando: uuid,
-			Comparator: series.In,
-		})
+	duplicatesPerId := getDuplicateUUIDs(filteredDf)
 
-		for d := 0; d < duplicates.Nrow(); d++ {
-			rowNumber, err := duplicates.Elem(d, 0).Int()
-			if err == nil {
-				if duplicateRows[uuid] != nil {
-					duplicateRows[uuid].Add(rowNumber)
-				} else {
-					duplicateRows[uuid] = containers.NewSet[int](rowNumber)
-				}
-			}
-		}
-	}
-	for d := range duplicateRows {
+	for id := range duplicatesPerId {
 		participants := []string{}
-		for _, row := range duplicateRows[d].Items() {
-			participants = append(participants, fmt.Sprintf("Last name: %s - (Row %d)", uuidColumn.Elem(row, 2).String(), row+2))
+		for _, row := range duplicatesPerId[id].Items() {
+			participants = append(participants, fmt.Sprintf("Last name: %s - (Row %d)",
+				filteredDf.Select(constants.FileColumnIndividualLastName).Elem(row, 0).String(),
+				row+2),
+			)
 		}
 
 		fileErrors = append(fileErrors, FileError{
-			Message: fmt.Sprintf("%s share the same id: %s", strings.Join(participants, ", "), d),
+			Message: fmt.Sprintf("%s share the same id: %s", strings.Join(participants, ", "), id),
 		})
 	}
 	if len(fileErrors) > 0 {
 		return fileErrors
 	}
 	return nil
+}
+
+func getDuplicateUUIDs(df dataframe.DataFrame) map[string]containers.Set[int] {
+	duplicatesPerId := map[string]containers.Set[int]{}
+	for i := 0; i < df.Nrow(); i++ {
+		uuid := df.Select(constants.FileColumnIndividualID).Elem(i, 0).String()
+		duplicates := ExcludeSelfFromDataframe(df, i).Filter(dataframe.F{
+			Colname:    constants.FileColumnIndividualID,
+			Comparando: uuid,
+			Comparator: series.In,
+		})
+
+		for d := 0; d < duplicates.Nrow(); d++ {
+			rowNumber, err := duplicates.Select(indexColumnName).Elem(d, 0).Int()
+			if err == nil {
+				if duplicatesPerId[uuid] != nil {
+					duplicatesPerId[uuid].Add(rowNumber)
+				} else {
+					duplicatesPerId[uuid] = containers.NewSet[int](rowNumber)
+				}
+			}
+		}
+	}
+	return duplicatesPerId
 }
 
 func FindDuplicatesInUpload(optionNames []deduplication.DeduplicationTypeName, df dataframe.DataFrame, deduplicationLogicOperator string) []containers.Set[int] {

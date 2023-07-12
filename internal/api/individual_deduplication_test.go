@@ -317,3 +317,38 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 		})
 	}
 }
+
+func TestFindDuplicatesInUUIDColumn(t *testing.T) {
+	tests := []struct {
+		name    string
+		records [][]string
+		want    map[string]containers.Set[int]
+	}{
+		{
+			name: "",
+			records: [][]string{
+				{"index", "id"},
+				{"0", "1"},
+				{"1", "2"},
+				{"2", "2"},
+				{"3", "2"},
+				{"4", "5"},
+				{"5", "1"},
+				{"6", "5"},
+				{"7", "8"},
+			},
+			want: map[string]containers.Set[int]{
+				"1": containers.NewSet[int](0, 5),
+				"2": containers.NewSet[int](1, 2, 3),
+				"5": containers.NewSet[int](4, 6),
+			},
+		},
+	}
+	for _, tt := range tests {
+		var testDf = dataframe.LoadRecords(tt.records)
+		t.Run(tt.name, func(t *testing.T) {
+			duplicates := getDuplicateUUIDs(testDf)
+			assert.Equal(t, tt.want, duplicates)
+		})
+	}
+}
