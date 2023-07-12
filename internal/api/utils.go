@@ -129,7 +129,6 @@ func AddIndexColumn(df dataframe.DataFrame) dataframe.DataFrame {
 	for i := 0; i < df.Nrow(); i++ {
 		indexes = append(indexes, i)
 	}
-	// adding indices to the records so we can recognize them in the filtered results
 	dfMutated := df.Mutate(series.New(indexes, series.String, indexColumnName))
 	return dfMutated
 }

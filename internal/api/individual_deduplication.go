@@ -8,34 +8,41 @@ import (
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
+	"strings"
 )
 
-func CheckForDuplicateUUIDs(df dataframe.DataFrame) []FileError {
-	uuidColumn := df.Select([]string{"id", indexColumnName})
-
+func FindDuplicatesInUUIDColumn(df dataframe.DataFrame) []FileError {
+	uuidColumn := df.Select([]string{indexColumnName, constants.FileColumnIndividualID, constants.FileColumnIndividualLastName})
 	fileErrors := []FileError{}
+	duplicateRows := map[string]containers.Set[int]{}
 
-	dupes := map[string]containers.Set[string]{}
 	for i := 0; i < uuidColumn.Nrow(); i++ {
-		currentValue := uuidColumn.Elem(i, 0).String()
-		result := ExcludeSelfFromDataframe(uuidColumn, i).Filter(dataframe.F{
+		uuid := uuidColumn.Elem(i, 1).String()
+		duplicates := ExcludeSelfFromDataframe(uuidColumn, i).Filter(dataframe.F{
 			Colname:    "id",
-			Comparando: currentValue,
+			Comparando: uuid,
 			Comparator: series.In,
 		})
 
-		for r := 0; r < result.Nrow(); r++ {
-			if dupes[currentValue] != nil {
-				dupes[currentValue].Add(result.Elem(r, 1).String())
-			} else {
-				dupes[currentValue] = containers.NewSet[string](result.Elem(r, 1).String())
+		for d := 0; d < duplicates.Nrow(); d++ {
+			rowNumber, err := duplicates.Elem(d, 0).Int()
+			if err == nil {
+				if duplicateRows[uuid] != nil {
+					duplicateRows[uuid].Add(rowNumber)
+				} else {
+					duplicateRows[uuid] = containers.NewSet[int](rowNumber)
+				}
 			}
 		}
 	}
-	for d := range dupes {
+	for d := range duplicateRows {
+		participants := []string{}
+		for _, row := range duplicateRows[d].Items() {
+			participants = append(participants, fmt.Sprintf("Last name: %s - (Row %d)", uuidColumn.Elem(row, 2).String(), row+2))
+		}
+
 		fileErrors = append(fileErrors, FileError{
-			Message: fmt.Sprintf("Id %s found in the following lines:", d),
-			Err:     []error{fmt.Errorf(dupes[d].String())},
+			Message: fmt.Sprintf("%s share the same id: %s", strings.Join(participants, ", "), d),
 		})
 	}
 	if len(fileErrors) > 0 {
@@ -237,9 +244,9 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []
 				}
 				if len(errorList) > 0 {
 					duplicateErrors = append(duplicateErrors, FileError{
-						fmt.Sprintf("Row %d (%s) in your file duplicates participant %s with the id %s",
+						fmt.Sprintf("Last name %s - Row %d is a duplicate of the participant %s with the id %s",
+							filteredDf.Select(constants.FileColumnIndividualLastName).Elem(f, 0),
 							rowNumber+2,
-							filteredDf.Select("last_name").Elem(f, 0),
 							duplicates[d].LastName,
 							duplicates[d].ID,
 						),
@@ -278,11 +285,11 @@ func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], deduplica
 				}
 			}
 			duplicateErrors = append(duplicateErrors, FileError{
-				fmt.Sprintf("The rows %d (Last name: %s) and %d (Last name: %s) in your file are duplicates",
+				fmt.Sprintf("Last name %s - Row %d and Last name: %s - Row %d in your file are duplicates",
+					records[originalIndex+1][columnMapping[constants.FileColumnIndividualLastName]],
 					originalIndex+2,
-					records[originalIndex+1][columnMapping["last_name"]],
+					records[duplicateIndex+1][columnMapping[constants.FileColumnIndividualLastName]],
 					duplicateIndex+2,
-					records[duplicateIndex+1][columnMapping["last_name"]],
 				),
 				errorList,
 			})

@@ -82,11 +82,11 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		}
 
 		df := api.GetDataframeFromRecords(records)
-		df = api.AddIndexColumn(df)
-		fileErrors = api.CheckForDuplicateUUIDs(df)
+		df = api.AddIndexColumn(df) // adding indices to the records, so we can recognize them in the filtered results
 
+		fileErrors = api.FindDuplicatesInUUIDColumn(df)
 		if fileErrors != nil {
-			renderError("Could not parse uploaded file", fileErrors)
+			renderError("Could not parse uploaded file due to duplicates in the id column", fileErrors)
 			return
 		}
 
@@ -134,9 +134,9 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 				return
 			}
 
-			duplicatesInFile := api.FindDuplicatesInUpload(optionNames, df, deduplicationLogicOperator[0])
-			if len(duplicatesInFile) > 0 {
-				errors := api.FormatFileDeduplicationErrors(duplicatesInFile, optionNames, records, colMapping)
+			duplicatesScores := api.FindDuplicatesInUpload(optionNames, df, deduplicationLogicOperator[0])
+			errors := api.FormatFileDeduplicationErrors(duplicatesScores, optionNames, records, colMapping)
+			if len(errors) > 0 {
 				if errors != nil {
 					renderError(fmt.Sprintf("Found %d duplicates within your uploaded file: ", len(errors)), errors)
 					return
