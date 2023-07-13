@@ -210,8 +210,7 @@
                 <div class="modal-body">
                     <div class="d-block">
                         <p>
-                            If you want to prevent duplicate participants from being uploaded,
-                            please pick one or more of the criteria, so we know how to recognize duplicates.
+                            {{.RequestContext.Locales.Translate "deduplication_explanation"}}
                         </p>
 
                         <div class="row">
@@ -231,9 +230,9 @@
 
                         <div class="row mt-4">
                         <p>
-                            Do you want all or any of the criteria to match?
+                            {{.RequestContext.Locales.Translate "all_or_any_criteria"}}
                         </p>
-                            <div class="form-check col-6">
+                            <div class="form-check col-3">
                                 <input class="form-check-input"
                                        type="radio"
                                        checked
@@ -244,7 +243,7 @@
                                     All
                                 </label>
                             </div>
-                            <div class="form-check col-6">
+                            <div class="form-check col-3">
                                 <input class="form-check-input"
                                        type="radio"
                                        form="individualForm"
