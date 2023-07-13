@@ -226,6 +226,7 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualServiceCC7,
 		constants.FileColumnIndividualServiceRequestedDate7,
 		constants.FileColumnIndividualServiceDeliveredDate7,
+		constants.FileColumnIndividualInactive,
 	}); err != nil {
 		return err
 	}
@@ -479,6 +480,8 @@ func Generate(count uint) error {
 		serviceRequested7 := randomDate()
 		serviceDelivered7 := randomDate()
 
+		inactive := randBool(90)
+
 		if err := writer.Write([]string{
 			address,
 			age,
@@ -579,6 +582,7 @@ func Generate(count uint) error {
 			serviceCC7,
 			serviceRequested7,
 			serviceDelivered7,
+			strconv.FormatBool(inactive),
 		}); err != nil {
 			return err
 		}
