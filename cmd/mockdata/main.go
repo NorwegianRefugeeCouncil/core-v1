@@ -480,7 +480,7 @@ func Generate(count uint) error {
 		serviceRequested7 := randomDate()
 		serviceDelivered7 := randomDate()
 
-		inactive := randBool(90)
+		inactive := randBool(10)
 
 		if err := writer.Write([]string{
 			address,
