@@ -270,6 +270,7 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []
 
 func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], deduplicationTypes []deduplication.DeduplicationTypeName, records [][]string, columnMapping map[string]int) []FileError {
 	duplicateErrors := make([]FileError, 0)
+	alertedOn := containers.Set[int]{}
 	columnNames := make([]string, 0)
 	for _, deduplicationType := range deduplicationTypes {
 		for _, column := range deduplication.DeduplicationTypes[deduplicationType].Config.Columns {
@@ -279,6 +280,9 @@ func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], deduplica
 
 	for originalIndex, duplicates := range duplicateMap {
 		for _, duplicateIndex := range duplicates.Items() {
+			if alertedOn.Contains(duplicateIndex) {
+				continue
+			}
 			errorList := make([]error, 0)
 			for _, column := range columnNames {
 				originalValue := records[originalIndex+1][columnMapping[column]]
@@ -303,6 +307,8 @@ func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], deduplica
 				errorList,
 			})
 		}
+		alertedOn.Add(originalIndex)
+		alertedOn.Add(duplicates.Items()...)
 	}
 	return duplicateErrors
 }
