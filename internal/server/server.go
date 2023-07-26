@@ -5,8 +5,11 @@ import (
 	"encoding/hex"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -104,6 +107,12 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 		return nil, err
 	}
 
+	azureBlobClient, err := getAzureBlobStorageClient(ctx, o.AzureBlobStorageURL)
+	if err != nil {
+		l.Error("failed to get azure blob storage client", zap.Error(err))
+		return nil, err
+	}
+
 	sessionStore := sessions.NewCookieStore(
 		hashKey1,
 		blockKey1,
@@ -131,6 +140,8 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 		idTokenVerifier,
 		sessionStore,
 		tpl,
+		azureBlobClient,
+		o.DownloadsContainerName,
 	)
 
 	return s, nil
@@ -165,4 +176,39 @@ func (s *Server) Start(ctx context.Context) error {
 		return err
 	}
 	return nil
+}
+
+func getAzureBlobStorageClient(ctx context.Context, url string)  (*azblob.Client, error) {
+	isDev := strings.Contains(url, "localhost") || strings.Contains(url, "127.0.0.1")
+
+	if isDev {
+		credential, err := azblob.NewSharedKeyCredential(
+			"devstoreaccount1",
+			"Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==",
+	)
+		if err != nil {
+			return nil, err
+		}
+
+		client, err := azblob.NewClientWithSharedKeyCredential(url, credential, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		client.CreateContainer(ctx, "individualdownloads", nil)
+
+		return client, nil
+	} else {
+		credential, err := azidentity.NewDefaultAzureCredential(nil)
+		if err != nil {
+			return nil, err
+		}
+		
+		client, err := azblob.NewClient(url, credential, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		return client, nil
+	}
 }

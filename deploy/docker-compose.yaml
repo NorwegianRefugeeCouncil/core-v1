@@ -74,3 +74,14 @@ services:
       - ./certs/tls.crt:/etc/envoy/certs/tls.crt
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  azure_blob_storage:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: individualdownloads
+    command: 'azurite -l /data --blobHost 0.0.0.0 --blobPort 11000 --queueHost 0.0.0.0 --queuePort 11001 --tableHost 0.0.0.0 --tablePort 11002'
+    ports:
+      - '11000:11000'
+      - '11001:11001'
+      - '11002:11002'
+    environment:
+      - ACCOUNT_NAME=devstoreaccount1
+      - ACCOUNT_KEY="Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="

@@ -36,6 +36,8 @@ const (
 	envHashKey2                = "CORE_HASH_KEY_2"
 	envBlockKey2               = "CORE_BLOCK_KEY_2"
 	envEnableBetaFeatures      = "CORE_ENABLE_BETA_FEATURES"
+	envAzureBlobStorageUrl     = "CORE_AZURE_BLOB_STORAGE_URL"
+	envDownloadsContainerName  = "CORE_DOWNLOADS_CONTAINER_NAME"
 
 	flagDbDSN                   = "db-dsn"
 	flagDbDriver                = "db-driver"
@@ -55,6 +57,8 @@ const (
 	flagHashKey2                = "hash-key-2"
 	flagBlockKey2               = "block-key-2"
 	flagEnableBetaFeatures      = "enable-beta-features"
+	flagAzureBlobStorageUrl     = "azure-blob-storage-url"
+	flagDownloadsContainerName  = "downloads-container-name"
 )
 
 // serveCmd represents the serve command
@@ -164,8 +168,11 @@ var serveCmd = &cobra.Command{
 		if len(blockKey2) == 0 {
 			return fmt.Errorf("--%s is required", flagBlockKey2)
 		}
-		
+
 		enableBetaFeatures := getBooleanFlagOrEnv(cmd, flagEnableBetaFeatures, envEnableBetaFeatures)
+
+		azureBlobStorageUrl := getFlagOrEnv(cmd, flagAzureBlobStorageUrl, envAzureBlobStorageUrl)
+		downloadsContainerName := getFlagOrEnv(cmd, flagDownloadsContainerName, envDownloadsContainerName)
 
 		options := server.Options{
 			Address:              listenAddress,
@@ -188,6 +195,8 @@ var serveCmd = &cobra.Command{
 			HashKey2:                hashKey2,
 			BlockKey2:               blockKey2,
 			EnableBetaFeatures:      enableBetaFeatures,
+			AzureBlobStorageURL:     azureBlobStorageUrl,
+			DownloadsContainerName:  downloadsContainerName,
 		}
 
 		srv, err := options.New(ctx)
@@ -350,6 +359,16 @@ Can also be set with %s
 This flag specifies whether to enable beta features.
 Can also be set with %s
 `, envEnableBetaFeatures)))
+
+	serveCmd.PersistentFlags().String(flagAzureBlobStorageUrl, "", cleanDoc(fmt.Sprintf(`
+This flag specifies the Azure Blob Storage URL.
+Can also be set with %s
+`, envAzureBlobStorageUrl)))
+
+	serveCmd.PersistentFlags().String(flagDownloadsContainerName, "", cleanDoc(fmt.Sprintf(`
+This flag specifies the Azure Blob Storage container name.
+Can also be set with %s
+`, envDownloadsContainerName)))
 
 }
 

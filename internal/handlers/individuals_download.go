@@ -1,13 +1,18 @@
 package handlers
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
+	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 	"github.com/google/uuid"
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
@@ -67,8 +72,9 @@ func setContentTypeForExtension(w http.ResponseWriter, ext string) {
 
 func HandleDownload(
 	userRepo db.IndividualRepo,
+	azureStorageClient *azblob.Client,
+	containerName string,
 ) http.Handler {
-
 	const queryParamFormat = "format"
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -87,36 +93,46 @@ func HandleDownload(
 
 		file := r.URL.Query().Get("file")
 		if file != "" {
-
-			// at this point, the file was already created and ready for download.
-
 			resultFileName, resultFileExtension, err := assertValidFileNameForCountry(file, selectedCountryID)
 			if err != nil {
 				l.Error("invalid file name", zap.Error(err))
 				http.Error(w, "invalid file name: "+err.Error(), http.StatusBadRequest)
 				return
 			}
-			filePath := path.Join("/tmp", file)
 
-			// check that the file already exists
-			_, err = os.Stat(filePath)
+			rangeHeader := r.Header.Get("Range")
+			downloadStreamOptions := &azblob.DownloadStreamOptions{}
+
+			if rangeHeader != "" {
+				offset, count, err := parseRangeHeader(rangeHeader)
+				if err != nil {
+					l.Error("invalid range header", zap.Error(err))
+					http.Error(w, "invalid range header: "+err.Error(), http.StatusBadRequest)
+					return
+				}
+
+				downloadStreamOptions.Range = azblob.HTTPRange{
+					Offset: offset,
+					Count:  count,
+				}
+			}
+
+			downloadStream, err := azureStorageClient.DownloadStream(ctx, containerName, file, downloadStreamOptions)
 			if err != nil {
-				l.Error("failed to get file info", zap.Error(err))
-				http.Error(w, "failed to get file info: "+err.Error(), http.StatusInternalServerError)
+				l.Error("failed to download file", zap.Error(err))
+				http.Error(w, "failed to download file: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
 
-			// open the file
-			file, err := os.Open(filePath)
+			b, err := ioutil.ReadAll(downloadStream.Body)
 			if err != nil {
-				l.Error("failed to open file", zap.Error(err))
-				http.Error(w, "failed to open file: "+err.Error(), http.StatusInternalServerError)
+				l.Error("failed to read file", zap.Error(err))
+				http.Error(w, "failed to read file: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
 
 			setContentTypeForExtension(w, resultFileExtension)
-			// serve the file
-			http.ServeContent(w, r, resultFileName, time.Time{}, file)
+			http.ServeContent(w, r, resultFileName, time.Time{}, bytes.NewReader(b))
 			return
 		}
 
@@ -159,6 +175,7 @@ func HandleDownload(
 		}
 
 		fileName := generateUniqueDownloadFileNameForCountryAndExtension(selectedCountryID, format)
+
 		downloadFile, err := os.Create(path.Join("/tmp", fileName))
 		if err != nil {
 			l.Error("failed to create temp file", zap.Error(err))
@@ -168,6 +185,9 @@ func HandleDownload(
 		defer func() {
 			if err := downloadFile.Close(); err != nil {
 				l.Error("failed to close temp file", zap.Error(err))
+			}
+			if err := os.Remove(downloadFile.Name()); err != nil {
+				l.Error("failed to remove temp file", zap.Error(err))
 			}
 		}()
 
@@ -188,19 +208,35 @@ func HandleDownload(
 			}
 		}
 
-		go func() {
-			// dirty hack to clear out the file after 30 minutes
-			time.Sleep(30 * time.Minute)
-			if err := os.Remove(downloadFile.Name()); err != nil {
-				l.Error("failed to remove temp file", zap.Error(err))
-			}
-		}()
+		_, err = azureStorageClient.UploadFile(ctx, containerName, fileName, downloadFile, nil)
+		if err != nil {
+			l.Error("failed to upload file", zap.Error(err))
+			http.Error(w, "failed to upload file: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		redirectPath := fmt.Sprintf("/countries/%s/participants/download?file=%s",
 			selectedCountryID,
-			path.Base(downloadFile.Name()),
+			path.Base(fileName),
 		)
 		http.Redirect(w, r, redirectPath, http.StatusSeeOther)
-
 	})
+}
+
+func parseRangeHeader(rangeHeader string) (int64, int64, error) {
+	match, _ := regexp.MatchString(`bytes=\d+-\d+`, rangeHeader)
+	if !match {
+		return 0, 0, fmt.Errorf("invalid range header")
+	}
+	rangeHeader = strings.ReplaceAll(rangeHeader, "bytes=", "")
+	parts := strings.Split(rangeHeader, "-")
+	offset, err := strconv.ParseInt(parts[0], 10, 64)
+	if err != nil {
+		return 0, 0, fmt.Errorf("invalid range header")
+	}
+	count, err := strconv.ParseInt(parts[1], 10, 64)
+	if err != nil {
+		return 0, 0, fmt.Errorf("invalid range header")
+	}
+	return offset, count, nil
 }

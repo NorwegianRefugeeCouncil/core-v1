@@ -52,6 +52,8 @@ certs:
 	@mkcert -cert-file deploy/certs/tls.crt -key-file deploy/certs/tls.key core.dev "*.core.dev" localhost 127.0.0.1 ::1 && chmod 644 deploy/certs/tls.key
 
 .PHONY: serve
+serve: export AZURE_STORAGE_ACCOUNT_NAME = devstoreaccount1
+serve: export AZURE_STORAGE_ACCOUNT_KEY = Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
 # Starts the server
 serve: prerequisites
 	@go run . serve \
@@ -73,7 +75,9 @@ serve: prerequisites
 		--block-key-1="1e4254ae1f74406b853193466816ddffd592f8ef3bf9c2299735aec453a34239" \
 		--hash-key-2="28382c602c786507d5a286ff5890f1db12dc638355f50ab7cf91a946b07da670" \
 		--block-key-2="f735998d3da9d8a2b01cba8e9243605a7e02dd5daebefe62e23f2bc0b29787c2" \
-		--enable-beta-features
+		--enable-beta-features \
+		--azure-blob-storage-url="http://127.0.0.1:11000/devstoreaccount1" \
+		--downloads-container-name="individualdownloads"
 
 .PHONY: bootstrap
 bootstrap:

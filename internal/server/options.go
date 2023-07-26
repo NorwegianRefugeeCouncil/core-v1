@@ -31,6 +31,8 @@ type Options struct {
 	HashKey2                string
 	BlockKey2               string
 	EnableBetaFeatures      bool
+	AzureBlobStorageURL 	 	string
+	DownloadsContainerName 	string
 }
 
 var jwtGroupRegex = regexp.MustCompile(`^[A-Za-z0-9_-]+(?: +[A-Za-z0-9_-]+)*$`)
@@ -82,6 +84,12 @@ func (o Options) validate() error {
 	}
 	if len(o.OAuthClientID) == 0 {
 		return fmt.Errorf("OAuth client ID is required")
+	}
+	if len(o.AzureBlobStorageURL) == 0 {
+		return fmt.Errorf("Azure Blob Storage URL is required")
+	}
+	if len(o.DownloadsContainerName) == 0 {
+		return fmt.Errorf("Downloads Container Name is required")
 	}
 	return nil
 }
