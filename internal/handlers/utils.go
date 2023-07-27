@@ -6,6 +6,11 @@ import (
 )
 
 func validateIndividualsExistInCountry(individualIds containers.StringSet, existingIndividuals []*api.Individual, expectedCountryId string) []string {
+
+	if len(existingIndividuals) == 0 {
+		return []string{}
+	}
+
 	existingIndividualIdMap := map[string]*api.Individual{}
 	for _, individual := range existingIndividuals {
 		existingIndividualIdMap[individual.ID] = individual

@@ -2,6 +2,7 @@ package validation
 
 import (
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
+	"github.com/nrc-no/notcore/internal/constants"
 	"testing"
 	"time"
 
@@ -455,12 +456,12 @@ func ValidIndividual() *IndividualBuilder {
 func TestValidateIndividual(t *testing.T) {
 	futureDate := time.Now().AddDate(1, 0, 0)
 	emptyDate := time.Time{}
-	email1Path := validation.NewPath("email1")
-	email2Path := validation.NewPath("email2")
-	email3Path := validation.NewPath("email3")
-	birthDatePath := validation.NewPath("birthDate")
-	countryIDPath := validation.NewPath("countryId")
-	displacementStatusPath := validation.NewPath("displacementStatus")
+	email1Path := validation.NewPath(constants.DBColumnIndividualEmail1)
+	email2Path := validation.NewPath(constants.DBColumnIndividualEmail2)
+	email3Path := validation.NewPath(constants.DBColumnIndividualEmail3)
+	birthDatePath := validation.NewPath(constants.DBColumnIndividualBirthDate)
+	countryIDPath := validation.NewPath(constants.DBColumnIndividualCountryID)
+	displacementStatusPath := validation.NewPath(constants.DBColumnIndividualDisplacementStatus)
 	sexPath := validation.NewPath("sex")
 	tests := []struct {
 		name string
@@ -486,47 +487,47 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "cognitiveDisabilityLevel (invalid)",
 			i:    ValidIndividual().WithCognitiveDisabilityLevel("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("cognitiveDisabilityLevel"), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath(constants.DBColumnIndividualCognitiveDisabilityLevel), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
 		}, {
 			name: "collectionAdministrativeArea1 (too long)",
 			i:    ValidIndividual().WithCollectionAdministrativeArea1(bigstr(individualAdministrativeAreaMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("collectionAdministrativeArea1"), bigstr(individualAdministrativeAreaMaxLength+1), individualAdministrativeAreaMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualCollectionAdministrativeArea1), bigstr(individualAdministrativeAreaMaxLength+1), individualAdministrativeAreaMaxLength)},
 		}, {
 			name: "collectionAdministrativeArea2 (too long)",
 			i:    ValidIndividual().WithCollectionAdministrativeArea2(bigstr(individualAdministrativeAreaMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("collectionAdministrativeArea2"), bigstr(individualAdministrativeAreaMaxLength+1), individualAdministrativeAreaMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualCollectionAdministrativeArea2), bigstr(individualAdministrativeAreaMaxLength+1), individualAdministrativeAreaMaxLength)},
 		}, {
 			name: "collectionAdministrativeArea3 (too long)",
 			i:    ValidIndividual().WithCollectionAdministrativeArea3(bigstr(individualAdministrativeAreaMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("collectionAdministrativeArea3"), bigstr(individualAdministrativeAreaMaxLength+1), individualAdministrativeAreaMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualCollectionAdministrativeArea3), bigstr(individualAdministrativeAreaMaxLength+1), individualAdministrativeAreaMaxLength)},
 		}, {
 			name: "collectionOffice (too long)",
 			i:    ValidIndividual().WithCollectionOffice(bigstr(individualCollectionOfficeMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("collectionOffice"), bigstr(individualCollectionOfficeMaxLength+1), individualCollectionOfficeMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualCollectionOffice), bigstr(individualCollectionOfficeMaxLength+1), individualCollectionOfficeMaxLength)},
 		}, {
 			name: "collectionAgentName (too long)",
 			i:    ValidIndividual().WithCollectionAgentName(bigstr(individualCollectionAgentNameMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("collectionAgentName"), bigstr(individualCollectionAgentNameMaxLength+1), individualCollectionAgentNameMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualCollectionAgentName), bigstr(individualCollectionAgentNameMaxLength+1), individualCollectionAgentNameMaxLength)},
 		}, {
 			name: "collectionAgentTitle (too long)",
 			i:    ValidIndividual().WithCollectionAgentTitle(bigstr(individualCollectionAgentTitleMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("collectionAgentTitle"), bigstr(individualCollectionAgentTitleMaxLength+1), individualCollectionAgentTitleMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualCollectionAgentTitle), bigstr(individualCollectionAgentTitleMaxLength+1), individualCollectionAgentTitleMaxLength)},
 		}, {
 			name: "collectionTime (in the future)",
 			i:    ValidIndividual().WithCollectionTime(futureDate).Build(),
-			want: validation.ErrorList{validation.Invalid(validation.NewPath("collectionTime"), futureDate, "collection time cannot be in the future")},
+			want: validation.ErrorList{validation.Invalid(validation.NewPath(constants.DBColumnIndividualCollectionTime), futureDate, "collection time cannot be in the future")},
 		}, {
 			name: "comments (too long)",
 			i:    ValidIndividual().WithComments(bigstr(maxTextLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("comments"), bigstr(maxTextLength+1), maxTextLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualComments), bigstr(maxTextLength+1), maxTextLength)},
 		}, {
 			name: "communicationDisabilityLevel (invalid)",
 			i:    ValidIndividual().WithCommunicationDisabilityLevel("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("communicationDisabilityLevel"), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath(constants.DBColumnIndividualCommunicationDisabilityLevel), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
 		}, {
 			name: "communityId (too long)",
 			i:    ValidIndividual().WithCommunityID(bigstr(individualCommunityIDMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("communityId"), bigstr(individualCommunityIDMaxLength+1), individualCommunityIDMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualCommunityID), bigstr(individualCommunityIDMaxLength+1), individualCommunityIDMaxLength)},
 		}, {
 			name: "countryId (not a uuid)",
 			i:    ValidIndividual().WithCountryID("not a uuid").Build(),
@@ -566,47 +567,47 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "fullName (too long)",
 			i:    ValidIndividual().WithFullName(bigstr(individualNameMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("fullName"), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualFullName), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
 		}, {
 			name: "firstName (too long)",
 			i:    ValidIndividual().WithFirstName(bigstr(individualNameMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("firstName"), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualFirstName), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
 		}, {
 			name: "middleName (too long)",
 			i:    ValidIndividual().WithMiddleName(bigstr(individualNameMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("middleName"), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualMiddleName), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
 		}, {
 			name: "LastName (too long)",
 			i:    ValidIndividual().WithLastName(bigstr(individualNameMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("lastName"), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualLastName), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
 		}, {
 			name: "MothersName (too long)",
 			i:    ValidIndividual().WithMothersName(bigstr(individualNameMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("mothersName"), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualMothersName), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
 		}, {
 			name: "NativeName (too long)",
 			i:    ValidIndividual().WithNativeName(bigstr(individualNameMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("nativeName"), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualNativeName), bigstr(individualNameMaxLength+1), individualNameMaxLength)},
 		}, {
 			name: "freeField1 (too long)",
 			i:    ValidIndividual().WithFreeField1(bigstr(individualFreeFieldMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("freeField1"), bigstr(individualFreeFieldMaxLength+1), individualFreeFieldMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualFreeField1), bigstr(individualFreeFieldMaxLength+1), individualFreeFieldMaxLength)},
 		}, {
 			name: "freeField2 (too long)",
 			i:    ValidIndividual().WithFreeField2(bigstr(individualFreeFieldMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("freeField2"), bigstr(individualFreeFieldMaxLength+1), individualFreeFieldMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualFreeField2), bigstr(individualFreeFieldMaxLength+1), individualFreeFieldMaxLength)},
 		}, {
 			name: "freeField3 (too long)",
 			i:    ValidIndividual().WithFreeField3(bigstr(individualFreeFieldMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("freeField3"), bigstr(individualFreeFieldMaxLength+1), individualFreeFieldMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualFreeField3), bigstr(individualFreeFieldMaxLength+1), individualFreeFieldMaxLength)},
 		}, {
 			name: "freeField4 (too long)",
 			i:    ValidIndividual().WithFreeField4(bigstr(individualFreeFieldMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("freeField4"), bigstr(individualFreeFieldMaxLength+1), individualFreeFieldMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualFreeField4), bigstr(individualFreeFieldMaxLength+1), individualFreeFieldMaxLength)},
 		}, {
 			name: "freeField5 (too long)",
 			i:    ValidIndividual().WithFreeField5(bigstr(individualFreeFieldMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("freeField5"), bigstr(individualFreeFieldMaxLength+1), individualFreeFieldMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualFreeField5), bigstr(individualFreeFieldMaxLength+1), individualFreeFieldMaxLength)},
 		}, {
 			name: "sex (invalid)",
 			i:    ValidIndividual().WithSex("bla").Build(),
@@ -614,115 +615,115 @@ func TestValidateIndividual(t *testing.T) {
 		}, {
 			name: "hearingDisabilityLevel (invalid)",
 			i:    ValidIndividual().WithHearingDisabilityLevel("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("hearingDisabilityLevel"), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath(constants.DBColumnIndividualHearingDisabilityLevel), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
 		}, {
 			name: "householdId (too long)",
 			i:    ValidIndividual().WithHouseholdID(bigstr(individualHouseholdIDMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("householdId"), bigstr(individualHouseholdIDMaxLength+1), individualHouseholdIDMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualHouseholdID), bigstr(individualHouseholdIDMaxLength+1), individualHouseholdIDMaxLength)},
 		}, {
 			name: "identificationType1 (invalid)",
 			i:    ValidIndividual().WithIdentificationType1("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("identificationType1"), enumTypes.IdentificationType("invalid"), allowedIdentificationTypesStr)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath(constants.DBColumnIndividualIdentificationType1), enumTypes.IdentificationType("invalid"), allowedIdentificationTypesStr)},
 		}, {
 			name: "identificationTypeExplanation1 (too long)",
 			i:    ValidIndividual().WithIdentificationTypeExplanation1(bigstr(maxTextLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("identificationTypeExplanation1"), bigstr(maxTextLength+1), maxTextLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualIdentificationTypeExplanation1), bigstr(maxTextLength+1), maxTextLength)},
 		}, {
 			name: "identificationNumber1 (too long)",
 			i:    ValidIndividual().WithIdentificationNumber1(bigstr(individualIdentificationNumberMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("identificationNumber1"), bigstr(individualIdentificationNumberMaxLength+1), individualIdentificationNumberMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualIdentificationNumber1), bigstr(individualIdentificationNumberMaxLength+1), individualIdentificationNumberMaxLength)},
 		}, {
 			name: "identificationType2 (invalid)",
 			i:    ValidIndividual().WithIdentificationType2("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("identificationType2"), enumTypes.IdentificationType("invalid"), allowedIdentificationTypesStr)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath(constants.DBColumnIndividualIdentificationType2), enumTypes.IdentificationType("invalid"), allowedIdentificationTypesStr)},
 		}, {
 			name: "identificationTypeExplanation2 (too long)",
 			i:    ValidIndividual().WithIdentificationTypeExplanation2(bigstr(maxTextLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("identificationTypeExplanation2"), bigstr(maxTextLength+1), maxTextLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualIdentificationTypeExplanation2), bigstr(maxTextLength+1), maxTextLength)},
 		}, {
 			name: "identificationNumber2 (too long)",
 			i:    ValidIndividual().WithIdentificationNumber2(bigstr(individualIdentificationNumberMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("identificationNumber2"), bigstr(individualIdentificationNumberMaxLength+1), individualIdentificationNumberMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualIdentificationNumber2), bigstr(individualIdentificationNumberMaxLength+1), individualIdentificationNumberMaxLength)},
 		}, {
 			name: "identificationType3 (invalid)",
 			i:    ValidIndividual().WithIdentificationType3("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("identificationType3"), enumTypes.IdentificationType("invalid"), allowedIdentificationTypesStr)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath(constants.DBColumnIndividualIdentificationType3), enumTypes.IdentificationType("invalid"), allowedIdentificationTypesStr)},
 		}, {
 			name: "identificationTypeExplanation3 (too long)",
 			i:    ValidIndividual().WithIdentificationTypeExplanation3(bigstr(maxTextLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("identificationTypeExplanation3"), bigstr(maxTextLength+1), maxTextLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualIdentificationTypeExplanation3), bigstr(maxTextLength+1), maxTextLength)},
 		}, {
 			name: "identificationNumber3 (too long)",
 			i:    ValidIndividual().WithIdentificationNumber3(bigstr(individualIdentificationNumberMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("identificationNumber3"), bigstr(individualIdentificationNumberMaxLength+1), individualIdentificationNumberMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualIdentificationNumber3), bigstr(individualIdentificationNumberMaxLength+1), individualIdentificationNumberMaxLength)},
 		}, {
 			name: "engagementContext (invalid)",
 			i:    ValidIndividual().WithEngagementContext("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("engagementContext"), enumTypes.EngagementContext("invalid"), allowedEngagementContextsStr)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath(constants.DBColumnIndividualEngagementContext), enumTypes.EngagementContext("invalid"), allowedEngagementContextsStr)},
 		}, {
 			name: "internalId (too long)",
 			i:    ValidIndividual().WithInternalID(bigstr(individualInternalIDMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("internalId"), bigstr(individualInternalIDMaxLength+1), individualInternalIDMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualInternalID), bigstr(individualInternalIDMaxLength+1), individualInternalIDMaxLength)},
 		}, {
 			name: "mobilityDisabilityLevel (invalid)",
 			i:    ValidIndividual().WithMobilityDisabilityLevel("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("mobilityDisabilityLevel"), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath(constants.DBColumnIndividualMobilityDisabilityLevel), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
 		}, {
 			name: "nationality1 (too long)",
 			i:    ValidIndividual().WithNationality1(bigstr(individualNationalityMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("nationality1"), bigstr(individualNationalityMaxLength+1), individualNationalityMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualNationality1), bigstr(individualNationalityMaxLength+1), individualNationalityMaxLength)},
 		}, {
 			name: "nationality2 (too long)",
 			i:    ValidIndividual().WithNationality2(bigstr(individualNationalityMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("nationality2"), bigstr(individualNationalityMaxLength+1), individualNationalityMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualNationality2), bigstr(individualNationalityMaxLength+1), individualNationalityMaxLength)},
 		}, {
 			name: "phoneNumber1 (too long)",
 			i:    ValidIndividual().WithPhoneNumber1(bigstr(individualPhoneNumberMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("phoneNumber1"), bigstr(individualPhoneNumberMaxLength+1), individualPhoneNumberMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualPhoneNumber1), bigstr(individualPhoneNumberMaxLength+1), individualPhoneNumberMaxLength)},
 		}, {
 			name: "phoneNumber2 (too long)",
 			i:    ValidIndividual().WithPhoneNumber2(bigstr(individualPhoneNumberMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("phoneNumber2"), bigstr(individualPhoneNumberMaxLength+1), individualPhoneNumberMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualPhoneNumber2), bigstr(individualPhoneNumberMaxLength+1), individualPhoneNumberMaxLength)},
 		}, {
 			name: "phoneNumber3 (too long)",
 			i:    ValidIndividual().WithPhoneNumber3(bigstr(individualPhoneNumberMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("phoneNumber3"), bigstr(individualPhoneNumberMaxLength+1), individualPhoneNumberMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualPhoneNumber3), bigstr(individualPhoneNumberMaxLength+1), individualPhoneNumberMaxLength)},
 		}, {
 			name: "preferredContactMethod (invalid)",
 			i:    ValidIndividual().WithPreferredContactMethod("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("preferredContactMethod"), enumTypes.ContactMethod("invalid"), allowedContactMethodsStr)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath(constants.DBColumnIndividualPreferredContactMethod), enumTypes.ContactMethod("invalid"), allowedContactMethodsStr)},
 		}, {
 			name: "preferredContactMethodComments (too long)",
 			i:    ValidIndividual().WithPreferredContactMethodComments(bigstr(maxTextLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("preferredContactMethodComments"), bigstr(maxTextLength+1), maxTextLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualPreferredContactMethodComments), bigstr(maxTextLength+1), maxTextLength)},
 		}, {
 			name: "preferredName (too long)",
 			i:    ValidIndividual().WithPreferredName(bigstr(individualPreferredNameMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("preferredName"), bigstr(individualPreferredNameMaxLength+1), individualPreferredNameMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualPreferredName), bigstr(individualPreferredNameMaxLength+1), individualPreferredNameMaxLength)},
 		}, {
 			name: "preferredCommunicationLanguage (too long)",
 			i:    ValidIndividual().WithPreferredCommunicationLanguage(bigstr(individualPreferredCommunicationLanguageMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("preferredCommunicationLanguage"), bigstr(individualPreferredCommunicationLanguageMaxLength+1), individualPreferredCommunicationLanguageMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualPreferredCommunicationLanguage), bigstr(individualPreferredCommunicationLanguageMaxLength+1), individualPreferredCommunicationLanguageMaxLength)},
 		}, {
 			name: "selfCareDisabilityLevel (invalid)",
 			i:    ValidIndividual().WithSelfCareDisabilityLevel("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("selfCareDisabilityLevel"), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath(constants.DBColumnIndividualSelfCareDisabilityLevel), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
 		}, {
 			name: "spokenLanguage1 (too long)",
 			i:    ValidIndividual().WithSpokenLanguage1(bigstr(individualSpokenLanguageMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("spokenLanguage1"), bigstr(individualSpokenLanguageMaxLength+1), individualSpokenLanguageMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualSpokenLanguage1), bigstr(individualSpokenLanguageMaxLength+1), individualSpokenLanguageMaxLength)},
 		}, {
 			name: "spokenLanguage2 (too long)",
 			i:    ValidIndividual().WithSpokenLanguage2(bigstr(individualSpokenLanguageMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("spokenLanguage2"), bigstr(individualSpokenLanguageMaxLength+1), individualSpokenLanguageMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualSpokenLanguage2), bigstr(individualSpokenLanguageMaxLength+1), individualSpokenLanguageMaxLength)},
 		}, {
 			name: "spokenLanguage3 (too long)",
 			i:    ValidIndividual().WithSpokenLanguage3(bigstr(individualSpokenLanguageMaxLength + 1)).Build(),
-			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath("spokenLanguage3"), bigstr(individualSpokenLanguageMaxLength+1), individualSpokenLanguageMaxLength)},
+			want: validation.ErrorList{validation.TooLongMaxLength(validation.NewPath(constants.DBColumnIndividualSpokenLanguage3), bigstr(individualSpokenLanguageMaxLength+1), individualSpokenLanguageMaxLength)},
 		}, {
 			name: "visionDisabilityLevel (invalid)",
 			i:    ValidIndividual().WithVisionDisabilityLevel("invalid").Build(),
-			want: validation.ErrorList{validation.NotSupported(validation.NewPath("visionDisabilityLevel"), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
+			want: validation.ErrorList{validation.NotSupported(validation.NewPath(constants.DBColumnIndividualVisionDisabilityLevel), enumTypes.DisabilityLevel("invalid"), allowedDisabilityLevelsStr)},
 		},
 	}
 	for _, tt := range tests {
@@ -752,7 +753,7 @@ func TestValidateIndividualList(t *testing.T) {
 			},
 			want: validation.ErrorList{
 				validation.NotSupported(
-					validation.NewPath("items[0].displacementStatus"),
+					validation.NewPath("items[0].displacement_status"),
 					enumTypes.DisplacementStatus("bla"),
 					allowedDisplacementStatusesStr)},
 		},

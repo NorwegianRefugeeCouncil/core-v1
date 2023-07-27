@@ -3,6 +3,8 @@ package db
 import (
 	"context"
 	"fmt"
+	"github.com/lib/pq"
+	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"strings"
 	"time"
 
@@ -24,10 +26,205 @@ type IndividualRepo interface {
 	PutMany(ctx context.Context, individuals []*api.Individual, fields containers.StringSet) ([]*api.Individual, error)
 	PerformAction(ctx context.Context, id string, action string) error
 	PerformActionMany(ctx context.Context, ids containers.StringSet, action string) error
+	FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName, deduplicationLogicOperator string) ([]*api.Individual, error)
 }
 
 type individualRepo struct {
 	db *sqlx.DB
+}
+
+func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName, deduplicationLogicOperator string) ([]*api.Individual, error) {
+	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
+		return i.findDuplicatesInternal(ctx, tx, individuals, deduplicationTypes, deduplicationLogicOperator)
+	})
+	if err != nil {
+		return nil, err
+	}
+	return ret.([]*api.Individual), nil
+}
+
+func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName, deduplicationLogicOperator string) ([]*api.Individual, error) {
+	if i.driverName() != "postgres" {
+		return nil, fmt.Errorf("deduplication is only implemented for postgres")
+	}
+
+	args := make([]interface{}, 0)
+	ret := make([]*api.Individual, 0)
+
+	selectedCountryID, err := utils.GetSelectedCountryID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	query, args := buildDeduplicationQuery(selectedCountryID, individuals, deduplicationTypes, deduplicationLogicOperator)
+	out := make([]*api.Individual, 0)
+
+	err = tx.SelectContext(ctx, &out, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	ret = append(ret, out...)
+	return ret, nil
+}
+
+type ColumnArgsGroups = map[string][]string
+type OrTypeArgsGroups = map[deduplication.DeduplicationTypeName]ColumnArgsGroups
+
+type RowArgsGroups = []*api.Individual
+type AndTypeArgsGroups = map[deduplication.DeduplicationTypeName]RowArgsGroups
+
+type QueryArgs struct {
+	And AndTypeArgsGroups
+	Or  OrTypeArgsGroups
+}
+
+/*
+example of QueryArgs:
+{
+	Or: {
+		"IDs": {
+		  "id_1": ["ID1", "ID2", "ID3", "ID4", "ID5","ID6"],
+		  "id_2": ["ID1", "ID2", "ID3", "ID4", "ID5","ID6"],
+		  "id_3": ["ID1", "ID2", "ID3", "ID4", "ID5","ID6"],
+		},
+	},
+	And: {
+		"Names": [
+		  {"firstName": "John","lastName": "Doe"},
+		  {"firstName": "Jane","lastName": "Doe"}
+		]
+	}
+}
+*/
+
+func buildDeduplicationQuery(selectedCountryID string, individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName, deduplicationLogicOperator string) (string, []interface{}) {
+	b := &strings.Builder{}
+	subQueries := []string{}
+	args := []interface{}{selectedCountryID}
+
+	argsMap := collectArgs(individuals, deduplicationTypes)
+	subQueries, args = getSubQueriesWithArgs(args, argsMap)
+	if len(args) == 1 {
+		return "", nil
+	}
+
+	b.WriteString("SELECT * FROM individual_registrations WHERE country_id = $1 AND deleted_at IS NULL")
+
+	b.WriteString(" AND ((")
+	b.WriteString(strings.Join(subQueries, fmt.Sprintf(") %s (", deduplicationLogicOperator)))
+	b.WriteString("))")
+
+	return b.String(), args
+}
+
+func collectArgs(individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) QueryArgs {
+	argsMap := QueryArgs{
+		Or:  OrTypeArgsGroups{},
+		And: AndTypeArgsGroups{},
+	}
+	for d := 0; d < len(deduplicationTypes); d++ {
+		deduplicationType := deduplicationTypes[d]
+		deduplicationConfig := deduplication.DeduplicationTypes[deduplicationType].Config
+		if deduplicationConfig.Condition == deduplication.LOGICAL_OPERATOR_OR {
+			orQueryArgs := collectOrQueryArgs(individuals, deduplicationConfig)
+			if len(orQueryArgs) > 0 {
+				argsMap.Or[deduplicationType] = orQueryArgs
+			}
+		} else if deduplicationConfig.Condition == deduplication.LOGICAL_OPERATOR_AND {
+			argsMap.And[deduplicationType] = individuals
+		}
+	}
+	return argsMap
+}
+
+func collectOrQueryArgs(individuals []*api.Individual, deduplicationConfig deduplication.DeduplicationTypeValue) ColumnArgsGroups {
+	colGroups := ColumnArgsGroups{}
+	args := make([]string, 0, len(individuals))
+	for c := 0; c < len(deduplicationConfig.Columns); c++ {
+		column := deduplicationConfig.Columns[c]
+		for _, individual := range individuals {
+			v, err := individual.GetFieldValue(column)
+			if err == nil && v != "" && v != nil {
+				args = append(args, v.(string))
+			}
+		}
+	}
+	if len(args) > 0 {
+		for c := 0; c < len(deduplicationConfig.Columns); c++ {
+			column := deduplicationConfig.Columns[c]
+			colGroups[column] = args
+		}
+	}
+	return colGroups
+}
+
+func getSubQueriesWithArgs(args []interface{}, argMap QueryArgs) ([]string, []interface{}) {
+	query := []string{}
+	for _, typeValues := range argMap.Or {
+		var orQuery string
+		orQuery, args = getOrSubQueriesWithArgs(args, typeValues)
+		if orQuery != "" {
+			query = append(query, orQuery)
+		}
+	}
+	for typeKey, typeValues := range argMap.And {
+		var andQuery string
+		andQuery, args = getAndSubQueriesWithArgs(args, typeValues, typeKey)
+		if andQuery != "" {
+			query = append(query, andQuery)
+		}
+	}
+
+	return query, args
+}
+
+func getEmptyValuesQuery(deduplicationTypes []deduplication.DeduplicationTypeName) string {
+	subQueries := make([]string, 0)
+	for i, _ := range deduplicationTypes {
+		for j, _ := range deduplication.DeduplicationTypes[deduplicationTypes[i]].Config.Columns {
+			subQueries = append(subQueries, fmt.Sprintf("%s = ''", deduplication.DeduplicationTypes[deduplicationTypes[i]].Config.Columns[j]))
+		}
+	}
+	return strings.Join(subQueries, " AND ")
+}
+
+func getOrSubQueriesWithArgs(args []interface{}, colGroups ColumnArgsGroups) (string, []interface{}) {
+	subQueries := make([]string, 0)
+	arg := []string{}
+
+	for groupKey, groupArgs := range colGroups {
+		arg = groupArgs
+		subQueries = append(subQueries, fmt.Sprintf("%s IN (SELECT * FROM UNNEST ($%d::text[]))", groupKey, len(args)+1))
+	}
+
+	if len(subQueries) > 0 {
+		args = append(args, pq.Array(arg))
+	}
+	return strings.Join(subQueries, " OR "), args
+}
+
+func getAndSubQueriesWithArgs(args []interface{}, rowGroups RowArgsGroups, typeKey deduplication.DeduplicationTypeName) (string, []interface{}) {
+	columns := deduplication.DeduplicationTypes[typeKey].Config.Columns
+	subQueries := make([]string, 0)
+
+	for _, row := range rowGroups {
+		subQueryParts := []string{}
+		for _, c := range columns {
+			v, err := row.GetFieldValue(c)
+			if err != nil || v == "" || v == nil {
+				continue
+			}
+			args = append(args, v)
+			subQueryParts = append(subQueryParts, fmt.Sprintf("%s = $%d", c, len(args)))
+		}
+		if len(subQueryParts) > 0 {
+			subQueries = append(subQueries, strings.Join(subQueryParts, " AND "))
+		}
+	}
+	if len(subQueries) > 0 {
+		subQuery := fmt.Sprintf("(%s)", strings.Join(subQueries, ") OR ("))
+		return subQuery, args
+	}
+	return "", args
 }
 
 func (i individualRepo) driverName() string {

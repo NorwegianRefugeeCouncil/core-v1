@@ -10,18 +10,18 @@ import (
 )
 
 type DummyStruct struct {
-	TextField        string     `json:"textField"`
-	TextFieldPtr     *string    `json:"textFieldPtr"`
-	NumberField      int        `json:"numberField"`
-	NumberFieldPtr   *int       `json:"numberFieldPtr"`
-	TextAreaField    string     `json:"textAreaField"`
-	TextAreaFieldPtr *string    `json:"textAreaFieldPtr"`
-	CheckboxField    bool       `json:"checkboxField"`
-	CheckboxFieldPtr *bool      `json:"checkboxFieldPtr"`
-	DateField        time.Time  `json:"dateField"`
-	DateFieldPtr     *time.Time `json:"dateFieldPtr"`
-	SelectField      string     `json:"selectField"`
-	SelectFieldPtr   *string    `json:"selectFieldPtr"`
+	TextField        string     `db:"textField"`
+	TextFieldPtr     *string    `db:"textFieldPtr"`
+	NumberField      int        `db:"numberField"`
+	NumberFieldPtr   *int       `db:"numberFieldPtr"`
+	TextAreaField    string     `db:"textAreaField"`
+	TextAreaFieldPtr *string    `db:"textAreaFieldPtr"`
+	CheckboxField    bool       `db:"checkboxField"`
+	CheckboxFieldPtr *bool      `db:"checkboxFieldPtr"`
+	DateField        time.Time  `db:"dateField"`
+	DateFieldPtr     *time.Time `db:"dateFieldPtr"`
+	SelectField      string     `db:"selectField"`
+	SelectFieldPtr   *string    `db:"selectFieldPtr"`
 }
 
 func formWithFields(fields ...Field) *Form {

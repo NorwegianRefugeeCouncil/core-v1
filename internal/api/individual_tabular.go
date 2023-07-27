@@ -14,31 +14,32 @@ import (
 
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/xuri/excelize/v2"
-	"golang.org/x/exp/slices"
 )
-
-// Unmarshal
 
 type FileError struct {
 	Message string
 	Err     []error
 }
 
-func UnmarshalIndividualsCSV(reader io.Reader, individuals *[]*Individual, fields *[]string, rowLimit *int) ([]FileError, error) {
+// Unmarshal
+
+func UnmarshalRecordsFromCSV(records *[][]string, reader io.Reader) error {
 	csvReader := csv.NewReader(reader)
 	csvReader.TrimLeadingSpace = true
-	records, err := csvReader.ReadAll()
-	if err != nil {
-		return []FileError{}, err
+	csvReader.Comma = ','
+	csvReader.LazyQuotes = false
+	csvReader.Comment = 0
+	output, err := csvReader.ReadAll()
+	if err == nil {
+		*records = output
 	}
-	return UnmarshalIndividualsTabularData(records, individuals, fields, rowLimit), err
+	return err
 }
 
-func UnmarshalIndividualsExcel(reader io.Reader, individuals *[]*Individual, fields *[]string, rowLimit *int) ([]FileError, error) {
+func UnmarshalRecordsFromExcel(records *[][]string, reader io.Reader) error {
 	f, err := excelize.OpenReader(reader)
-	var fileErrors []FileError
 	if err != nil {
-		return fileErrors, err
+		return err
 	}
 
 	defer func() {
@@ -50,31 +51,42 @@ func UnmarshalIndividualsExcel(reader io.Reader, individuals *[]*Individual, fie
 	sheets := f.GetSheetList()
 	if len(sheets) == 0 {
 		err := errors.New("no sheets found")
-		return fileErrors, err
+		return err
 	}
 
 	rows, err := f.GetRows(sheets[0])
 	if err != nil {
-		return fileErrors, err
+		return err
 	}
 	if len(rows) == 0 {
 		err := errors.New("no rows found")
-		return fileErrors, err
+		return err
 	}
-
-	return UnmarshalIndividualsTabularData(rows, individuals, fields, rowLimit), err
+	f.Close()
+	if err == nil {
+		*records = rows
+	}
+	return err
 }
 
-func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual, fields *[]string, rowLimit *int) []FileError {
+func UnmarshallRecordsFromFile(records *[][]string, reader io.Reader, filename string) error {
+	if strings.HasSuffix(filename, ".csv") {
+		return UnmarshalRecordsFromCSV(records, reader)
+	} else if strings.HasSuffix(filename, ".xlsx") || strings.HasSuffix(filename, ".xls") {
+		return UnmarshalRecordsFromExcel(records, reader)
+	} else {
+		fileNameParts := strings.Split(filename, ".")
+		fileType := fileNameParts[len(fileNameParts)-1]
 
-	if rowLimit != nil && len(data[1:]) > *rowLimit {
-		return []FileError{{fmt.Sprintf("Your file contains %d participants, which exceeds the upload limit of %d participants at a time.", len(data[1:]), *rowLimit), nil}}
+		err := errors.New(fmt.Sprintf("Could not process uploaded file of filetype %s, please upload a .csv or a .xls(x) file.", fileType))
+		return err
 	}
+}
 
+func GetColumnMapping(data [][]string, fields *[]string) (map[string]int, []FileError) {
 	colMapping := map[string]int{}
+	errors := []error{}
 	headerRow := data[0]
-	var fileErrors []FileError
-	var columnErrors []error
 	for i, col := range headerRow {
 		col = trimString(col)
 		field, ok := constants.IndividualFileToDBMap[col]
@@ -83,18 +95,27 @@ func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual
 			if ok {
 				continue
 			}
-			columnErrors = append(columnErrors, fmt.Errorf("unknown column: \"%s\"	", logutils.Escape(col)))
+			errors = append(errors, fmt.Errorf("column: \"%s\"	", logutils.Escape(col)))
 		}
 		*fields = append(*fields, field)
 		col = trimString(col)
 		colMapping[strings.Trim(col, " \n\t\r")] = i
 	}
-	if len(columnErrors) > 0 {
-		fileErrors = append(fileErrors, FileError{
+	if len(errors) > 0 {
+		return nil, []FileError{FileError{
 			Message: fmt.Sprintf("Unknown columns"),
-			Err:     columnErrors,
-		})
+			Err:     errors,
+		}}
 	}
+	return colMapping, nil
+}
+
+func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual, colMapping map[string]int, rowLimit *int) []FileError {
+
+	if rowLimit != nil && len(data[1:]) > *rowLimit {
+		return []FileError{{fmt.Sprintf("Your file contains %d participants, which exceeds the upload limit of %d participants at a time.", len(data[1:]), *rowLimit), nil}}
+	}
+	var fileErrors []FileError
 
 	for row, cols := range data[1:] {
 		individual := &Individual{}
@@ -777,19 +798,6 @@ func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
 	return nil
 }
 
-func getTimeFormatForField(field string) string {
-	switch field {
-	case constants.DBColumnIndividualUpdatedAt:
-		return time.RFC3339
-	case constants.DBColumnIndividualCreatedAt:
-		return time.RFC3339
-	case constants.DBColumnIndividualDeletedAt:
-		return time.RFC3339
-	default:
-		return "2006-01-02"
-	}
-}
-
 func (i *Individual) marshalTabularData() ([]string, error) {
 	row := make([]string, len(constants.IndividualFileColumns))
 	for j, col := range constants.IndividualFileColumns {
@@ -844,24 +852,4 @@ func (i *Individual) marshalTabularData() ([]string, error) {
 		}
 	}
 	return row, nil
-}
-
-var TRUE_VALUES = []string{"true", "yes", "1"}
-var FALSE_VALUES = []string{"false", "no", "0"}
-
-func getValidatedBoolean(value string) (bool, error) {
-	isExplicitlyTrue := slices.Contains(TRUE_VALUES, strings.ToLower(value))
-	isExplicitlyFalse := slices.Contains(FALSE_VALUES, strings.ToLower(value))
-	if !isExplicitlyTrue && !isExplicitlyFalse {
-		return false, fmt.Errorf("invalid boolean value \"%s\". Valid values are: \"%s\", \"%s\"", value, strings.Join(TRUE_VALUES, "\", \""), strings.Join(FALSE_VALUES, "\", \""))
-	}
-	return isExplicitlyTrue, nil
-}
-
-func stringArrayToInterfaceArray(row []string) []interface{} {
-	var result []interface{}
-	for _, col := range row {
-		result = append(result, col)
-	}
-	return result
 }

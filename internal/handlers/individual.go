@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"html/template"
 	"net/http"
 
@@ -23,10 +24,12 @@ import (
 func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 	const (
-		templateName          = "individual.gohtml"
-		templateParamAlerts   = "Alerts"
-		pathParamIndividualID = "individual_id"
-		newID                 = "new"
+		templateName                        = "individual.gohtml"
+		templateParamAlerts                 = "Alerts"
+		pathParamIndividualID               = "individual_id"
+		formDeduplicationParam              = "deduplicationType"
+		formParamDeduplicationLogicOperator = "deduplicationLogicOperator"
+		newID                               = "new"
 	)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -110,13 +113,15 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 		individual.Normalize()
 
+		warningIcon := "exclamation-triangle"
+
 		// Validate the individual
 		validationErrors = apivalidation.ValidateIndividual(individual)
 		if len(validationErrors) > 0 {
 			alerts = append(alerts, alert.Alert{
 				Type:        bootstrap.StyleDanger,
 				Title:       "Failed to save individual",
-				Icon:        "exclamation-triangle",
+				Icon:        warningIcon,
 				Content:     template.HTML("There were errors with your submission. Please correct them and try again."),
 				Dismissible: true,
 			})
@@ -124,22 +129,62 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			return
 		}
 
-		// Save the individual
-		individual, err = repo.Put(ctx, individual, constants.IndividualDBColumns)
-		if err != nil {
-			l.Error("failed to put individual", zap.Error(err))
-			err = apierrs.ErrorFrom(err)
-			render()
-			return
-		}
+		if r.Method == http.MethodPost || r.Method == http.MethodPut {
+			duplicates := []*api.Individual{}
+			deduplicationTypes := r.Form[formDeduplicationParam]
+			deduplicationLogicOperator := r.Form[formParamDeduplicationLogicOperator]
+			optionNames, err := deduplication.GetDeduplicationTypeNames(deduplicationTypes)
+			if err != nil {
+				alerts = append(alerts, alert.Alert{
+					Type:        bootstrap.StyleDanger,
+					Title:       "An Error Occurred during Deduplication",
+					Icon:        warningIcon,
+					Dismissible: true,
+				})
+				render()
+			}
 
-		if individualId == "new" {
-			http.Redirect(w, r, fmt.Sprintf("/countries/%s/participants/%s", individual.CountryID, individual.ID), http.StatusFound)
-			return
-		} else {
-			render()
-			return
-		}
+			if len(optionNames) > 0 {
+				duplicates, err = repo.FindDuplicates(ctx, []*api.Individual{individual}, optionNames, deduplicationLogicOperator[0])
+			}
 
+			if len(duplicates) > 0 {
+				for _, dType := range optionNames {
+					for _, field := range deduplication.DeduplicationTypes[dType].Config.Columns {
+						value, err := individual.GetFieldValue(field)
+						if err != nil || value == "" {
+							continue
+						}
+						validationErrors = append(validationErrors, validation.Duplicate(validation.NewPath(field), value))
+					}
+				}
+
+				alerts = append(alerts, alert.Alert{
+					Type:        bootstrap.StyleDanger,
+					Title:       fmt.Sprintf("Found %d duplicates", len(duplicates)),
+					Icon:        warningIcon,
+					Dismissible: true,
+				})
+				render()
+				return
+			}
+
+			// Save the individual
+			individual, err = repo.Put(ctx, individual, constants.IndividualDBColumns)
+			if err != nil {
+				l.Error("failed to put individual", zap.Error(err))
+				err = apierrs.ErrorFrom(err)
+				render()
+				return
+			}
+
+			if individualId == "new" {
+				http.Redirect(w, r, fmt.Sprintf("/countries/%s/participants/%s", individual.CountryID, individual.ID), http.StatusFound)
+				return
+			} else {
+				render()
+				return
+			}
+		}
 	})
 }

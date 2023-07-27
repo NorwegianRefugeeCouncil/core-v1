@@ -2,16 +2,15 @@ package handlers
 
 import (
 	"fmt"
-	"net/http"
-	"strconv"
-	"strings"
-
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
+	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"go.uber.org/zap"
+	"net/http"
+	"strings"
 )
 
 var UPLOAD_LIMIT = 10000
@@ -19,8 +18,10 @@ var UPLOAD_LIMIT = 10000
 func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Handler {
 
 	const (
-		templateName  = "error.gohtml"
-		formParamFile = "file"
+		templateName                        = "error.gohtml"
+		formParamFile                       = "file"
+		formParamDeduplicationType          = "deduplicationType"
+		formParamDeduplicationLogicOperator = "deduplicationLogicOperator"
 	)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -56,29 +57,36 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 
 		var individuals []*api.Individual
 		var fields []string
+		var records [][]string
+		fileErrors := []api.FileError{}
 
-		if strings.HasSuffix(filename, ".csv") {
-			fileErrors, err := api.UnmarshalIndividualsCSV(formFile, &individuals, &fields, &UPLOAD_LIMIT)
-			if err != nil {
-				l.Error("failed to parse csv", zap.Error(err))
-			}
-			if fileErrors != nil {
-				renderError("Could not parse uploaded .csv file", fileErrors)
-				return
-			}
-		} else if strings.HasSuffix(filename, ".xlsx") || strings.HasSuffix(filename, ".xls") {
-			fileErrors, err := api.UnmarshalIndividualsExcel(formFile, &individuals, &fields, &UPLOAD_LIMIT)
-			if err != nil {
-				l.Error("failed to parse excel file", zap.Error(err))
-			}
-			if fileErrors != nil {
-				renderError("Could not parse uploaded .xls(x) file", fileErrors)
-				return
-			}
-		} else {
-			var contentType = r.Header.Get("Content-Type")
-			l.Error(fmt.Sprintf("unsupported content type: %s", contentType))
-			renderError(fmt.Sprintf("Could not process uploaded file of filetype %s, please upload a .csv or a .xls(x) file.", contentType), nil)
+		err = api.UnmarshallRecordsFromFile(&records, formFile, filename)
+		if err != nil {
+			l.Error("failed to parse file", zap.Error(err))
+			renderError("Failed to parse input file: "+err.Error(), nil)
+			return
+		}
+
+		colMapping, fileErrors := api.GetColumnMapping(records, &fields)
+
+		if fileErrors != nil {
+			renderError("Could not parse uploaded file", fileErrors)
+			return
+		}
+
+		fileErrors = api.UnmarshalIndividualsTabularData(records, &individuals, colMapping, &UPLOAD_LIMIT)
+
+		if fileErrors != nil {
+			renderError("Could not parse uploaded file", fileErrors)
+			return
+		}
+
+		df := api.GetDataframeFromRecords(records)
+		df = api.AddIndexColumn(df) // adding indices to the records, so we can recognize them in the filtered results
+
+		fileErrors = api.FindDuplicatesInUUIDColumn(df)
+		if fileErrors != nil {
+			renderError("Could not parse uploaded file due to duplicates in the id column", fileErrors)
 			return
 		}
 
@@ -100,7 +108,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			}
 		}
 
-		existingIndividuals, err := individualRepo.GetAll(ctx, api.ListIndividualsOptions{IDs: individualIds})
+		existingIndividuals, err := individualRepo.GetAll(ctx, api.ListIndividualsOptions{IDs: individualIds, CountryID: selectedCountryID})
 		if err != nil {
 			l.Error("failed to get existing individuals", zap.Error(err))
 			renderError("Could not load list of participants: "+err.Error(), nil)
@@ -108,10 +116,44 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		}
 
 		invalidIndividualIds := validateIndividualsExistInCountry(individualIds, existingIndividuals, selectedCountryID)
+
 		if len(invalidIndividualIds) > 0 {
 			l.Warn("user trying to update individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
 			renderError(fmt.Sprintf("Could not update participants %s, they do not exist in the database for the selected country.", strings.Join(invalidIndividualIds, ",")), nil)
 			return
+		}
+
+		deduplicationTypes := r.MultipartForm.Value[formParamDeduplicationType]
+		deduplicationLogicOperator := r.MultipartForm.Value[formParamDeduplicationLogicOperator]
+
+		if len(deduplicationTypes) > 0 {
+			optionNames, err := deduplication.GetDeduplicationTypeNames(deduplicationTypes)
+			if err != nil {
+				l.Error("invalid deduplication type", zap.String("deduplication_type", strings.Join(deduplicationTypes, ",")), zap.Error(err))
+				renderError(fmt.Sprintf("Invalid deduplication type: %s", strings.Join(deduplicationTypes, ",")), nil)
+				return
+			}
+
+			duplicatesScores := api.FindDuplicatesInUpload(optionNames, df, deduplicationLogicOperator[0])
+			errors := api.FormatFileDeduplicationErrors(duplicatesScores, optionNames, records, colMapping)
+			if len(errors) > 0 {
+				if errors != nil {
+					renderError(fmt.Sprintf("Found %d duplicates within your uploaded file: ", len(errors)), errors)
+					return
+				}
+			}
+
+			duplicatesInDB, err := individualRepo.FindDuplicates(ctx, individuals, optionNames, deduplicationLogicOperator[0])
+			if err != nil {
+				renderError("An error occurred while trying to check for duplicates: "+err.Error(), nil)
+				return
+			}
+
+			dbDuplicationErrors := api.FormatDbDeduplicationErrors(duplicatesInDB, optionNames, df, deduplicationLogicOperator[0])
+			if len(dbDuplicationErrors) > 0 {
+				renderError(fmt.Sprintf("%d duplicates found in database", len(dbDuplicationErrors)), dbDuplicationErrors)
+				return
+			}
 		}
 
 		_, err = individualRepo.PutMany(r.Context(), individuals, fieldSet)
@@ -125,16 +167,4 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 
 		return
 	})
-}
-
-func parseQryParamInt(r *http.Request, key string) (int, error) {
-	strValue := r.URL.Query().Get(key)
-	if len(strValue) != 0 {
-		intValue, err := strconv.Atoi(strValue)
-		if err != nil {
-			return 0, err
-		}
-		return intValue, nil
-	}
-	return 0, nil
 }

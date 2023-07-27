@@ -139,10 +139,10 @@ func computeStructFields(i interface{}) map[string]reflect.StructField {
 	for i := 0; i < fieldCount; i++ {
 		field := reflectType.Elem().Field(i)
 		fieldName := field.Name
-		jsonTag := field.Tag.Get("json")
-		if jsonTag != "" {
-			jsonTag = strings.Split(jsonTag, ",")[0]
-			fieldName = jsonTag
+		dbField := field.Tag.Get("db")
+		if dbField != "" {
+			dbField = strings.Split(dbField, ",")[0]
+			fieldName = dbField
 		}
 		structFieldsByName[fieldName] = field
 	}
