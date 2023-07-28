@@ -79,10 +79,7 @@
                                     </button>
                                 </div>
 
-                                {{ $auth := .RequestContext.Auth }}
-                                {{ $countries := $auth.GetAllowedCountries }}
-                                {{ $countryLength := $countries.Len }}
-                                {{if or (gt $countryLength 1) ($auth.IsGlobalAdmin)}}
+                                {{ if .RequestContext.HasSelectedCountryWritePermission }}
                                     <div class="btn-group ms-3">
                                         <button type="button"
                                                 class="btn btn-sm btn-link dropdown-toggle text-decoration-none px-2"
