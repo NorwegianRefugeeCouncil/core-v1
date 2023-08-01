@@ -66,6 +66,15 @@ func UnmarshalRecordsFromExcel(records *[][]string, reader io.Reader) error {
 	if err == nil {
 		*records = rows
 	}
+
+	for i, record := range *records {
+		header := (*records)[0]
+		diff := len(header) - len(record)
+		if diff > 0 {
+			filler := make([]string, diff)
+			(*records)[i] = append((*records)[i], filler...)
+		}
+	}
 	return err
 }
 
