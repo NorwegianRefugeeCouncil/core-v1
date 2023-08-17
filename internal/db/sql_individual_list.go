@@ -194,7 +194,13 @@ func (g *getAllIndividualsSQLQuery) withCollectionAgentName(name string) *getAll
 	if len(name) == 0 {
 		return g
 	}
-	g.writeString(" AND " + constants.DBColumnIndividualCollectionAgentName + " = ").writeArg(name)
+	if g.driverName == "sqlite" {
+		g.writeString(" AND " + constants.DBColumnIndividualCollectionAgentName + " LIKE ")
+		g.writeArg("%" + name + "%")
+	} else if g.driverName == "postgres" {
+		g.writeString(" AND " + constants.DBColumnIndividualCollectionAgentName + " ILIKE ")
+		g.writeArg("%" + name + "%")
+	}
 	return g
 }
 

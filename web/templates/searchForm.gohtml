@@ -812,6 +812,20 @@
                        value="{{.Options.CollectionOffice}}">
             </div>
             <!-- End CollectionOffice -->
+
+            <!-- CollectionAgentName -->
+            <div class="form-group mb-3 col-3">
+                <label class="form-label" for="CollectionAgentName">
+                    {{.RequestContext.Locales.Translate "collection_agent_name"}}
+                </label>
+                <input id="CollectionAgentName"
+                       name="collection_agent_name"
+                       type="text"
+                       placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "collection_agent_name")}}"
+                       class="form-control"
+                       value="{{.Options.CollectionAgentName}}">
+            </div>
+            <!-- End CollectionAgentName -->
         </div>
 
         <div class="row">
