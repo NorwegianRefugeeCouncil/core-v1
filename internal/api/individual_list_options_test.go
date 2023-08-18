@@ -94,7 +94,7 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 		}, {
 			name: "collectionTimeFrom",
 			args: url.Values{"collection_time_from": []string{"2020-01-01"}},
-			want: ListIndividualsOptions{CollectionTimeFrom: pointers.Time(time.Time(2020, 1, 1))},
+			want: ListIndividualsOptions{CollectionTimeFrom: pointers.Time(time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC))},
 		}, {
 			name:    "collectionTimeFrom (invalid)",
 			args:    url.Values{"collection_time_from": []string{"invalid"}},
@@ -102,7 +102,7 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 		}, {
 			name: "collectionTimeTo",
 			args: url.Values{"collection_time_to": []string{"2020-01-01"}},
-			want: ListIndividualsOptions{CollectionTimeTo: pointers.Time(time.Date(2020, 1, 1, 10, 30, 5, 0, time.UTC))},
+			want: ListIndividualsOptions{CollectionTimeTo: pointers.Time(time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC))},
 		}, {
 			name:    "collectionTimeTo (invalid)",
 			args:    url.Values{"collection_time_to": []string{"invalid"}},
