@@ -93,16 +93,16 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 			want: ListIndividualsOptions{CollectionAgentTitle: "admin"},
 		}, {
 			name: "collectionTimeFrom",
-			args: url.Values{"collection_time_from": []string{"2020-01-01T10:30:05Z"}},
-			want: ListIndividualsOptions{CollectionTimeFrom: pointers.Time(time.Date(2020, 1, 1, 10, 30, 5, 0, time.UTC))},
+			args: url.Values{"collection_time_from": []string{"2020-01-01"}},
+			want: ListIndividualsOptions{CollectionTimeFrom: pointers.Time(time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC))},
 		}, {
 			name:    "collectionTimeFrom (invalid)",
 			args:    url.Values{"collection_time_from": []string{"invalid"}},
 			wantErr: true,
 		}, {
 			name: "collectionTimeTo",
-			args: url.Values{"collection_time_to": []string{"2020-01-01T10:30:05Z"}},
-			want: ListIndividualsOptions{CollectionTimeTo: pointers.Time(time.Date(2020, 1, 1, 10, 30, 5, 0, time.UTC))},
+			args: url.Values{"collection_time_to": []string{"2020-01-01"}},
+			want: ListIndividualsOptions{CollectionTimeTo: pointers.Time(time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC))},
 		}, {
 			name:    "collectionTimeTo (invalid)",
 			args:    url.Values{"collection_time_to": []string{"invalid"}},
@@ -581,11 +581,11 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 		}, {
 			name: "collectionTimeFrom",
 			o:    ListIndividualsOptions{CountryID: countryId, CollectionTimeFrom: pointers.Time(time.Date(2000, 1, 1, 10, 30, 5, 0, time.UTC))},
-			want: "/countries/usa/participants?collection_time_from=2000-01-01T10%3A30%3A05Z",
+			want: "/countries/usa/participants?collection_time_from=2000-01-01",
 		}, {
 			name: "collectionTimeTo",
 			o:    ListIndividualsOptions{CountryID: countryId, CollectionTimeTo: pointers.Time(time.Date(2000, 1, 1, 10, 30, 5, 0, time.UTC))},
-			want: "/countries/usa/participants?collection_time_to=2000-01-01T10%3A30%3A05Z",
+			want: "/countries/usa/participants?collection_time_to=2000-01-01",
 		}, {
 			name: "communityID",
 			o:    ListIndividualsOptions{CountryID: countryId, CommunityID: "communityID"},

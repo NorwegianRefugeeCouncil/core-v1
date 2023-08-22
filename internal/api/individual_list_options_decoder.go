@@ -218,13 +218,13 @@ func (p *listIndividualsOptionsDecoder) parseCollectionAgentTitle() error {
 
 func (p *listIndividualsOptionsDecoder) parseCollectionTimeFrom() error {
 	var err error
-	p.out.CollectionTimeFrom, err = parseOptionalDateTime(p.values.Get(constants.FormParamsGetIndividualsCollectionTimeFrom))
+	p.out.CollectionTimeFrom, err = parseOptionalDate(p.values.Get(constants.FormParamsGetIndividualsCollectionTimeFrom))
 	return err
 }
 
 func (p *listIndividualsOptionsDecoder) parseCollectionTimeTo() error {
 	var err error
-	p.out.CollectionTimeTo, err = parseOptionalDateTime(p.values.Get(constants.FormParamsGetIndividualsCollectionTimeTo))
+	p.out.CollectionTimeTo, err = parseOptionalDate(p.values.Get(constants.FormParamsGetIndividualsCollectionTimeTo))
 	return err
 }
 

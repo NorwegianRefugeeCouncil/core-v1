@@ -757,6 +757,51 @@
             </div>
             <!-- End EngagementContext -->
 
+            <!-- CollectionAgentName -->
+            <div class="form-group mb-3 col-3">
+                <label class="form-label" for="CollectionAgentName">
+                    {{.RequestContext.Locales.Translate "collection_agent_name"}}
+                </label>
+                <input id="CollectionAgentName"
+                       name="collection_agent_name"
+                       type="text"
+                       placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "collection_agent_name")}}"
+                       class="form-control"
+                       value="{{.Options.CollectionAgentName}}">
+            </div>
+            <!-- End CollectionAgentName -->
+
+            <!-- Collection Date  -->
+            <div class="col-6">
+                <label class="form-label">
+                    {{.RequestContext.Locales.Translate "collection_time"}}
+                </label>
+                <div class="row">
+                    <div class="col-3 input-group mb-2 w-50">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                {{.RequestContext.Locales.Translate "from"}}
+                            </div>
+                        </div>
+                        <input type="date" name="collection_time_from" class="form-control"
+                               id="CollectionTimeFrom"
+                               value="{{if .Options.CollectionTimeFrom}}{{.Options.CollectionTimeFrom.Format "2006-01-02"}}{{end}}">
+                    </div>
+
+                    <div class="col-3 input-group mb-2 w-50">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                {{.RequestContext.Locales.Translate "to"}}
+                            </div>
+                        </div>
+                        <input type="date" name="collection_time_to" class="form-control"
+                               id="CollectionTimeTo"
+                               value="{{if .Options.CollectionTimeTo}}{{.Options.CollectionTimeTo.Format "2006-01-02"}}{{end}}">
+                    </div>
+                </div>
+            </div>
+            <!-- End Collection Date  -->
+
             <!-- CollectionAdministrativeArea1 -->
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="CollectionAdministrativeArea1">
@@ -812,20 +857,6 @@
                        value="{{.Options.CollectionOffice}}">
             </div>
             <!-- End CollectionOffice -->
-
-            <!-- CollectionAgentName -->
-            <div class="form-group mb-3 col-3">
-                <label class="form-label" for="CollectionAgentName">
-                    {{.RequestContext.Locales.Translate "collection_agent_name"}}
-                </label>
-                <input id="CollectionAgentName"
-                       name="collection_agent_name"
-                       type="text"
-                       placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "collection_agent_name")}}"
-                       class="form-control"
-                       value="{{.Options.CollectionAgentName}}">
-            </div>
-            <!-- End CollectionAgentName -->
 
         </div>
 
