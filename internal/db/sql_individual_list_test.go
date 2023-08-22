@@ -99,8 +99,8 @@ func Test_newGetAllIndividualsSQLQuery(t *testing.T) {
 		}, {
 			name:     "collectionAgentName",
 			args:     api.ListIndividualsOptions{CollectionAgentName: "agent"},
-			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND collection_agent_name = $1`,
-			wantArgs: []interface{}{"agent"},
+			wantSql:  `SELECT * FROM individual_registrations WHERE deleted_at IS NULL AND collection_agent_name ILIKE $1`,
+			wantArgs: []interface{}{"%agent%"},
 		}, {
 			name:     "collectionAgentTitle",
 			args:     api.ListIndividualsOptions{CollectionAgentTitle: "title"},

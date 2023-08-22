@@ -206,13 +206,13 @@ func (p *listIndividualsOptionsEncoder) encodeCollectionAgentTitle() {
 
 func (p *listIndividualsOptionsEncoder) encodeCollectionTimeFrom() {
 	if p.values.CollectionTimeFrom != nil {
-		p.out.Add(constants.FormParamsGetIndividualsCollectionTimeFrom, p.values.CollectionTimeFrom.Format(time.RFC3339))
+		p.out.Add(constants.FormParamsGetIndividualsCollectionTimeFrom, p.values.CollectionTimeFrom.Format("2006-01-02"))
 	}
 }
 
 func (p *listIndividualsOptionsEncoder) encodeCollectionTimeTo() {
 	if p.values.CollectionTimeTo != nil {
-		p.out.Add(constants.FormParamsGetIndividualsCollectionTimeTo, p.values.CollectionTimeTo.Format(time.RFC3339))
+		p.out.Add(constants.FormParamsGetIndividualsCollectionTimeTo, p.values.CollectionTimeTo.Format("2006-01-02"))
 	}
 }
 
