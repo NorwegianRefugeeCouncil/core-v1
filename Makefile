@@ -36,11 +36,6 @@ coverage: .dev-image
 test: .dev-image
 	docker run --rm -it -v $(shell pwd)/reports:/app/reports core-dev test
 
-.PHONY: proxy
-## Runs the envoy proxy
-proxy: prerequisites
-	@envoy -c deploy/envoy.yaml -l debug
-
 .PHONY: template
 ## Generates the nrc grf template
 template: 
