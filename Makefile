@@ -41,6 +41,12 @@ test: .dev-image
 template: 
 	@go run . template
 
+.PHONY: certs
+certs:
+	@mkcert -install
+	@mkdir -p deploy/certs
+	@mkcert -cert-file deploy/certs/tls.crt -key-file deploy/certs/tls.key core.dev "*.core.dev" localhost 127.0.0.1 ::1 
+
 .PHONY: serve
 # Starts the server
 serve: prerequisites

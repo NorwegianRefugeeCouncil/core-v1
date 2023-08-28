@@ -46,8 +46,7 @@ brew install mkcert
 </summary>
 
 ```
-mkcert -install
-mkcert -cert-file certs/tls.crt -key-file certs/tls.key core.dev "*.core.dev" localhost 127.0.0.1 ::1 
+make certs
 ```
 </details>
 
