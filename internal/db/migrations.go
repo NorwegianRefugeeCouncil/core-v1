@@ -52,6 +52,7 @@ var migrations = []migration{
 	migrationFromFile("028_add_native_name_field"),
 	migrationFromFile("029_add_general_disability_fields"),
 	migrationFromFile("030_update_individual_soft_delete_trigger"),
+	migrationFromFile("031_convert_booleans"),
 }
 
 // Migrate runs the migrations on the database.

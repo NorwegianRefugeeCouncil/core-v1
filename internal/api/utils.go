@@ -6,7 +6,6 @@ import (
 	"github.com/go-gota/gota/series"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
-	"golang.org/x/exp/slices"
 	"strconv"
 	"strings"
 	"time"
@@ -92,18 +91,6 @@ func getTimeFormatForField(field string) string {
 	default:
 		return "2006-01-02"
 	}
-}
-
-var TRUE_VALUES = []string{"true", "yes", "1"}
-var FALSE_VALUES = []string{"false", "no", "0"}
-
-func getValidatedBoolean(value string) (bool, error) {
-	isExplicitlyTrue := slices.Contains(TRUE_VALUES, strings.ToLower(value))
-	isExplicitlyFalse := slices.Contains(FALSE_VALUES, strings.ToLower(value))
-	if !isExplicitlyTrue && !isExplicitlyFalse {
-		return false, fmt.Errorf("invalid boolean value \"%s\". Valid values are: \"%s\", \"%s\"", value, strings.Join(TRUE_VALUES, "\", \""), strings.Join(FALSE_VALUES, "\", \""))
-	}
-	return isExplicitlyTrue, nil
 }
 
 func stringArrayToInterfaceArray(row []string) []interface{} {

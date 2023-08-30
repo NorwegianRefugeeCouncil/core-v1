@@ -16,6 +16,7 @@ func RegisterFieldKind(fieldKind FieldKind) {
 
 func init() {
 	RegisterFieldKind(FieldKindCheckboxInput)
+	RegisterFieldKind(FieldKindOptionalBooleanInput)
 	RegisterFieldKind(FieldKindDateInput)
 	RegisterFieldKind(FieldKindHiddenInput)
 	RegisterFieldKind(FieldKindID)
@@ -30,6 +31,8 @@ const (
 	// FieldKindUnknown is the default value for a field kind.
 	FieldKindUnknown FieldKind = "unknown"
 
+	// FieldKindOptionalBooleanInput is the kind of field that represents an optional boolean input.
+	FieldKindOptionalBooleanInput FieldKind = "optionalBoolean"
 	// FieldKindCheckboxInput is the kind of field that represents a checkbox input.
 	FieldKindCheckboxInput FieldKind = "checkbox"
 	// FieldKindDateInput is the kind of field that represents a date input.

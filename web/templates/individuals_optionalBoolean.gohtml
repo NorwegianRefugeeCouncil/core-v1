@@ -1,0 +1,12 @@
+{{define "optionalBoolean"}}
+	{{$value := .Value}}
+	<div class="text-center" style="width: {{.Width}}">
+		{{if $value}}
+			{{if eq (deref $value) true}}
+				<i class="bi bi-check"></i>
+			{{else}}
+				<i class="bi bi-x"></i>
+			{{end}}
+		{{end}}
+	</div>
+{{end}}

@@ -36,69 +36,6 @@ func TestMakeIndexSetWithSkip(t *testing.T) {
 	}
 }
 
-func TestGetValidatedBoolean(t *testing.T) {
-	tests := []struct {
-		name    string
-		value   string
-		want    bool
-		wantErr bool
-	}{
-		{
-			name:    "\"true\"",
-			value:   "true",
-			want:    true,
-			wantErr: false,
-		}, {
-			name:    "\"yes\"",
-			value:   "yes",
-			want:    true,
-			wantErr: false,
-		}, {
-			name:    "\"1\"",
-			value:   "1",
-			want:    true,
-			wantErr: false,
-		}, {
-			name:    "\"false\"",
-			value:   "false",
-			want:    false,
-			wantErr: false,
-		}, {
-			name:    "\"no\"",
-			value:   "no",
-			want:    false,
-			wantErr: false,
-		}, {
-			name:    "\"0\"",
-			value:   "0",
-			want:    false,
-			wantErr: false,
-		}, {
-			name:    "\"nope\"",
-			value:   "nope",
-			want:    false,
-			wantErr: true,
-		}, {
-			name:    "\"yeah\"",
-			value:   "yeah",
-			want:    false,
-			wantErr: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result, err := getValidatedBoolean(tt.value)
-
-			if tt.wantErr {
-				assert.Error(t, err)
-			} else {
-				assert.NoError(t, err)
-				assert.Equal(t, tt.want, result)
-			}
-		})
-	}
-}
-
 func TestParseDate(t *testing.T) {
 
 	t.Run("empty string", func(t *testing.T) {

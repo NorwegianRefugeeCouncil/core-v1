@@ -11,7 +11,7 @@ import (
 
 type Individual struct {
 	// Inactive is true if the individual is inactive
-	Inactive bool `json:"inactive" db:"inactive"`
+	Inactive *bool `json:"inactive" db:"inactive"`
 	// Address is the residence address of the individual
 	Address string `json:"address" db:"address"`
 	// Age is the age of the individual
@@ -86,25 +86,25 @@ type Individual struct {
 	// Sex is the sex of the individual
 	Sex enumTypes.Sex `json:"sex" db:"sex"`
 	// HasCognitiveDisability is true if the individual has a cognitive disability
-	HasCognitiveDisability bool `json:"hasCognitiveDisability" db:"has_cognitive_disability"`
+	HasCognitiveDisability *bool `json:"hasCognitiveDisability" db:"has_cognitive_disability"`
 	// HasCommunicationDisability is true if the individual has a communication disability
-	HasCommunicationDisability bool `json:"hasCommunicationDisability" db:"has_communication_disability"`
+	HasCommunicationDisability *bool `json:"hasCommunicationDisability" db:"has_communication_disability"`
 	// HasConsentedToRGPD is a flag indicating whether the individual has consented to the RGPD
 	// (General Data Protection Regulation)
-	HasConsentedToRGPD bool `json:"hasConsentedToRgpd" db:"has_consented_to_rgpd"`
+	HasConsentedToRGPD *bool `json:"hasConsentedToRgpd" db:"has_consented_to_rgpd"`
 	// HasConsentedToReferral is a flag indicating whether the individual has consented to be referred
 	// to internal or external services
-	HasConsentedToReferral bool `json:"hasConsentedToReferral" db:"has_consented_to_referral"`
+	HasConsentedToReferral *bool `json:"hasConsentedToReferral" db:"has_consented_to_referral"`
 	// HasDisability is true if the individual has a disability
-	HasDisability bool `json:"hasDisability" db:"has_disability"`
+	HasDisability *bool `json:"hasDisability" db:"has_disability"`
 	// HasHearingDisability is true if the individual has a hearing disability
-	HasHearingDisability bool `json:"hasHearingDisability" db:"has_hearing_disability"`
+	HasHearingDisability *bool `json:"hasHearingDisability" db:"has_hearing_disability"`
 	// HasMobilityDisability is true if the individual has a mobility disability
-	HasMobilityDisability bool `json:"hasMobilityDisability" db:"has_mobility_disability"`
+	HasMobilityDisability *bool `json:"hasMobilityDisability" db:"has_mobility_disability"`
 	// HasSelfCareDisability is true if the individual has a self care disability
-	HasSelfCareDisability bool `json:"hasSelfCareDisability" db:"has_selfcare_disability"`
+	HasSelfCareDisability *bool `json:"hasSelfCareDisability" db:"has_selfcare_disability"`
 	// HasVisionDisability is true if the individual has a vision disability
-	HasVisionDisability bool `json:"hasVisionDisability" db:"has_vision_disability"`
+	HasVisionDisability *bool `json:"hasVisionDisability" db:"has_vision_disability"`
 	// HearingDisabilityLevel is the hearing disability level of the individual
 	HearingDisabilityLevel enumTypes.DisabilityLevel `json:"hearingDisabilityLevel" db:"hearing_disability_level"`
 	// HouseholdID is the ID of the household the individual belongs to
@@ -140,15 +140,15 @@ type Individual struct {
 	// systems.
 	InternalID string `json:"internalId" db:"internal_id"`
 	// IsHeadOfCommunity is a flag indicating whether the individual is the head of the community
-	IsHeadOfCommunity bool `json:"isHeadOfCommunity" db:"is_head_of_community"`
+	IsHeadOfCommunity *bool `json:"isHeadOfCommunity" db:"is_head_of_community"`
 	// IsHeadOfHousehold is a flag indicating whether the individual is the head of the household
-	IsHeadOfHousehold bool `json:"isHeadOfHousehold" db:"is_head_of_household"`
+	IsHeadOfHousehold *bool `json:"isHeadOfHousehold" db:"is_head_of_household"`
 	// IsFemaleHeadedHousehold is a flag indicating whether the head of the household is female
-	IsFemaleHeadedHousehold bool `json:"isFemaleHeadedHousehold" db:"is_female_headed_household"`
+	IsFemaleHeadedHousehold *bool `json:"isFemaleHeadedHousehold" db:"is_female_headed_household"`
 	// IsMinorHeadedHousehold is a flag indicating whether the head of the household is a minor
-	IsMinorHeadedHousehold bool `json:"isMinorHeadedHousehold" db:"is_minor_headed_household"`
+	IsMinorHeadedHousehold *bool `json:"isMinorHeadedHousehold" db:"is_minor_headed_household"`
 	// IsMinor is a flag indicating whether the individual is a minor
-	IsMinor bool `json:"isMinor" db:"is_minor"`
+	IsMinor *bool `json:"isMinor" db:"is_minor"`
 	// MobilityDisabilityLevel is the mobility disability level of the individual
 	MobilityDisabilityLevel enumTypes.DisabilityLevel `json:"mobilityDisabilityLevel" db:"mobility_disability_level"`
 	// Nationality1 is the primary nationality of the individual
@@ -176,9 +176,9 @@ type Individual struct {
 	// PreferredCommunicationLanguage is the preferred communication language of the individual
 	PreferredCommunicationLanguage string `json:"preferredCommunicationLanguage" db:"preferred_communication_language"`
 	// PrefersToRemainAnonymous is a flag indicating whether the individual prefers to remain anonymous
-	PrefersToRemainAnonymous bool `json:"prefersToRemainAnonymous" db:"prefers_to_remain_anonymous"`
+	PrefersToRemainAnonymous *bool `json:"prefersToRemainAnonymous" db:"prefers_to_remain_anonymous"`
 	// PresentsProtectionConcerns is a flag indicating whether the individual presents protection concerns
-	PresentsProtectionConcerns bool `json:"presentsProtectionConcerns" db:"presents_protection_concerns"`
+	PresentsProtectionConcerns *bool `json:"presentsProtectionConcerns" db:"presents_protection_concerns"`
 	// PWDComments is the comments on the disability status of the individual
 	PWDComments string `json:"pwdComments" db:"pwd_comments"`
 	// SelfCareDisabilityLevel is the self-care disability level of the individual
@@ -555,7 +555,7 @@ func (i *Individual) Normalize() {
 	i.ServiceCC7 = enumTypes.ServiceCC(trimString(string(i.ServiceCC7)))
 	i.ServiceComments7 = trimString(i.ServiceComments7)
 
-	if i.PrefersToRemainAnonymous {
+	if i.PrefersToRemainAnonymous != nil && *i.PrefersToRemainAnonymous == true {
 		i.FullName = ""
 		i.PreferredName = ""
 		i.FirstName = ""

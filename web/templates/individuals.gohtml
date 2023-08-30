@@ -1024,9 +1024,11 @@
                             data-individual-id="{{.ID}}">
                             <td class="sticky-column" style="width: {{$inactiveWidth}}">
                                 {{if .Inactive}}
-                                    <div class="">
-                                        <i class="bi bi-eye-slash-fill "></i>
-                                    </div>
+                                    {{if eq (deref .Inactive) true}}
+                                        <div class="">
+                                            <i class="bi bi-eye-slash-fill "></i>
+                                        </div>
+                                    {{end}}
                                 {{end}}
                             </td>
 
@@ -1069,14 +1071,14 @@
                             <!-- First Name -->
                             <td>
                                 <div style="width: {{$nameWidth}}">
-                                    {{if not .PrefersToRemainAnonymous}}
-                                        {{.FirstName}}
-                                    {{else}}
+                                    {{if and .PrefersToRemainAnonymous (eq (deref .PrefersToRemainAnonymous) true)}}
                                         <span class="text-muted">
                                             <em>
                                                 {{$locales.Translate "anonymous"}}
                                             </em>
                                         </span>
+                                    {{else}}
+                                        {{.FirstName}}
                                     {{end}}
                                 </div>
                             </td>
@@ -1085,14 +1087,14 @@
                             <!-- Middle Name -->
                             <td>
                                 <div style="width: {{$nameWidth}}">
-                                    {{if not .PrefersToRemainAnonymous}}
-                                        {{.MiddleName}}
-                                    {{else}}
+                                    {{if and .PrefersToRemainAnonymous (eq (deref .PrefersToRemainAnonymous) true)}}
                                         <span class="text-muted">
                                             <em>
                                                 {{$locales.Translate "anonymous"}}
                                             </em>
                                         </span>
+                                    {{else}}
+                                        {{.MiddleName}}
                                     {{end}}
                                 </div>
                             </td>
@@ -1101,14 +1103,14 @@
                             <!-- Last Name -->
                             <td>
                                 <div style="width: {{$nameWidth}}">
-                                    {{if not .PrefersToRemainAnonymous}}
-                                        {{.LastName}}
-                                    {{else}}
+                                    {{if and .PrefersToRemainAnonymous (eq (deref .PrefersToRemainAnonymous) true)}}
                                         <span class="text-muted">
                                             <em>
                                                 {{$locales.Translate "anonymous"}}
                                             </em>
                                         </span>
+                                    {{else}}
+                                        {{.LastName}}
                                     {{end}}
                                 </div>
                             </td>
@@ -1117,14 +1119,14 @@
                             <!-- Native Name -->
                             <td>
                                 <div style="width: {{$nameWidth}}">
-                                    {{if not .PrefersToRemainAnonymous}}
-                                        {{.NativeName}}
-                                    {{else}}
+                                    {{if and .PrefersToRemainAnonymous (eq (deref .PrefersToRemainAnonymous) true)}}
                                         <span class="text-muted">
                                             <em>
                                                 {{$locales.Translate "anonymous"}}
                                             </em>
                                         </span>
+                                    {{else}}
+                                        {{.NativeName}}
                                     {{end}}
                                 </div>
                             </td>
@@ -1206,40 +1208,28 @@
 
                             <!-- IsHeadOfHousehold -->
                             <td>
-                                <div class="text-center" style="width: {{$isHeadOfHouseholdWidth}}">
-                                    {{if .IsHeadOfHousehold}}
-                                        <input class="form-check-input marker-only"
-                                               type="checkbox"
-                                               checked="checked"
-                                               disabled="disabled"/>
-                                    {{end}}
-                                </div>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsHeadOfHousehold
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
                             </td>
                             <!-- End IsHeadOfHousehold -->
 
                             <!-- IsMinorHeadedHousehold -->
                             <td>
-                                <div class="text-center" style="width: {{$isHeadOfHouseholdWidth}}">
-                                    {{if .IsMinorHeadedHousehold}}
-                                        <input class="form-check-input marker-only"
-                                               type="checkbox"
-                                               checked="checked"
-                                               disabled="disabled"/>
-                                    {{end}}
-                                </div>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsMinorHeadedHousehold
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
                             </td>
                             <!-- End IsMinorHeadedHousehold -->
 
                             <!-- IsFemaleHeadedHousehold -->
                             <td>
-                                <div class="text-center" style="width: {{$isHeadOfHouseholdWidth}}">
-                                    {{if .IsFemaleHeadedHousehold}}
-                                        <input class="form-check-input marker-only"
-                                               type="checkbox"
-                                               checked="checked"
-                                               disabled="disabled"/>
-                                    {{end}}
-                                </div>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsFemaleHeadedHousehold
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
                             </td>
                             <!-- End IsFemaleHeadedHousehold -->
 
@@ -1253,14 +1243,10 @@
 
                             <!-- IsHeadOfCommunity -->
                             <td>
-                                <div class="text-center" style="width: {{$isHeadOfCommunityWidth}}">
-                                    {{if .IsHeadOfCommunity}}
-                                        <input class="form-check-input marker-only"
-                                               type="checkbox"
-                                               checked="checked"
-                                               disabled="disabled">
-                                    {{end}}
-                                </div>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsHeadOfCommunity
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
                             </td>
                             <!-- End IsHeadOfCommunity -->
 
@@ -1287,14 +1273,10 @@
 
                             <!-- HasDisability -->
                             <td>
-                                <div class="text-center" style="width: {{$isHeadOfHouseholdWidth}}">
-                                    {{if .HasDisability}}
-                                        <input class="form-check-input marker-only"
-                                               type="checkbox"
-                                               checked="checked"
-                                               disabled="disabled"/>
-                                    {{end}}
-                                </div>
+                                {{template "optionalBoolean" (dict
+                                "Value" .HasDisability
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
                             </td>
                             <!-- End HasDisability -->
 
@@ -1721,96 +1703,4 @@
             </div>
         </div>
     </div>
-{{end}}
-
-{{define "columnHeader"}}
-    {{$options := .Options}}
-    {{$sortable := .Sortable}}
-    {{$label := .Label}}
-    {{$width := .Width}}
-    {{$minWidth := .MinWidth}}
-    {{$maxWidth := .MaxWidth}}
-    {{$sortKey := .SortKey}}
-    {{$sortOnClick := ""}}
-    {{$sortDirection := ""}}
-    {{$sortDirectionForLink := ""}}
-    {{$sorted := false}}
-    {{$left:= .Left}}
-
-    {{if $sortable}}
-        {{$sortDirection = $options.GetSortDirection $sortKey}}
-        {{if eq $sortDirection "ascending"}}
-            {{$sorted = true}}
-            {{$sortDirectionForLink = "descending"}}
-        {{ else if eq $sortDirection "descending"}}
-            {{$sorted = true}}
-            {{$sortDirectionForLink = "ascending"}}
-        {{else}}
-            {{$sortDirectionForLink = "ascending"}}
-        {{end}}
-        {{$sortLinkUrl := ($options.WithSort $sortKey $sortDirectionForLink).QueryParams }}
-        {{$sortOnClick = concat "onclick=\"goToURL('" $sortLinkUrl "')\"" }}
-    {{end}}
-
-    {{$style := "style=\""}}
-    {{if .Style}}{{$style = concat $style .Style}}{{end}}
-    {{$style = concat $style ";" }}
-    {{if $width}}
-        {{$style = concat $style "width: " $width ";" }}
-    {{end}}
-    {{if $minWidth}}
-        {{$style = concat $style "min-width: " $minWidth ";" }}
-    {{end}}
-    {{if $maxWidth}}
-        {{$style = concat $style "max-width: " $maxWidth ";" }}
-    {{end}}
-    {{if $left}}
-        {{$style = concat $style "left: " $left ";" }}
-    {{end}}
-    {{$style = concat $style "\"" }}
-
-    <th {{$style | attr}}
-            class="{{.Class}} {{if $sortable}}sortable{{end}} {{if $sorted}}sorted{{end}}"
-            {{if .Scope}}scope="{{.Scope}}"{{end}}
-            {{if .Title}}title="{{.Title}}"{{end}}
-            {{if $sortable}}{{$sortOnClick | attr}}{{end}}
-            {{if $sortable}}
-                {{if eq $sortDirection ""}}
-                    aria-sort="none"
-                {{ else if eq $sortDirection "ascending"}}
-                    aria-sort="ascending"
-                {{ else if eq $sortDirection "descending"}}
-                    aria-sort="descending"
-                {{end}}
-            {{end}}
-    >
-        <div class="d-flex flex-row">
-            <span class="flex-grow-1">{{$label}}</span>
-
-            <div class="text-center" style="min-width: 2rem;">
-                {{if $sortable}}
-                    <!-- print current sorting direction icon -->
-                    <span class="ms-1 me-1 sort-icon-current">
-                        {{- if eq $sortDirection "ascending" -}}
-                            <i class="bi bi-sort-up"></i>
-                        {{- else if eq $sortDirection "descending" -}}
-                            <i class="bi bi-sort-down"></i>
-                        {{- end -}}
-                    </span>
-
-                    <!-- print next sorting direction icon -->
-                    <span class="ms-1 me-1 sort-icon-next text-primary">
-                        {{- if eq $sortDirectionForLink "ascending" -}}
-                            <i class="bi bi-sort-up"></i>
-                        {{- else if eq $sortDirectionForLink "descending" -}}
-                            <i class="bi bi-sort-down"></i>
-                        {{- end -}}
-                    </span>
-
-                    <!-- print sortable icon -->
-                    <span class="ms-1 me-1 sort-icon-sortable"><i class="bi bi-list"></i></span>
-                {{end}}
-            </div>
-        </div>
-    </th>
 {{end}}
