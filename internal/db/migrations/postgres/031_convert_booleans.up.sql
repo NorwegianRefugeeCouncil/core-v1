@@ -45,3 +45,6 @@ ALTER TABLE individual_registrations ALTER COLUMN presents_protection_concerns S
 
 ALTER TABLE individual_registrations ALTER COLUMN prefers_to_remain_anonymous DROP NOT NULL;
 ALTER TABLE individual_registrations ALTER COLUMN prefers_to_remain_anonymous SET DEFAULT null;
+
+ALTER TABLE individual_registrations ALTER COLUMN inactive DROP NOT NULL;
+ALTER TABLE individual_registrations ALTER COLUMN inactive SET DEFAULT null;
