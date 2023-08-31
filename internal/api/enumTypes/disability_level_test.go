@@ -2,7 +2,7 @@ package enumTypes
 
 import (
 	"encoding/json"
-	"github.com/golang/mock/gomock"
+	"github.com/nrc-no/notcore/internal/locales"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -64,11 +64,6 @@ func TestDisabilityLevel_UnmarshalJSON(t *testing.T) {
 }
 
 func TestDisabilityLevel_String(t *testing.T) {
-
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	m := NewMockFoo(ctrl)
-
 	tests := []struct {
 		name string
 		g    DisabilityLevel
@@ -82,6 +77,48 @@ func TestDisabilityLevel_String(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equal(t, tt.want, tt.g.String())
+		})
+	}
+}
+
+type mockLocale struct{}
+
+func (m mockLocale) Translate(key string) string {
+	switch key {
+	case "option_disability_none":
+		return "None"
+	case "option_disability_mild":
+		return "Mild"
+	case "option_disability_moderate":
+		return "Moderate"
+	case "option_disability_severe":
+		return "Severe"
+	case "option_unspecified":
+		return "Unspecified"
+	default:
+		return ""
+	}
+}
+
+func TestDisabilityLevel_String2(t *testing.T) {
+	locales.GetLocales() = mockLocale{}
+	tests := []struct {
+		level    DisabilityLevel
+		expected string
+	}{
+		{DisabilityLevelNone, "None"},
+		{DisabilityLevelMild, "Mild"},
+		{DisabilityLevelModerate, "Moderate"},
+		{DisabilityLevelSevere, "Severe"},
+		{DisabilityLevelUnspecified, "Unspecified"},
+	}
+
+	for _, test := range tests {
+		t.Run(test.expected, func(t *testing.T) {
+			result := test.level.String()
+			if result != test.expected {
+				t.Errorf("Expected '%s', but got '%s'", test.expected, result)
+			}
 		})
 	}
 }
