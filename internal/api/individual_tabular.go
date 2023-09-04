@@ -366,7 +366,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				errors = append(errors, err)
 				break
 			}
-			i.CommunitySize = &householdSize
+			i.HouseholdSize = &householdSize
 		case constants.FileColumnIndividualIdentificationType1:
 			identificationType, err := enumTypes.ParseIdentificationType(cols[idx])
 			if err != nil {
