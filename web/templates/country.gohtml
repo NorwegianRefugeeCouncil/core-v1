@@ -55,8 +55,9 @@
                 {{.RequestContext.Locales.Translate "new_country"}}
             {{end}}
         </h1>
-        <form method="post" action="/countries/{{if eq "" .Country.ID}}new{{else}}{{.Country.ID}}{{end}}">
-            <div class="card">
+        <div class="scroll-body">
+            <form method="post" action="/countries/{{if eq "" .Country.ID}}new{{else}}{{.Country.ID}}{{end}}">
+                <div class="card">
                         <div class="card-header">
                             {{.RequestContext.Locales.Translate "country_details"}}
                         </div>
@@ -127,7 +128,8 @@
                             <button class="btn btn-primary" type="submit">{{.RequestContext.Locales.Translate "save"}}</button>
                         </div>
                     </div>
-        </form>
+                </form>
+            </div>
     </main>
 
 {{end}}
