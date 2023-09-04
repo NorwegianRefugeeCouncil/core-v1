@@ -68,14 +68,14 @@ func TestServiceCC_String(t *testing.T) {
 		g    ServiceCC
 		want string
 	}{
-		{"cva", ServiceCCCVA, "option_service_cva"},
-		{"icla", ServiceCCICLA, "option_service_icla"},
-		{"education", ServiceCCEducation, "option_service_education"},
-		{"lfs", ServiceCCLFS, "option_service_lfs"},
-		{"protection", ServiceCCProtection, "option_service_protection"},
-		{"shelter_and_settlements", ServiceCCShelter, "option_service_shelter"},
-		{"wash", ServiceCCWash, "option_service_wash"},
-		{"other", ServiceCCOther, "option_other"},
+		{"cva", ServiceCCCVA, "CVA"},
+		{"icla", ServiceCCICLA, "ICLA"},
+		{"education", ServiceCCEducation, "Education"},
+		{"lfs", ServiceCCLFS, "LFS"},
+		{"protection", ServiceCCProtection, "Protection"},
+		{"shelter_and_settlements", ServiceCCShelter, "Shelter & Settlements"},
+		{"wash", ServiceCCWash, "WASH"},
+		{"other", ServiceCCOther, "Other"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

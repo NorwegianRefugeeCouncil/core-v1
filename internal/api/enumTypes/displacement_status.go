@@ -40,24 +40,24 @@ List is : IDP, Refugee, Host Community, Returnee, Non-Displaced, Other
 */
 
 func (g DisplacementStatus) String() string {
-	l := locales.GetLocales()
+	t := locales.GetTranslator()
 	switch g {
 	case DisplacementStatusRefugee:
-		return l.Translate("option_displacement_status_refugee")
+		return t("option_displacement_status_refugee")
 	case DisplacementStatusIDP:
-		return l.Translate("option_displacement_status_idp")
+		return t("option_displacement_status_idp")
 	case DisplacementStatusHostCommunity:
-		return l.Translate("option_displacement_status_host_community")
+		return t("option_displacement_status_host_community")
 	case DisplacementStatusReturnee:
-		return l.Translate("option_displacement_status_returnee")
+		return t("option_displacement_status_returnee")
 	case DisplacementStatusAsylumSeeker:
-		return l.Translate("option_displacement_status_asylum_seeker")
+		return t("option_displacement_status_asylum_seeker")
 	case DisplacementStatusNonDisplaced:
-		return l.Translate("option_displacement_status_non_displaced")
+		return t("option_displacement_status_non_displaced")
 	case DisplacementStatusOther:
-		return l.Translate("option_other")
+		return t("option_other")
 	case DisplacementStatusUnspecified:
-		return l.Translate("option_unspecified")
+		return t("option_unspecified")
 	default:
 		return ""
 	}

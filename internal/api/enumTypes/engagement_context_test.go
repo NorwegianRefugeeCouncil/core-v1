@@ -68,12 +68,12 @@ func TestEngagementContext_String(t *testing.T) {
 		g    EngagementContext
 		want string
 	}{
-		{"houseVisit", EngagementContextHouseVisit, "option_engagement_context_house_visit"},
-		{"fieldActivity", EngagementContextFieldActivity, "option_engagement_context_field_activity"},
-		{"inOffice", EngagementContextInOffice, "option_engagement_context_in_office"},
-		{"referred", EngagementContextReferred, "option_engagement_context_referred"},
-		{"remoteChannels", EngagementContextRemoteChannels, "option_engagement_context_remote_channels"},
-		{"other", EngagementContextOther, "option_other"},
+		{"houseVisit", EngagementContextHouseVisit, "House visit"},
+		{"fieldActivity", EngagementContextFieldActivity, "Field activity"},
+		{"inOffice", EngagementContextInOffice, "In-office"},
+		{"referred", EngagementContextReferred, "Referred"},
+		{"remoteChannels", EngagementContextRemoteChannels, "Remote channels"},
+		{"other", EngagementContextOther, "Other"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

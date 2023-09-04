@@ -32,20 +32,20 @@ func AllContactMethods() containers.Set[ContactMethod] {
 }
 
 func (g ContactMethod) String() string {
-	l := locales.GetLocales()
+	t := locales.GetTranslator()
 	switch g {
 	case ContactMethodPhone:
-		return l.Translate("option_contact_method_phone")
+		return t("option_contact_method_phone")
 	case ContactMethodWhatsapp:
-		return l.Translate("option_contact_method_whatsapp")
+		return t("option_contact_method_whatsapp")
 	case ContactMethodEmail:
-		return l.Translate("option_contact_method_email")
+		return t("option_contact_method_email")
 	case ContactMethodVisit:
-		return l.Translate("option_contact_method_visit")
+		return t("option_contact_method_visit")
 	case ContactMethodOther:
-		return l.Translate("option_other")
+		return t("option_other")
 	case ContactMethodUnspecified:
-		return l.Translate("option_unspecified")
+		return t("option_unspecified")
 	default:
 		return ""
 	}

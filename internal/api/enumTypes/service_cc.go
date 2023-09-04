@@ -41,26 +41,26 @@ List is : IDP, Refugee, Host Community, Returnee, Non-Displaced, Other
 */
 
 func (g ServiceCC) String() string {
-	l := locales.GetLocales()
+	t := locales.GetTranslator()
 	switch g {
 	case ServiceCCShelter:
-		return l.Translate("option_service_shelter")
+		return t("option_service_shelter")
 	case ServiceCCWash:
-		return l.Translate("option_service_wash")
+		return t("option_service_wash")
 	case ServiceCCProtection:
-		return l.Translate("option_service_protection")
+		return t("option_service_protection")
 	case ServiceCCEducation:
-		return l.Translate("option_service_education")
+		return t("option_service_education")
 	case ServiceCCICLA:
-		return l.Translate("option_service_icla")
+		return t("option_service_icla")
 	case ServiceCCLFS:
-		return l.Translate("option_service_lfs")
+		return t("option_service_lfs")
 	case ServiceCCCVA:
-		return l.Translate("option_service_cva")
+		return t("option_service_cva")
 	case ServiceCCOther:
-		return l.Translate("option_other")
+		return t("option_other")
 	case ServiceCCNone:
-		return l.Translate("option_unspecified")
+		return t("option_unspecified")
 	default:
 		return ""
 	}

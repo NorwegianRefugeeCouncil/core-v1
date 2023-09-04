@@ -30,18 +30,18 @@ func AllDisabilityLevels() containers.Set[DisabilityLevel] {
 }
 
 func (g DisabilityLevel) String() string {
-	l := locales.GetLocales()
+	var t = locales.GetTranslator()
 	switch g {
 	case DisabilityLevelNone:
-		return l.Translate("option_disability_none")
+		return t("option_disability_none")
 	case DisabilityLevelMild:
-		return l.Translate("option_disability_mild")
+		return t("option_disability_mild")
 	case DisabilityLevelModerate:
-		return l.Translate("option_disability_moderate")
+		return t("option_disability_moderate")
 	case DisabilityLevelSevere:
-		return l.Translate("option_disability_severe")
+		return t("option_disability_severe")
 	case DisabilityLevelUnspecified:
-		return l.Translate("option_unspecified")
+		return t("option_unspecified")
 	default:
 		return ""
 	}

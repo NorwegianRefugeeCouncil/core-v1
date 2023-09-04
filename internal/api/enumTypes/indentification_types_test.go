@@ -68,10 +68,10 @@ func TestIdentificationType_String(t *testing.T) {
 		g    IdentificationType
 		want string
 	}{
-		{"passport", IdentificationTypePassport, "option_identification_type_passport"},
-		{"unhcr_id", IdentificationTypeUNHCR, "option_identification_type_unhcr"},
-		{"national_id", IdentificationTypeNational, "option_identification_type_national_id"},
-		{"other", IdentificationTypeOther, "option_other"},
+		{"passport", IdentificationTypePassport, "Passport"},
+		{"unhcr_id", IdentificationTypeUNHCR, "UNHCR ID"},
+		{"national_id", IdentificationTypeNational, "National ID"},
+		{"other", IdentificationTypeOther, "Other"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

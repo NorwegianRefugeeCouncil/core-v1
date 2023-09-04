@@ -38,22 +38,22 @@ List is : House Visit, Field Activity, In-Office, Remote Channels, Referred, Oth
 */
 
 func (g EngagementContext) String() string {
-	l := locales.GetLocales()
+	t := locales.GetTranslator()
 	switch g {
 	case EngagementContextHouseVisit:
-		return l.Translate("option_engagement_context_house_visit")
+		return t("option_engagement_context_house_visit")
 	case EngagementContextFieldActivity:
-		return l.Translate("option_engagement_context_field_activity")
+		return t("option_engagement_context_field_activity")
 	case EngagementContextInOffice:
-		return l.Translate("option_engagement_context_in_office")
+		return t("option_engagement_context_in_office")
 	case EngagementContextRemoteChannels:
-		return l.Translate("option_engagement_context_remote_channels")
+		return t("option_engagement_context_remote_channels")
 	case EngagementContextReferred:
-		return l.Translate("option_engagement_context_referred")
+		return t("option_engagement_context_referred")
 	case EngagementContextOther:
-		return l.Translate("option_other")
+		return t("option_other")
 	case EngagementContextUnspecified:
-		return l.Translate("option_unspecified")
+		return t("option_unspecified")
 	default:
 		return ""
 	}

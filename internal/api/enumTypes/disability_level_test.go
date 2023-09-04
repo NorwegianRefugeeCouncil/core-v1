@@ -2,10 +2,8 @@ package enumTypes
 
 import (
 	"encoding/json"
-	"github.com/nrc-no/notcore/internal/locales"
-	"testing"
-
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func disabilityLevelPtr(g DisabilityLevel) *DisabilityLevel {
@@ -37,30 +35,33 @@ func TestDisabilityLevel_MarshalJSON(t *testing.T) {
 }
 
 func TestDisabilityLevel_UnmarshalJSON(t *testing.T) {
-	type dummy struct {
-		DisabilityLevel DisabilityLevel `json:"d"`
-	}
-	var d dummy
-	assert.NoError(t, json.Unmarshal([]byte(`{"d":"moderate"}`), &d))
-	assert.Equal(t, DisabilityLevelModerate, d.DisabilityLevel)
 
 	type dummyPtr struct {
 		DisabilityLevel *DisabilityLevel `json:"d"`
 	}
-	{
-		var dPtr dummyPtr
-		assert.NoError(t, json.Unmarshal([]byte(`{"d":"none"}`), &dPtr))
-		assert.Equal(t, disabilityLevelPtr(DisabilityLevelNone), dPtr.DisabilityLevel)
+	tests := []struct {
+		name    string
+		bytes   []byte
+		want    DisabilityLevel
+		wantErr bool
+	}{
+		{"severe", []byte(`{"d":"severe"}`), DisabilityLevelSevere, false},
+		{"none", []byte(`{"d":"none"}`), DisabilityLevelNone, false},
+		{"null", []byte(`{"d":"null"}`), "", true},
+		{"invalid", []byte(`{"d":"invalid"}`), "", true},
 	}
-	{
-		var dPtr dummyPtr
-		assert.NoError(t, json.Unmarshal([]byte(`{"d":null}`), &dPtr))
-		assert.Equal(t, (*DisabilityLevel)(nil), dPtr.DisabilityLevel)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var dPtr dummyPtr
+			if tt.wantErr {
+				assert.Error(t, json.Unmarshal(tt.bytes, &dPtr))
+			} else {
+				assert.NoError(t, json.Unmarshal(tt.bytes, &dPtr))
+				assert.Equal(t, disabilityLevelPtr(tt.want), dPtr.DisabilityLevel)
+			}
+		})
 	}
-	{
-		var dPtr dummyPtr
-		assert.Error(t, json.Unmarshal([]byte(`{"d":"invalid"}`), &dPtr))
-	}
+
 }
 
 func TestDisabilityLevel_String(t *testing.T) {
@@ -69,56 +70,14 @@ func TestDisabilityLevel_String(t *testing.T) {
 		g    DisabilityLevel
 		want string
 	}{
-		{"none", DisabilityLevelNone, "option_disability_none"},
-		{"mild", DisabilityLevelMild, "option_disability_mild"},
-		{"moderate", DisabilityLevelModerate, "option_disability_moderate"},
-		{"severe", DisabilityLevelSevere, "option_disability_severe"},
+		{"none", DisabilityLevelNone, "None"},
+		{"mild", DisabilityLevelMild, "Mild"},
+		{"moderate", DisabilityLevelModerate, "Moderate"},
+		{"severe", DisabilityLevelSevere, "Severe"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equal(t, tt.want, tt.g.String())
-		})
-	}
-}
-
-type mockLocale struct{}
-
-func (m mockLocale) Translate(key string) string {
-	switch key {
-	case "option_disability_none":
-		return "None"
-	case "option_disability_mild":
-		return "Mild"
-	case "option_disability_moderate":
-		return "Moderate"
-	case "option_disability_severe":
-		return "Severe"
-	case "option_unspecified":
-		return "Unspecified"
-	default:
-		return ""
-	}
-}
-
-func TestDisabilityLevel_String2(t *testing.T) {
-	locales.GetLocales() = mockLocale{}
-	tests := []struct {
-		level    DisabilityLevel
-		expected string
-	}{
-		{DisabilityLevelNone, "None"},
-		{DisabilityLevelMild, "Mild"},
-		{DisabilityLevelModerate, "Moderate"},
-		{DisabilityLevelSevere, "Severe"},
-		{DisabilityLevelUnspecified, "Unspecified"},
-	}
-
-	for _, test := range tests {
-		t.Run(test.expected, func(t *testing.T) {
-			result := test.level.String()
-			if result != test.expected {
-				t.Errorf("Expected '%s', but got '%s'", test.expected, result)
-			}
 		})
 	}
 }

@@ -60,6 +60,10 @@ func GetLocales() *locales {
 	return l
 }
 
+func GetTranslator() func(id string, args ...interface{}) string {
+	return l.Translate
+}
+
 func SetLocalizer(loc *i18n.Localizer) {
 	l.localizer = loc
 }

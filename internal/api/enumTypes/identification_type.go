@@ -33,18 +33,18 @@ List is : Passport, UNHCR ID, National ID, Other
 */
 
 func (g IdentificationType) String() string {
-	l := locales.GetLocales()
+	t := locales.GetTranslator()
 	switch g {
 	case IdentificationTypePassport:
-		return l.Translate("option_identification_type_passport")
+		return t("option_identification_type_passport")
 	case IdentificationTypeUNHCR:
-		return l.Translate("option_identification_type_unhcr")
+		return t("option_identification_type_unhcr")
 	case IdentificationTypeNational:
-		return l.Translate("option_identification_type_national_id")
+		return t("option_identification_type_national_id")
 	case IdentificationTypeOther:
-		return l.Translate("option_other")
+		return t("option_other")
 	case IdentificationTypeUnspecified:
-		return l.Translate("option_unspecified")
+		return t("option_unspecified")
 	default:
 		return ""
 	}

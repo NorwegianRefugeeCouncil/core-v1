@@ -31,18 +31,18 @@ func AllSexes() containers.Set[Sex] {
 }
 
 func (g Sex) String() string {
-	l := locales.GetLocales()
+	t := locales.GetTranslator()
 	switch g {
 	case SexMale:
-		return l.Translate("option_sex_male")
+		return t("option_sex_male")
 	case SexFemale:
-		return l.Translate("option_sex_female")
+		return t("option_sex_female")
 	case SexOther:
-		return l.Translate("option_other")
+		return t("option_other")
 	case SexPreferNotToSay:
-		return l.Translate("option_sex_prefers_not_to_say")
+		return t("option_sex_prefers_not_to_say")
 	case SexUnspecified:
-		return l.Translate("option_unspecified")
+		return t("option_unspecified")
 	default:
 		return ""
 	}
