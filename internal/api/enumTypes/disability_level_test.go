@@ -35,33 +35,30 @@ func TestDisabilityLevel_MarshalJSON(t *testing.T) {
 }
 
 func TestDisabilityLevel_UnmarshalJSON(t *testing.T) {
+	type dummy struct {
+		DisabilityLevel DisabilityLevel `json:"d"`
+	}
+	var d dummy
+	assert.NoError(t, json.Unmarshal([]byte(`{"d":"moderate"}`), &d))
+	assert.Equal(t, DisabilityLevelModerate, d.DisabilityLevel)
 
 	type dummyPtr struct {
 		DisabilityLevel *DisabilityLevel `json:"d"`
 	}
-	tests := []struct {
-		name    string
-		bytes   []byte
-		want    DisabilityLevel
-		wantErr bool
-	}{
-		{"severe", []byte(`{"d":"severe"}`), DisabilityLevelSevere, false},
-		{"none", []byte(`{"d":"none"}`), DisabilityLevelNone, false},
-		{"null", []byte(`{"d":"null"}`), "", true},
-		{"invalid", []byte(`{"d":"invalid"}`), "", true},
+	{
+		var dPtr dummyPtr
+		assert.NoError(t, json.Unmarshal([]byte(`{"d":"none"}`), &dPtr))
+		assert.Equal(t, disabilityLevelPtr(DisabilityLevelNone), dPtr.DisabilityLevel)
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			var dPtr dummyPtr
-			if tt.wantErr {
-				assert.Error(t, json.Unmarshal(tt.bytes, &dPtr))
-			} else {
-				assert.NoError(t, json.Unmarshal(tt.bytes, &dPtr))
-				assert.Equal(t, disabilityLevelPtr(tt.want), dPtr.DisabilityLevel)
-			}
-		})
+	{
+		var dPtr dummyPtr
+		assert.NoError(t, json.Unmarshal([]byte(`{"d":null}`), &dPtr))
+		assert.Equal(t, (*DisabilityLevel)(nil), dPtr.DisabilityLevel)
 	}
-
+	{
+		var dPtr dummyPtr
+		assert.Error(t, json.Unmarshal([]byte(`{"d":"invalid"}`), &dPtr))
+	}
 }
 
 func TestDisabilityLevel_String(t *testing.T) {
