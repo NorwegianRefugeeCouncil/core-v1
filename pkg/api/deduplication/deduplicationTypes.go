@@ -10,6 +10,7 @@ type DeduplicationTypeName string
 const (
 	DeduplicationTypeNameIds          DeduplicationTypeName = "Ids"
 	DeduplicationTypeNamePhoneNumbers DeduplicationTypeName = "PhoneNumbers"
+	DeduplicationTypeNameMothersName  DeduplicationTypeName = "MothersName"
 	DeduplicationTypeNameEmails       DeduplicationTypeName = "Emails"
 	DeduplicationTypeNameNames        DeduplicationTypeName = "Names"
 	DeduplicationTypeNameFullName     DeduplicationTypeName = "FullName"
@@ -74,6 +75,15 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		},
 		Order: 8,
 	},
+	DeduplicationTypeNameMothersName: {
+		ID:    DeduplicationTypeNameMothersName,
+		Label: "Mother's name",
+		Config: DeduplicationTypeValue{
+			Columns:   []string{constants.DBColumnIndividualMothersName},
+			Condition: LOGICAL_OPERATOR_OR,
+		},
+		Order: 8,
+	},
 	DeduplicationTypeNameFullName: {
 		ID:    DeduplicationTypeNameFullName,
 		Label: "Full Name",
@@ -135,6 +145,7 @@ var deduplicationTypeNames = map[string]DeduplicationTypeName{
 	"PhoneNumbers": DeduplicationTypeNamePhoneNumbers,
 	"Emails":       DeduplicationTypeNameEmails,
 	"Names":        DeduplicationTypeNameNames,
+	"MothersName":  DeduplicationTypeNameMothersName,
 	"FullName":     DeduplicationTypeNameFullName,
 	"FreeField1":   DeduplicationTypeNameFreeField1,
 	"FreeField2":   DeduplicationTypeNameFreeField2,
