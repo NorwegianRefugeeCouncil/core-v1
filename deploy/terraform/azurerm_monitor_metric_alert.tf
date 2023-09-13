@@ -52,6 +52,29 @@ resource "azurerm_monitor_metric_alert" "postgres_memory_usage" {
   }
 }
 
+resource "azurerm_monitor_metric_alert" "postgres_storage_percent" {
+  provider            = azurerm.runtime
+  name                = "postgres-storage-percent-${var.environment}"
+  resource_group_name = azurerm_resource_group.rg.name
+  scopes              = [azurerm_postgresql_flexible_server.postgres.id]
+  description         = "${var.environment} - Postgres server: Storage percent average is greater than 80% within the last hour."
+  severity            = 3
+  window_size         = "PT1H"
+  frequency           = "PT30M"
+
+  criteria {
+    metric_namespace = "Microsoft.DBforPostgreSQL/flexibleServers"
+    metric_name      = "storage_percent"
+    aggregation      = "Average"
+    operator         = "GreaterThan"
+    threshold        = 80
+  }
+
+  action {
+    action_group_id = azurerm_monitor_action_group.ag_teams.id
+  }
+}
+
 ##########################
 # monitor app service plan
 ##########################
