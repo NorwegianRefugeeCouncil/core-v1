@@ -73,7 +73,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 			Columns:   []string{constants.DBColumnIndividualFirstName, constants.DBColumnIndividualMiddleName, constants.DBColumnIndividualLastName, constants.DBColumnIndividualNativeName},
 			Condition: LOGICAL_OPERATOR_AND,
 		},
-		Order: 8,
+		Order: 10,
 	},
 	DeduplicationTypeNameMothersName: {
 		ID:    DeduplicationTypeNameMothersName,
