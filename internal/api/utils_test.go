@@ -200,3 +200,54 @@ func TestParseAge(t *testing.T) {
 		})
 	}
 }
+
+func TestGetValidatedBoolean(t *testing.T) {
+	tests := []struct {
+		name  string
+		value string
+		want  bool
+	}{
+		{
+			name:  "\"true\"",
+			value: "true",
+			want:  true,
+		}, {
+			name:  "\"yes\"",
+			value: "yes",
+			want:  true,
+		}, {
+			name:  "\"1\"",
+			value: "1",
+			want:  true,
+		}, {
+			name:  "\"false\"",
+			value: "false",
+			want:  false,
+		}, {
+			name:  "\"no\"",
+			value: "no",
+			want:  false,
+		}, {
+			name:  "\"0\"",
+			value: "0",
+			want:  false,
+		}, {
+			name:  "\"nope\"",
+			value: "nope",
+			want:  false,
+		}, {
+			name:  "\"yeah\"",
+			value: "yeah",
+			want:  false,
+		}, {
+			name:  "empty string",
+			value: "",
+			want:  false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, isExplicitlyTrue(tt.value))
+		})
+	}
+}
