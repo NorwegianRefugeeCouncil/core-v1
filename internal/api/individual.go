@@ -11,7 +11,7 @@ import (
 
 type Individual struct {
 	// Inactive is true if the individual is inactive
-	Inactive *bool `json:"inactive" db:"inactive"`
+	Inactive bool `json:"inactive" db:"inactive"`
 	// Address is the residence address of the individual
 	Address string `json:"address" db:"address"`
 	// Age is the age of the individual

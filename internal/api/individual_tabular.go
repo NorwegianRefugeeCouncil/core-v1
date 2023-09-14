@@ -155,11 +155,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualID:
 			i.ID = cols[idx]
 		case constants.FileColumnIndividualInactive:
-			inactive, err := enumTypes.TranslateOptionalBoolean(cols[idx])
-			if err != nil {
-				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualInactive, err, enumTypes.AllOptionalBooleans().String()))
-			}
-			i.Inactive = inactive
+			i.Inactive = isExplicitlyTrue(cols[idx])
 		case constants.FileColumnIndividualAddress:
 			i.Address = cols[idx]
 		case constants.FileColumnIndividualAge:

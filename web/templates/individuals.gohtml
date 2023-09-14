@@ -1024,7 +1024,7 @@
                             data-individual-id="{{.ID}}">
                             <td class="sticky-column" style="width: {{$inactiveWidth}}">
                                 {{if .Inactive}}
-                                    {{if eq (deref .Inactive) true}}
+                                    {{if eq (boolPointerToValue .Inactive) true}}
                                         <div class="">
                                             <i class="bi bi-eye-slash-fill "></i>
                                         </div>
@@ -1071,7 +1071,7 @@
                             <!-- First Name -->
                             <td>
                                 <div style="width: {{$nameWidth}}">
-                                    {{if and .PrefersToRemainAnonymous (eq (deref .PrefersToRemainAnonymous) true)}}
+                                    {{if and .PrefersToRemainAnonymous (eq (boolPointerToValue .PrefersToRemainAnonymous) true)}}
                                         <span class="text-muted">
                                             <em>
                                                 {{$locales.Translate "anonymous"}}
@@ -1087,7 +1087,7 @@
                             <!-- Middle Name -->
                             <td>
                                 <div style="width: {{$nameWidth}}">
-                                    {{if and .PrefersToRemainAnonymous (eq (deref .PrefersToRemainAnonymous) true)}}
+                                    {{if and .PrefersToRemainAnonymous (eq (boolPointerToValue .PrefersToRemainAnonymous) true)}}
                                         <span class="text-muted">
                                             <em>
                                                 {{$locales.Translate "anonymous"}}
@@ -1103,7 +1103,7 @@
                             <!-- Last Name -->
                             <td>
                                 <div style="width: {{$nameWidth}}">
-                                    {{if and .PrefersToRemainAnonymous (eq (deref .PrefersToRemainAnonymous) true)}}
+                                    {{if and .PrefersToRemainAnonymous (eq (boolPointerToValue .PrefersToRemainAnonymous) true)}}
                                         <span class="text-muted">
                                             <em>
                                                 {{$locales.Translate "anonymous"}}
@@ -1119,7 +1119,7 @@
                             <!-- Native Name -->
                             <td>
                                 <div style="width: {{$nameWidth}}">
-                                    {{if and .PrefersToRemainAnonymous (eq (deref .PrefersToRemainAnonymous) true)}}
+                                    {{if and .PrefersToRemainAnonymous (eq (boolPointerToValue .PrefersToRemainAnonymous) true)}}
                                         <span class="text-muted">
                                             <em>
                                                 {{$locales.Translate "anonymous"}}

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/nrc-no/notcore/internal/containers"
+	"github.com/nrc-no/notcore/internal/utils/pointers"
 	"github.com/nrc-no/notcore/pkg/logutils"
 	"strings"
 )
@@ -60,12 +61,12 @@ func TranslateOptionalBoolean(str string) (*bool, error) {
 		string(OptionalBooleanNo), OptionalBooleanNo.String(),
 		string(OptionalBooleanFalse), OptionalBooleanFalse.String(),
 		string(OptionalBoolean0), OptionalBoolean0.String():
-		return NewBool(false), nil
+		return pointers.Bool(false), nil
 	case
 		string(OptionalBoolean1), OptionalBoolean1.String(),
 		string(OptionalBooleanTrue), OptionalBooleanTrue.String(),
 		string(OptionalBooleanYes), OptionalBooleanYes.String():
-		return NewBool(true), nil
+		return pointers.Bool(true), nil
 	case string(OptionalBooleanUnknown), OptionalBooleanUnknown.String():
 		return nil, nil
 	default:
@@ -119,8 +120,4 @@ func (g *OptionalBoolean) UnmarshalText(b []byte) error {
 	}
 	*g = parsed
 	return nil
-}
-
-func NewBool(b bool) *bool {
-	return &b
 }

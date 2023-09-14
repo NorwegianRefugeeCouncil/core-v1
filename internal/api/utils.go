@@ -6,6 +6,7 @@ import (
 	"github.com/go-gota/gota/series"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
+	"golang.org/x/exp/slices"
 	"strconv"
 	"strings"
 	"time"
@@ -126,4 +127,10 @@ func ExcludeSelfFromDataframe(df dataframe.DataFrame, selfIndex int) dataframe.D
 
 	// check for duplicates of the current value within its own column
 	return df.Subset(otherElements)
+}
+
+var TRUE_VALUES = []string{"true", "yes", "1"}
+
+func isExplicitlyTrue(value string) bool {
+	return slices.Contains(TRUE_VALUES, strings.ToLower(value))
 }
