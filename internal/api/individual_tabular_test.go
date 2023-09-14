@@ -3,6 +3,7 @@ package api_test
 import (
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"github.com/nrc-no/notcore/internal/handlers"
+	"github.com/nrc-no/notcore/internal/utils/pointers"
 	"testing"
 	"time"
 
@@ -24,7 +25,7 @@ var parameters = []struct {
 	{constants.FileColumnIndividualBirthDate, "1992-07-31", &foo, false},
 	{constants.FileColumnIndividualBirthDate, "31-07-1992", "", true},
 	{constants.FileColumnIndividualDisplacementStatus, "refugee", enumTypes.DisplacementStatusRefugee, false},
-	{constants.FileColumnIndividualHasDisability, "yEs", enumTypes.NewBool(true), false},
+	{constants.FileColumnIndividualHasDisability, "yEs", pointers.Bool(true), false},
 	{constants.FileColumnIndividualDisplacementStatus, "Refugee", enumTypes.DisplacementStatusRefugee, false},
 	{constants.FileColumnIndividualDisplacementStatus, "nothing", enumTypes.DisplacementStatusRefugee, true},
 	{constants.FileColumnIndividualServiceCC1, "shelter_and_settlements", enumTypes.ServiceCCShelter, false},
@@ -38,15 +39,15 @@ var parameters = []struct {
 	{constants.FileColumnIndividualNativeName, "جون", "جون", false},
 	{constants.FileColumnIndividualMothersName, "Jane Doe", "Jane Doe", false},
 	{constants.FileColumnIndividualSex, "male", enumTypes.SexMale, false},
-	{constants.FileColumnIndividualIsMinor, "tRuE", enumTypes.NewBool(true), false},
-	{constants.FileColumnIndividualIsMinor, "YeS", enumTypes.NewBool(true), false},
-	{constants.FileColumnIndividualIsMinor, "1", enumTypes.NewBool(true), false},
+	{constants.FileColumnIndividualIsMinor, "tRuE", pointers.Bool(true), false},
+	{constants.FileColumnIndividualIsMinor, "YeS", pointers.Bool(true), false},
+	{constants.FileColumnIndividualIsMinor, "1", pointers.Bool(true), false},
 	{constants.FileColumnIndividualIsMinor, "anything-else", false, true},
 	{constants.FileColumnIndividualPhoneNumber1, "01234", "01234", false},
 	{constants.FileColumnIndividualPreferredName, "Hughie", "Hughie", false},
-	{constants.FileColumnIndividualPresentsProtectionConcerns, "tRuE", enumTypes.NewBool(true), false},
-	{constants.FileColumnIndividualPresentsProtectionConcerns, "YeS", enumTypes.NewBool(true), false},
-	{constants.FileColumnIndividualPresentsProtectionConcerns, "1", enumTypes.NewBool(true), false},
+	{constants.FileColumnIndividualPresentsProtectionConcerns, "tRuE", pointers.Bool(true), false},
+	{constants.FileColumnIndividualPresentsProtectionConcerns, "YeS", pointers.Bool(true), false},
+	{constants.FileColumnIndividualPresentsProtectionConcerns, "1", pointers.Bool(true), false},
 	{constants.FileColumnIndividualPresentsProtectionConcerns, "anything-else", "anything-else", true},
 }
 

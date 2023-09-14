@@ -26,7 +26,7 @@ func (i *IndividualBuilder) Build() *api.Individual {
 	return i.individual
 }
 
-func (i *IndividualBuilder) WithInactive(inactive *bool) *IndividualBuilder {
+func (i *IndividualBuilder) WithInactive(inactive bool) *IndividualBuilder {
 	i.individual.Inactive = inactive
 	return i
 }
