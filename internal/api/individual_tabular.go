@@ -289,6 +289,60 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.Sex = sex
+		case constants.FileColumnIndividualHasMedicalCondition:
+			hasMedicalCondition, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.HasMedicalCondition = hasMedicalCondition
+		case constants.FileColumnIndividualNeedsLegalAndPhysicalProtection:
+			needsLegalAndPhysicalProtection, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.NeedsLegalAndPhysicalProtection = needsLegalAndPhysicalProtection
+		case constants.FileColumnIndividualIsChildAtRisk:
+			isChildAtRisk, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsChildAtRisk = isChildAtRisk
+		case constants.FileColumnIndividualIsWomanAtRisk:
+			isWomanAtRisk, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsWomanAtRisk = isWomanAtRisk
+		case constants.FileColumnIndividualIsElderAtRisk:
+			isElderAtRisk, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsElderAtRisk = isElderAtRisk
+		case constants.FileColumnIndividualIsLactating:
+			isLactating, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsLactating = isLactating
+		case constants.FileColumnIndividualIsPregnant:
+			isPregnant, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsPregnant = isPregnant
+		case constants.FileColumnIndividualIsSingleParent:
+			isSingleParent, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsSingleParent = isSingleParent
+		case constants.FileColumnIndividualIsSeparatedChild:
+			isSeparatedChild, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsSeparatedChild = isSeparatedChild
 		case constants.FileColumnIndividualHasCognitiveDisability:
 			hasCognitiveDisability, err := enumTypes.TranslateOptionalBoolean(cols[idx])
 			if err != nil {
@@ -822,6 +876,8 @@ func (i *Individual) marshalTabularData() ([]string, error) {
 			if v != nil {
 				row[j] = strconv.FormatBool(*v)
 			}
+		case enumTypes.OptionalBoolean:
+			row[j] = string(v)
 		case int:
 			row[j] = strconv.Itoa(v)
 		case *int:

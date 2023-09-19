@@ -197,6 +197,15 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualIsFemaleHeadedHousehold,
 		constants.FileColumnIndividualIsMinorHeadedHousehold,
 		constants.FileColumnIndividualIsMinor,
+		constants.FileColumnIndividualIsChildAtRisk,
+		constants.FileColumnIndividualIsWomanAtRisk,
+		constants.FileColumnIndividualIsElderAtRisk,
+		constants.FileColumnIndividualIsSeparatedChild,
+		constants.FileColumnIndividualIsSingleParent,
+		constants.FileColumnIndividualIsPregnant,
+		constants.FileColumnIndividualIsLactating,
+		constants.FileColumnIndividualHasMedicalCondition,
+		constants.FileColumnIndividualNeedsLegalAndPhysicalProtection,
 		constants.FileColumnIndividualMobilityDisabilityLevel,
 		constants.FileColumnIndividualNationality1,
 		constants.FileColumnIndividualNationality2,
@@ -429,6 +438,15 @@ func Generate(count uint) error {
 		isFemaleHeadedHousehold := randomOptionalBool()
 
 		isMinor := randomOptionalBool()
+		isChildAtRisk := randomOptionalBool()
+		isWomanAtRisk := randomOptionalBool()
+		isElderAtRisk := randomOptionalBool()
+		isSeparatedChild := randomOptionalBool()
+		isSingleParent := randomOptionalBool()
+		isPregnant := randomOptionalBool()
+		isLactating := randomOptionalBool()
+		hasMedicalCondition := randomOptionalBool()
+		needsLegalAndPhysicalProtection := randomOptionalBool()
 
 		nationality1 := randomCountry()
 		nationality2 := randomCountry()
@@ -553,6 +571,15 @@ func Generate(count uint) error {
 			isFemaleHeadedHousehold,
 			isMinorHeadedHousehold,
 			isMinor,
+			isChildAtRisk,
+			isWomanAtRisk,
+			isElderAtRisk,
+			isSeparatedChild,
+			isSingleParent,
+			isPregnant,
+			isLactating,
+			hasMedicalCondition,
+			needsLegalAndPhysicalProtection,
 			mobilityDisabilityLevel,
 			nationality1,
 			nationality2,

@@ -593,13 +593,120 @@
                     "MaxWidth" $isHeadOfHouseholdWidth
                     )}}
 
-
                     {{template "columnHeader" (dict
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "is_female_headed_household"
                     "Label" (.RequestContext.Locales.Translate "is_female_headed_household_abrv")
                     "Title" "Female Head of Household"
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "is_child_at_risk"
+                    "Label" (.RequestContext.Locales.Translate "is_child_at_risk_abrv")
+                    "Title" (.RequestContext.Locales.Translate "is_child_at_risk")
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "is_woman_at_risk"
+                    "Label" (.RequestContext.Locales.Translate "is_woman_at_risk_abrv")
+                    "Title" (.RequestContext.Locales.Translate "is_woman_at_risk")
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "is_elder_at_risk"
+                    "Label" (.RequestContext.Locales.Translate "is_elder_at_risk_abrv")
+                    "Title" (.RequestContext.Locales.Translate "is_elder_at_risk")
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "is_pregnant"
+                    "Label" (.RequestContext.Locales.Translate "is_pregnant_abrv")
+                    "Title" (.RequestContext.Locales.Translate "is_pregnant")
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "is_lactating"
+                    "Label" (.RequestContext.Locales.Translate "is_lactating_abrv")
+                    "Title" (.RequestContext.Locales.Translate "is_lactating")
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "is_separated_child"
+                    "Label" (.RequestContext.Locales.Translate "is_separated_child_abrv")
+                    "Title" (.RequestContext.Locales.Translate "is_separated_child")
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "is_single_parent"
+                    "Label" (.RequestContext.Locales.Translate "is_single_parent_abrv")
+                    "Title" (.RequestContext.Locales.Translate "is_single_parent")
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "has_medical_condition"
+                    "Label" (.RequestContext.Locales.Translate "has_medical_condition_abrv")
+                    "Title" (.RequestContext.Locales.Translate "has_medical_condition")
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "needs_legal_and_physical_protection"
+                    "Label" (.RequestContext.Locales.Translate "needs_legal_and_physical_protection_abrv")
+                    "Title" (.RequestContext.Locales.Translate "needs_legal_and_physical_protection")
                     "Class" "text-center"
                     "Width" $isHeadOfHouseholdWidth
                     "MinWidth" $isHeadOfHouseholdWidth
@@ -1232,6 +1339,87 @@
                                 )}}
                             </td>
                             <!-- End IsFemaleHeadedHousehold -->
+
+                            <!-- IsChildAtRisk -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsChildAtRisk
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End IsChildAtRisk -->
+
+                            <!-- IsWomanAtRisk -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsWomanAtRisk
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End IsWomanAtRisk -->
+
+                            <!-- IsElderAtRisk -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsElderAtRisk
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End IsElderAtRisk -->
+
+                            <!-- IsPregnant -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsPregnant
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End IsPregnant -->
+
+                            <!-- IsLactating -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsLactating
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End IsLactating -->
+
+                            <!-- IsSeparatedChild -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsSeparatedChild
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End IsSeparatedChild -->
+
+                            <!-- IsSingleParent -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsSingleParent
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End IsSingleParent -->
+
+                            <!-- HasMedicalCondition -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .HasMedicalCondition
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End HasMedicalCondition -->
+
+                            <!-- NeedsLegalAndPhysicalProtection -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .NeedsLegalAndPhysicalProtection
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End NeedsLegalAndPhysicalProtection -->
 
                             <!-- CommunityID -->
                             <td>

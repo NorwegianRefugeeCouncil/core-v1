@@ -73,6 +73,15 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withIsFemaleHeadedHousehold(options.IsFemaleHeadedHousehold).
 		withIsMinorHeadedHousehold(options.IsMinorHeadedHousehold).
 		withIsMinor(options.IsMinor).
+		withBoolean(options.IsChildAtRisk, constants.DBColumnIndividualIsChildAtRisk).
+		withBoolean(options.IsWomanAtRisk, constants.DBColumnIndividualIsWomanAtRisk).
+		withBoolean(options.IsElderAtRisk, constants.DBColumnIndividualIsElderAtRisk).
+		withBoolean(options.IsPregnant, constants.DBColumnIndividualIsPregnant).
+		withBoolean(options.IsLactating, constants.DBColumnIndividualIsLactating).
+		withBoolean(options.IsSeparatedChild, constants.DBColumnIndividualIsSeparatedChild).
+		withBoolean(options.IsSingleParent, constants.DBColumnIndividualIsSingleParent).
+		withBoolean(options.HasMedicalCondition, constants.DBColumnIndividualHasMedicalCondition).
+		withBoolean(options.NeedsLegalAndPhysicalProtection, constants.DBColumnIndividualNeedsLegalAndPhysicalProtection).
 		withMobilityDisabilityLevel(options.MobilityDisabilityLevel).
 		withNationality(options.Nationality).
 		withPhoneNumber(options.PhoneNumber).
@@ -621,6 +630,18 @@ func (g *getAllIndividualsSQLQuery) withIsMinor(isMinor *bool) *getAllIndividual
 		g.writeString(" AND " + constants.DBColumnIndividualIsMinor + " = ").writeArg(true)
 	} else {
 		g.writeString(" AND " + constants.DBColumnIndividualIsMinor + " = ").writeArg(false)
+	}
+	return g
+}
+
+func (g *getAllIndividualsSQLQuery) withBoolean(b *bool, dbColumnName string) *getAllIndividualsSQLQuery {
+	if b == nil {
+		return g
+	}
+	if *b {
+		g.writeString(" AND " + dbColumnName + " = ").writeArg(true)
+	} else {
+		g.writeString(" AND " + dbColumnName + " = ").writeArg(false)
 	}
 	return g
 }
