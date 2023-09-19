@@ -67,7 +67,11 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 }
 
 type ColumnArgsGroups = map[string][]string
-type OrTypeArgsGroups = map[deduplication.DeduplicationTypeName]ColumnArgsGroups
+type TypedColumnArgsGroups = struct {
+	Args    ColumnArgsGroups
+	SQLType string
+}
+type OrTypeArgsGroups = map[deduplication.DeduplicationTypeName]TypedColumnArgsGroups
 
 type RowArgsGroups = []*api.Individual
 type AndTypeArgsGroups = map[deduplication.DeduplicationTypeName]RowArgsGroups
@@ -81,10 +85,14 @@ type QueryArgs struct {
 example of QueryArgs:
 {
 	Or: {
-		"IDs": {
-		  "id_1": ["ID1", "ID2", "ID3", "ID4", "ID5","ID6"],
-		  "id_2": ["ID1", "ID2", "ID3", "ID4", "ID5","ID6"],
-		  "id_3": ["ID1", "ID2", "ID3", "ID4", "ID5","ID6"],
+		"IDs":{
+			Args: {
+					  "id_1": ["ID1", "ID2", "ID3", "ID4", "ID5","ID6"],
+					  "id_2": ["ID1", "ID2", "ID3", "ID4", "ID5","ID6"],
+					  "id_3": ["ID1", "ID2", "ID3", "ID4", "ID5","ID6"],
+					},
+			},
+			"SQLType: "text",
 		},
 	},
 	And: {
@@ -126,7 +134,7 @@ func collectArgs(individuals []*api.Individual, deduplicationTypes []deduplicati
 		deduplicationConfig := deduplication.DeduplicationTypes[deduplicationType].Config
 		if deduplicationConfig.Condition == deduplication.LOGICAL_OPERATOR_OR {
 			orQueryArgs := collectOrQueryArgs(individuals, deduplicationConfig)
-			if len(orQueryArgs) > 0 {
+			if len(orQueryArgs.Args) > 0 {
 				argsMap.Or[deduplicationType] = orQueryArgs
 			}
 		} else if deduplicationConfig.Condition == deduplication.LOGICAL_OPERATOR_AND {
@@ -136,15 +144,27 @@ func collectArgs(individuals []*api.Individual, deduplicationTypes []deduplicati
 	return argsMap
 }
 
-func collectOrQueryArgs(individuals []*api.Individual, deduplicationConfig deduplication.DeduplicationTypeValue) ColumnArgsGroups {
+func collectOrQueryArgs(individuals []*api.Individual, deduplicationConfig deduplication.DeduplicationTypeValue) TypedColumnArgsGroups {
 	colGroups := ColumnArgsGroups{}
+	colType := ""
 	args := make([]string, 0, len(individuals))
 	for c := 0; c < len(deduplicationConfig.Columns); c++ {
 		column := deduplicationConfig.Columns[c]
 		for _, individual := range individuals {
 			v, err := individual.GetFieldValue(column)
-			if err == nil && v != "" && v != nil {
-				args = append(args, v.(string))
+			if err == nil {
+				switch v.(type) {
+				case string:
+					if v.(string) != "" {
+						args = append(args, v.(string))
+					}
+					colType = "text"
+				case *time.Time:
+					if v.(*time.Time) != nil {
+						args = append(args, v.(*time.Time).Format("2006-01-02"))
+					}
+					colType = "date"
+				}
 			}
 		}
 	}
@@ -154,7 +174,7 @@ func collectOrQueryArgs(individuals []*api.Individual, deduplicationConfig dedup
 			colGroups[column] = args
 		}
 	}
-	return colGroups
+	return TypedColumnArgsGroups{colGroups, colType}
 }
 
 func getSubQueriesWithArgs(args []interface{}, argMap QueryArgs) ([]string, []interface{}) {
@@ -187,13 +207,13 @@ func getEmptyValuesQuery(deduplicationTypes []deduplication.DeduplicationTypeNam
 	return strings.Join(subQueries, " AND ")
 }
 
-func getOrSubQueriesWithArgs(args []interface{}, colGroups ColumnArgsGroups) (string, []interface{}) {
+func getOrSubQueriesWithArgs(args []interface{}, colGroups TypedColumnArgsGroups) (string, []interface{}) {
 	subQueries := make([]string, 0)
 	arg := []string{}
 
-	for groupKey, groupArgs := range colGroups {
+	for groupKey, groupArgs := range colGroups.Args {
 		arg = groupArgs
-		subQueries = append(subQueries, fmt.Sprintf("%s IN (SELECT * FROM UNNEST ($%d::text[]))", groupKey, len(args)+1))
+		subQueries = append(subQueries, fmt.Sprintf("%s IN (SELECT * FROM UNNEST ($%d::%s[]))", groupKey, len(args)+1, colGroups.SQLType))
 	}
 
 	if len(subQueries) > 0 {
