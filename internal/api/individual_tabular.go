@@ -290,113 +290,113 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			}
 			i.Sex = sex
 		case constants.FileColumnIndividualHasMedicalCondition:
-			hasMedicalCondition, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			hasMedicalCondition, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.HasMedicalCondition = hasMedicalCondition
+			i.HasMedicalCondition = hasMedicalCondition.BoolPtr()
 		case constants.FileColumnIndividualNeedsLegalAndPhysicalProtection:
-			needsLegalAndPhysicalProtection, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			needsLegalAndPhysicalProtection, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.NeedsLegalAndPhysicalProtection = needsLegalAndPhysicalProtection
+			i.NeedsLegalAndPhysicalProtection = needsLegalAndPhysicalProtection.BoolPtr()
 		case constants.FileColumnIndividualIsChildAtRisk:
-			isChildAtRisk, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			isChildAtRisk, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.IsChildAtRisk = isChildAtRisk
+			i.IsChildAtRisk = isChildAtRisk.BoolPtr()
 		case constants.FileColumnIndividualIsWomanAtRisk:
-			isWomanAtRisk, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			isWomanAtRisk, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.IsWomanAtRisk = isWomanAtRisk
+			i.IsWomanAtRisk = isWomanAtRisk.BoolPtr()
 		case constants.FileColumnIndividualIsElderAtRisk:
-			isElderAtRisk, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			isElderAtRisk, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.IsElderAtRisk = isElderAtRisk
+			i.IsElderAtRisk = isElderAtRisk.BoolPtr()
 		case constants.FileColumnIndividualIsLactating:
-			isLactating, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			isLactating, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.IsLactating = isLactating
+			i.IsLactating = isLactating.BoolPtr()
 		case constants.FileColumnIndividualIsPregnant:
-			isPregnant, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			isPregnant, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.IsPregnant = isPregnant
+			i.IsPregnant = isPregnant.BoolPtr()
 		case constants.FileColumnIndividualIsSingleParent:
-			isSingleParent, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			isSingleParent, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.IsSingleParent = isSingleParent
+			i.IsSingleParent = isSingleParent.BoolPtr()
 		case constants.FileColumnIndividualIsSeparatedChild:
-			isSeparatedChild, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			isSeparatedChild, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.IsSeparatedChild = isSeparatedChild
+			i.IsSeparatedChild = isSeparatedChild.BoolPtr()
 		case constants.FileColumnIndividualHasCognitiveDisability:
-			hasCognitiveDisability, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			hasCognitiveDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.HasCognitiveDisability = hasCognitiveDisability
+			i.HasCognitiveDisability = hasCognitiveDisability.BoolPtr()
 		case constants.FileColumnIndividualHasCommunicationDisability:
-			hasCommunicationDisability, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			hasCommunicationDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCommunicationDisability, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.HasCommunicationDisability = hasCommunicationDisability
+			i.HasCommunicationDisability = hasCommunicationDisability.BoolPtr()
 		case constants.FileColumnIndividualHasConsentedToRGPD:
-			hasConsentedToRGPD, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			hasConsentedToRGPD, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasConsentedToRGPD, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.HasConsentedToRGPD = hasConsentedToRGPD
+			i.HasConsentedToRGPD = hasConsentedToRGPD.BoolPtr()
 		case constants.FileColumnIndividualHasConsentedToReferral:
-			hasConsentedToReferral, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			hasConsentedToReferral, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasConsentedToReferral, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.HasConsentedToReferral = hasConsentedToReferral
+			i.HasConsentedToReferral = hasConsentedToReferral.BoolPtr()
 		case constants.FileColumnIndividualHasDisability:
-			hasDisability, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			hasDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasDisability, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.HasDisability = hasDisability
+			i.HasDisability = hasDisability.BoolPtr()
 		case constants.FileColumnIndividualHasHearingDisability:
-			hasHearingDisability, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			hasHearingDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasHearingDisability, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.HasHearingDisability = hasHearingDisability
+			i.HasHearingDisability = hasHearingDisability.BoolPtr()
 		case constants.FileColumnIndividualHasMobilityDisability:
-			hasMobilityDisability, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			hasMobilityDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasMobilityDisability, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.HasMobilityDisability = hasMobilityDisability
+			i.HasMobilityDisability = hasMobilityDisability.BoolPtr()
 		case constants.FileColumnIndividualHasSelfCareDisability:
-			hasSelfCareDisability, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			hasSelfCareDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasSelfCareDisability, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.HasSelfCareDisability = hasSelfCareDisability
+			i.HasSelfCareDisability = hasSelfCareDisability.BoolPtr()
 		case constants.FileColumnIndividualHasVisionDisability:
-			hasVisionDisability, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			hasVisionDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasVisionDisability, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.HasVisionDisability = hasVisionDisability
+			i.HasVisionDisability = hasVisionDisability.BoolPtr()
 		case constants.FileColumnIndividualHearingDisabilityLevel:
 			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
 			if err != nil {
@@ -460,35 +460,35 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 		case constants.FileColumnIndividualInternalID:
 			i.InternalID = cols[idx]
 		case constants.FileColumnIndividualIsHeadOfCommunity:
-			isHeadOfCommunity, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			isHeadOfCommunity, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualIsHeadOfCommunity, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.IsHeadOfCommunity = isHeadOfCommunity
+			i.IsHeadOfCommunity = isHeadOfCommunity.BoolPtr()
 		case constants.FileColumnIndividualIsHeadOfHousehold:
-			isHeadOfHousehold, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			isHeadOfHousehold, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualIsHeadOfHousehold, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.IsHeadOfHousehold = isHeadOfHousehold
+			i.IsHeadOfHousehold = isHeadOfHousehold.BoolPtr()
 		case constants.FileColumnIndividualIsFemaleHeadedHousehold:
-			isFemaleHeadedHousehold, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			isFemaleHeadedHousehold, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualIsFemaleHeadedHousehold, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.IsFemaleHeadedHousehold = isFemaleHeadedHousehold
+			i.IsFemaleHeadedHousehold = isFemaleHeadedHousehold.BoolPtr()
 		case constants.FileColumnIndividualIsMinorHeadedHousehold:
-			isMinorHeadedHousehold, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			isMinorHeadedHousehold, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualIsMinorHeadedHousehold, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.IsMinorHeadedHousehold = isMinorHeadedHousehold
+			i.IsMinorHeadedHousehold = isMinorHeadedHousehold.BoolPtr()
 		case constants.FileColumnIndividualIsMinor:
-			isMinor, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			isMinor, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualIsMinor, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.IsMinor = isMinor
+			i.IsMinor = isMinor.BoolPtr()
 		case constants.FileColumnIndividualMobilityDisabilityLevel:
 			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
 			if err != nil {
@@ -547,17 +547,17 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				}
 			}
 		case constants.FileColumnIndividualPrefersToRemainAnonymous:
-			prefersToRemainAnonymous, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			prefersToRemainAnonymous, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualPrefersToRemainAnonymous, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.PrefersToRemainAnonymous = prefersToRemainAnonymous
+			i.PrefersToRemainAnonymous = prefersToRemainAnonymous.BoolPtr()
 		case constants.FileColumnIndividualPresentsProtectionConcerns:
-			presentsProtectionConcerns, err := enumTypes.TranslateOptionalBoolean(cols[idx])
+			presentsProtectionConcerns, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
 				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualPresentsProtectionConcerns, err, enumTypes.AllOptionalBooleans().String()))
 			}
-			i.PresentsProtectionConcerns = presentsProtectionConcerns
+			i.PresentsProtectionConcerns = presentsProtectionConcerns.BoolPtr()
 		case constants.FileColumnIndividualPWDComments:
 			i.PWDComments = cols[idx]
 		case constants.FileColumnIndividualSelfCareDisabilityLevel:

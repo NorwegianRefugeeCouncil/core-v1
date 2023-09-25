@@ -55,24 +55,25 @@ func (g OptionalBoolean) String() string {
 	}
 }
 
-func TranslateOptionalBoolean(str string) (*bool, error) {
-	switch strings.ToLower(str) {
+func (b OptionalBoolean) BoolPtr() *bool {
+	switch b {
 	case
-		string(OptionalBooleanNo), OptionalBooleanNo.String(),
-		string(OptionalBooleanFalse), OptionalBooleanFalse.String(),
-		string(OptionalBoolean0), OptionalBoolean0.String():
-		return pointers.Bool(false), nil
+		OptionalBooleanNo,
+		OptionalBooleanFalse,
+		OptionalBoolean0:
+		return pointers.Bool(false)
 	case
-		string(OptionalBoolean1), OptionalBoolean1.String(),
-		string(OptionalBooleanTrue), OptionalBooleanTrue.String(),
-		string(OptionalBooleanYes), OptionalBooleanYes.String():
-		return pointers.Bool(true), nil
-	case string(OptionalBooleanUnknown), OptionalBooleanUnknown.String():
-		return nil, nil
+		OptionalBoolean1,
+		OptionalBooleanTrue,
+		OptionalBooleanYes:
+		return pointers.Bool(true)
+	case OptionalBooleanUnknown:
+		return nil
 	default:
-		return nil, fmt.Errorf("unknown value for optional boolean: \"%v\"", logutils.Escape(str))
+		return nil
 	}
 }
+
 func ParseOptionalBoolean(str string) (OptionalBoolean, error) {
 	switch strings.ToLower(str) {
 	case
