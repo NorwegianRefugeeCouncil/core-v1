@@ -19,6 +19,7 @@ const (
 	DeduplicationTypeNameFreeField3   DeduplicationTypeName = "FreeField3"
 	DeduplicationTypeNameFreeField4   DeduplicationTypeName = "FreeField4"
 	DeduplicationTypeNameFreeField5   DeduplicationTypeName = "FreeField5"
+	DeduplicationTypeNameBirthdate    DeduplicationTypeName = "Birthdate"
 )
 
 const (
@@ -74,6 +75,15 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 			Condition: LOGICAL_OPERATOR_AND,
 		},
 		Order: 10,
+	},
+	DeduplicationTypeNameBirthdate: {
+		ID:    DeduplicationTypeNameBirthdate,
+		Label: "Birthdate",
+		Config: DeduplicationTypeValue{
+			Columns:   []string{constants.DBColumnIndividualBirthDate},
+			Condition: LOGICAL_OPERATOR_OR,
+		},
+		Order: 11,
 	},
 	DeduplicationTypeNameMothersName: {
 		ID:    DeduplicationTypeNameMothersName,
@@ -152,6 +162,7 @@ var deduplicationTypeNames = map[string]DeduplicationTypeName{
 	"FreeField3":   DeduplicationTypeNameFreeField3,
 	"FreeField4":   DeduplicationTypeNameFreeField4,
 	"FreeField5":   DeduplicationTypeNameFreeField5,
+	"Birthdate":    DeduplicationTypeNameBirthdate,
 }
 
 func GetDeduplicationTypeNames(deduplicationTypes []string) ([]DeduplicationTypeName, error) {
