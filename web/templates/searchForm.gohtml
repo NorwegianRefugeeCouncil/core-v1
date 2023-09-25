@@ -588,6 +588,336 @@
         </div>
 
         <h6 class="mt-2">
+            {{.RequestContext.Locales.Translate "vulnerabilities"}}
+        </h6>
+        <div class="row">
+            <!-- IsChildAtRisk -->
+            <div class="form-group col-3">
+                <label class="form-text">
+                    {{.RequestContext.Locales.Translate "is_child_at_risk"}}
+                </label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value=""
+                               id="IsChildAtRiskAll"
+                               name="is_child_at_risk"
+                               {{if eq .Options.IsChildAtRisk nil }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsChildAtRiskAll">
+                            {{.RequestContext.Locales.Translate "all"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value="true"
+                               id="IsChildAtRiskYes"
+                               name="is_child_at_risk"
+                               {{if .Options.IsIsChildAtRiskSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsChildAtRiskYes">
+                            {{.RequestContext.Locales.Translate "yes"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline mb-3">
+                        <input class="form-check-input" type="radio" value="false"
+                               id="IsChildAtRiskNo"
+                               name="is_child_at_risk"
+                               {{if .Options.IsNotIsChildAtRiskSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsChildAtRiskNo">
+                            {{.RequestContext.Locales.Translate "no"}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- End IsChildAtRisk -->
+            <!-- IsWomanAtRisk -->
+            <div class="form-group col-3">
+                <label class="form-text">
+                    {{.RequestContext.Locales.Translate "is_woman_at_risk"}}
+                </label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value=""
+                               id="IsWomanAtRiskAll"
+                               name="is_woman_at_risk"
+                               {{if eq .Options.IsWomanAtRisk nil }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsWomanAtRiskAll">
+                            {{.RequestContext.Locales.Translate "all"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value="true"
+                               id="IsWomanAtRiskYes"
+                               name="is_woman_at_risk"
+                               {{if .Options.IsIsWomanAtRiskSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsWomanAtRiskYes">
+                            {{.RequestContext.Locales.Translate "yes"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline mb-3">
+                        <input class="form-check-input" type="radio" value="false"
+                               id="IsWomanAtRiskNo"
+                               name="is_woman_at_risk"
+                               {{if .Options.IsNotIsWomanAtRiskSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsWomanAtRiskNo">
+                            {{.RequestContext.Locales.Translate "no"}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- End IsWomanAtRisk -->
+            <!-- IsElderAtRisk -->
+            <div class="form-group col-3">
+                <label class="form-text">
+                    {{.RequestContext.Locales.Translate "is_elder_at_risk"}}
+                </label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value=""
+                               id="IsElderAtRiskAll"
+                               name="is_elder_at_risk"
+                               {{if eq .Options.IsElderAtRisk nil }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsElderAtRiskAll">
+                            {{.RequestContext.Locales.Translate "all"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value="true"
+                               id="IsElderAtRiskYes"
+                               name="is_elder_at_risk"
+                               {{if .Options.IsIsElderAtRiskSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsElderAtRiskYes">
+                            {{.RequestContext.Locales.Translate "yes"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline mb-3">
+                        <input class="form-check-input" type="radio" value="false"
+                               id="IsElderAtRiskNo"
+                               name="is_elder_at_risk"
+                               {{if .Options.IsNotIsElderAtRiskSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsElderAtRiskNo">
+                            {{.RequestContext.Locales.Translate "no"}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- End IsElderAtRisk -->
+            <!-- IsSeparatedChild -->
+            <div class="form-group col-3">
+                <label class="form-text">
+                    {{.RequestContext.Locales.Translate "is_separated_child"}}
+                </label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value=""
+                               id="IsSeparatedChildAll"
+                               name="is_separated_child"
+                               {{if eq .Options.IsSeparatedChild nil }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsSeparatedChildAll">
+                            {{.RequestContext.Locales.Translate "all"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value="true"
+                               id="IsSeparatedChildYes"
+                               name="is_separated_child"
+                               {{if .Options.IsIsSeparatedChildSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsSeparatedChildYes">
+                            {{.RequestContext.Locales.Translate "yes"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline mb-3">
+                        <input class="form-check-input" type="radio" value="false"
+                               id="IsSeparatedChildNo"
+                               name="is_separated_child"
+                               {{if .Options.IsNotIsSeparatedChildSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsSeparatedChildNo">
+                            {{.RequestContext.Locales.Translate "no"}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- End IsSeparatedChild -->
+            <!-- IsSingleParent -->
+            <div class="form-group col-3">
+                <label class="form-text">
+                    {{.RequestContext.Locales.Translate "is_single_parent"}}
+                </label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value=""
+                               id="IsSingleParentAll"
+                               name="is_single_parent"
+                               {{if eq .Options.IsSingleParent nil }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsSingleParentAll">
+                            {{.RequestContext.Locales.Translate "all"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value="true"
+                               id="IsSingleParentYes"
+                               name="is_single_parent"
+                               {{if .Options.IsIsSingleParentSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsSingleParentYes">
+                            {{.RequestContext.Locales.Translate "yes"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline mb-3">
+                        <input class="form-check-input" type="radio" value="false"
+                               id="IsSingleParentNo"
+                               name="is_single_parent"
+                               {{if .Options.IsNotIsSingleParentSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsSingleParentNo">
+                            {{.RequestContext.Locales.Translate "no"}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- End IsSingleParent -->
+            <!-- IsPregnant -->
+            <div class="form-group col-3">
+                <label class="form-text">
+                    {{.RequestContext.Locales.Translate "is_pregnant"}}
+                </label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value=""
+                               id="IsPregnantAll"
+                               name="is_pregnant"
+                               {{if eq .Options.IsPregnant nil }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsPregnantAll">
+                            {{.RequestContext.Locales.Translate "all"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value="true"
+                               id="IsPregnantYes"
+                               name="is_pregnant"
+                               {{if .Options.IsIsPregnantSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsPregnantYes">
+                            {{.RequestContext.Locales.Translate "yes"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline mb-3">
+                        <input class="form-check-input" type="radio" value="false"
+                               id="IsPregnantNo"
+                               name="is_pregnant"
+                               {{if .Options.IsNotIsPregnantSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsPregnantNo">
+                            {{.RequestContext.Locales.Translate "no"}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- End IsPregnant -->
+            <!-- IsLactating -->
+            <div class="form-group col-3">
+                <label class="form-text">
+                    {{.RequestContext.Locales.Translate "is_lactating"}}
+                </label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value=""
+                               id="IsLactatingAll"
+                               name="is_lactating"
+                               {{if eq .Options.IsLactating nil }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsLactatingAll">
+                            {{.RequestContext.Locales.Translate "all"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value="true"
+                               id="IsLactatingYes"
+                               name="is_lactating"
+                               {{if .Options.IsIsLactatingSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsLactatingYes">
+                            {{.RequestContext.Locales.Translate "yes"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline mb-3">
+                        <input class="form-check-input" type="radio" value="false"
+                               id="IsLactatingNo"
+                               name="is_lactating"
+                               {{if .Options.IsNotIsLactatingSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="IsLactatingNo">
+                            {{.RequestContext.Locales.Translate "no"}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- End IsLactating -->
+            <!-- HasMedicalCondition -->
+            <div class="form-group col-3">
+                <label class="form-text">
+                    {{.RequestContext.Locales.Translate "has_medical_condition"}}
+                </label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value=""
+                               id="HasMedicalConditionAll"
+                               name="has_medical_condition"
+                               {{if eq .Options.HasMedicalCondition nil }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="HasMedicalConditionAll">
+                            {{.RequestContext.Locales.Translate "all"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value="true"
+                               id="HasMedicalConditionYes"
+                               name="has_medical_condition"
+                               {{if .Options.IsHasMedicalConditionSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="HasMedicalConditionYes">
+                            {{.RequestContext.Locales.Translate "yes"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline mb-3">
+                        <input class="form-check-input" type="radio" value="false"
+                               id="HasMedicalConditionNo"
+                               name="has_medical_condition"
+                               {{if .Options.IsNotHasMedicalConditionSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="HasMedicalConditionNo">
+                            {{.RequestContext.Locales.Translate "no"}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- End HasMedicalCondition -->
+            <!-- NeedsLegalAndPhysicalProtection -->
+            <div class="form-group col-3">
+                <label class="form-text">
+                    {{.RequestContext.Locales.Translate "needs_legal_and_physical_protection"}}
+                </label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value=""
+                               id="NeedsLegalAndPhysicalProtectionAll"
+                               name="needs_legal_and_physical_protection"
+                               {{if eq .Options.NeedsLegalAndPhysicalProtection nil }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="NeedsLegalAndPhysicalProtectionAll">
+                            {{.RequestContext.Locales.Translate "all"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" value="true"
+                               id="NeedsLegalAndPhysicalProtectionYes"
+                               name="needs_legal_and_physical_protection"
+                               {{if .Options.IsNeedsLegalAndPhysicalProtectionSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="NeedsLegalAndPhysicalProtectionYes">
+                            {{.RequestContext.Locales.Translate "yes"}}
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline mb-3">
+                        <input class="form-check-input" type="radio" value="false"
+                               id="NeedsLegalAndPhysicalProtectionNo"
+                               name="needs_legal_and_physical_protection"
+                               {{if .Options.IsNotNeedsLegalAndPhysicalProtectionSelected }}checked="checked"{{end}}>
+                        <label class="form-check-label" for="NeedsLegalAndPhysicalProtectionNo">
+                            {{.RequestContext.Locales.Translate "no"}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- End NeedsLegalAndPhysicalProtection -->
+        </div>
+
+        <h6 class="mt-2">
             {{.RequestContext.Locales.Translate "protection"}}
         </h6>
         <div class="row">

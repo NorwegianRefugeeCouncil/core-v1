@@ -2,6 +2,7 @@ package enumTypes
 
 import (
 	"encoding/json"
+	"github.com/nrc-no/notcore/internal/utils/pointers"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -149,6 +150,45 @@ func TestParseOptionalBoolean(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := ParseOptionalBoolean(tt.str)
+			if tt.wantErr {
+				assert.Error(t, err)
+				return
+			}
+			assert.NoError(t, err)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestTranslateOptionalBoolean(t *testing.T) {
+	tests := []struct {
+		name    string
+		str     string
+		want    *bool
+		wantErr bool
+	}{
+		{"no", "0", pointers.Bool(false), false},
+		{"no", "NO", pointers.Bool(false), false},
+		{"no", "No", pointers.Bool(false), false},
+		{"no", "no", pointers.Bool(false), false},
+		{"no", "FALSE", pointers.Bool(false), false},
+		{"no", "faLSE", pointers.Bool(false), false},
+		{"no", "False", pointers.Bool(false), false},
+		{"no", "false", pointers.Bool(false), false},
+		{"yes", "1", pointers.Bool(true), false},
+		{"yes", "YES", pointers.Bool(true), false},
+		{"yes", "YeS", pointers.Bool(true), false},
+		{"yes", "Yes", pointers.Bool(true), false},
+		{"yes", "yes", pointers.Bool(true), false},
+		{"yes", "TRUE", pointers.Bool(true), false},
+		{"yes", "True", pointers.Bool(true), false},
+		{"yes", "true", pointers.Bool(true), false},
+		{"", "", nil, false},
+		{"invalid", "invalid", nil, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := TranslateOptionalBoolean(tt.str)
 			if tt.wantErr {
 				assert.Error(t, err)
 				return

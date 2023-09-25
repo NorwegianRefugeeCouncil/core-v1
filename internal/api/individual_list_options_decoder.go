@@ -68,6 +68,15 @@ func (p *listIndividualsOptionsDecoder) parse() error {
 		p.parseIsFemaleHeadedHousehold,
 		p.parseIsMinorHeadedHousehold,
 		p.parseIsMinor,
+		p.parseIsChildAtRisk,
+		p.parseIsWomanAtRisk,
+		p.parseIsElderAtRisk,
+		p.parseIsPregnant,
+		p.parseIsLactating,
+		p.parseIsSeparatedChild,
+		p.parseIsSingleParent,
+		p.parseHasMedicalCondition,
+		p.parseNeedsLegalAndPhysicalProtection,
 		p.parseMobilityDisabilityLevel,
 		p.parseNationality,
 		p.parsePhoneNumber,
@@ -468,6 +477,51 @@ func (p *listIndividualsOptionsDecoder) parseIsMinorHeadedHousehold() error {
 
 func (p *listIndividualsOptionsDecoder) parseIsMinor() (err error) {
 	p.out.IsMinor, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsIsMinor))
+	return err
+}
+
+func (p *listIndividualsOptionsDecoder) parseIsChildAtRisk() (err error) {
+	p.out.IsChildAtRisk, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsIsChildAtRisk))
+	return err
+}
+
+func (p *listIndividualsOptionsDecoder) parseIsWomanAtRisk() (err error) {
+	p.out.IsWomanAtRisk, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsIsWomanAtRisk))
+	return err
+}
+
+func (p *listIndividualsOptionsDecoder) parseIsElderAtRisk() (err error) {
+	p.out.IsElderAtRisk, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsIsElderAtRisk))
+	return err
+}
+
+func (p *listIndividualsOptionsDecoder) parseIsPregnant() (err error) {
+	p.out.IsPregnant, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsIsPregnant))
+	return err
+}
+
+func (p *listIndividualsOptionsDecoder) parseIsLactating() (err error) {
+	p.out.IsLactating, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsIsLactating))
+	return err
+}
+
+func (p *listIndividualsOptionsDecoder) parseIsSeparatedChild() (err error) {
+	p.out.IsSeparatedChild, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsIsSeparatedChild))
+	return err
+}
+
+func (p *listIndividualsOptionsDecoder) parseIsSingleParent() (err error) {
+	p.out.IsSingleParent, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsIsSingleParent))
+	return err
+}
+
+func (p *listIndividualsOptionsDecoder) parseHasMedicalCondition() (err error) {
+	p.out.HasMedicalCondition, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsHasMedicalCondition))
+	return err
+}
+
+func (p *listIndividualsOptionsDecoder) parseNeedsLegalAndPhysicalProtection() (err error) {
+	p.out.NeedsLegalAndPhysicalProtection, err = parseOptionalBool(p.values.Get(constants.FormParamsGetIndividualsNeedsLegalAndPhysicalProtection))
 	return err
 }
 

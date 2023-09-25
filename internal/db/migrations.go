@@ -53,6 +53,7 @@ var migrations = []migration{
 	migrationFromFile("029_add_general_disability_fields"),
 	migrationFromFile("030_update_individual_soft_delete_trigger"),
 	migrationFromFile("031_make_booleans_nullable"),
+	migrationFromFile("032_add_vulnerabilities"),
 }
 
 // Migrate runs the migrations on the database.

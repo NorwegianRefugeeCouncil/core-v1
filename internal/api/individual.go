@@ -149,6 +149,24 @@ type Individual struct {
 	IsMinorHeadedHousehold *bool `json:"isMinorHeadedHousehold" db:"is_minor_headed_household"`
 	// IsMinor is a flag indicating whether the individual is a minor
 	IsMinor *bool `json:"isMinor" db:"is_minor"`
+	// NeedsLegalAndPhysicalProtection is a flag indicating whether the individual needs legal and physical protection
+	NeedsLegalAndPhysicalProtection *bool `json:"needsLegalAndPhysicalProtection" db:"needs_legal_and_physical_protection"`
+	// HasMedicalCondition is a flag indicating whether the individual has a medical condition
+	HasMedicalCondition *bool `json:"hasMedicalCondition" db:"has_medical_condition"`
+	// IsPregnant is a flag indicating whether the individual is pregnant
+	IsPregnant *bool `json:"isPregnant" db:"is_pregnant"`
+	// IsLactating is a flag indicating whether the individual is lactating
+	IsLactating *bool `json:"isLactating" db:"is_lactating"`
+	// IsWomanAtRisk is a flag indicating whether the individual is a woman at risk
+	IsWomanAtRisk *bool `json:"isWomanAtRisk" db:"is_woman_at_risk"`
+	// IsChildAtRisk is a flag indicating whether the individual is a child at risk
+	IsChildAtRisk *bool `json:"isChildAtRisk" db:"is_child_at_risk"`
+	// IsElderAtRisk is a flag indicating whether the individual is an elder at risk
+	IsElderAtRisk *bool `json:"isElderAtRisk" db:"is_elder_at_risk"`
+	// IsSingleParent is a flag indicating whether the individual is a single parent
+	IsSingleParent *bool `json:"isSingleParent" db:"is_single_parent"`
+	// IsSeparatedChild is a flag indicating whether the individual is a separated child
+	IsSeparatedChild *bool `json:"isSeparatedChild" db:"is_separated_child"`
 	// MobilityDisabilityLevel is the mobility disability level of the individual
 	MobilityDisabilityLevel enumTypes.DisabilityLevel `json:"mobilityDisabilityLevel" db:"mobility_disability_level"`
 	// Nationality1 is the primary nationality of the individual
@@ -360,6 +378,24 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.IsMinorHeadedHousehold, nil
 	case constants.DBColumnIndividualIsMinor:
 		return i.IsMinor, nil
+	case constants.DBColumnIndividualIsChildAtRisk:
+		return i.IsChildAtRisk, nil
+	case constants.DBColumnIndividualIsElderAtRisk:
+		return i.IsElderAtRisk, nil
+	case constants.DBColumnIndividualIsWomanAtRisk:
+		return i.IsWomanAtRisk, nil
+	case constants.DBColumnIndividualIsLactating:
+		return i.IsLactating, nil
+	case constants.DBColumnIndividualIsPregnant:
+		return i.IsPregnant, nil
+	case constants.DBColumnIndividualIsSeparatedChild:
+		return i.IsSeparatedChild, nil
+	case constants.DBColumnIndividualIsSingleParent:
+		return i.IsSingleParent, nil
+	case constants.DBColumnIndividualHasMedicalCondition:
+		return i.HasMedicalCondition, nil
+	case constants.DBColumnIndividualNeedsLegalAndPhysicalProtection:
+		return i.NeedsLegalAndPhysicalProtection, nil
 	case constants.DBColumnIndividualNationality1:
 		return i.Nationality1, nil
 	case constants.DBColumnIndividualNationality2:

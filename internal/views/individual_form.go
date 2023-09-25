@@ -55,6 +55,7 @@ func (f *IndividualForm) build() error {
 	fieldBuilders := []builderFuncs{
 		f.buildTitle,
 		f.buildIdField,
+		f.buildPrefersToRemainAnonymous,
 		f.buildFullName,
 		f.buildPreferredName,
 		f.buildFirstName,
@@ -62,11 +63,6 @@ func (f *IndividualForm) build() error {
 		f.buildLastName,
 		f.buildNativeName,
 		f.buildMothersName,
-		f.buildPrefersToRemainAnonymous,
-		f.buildSex,
-		f.buildBirthDate,
-		f.buildAge,
-		f.buildIsMinor,
 		f.buildNationality1,
 		f.buildNationality2,
 		f.buildIdentification1Type,
@@ -79,6 +75,19 @@ func (f *IndividualForm) build() error {
 		f.buildIdentification3Other,
 		f.buildIdentification3Number,
 		f.buildInternalID,
+		f.buildSex,
+		f.buildBirthDate,
+		f.buildAge,
+		f.buildIsMinor,
+		f.buildIsChildAtRisk,
+		f.buildIsElderAtRisk,
+		f.buildIsWomanAtRisk,
+		f.buildIsSingleParent,
+		f.buildIsSeparatedChild,
+		f.buildIsPregnant,
+		f.buildIsLactating,
+		f.buildHasMedicalCondition,
+		f.buildNeedsLegalAndPhysicalProtection,
 		f.buildHouseholdID,
 		f.buildHouseholdSize,
 		f.buildIsHeadOfHousehold,
@@ -364,6 +373,69 @@ func (f *IndividualForm) buildIsMinor() error {
 		Name:        constants.DBColumnIndividualIsMinor,
 		DisplayName: "Is the person a minor",
 	}, f.personalInfoSection, f.individual.IsMinor)
+}
+
+func (f *IndividualForm) buildIsChildAtRisk() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualIsChildAtRisk,
+		DisplayName: "Is the person a child at risk",
+	}, f.personalInfoSection, f.individual.IsChildAtRisk)
+}
+
+func (f *IndividualForm) buildIsWomanAtRisk() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualIsWomanAtRisk,
+		DisplayName: "Is the person a woman at risk",
+	}, f.personalInfoSection, f.individual.IsWomanAtRisk)
+}
+
+func (f *IndividualForm) buildIsElderAtRisk() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualIsElderAtRisk,
+		DisplayName: "Is the person an elder at risk",
+	}, f.personalInfoSection, f.individual.IsElderAtRisk)
+}
+
+func (f *IndividualForm) buildIsSingleParent() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualIsSingleParent,
+		DisplayName: "Is the person a single parent",
+	}, f.personalInfoSection, f.individual.IsSingleParent)
+}
+
+func (f *IndividualForm) buildIsSeparatedChild() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualIsSeparatedChild,
+		DisplayName: "Is the person a separated child",
+	}, f.personalInfoSection, f.individual.IsSeparatedChild)
+}
+
+func (f *IndividualForm) buildIsPregnant() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualIsPregnant,
+		DisplayName: "Is the person pregnant",
+	}, f.personalInfoSection, f.individual.IsPregnant)
+}
+
+func (f *IndividualForm) buildIsLactating() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualIsLactating,
+		DisplayName: "Is the person lactating",
+	}, f.personalInfoSection, f.individual.IsLactating)
+}
+
+func (f *IndividualForm) buildHasMedicalCondition() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualHasMedicalCondition,
+		DisplayName: "Does the person have a medical condition",
+	}, f.personalInfoSection, f.individual.HasMedicalCondition)
+}
+
+func (f *IndividualForm) buildNeedsLegalAndPhysicalProtection() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualNeedsLegalAndPhysicalProtection,
+		DisplayName: "Does the person need legal and physical protection",
+	}, f.personalInfoSection, f.individual.NeedsLegalAndPhysicalProtection)
 }
 
 func (f *IndividualForm) buildNationality1() error {

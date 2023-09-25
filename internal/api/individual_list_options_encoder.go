@@ -75,6 +75,15 @@ func (p *listIndividualsOptionsEncoder) encode() url.Values {
 		p.encodeIsFemaleHeadedHousehold,
 		p.encodeIsMinorHeadedHousehold,
 		p.encodeIsMinor,
+		p.encodeIsChildAtRisk,
+		p.encodeIsWomanAtRisk,
+		p.encodeIsElderAtRisk,
+		p.encodeIsPregnant,
+		p.encodeIsLactating,
+		p.encodeIsSeparatedChild,
+		p.encodeIsSingleParent,
+		p.encodeHasMedicalCondition,
+		p.encodeNeedsLegalAndPhysicalProtection,
 		p.encodeMobilityDisabilityLevel,
 		p.encodeNationality,
 		p.encodePhoneNumber,
@@ -419,6 +428,60 @@ func (p *listIndividualsOptionsEncoder) encodeIsMinorHeadedHousehold() {
 func (p *listIndividualsOptionsEncoder) encodeIsMinor() {
 	if p.values.IsMinor != nil {
 		p.out.Add(constants.FormParamsGetIndividualsIsMinor, strconv.FormatBool(*p.values.IsMinor))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeIsChildAtRisk() {
+	if p.values.IsChildAtRisk != nil {
+		p.out.Add(constants.FormParamsGetIndividualsIsChildAtRisk, strconv.FormatBool(*p.values.IsChildAtRisk))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeIsWomanAtRisk() {
+	if p.values.IsWomanAtRisk != nil {
+		p.out.Add(constants.FormParamsGetIndividualsIsWomanAtRisk, strconv.FormatBool(*p.values.IsWomanAtRisk))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeIsElderAtRisk() {
+	if p.values.IsElderAtRisk != nil {
+		p.out.Add(constants.FormParamsGetIndividualsIsElderAtRisk, strconv.FormatBool(*p.values.IsElderAtRisk))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeIsPregnant() {
+	if p.values.IsPregnant != nil {
+		p.out.Add(constants.FormParamsGetIndividualsIsPregnant, strconv.FormatBool(*p.values.IsPregnant))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeIsLactating() {
+	if p.values.IsLactating != nil {
+		p.out.Add(constants.FormParamsGetIndividualsIsLactating, strconv.FormatBool(*p.values.IsLactating))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeIsSeparatedChild() {
+	if p.values.IsSeparatedChild != nil {
+		p.out.Add(constants.FormParamsGetIndividualsIsSeparatedChild, strconv.FormatBool(*p.values.IsSeparatedChild))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeIsSingleParent() {
+	if p.values.IsSingleParent != nil {
+		p.out.Add(constants.FormParamsGetIndividualsIsSingleParent, strconv.FormatBool(*p.values.IsSingleParent))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeHasMedicalCondition() {
+	if p.values.HasMedicalCondition != nil {
+		p.out.Add(constants.FormParamsGetIndividualsHasMedicalCondition, strconv.FormatBool(*p.values.HasMedicalCondition))
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeNeedsLegalAndPhysicalProtection() {
+	if p.values.NeedsLegalAndPhysicalProtection != nil {
+		p.out.Add(constants.FormParamsGetIndividualsNeedsLegalAndPhysicalProtection, strconv.FormatBool(*p.values.NeedsLegalAndPhysicalProtection))
 	}
 }
 
