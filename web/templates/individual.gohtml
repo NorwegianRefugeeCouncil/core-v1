@@ -68,10 +68,8 @@
         <div class="col-12 col-md-10 col-lg-10 col-xl-8 mx-auto my-4 pe-4 d-flex flex-row align-items-start">
             <h1 class="flex-grow-1 text-truncate pe-2">
                 {{if .Individual.Inactive}}
-                    {{if boolPointerToValue .Individual.Inactive}}
-                        <i class="bi bi-eye-slash-fill"
-                           data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "deactivated_individual"}}"></i>
-                    {{end}}
+                    <i class="bi bi-eye-slash-fill"
+                       data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "deactivated_individual"}}"></i>
                 {{end}}
                 {{.form.Title}}
             </h1>
@@ -127,7 +125,7 @@
                             <button type="submit"
                                     id="deactivateButton"
                                     form="deactivate-individual-form"
-                                    class="btn btn-sm btn-outline-secondary{{if .Individual.Inactive}}{{if eq (boolPointerToValue .Individual.Inactive) true}} disabled{{end}}{{end}}"
+                                    class="btn btn-sm btn-outline-secondary{{if .Individual.Inactive}} disabled{{end}}"
                                     data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "deactivate_individual"}}">
                                 <i class="bi bi-eye-slash-fill"></i>
                                 {{.RequestContext.Locales.Translate "deactivate_individual"}}
@@ -135,7 +133,7 @@
                             <button type="submit"
                                     form="activate-individual-form"
                                     id="activateButton"
-                                    class="btn btn-sm btn-outline-secondary{{if or (not .Individual.Inactive) (eq (boolPointerToValue .Individual.Inactive) false)}} disabled{{end}}"
+                                    class="btn btn-sm btn-outline-secondary{{if not .Individual.Inactive}} disabled{{end}}"
                                     data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "activate_individual"}}">
                                 <i class="bi bi-eye"></i>
                                 {{.RequestContext.Locales.Translate "activate_individual"}}

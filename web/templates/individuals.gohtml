@@ -1131,11 +1131,9 @@
                             data-individual-id="{{.ID}}">
                             <td class="sticky-column" style="width: {{$inactiveWidth}}">
                                 {{if .Inactive}}
-                                    {{if eq (boolPointerToValue .Inactive) true}}
-                                        <div class="">
-                                            <i class="bi bi-eye-slash-fill "></i>
-                                        </div>
-                                    {{end}}
+                                    <div class="">
+                                        <i class="bi bi-eye-slash-fill "></i>
+                                    </div>
                                 {{end}}
                             </td>
 
