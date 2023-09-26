@@ -80,6 +80,16 @@ func randomBool() string {
 	return "false"
 }
 
+func randomOptionalBool() string {
+	r := rand.Intn(100)
+	if r > 66 {
+		return "true"
+	} else if r > 33 {
+		return "false"
+	}
+	return ""
+}
+
 func randomEngagementContext() string {
 	return pick(
 		"",
@@ -187,6 +197,15 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualIsFemaleHeadedHousehold,
 		constants.FileColumnIndividualIsMinorHeadedHousehold,
 		constants.FileColumnIndividualIsMinor,
+		constants.FileColumnIndividualIsChildAtRisk,
+		constants.FileColumnIndividualIsWomanAtRisk,
+		constants.FileColumnIndividualIsElderAtRisk,
+		constants.FileColumnIndividualIsSeparatedChild,
+		constants.FileColumnIndividualIsSingleParent,
+		constants.FileColumnIndividualIsPregnant,
+		constants.FileColumnIndividualIsLactating,
+		constants.FileColumnIndividualHasMedicalCondition,
+		constants.FileColumnIndividualNeedsLegalAndPhysicalProtection,
 		constants.FileColumnIndividualMobilityDisabilityLevel,
 		constants.FileColumnIndividualNationality1,
 		constants.FileColumnIndividualNationality2,
@@ -277,7 +296,7 @@ func Generate(count uint) error {
 		if displacementStatus == "other" {
 			displacementStatusComment = randomText(f)
 		}
-		hasDisability := randomBool()
+		hasDisability := randomOptionalBool()
 		pwdComments := randomText(f)
 
 		var email1 string
@@ -327,14 +346,14 @@ func Generate(count uint) error {
 		}
 
 		sex := randomSex()
-		hasCognitiveDisability := randomBool()
-		hasCommunicationDisability := randomBool()
-		hasConsentedToRgpd := randomBool()
-		hasConsentedToReferral := randomBool()
-		hasHearingDisability := randomBool()
-		hasMobilityDisability := randomBool()
-		hasSelfCareDisability := randomBool()
-		hasVisionDisability := randomBool()
+		hasCognitiveDisability := randomOptionalBool()
+		hasCommunicationDisability := randomOptionalBool()
+		hasConsentedToRgpd := randomOptionalBool()
+		hasConsentedToReferral := randomOptionalBool()
+		hasHearingDisability := randomOptionalBool()
+		hasMobilityDisability := randomOptionalBool()
+		hasSelfCareDisability := randomOptionalBool()
+		hasVisionDisability := randomOptionalBool()
 
 		hearingDisabilityLevel := randomDisabilityLevel()
 		if hasHearingDisability == "false" {
@@ -412,13 +431,22 @@ func Generate(count uint) error {
 
 		isHeadOfHousehold := "false"
 		if householdId != "" {
-			isHeadOfHousehold = randomBool()
+			isHeadOfHousehold = randomOptionalBool()
 		}
 
-		isMinorHeadedHousehold := randomBool()
-		isFemaleHeadedHousehold := randomBool()
+		isMinorHeadedHousehold := randomOptionalBool()
+		isFemaleHeadedHousehold := randomOptionalBool()
 
-		isMinor := randomBool()
+		isMinor := randomOptionalBool()
+		isChildAtRisk := randomOptionalBool()
+		isWomanAtRisk := randomOptionalBool()
+		isElderAtRisk := randomOptionalBool()
+		isSeparatedChild := randomOptionalBool()
+		isSingleParent := randomOptionalBool()
+		isPregnant := randomOptionalBool()
+		isLactating := randomOptionalBool()
+		hasMedicalCondition := randomOptionalBool()
+		needsLegalAndPhysicalProtection := randomOptionalBool()
 
 		nationality1 := randomCountry()
 		nationality2 := randomCountry()
@@ -543,6 +571,15 @@ func Generate(count uint) error {
 			isFemaleHeadedHousehold,
 			isMinorHeadedHousehold,
 			isMinor,
+			isChildAtRisk,
+			isWomanAtRisk,
+			isElderAtRisk,
+			isSeparatedChild,
+			isSingleParent,
+			isPregnant,
+			isLactating,
+			hasMedicalCondition,
+			needsLegalAndPhysicalProtection,
 			mobilityDisabilityLevel,
 			nationality1,
 			nationality2,

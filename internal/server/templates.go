@@ -86,13 +86,9 @@ func parseTemplates(
 				}
 				return dict, nil
 			},
+			"boolPointerToValue": func(i *bool) bool { return *i },
 		})
-		t[name], err = tpl.ParseFS(web.Content,
-			"templates/nav.gohtml",
-			"templates/base.gohtml",
-			"templates/searchForm.gohtml",
-			"templates/error.gohtml",
-			"templates/"+name)
+		t[name], err = tpl.ParseFS(web.Content, "templates/**.gohtml", "templates/"+name)
 		if err != nil {
 			return nil, err
 		}

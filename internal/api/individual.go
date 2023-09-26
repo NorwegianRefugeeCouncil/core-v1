@@ -86,25 +86,25 @@ type Individual struct {
 	// Sex is the sex of the individual
 	Sex enumTypes.Sex `json:"sex" db:"sex"`
 	// HasCognitiveDisability is true if the individual has a cognitive disability
-	HasCognitiveDisability bool `json:"hasCognitiveDisability" db:"has_cognitive_disability"`
+	HasCognitiveDisability *bool `json:"hasCognitiveDisability" db:"has_cognitive_disability"`
 	// HasCommunicationDisability is true if the individual has a communication disability
-	HasCommunicationDisability bool `json:"hasCommunicationDisability" db:"has_communication_disability"`
+	HasCommunicationDisability *bool `json:"hasCommunicationDisability" db:"has_communication_disability"`
 	// HasConsentedToRGPD is a flag indicating whether the individual has consented to the RGPD
 	// (General Data Protection Regulation)
-	HasConsentedToRGPD bool `json:"hasConsentedToRgpd" db:"has_consented_to_rgpd"`
+	HasConsentedToRGPD *bool `json:"hasConsentedToRgpd" db:"has_consented_to_rgpd"`
 	// HasConsentedToReferral is a flag indicating whether the individual has consented to be referred
 	// to internal or external services
-	HasConsentedToReferral bool `json:"hasConsentedToReferral" db:"has_consented_to_referral"`
+	HasConsentedToReferral *bool `json:"hasConsentedToReferral" db:"has_consented_to_referral"`
 	// HasDisability is true if the individual has a disability
-	HasDisability bool `json:"hasDisability" db:"has_disability"`
+	HasDisability *bool `json:"hasDisability" db:"has_disability"`
 	// HasHearingDisability is true if the individual has a hearing disability
-	HasHearingDisability bool `json:"hasHearingDisability" db:"has_hearing_disability"`
+	HasHearingDisability *bool `json:"hasHearingDisability" db:"has_hearing_disability"`
 	// HasMobilityDisability is true if the individual has a mobility disability
-	HasMobilityDisability bool `json:"hasMobilityDisability" db:"has_mobility_disability"`
+	HasMobilityDisability *bool `json:"hasMobilityDisability" db:"has_mobility_disability"`
 	// HasSelfCareDisability is true if the individual has a self care disability
-	HasSelfCareDisability bool `json:"hasSelfCareDisability" db:"has_selfcare_disability"`
+	HasSelfCareDisability *bool `json:"hasSelfCareDisability" db:"has_selfcare_disability"`
 	// HasVisionDisability is true if the individual has a vision disability
-	HasVisionDisability bool `json:"hasVisionDisability" db:"has_vision_disability"`
+	HasVisionDisability *bool `json:"hasVisionDisability" db:"has_vision_disability"`
 	// HearingDisabilityLevel is the hearing disability level of the individual
 	HearingDisabilityLevel enumTypes.DisabilityLevel `json:"hearingDisabilityLevel" db:"hearing_disability_level"`
 	// HouseholdID is the ID of the household the individual belongs to
@@ -140,15 +140,33 @@ type Individual struct {
 	// systems.
 	InternalID string `json:"internalId" db:"internal_id"`
 	// IsHeadOfCommunity is a flag indicating whether the individual is the head of the community
-	IsHeadOfCommunity bool `json:"isHeadOfCommunity" db:"is_head_of_community"`
+	IsHeadOfCommunity *bool `json:"isHeadOfCommunity" db:"is_head_of_community"`
 	// IsHeadOfHousehold is a flag indicating whether the individual is the head of the household
-	IsHeadOfHousehold bool `json:"isHeadOfHousehold" db:"is_head_of_household"`
+	IsHeadOfHousehold *bool `json:"isHeadOfHousehold" db:"is_head_of_household"`
 	// IsFemaleHeadedHousehold is a flag indicating whether the head of the household is female
-	IsFemaleHeadedHousehold bool `json:"isFemaleHeadedHousehold" db:"is_female_headed_household"`
+	IsFemaleHeadedHousehold *bool `json:"isFemaleHeadedHousehold" db:"is_female_headed_household"`
 	// IsMinorHeadedHousehold is a flag indicating whether the head of the household is a minor
-	IsMinorHeadedHousehold bool `json:"isMinorHeadedHousehold" db:"is_minor_headed_household"`
+	IsMinorHeadedHousehold *bool `json:"isMinorHeadedHousehold" db:"is_minor_headed_household"`
 	// IsMinor is a flag indicating whether the individual is a minor
-	IsMinor bool `json:"isMinor" db:"is_minor"`
+	IsMinor *bool `json:"isMinor" db:"is_minor"`
+	// NeedsLegalAndPhysicalProtection is a flag indicating whether the individual needs legal and physical protection
+	NeedsLegalAndPhysicalProtection *bool `json:"needsLegalAndPhysicalProtection" db:"needs_legal_and_physical_protection"`
+	// HasMedicalCondition is a flag indicating whether the individual has a medical condition
+	HasMedicalCondition *bool `json:"hasMedicalCondition" db:"has_medical_condition"`
+	// IsPregnant is a flag indicating whether the individual is pregnant
+	IsPregnant *bool `json:"isPregnant" db:"is_pregnant"`
+	// IsLactating is a flag indicating whether the individual is lactating
+	IsLactating *bool `json:"isLactating" db:"is_lactating"`
+	// IsWomanAtRisk is a flag indicating whether the individual is a woman at risk
+	IsWomanAtRisk *bool `json:"isWomanAtRisk" db:"is_woman_at_risk"`
+	// IsChildAtRisk is a flag indicating whether the individual is a child at risk
+	IsChildAtRisk *bool `json:"isChildAtRisk" db:"is_child_at_risk"`
+	// IsElderAtRisk is a flag indicating whether the individual is an elder at risk
+	IsElderAtRisk *bool `json:"isElderAtRisk" db:"is_elder_at_risk"`
+	// IsSingleParent is a flag indicating whether the individual is a single parent
+	IsSingleParent *bool `json:"isSingleParent" db:"is_single_parent"`
+	// IsSeparatedChild is a flag indicating whether the individual is a separated child
+	IsSeparatedChild *bool `json:"isSeparatedChild" db:"is_separated_child"`
 	// MobilityDisabilityLevel is the mobility disability level of the individual
 	MobilityDisabilityLevel enumTypes.DisabilityLevel `json:"mobilityDisabilityLevel" db:"mobility_disability_level"`
 	// Nationality1 is the primary nationality of the individual
@@ -176,9 +194,9 @@ type Individual struct {
 	// PreferredCommunicationLanguage is the preferred communication language of the individual
 	PreferredCommunicationLanguage string `json:"preferredCommunicationLanguage" db:"preferred_communication_language"`
 	// PrefersToRemainAnonymous is a flag indicating whether the individual prefers to remain anonymous
-	PrefersToRemainAnonymous bool `json:"prefersToRemainAnonymous" db:"prefers_to_remain_anonymous"`
+	PrefersToRemainAnonymous *bool `json:"prefersToRemainAnonymous" db:"prefers_to_remain_anonymous"`
 	// PresentsProtectionConcerns is a flag indicating whether the individual presents protection concerns
-	PresentsProtectionConcerns bool `json:"presentsProtectionConcerns" db:"presents_protection_concerns"`
+	PresentsProtectionConcerns *bool `json:"presentsProtectionConcerns" db:"presents_protection_concerns"`
 	// PWDComments is the comments on the disability status of the individual
 	PWDComments string `json:"pwdComments" db:"pwd_comments"`
 	// SelfCareDisabilityLevel is the self-care disability level of the individual
@@ -360,6 +378,24 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.IsMinorHeadedHousehold, nil
 	case constants.DBColumnIndividualIsMinor:
 		return i.IsMinor, nil
+	case constants.DBColumnIndividualIsChildAtRisk:
+		return i.IsChildAtRisk, nil
+	case constants.DBColumnIndividualIsElderAtRisk:
+		return i.IsElderAtRisk, nil
+	case constants.DBColumnIndividualIsWomanAtRisk:
+		return i.IsWomanAtRisk, nil
+	case constants.DBColumnIndividualIsLactating:
+		return i.IsLactating, nil
+	case constants.DBColumnIndividualIsPregnant:
+		return i.IsPregnant, nil
+	case constants.DBColumnIndividualIsSeparatedChild:
+		return i.IsSeparatedChild, nil
+	case constants.DBColumnIndividualIsSingleParent:
+		return i.IsSingleParent, nil
+	case constants.DBColumnIndividualHasMedicalCondition:
+		return i.HasMedicalCondition, nil
+	case constants.DBColumnIndividualNeedsLegalAndPhysicalProtection:
+		return i.NeedsLegalAndPhysicalProtection, nil
 	case constants.DBColumnIndividualNationality1:
 		return i.Nationality1, nil
 	case constants.DBColumnIndividualNationality2:
@@ -555,7 +591,7 @@ func (i *Individual) Normalize() {
 	i.ServiceCC7 = enumTypes.ServiceCC(trimString(string(i.ServiceCC7)))
 	i.ServiceComments7 = trimString(i.ServiceComments7)
 
-	if i.PrefersToRemainAnonymous {
+	if i.PrefersToRemainAnonymous != nil && *i.PrefersToRemainAnonymous == true {
 		i.FullName = ""
 		i.PreferredName = ""
 		i.FirstName = ""

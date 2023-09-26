@@ -55,6 +55,7 @@ func (f *IndividualForm) build() error {
 	fieldBuilders := []builderFuncs{
 		f.buildTitle,
 		f.buildIdField,
+		f.buildPrefersToRemainAnonymous,
 		f.buildFullName,
 		f.buildPreferredName,
 		f.buildFirstName,
@@ -62,11 +63,6 @@ func (f *IndividualForm) build() error {
 		f.buildLastName,
 		f.buildNativeName,
 		f.buildMothersName,
-		f.buildPrefersToRemainAnonymous,
-		f.buildSex,
-		f.buildBirthDate,
-		f.buildAge,
-		f.buildIsMinor,
 		f.buildNationality1,
 		f.buildNationality2,
 		f.buildIdentification1Type,
@@ -79,6 +75,19 @@ func (f *IndividualForm) build() error {
 		f.buildIdentification3Other,
 		f.buildIdentification3Number,
 		f.buildInternalID,
+		f.buildSex,
+		f.buildBirthDate,
+		f.buildAge,
+		f.buildIsMinor,
+		f.buildIsChildAtRisk,
+		f.buildIsElderAtRisk,
+		f.buildIsWomanAtRisk,
+		f.buildIsSingleParent,
+		f.buildIsSeparatedChild,
+		f.buildIsPregnant,
+		f.buildIsLactating,
+		f.buildHasMedicalCondition,
+		f.buildNeedsLegalAndPhysicalProtection,
 		f.buildHouseholdID,
 		f.buildHouseholdSize,
 		f.buildIsHeadOfHousehold,
@@ -360,10 +369,73 @@ func (f *IndividualForm) buildAge() error {
 }
 
 func (f *IndividualForm) buildIsMinor() error {
-	return buildField(&forms.CheckboxInputField{
+	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualIsMinor,
 		DisplayName: "Is the person a minor",
 	}, f.personalInfoSection, f.individual.IsMinor)
+}
+
+func (f *IndividualForm) buildIsChildAtRisk() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualIsChildAtRisk,
+		DisplayName: "Is the person a child at risk",
+	}, f.personalInfoSection, f.individual.IsChildAtRisk)
+}
+
+func (f *IndividualForm) buildIsWomanAtRisk() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualIsWomanAtRisk,
+		DisplayName: "Is the person a woman at risk",
+	}, f.personalInfoSection, f.individual.IsWomanAtRisk)
+}
+
+func (f *IndividualForm) buildIsElderAtRisk() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualIsElderAtRisk,
+		DisplayName: "Is the person an elder at risk",
+	}, f.personalInfoSection, f.individual.IsElderAtRisk)
+}
+
+func (f *IndividualForm) buildIsSingleParent() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualIsSingleParent,
+		DisplayName: "Is the person a single parent",
+	}, f.personalInfoSection, f.individual.IsSingleParent)
+}
+
+func (f *IndividualForm) buildIsSeparatedChild() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualIsSeparatedChild,
+		DisplayName: "Is the person a separated child",
+	}, f.personalInfoSection, f.individual.IsSeparatedChild)
+}
+
+func (f *IndividualForm) buildIsPregnant() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualIsPregnant,
+		DisplayName: "Is the person pregnant",
+	}, f.personalInfoSection, f.individual.IsPregnant)
+}
+
+func (f *IndividualForm) buildIsLactating() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualIsLactating,
+		DisplayName: "Is the person lactating",
+	}, f.personalInfoSection, f.individual.IsLactating)
+}
+
+func (f *IndividualForm) buildHasMedicalCondition() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualHasMedicalCondition,
+		DisplayName: "Does the person have a medical condition",
+	}, f.personalInfoSection, f.individual.HasMedicalCondition)
+}
+
+func (f *IndividualForm) buildNeedsLegalAndPhysicalProtection() error {
+	return buildField(&forms.OptionalBooleanInputField{
+		Name:        constants.DBColumnIndividualNeedsLegalAndPhysicalProtection,
+		DisplayName: "Does the person need legal and physical protection",
+	}, f.personalInfoSection, f.individual.NeedsLegalAndPhysicalProtection)
 }
 
 func (f *IndividualForm) buildNationality1() error {
@@ -478,21 +550,21 @@ func (f *IndividualForm) buildHouseholdSize() error {
 }
 
 func (f *IndividualForm) buildIsHeadOfHousehold() error {
-	return buildField(&forms.CheckboxInputField{
+	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualIsHeadOfHousehold,
 		DisplayName: "Is the person the head of the household",
 	}, f.personalInfoSection, f.individual.IsHeadOfHousehold)
 }
 
 func (f *IndividualForm) buildIsFemaleHeadedHousehold() error {
-	return buildField(&forms.CheckboxInputField{
+	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualIsFemaleHeadedHousehold,
 		DisplayName: "Is the household headed by a female",
 	}, f.personalInfoSection, f.individual.IsFemaleHeadedHousehold)
 }
 
 func (f *IndividualForm) buildIsMinorHeadedHousehold() error {
-	return buildField(&forms.CheckboxInputField{
+	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualIsMinorHeadedHousehold,
 		DisplayName: "Is the household headed by a minor",
 	}, f.personalInfoSection, f.individual.IsMinorHeadedHousehold)
@@ -513,7 +585,7 @@ func (f *IndividualForm) buildCommunitySize() error {
 }
 
 func (f *IndividualForm) buildIsHeadOfCommunity() error {
-	return buildField(&forms.CheckboxInputField{
+	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualIsHeadOfCommunity,
 		DisplayName: "Is the person the representative of the community",
 	}, f.personalInfoSection, f.individual.IsHeadOfCommunity)
@@ -619,21 +691,21 @@ func (f *IndividualForm) buildContactInstructions() error {
 }
 
 func (f *IndividualForm) buildHasConsentedToRgpd() error {
-	return buildField(&forms.CheckboxInputField{
+	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualHasConsentedToRGPD,
 		DisplayName: "Has the person consented to NRC using their data?",
 	}, f.protectionSection, f.individual.HasConsentedToRGPD)
 }
 
 func (f *IndividualForm) buildHasConsentedToReferral() error {
-	return buildField(&forms.CheckboxInputField{
+	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualHasConsentedToReferral,
 		DisplayName: "Has the person consented to NRC referring them to other service providers within or outside of NRC",
 	}, f.protectionSection, f.individual.HasConsentedToReferral)
 }
 
 func (f *IndividualForm) buildPresentsProtectionConcerns() error {
-	return buildField(&forms.CheckboxInputField{
+	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualPresentsProtectionConcerns,
 		DisplayName: "The person presents protection concerns",
 	}, f.protectionSection, f.individual.PresentsProtectionConcerns)
@@ -658,7 +730,7 @@ func (f *IndividualForm) buildDisplacementStatusComment() error {
 }
 
 func (f *IndividualForm) buildHasVisionDisability() error {
-	return buildField(&forms.CheckboxInputField{
+	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualHasVisionDisability,
 		DisplayName: "Does the person have difficulty seeing, even if wearing glasses?",
 	}, f.disabilitiesSection, f.individual.HasVisionDisability)
@@ -676,7 +748,7 @@ func (f *IndividualForm) buildVisionDisabilityLevel() error {
 }
 
 func (f *IndividualForm) buildHasDisability() error {
-	return buildField(&forms.CheckboxInputField{
+	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualHasDisability,
 		DisplayName: "Does the participant have any disability (PWD)?",
 	}, f.disabilitiesSection, f.individual.HasDisability)
@@ -690,7 +762,7 @@ func (f *IndividualForm) buildPWDComments() error {
 }
 
 func (f *IndividualForm) buildHasHearingDisability() error {
-	return buildField(&forms.CheckboxInputField{
+	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualHasHearingDisability,
 		DisplayName: "Does the person have difficulty hearing, even if using a hearing aid?",
 	}, f.disabilitiesSection, f.individual.HasHearingDisability)
@@ -708,7 +780,7 @@ func (f *IndividualForm) buildHearingDisabilityLevel() error {
 }
 
 func (f *IndividualForm) buildHasMobilityDisability() error {
-	return buildField(&forms.CheckboxInputField{
+	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualHasMobilityDisability,
 		DisplayName: "Do you have difficulty walking or climbing steps?",
 	}, f.disabilitiesSection, f.individual.HasMobilityDisability)
@@ -726,7 +798,7 @@ func (f *IndividualForm) buildMobilityDisabilityLevel() error {
 }
 
 func (f *IndividualForm) buildHasCognitiveDisability() error {
-	return buildField(&forms.CheckboxInputField{
+	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualHasCognitiveDisability,
 		DisplayName: "Does the person have difficulty remembering or concentrating?",
 	}, f.disabilitiesSection, f.individual.HasCognitiveDisability)
@@ -744,7 +816,7 @@ func (f *IndividualForm) buildCognitiveDisabilityLevel() error {
 }
 
 func (f *IndividualForm) buildHasSelfCareDisability() error {
-	return buildField(&forms.CheckboxInputField{
+	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualHasSelfCareDisability,
 		DisplayName: "Does the person have difficulty with self-care such as washing all over or dressing?",
 	}, f.disabilitiesSection, f.individual.HasSelfCareDisability)
@@ -762,7 +834,7 @@ func (f *IndividualForm) buildSelfCareDisabilityLevel() error {
 }
 
 func (f *IndividualForm) buildHasCommunicationDisability() error {
-	return buildField(&forms.CheckboxInputField{
+	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualHasCommunicationDisability,
 		DisplayName: "Using their usual (customary) language, do they have difficulty communicating, for example understanding or being understood?",
 	}, f.disabilitiesSection, f.individual.HasCommunicationDisability)
