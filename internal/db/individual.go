@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/lib/pq"
+	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"strings"
 	"time"
@@ -120,8 +121,24 @@ func buildDeduplicationQuery(selectedCountryID string, individuals []*api.Indivi
 	b.WriteString(" AND ((")
 	b.WriteString(strings.Join(subQueries, fmt.Sprintf(") %s (", deduplicationLogicOperator)))
 	b.WriteString("))")
-
+	idSubQuery, args := getIdSubQuery(individuals, args)
+	b.WriteString(idSubQuery)
 	return b.String(), args
+}
+
+func getIdSubQuery(individuals []*api.Individual, args []interface{}) (string, []interface{}) {
+	subQuery := ""
+	ids := []string{}
+	for _, individual := range individuals {
+		if individual.ID != "" {
+			ids = append(ids, individual.ID)
+		}
+	}
+	if len(ids) > 0 {
+		args = append(args, pq.Array(ids))
+		subQuery = fmt.Sprintf(" AND %s NOT IN (SELECT * FROM UNNEST($%d::uuid[]))", constants.DBColumnIndividualID, len(args))
+	}
+	return subQuery, args
 }
 
 func collectArgs(individuals []*api.Individual, deduplicationTypes []deduplication.DeduplicationTypeName) QueryArgs {
