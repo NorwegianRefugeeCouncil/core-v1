@@ -38,6 +38,49 @@ func TestGetEmptyValuesQuery(t *testing.T) {
 	}
 }
 
+func TestGetIdSubQuery(t *testing.T) {
+	tests := []struct {
+		name        string
+		args        []interface{}
+		individuals []*api.Individual
+		wantString  string
+		wantArgs    []interface{}
+	}{
+		{
+			name:        "add ids",
+			args:        []interface{}{},
+			individuals: individuals,
+			wantString:  " AND id NOT IN (SELECT * FROM UNNEST($1::uuid[]))",
+			wantArgs:    []interface{}{pq.Array([]string{"1", "2", "3"})},
+		},
+		{
+			name: "add ids",
+			args: []interface{}{},
+			individuals: []*api.Individual{
+				{ID: "1", FullName: "FN1 LN1"},
+				{ID: "", FullName: "FN2 LN2"},
+				{FullName: "FN3 LN3"},
+			},
+			wantString: " AND id NOT IN (SELECT * FROM UNNEST($1::uuid[]))",
+			wantArgs:   []interface{}{pq.Array([]string{"1"})},
+		},
+		{
+			name:        "add no ids",
+			args:        []interface{}{},
+			individuals: []*api.Individual{},
+			wantString:  "",
+			wantArgs:    []interface{}{},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			subQuery, args := getIdSubQuery(tt.individuals, tt.args)
+			assert.Equal(t, tt.wantString, subQuery)
+			assert.Equal(t, tt.wantArgs, args)
+		})
+	}
+}
+
 func TestCollectParams(t *testing.T) {
 	tests := []struct {
 		name               string
