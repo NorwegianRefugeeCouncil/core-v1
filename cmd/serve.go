@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/nrc-no/notcore/internal/utils"
 	"net"
 	"os"
 	"os/signal"
 	"strings"
 	"time"
+
+	"github.com/nrc-no/notcore/internal/utils"
 
 	"github.com/nrc-no/notcore/internal/server"
 	"github.com/nrc-no/notcore/internal/server/middleware"
@@ -24,8 +25,6 @@ const (
 	envTokenRefreshURL         = "CORE_TOKEN_REFRESH_URL"
 	envTokenRefreshInterval    = "CORE_TOKEN_REFRESH_INTERVAL"
 	envJwtGlobalAdminGroup     = "CORE_JWT_GLOBAL_ADMIN_GROUP"
-	envJwtCanReadGroup         = "CORE_JWT_CAN_READ_GROUP"
-	envJwtCanWriteGroup        = "CORE_JWT_CAN_WRITE_GROUP"
 	envIdTokenHeaderName       = "CORE_ID_TOKEN_HEADER_NAME"
 	envIdTokenHeaderFormat     = "CORE_ID_TOKEN_HEADER_FORMAT"
 	envAccessTokenHeaderName   = "CORE_ACCESS_TOKEN_HEADER_NAME"
@@ -45,8 +44,6 @@ const (
 	flagTokenRefreshURL         = "token-refresh-url"
 	flagTokenRefreshInterval    = "token-refresh-interval"
 	flagJwtGlobalAdminGroup     = "jwt-global-admin-group"
-	flagJwtCanReadGroup         = "jwt-can-read-group"
-	flagJwtCanWriteGroup        = "jwt-can-write-group"
 	flagIdTokenHeaderName       = "id-token-header-name"
 	flagIdTokenHeaderFormat     = "id-token-header-format"
 	flagAccessTokenHeaderName   = "access-token-header-name"
@@ -91,16 +88,6 @@ var serveCmd = &cobra.Command{
 		jwtGroupGlobalAdmin := getFlagOrEnv(cmd, flagJwtGlobalAdminGroup, envJwtGlobalAdminGroup)
 		if len(jwtGroupGlobalAdmin) == 0 {
 			return fmt.Errorf("--%s is required", flagJwtGlobalAdminGroup)
-		}
-
-		jwtGroupCanRead := getFlagOrEnv(cmd, flagJwtCanReadGroup, envJwtCanReadGroup)
-		if len(jwtGroupCanRead) == 0 {
-			return fmt.Errorf("--%s is required", flagJwtCanReadGroup)
-		}
-
-		jwtGroupCanWrite := getFlagOrEnv(cmd, flagJwtCanWriteGroup, envJwtCanWriteGroup)
-		if len(jwtGroupCanWrite) == 0 {
-			return fmt.Errorf("--%s is required", flagJwtCanWriteGroup)
 		}
 
 		listenAddress := getFlagOrEnv(cmd, flagListenAddress, envListenAddress)
@@ -189,8 +176,6 @@ var serveCmd = &cobra.Command{
 			TokenRefreshInterval: tokenRefreshInterval,
 			JwtGroups: utils.JwtGroupOptions{
 				GlobalAdmin: jwtGroupGlobalAdmin,
-				CanRead:     jwtGroupCanRead,
-				CanWrite:    jwtGroupCanWrite,
 			},
 			IdTokenAuthHeaderName:   idTokenHeaderName,
 			IdTokenAuthHeaderFormat: idTokenHeaderFormat,
@@ -260,20 +245,6 @@ jwt global admin group. Can also be set with %s
 
 This group is used to identify the global admin group. If the user is part of this group, he will be considered 
 as having Global Administrator permissions. 
-`, envJwtGlobalAdminGroup)))
-
-	serveCmd.PersistentFlags().String(flagJwtCanReadGroup, "", cleanDoc(fmt.Sprintf(`
-jwt can read group. Can also be set with %s
-
-This group is used to identify the can read group. If the user is part of this group, he will be considered 
-as having Read permissions. 
-`, envJwtGlobalAdminGroup)))
-
-	serveCmd.PersistentFlags().String(flagJwtCanWriteGroup, "", cleanDoc(fmt.Sprintf(`
-jwt can write group. Can also be set with %s
-
-This group is used to identify the can write group. If the user is part of this group, he will be considered 
-as having Write permissions. 
 `, envJwtGlobalAdminGroup)))
 
 	serveCmd.PersistentFlags().String(flagIdTokenHeaderName, "", cleanDoc(fmt.Sprintf(`

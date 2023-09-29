@@ -2,11 +2,12 @@ package server
 
 import (
 	"fmt"
-	"github.com/nrc-no/notcore/internal/utils"
 	"net"
 	"net/url"
 	"regexp"
 	"time"
+
+	"github.com/nrc-no/notcore/internal/utils"
 
 	"github.com/nrc-no/notcore/internal/server/middleware"
 )
@@ -65,18 +66,6 @@ func (o Options) validate() error {
 	}
 	if !jwtGroupRegex.MatchString(o.JwtGroups.GlobalAdmin) {
 		return fmt.Errorf("JWT group global admin is invalid")
-	}
-	if len(o.JwtGroups.CanRead) == 0 {
-		return fmt.Errorf("JWT group can read is required")
-	}
-	if !jwtGroupRegex.MatchString(o.JwtGroups.CanRead) {
-		return fmt.Errorf("JWT group can read is invalid")
-	}
-	if len(o.JwtGroups.CanWrite) == 0 {
-		return fmt.Errorf("JWT group can write is required")
-	}
-	if !jwtGroupRegex.MatchString(o.JwtGroups.CanWrite) {
-		return fmt.Errorf("JWT group can read is invalid")
 	}
 	if !isValidRFC7230HeaderName(o.IdTokenAuthHeaderName) {
 		return fmt.Errorf("auth header name is invalid")

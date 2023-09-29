@@ -5,28 +5,25 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/nrc-no/notcore/internal/auth"
 	"github.com/nrc-no/notcore/internal/containers"
 )
 
 func TestHasGlobalAdminPermission(t *testing.T) {
 	var parametrizedTests = []struct {
 		isGlobalAdmin  bool
-		canRead        bool
-		canWrite       bool
 		expectedStatus int
 	}{
-		{true, true, true, http.StatusOK},
-		{false, true, true, http.StatusForbidden},
+		{true, http.StatusOK},
+		{false, http.StatusForbidden},
 	}
 
 	for _, tt := range parametrizedTests {
 		t.Run("", func(t *testing.T) {
 			handlerToTest := configureDummyContextMiddleware(
-				containers.NewStringSet(),
+				auth.CountryPermissions{},
 				containers.NewStringSet(),
 				tt.isGlobalAdmin,
-				tt.canRead,
-				tt.canWrite,
 				"",
 			)(
 				HasGlobalAdminPermission()(

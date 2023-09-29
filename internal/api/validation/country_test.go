@@ -1,10 +1,10 @@
 package validation
 
 import (
-	"github.com/nrc-no/notcore/internal/api"
-	"github.com/nrc-no/notcore/internal/containers"
 	"strings"
 	"testing"
+
+	"github.com/nrc-no/notcore/internal/api"
 
 	"github.com/nrc-no/notcore/pkg/api/validation"
 	"github.com/stretchr/testify/assert"
@@ -20,7 +20,8 @@ func ValidCountry() *CountryBuilder {
 			ID:               "id",
 			Code:             "code",
 			Name:             "name",
-			NrcOrganisations: containers.NewStringSet("nrc_organisation"),
+			ReadGroup: 			  "read_group",
+			WriteGroup: 		  "write_group",
 		},
 	}
 }
@@ -39,8 +40,13 @@ func (b *CountryBuilder) WithCode(code string) *CountryBuilder {
 	return b
 }
 
-func (b *CountryBuilder) WithNrcOrganisation(nrcOrganisations containers.StringSet) *CountryBuilder {
-	b.country.NrcOrganisations = nrcOrganisations
+func (b *CountryBuilder) WithReadGroup(readGroup string) *CountryBuilder {
+	b.country.ReadGroup = readGroup
+	return b
+}
+
+func (b *CountryBuilder) WithWriteGroup(writeGroup string) *CountryBuilder {
+	b.country.WriteGroup = writeGroup
 	return b
 }
 
@@ -52,7 +58,8 @@ func (b *CountryBuilder) WithID(id string) *CountryBuilder {
 func TestValidateCountry(t *testing.T) {
 	namePath := validation.NewPath("name")
 	codePath := validation.NewPath("code")
-	nrcOrganisationPath := validation.NewPath("nrcOrganisations")
+	readGroupPath := validation.NewPath("readGroup")
+	writeGroupPath := validation.NewPath("writeGroup")
 	weirdString := string([]byte{0x7f, 0x7f})
 	tests := []struct {
 		name    string
@@ -96,17 +103,41 @@ func TestValidateCountry(t *testing.T) {
 			country: ValidCountry().WithCode(bigstr(256)).Build(),
 			want:    validation.ErrorList{validation.TooLongMaxLength(codePath, bigstr(256), 255)},
 		}, {
-			name:    "missing nrc organisation",
-			country: ValidCountry().WithNrcOrganisation(containers.NewStringSet()).Build(),
-			want:    validation.ErrorList{validation.Required(nrcOrganisationPath, "nrc organisation is required")},
+			name: "missing read group",
+			country: ValidCountry().
+				WithReadGroup("").
+				Build(),
+			want: validation.ErrorList{validation.Required(readGroupPath, "group is required")},
 		}, {
-			name:    "invalid nrc organisation",
-			country: ValidCountry().WithNrcOrganisation(containers.NewStringSet("!!")).Build(),
-			want:    validation.ErrorList{validation.Invalid(nrcOrganisationPath, "!!", "nrc organisation is invalid")},
+			name: "invalid read group",
+			country: ValidCountry().
+				WithReadGroup("!!").
+				Build(),
+			want: validation.ErrorList{validation.Invalid(readGroupPath, "!!", "group is invalid")},
 		}, {
-			name:    "nrc organisation too long",
-			country: ValidCountry().WithNrcOrganisation(containers.NewStringSet(bigstr(256), "shortName")).Build(),
-			want:    validation.ErrorList{validation.TooLongMaxLength(nrcOrganisationPath, bigstr(256), 255)},
+			name: "read group too long",
+			country: ValidCountry().
+				WithReadGroup(bigstr(256)).
+				Build(),
+			want: validation.ErrorList{validation.TooLongMaxLength(readGroupPath, bigstr(256), 255)},
+		}, {
+			name: "missing write group",
+			country: ValidCountry().
+				WithWriteGroup("").
+				Build(),
+			want: validation.ErrorList{validation.Required(writeGroupPath, "group is required")},
+		}, {
+			name: "invalid write group",
+			country: ValidCountry().
+				WithWriteGroup("!!").
+				Build(),
+			want: validation.ErrorList{validation.Invalid(writeGroupPath, "!!", "group is invalid")},
+		}, {
+			name: "write group too long",
+			country: ValidCountry().
+				WithWriteGroup(bigstr(256)).
+				Build(),
+			want: validation.ErrorList{validation.TooLongMaxLength(writeGroupPath, bigstr(256), 255)},
 		},
 	}
 	for _, tt := range tests {

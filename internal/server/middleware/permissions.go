@@ -1,21 +1,20 @@
 package middleware
 
 import (
+	"net/http"
+
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/auth"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 // ParsedPermissions is a helper struct to store the parsed permissions
 type ParsedPermissions struct {
 	IsGlobalAdmin bool
-	CountryIds    containers.StringSet
-	CanRead       bool
-	CanWrite      bool
+	CountryPermissions auth.CountryPermissions 
 }
 
 // permissionMiddleware will compute the user's permissions and add them to the context
@@ -48,8 +47,8 @@ func ComputePermissions(
 				allCountryIDs.Add(c.ID)
 			}
 
-			perms := parsePermissions(allCountries, jwtGroups, session.GetUserGroups(), session.GetNrcOrganisation())
-			authIntf := auth.New(perms.CountryIds, allCountryIDs, perms.IsGlobalAdmin, perms.CanRead, perms.CanWrite)
+			perms := parsePermissions(allCountries, jwtGroups, session.GetUserGroups())
+			authIntf := auth.New(perms.CountryPermissions, allCountryIDs, perms.IsGlobalAdmin)
 			r = r.WithContext(utils.WithAuthContext(ctx, authIntf))
 			h.ServeHTTP(w, r)
 
@@ -59,42 +58,30 @@ func ComputePermissions(
 
 // parsePermissions will retrieve the country ids from the user's groups
 // and determine if the user is a global admin
-func parsePermissions(allCountries []*api.Country, jwtGroups utils.JwtGroupOptions, userGroups []string, nrcOrganisation string) *ParsedPermissions {
-	countryIds := containers.NewStringSet()
+func parsePermissions(allCountries []*api.Country, jwtGroups utils.JwtGroupOptions, userGroups []string) *ParsedPermissions {
+	countryPermissions := auth.CountryPermissions{}
+	userGroupsSet := containers.NewStringSet(userGroups...)
 
 	for _, c := range allCountries {
-		for _, org := range c.NrcOrganisations.Items() {
-			if nrcOrganisation == org {
-				countryIds.Add(c.ID)
+		if userGroupsSet.Contains(c.ReadGroup) {
+			if countryPermissions[c.ID] == nil {
+				countryPermissions[c.ID] = containers.NewSet[auth.Permission]()
 			}
+			countryPermissions[c.ID].Add(auth.PermissionRead)
+		}
+
+		if userGroupsSet.Contains(c.WriteGroup) {
+			if countryPermissions[c.ID] == nil {
+				countryPermissions[c.ID] = containers.NewSet[auth.Permission]()
+			}
+			countryPermissions[c.ID].Add(auth.PermissionWrite)
 		}
 	}
 
-	isGlobalAdmin := false
-	canRead := false
-	canWrite := false
-	for _, group := range userGroups {
-		if group == jwtGroups.GlobalAdmin {
-			isGlobalAdmin = true
-			canWrite = true
-			canRead = true
-			continue
-		}
-		if group == jwtGroups.CanWrite {
-			canWrite = true
-			canRead = true
-			continue
-		}
-		if group == jwtGroups.CanRead {
-			canRead = true
-			continue
-		}
-	}
+	isGlobalAdmin := userGroupsSet.Contains(jwtGroups.GlobalAdmin)
 
 	return &ParsedPermissions{
 		IsGlobalAdmin: isGlobalAdmin,
-		CanWrite:      canWrite,
-		CanRead:       canRead,
-		CountryIds:    countryIds,
+		CountryPermissions: countryPermissions,
 	}
 }

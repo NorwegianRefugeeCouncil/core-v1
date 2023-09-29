@@ -11,12 +11,10 @@ new_country = "New country"
 no_country_found = "No country found"
 
 # country.gohtml
-add_nrc_organisation = "Add another NRC Organisation this country's associated with."
 code = "Code"
 country_details = "Country details"
-new_nrc_organisation = "New NRC organisation"
-nrc_organisation = "NRC organisation"
-nrc_organisation_description = "The NRC Organisation that this country is associated with.  Users that belong to this NRC Organisation will be able to access this country's data."
+read_group = "Read group"
+write_group = "Write group"
 save = "Save"
 
 # individual.gohtml

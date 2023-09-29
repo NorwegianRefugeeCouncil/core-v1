@@ -1,25 +1,41 @@
 package middleware
 
 import (
-	"github.com/nrc-no/notcore/internal/api"
-	"github.com/nrc-no/notcore/internal/utils"
 	"reflect"
 	"testing"
 
+	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/auth"
 	"github.com/nrc-no/notcore/internal/containers"
+	"github.com/nrc-no/notcore/internal/utils"
+)
+
+var (
+	country1 = api.Country{
+		ID:           "1",
+		ReadGroup:    "nrc-country-1-read",
+		WriteGroup:   "nrc-country-1-write",
+	}
+	country2 = api.Country{
+		ID:           "2",
+		ReadGroup:    "nrc-country-2-read",
+		WriteGroup:   "nrc-country-2-write",
+	}
+	country3 = api.Country{
+		ID:           "3",
+		ReadGroup:    "nrc-country-1-read",
+		WriteGroup:   "nrc-country-1-write",
+	}
 )
 
 func Test_parsePermissions(t *testing.T) {
 	jwtGroups := utils.JwtGroupOptions{
 		GlobalAdmin: "global-admin",
-		CanRead:     "can-read",
-		CanWrite:    "can-write",
 	}
 	type args struct {
 		allCountries    []*api.Country
 		jwtGroups       utils.JwtGroupOptions
 		userGroups      []string
-		nrcOrganisation string
 	}
 	tests := []struct {
 		name string
@@ -27,151 +43,349 @@ func Test_parsePermissions(t *testing.T) {
 		want *ParsedPermissions
 	}{
 		{
-			name: "global admin. no countries defined",
+			name: "global admin, no countries defined",
 			args: args{
-				allCountries:    []*api.Country{},
-				jwtGroups:       jwtGroups,
-				userGroups:      []string{"global-admin"},
-				nrcOrganisation: "NRC HO",
+				allCountries: []*api.Country{},
+				jwtGroups: jwtGroups,
+				userGroups: []string{
+					jwtGroups.GlobalAdmin,
+				},
 			},
 			want: &ParsedPermissions{
 				IsGlobalAdmin: true,
-				CanWrite:      true,
-				CanRead:       true,
-				CountryIds:    containers.NewStringSet(),
+				CountryPermissions: auth.CountryPermissions{},
 			},
-		}, {
-			name: "global admin. with countries defined",
+		},
+		{
+			name: "global admin, with countries defined",
 			args: args{
 				allCountries: []*api.Country{
-					{ID: "1", NrcOrganisations: containers.NewStringSet("NRC Country 1")},
+					&country1,
+					&country2,
 				},
-				jwtGroups:       jwtGroups,
-				userGroups:      []string{"global-admin"},
-				nrcOrganisation: "NRC Country 1",
+				jwtGroups: jwtGroups,
+				userGroups: []string{
+					jwtGroups.GlobalAdmin,
+				},
 			},
 			want: &ParsedPermissions{
 				IsGlobalAdmin: true,
-				CanWrite:      true,
-				CanRead:       true,
-				CountryIds:    containers.NewStringSet("1"),
+				CountryPermissions: auth.CountryPermissions{},
 			},
-		}, {
-			name: "country access only, no read or write permissions",
+		},
+		{
+			name: "global admin, with countries defined and read access to one",
 			args: args{
 				allCountries: []*api.Country{
-					{ID: "1", NrcOrganisations: containers.NewStringSet("NRC Country 1")},
-					{ID: "2", NrcOrganisations: containers.NewStringSet("NRC Country 2")},
+					&country1,
+					&country2,
 				},
-				jwtGroups:       jwtGroups,
-				userGroups:      []string{},
-				nrcOrganisation: "NRC Country 1",
+				jwtGroups: jwtGroups,
+				userGroups: []string{
+					jwtGroups.GlobalAdmin,
+					country1.ReadGroup,
+				},
 			},
 			want: &ParsedPermissions{
-				IsGlobalAdmin: false,
-				CanWrite:      false,
-				CanRead:       false,
-				CountryIds:    containers.NewStringSet("1"),
+				IsGlobalAdmin: true,
+				CountryPermissions: auth.CountryPermissions{
+					country1.ID: containers.NewSet(
+						auth.PermissionRead,
+					),
+				},
 			},
-		}, {
-			name: "country access only, multiple countries per nrc organisation, no read or write permissions",
+		},
+		{
+			name: "single country, no access",
 			args: args{
 				allCountries: []*api.Country{
-					{ID: "1", NrcOrganisations: containers.NewStringSet("NRC Country 1", "NRC Country 3")},
+					&country1,
 				},
-				userGroups:      []string{},
-				nrcOrganisation: "NRC Country 3",
+				jwtGroups: jwtGroups,
+				userGroups: []string{},
 			},
 			want: &ParsedPermissions{
 				IsGlobalAdmin: false,
-				CanWrite:      false,
-				CanRead:       false,
-				CountryIds:    containers.NewStringSet("1"),
+				CountryPermissions: auth.CountryPermissions{},
 			},
-		}, {
-			name: "country access only. no countries",
-			args: args{
-				allCountries:    []*api.Country{},
-				jwtGroups:       jwtGroups,
-				userGroups:      []string{},
-				nrcOrganisation: "NRC Country 1",
-			},
-			want: &ParsedPermissions{
-				IsGlobalAdmin: false,
-				CanWrite:      false,
-				CanRead:       false,
-				CountryIds:    containers.NewStringSet(),
-			},
-		}, {
-			name: "country access only. no matching countries",
+		},
+		{
+			name: "single country, read access",
 			args: args{
 				allCountries: []*api.Country{
-					{ID: "1", NrcOrganisations: containers.NewStringSet("NRC Country 1")},
-					{ID: "2", NrcOrganisations: containers.NewStringSet("NRC Country 2")},
+					&country1,
 				},
-				jwtGroups:       jwtGroups,
-				userGroups:      []string{},
-				nrcOrganisation: "NRC Country 3",
+				jwtGroups: jwtGroups,
+				userGroups: []string{
+					country1.ReadGroup,
+				},
 			},
 			want: &ParsedPermissions{
 				IsGlobalAdmin: false,
-				CanWrite:      false,
-				CanRead:       false,
-				CountryIds:    containers.NewStringSet(),
+				CountryPermissions: auth.CountryPermissions{
+					country1.ID: containers.NewSet(
+						auth.PermissionRead,
+					),
+				},
 			},
-		}, {
-			name: "country access only, only read permissions",
+		},
+		{
+			name: "single country, write access",
 			args: args{
 				allCountries: []*api.Country{
-					{ID: "1", NrcOrganisations: containers.NewStringSet("NRC Country 1")},
+					&country1,
 				},
-				jwtGroups:       jwtGroups,
-				userGroups:      []string{"can-read"},
-				nrcOrganisation: "NRC Country 1",
+				jwtGroups: jwtGroups,
+				userGroups: []string{
+					country1.WriteGroup,
+				},
 			},
 			want: &ParsedPermissions{
 				IsGlobalAdmin: false,
-				CanWrite:      false,
-				CanRead:       true,
-				CountryIds:    containers.NewStringSet("1"),
+				CountryPermissions: auth.CountryPermissions{
+					country1.ID: containers.NewSet(
+						auth.PermissionWrite,
+					),
+				},
 			},
-		}, {
-			name: "country access only, only write permissions",
+		},
+		{
+			name: "single country, read and write access",
 			args: args{
 				allCountries: []*api.Country{
-					{ID: "1", NrcOrganisations: containers.NewStringSet("NRC Country 1")},
+					&country1,
 				},
-				jwtGroups:       jwtGroups,
-				userGroups:      []string{"can-write"},
-				nrcOrganisation: "NRC Country 1",
+				jwtGroups: jwtGroups,
+				userGroups: []string{
+					country1.ReadGroup,
+					country1.WriteGroup,
+				},
 			},
 			want: &ParsedPermissions{
 				IsGlobalAdmin: false,
-				CanWrite:      true,
-				CanRead:       true,
-				CountryIds:    containers.NewStringSet("1"),
+				CountryPermissions: auth.CountryPermissions{
+					country1.ID: containers.NewSet(
+						auth.PermissionRead,
+						auth.PermissionWrite,
+					),
+				},
 			},
-		}, {
-			name: "country access only, read and write permissions",
+		},
+		{
+			name: "multiple countries, no access",
 			args: args{
 				allCountries: []*api.Country{
-					{ID: "1", NrcOrganisations: containers.NewStringSet("NRC Country 1")},
+					&country1,
+					&country2,
 				},
-				jwtGroups:       jwtGroups,
-				userGroups:      []string{"can-read", "can-write"},
-				nrcOrganisation: "NRC Country 1",
+				jwtGroups: jwtGroups,
+				userGroups: []string{},
 			},
 			want: &ParsedPermissions{
 				IsGlobalAdmin: false,
-				CanWrite:      true,
-				CanRead:       true,
-				CountryIds:    containers.NewStringSet("1"),
+				CountryPermissions: auth.CountryPermissions{},
+			},
+		},
+		{
+			name: "multiple countries, read access to one",
+			args: args{
+				allCountries: []*api.Country{
+					&country1,
+					&country2,
+				},
+				jwtGroups: jwtGroups,
+				userGroups: []string{
+					country1.ReadGroup,
+				},
+			},
+			want: &ParsedPermissions{
+				IsGlobalAdmin: false,
+				CountryPermissions: auth.CountryPermissions{
+					country1.ID: containers.NewSet(
+						auth.PermissionRead,
+					),
+				},
+			},
+		},
+		{
+			name: "multiple countries, write access to one",
+			args: args{
+				allCountries: []*api.Country{
+					&country1,
+					&country2,
+				},
+				jwtGroups: jwtGroups,
+				userGroups: []string{
+					country1.WriteGroup,
+				},
+			},
+			want: &ParsedPermissions{
+				IsGlobalAdmin: false,
+				CountryPermissions: auth.CountryPermissions{
+					country1.ID: containers.NewSet(
+						auth.PermissionWrite,
+					),
+				},
+			},
+		},
+		{
+			name: "multiple countries, read and write access to one",
+			args: args{
+				allCountries: []*api.Country{
+					&country1,
+					&country2,
+				},
+				jwtGroups: jwtGroups,
+				userGroups: []string{
+					country1.ReadGroup,
+					country1.WriteGroup,
+				},
+			},
+			want: &ParsedPermissions{
+				IsGlobalAdmin: false,
+				CountryPermissions: auth.CountryPermissions{
+					country1.ID: containers.NewSet(
+						auth.PermissionRead,
+						auth.PermissionWrite,
+					),
+				},
+			},
+		},
+		{
+			name: "multiple countries, read access to multiple",
+			args: args{
+				allCountries: []*api.Country{
+					&country1,
+					&country2,
+				},
+				jwtGroups: jwtGroups,
+				userGroups: []string{
+					country1.ReadGroup,
+					country2.ReadGroup,
+				},
+			},
+			want: &ParsedPermissions{
+				IsGlobalAdmin: false,
+				CountryPermissions: auth.CountryPermissions{
+					country1.ID: containers.NewSet(
+						auth.PermissionRead,
+					),
+					country2.ID: containers.NewSet(
+						auth.PermissionRead,
+					),
+				},
+			},
+		},
+		{
+			name: "multiple countries, write access to multiple",
+			args: args{
+				allCountries: []*api.Country{
+					&country1,
+					&country2,
+				},
+				jwtGroups: jwtGroups,
+				userGroups: []string{
+					country1.WriteGroup,
+					country2.WriteGroup,
+				},
+			},
+			want: &ParsedPermissions{
+				IsGlobalAdmin: false,
+				CountryPermissions: auth.CountryPermissions{
+					country1.ID: containers.NewSet(
+						auth.PermissionWrite,
+					),
+					country2.ID: containers.NewSet(
+						auth.PermissionWrite,
+					),
+				},
+			},
+		},
+		{
+			name: "multiple countries, read and write access to multiple",
+			args: args{
+				allCountries: []*api.Country{
+					&country1,
+					&country2,
+				},
+				jwtGroups: jwtGroups,
+				userGroups: []string{
+					country1.ReadGroup,
+					country1.WriteGroup,
+					country2.ReadGroup,
+					country2.WriteGroup,
+				},
+			},
+			want: &ParsedPermissions{
+				IsGlobalAdmin: false,
+				CountryPermissions: auth.CountryPermissions{
+					country1.ID: containers.NewSet(
+						auth.PermissionRead,
+						auth.PermissionWrite,
+					),
+					country2.ID: containers.NewSet(
+						auth.PermissionRead,
+						auth.PermissionWrite,
+					),
+				},
+			},
+		},
+		{
+			name: "multiple countries, read access to one and write access to another",
+			args: args{
+				allCountries: []*api.Country{
+					&country1,
+					&country2,
+				},
+				jwtGroups: jwtGroups,
+				userGroups: []string{
+					country1.ReadGroup,
+					country2.WriteGroup,
+				},
+			},
+			want: &ParsedPermissions{
+				IsGlobalAdmin: false,
+				CountryPermissions: auth.CountryPermissions{
+					country1.ID: containers.NewSet(
+						auth.PermissionRead,
+					),
+					country2.ID: containers.NewSet(
+						auth.PermissionWrite,
+					),
+				},
+			},
+		},
+		{
+			name: "multiple countries, read and write access to one and write access to another",
+			args: args{
+				allCountries: []*api.Country{
+					&country1,
+					&country2,
+				},
+				jwtGroups: jwtGroups,
+				userGroups: []string{
+					country1.ReadGroup,
+					country1.WriteGroup,
+					country2.WriteGroup,
+				},
+			},
+			want: &ParsedPermissions{
+				IsGlobalAdmin: false,
+				CountryPermissions: auth.CountryPermissions{
+					country1.ID: containers.NewSet(
+						auth.PermissionRead,
+						auth.PermissionWrite,
+					),
+					country2.ID: containers.NewSet(
+						auth.PermissionWrite,
+					),
+				},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := parsePermissions(tt.args.allCountries, tt.args.jwtGroups, tt.args.userGroups, tt.args.nrcOrganisation); !reflect.DeepEqual(got, tt.want) {
+			if got := parsePermissions(tt.args.allCountries, tt.args.jwtGroups, tt.args.userGroups); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("parsePermissions() = %v, want %v", got, tt.want)
 			}
 		})

@@ -1,139 +1,98 @@
 [
   {
-    "id": "EASY_TO_REMEMBER_LOGIN__global",
-    "email": "a@gmail.com",
+    "id": "admin",
+    "email": "admin@not.nrc.no",
     "email_verified": true,
-    "name": "Global admin user",
-    "nickname": "gau",
+    "name": "Global admin",
     "password": "123",
     "groups": [
-      "NRC_Core_GlobalAdmin"
-    ],
-    "nrcOrganisation": "NRC Head Office"
+      "App__NRC_CORE__LOCAL__GLOBAL__ADMIN"
+    ]
   },
   {
-    "id": "EASY_TO_REMEMBER_LOGIN__global_admin",
-    "email": "admin@gmail.com",
+    "id": "single_country_write_and_read",
+    "email": "nocountry@not.nrc.no",
     "email_verified": true,
-    "name": "Global admin user",
-    "nickname": "gau",
+    "name": "No Country",
     "password": "123",
     "groups": [
-      "NRC_Core_GlobalAdmin"
-    ],
-    "nrcOrganisation": "NRC Head Office"
+      "App__NRC_CORE__LOCAL__COUNTRY_A__WRITE",
+      "App__NRC_CORE__LOCAL__COUNTRY_A__READ"
+    ]
   },
   {
-    "id": "EASY_TO_REMEMBER_LOGIN__country_r",
-    "email": "r@gmail.com",
+    "id": "single_country_write",
+    "email": "nocountry@not.nrc.no",
     "email_verified": true,
-    "name": "Country user",
-    "nickname": "cu",
+    "name": "No Country",
     "password": "123",
     "groups": [
-      "NRC_Core_CanRead"
-    ],
-    "nrcOrganisation": "NRC Colombia"
+      "App__NRC_CORE__LOCAL__COUNTRY_A__WRITE"
+    ]
   },
   {
-    "id": "EASY_TO_REMEMBER_LOGIN__country_rw",
-    "email": "rw@gmail.com",
+    "id": "single_country_read",
+    "email": "nocountry@not.nrc.no",
     "email_verified": true,
-    "name": "Country user",
-    "nickname": "cu",
+    "name": "No Country",
     "password": "123",
     "groups": [
-      "NRC_Core_CanRead",
-      "NRC_Core_CanWrite"
-    ],
-    "nrcOrganisation": "NRC Colombia"
+      "App__NRC_CORE__LOCAL__COUNTRY_A__READ"
+    ]
   },
   {
-    "id": "EASY_TO_REMEMBER_LOGIN__country_none",
-    "email": "none@gmail.com",
+    "id": "multi_country_write_and_read",
+    "email": "nocountry@not.nrc.no",
     "email_verified": true,
-    "name": "Country user",
-    "nickname": "cu",
+    "name": "No Country",
     "password": "123",
     "groups": [
-    ],
-    "nrcOrganisation": "NRC Colombia"
+      "App__NRC_CORE__LOCAL__COUNTRY_A__WRITE",
+      "App__NRC_CORE__LOCAL__COUNTRY_A__READ",
+      "App__NRC_CORE__LOCAL__COUNTRY_B__WRITE",
+      "App__NRC_CORE__LOCAL__COUNTRY_B__READ"
+    ]
   },
   {
-    "id": "EASY_TO_REMEMBER_LOGIN__country",
-    "email": "b@gmail.com",
+    "id": "multi_country_write",
+    "email": "nocountry@not.nrc.no",
     "email_verified": true,
-    "name": "Country user",
-    "nickname": "cu",
+    "name": "No Country",
     "password": "123",
     "groups": [
-    ],
-    "nrcOrganisation": "NRC Uganda"
+      "App__NRC_CORE__LOCAL__COUNTRY_A__WRITE",
+      "App__NRC_CORE__LOCAL__COUNTRY_B__WRITE"
+    ]
   },
   {
-    "id": "EASY_TO_REMEMBER_LOGIN__none",
-    "email": "c@gmail.com",
+    "id": "multi_country_read",
+    "email": "nocountry@not.nrc.no",
     "email_verified": true,
-    "name": "No country user",
-    "nickname": "ncu",
+    "name": "No Country",
     "password": "123",
-    "groups": [],
-    "nrcOrganisation": "none"
+    "groups": [
+      "App__NRC_CORE__LOCAL__COUNTRY_A__READ",
+      "App__NRC_CORE__LOCAL__COUNTRY_B__READ"
+    ]
   },
   {
-    "id": "SIMPLE_OIDC_USER_HARLEY",
-    "email": "harley@qlik.example",
+    "id": "multi_country_different_write_and_read",
+    "email": "mcdwr@not.nrc.no",
     "email_verified": true,
-    "name": "Harley Kiffe",
-    "nickname": "harley",
-    "password": "Password1!",
+    "name": "Multi country different write and read",
+    "password": "123",
     "groups": [
-      "NRC_Core_GlobalAdmin"
-    ],
-    "nrcOrganisation": "NRC Head Office"
+      "App__NRC_CORE__LOCAL__COUNTRY_A__WRITE",
+      "App__NRC_CORE__LOCAL__COUNTRY_B__READ"
+    ]
   },
   {
-    "id": "SIMPLE_OIDC_USER_BARB",
-    "email": "barb@qlik.example",
+    "id": "no_country",
+    "email": "nc@not.nrc.no",
     "email_verified": true,
-    "name": "Barb Stovin",
-    "nickname": "barb",
-    "password": "Password1!",
+    "name": "No Country",
+    "password": "123",
     "groups": [
-    ],
-    "nrcOrganisation": "NRC Uganda"
-  },
-  {
-    "id": "SIMPLE_OIDC_USER_QUINN",
-    "email": "quinn@qlik.example",
-    "email_verified": true,
-    "name": "Quinn Leeming",
-    "nickname": "quinn",
-    "password": "Password1!",
-    "groups": [
-    ],
-    "nrcOrganisation": "NRC Colombia"
-  },
-  {
-    "id": "SIMPLE_OIDC_USER_SIM",
-    "email": "sim@qlik.example",
-    "email_verified": true,
-    "name": "Sim Cleaton",
-    "nickname": "sim",
-    "password": "Password1!",
-    "groups": [
-    ],
-    "nrcOrganisation": "NRC Colombia"
-  },
-  {
-    "id": "SIMPLE_OIDC_USER_PHILLIE",
-    "email": "phillie@qlik.example",
-    "email_verified": true,
-    "name": "Phillie Smeed",
-    "nickname": "phillie",
-    "password": "Password1!",
-    "groups": [
-    ],
-    "nrcOrganisation": "none"
+    ]
   }
 ]

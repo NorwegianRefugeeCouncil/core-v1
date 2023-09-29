@@ -8,6 +8,8 @@ import (
 
 type Permission uint8
 
+type CountryPermissions map[string]containers.Set[Permission]
+
 const (
 	PermissionGlobalAdmin Permission = iota
 	PermissionWrite
@@ -25,23 +27,22 @@ type Interface interface {
 type permissions struct {
 	// isGlobalAdmin is true if the user has global admin permissions
 	isGlobalAdmin bool
-	// canRead is true if the user has read permissions
-	canRead bool
-	// canWrite is true if the user has write permissions
-	canWrite bool
-	// allowedCountryIDs is a list of country IDs that the user is attached to by their organisation property
+	countryPermissions CountryPermissions
 	allowedCountryIDs containers.StringSet
 	// allCountryIDs is a list of all country IDs
 	allCountryIDs containers.StringSet
 }
 
-func New(allowedCountryIDs, allCountryIDs containers.StringSet, isGlobalAdmin bool, canRead bool, canWrite bool) Interface {
+func New(countryPermissions CountryPermissions, allCountryIDs containers.StringSet, isGlobalAdmin bool) Interface {
+	allowedCountryIDs := containers.NewStringSet()
+  for k := range countryPermissions{
+		allowedCountryIDs.Add(k)
+  }
 	p := permissions{
-		allowedCountryIDs: containers.NewStringSet(allowedCountryIDs.Items()...),
+		countryPermissions: countryPermissions,
+		allowedCountryIDs: allowedCountryIDs,
 		allCountryIDs:     containers.NewStringSet(allCountryIDs.Items()...),
 		isGlobalAdmin:     isGlobalAdmin,
-		canRead:           canRead,
-		canWrite:          canWrite,
 	}
 	return p
 }
@@ -67,15 +68,15 @@ func (p permissions) GetAllowedCountries() containers.StringSet {
 	if p.IsGlobalAdmin() {
 		return containers.NewStringSet(p.allCountryIDs.Items()...)
 	}
-	return containers.NewStringSet(p.allowedCountryIDs.Items()...)
+	return p.allowedCountryIDs 
 }
 
 func (p permissions) HasCountryPermissionWrite(countryID string) bool {
-	return p.isGlobalAdmin || (p.allowedCountryIDs.Contains(countryID) && p.canWrite)
+	return p.IsGlobalAdmin() || p.countryPermissions[countryID].Contains(PermissionWrite)
 }
 
 func (p permissions) HasCountryPermissionRead(countryID string) bool {
-	return p.isGlobalAdmin || (p.allowedCountryIDs.Contains(countryID) && p.canRead)
+	return p.IsGlobalAdmin() || p.countryPermissions[countryID].Contains(PermissionRead) || p.countryPermissions[countryID].Contains(PermissionWrite) 
 }
 
 func (p permissions) IsGlobalAdmin() bool {

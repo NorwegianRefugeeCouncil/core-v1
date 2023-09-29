@@ -16,21 +16,17 @@ func nextHandler() http.HandlerFunc {
 }
 
 func configureDummyContextMiddleware(
-	allowedCountryIDs containers.StringSet,
+	countryPermissions auth.CountryPermissions,
 	allCountryIDs containers.StringSet,
 	isGlobalAdmin bool,
-	canRead bool,
-	canWrite bool,
 	selectedCountryId string,
 ) mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			authIntf := auth.New(
-				allowedCountryIDs,
+				countryPermissions,
 				allCountryIDs,
 				isGlobalAdmin,
-				canRead,
-				canWrite,
 			)
 			r = r.WithContext(
 				utils.WithAuthContext(
