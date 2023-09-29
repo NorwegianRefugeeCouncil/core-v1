@@ -92,16 +92,20 @@
                             <!-- ReadGroup -->
                             <div class="form mb-3">
                                 <label for="ReadGroup" class="form-label">{{.RequestContext.Locales.Translate "read_group"}}</label>
-                                <input id="ReadGroup" name="ReadGroup" class="form-control font-monospace"
-                                       value="{{.Country.ReadGroup}}">
+                                <div class="form-text">
+                                    {{.RequestContext.Locales.Translate "read_group_description"}}
+                                </div>
+                                <input id="ReadGroup" name="ReadGroup" class="form-control font-monospace" value="{{.Country.ReadGroup}}">
                             </div>
                             <!-- End of ReadGroup -->
 
                             <!-- WriteGroup -->
                             <div class="form mb-3">
                                 <label for="WriteGroup" class="form-label">{{.RequestContext.Locales.Translate "write_group"}}</label>
-                                <input id="WriteGroup" name="WriteGroup" class="form-control font-monospace"
-                                       value="{{.Country.WriteGroup}}">
+                                <div class="form-text">
+                                    {{.RequestContext.Locales.Translate "write_group_description"}}
+                                </div>
+                                <input id="WriteGroup" name="WriteGroup" class="form-control font-monospace" value="{{.Country.WriteGroup}}">
                             </div>
                             <!-- End of WriteGroup -->
 
