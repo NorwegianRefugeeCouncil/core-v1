@@ -11,9 +11,9 @@
   },
   {
     "id": "single_country_write_and_read",
-    "email": "nocountry@not.nrc.no",
+    "email": "carw@not.nrc.no",
     "email_verified": true,
-    "name": "No Country",
+    "name": "Single country write and read",
     "password": "123",
     "groups": [
       "App__NRC_CORE__LOCAL__COUNTRY_A__WRITE",
@@ -22,9 +22,9 @@
   },
   {
     "id": "single_country_write",
-    "email": "nocountry@not.nrc.no",
+    "email": "caw@not.nrc.no",
     "email_verified": true,
-    "name": "No Country",
+    "name": "Single country write",
     "password": "123",
     "groups": [
       "App__NRC_CORE__LOCAL__COUNTRY_A__WRITE"
@@ -32,9 +32,9 @@
   },
   {
     "id": "single_country_read",
-    "email": "nocountry@not.nrc.no",
+    "email": "car@not.nrc.no",
     "email_verified": true,
-    "name": "No Country",
+    "name": "Single country read",
     "password": "123",
     "groups": [
       "App__NRC_CORE__LOCAL__COUNTRY_A__READ"
@@ -42,9 +42,9 @@
   },
   {
     "id": "multi_country_write_and_read",
-    "email": "nocountry@not.nrc.no",
+    "email": "carwbrw@not.nrc.no",
     "email_verified": true,
-    "name": "No Country",
+    "name": "Multi country write and read",
     "password": "123",
     "groups": [
       "App__NRC_CORE__LOCAL__COUNTRY_A__WRITE",
@@ -55,9 +55,9 @@
   },
   {
     "id": "multi_country_write",
-    "email": "nocountry@not.nrc.no",
+    "email": "cawbw@not.nrc.no",
     "email_verified": true,
-    "name": "No Country",
+    "name": "Multi country write",
     "password": "123",
     "groups": [
       "App__NRC_CORE__LOCAL__COUNTRY_A__WRITE",
@@ -66,9 +66,9 @@
   },
   {
     "id": "multi_country_read",
-    "email": "nocountry@not.nrc.no",
+    "email": "carbr@not.nrc.no",
     "email_verified": true,
-    "name": "No Country",
+    "name": "Multi country read",
     "password": "123",
     "groups": [
       "App__NRC_CORE__LOCAL__COUNTRY_A__READ",
@@ -77,7 +77,7 @@
   },
   {
     "id": "multi_country_different_write_and_read",
-    "email": "mcdwr@not.nrc.no",
+    "email": "cawbr@not.nrc.no",
     "email_verified": true,
     "name": "Multi country different write and read",
     "password": "123",
