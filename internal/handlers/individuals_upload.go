@@ -83,7 +83,11 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			return
 		}
 
-		df := api.GetDataframeFromRecords(records)
+		deduplicationTypes := r.MultipartForm.Value[formParamDeduplicationType]
+		deduplicationLogicOperator := deduplication.LogicOperator(r.MultipartForm.Value[formParamDeduplicationLogicOperator][0])
+		deduplicationConfig, err := deduplication.GetDeduplicationConfig(deduplicationTypes, deduplicationLogicOperator)
+
+		df := api.GetDataframeFromRecords(records, deduplicationConfig.Types)
 		df = api.AddIndexColumn(df) // adding indices to the records, so we can recognize them in the filtered results
 
 		fileErrors = api.FindDuplicatesInUUIDColumn(df)
@@ -125,19 +129,9 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			return
 		}
 
-		deduplicationTypes := r.MultipartForm.Value[formParamDeduplicationType]
-		deduplicationLogicOperator := r.MultipartForm.Value[formParamDeduplicationLogicOperator]
-
-		if len(deduplicationTypes) > 0 {
-			optionNames, err := deduplication.GetDeduplicationTypeNames(deduplicationTypes)
-			if err != nil {
-				l.Error("invalid deduplication type", zap.String("deduplication_type", strings.Join(deduplicationTypes, ",")), zap.Error(err))
-				renderError(t("error_invalid_deduplication_type", strings.Join(deduplicationTypes, ",")), nil)
-				return
-			}
-
-			duplicatesScores := api.FindDuplicatesInUpload(optionNames, df, deduplicationLogicOperator[0])
-			errors := api.FormatFileDeduplicationErrors(duplicatesScores, optionNames, records, colMapping)
+		if len(deduplicationConfig.Types) > 0 {
+			duplicatesScores := api.FindDuplicatesInUpload(deduplicationConfig, df)
+			errors := api.FormatFileDeduplicationErrors(duplicatesScores, deduplicationConfig, records, colMapping)
 			if len(errors) > 0 {
 				if errors != nil {
 					renderError(t("error_found_duplicates_in_file", len(errors)), errors)
@@ -145,13 +139,13 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 				}
 			}
 
-			duplicatesInDB, err := individualRepo.FindDuplicates(ctx, individuals, optionNames, deduplicationLogicOperator[0])
+			duplicatesInDB, err := individualRepo.FindDuplicates(ctx, df, deduplicationConfig)
 			if err != nil {
 				renderError(t("error_deduplication_fail", err.Error()), nil)
 				return
 			}
 
-			dbDuplicationErrors := api.FormatDbDeduplicationErrors(duplicatesInDB, optionNames, df, deduplicationLogicOperator[0])
+			dbDuplicationErrors := api.FormatDbDeduplicationErrors(duplicatesInDB, df, deduplicationConfig)
 			if len(dbDuplicationErrors) > 0 {
 				renderError(t("error_found_duplicates_in_db", len(dbDuplicationErrors)), dbDuplicationErrors)
 				return

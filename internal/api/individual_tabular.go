@@ -129,7 +129,7 @@ func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual
 	for row, cols := range data[1:] {
 		individual := &Individual{}
 		var rowErrors []error
-		for _, err := range individual.unmarshalTabularData(colMapping, cols) {
+		for _, err := range individual.UnmarshalTabularData(colMapping, cols) {
 			rowErrors = append(rowErrors, err)
 		}
 		if len(rowErrors) > 0 {
@@ -806,7 +806,7 @@ func MarshalIndividualsCSV(w io.Writer, individuals []*Individual) error {
 	}
 
 	for _, individual := range individuals {
-		row, err := individual.marshalTabularData()
+		row, err := individual.MarshalTabularData()
 		if err != nil {
 			return err
 		}
@@ -841,7 +841,7 @@ func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
 	}
 
 	for idx, individual := range individuals {
-		row, err := individual.marshalTabularData()
+		row, err := individual.MarshalTabularData()
 		if err != nil {
 			return err
 		}

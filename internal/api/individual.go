@@ -5,6 +5,8 @@ import (
 	"errors"
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"github.com/nrc-no/notcore/internal/locales"
+	"net/mail"
+	"strconv"
 	"time"
 
 	"github.com/nrc-no/notcore/internal/constants"
@@ -605,4 +607,711 @@ func (i *Individual) Normalize() {
 		i.LastName = ""
 		i.NativeName = ""
 	}
+}
+
+func (i *Individual) MarshalTabularData() ([]string, error) {
+	row := make([]string, len(constants.IndividualFileColumns))
+	for j, col := range constants.IndividualFileColumns {
+		field, ok := constants.IndividualDBToFileMap[col]
+		if !ok {
+			return nil, fmt.Errorf("unknown column %s", col) // should not happen but we never know.
+		}
+		value, err := i.GetFieldValue(field)
+		if err != nil {
+			return nil, err
+		}
+
+		switch v := value.(type) {
+		case bool:
+			row[j] = strconv.FormatBool(v)
+		case *bool:
+			if v != nil {
+				row[j] = strconv.FormatBool(*v)
+			}
+		case enumTypes.OptionalBoolean:
+			row[j] = string(v)
+		case int:
+			row[j] = strconv.Itoa(v)
+		case *int:
+			if v != nil {
+				row[j] = strconv.Itoa(*value.(*int))
+			}
+		case string:
+			if (field == constants.DBColumnIndividualNationality1 || field == constants.DBColumnIndividualNationality2) && v != "" {
+				row[j] = constants.CountriesByCode[v].Name
+				break
+			}
+			if (field == constants.DBColumnIndividualSpokenLanguage1 || field == constants.DBColumnIndividualSpokenLanguage2 || field == constants.DBColumnIndividualSpokenLanguage3 || field == constants.DBColumnIndividualPreferredCommunicationLanguage) && v != "" {
+				row[j] = constants.LanguagesByCode[v].Name
+				break
+			}
+			row[j] = v
+		case time.Time:
+			row[j] = v.Format(getTimeFormatForField(field))
+		case *time.Time:
+			if v != nil {
+				row[j] = v.Format(getTimeFormatForField(field))
+			}
+		case enumTypes.DisabilityLevel:
+			row[j] = string(v)
+		case enumTypes.DisplacementStatus:
+			row[j] = string(v)
+		case enumTypes.ServiceCC:
+			row[j] = string(v)
+		case enumTypes.Sex:
+			row[j] = string(v)
+		default:
+			row[j] = fmt.Sprintf("%v", v)
+		}
+	}
+	return row, nil
+}
+
+func (i *Individual) UnmarshalTabularData(colMapping map[string]int, cols []string) []error {
+	var errors []error
+	if len(cols) <= len(colMapping) {
+		filler := make([]string, len(colMapping)-len(cols))
+		cols = append(cols, filler...)
+	}
+	for field, idx := range colMapping {
+		switch field {
+		case constants.FileColumnIndividualID:
+			i.ID = cols[idx]
+		case constants.FileColumnIndividualInactive:
+			i.Inactive = isExplicitlyTrue(cols[idx])
+		case constants.FileColumnIndividualAddress:
+			i.Address = cols[idx]
+		case constants.FileColumnIndividualAge:
+			age, err := ParseAge(cols[idx])
+			if err != nil {
+				errors = append(errors, err)
+				break
+			}
+			i.Age = age
+		case constants.FileColumnIndividualBirthDate:
+			var birthDate *time.Time
+			birthDate, err := ParseBirthdate(cols[idx])
+			if err != nil {
+				errors = append(errors, err)
+				break
+			}
+			i.BirthDate = birthDate
+		case constants.FileColumnIndividualCognitiveDisabilityLevel:
+			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualCognitiveDisabilityLevel, err, enumTypes.AllDisabilityLevels().String()))
+				break
+			}
+			i.CognitiveDisabilityLevel = disabilityLevel
+		case constants.FileColumnIndividualCollectionAdministrativeArea1:
+			i.CollectionAdministrativeArea1 = cols[idx]
+		case constants.FileColumnIndividualCollectionAdministrativeArea2:
+			i.CollectionAdministrativeArea2 = cols[idx]
+		case constants.FileColumnIndividualCollectionAdministrativeArea3:
+			i.CollectionAdministrativeArea3 = cols[idx]
+		case constants.FileColumnIndividualCollectionOffice:
+			i.CollectionOffice = cols[idx]
+		case constants.FileColumnIndividualCollectionAgentName:
+			i.CollectionAgentName = cols[idx]
+		case constants.FileColumnIndividualCollectionAgentTitle:
+			i.CollectionAgentTitle = cols[idx]
+		case constants.FileColumnIndividualComments:
+			i.Comments = cols[idx]
+		case constants.FileColumnIndividualCollectionTime:
+			var collectionTime *time.Time
+			collectionTime, err := ParseDate(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualCollectionTime, err))
+				break
+			}
+			if collectionTime != nil {
+				i.CollectionTime = *collectionTime
+			}
+		case constants.FileColumnIndividualCommunicationDisabilityLevel:
+			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualCommunicationDisabilityLevel, err, enumTypes.AllDisabilityLevels().String()))
+				break
+			}
+			i.CommunicationDisabilityLevel = disabilityLevel
+		case constants.FileColumnIndividualCommunityID:
+			i.CommunityID = cols[idx]
+		case constants.FileColumnIndividualCommunitySize:
+			var communitySizeStr = cols[idx]
+			if communitySizeStr == "" {
+				continue
+			}
+			communitySize, err := strconv.Atoi(communitySizeStr)
+			if err != nil {
+				errors = append(errors, err)
+				break
+			}
+			i.CommunitySize = &communitySize
+		case constants.FileColumnIndividualDisplacementStatus:
+			displacementStatus, err := enumTypes.ParseDisplacementStatus(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualDisplacementStatus, err, enumTypes.AllDisplacementStatuses().String()))
+				break
+			}
+			i.DisplacementStatus = displacementStatus
+		case constants.FileColumnIndividualDisplacementStatusComment:
+			i.DisplacementStatusComment = cols[idx]
+		case constants.FileColumnIndividualEmail1:
+			if cols[idx] != "" {
+				email, err := mail.ParseAddress(cols[idx])
+				if err != nil {
+					errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualEmail1, err))
+					break
+				}
+				i.Email1 = email.Address
+			}
+		case constants.FileColumnIndividualEmail2:
+			if cols[idx] != "" {
+				email, err := mail.ParseAddress(cols[idx])
+				if err != nil {
+					errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualEmail2, err))
+					break
+				}
+				i.Email2 = email.Address
+			}
+		case constants.FileColumnIndividualEmail3:
+			if cols[idx] != "" {
+				email, err := mail.ParseAddress(cols[idx])
+				if err != nil {
+					errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualEmail3, err))
+					break
+				}
+				i.Email3 = email.Address
+			}
+		case constants.FileColumnIndividualFullName:
+			i.FullName = cols[idx]
+		case constants.FileColumnIndividualFirstName:
+			i.FirstName = cols[idx]
+		case constants.FileColumnIndividualMiddleName:
+			i.MiddleName = cols[idx]
+		case constants.FileColumnIndividualLastName:
+			i.LastName = cols[idx]
+		case constants.FileColumnIndividualNativeName:
+			i.NativeName = cols[idx]
+		case constants.FileColumnIndividualMothersName:
+			i.MothersName = cols[idx]
+		case constants.FileColumnIndividualFreeField1:
+			i.FreeField1 = cols[idx]
+		case constants.FileColumnIndividualFreeField2:
+			i.FreeField2 = cols[idx]
+		case constants.FileColumnIndividualFreeField3:
+			i.FreeField3 = cols[idx]
+		case constants.FileColumnIndividualFreeField4:
+			i.FreeField4 = cols[idx]
+		case constants.FileColumnIndividualFreeField5:
+			i.FreeField5 = cols[idx]
+		case constants.FileColumnIndividualSex:
+			sex, err := enumTypes.ParseSex(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualSex, err, enumTypes.AllSexes().String()))
+				break
+			}
+			i.Sex = sex
+		case constants.FileColumnIndividualHasMedicalCondition:
+			hasMedicalCondition, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.HasMedicalCondition = hasMedicalCondition.BoolPtr()
+		case constants.FileColumnIndividualNeedsLegalAndPhysicalProtection:
+			needsLegalAndPhysicalProtection, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.NeedsLegalAndPhysicalProtection = needsLegalAndPhysicalProtection.BoolPtr()
+		case constants.FileColumnIndividualIsChildAtRisk:
+			isChildAtRisk, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsChildAtRisk = isChildAtRisk.BoolPtr()
+		case constants.FileColumnIndividualIsWomanAtRisk:
+			isWomanAtRisk, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsWomanAtRisk = isWomanAtRisk.BoolPtr()
+		case constants.FileColumnIndividualIsElderAtRisk:
+			isElderAtRisk, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsElderAtRisk = isElderAtRisk.BoolPtr()
+		case constants.FileColumnIndividualIsLactating:
+			isLactating, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsLactating = isLactating.BoolPtr()
+		case constants.FileColumnIndividualIsPregnant:
+			isPregnant, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsPregnant = isPregnant.BoolPtr()
+		case constants.FileColumnIndividualIsSingleParent:
+			isSingleParent, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsSingleParent = isSingleParent.BoolPtr()
+		case constants.FileColumnIndividualIsSeparatedChild:
+			isSeparatedChild, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsSeparatedChild = isSeparatedChild.BoolPtr()
+		case constants.FileColumnIndividualHasCognitiveDisability:
+			hasCognitiveDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.HasCognitiveDisability = hasCognitiveDisability.BoolPtr()
+		case constants.FileColumnIndividualHasCommunicationDisability:
+			hasCommunicationDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasCommunicationDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.HasCommunicationDisability = hasCommunicationDisability.BoolPtr()
+		case constants.FileColumnIndividualHasConsentedToRGPD:
+			hasConsentedToRGPD, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasConsentedToRGPD, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.HasConsentedToRGPD = hasConsentedToRGPD.BoolPtr()
+		case constants.FileColumnIndividualHasConsentedToReferral:
+			hasConsentedToReferral, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasConsentedToReferral, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.HasConsentedToReferral = hasConsentedToReferral.BoolPtr()
+		case constants.FileColumnIndividualHasDisability:
+			hasDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.HasDisability = hasDisability.BoolPtr()
+		case constants.FileColumnIndividualHasHearingDisability:
+			hasHearingDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasHearingDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.HasHearingDisability = hasHearingDisability.BoolPtr()
+		case constants.FileColumnIndividualHasMobilityDisability:
+			hasMobilityDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasMobilityDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.HasMobilityDisability = hasMobilityDisability.BoolPtr()
+		case constants.FileColumnIndividualHasSelfCareDisability:
+			hasSelfCareDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasSelfCareDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.HasSelfCareDisability = hasSelfCareDisability.BoolPtr()
+		case constants.FileColumnIndividualHasVisionDisability:
+			hasVisionDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHasVisionDisability, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.HasVisionDisability = hasVisionDisability.BoolPtr()
+		case constants.FileColumnIndividualHearingDisabilityLevel:
+			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualHearingDisabilityLevel, err, enumTypes.AllDisabilityLevels().String()))
+				break
+			}
+			i.HearingDisabilityLevel = disabilityLevel
+		case constants.FileColumnIndividualHouseholdID:
+			i.HouseholdID = cols[idx]
+		case constants.FileColumnIndividualHouseholdSize:
+			var householdSizeStr = cols[idx]
+			if householdSizeStr == "" {
+				continue
+			}
+			householdSize, err := strconv.Atoi(householdSizeStr)
+			if err != nil {
+				errors = append(errors, err)
+				break
+			}
+			i.HouseholdSize = &householdSize
+		case constants.FileColumnIndividualIdentificationType1:
+			identificationType, err := enumTypes.ParseIdentificationType(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualIdentificationType1, err, enumTypes.AllIdentificationTypes().String()))
+				break
+			}
+			i.IdentificationType1 = identificationType
+		case constants.FileColumnIndividualIdentificationTypeExplanation1:
+			i.IdentificationTypeExplanation1 = cols[idx]
+		case constants.FileColumnIndividualIdentificationNumber1:
+			i.IdentificationNumber1 = cols[idx]
+		case constants.FileColumnIndividualIdentificationType2:
+			identificationType, err := enumTypes.ParseIdentificationType(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualIdentificationType2, err, enumTypes.AllIdentificationTypes().String()))
+				break
+			}
+			i.IdentificationType2 = identificationType
+		case constants.FileColumnIndividualIdentificationTypeExplanation2:
+			i.IdentificationTypeExplanation2 = cols[idx]
+		case constants.FileColumnIndividualIdentificationNumber2:
+			i.IdentificationNumber2 = cols[idx]
+		case constants.FileColumnIndividualIdentificationType3:
+			identificationType, err := enumTypes.ParseIdentificationType(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualIdentificationType3, err, enumTypes.AllIdentificationTypes().String()))
+				break
+			}
+			i.IdentificationType3 = identificationType
+		case constants.FileColumnIndividualIdentificationTypeExplanation3:
+			i.IdentificationTypeExplanation3 = cols[idx]
+		case constants.FileColumnIndividualIdentificationNumber3:
+			i.IdentificationNumber3 = cols[idx]
+		case constants.FileColumnIndividualEngagementContext:
+			engagementContext, err := enumTypes.ParseEngagementContext(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualEngagementContext, err, enumTypes.AllEngagementContexts().String()))
+				break
+			}
+			i.EngagementContext = engagementContext
+		case constants.FileColumnIndividualInternalID:
+			i.InternalID = cols[idx]
+		case constants.FileColumnIndividualIsHeadOfCommunity:
+			isHeadOfCommunity, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualIsHeadOfCommunity, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsHeadOfCommunity = isHeadOfCommunity.BoolPtr()
+		case constants.FileColumnIndividualIsHeadOfHousehold:
+			isHeadOfHousehold, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualIsHeadOfHousehold, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsHeadOfHousehold = isHeadOfHousehold.BoolPtr()
+		case constants.FileColumnIndividualIsFemaleHeadedHousehold:
+			isFemaleHeadedHousehold, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualIsFemaleHeadedHousehold, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsFemaleHeadedHousehold = isFemaleHeadedHousehold.BoolPtr()
+		case constants.FileColumnIndividualIsMinorHeadedHousehold:
+			isMinorHeadedHousehold, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualIsMinorHeadedHousehold, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsMinorHeadedHousehold = isMinorHeadedHousehold.BoolPtr()
+		case constants.FileColumnIndividualIsMinor:
+			isMinor, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualIsMinor, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.IsMinor = isMinor.BoolPtr()
+		case constants.FileColumnIndividualMobilityDisabilityLevel:
+			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualMobilityDisabilityLevel, err, enumTypes.AllDisabilityLevels().String()))
+				break
+			}
+			i.MobilityDisabilityLevel = disabilityLevel
+		case constants.FileColumnIndividualNationality1:
+			if cols[idx] != "" {
+				if c := constants.CountriesByCode[cols[idx]].Name; c != "" {
+					i.Nationality1 = cols[idx]
+				} else if c := constants.CountriesByName[cols[idx]].Name; c != "" {
+					i.Nationality1 = constants.CountriesByName[cols[idx]].ISO3166Alpha3
+				} else {
+					errors = append(errors, fmt.Errorf("%s: invalid value \"%s\". valid values adhere to the ISO3166Alpha3 norm", constants.FileColumnIndividualNationality1, cols[idx]))
+					break
+				}
+			}
+		case constants.FileColumnIndividualNationality2:
+			if cols[idx] != "" {
+				if c := constants.CountriesByCode[cols[idx]].Name; c != "" {
+					i.Nationality2 = cols[idx]
+				} else if c := constants.CountriesByName[cols[idx]].Name; c != "" {
+					i.Nationality2 = constants.CountriesByName[cols[idx]].ISO3166Alpha3
+				} else {
+					errors = append(errors, fmt.Errorf("%s: invalid value \"%s\". valid values adhere to the ISO3166Alpha3 norm", constants.FileColumnIndividualNationality2, cols[idx]))
+					break
+				}
+			}
+		case constants.FileColumnIndividualPhoneNumber1:
+			i.PhoneNumber1 = cols[idx]
+		case constants.FileColumnIndividualPhoneNumber2:
+			i.PhoneNumber2 = cols[idx]
+		case constants.FileColumnIndividualPhoneNumber3:
+			i.PhoneNumber3 = cols[idx]
+		case constants.FileColumnIndividualPreferredContactMethod:
+			preferredContactMethod, err := enumTypes.ParseContactMethod(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualPreferredContactMethod, err, enumTypes.AllContactMethods().String()))
+				break
+			}
+			i.PreferredContactMethod = preferredContactMethod
+		case constants.FileColumnIndividualPreferredContactMethodComments:
+			i.PreferredContactMethodComments = cols[idx]
+		case constants.FileColumnIndividualPreferredName:
+			i.PreferredName = cols[idx]
+		case constants.FileColumnIndividualPreferredCommunicationLanguage:
+			if cols[idx] != "" {
+				if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
+					i.PreferredCommunicationLanguage = cols[idx]
+				} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
+					i.PreferredCommunicationLanguage = constants.LanguagesByName[cols[idx]].ID
+				} else {
+					errors = append(errors, fmt.Errorf("%s: invalid value \"%s\"", constants.FileColumnIndividualPreferredCommunicationLanguage, cols[idx]))
+					break
+				}
+			}
+		case constants.FileColumnIndividualPrefersToRemainAnonymous:
+			prefersToRemainAnonymous, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualPrefersToRemainAnonymous, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.PrefersToRemainAnonymous = prefersToRemainAnonymous.BoolPtr()
+		case constants.FileColumnIndividualPresentsProtectionConcerns:
+			presentsProtectionConcerns, err := enumTypes.ParseOptionalBoolean(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualPresentsProtectionConcerns, err, enumTypes.AllOptionalBooleans().String()))
+			}
+			i.PresentsProtectionConcerns = presentsProtectionConcerns.BoolPtr()
+		case constants.FileColumnIndividualPWDComments:
+			i.PWDComments = cols[idx]
+		case constants.FileColumnIndividualVulnerabilityComments:
+			i.VulnerabilityComments = cols[idx]
+		case constants.FileColumnIndividualSelfCareDisabilityLevel:
+			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualSelfCareDisabilityLevel, err, enumTypes.AllDisabilityLevels().String()))
+				break
+			}
+			i.SelfCareDisabilityLevel = disabilityLevel
+		case constants.FileColumnIndividualSpokenLanguage1:
+			if cols[idx] != "" {
+				if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
+					i.SpokenLanguage1 = cols[idx]
+				} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
+					i.SpokenLanguage1 = constants.LanguagesByName[cols[idx]].ID
+				} else {
+					errors = append(errors, fmt.Errorf("%s: invalid value \"%s\"", constants.FileColumnIndividualSpokenLanguage1, cols[idx]))
+					break
+				}
+			}
+		case constants.FileColumnIndividualSpokenLanguage2:
+			if cols[idx] != "" {
+				if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
+					i.SpokenLanguage2 = cols[idx]
+				} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
+					i.SpokenLanguage2 = constants.LanguagesByName[cols[idx]].ID
+				} else {
+					errors = append(errors, fmt.Errorf("%s: invalid value \"%s\"", constants.FileColumnIndividualSpokenLanguage2, cols[idx]))
+					break
+				}
+			}
+		case constants.FileColumnIndividualSpokenLanguage3:
+			if cols[idx] != "" {
+				if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
+					i.SpokenLanguage3 = cols[idx]
+				} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
+					i.SpokenLanguage3 = constants.LanguagesByName[cols[idx]].ID
+				} else {
+					errors = append(errors, fmt.Errorf("%s: invalid value \"%s\"", constants.FileColumnIndividualSpokenLanguage3, cols[idx]))
+					break
+				}
+			}
+		case constants.FileColumnIndividualVisionDisabilityLevel:
+			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualVisionDisabilityLevel, err, enumTypes.AllDisabilityLevels().String()))
+				break
+			}
+			i.VisionDisabilityLevel = disabilityLevel
+		case constants.FileColumnIndividualServiceCC1:
+			cc, err := enumTypes.ParseServiceCC(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualServiceCC1, err, enumTypes.AllServiceCCs().String()))
+				break
+			}
+			i.ServiceCC1 = cc
+		case constants.FileColumnIndividualServiceRequestedDate1:
+			var date *time.Time
+			date, err := ParseDate(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceRequestedDate1, err))
+				break
+			}
+			i.ServiceRequestedDate1 = date
+		case constants.FileColumnIndividualServiceDeliveredDate1:
+			var date *time.Time
+			date, err := ParseDate(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceDeliveredDate1, err))
+				break
+			}
+			i.ServiceDeliveredDate1 = date
+		case constants.FileColumnIndividualServiceComments1:
+			i.ServiceComments1 = cols[idx]
+		case constants.FileColumnIndividualServiceCC2:
+			cc, err := enumTypes.ParseServiceCC(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualServiceCC2, err, enumTypes.AllServiceCCs().String()))
+				break
+			}
+			i.ServiceCC2 = cc
+		case constants.FileColumnIndividualServiceRequestedDate2:
+			var date *time.Time
+			date, err := ParseDate(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceRequestedDate2, err))
+				break
+			}
+			i.ServiceRequestedDate2 = date
+		case constants.FileColumnIndividualServiceDeliveredDate2:
+			var date *time.Time
+			date, err := ParseDate(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceDeliveredDate2, err))
+				break
+			}
+			i.ServiceDeliveredDate2 = date
+		case constants.FileColumnIndividualServiceComments2:
+			i.ServiceComments2 = cols[idx]
+		case constants.FileColumnIndividualServiceCC3:
+			cc, err := enumTypes.ParseServiceCC(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualServiceCC3, err, enumTypes.AllServiceCCs().String()))
+				break
+			}
+			i.ServiceCC3 = cc
+		case constants.FileColumnIndividualServiceRequestedDate3:
+			var date *time.Time
+			date, err := ParseDate(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceRequestedDate3, err))
+				break
+			}
+			i.ServiceRequestedDate3 = date
+		case constants.FileColumnIndividualServiceDeliveredDate3:
+			var date *time.Time
+			date, err := ParseDate(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceDeliveredDate3, err))
+				break
+			}
+			i.ServiceDeliveredDate3 = date
+		case constants.FileColumnIndividualServiceComments3:
+			i.ServiceComments3 = cols[idx]
+		case constants.FileColumnIndividualServiceCC4:
+			cc, err := enumTypes.ParseServiceCC(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualServiceCC4, err, enumTypes.AllServiceCCs().String()))
+				break
+			}
+			i.ServiceCC4 = cc
+		case constants.FileColumnIndividualServiceRequestedDate4:
+			var date *time.Time
+			date, err := ParseDate(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceRequestedDate4, err))
+				break
+			}
+			i.ServiceRequestedDate4 = date
+		case constants.FileColumnIndividualServiceDeliveredDate4:
+			var date *time.Time
+			date, err := ParseDate(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceDeliveredDate4, err))
+				break
+			}
+			i.ServiceDeliveredDate4 = date
+		case constants.FileColumnIndividualServiceComments4:
+			i.ServiceComments4 = cols[idx]
+		case constants.FileColumnIndividualServiceCC5:
+			cc, err := enumTypes.ParseServiceCC(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualServiceCC5, err, enumTypes.AllServiceCCs().String()))
+				break
+			}
+			i.ServiceCC5 = cc
+		case constants.FileColumnIndividualServiceRequestedDate5:
+			var date *time.Time
+			date, err := ParseDate(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceRequestedDate5, err))
+				break
+			}
+			i.ServiceRequestedDate5 = date
+		case constants.FileColumnIndividualServiceDeliveredDate5:
+			var date *time.Time
+			date, err := ParseDate(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceDeliveredDate5, err))
+				break
+			}
+			i.ServiceDeliveredDate5 = date
+		case constants.FileColumnIndividualServiceComments5:
+			i.ServiceComments5 = cols[idx]
+		case constants.FileColumnIndividualServiceCC6:
+			cc, err := enumTypes.ParseServiceCC(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualServiceCC6, err, enumTypes.AllServiceCCs().String()))
+				break
+			}
+			i.ServiceCC6 = cc
+		case constants.FileColumnIndividualServiceRequestedDate6:
+			var date *time.Time
+			date, err := ParseDate(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceRequestedDate6, err))
+				break
+			}
+			i.ServiceRequestedDate6 = date
+		case constants.FileColumnIndividualServiceDeliveredDate6:
+			var date *time.Time
+			date, err := ParseDate(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceDeliveredDate6, err))
+				break
+			}
+			i.ServiceDeliveredDate6 = date
+		case constants.FileColumnIndividualServiceComments6:
+			i.ServiceComments6 = cols[idx]
+		case constants.FileColumnIndividualServiceCC7:
+			cc, err := enumTypes.ParseServiceCC(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w. valid values are %s", constants.FileColumnIndividualServiceCC7, err, enumTypes.AllServiceCCs().String()))
+				break
+			}
+			i.ServiceCC7 = cc
+		case constants.FileColumnIndividualServiceRequestedDate7:
+			var date *time.Time
+			date, err := ParseDate(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceRequestedDate7, err))
+				break
+			}
+			i.ServiceRequestedDate7 = date
+		case constants.FileColumnIndividualServiceDeliveredDate7:
+			var date *time.Time
+			date, err := ParseDate(cols[idx])
+			if err != nil {
+				errors = append(errors, fmt.Errorf("%s: %w", constants.FileColumnIndividualServiceDeliveredDate7, err))
+				break
+			}
+			i.ServiceDeliveredDate7 = date
+		case constants.FileColumnIndividualServiceComments7:
+			i.ServiceComments7 = cols[idx]
+		}
+	}
+	if len(errors) > 0 {
+		return errors
+	}
+	i.Normalize()
+	return nil
 }

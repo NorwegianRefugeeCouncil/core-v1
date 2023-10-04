@@ -1,221 +1,193 @@
 package db
 
 import (
+	"github.com/go-gota/gota/dataframe"
+	"github.com/go-gota/gota/series"
 	"github.com/lib/pq"
-	"github.com/nrc-no/notcore/internal/api"
-	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/utils/pointers"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"github.com/stretchr/testify/assert"
-	"strings"
 	"testing"
-	"time"
 )
 
-var individuals = []*api.Individual{
-	{ID: "1", IdentificationNumber1: "ID1", IdentificationNumber2: "ID2", IdentificationNumber3: "ID3", FirstName: "FN1", MiddleName: "", LastName: "LN1", NativeName: "NN1", Email1: "123", BirthDate: pointers.Time(time.Date(2006, 2, 1, 0, 0, 0, 0, time.UTC))},
-	{ID: "2", IdentificationNumber1: "ID4", IdentificationNumber2: "ID5", IdentificationNumber3: "ID6", FirstName: "FN2", MiddleName: "MN2", LastName: "LN2", NativeName: "NN2", Email2: "456"},
-	{ID: "3", IdentificationNumber1: "ID7", IdentificationNumber2: "ID8", FirstName: "FN3", LastName: "LN3", MiddleName: "", BirthDate: pointers.Time(time.Date(2007, 4, 9, 0, 0, 0, 0, time.UTC))},
+func TestBuildTableSchemaQuery(t *testing.T) {
+	t.Run("Get Table schema query", func(t *testing.T) {
+		query := buildTableSchemaQuery()
+		assert.Equal(t, query, "SELECT column_name as Name, udt_name as SQLType, column_default as Default FROM information_schema.columns WHERE table_name = 'individual_registrations';")
+	})
 }
 
-func TestGetEmptyValuesQuery(t *testing.T) {
+func TestBuildCreateTempTableQuery(t *testing.T) {
 	tests := []struct {
-		name               string
-		deduplicationTypes []deduplication.DeduplicationTypeName
-		wantValues         string
+		name              string
+		tableName         string
+		schema            []DBColumn
+		columnsOfInterest []string
+		wantQuery         string
 	}{
 		{
-			name:               "type: Names, IDs, Emails",
-			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds, deduplication.DeduplicationTypeNameEmails},
-			wantValues:         "first_name = '' AND middle_name = '' AND last_name = '' AND native_name = '' AND identification_number_1 = '' AND identification_number_2 = '' AND identification_number_3 = '' AND email_1 = '' AND email_2 = '' AND email_3 = ''",
+			"Create temp table query",
+			"table_name",
+			[]DBColumn{
+				{Name: "id", SQLType: "uuid", Default: nil},
+				{Name: "col_text_1", SQLType: "text", Default: pointers.String("")},
+				{Name: "col_text_2", SQLType: "text", Default: nil},
+				{Name: "col_date", SQLType: "timestamp", Default: nil},
+			},
+			[]string{"col_text_1", "col_date"},
+			"CREATE TEMPORARY TABLE table_name (col_text_1 text,col_date timestamp) ON COMMIT DROP;",
+		},
+		{
+			"Create temp table query",
+			"table_name",
+			[]DBColumn{},
+			[]string{"col_text_1", "col_date"},
+			"CREATE TEMPORARY TABLE table_name () ON COMMIT DROP;",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			params := getEmptyValuesQuery(tt.deduplicationTypes)
-			assert.Equal(t, tt.wantValues, params)
+			query := buildCreateTempTableQuery(tt.tableName, tt.schema, tt.columnsOfInterest)
+			assert.Equal(t, tt.wantQuery, query)
 		})
 	}
 }
 
-func TestGetIdSubQuery(t *testing.T) {
+func TestBuildInsertIndividualsQuery(t *testing.T) {
 	tests := []struct {
-		name        string
-		args        []interface{}
-		individuals []*api.Individual
-		wantString  string
-		wantArgs    []interface{}
+		name              string
+		tableName         string
+		schema            []DBColumn
+		df                dataframe.DataFrame
+		columnsOfInterest []string
+		uploadHasIdColumn bool
+		wantQuery         string
+		wantArgs          []interface{}
 	}{
 		{
-			name:        "add ids",
-			args:        []interface{}{},
-			individuals: individuals,
-			wantString:  " AND id NOT IN (SELECT * FROM UNNEST($1::uuid[]))",
-			wantArgs:    []interface{}{pq.Array([]string{"1", "2", "3"})},
-		},
-		{
-			name: "add ids",
-			args: []interface{}{},
-			individuals: []*api.Individual{
-				{ID: "1", FullName: "FN1 LN1"},
-				{ID: "", FullName: "FN2 LN2"},
-				{FullName: "FN3 LN3"},
+			"Insert individuals query",
+			"table_name",
+			[]DBColumn{
+				{Name: "id", SQLType: "uuid", Default: nil},
+				{Name: "col_text_1", SQLType: "text", Default: pointers.String("")},
+				{Name: "col_text_2", SQLType: "text", Default: nil},
+				{Name: "col_date", SQLType: "timestamp", Default: nil},
 			},
-			wantString: " AND id NOT IN (SELECT * FROM UNNEST($1::uuid[]))",
-			wantArgs:   []interface{}{pq.Array([]string{"1"})},
+			dataframe.New(
+				series.New([]string{"b", "a"}, series.String, "col_text_1"),
+				series.New([]string{"1", ""}, series.String, "col_text_2"),
+				series.New([]string{"", "3746979"}, series.String, "col_date"),
+			),
+			[]string{"col_text_1", "col_date"},
+			false,
+			"INSERT INTO table_name SELECT * FROM UNNEST($1::text[],$2::timestamp[]);",
+			[]interface{}{pq.Array([]string{"b", "a"}), pq.Array([]string{"", "3746979"})},
 		},
 		{
-			name:        "add no ids",
-			args:        []interface{}{},
-			individuals: []*api.Individual{},
-			wantString:  "",
-			wantArgs:    []interface{}{},
+			"Insert individuals query",
+			"table_name",
+			[]DBColumn{
+				{Name: "id", SQLType: "uuid", Default: nil},
+				{Name: "col_text_1", SQLType: "text", Default: pointers.String("")},
+				{Name: "col_text_2", SQLType: "text", Default: nil},
+				{Name: "col_date", SQLType: "timestamp", Default: nil},
+			},
+			dataframe.New(
+				series.New([]string{"id1", "id2"}, series.String, "id"),
+				series.New([]string{"b", "a"}, series.String, "col_text_1"),
+				series.New([]string{"1", ""}, series.String, "col_text_2"),
+				series.New([]string{"", "3746979"}, series.String, "col_date"),
+			),
+			[]string{"other", "no"},
+			true,
+			"INSERT INTO table_name SELECT * FROM UNNEST($1::uuid[]);",
+			[]interface{}{pq.Array([]string{"id1", "id2"})},
+		},
+		{
+			"Insert individuals query",
+			"table_name",
+			[]DBColumn{
+				{Name: "id", SQLType: "uuid", Default: nil},
+				{Name: "col_text_1", SQLType: "text", Default: pointers.String("")},
+				{Name: "col_text_2", SQLType: "text", Default: nil},
+				{Name: "col_date", SQLType: "timestamp", Default: nil},
+			},
+			dataframe.New(
+				series.New([]string{"id1", "id2"}, series.String, "id"),
+				series.New([]string{"b", "a"}, series.String, "lri"),
+				series.New([]string{"1", ""}, series.String, "col_text_2"),
+				series.New([]string{"", "3746979"}, series.String, "col_date"),
+			),
+			[]string{"col_text_1", "no"},
+			true,
+			"INSERT INTO table_name SELECT * FROM UNNEST($1::uuid[],$2::text[]);",
+			[]interface{}{pq.Array([]string{"id1", "id2"}), pq.Array([]interface{}{nil, nil})},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			subQuery, args := getIdSubQuery(tt.individuals, tt.args)
-			assert.Equal(t, tt.wantString, subQuery)
+			query, args := buildInsertIndividualsQuery(tt.tableName, tt.schema, tt.df, tt.columnsOfInterest, tt.uploadHasIdColumn)
 			assert.Equal(t, tt.wantArgs, args)
+			assert.Equal(t, tt.wantQuery, query)
 		})
 	}
 }
 
-func TestCollectParams(t *testing.T) {
+func TestBuildDeduplicationQuery(t *testing.T) {
 	tests := []struct {
-		name               string
-		deduplicationTypes []deduplication.DeduplicationTypeName
-		wantValues         QueryArgs
+		name              string
+		tableName         string
+		config            deduplication.DeduplicationConfig
+		columnsOfInterest []string
+		uploadHasIdColumn bool
+		wantQuery         string
 	}{
 		{
-			name:               "type: Names, IDs, Birthdate, Fullname",
-			deduplicationTypes: []deduplication.DeduplicationTypeName{deduplication.DeduplicationTypeNameNames, deduplication.DeduplicationTypeNameIds, deduplication.DeduplicationTypeNameBirthdate, deduplication.DeduplicationTypeNameFullName},
-			wantValues: QueryArgs{
-				And: AndTypeArgsGroups{
-					"Names": individuals,
-				},
-				Or: OrTypeArgsGroups{
-					"Ids": TypedColumnArgsGroups{
-						ColumnArgsGroups{
-							"identification_number_1": {"ID1", "ID4", "ID7", "ID2", "ID5", "ID8", "ID3", "ID6"},
-							"identification_number_2": {"ID1", "ID4", "ID7", "ID2", "ID5", "ID8", "ID3", "ID6"},
-							"identification_number_3": {"ID1", "ID4", "ID7", "ID2", "ID5", "ID8", "ID3", "ID6"},
-						},
-						"text",
-					},
-
-					"Birthdate": TypedColumnArgsGroups{
-						ColumnArgsGroups{
-							"birth_date": {"2006-02-01", "2007-04-09"},
-						},
-						"date",
-					},
+			"Deduplication query",
+			"table_name",
+			deduplication.DeduplicationConfig{
+				deduplication.LOGICAL_OPERATOR_AND,
+				[]deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
 				},
 			},
+			[]string{"col_text_1", "col_date"},
+			false,
+			"SELECT DISTINCT ir.col_text_1,ir.col_date,ir.id FROM individual_registrations ir CROSS JOIN table_name ti WHERE ir.country_id = $1 AND ir.deleted_at IS NULL AND (ti.full_name = ir.full_name) AND ir.deleted_at IS NULL;",
+		},
+		{
+			"Deduplication query",
+			"table_name",
+			deduplication.DeduplicationConfig{
+				deduplication.LOGICAL_OPERATOR_OR,
+				[]deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameIds],
+				},
+			},
+			[]string{"col_text_1", "col_date"},
+			true,
+			"SELECT DISTINCT ir.col_text_1,ir.col_date,ir.id FROM individual_registrations ir CROSS JOIN table_name ti WHERE ir.country_id = $1 AND ir.deleted_at IS NULL AND (ti.full_name = ir.full_name) OR (ti.identification_number_1 = ir.identification_number_1 OR ti.identification_number_2 = ir.identification_number_2 OR ti.identification_number_3 = ir.identification_number_3) AND ti.id::uuid NOT IN (SELECT id FROM individual_registrations) AND ir.deleted_at IS NULL;",
+		},
+		{
+			"Deduplication query",
+			"table_name",
+			deduplication.DeduplicationConfig{
+				deduplication.LOGICAL_OPERATOR_OR,
+				[]deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameIds],
+				},
+			},
+			[]string{},
+			true,
+			"SELECT DISTINCT ir.id FROM individual_registrations ir CROSS JOIN table_name ti WHERE ir.country_id = $1 AND ir.deleted_at IS NULL AND (ti.full_name = ir.full_name) OR (ti.identification_number_1 = ir.identification_number_1 OR ti.identification_number_2 = ir.identification_number_2 OR ti.identification_number_3 = ir.identification_number_3) AND ti.id::uuid NOT IN (SELECT id FROM individual_registrations) AND ir.deleted_at IS NULL;",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			params := collectArgs(individuals, tt.deduplicationTypes)
-			assert.Equal(t, tt.wantValues, params)
-		})
-	}
-}
-
-func TestFillOrQueryWithParameters(t *testing.T) {
-	tests := []struct {
-		name             string
-		queryBuilder     *strings.Builder
-		values           TypedColumnArgsGroups
-		wantArgs         []interface{}
-		wantedQueryParts containers.Set[string]
-	}{
-		{
-			name:         "type: IDs",
-			queryBuilder: &strings.Builder{},
-			values: TypedColumnArgsGroups{
-				ColumnArgsGroups{
-					"identification_number_1": {"ID1", "ID4", "ID7", "ID2", "ID5", "ID8", "ID3", "ID6"},
-					"identification_number_2": {"ID1", "ID4", "ID7", "ID2", "ID5", "ID8", "ID3", "ID6"},
-					"identification_number_3": {"ID1", "ID4", "ID7", "ID2", "ID5", "ID8", "ID3", "ID6"},
-				},
-				"text",
-			},
-			wantArgs: []interface{}{
-				pq.Array([]string{"ID1", "ID4", "ID7", "ID2", "ID5", "ID8", "ID3", "ID6"}),
-			},
-			wantedQueryParts: containers.NewSet[string]([]string{
-				"identification_number_1 IN (SELECT * FROM UNNEST ($1::text[]))",
-				"identification_number_2 IN (SELECT * FROM UNNEST ($1::text[]))",
-				"identification_number_3 IN (SELECT * FROM UNNEST ($1::text[]))",
-			}...),
-		},
-		{
-			name:         "type: Birthdate",
-			queryBuilder: &strings.Builder{},
-			values: TypedColumnArgsGroups{
-				ColumnArgsGroups{
-					"birth_date": {"2006-02-01", "2007-04-09"},
-				},
-				"date",
-			},
-			wantArgs: []interface{}{
-				pq.Array([]string{"2006-02-01", "2007-04-09"}),
-			},
-			wantedQueryParts: containers.NewSet[string]([]string{
-				"birth_date IN (SELECT * FROM UNNEST ($1::date[]))",
-			}...),
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			args := []interface{}{}
-			query := ""
-			query, args = getOrSubQueriesWithArgs(args, tt.values)
-			assert.Equal(t, tt.wantArgs, args)
-
-			assert.Equal(t, containers.NewSet[string](strings.Split(query, " OR ")...), tt.wantedQueryParts)
-		})
-	}
-}
-
-func TestFillAndQueryWithParameters(t *testing.T) {
-	tests := []struct {
-		name             string
-		queryBuilder     *strings.Builder
-		values           RowArgsGroups
-		wantArgs         []interface{}
-		wantedQueryParts [][]string
-		typeKey          deduplication.DeduplicationTypeName
-	}{
-		{
-			name:         "type: Names",
-			queryBuilder: &strings.Builder{},
-			values:       individuals,
-			typeKey:      deduplication.DeduplicationTypeNameNames,
-			wantArgs: []interface{}{
-				"FN1", "LN1", "NN1", "FN2", "MN2", "LN2", "NN2", "FN3", "LN3",
-			},
-			wantedQueryParts: [][]string{
-				{"first_name = $1", "last_name = $2", "native_name = $3"},
-				{"first_name = $4", "middle_name = $5", "last_name = $6", "native_name = $7"},
-				{"first_name = $8", "last_name = $9"},
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			args := []interface{}{}
-			query := ""
-			query, args = getAndSubQueriesWithArgs(args, tt.values, deduplication.DeduplicationTypeNameNames)
-			assert.Equal(t, tt.wantArgs, args)
-
-			query = strings.TrimPrefix(query, "(")
-			query = strings.TrimSuffix(query, ")")
-			queries := strings.Split(query, ") OR (")
-			for q := 0; q < len(queries); q++ {
-				assert.Equal(t, strings.Split(queries[q], " AND "), tt.wantedQueryParts[q])
-			}
+			query := buildDeduplicationQuery(tt.tableName, tt.columnsOfInterest, tt.config, tt.uploadHasIdColumn)
+			assert.Equal(t, tt.wantQuery, query)
 		})
 	}
 }

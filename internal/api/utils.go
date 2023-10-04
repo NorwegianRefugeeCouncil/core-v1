@@ -8,6 +8,7 @@ import (
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/locales"
+	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"golang.org/x/exp/slices"
 	"strconv"
 	"strings"
@@ -114,19 +115,26 @@ func stringArrayToInterfaceArray(row []string) []interface{} {
 
 var indexColumnName = "index"
 
-func GetDataframeFromRecords(records [][]string) dataframe.DataFrame {
+func GetDataframeFromRecords(records [][]string, deduplicationTypes []deduplication.DeduplicationType) dataframe.DataFrame {
 	keys := locales.GetTranslationKeys(records[0])
 	dbCols := make([]string, len(keys))
 	for i, key := range keys {
 		dbCols[i] = constants.IndividualFileToDBMap[key]
 	}
 
+	columnsOfInterest := []string{}
+	if slices.Contains(records[0], constants.FileColumnIndividualID) {
+		columnsOfInterest = append(columnsOfInterest, constants.FileColumnIndividualID)
+	}
+	for _, deduplicationType := range deduplicationTypes {
+		columnsOfInterest = append(columnsOfInterest, deduplicationType.Config.Columns...)
+	}
 	return dataframe.LoadRecords(records,
 		dataframe.Names(dbCols...),
-		dataframe.DetectTypes(false),
+		dataframe.DetectTypes(true),
 		dataframe.DefaultType(series.String),
 		dataframe.HasHeader(true),
-	)
+	).Select(columnsOfInterest)
 }
 
 func AddIndexColumn(df dataframe.DataFrame) dataframe.DataFrame {
