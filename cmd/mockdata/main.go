@@ -219,6 +219,7 @@ func Generate(count uint) error {
 		constants.FileColumnIndividualPrefersToRemainAnonymous,
 		constants.FileColumnIndividualPresentsProtectionConcerns,
 		constants.FileColumnIndividualPWDComments,
+		constants.FileColumnIndividualVulnerabilityComments,
 		constants.FileColumnIndividualSelfCareDisabilityLevel,
 		constants.FileColumnIndividualSpokenLanguage1,
 		constants.FileColumnIndividualSpokenLanguage2,
@@ -447,6 +448,7 @@ func Generate(count uint) error {
 		isLactating := randomOptionalBool()
 		hasMedicalCondition := randomOptionalBool()
 		needsLegalAndPhysicalProtection := randomOptionalBool()
+		vulnerabilityComments := randomText(f)
 
 		nationality1 := randomCountry()
 		nationality2 := randomCountry()
@@ -598,6 +600,7 @@ func Generate(count uint) error {
 			spokenLanguage2,
 			spokenLanguage3,
 			visionDisabilityLevel,
+			vulnerabilityComments,
 			serviceCC1,
 			serviceRequested1,
 			serviceDelivered1,
