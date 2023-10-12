@@ -727,7 +727,13 @@ func (g *getAllIndividualsSQLQuery) withPWDComments(pwdComments string) *getAllI
 	if len(pwdComments) == 0 {
 		return g
 	}
-	g.writeString(" AND pwd_comments = ").writeArg(pwdComments)
+	if g.driverName == "sqlite" {
+		g.writeString(" AND " + constants.DBColumnIndividualPWDComments + " LIKE ")
+		g.writeArg("%" + pwdComments + "%")
+	} else if g.driverName == "postgres" {
+		g.writeString(" AND " + constants.DBColumnIndividualPWDComments + " ILIKE ")
+		g.writeArg("%" + pwdComments + "%")
+	}
 	return g
 }
 
@@ -735,7 +741,13 @@ func (g *getAllIndividualsSQLQuery) withVulnerabilityComments(vulnerabilityComme
 	if len(vulnerabilityComments) == 0 {
 		return g
 	}
-	g.writeString(" AND vulnerability_comments = ").writeArg(vulnerabilityComments)
+	if g.driverName == "sqlite" {
+		g.writeString(" AND " + constants.DBColumnIndividualVulnerabilityComments + " LIKE ")
+		g.writeArg("%" + vulnerabilityComments + "%")
+	} else if g.driverName == "postgres" {
+		g.writeString(" AND " + constants.DBColumnIndividualVulnerabilityComments + " ILIKE ")
+		g.writeArg("%" + vulnerabilityComments + "%")
+	}
 	return g
 }
 
