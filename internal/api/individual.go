@@ -211,6 +211,8 @@ type Individual struct {
 	UpdatedAt time.Time `json:"updatedAt" db:"updated_at"`
 	// VisionDisabilityLevel is the vision disability level of the individual
 	VisionDisabilityLevel enumTypes.DisabilityLevel `json:"visionDisabilityLevel" db:"vision_disability_level"`
+	// VulnerabilityComments is the comments on the vulnerabilities of the individual
+	VulnerabilityComments string `json:"vulnerabilityComments" db:"vulnerability_comments"`
 
 	ServiceCC1            enumTypes.ServiceCC `json:"serviceCC1" db:"service_cc_1"`
 	ServiceRequestedDate1 *time.Time          `json:"serviceRequestedDate1" db:"service_requested_date_1"`
@@ -426,6 +428,8 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.PresentsProtectionConcerns, nil
 	case constants.DBColumnIndividualPWDComments:
 		return i.PWDComments, nil
+	case constants.DBColumnIndividualVulnerabilityComments:
+		return i.VulnerabilityComments, nil
 	case constants.DBColumnIndividualSpokenLanguage1:
 		return i.SpokenLanguage1, nil
 	case constants.DBColumnIndividualSpokenLanguage2:
@@ -572,6 +576,7 @@ func (i *Individual) Normalize() {
 	}
 	i.PreferredCommunicationLanguage = trimString(i.PreferredCommunicationLanguage)
 	i.PWDComments = trimString(i.PWDComments)
+	i.VulnerabilityComments = trimString(i.VulnerabilityComments)
 	i.SpokenLanguage1 = trimString(i.SpokenLanguage1)
 	i.SpokenLanguage2 = trimString(i.SpokenLanguage2)
 	i.SpokenLanguage3 = trimString(i.SpokenLanguage3)

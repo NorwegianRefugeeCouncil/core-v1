@@ -77,6 +77,7 @@ type ListIndividualsOptions struct {
 	PrefersToRemainAnonymous        *bool
 	PresentsProtectionConcerns      *bool
 	PWDComments                     string
+	VulnerabilityComments           string
 	SelfCareDisabilityLevel         enumTypes.DisabilityLevel
 	SpokenLanguage                  string
 	UpdatedAtFrom                   *time.Time

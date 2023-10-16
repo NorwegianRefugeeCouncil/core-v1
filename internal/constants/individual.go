@@ -88,6 +88,7 @@ const (
 	FormParamIndividualPrefersToRemainAnonymous        = "PrefersToRemainAnonymous"
 	FormParamIndividualPresentsProtectionConcerns      = "PresentsProtectionConcerns"
 	FormParamIndividualPWDComments                     = "PWDComments"
+	FormParamIndividualVulnerabilityComments           = "VulnerabilityComments"
 	FormParamIndividualSelfCareDisabilityLevel         = "SelfCareDisabilityLevel"
 	FormParamIndividualSpokenLanguage1                 = "SpokenLanguage1"
 	FormParamIndividualSpokenLanguage2                 = "SpokenLanguage2"
@@ -203,6 +204,7 @@ const (
 	FormParamsGetIndividualsPrefersToRemainAnonymous        = "prefers_to_remain_anonymous"
 	FormParamsGetIndividualsPresentsProtectionConcerns      = "presents_protection_concerns"
 	FormParamsGetIndividualsPWDComments                     = "pwd_comments"
+	FormParamsGetIndividualsVulnerabilityComments           = "vulnerability_comments"
 	FormParamsGetIndividualsSelfCareDisabilityLevel         = "selfcare_disability_level"
 	FormParamsGetIndividualsSkip                            = "skip"
 	FormParamsGetIndividualsSpokenLanguage                  = "spoken_language"
@@ -307,6 +309,7 @@ const (
 	DBColumnIndividualPrefersToRemainAnonymous        = "prefers_to_remain_anonymous"
 	DBColumnIndividualPresentsProtectionConcerns      = "presents_protection_concerns"
 	DBColumnIndividualPWDComments                     = "pwd_comments"
+	DBColumnIndividualVulnerabilityComments           = "vulnerability_comments"
 	DBColumnIndividualSelfCareDisabilityLevel         = "selfcare_disability_level"
 	DBColumnIndividualSpokenLanguage1                 = "spoken_language_1"
 	DBColumnIndividualSpokenLanguage2                 = "spoken_language_2"
@@ -428,6 +431,7 @@ const (
 	FileColumnIndividualPrefersToRemainAnonymous        = "prefers_to_remain_anonymous"
 	FileColumnIndividualPresentsProtectionConcerns      = "presents_protection_concerns"
 	FileColumnIndividualPWDComments                     = "pwd_comments"
+	FileColumnIndividualVulnerabilityComments           = "vulnerability_comments"
 	FileColumnIndividualSelfCareDisabilityLevel         = "selfcare_disability_level"
 	FileColumnIndividualSpokenLanguage1                 = "spoken_language_1"
 	FileColumnIndividualSpokenLanguage2                 = "spoken_language_2"
@@ -555,6 +559,7 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualPrefersToRemainAnonymous,
 	DBColumnIndividualPresentsProtectionConcerns,
 	DBColumnIndividualPWDComments,
+	DBColumnIndividualVulnerabilityComments,
 	DBColumnIndividualSelfCareDisabilityLevel,
 	DBColumnIndividualSpokenLanguage1,
 	DBColumnIndividualSpokenLanguage2,
@@ -605,15 +610,6 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualBirthDate,
 	FileColumnIndividualAge,
 	FileColumnIndividualIsMinor,
-	FileColumnIndividualIsChildAtRisk,
-	FileColumnIndividualIsWomanAtRisk,
-	FileColumnIndividualIsElderAtRisk,
-	FileColumnIndividualIsSeparatedChild,
-	FileColumnIndividualIsSingleParent,
-	FileColumnIndividualIsPregnant,
-	FileColumnIndividualIsLactating,
-	FileColumnIndividualHasMedicalCondition,
-	FileColumnIndividualNeedsLegalAndPhysicalProtection,
 	FileColumnIndividualNationality1,
 	FileColumnIndividualNationality2,
 	FileColumnIndividualIdentificationNumber1,
@@ -667,6 +663,16 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualSelfCareDisabilityLevel,
 	FileColumnIndividualHasCommunicationDisability,
 	FileColumnIndividualCommunicationDisabilityLevel,
+	FileColumnIndividualIsChildAtRisk,
+	FileColumnIndividualIsWomanAtRisk,
+	FileColumnIndividualIsElderAtRisk,
+	FileColumnIndividualIsSeparatedChild,
+	FileColumnIndividualIsSingleParent,
+	FileColumnIndividualIsPregnant,
+	FileColumnIndividualIsLactating,
+	FileColumnIndividualHasMedicalCondition,
+	FileColumnIndividualNeedsLegalAndPhysicalProtection,
+	FileColumnIndividualVulnerabilityComments,
 	FileColumnIndividualEngagementContext,
 	FileColumnIndividualComments,
 	FileColumnIndividualFreeField1,
@@ -801,6 +807,7 @@ var IndividualDBToFileMap = map[string]string{
 	DBColumnIndividualPrefersToRemainAnonymous:        FileColumnIndividualPrefersToRemainAnonymous,
 	DBColumnIndividualPresentsProtectionConcerns:      FileColumnIndividualPresentsProtectionConcerns,
 	DBColumnIndividualPWDComments:                     FileColumnIndividualPWDComments,
+	DBColumnIndividualVulnerabilityComments:           FileColumnIndividualVulnerabilityComments,
 	DBColumnIndividualSelfCareDisabilityLevel:         FileColumnIndividualSelfCareDisabilityLevel,
 	DBColumnIndividualSpokenLanguage1:                 FileColumnIndividualSpokenLanguage1,
 	DBColumnIndividualSpokenLanguage2:                 FileColumnIndividualSpokenLanguage2,
@@ -923,6 +930,7 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualPrefersToRemainAnonymous:        DBColumnIndividualPrefersToRemainAnonymous,
 	FileColumnIndividualPresentsProtectionConcerns:      DBColumnIndividualPresentsProtectionConcerns,
 	FileColumnIndividualPWDComments:                     DBColumnIndividualPWDComments,
+	FileColumnIndividualVulnerabilityComments:           DBColumnIndividualVulnerabilityComments,
 	FileColumnIndividualSelfCareDisabilityLevel:         DBColumnIndividualSelfCareDisabilityLevel,
 	FileColumnIndividualSpokenLanguage1:                 DBColumnIndividualSpokenLanguage1,
 	FileColumnIndividualSpokenLanguage2:                 DBColumnIndividualSpokenLanguage2,

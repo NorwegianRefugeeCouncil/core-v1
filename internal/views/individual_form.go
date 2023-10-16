@@ -11,13 +11,14 @@ import (
 
 type IndividualForm struct {
 	*forms.Form
-	individual            *api.Individual
-	personalInfoSection   *forms.FormSection
-	contactInfoSection    *forms.FormSection
-	protectionSection     *forms.FormSection
-	disabilitiesSection   *forms.FormSection
-	dataCollectionSection *forms.FormSection
-	serviceSection        *forms.FormSection
+	individual             *api.Individual
+	personalInfoSection    *forms.FormSection
+	contactInfoSection     *forms.FormSection
+	protectionSection      *forms.FormSection
+	disabilitiesSection    *forms.FormSection
+	vulnerabilitiesSection *forms.FormSection
+	dataCollectionSection  *forms.FormSection
+	serviceSection         *forms.FormSection
 }
 
 func NewIndividualForm(i *api.Individual) (*IndividualForm, error) {
@@ -48,7 +49,8 @@ func (f *IndividualForm) build() error {
 		f.buildContactInfoSection,
 		f.buildProtectionSection,
 		f.buildDisabilitiesSection,
-		f.buildDataColletionSection,
+		f.buildVulnerabilitiesSection,
+		f.buildDataCollectionSection,
 		f.buildServiceSection,
 	}
 
@@ -116,6 +118,7 @@ func (f *IndividualForm) build() error {
 		f.buildDisplacementStatusComment,
 		f.buildHasDisability,
 		f.buildPWDComments,
+		f.buildVulnerabilityComments,
 		f.buildHasVisionDisability,
 		f.buildVisionDisabilityLevel,
 		f.buildHasHearingDisability,
@@ -246,7 +249,18 @@ func (f *IndividualForm) buildDisabilitiesSection() error {
 	return nil
 }
 
-func (f *IndividualForm) buildDataColletionSection() error {
+func (f *IndividualForm) buildVulnerabilitiesSection() error {
+	f.vulnerabilitiesSection = &forms.FormSection{
+		Title:       "Vulnerabilities",
+		Fields:      []forms.Field{},
+		Collapsible: true,
+		Collapsed:   !f.isNew(),
+	}
+	f.Form.Sections = append(f.Form.Sections, f.vulnerabilitiesSection)
+	return nil
+}
+
+func (f *IndividualForm) buildDataCollectionSection() error {
 	f.dataCollectionSection = &forms.FormSection{
 		Title:       "Data Collection",
 		Fields:      []forms.Field{},
@@ -379,63 +393,63 @@ func (f *IndividualForm) buildIsChildAtRisk() error {
 	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualIsChildAtRisk,
 		DisplayName: "Is the person a child at risk",
-	}, f.personalInfoSection, f.individual.IsChildAtRisk)
+	}, f.vulnerabilitiesSection, f.individual.IsChildAtRisk)
 }
 
 func (f *IndividualForm) buildIsWomanAtRisk() error {
 	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualIsWomanAtRisk,
 		DisplayName: "Is the person a woman at risk",
-	}, f.personalInfoSection, f.individual.IsWomanAtRisk)
+	}, f.vulnerabilitiesSection, f.individual.IsWomanAtRisk)
 }
 
 func (f *IndividualForm) buildIsElderAtRisk() error {
 	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualIsElderAtRisk,
 		DisplayName: "Is the person an elder at risk",
-	}, f.personalInfoSection, f.individual.IsElderAtRisk)
+	}, f.vulnerabilitiesSection, f.individual.IsElderAtRisk)
 }
 
 func (f *IndividualForm) buildIsSingleParent() error {
 	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualIsSingleParent,
 		DisplayName: "Is the person a single parent",
-	}, f.personalInfoSection, f.individual.IsSingleParent)
+	}, f.vulnerabilitiesSection, f.individual.IsSingleParent)
 }
 
 func (f *IndividualForm) buildIsSeparatedChild() error {
 	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualIsSeparatedChild,
 		DisplayName: "Is the person a separated child",
-	}, f.personalInfoSection, f.individual.IsSeparatedChild)
+	}, f.vulnerabilitiesSection, f.individual.IsSeparatedChild)
 }
 
 func (f *IndividualForm) buildIsPregnant() error {
 	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualIsPregnant,
 		DisplayName: "Is the person pregnant",
-	}, f.personalInfoSection, f.individual.IsPregnant)
+	}, f.vulnerabilitiesSection, f.individual.IsPregnant)
 }
 
 func (f *IndividualForm) buildIsLactating() error {
 	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualIsLactating,
 		DisplayName: "Is the person lactating",
-	}, f.personalInfoSection, f.individual.IsLactating)
+	}, f.vulnerabilitiesSection, f.individual.IsLactating)
 }
 
 func (f *IndividualForm) buildHasMedicalCondition() error {
 	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualHasMedicalCondition,
 		DisplayName: "Does the person have a medical condition",
-	}, f.personalInfoSection, f.individual.HasMedicalCondition)
+	}, f.vulnerabilitiesSection, f.individual.HasMedicalCondition)
 }
 
 func (f *IndividualForm) buildNeedsLegalAndPhysicalProtection() error {
 	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualNeedsLegalAndPhysicalProtection,
 		DisplayName: "Does the person need legal and physical protection",
-	}, f.personalInfoSection, f.individual.NeedsLegalAndPhysicalProtection)
+	}, f.vulnerabilitiesSection, f.individual.NeedsLegalAndPhysicalProtection)
 }
 
 func (f *IndividualForm) buildNationality1() error {
@@ -759,6 +773,13 @@ func (f *IndividualForm) buildPWDComments() error {
 		Name:        constants.DBColumnIndividualPWDComments,
 		DisplayName: "PWD Comments",
 	}, f.disabilitiesSection, f.individual.PWDComments)
+}
+
+func (f *IndividualForm) buildVulnerabilityComments() error {
+	return buildField(&forms.TextAreaInputField{
+		Name:        constants.DBColumnIndividualVulnerabilityComments,
+		DisplayName: "Vulnerability Comments",
+	}, f.vulnerabilitiesSection, f.individual.VulnerabilityComments)
 }
 
 func (f *IndividualForm) buildHasHearingDisability() error {

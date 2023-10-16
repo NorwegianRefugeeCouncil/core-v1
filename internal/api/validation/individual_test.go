@@ -401,6 +401,11 @@ func (i *IndividualBuilder) WithPwdComments(pwdComments string) *IndividualBuild
 	return i
 }
 
+func (i *IndividualBuilder) WithVulnerabilityComments(vulnerabilityComments string) *IndividualBuilder {
+	i.individual.VulnerabilityComments = vulnerabilityComments
+	return i
+}
+
 func (i *IndividualBuilder) WithSelfCareDisabilityLevel(level enumTypes.DisabilityLevel) *IndividualBuilder {
 	i.individual.SelfCareDisabilityLevel = level
 	return i

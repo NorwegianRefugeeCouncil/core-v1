@@ -560,6 +560,8 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			i.PresentsProtectionConcerns = presentsProtectionConcerns.BoolPtr()
 		case constants.FileColumnIndividualPWDComments:
 			i.PWDComments = cols[idx]
+		case constants.FileColumnIndividualVulnerabilityComments:
+			i.VulnerabilityComments = cols[idx]
 		case constants.FileColumnIndividualSelfCareDisabilityLevel:
 			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
 			if err != nil {
