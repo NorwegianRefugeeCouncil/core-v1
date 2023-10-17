@@ -15,6 +15,7 @@ terraform {
   }
   backend "azurerm" {
   }
+  required_version = "1.5.7"
 }
 
 provider "azapi" {
