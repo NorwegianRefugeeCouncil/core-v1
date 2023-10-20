@@ -87,7 +87,17 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		deduplicationLogicOperator := deduplication.LogicOperator(r.MultipartForm.Value[formParamDeduplicationLogicOperator][0])
 		deduplicationConfig, err := deduplication.GetDeduplicationConfig(deduplicationTypes, deduplicationLogicOperator)
 
-		df := api.GetDataframeFromRecords(records, deduplicationConfig.Types)
+		df, err := api.GetDataframeFromRecords(records, deduplicationConfig.Types)
+		if err != nil {
+			l.Error("failed to get dataframe from records", zap.Error(err))
+			renderError("Could not parse uploaded file", []api.FileError{
+				{
+					Message: "Something went wrong preparing deduplication. Please check if your file has the correct columns",
+					Err:     []error{err},
+				},
+			})
+			return
+		}
 		df = api.AddIndexColumn(df) // adding indices to the records, so we can recognize them in the filtered results
 
 		fileErrors = api.FindDuplicatesInUUIDColumn(df)

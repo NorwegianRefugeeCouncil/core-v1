@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
+	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/pkg/logutils"
 	"golang.org/x/exp/slices"
@@ -14,7 +15,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/xuri/excelize/v2"
 )
 
@@ -145,7 +145,7 @@ func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual
 	return fileErrors
 }
 
-func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []string) []error {
+func (i *Individual) UnmarshalTabularData(colMapping map[string]int, cols []string) []error {
 	var errs []error
 	t := locales.GetTranslator()
 	if len(cols) <= len(colMapping) {
@@ -861,7 +861,7 @@ func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
 	return nil
 }
 
-func (i *Individual) marshalTabularData() ([]string, error) {
+func (i *Individual) MarshalTabularData() ([]string, error) {
 	row := make([]string, len(constants.IndividualFileColumns))
 	for j, col := range constants.IndividualFileColumns {
 		field, ok := constants.IndividualFileToDBMap[col]

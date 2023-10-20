@@ -8,6 +8,7 @@ import (
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
+	"golang.org/x/exp/slices"
 	"strings"
 	"time"
 )
@@ -356,4 +357,44 @@ func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], config de
 		alertedOn.Add(duplicates.Items()...)
 	}
 	return duplicateErrors
+}
+
+func GetDataframeFromRecords(records [][]string, deduplicationTypes []deduplication.DeduplicationType) (dataframe.DataFrame, error) {
+	columnsOfInterest := []string{}
+	if slices.Contains(records[0], constants.FileColumnIndividualID) {
+		columnsOfInterest = append(columnsOfInterest, constants.FileColumnIndividualID)
+	}
+	for _, deduplicationType := range deduplicationTypes {
+		columnsOfInterest = append(columnsOfInterest, deduplicationType.Config.Columns...)
+	}
+
+	df := dataframe.LoadRecords(records,
+		dataframe.DetectTypes(false),
+		dataframe.DefaultType(series.String),
+		dataframe.HasHeader(true),
+	).Select(columnsOfInterest)
+
+	if df.Err != nil {
+		return dataframe.DataFrame{}, df.Err
+	}
+	return df, nil
+}
+
+func GetRecordsFromIndividual(deduplicationTypes []deduplication.DeduplicationType, individual *Individual) [][]string {
+	var record [][]string
+	var header []string
+	var values []string
+	for _, dType := range deduplicationTypes {
+		for _, field := range dType.Config.Columns {
+			value, err := individual.GetFieldValue(field)
+			if err != nil {
+				continue
+			}
+			header = append(header, field)
+			values = append(values, value.(string))
+		}
+	}
+	record = append(record, header)
+	record = append(record, values)
+	return record
 }

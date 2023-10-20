@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/go-gota/gota/dataframe"
+	"github.com/go-gota/gota/series"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
@@ -404,6 +405,7 @@ func TestFindDuplicatesInUUIDColumn(t *testing.T) {
 				{"5", "1"},
 				{"6", "5"},
 				{"7", "8"},
+				{"8", ""},
 			},
 			want: map[string]containers.Set[int]{
 				"1": containers.NewSet[int](0, 5),
@@ -417,6 +419,103 @@ func TestFindDuplicatesInUUIDColumn(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			duplicates := getDuplicateUUIDs(testDf)
 			assert.Equal(t, tt.want, duplicates)
+		})
+	}
+}
+
+func TestGetDataframeFromRecords(t *testing.T) {
+	tests := []struct {
+		name    string
+		records [][]string
+		config  []deduplication.DeduplicationType
+		want    dataframe.DataFrame
+		wantErr bool
+	}{
+		{
+			name: "with id column",
+			records: [][]string{
+				{"index", "id", "full_name"},
+				{"0", "id1", ""},
+				{"2", "id3", "full"},
+				{"4", "id5", "name"},
+			},
+			config: []deduplication.DeduplicationType{
+				deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
+			},
+			want: dataframe.New(
+				series.New([]string{"id1", "id3", "id5"}, series.String, "id"),
+				series.New([]string{"", "full", "name"}, series.String, "full_name"),
+			),
+			wantErr: false,
+		},
+		{
+			name: "without id column",
+			records: [][]string{
+				{"index", "full_name"},
+				{"0", ""},
+				{"2", "full"},
+				{"4", "name"},
+			},
+			config: []deduplication.DeduplicationType{
+				deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
+			},
+			want: dataframe.New(
+				series.New([]string{"", "full", "name"}, series.String, "full_name"),
+			),
+			wantErr: false,
+		},
+		{
+			name: "no deduplication type",
+			records: [][]string{
+				{"index", "full_name"},
+				{"0", ""},
+				{"2", "full"},
+				{"4", "name"},
+			},
+			config:  []deduplication.DeduplicationType{},
+			want:    dataframe.DataFrame{},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			testDf, err := GetDataframeFromRecords(tt.records, tt.config)
+
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.want, testDf)
+			}
+		})
+	}
+}
+
+func TestGetRecordsFromIndividual(t *testing.T) {
+	tests := []struct {
+		name       string
+		individual Individual
+		config     []deduplication.DeduplicationType
+		want       [][]string
+	}{
+		{
+			name: "",
+			individual: Individual{
+				FullName: "A B",
+			},
+			config: []deduplication.DeduplicationType{
+				deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
+			},
+			want: [][]string{
+				{"full_name"},
+				{"A B"},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			records := GetRecordsFromIndividual(tt.config, &tt.individual)
+			assert.Equal(t, tt.want, records)
 		})
 	}
 }

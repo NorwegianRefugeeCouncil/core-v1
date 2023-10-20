@@ -132,7 +132,7 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 		if r.Method == http.MethodPost || r.Method == http.MethodPut {
 			duplicates := []*api.Individual{}
 			deduplicationTypes := r.Form[formDeduplicationParam]
-			deduplicationLogicOperator := deduplication.LogicOperator(r.MultipartForm.Value[formParamDeduplicationLogicOperator][0])
+			deduplicationLogicOperator := deduplication.LogicOperator(r.Form[formParamDeduplicationLogicOperator][0])
 			deduplicationConfig, err := deduplication.GetDeduplicationConfig(deduplicationTypes, deduplicationLogicOperator)
 
 			if err != nil {
@@ -146,12 +146,29 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			}
 
 			if len(deduplicationConfig.Types) > 0 {
-				record, err := individual.MarshalTabularData()
+				record := api.GetRecordsFromIndividual(deduplicationConfig.Types, individual)
+				df, err := api.GetDataframeFromRecords(record, deduplicationConfig.Types)
 				if err != nil {
-					l.Error("failed to unmarshal individual", zap.Error(err))
+					alerts = append(alerts, alert.Alert{
+						Type:        bootstrap.StyleDanger,
+						Title:       fmt.Sprintf("Error during deduplication %e", err),
+						Icon:        warningIcon,
+						Dismissible: true,
+					})
+					render()
+					return
 				}
-				df := api.GetDataframeFromRecords([][]string{record}, deduplicationConfig.Types)
 				duplicates, err = repo.FindDuplicates(ctx, df, deduplicationConfig)
+				if err != nil {
+					alerts = append(alerts, alert.Alert{
+						Type:        bootstrap.StyleDanger,
+						Title:       fmt.Sprintf("Error during deduplication %e", err),
+						Icon:        warningIcon,
+						Dismissible: true,
+					})
+					render()
+					return
+				}
 			}
 
 			if len(duplicates) > 0 {
