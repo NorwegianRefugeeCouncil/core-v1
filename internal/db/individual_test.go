@@ -65,7 +65,7 @@ func TestBuildInsertIndividualsQuery(t *testing.T) {
 		wantArgs          []interface{}
 	}{
 		{
-			"Insert individuals query",
+			"Insert individuals query, skip irrelevant columns",
 			"table_name",
 			[]DBColumn{
 				{Name: "id", SQLType: "uuid", Default: nil},
@@ -76,15 +76,15 @@ func TestBuildInsertIndividualsQuery(t *testing.T) {
 			dataframe.New(
 				series.New([]string{"b", "a"}, series.String, "col_text_1"),
 				series.New([]string{"1", ""}, series.String, "col_text_2"),
-				series.New([]string{"", "3746979"}, series.String, "col_date"),
+				series.New([]string{"", "3"}, series.String, "col_date"),
 			),
 			[]string{"col_text_1", "col_date"},
 			false,
 			"INSERT INTO table_name SELECT * FROM UNNEST($1::text[],$2::timestamp[]);",
-			[]interface{}{pq.Array([]string{"b", "a"}), pq.Array([]string{"", "3746979"})},
+			[]interface{}{pq.Array([]string{"b", "a"}), pq.Array([]string{"", "3"})},
 		},
 		{
-			"Insert individuals query",
+			"Insert individuals query, add id column, skip non-existent columns",
 			"table_name",
 			[]DBColumn{
 				{Name: "id", SQLType: "uuid", Default: nil},
@@ -96,7 +96,7 @@ func TestBuildInsertIndividualsQuery(t *testing.T) {
 				series.New([]string{"id1", "id2"}, series.String, "id"),
 				series.New([]string{"b", "a"}, series.String, "col_text_1"),
 				series.New([]string{"1", ""}, series.String, "col_text_2"),
-				series.New([]string{"", "3746979"}, series.String, "col_date"),
+				series.New([]string{"", "3"}, series.String, "col_date"),
 			),
 			[]string{"other", "no"},
 			true,
@@ -104,7 +104,7 @@ func TestBuildInsertIndividualsQuery(t *testing.T) {
 			[]interface{}{pq.Array([]string{"id1", "id2"})},
 		},
 		{
-			"Insert individuals query",
+			"Insert individuals query, add id column, fill with empty column if no data exists",
 			"table_name",
 			[]DBColumn{
 				{Name: "id", SQLType: "uuid", Default: nil},
@@ -114,9 +114,9 @@ func TestBuildInsertIndividualsQuery(t *testing.T) {
 			},
 			dataframe.New(
 				series.New([]string{"id1", "id2"}, series.String, "id"),
-				series.New([]string{"b", "a"}, series.String, "lri"),
+				series.New([]string{"b", "a"}, series.String, "col"),
 				series.New([]string{"1", ""}, series.String, "col_text_2"),
-				series.New([]string{"", "3746979"}, series.String, "col_date"),
+				series.New([]string{"", "3"}, series.String, "col_date"),
 			),
 			[]string{"col_text_1", "no"},
 			true,
@@ -143,7 +143,7 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 		wantQuery         string
 	}{
 		{
-			"Deduplication query",
+			"Deduplication query, no id column",
 			"table_name",
 			deduplication.DeduplicationConfig{
 				deduplication.LOGICAL_OPERATOR_AND,
@@ -156,7 +156,7 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 			"SELECT DISTINCT ir.col_text_1,ir.col_date,ir.id FROM individual_registrations ir CROSS JOIN table_name ti WHERE ir.country_id = $1 AND ir.deleted_at IS NULL AND (ti.full_name = ir.full_name) AND ir.deleted_at IS NULL;",
 		},
 		{
-			"Deduplication query",
+			"Deduplication query, id column, deduplicate any",
 			"table_name",
 			deduplication.DeduplicationConfig{
 				deduplication.LOGICAL_OPERATOR_OR,
@@ -170,10 +170,10 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 			"SELECT DISTINCT ir.col_text_1,ir.col_date,ir.id FROM individual_registrations ir CROSS JOIN table_name ti WHERE ir.country_id = $1 AND ir.deleted_at IS NULL AND (ti.full_name = ir.full_name) OR (ti.identification_number_1 = ir.identification_number_1 OR ti.identification_number_2 = ir.identification_number_2 OR ti.identification_number_3 = ir.identification_number_3) AND ti.id::uuid NOT IN (SELECT id FROM individual_registrations) AND ir.deleted_at IS NULL;",
 		},
 		{
-			"Deduplication query",
+			"Deduplication query, id column, deduplicate all",
 			"table_name",
 			deduplication.DeduplicationConfig{
-				deduplication.LOGICAL_OPERATOR_OR,
+				deduplication.LOGICAL_OPERATOR_AND,
 				[]deduplication.DeduplicationType{
 					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
 					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameIds],
@@ -181,7 +181,7 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 			},
 			[]string{},
 			true,
-			"SELECT DISTINCT ir.id FROM individual_registrations ir CROSS JOIN table_name ti WHERE ir.country_id = $1 AND ir.deleted_at IS NULL AND (ti.full_name = ir.full_name) OR (ti.identification_number_1 = ir.identification_number_1 OR ti.identification_number_2 = ir.identification_number_2 OR ti.identification_number_3 = ir.identification_number_3) AND ti.id::uuid NOT IN (SELECT id FROM individual_registrations) AND ir.deleted_at IS NULL;",
+			"SELECT DISTINCT ir.id FROM individual_registrations ir CROSS JOIN table_name ti WHERE ir.country_id = $1 AND ir.deleted_at IS NULL AND (ti.full_name = ir.full_name) AND (ti.identification_number_1 = ir.identification_number_1 OR ti.identification_number_2 = ir.identification_number_2 OR ti.identification_number_3 = ir.identification_number_3) AND ti.id::uuid NOT IN (SELECT id FROM individual_registrations) AND ir.deleted_at IS NULL;",
 		},
 	}
 	for _, tt := range tests {
