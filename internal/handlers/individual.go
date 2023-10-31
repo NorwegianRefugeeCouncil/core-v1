@@ -147,7 +147,8 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 			if len(deduplicationConfig.Types) > 0 {
 				record := api.GetRecordsFromIndividual(deduplicationConfig.Types, individual)
-				df, err := api.GetDataframeFromRecords(record, deduplicationConfig.Types)
+				uploadDfHasIdColumn := individual.ID != ""
+				df, err := api.GetDataframeFromRecords(record, deduplicationConfig.Types, uploadDfHasIdColumn)
 				if err != nil {
 					alerts = append(alerts, alert.Alert{
 						Type:        bootstrap.StyleDanger,

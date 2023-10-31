@@ -144,7 +144,15 @@ func buildInsertIndividualsQuery(tempTableName string, schema []DBColumn, df dat
 				empty := make([]interface{}, df.Nrow())
 				args = append(args, pq.Array(empty))
 			} else {
-				args = append(args, pq.Array(g.Records()))
+				values := make([]interface{}, df.Nrow())
+				for i := 0; i < df.Nrow(); i++ {
+					if g.Elem(i) == nil {
+						values[i] = nil
+						continue
+					}
+					values[i] = g.Elem(i)
+				}
+				args = append(args, pq.Array(values))
 			}
 			types = append(types, fmt.Sprintf("$%d::%s[]", len(args), col.SQLType))
 		}
@@ -171,7 +179,7 @@ func buildDeduplicationQuery(tempTableName string, columnsOfInterest []string, c
 		subSubQueries := []string{}
 		cols := dt.Config.Columns
 		for _, c := range cols {
-			subSubQueries = append(subSubQueries, fmt.Sprintf("ti.%s = ir.%s", c, c))
+			subSubQueries = append(subSubQueries, fmt.Sprintf("NULLIF(ti.%s, '') = NULLIF(ir.%s, '')", c, c))
 		}
 		subQueries = append(subQueries, strings.Join(subSubQueries, fmt.Sprintf(" %s ", dt.Config.Condition)))
 	}

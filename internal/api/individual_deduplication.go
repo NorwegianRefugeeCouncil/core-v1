@@ -127,26 +127,16 @@ func getOrDuplicationScore(scoresByType []int, totalScores []int, df dataframe.D
 			continue
 		}
 
-		newDf := ExcludeSelfFromDataframe(thisColumn, currentIndex)
-
+		filters := []dataframe.F{}
 		// check for duplicates of the current value within its own column
-		result := newDf.Filter(dataframe.F{
+		filters = append(filters, dataframe.F{
 			Colname:    column,
 			Comparando: currentValue,
 			Comparator: series.In,
 		})
-		for r := 0; r < result.Nrow(); r++ {
-			index, err := result.Select(indexColumnName).Elem(r, 0).Int()
-			if err == nil {
-				scoresByType[index]++
-			}
-		}
-
-		//df.Select([]string{column, indexColumnName}).
 
 		// if there are multiple columns to check, we also filter all the other columns
 		if len(option.Config.Columns) > 1 {
-			filters := []dataframe.F{}
 			for _, c := range option.Config.Columns {
 				if c != column {
 					filters = append(filters, dataframe.F{
@@ -156,13 +146,19 @@ func getOrDuplicationScore(scoresByType []int, totalScores []int, df dataframe.D
 					})
 				}
 			}
-			result = df.Filter(filters...)
+		}
+		result := df.FilterAggregation(dataframe.Or, filters...)
 
-			for r := 0; r < result.Nrow(); r++ {
-				index, err := result.Select(indexColumnName).Elem(r, 0).Int()
-				if err == nil {
-					scoresByType[index]++
-				}
+		result = result.Filter(dataframe.F{
+			Colname:    indexColumnName,
+			Comparando: currentIndex,
+			Comparator: series.Neq,
+		})
+
+		for r := 0; r < result.Nrow(); r++ {
+			index, err := result.Select(indexColumnName).Elem(r, 0).Int()
+			if err == nil {
+				scoresByType[index]++
 			}
 		}
 	}
@@ -177,23 +173,38 @@ func getOrDuplicationScore(scoresByType []int, totalScores []int, df dataframe.D
 
 func getAndDuplicationScore(totalScores []int, df dataframe.DataFrame, currentIndex int, option deduplication.DeduplicationType) {
 	// we can exclude the current row, to prevent a false positive
-	otherElements := makeIndexSetWithSkip(df.Nrow(), currentIndex).Items()
-	// we're chaining the filters, such that only complete combinations of values are counted
-	result := df.Subset(otherElements).Filter()
+	others := df.Filter(dataframe.F{
+		Colname:    indexColumnName,
+		Comparando: currentIndex,
+		Comparator: series.Neq,
+	})
+
+	filters := []dataframe.F{}
 
 	// e.g. first_name, middle_name, last_name, native_name
 	for _, column := range option.Config.Columns {
 		current := df.Select(column).Elem(currentIndex, 0)
-		result = result.Filter(dataframe.F{
+		if current.String() == "" {
+			continue
+		}
+
+		filters = append(filters, dataframe.F{
 			Colidx:     0,
 			Colname:    column,
 			Comparando: current,
 			Comparator: series.Eq,
 		})
 	}
+
+	if len(filters) == 0 {
+		return
+	}
+
+	filteredDf := others.FilterAggregation(dataframe.And, filters...)
+
 	// if there are any rows left, they count as duplicates within the current deduplicationType
-	for r := 0; r < result.Nrow(); r++ {
-		ind, err := result.Select(indexColumnName).Elem(r, 0).Int()
+	for r := 0; r < filteredDf.Nrow(); r++ {
+		ind, err := filteredDf.Select(indexColumnName).Elem(r, 0).Int()
 		if err == nil {
 			totalScores[ind]++
 		}
@@ -359,13 +370,21 @@ func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], config de
 	return duplicateErrors
 }
 
-func GetDataframeFromRecords(records [][]string, deduplicationTypes []deduplication.DeduplicationType) (dataframe.DataFrame, error) {
+func GetDataframeFromRecords(records [][]string, deduplicationTypes []deduplication.DeduplicationType, uploadDfHasIdColumn bool) (dataframe.DataFrame, error) {
 	columnsOfInterest := []string{}
-	if slices.Contains(records[0], constants.FileColumnIndividualID) {
+	if uploadDfHasIdColumn {
 		columnsOfInterest = append(columnsOfInterest, constants.FileColumnIndividualID)
+	} else {
+		if len(deduplicationTypes) == 0 {
+			return dataframe.DataFrame{}, nil
+		}
 	}
 	for _, deduplicationType := range deduplicationTypes {
 		columnsOfInterest = append(columnsOfInterest, deduplicationType.Config.Columns...)
+	}
+	// add last name for the error messages
+	if !slices.Contains(columnsOfInterest, constants.FileColumnIndividualLastName) {
+		columnsOfInterest = append(columnsOfInterest, constants.FileColumnIndividualLastName)
 	}
 
 	df := dataframe.LoadRecords(records,
@@ -377,6 +396,9 @@ func GetDataframeFromRecords(records [][]string, deduplicationTypes []deduplicat
 	if df.Err != nil {
 		return dataframe.DataFrame{}, df.Err
 	}
+
+	df = AddIndexColumn(df) // adding indices to the records, so we can recognize them in the filtered results
+
 	return df, nil
 }
 

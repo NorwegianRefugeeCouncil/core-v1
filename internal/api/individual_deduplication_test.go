@@ -428,6 +428,7 @@ func TestGetDataframeFromRecords(t *testing.T) {
 		name    string
 		records [][]string
 		config  []deduplication.DeduplicationType
+		uploadHasIdColumn bool
 		want    dataframe.DataFrame
 		wantErr bool
 	}{
@@ -442,6 +443,7 @@ func TestGetDataframeFromRecords(t *testing.T) {
 			config: []deduplication.DeduplicationType{
 				deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
 			},
+			uploadHasIdColumn: true,
 			want: dataframe.New(
 				series.New([]string{"id1", "id3", "id5"}, series.String, "id"),
 				series.New([]string{"", "full", "name"}, series.String, "full_name"),
@@ -459,6 +461,7 @@ func TestGetDataframeFromRecords(t *testing.T) {
 			config: []deduplication.DeduplicationType{
 				deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
 			},
+			uploadHasIdColumn: false
 			want: dataframe.New(
 				series.New([]string{"", "full", "name"}, series.String, "full_name"),
 			),
@@ -472,6 +475,7 @@ func TestGetDataframeFromRecords(t *testing.T) {
 				{"2", "full"},
 				{"4", "name"},
 			},
+			uploadHasIdColumn: false,
 			config:  []deduplication.DeduplicationType{},
 			want:    dataframe.DataFrame{},
 			wantErr: true,
@@ -479,7 +483,7 @@ func TestGetDataframeFromRecords(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			testDf, err := GetDataframeFromRecords(tt.records, tt.config)
+			testDf, err := GetDataframeFromRecords(tt.records, tt.config, tt.uploadHasIdColumn)
 
 			if tt.wantErr {
 				assert.Error(t, err)

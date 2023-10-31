@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/locales"
@@ -10,6 +11,7 @@ import (
 	"github.com/nrc-no/notcore/internal/utils"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"go.uber.org/zap"
+	"golang.org/x/exp/slices"
 	"net/http"
 	"strings"
 )
@@ -87,7 +89,9 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		deduplicationLogicOperator := deduplication.LogicOperator(r.MultipartForm.Value[formParamDeduplicationLogicOperator][0])
 		deduplicationConfig, err := deduplication.GetDeduplicationConfig(deduplicationTypes, deduplicationLogicOperator)
 
-		df, err := api.GetDataframeFromRecords(records, deduplicationConfig.Types)
+		uploadDfHasIdColumn := slices.Contains(records[0], constants.FileColumnIndividualID)
+
+		df, err := api.GetDataframeFromRecords(records, deduplicationConfig.Types, uploadDfHasIdColumn)
 		if err != nil {
 			l.Error("failed to get dataframe from records", zap.Error(err))
 			renderError("Could not parse uploaded file", []api.FileError{
@@ -98,12 +102,13 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			})
 			return
 		}
-		df = api.AddIndexColumn(df) // adding indices to the records, so we can recognize them in the filtered results
 
-		fileErrors = api.FindDuplicatesInUUIDColumn(df)
-		if fileErrors != nil {
-			renderError(t("error_file_with_duplicate_uuids"), fileErrors)
-			return
+		if uploadDfHasIdColumn {
+			fileErrors = api.FindDuplicatesInUUIDColumn(df)
+			if fileErrors != nil {
+				renderError(t("error_file_with_duplicate_uuids"), fileErrors)
+				return
+			}
 		}
 
 		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
