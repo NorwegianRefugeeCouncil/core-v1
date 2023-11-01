@@ -184,9 +184,6 @@ func getAndDuplicationScore(totalScores []int, df dataframe.DataFrame, currentIn
 	// e.g. first_name, middle_name, last_name, native_name
 	for _, column := range option.Config.Columns {
 		current := df.Select(column).Elem(currentIndex, 0)
-		if current.String() == "" {
-			continue
-		}
 
 		filters = append(filters, dataframe.F{
 			Colidx:     0,
@@ -194,10 +191,6 @@ func getAndDuplicationScore(totalScores []int, df dataframe.DataFrame, currentIn
 			Comparando: current,
 			Comparator: series.Eq,
 		})
-	}
-
-	if len(filters) == 0 {
-		return
 	}
 
 	filteredDf := others.FilterAggregation(dataframe.And, filters...)
@@ -370,21 +363,18 @@ func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], config de
 	return duplicateErrors
 }
 
-func GetDataframeFromRecords(records [][]string, deduplicationTypes []deduplication.DeduplicationType, uploadDfHasIdColumn bool) (dataframe.DataFrame, error) {
+func GetDataframeFromRecords(records [][]string, deduplicationTypes []deduplication.DeduplicationType, mandatory []string) (dataframe.DataFrame, error) {
 	columnsOfInterest := []string{}
-	if uploadDfHasIdColumn {
-		columnsOfInterest = append(columnsOfInterest, constants.FileColumnIndividualID)
-	} else {
-		if len(deduplicationTypes) == 0 {
-			return dataframe.DataFrame{}, nil
-		}
+	if len(deduplicationTypes) == 0 && len(mandatory) == 0 {
+		return dataframe.DataFrame{}, nil
 	}
 	for _, deduplicationType := range deduplicationTypes {
 		columnsOfInterest = append(columnsOfInterest, deduplicationType.Config.Columns...)
 	}
-	// add last name for the error messages
-	if !slices.Contains(columnsOfInterest, constants.FileColumnIndividualLastName) {
-		columnsOfInterest = append(columnsOfInterest, constants.FileColumnIndividualLastName)
+	for _, mandatoryColumn := range mandatory {
+		if !slices.Contains(columnsOfInterest, mandatoryColumn) {
+			columnsOfInterest = append(columnsOfInterest, mandatoryColumn)
+		}
 	}
 
 	df := dataframe.LoadRecords(records,
@@ -402,7 +392,7 @@ func GetDataframeFromRecords(records [][]string, deduplicationTypes []deduplicat
 	return df, nil
 }
 
-func GetRecordsFromIndividual(deduplicationTypes []deduplication.DeduplicationType, individual *Individual) [][]string {
+func GetRecordsFromIndividual(deduplicationTypes []deduplication.DeduplicationType, individual *Individual, mandatory []string) [][]string {
 	var record [][]string
 	var header []string
 	var values []string
@@ -415,6 +405,17 @@ func GetRecordsFromIndividual(deduplicationTypes []deduplication.DeduplicationTy
 			header = append(header, field)
 			values = append(values, value.(string))
 		}
+	}
+	for _, field := range mandatory {
+		if slices.Contains(header, field) {
+			continue
+		}
+		value, err := individual.GetFieldValue(field)
+		if err != nil {
+			continue
+		}
+		header = append(header, field)
+		values = append(values, value.(string))
 	}
 	record = append(record, header)
 	record = append(record, values)

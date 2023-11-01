@@ -378,6 +378,25 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 				9: containers.NewSet[int](),
 			},
 		},
+		{
+			name: "check Names and IDs and Full Name, OR",
+			config: deduplication.DeduplicationConfig{
+				deduplication.LOGICAL_OPERATOR_OR,
+				[]deduplication.DeduplicationType{},
+			},
+			want: []containers.Set[int]{
+				0: containers.NewSet[int](),
+				1: containers.NewSet[int](),
+				2: containers.NewSet[int](),
+				3: containers.NewSet[int](),
+				4: containers.NewSet[int](),
+				5: containers.NewSet[int](),
+				6: containers.NewSet[int](),
+				7: containers.NewSet[int](),
+				8: containers.NewSet[int](),
+				9: containers.NewSet[int](),
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -389,24 +408,16 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 
 func TestFindDuplicatesInUUIDColumn(t *testing.T) {
 	tests := []struct {
-		name    string
-		records [][]string
-		want    map[string]containers.Set[int]
+		name string
+		df   dataframe.DataFrame
+		want map[string]containers.Set[int]
 	}{
 		{
 			name: "",
-			records: [][]string{
-				{"index", "id"},
-				{"0", "1"},
-				{"1", "2"},
-				{"2", "2"},
-				{"3", "2"},
-				{"4", "5"},
-				{"5", "1"},
-				{"6", "5"},
-				{"7", "8"},
-				{"8", ""},
-			},
+			df: dataframe.New(
+				series.New([]string{"1", "2", "2", "2", "5", "1", "5", "8", ""}, series.String, "id"),
+				series.New([]string{"0", "1", "2", "3", "4", "5", "6", "7", "8"}, series.String, "index"),
+			),
 			want: map[string]containers.Set[int]{
 				"1": containers.NewSet[int](0, 5),
 				"2": containers.NewSet[int](1, 2, 3),
@@ -415,9 +426,8 @@ func TestFindDuplicatesInUUIDColumn(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		var testDf = dataframe.LoadRecords(tt.records)
 		t.Run(tt.name, func(t *testing.T) {
-			duplicates := getDuplicateUUIDs(testDf)
+			duplicates := getDuplicateUUIDs(tt.df)
 			assert.Equal(t, tt.want, duplicates)
 		})
 	}
@@ -425,17 +435,17 @@ func TestFindDuplicatesInUUIDColumn(t *testing.T) {
 
 func TestGetDataframeFromRecords(t *testing.T) {
 	tests := []struct {
-		name    string
-		records [][]string
-		config  []deduplication.DeduplicationType
-		uploadHasIdColumn bool
-		want    dataframe.DataFrame
-		wantErr bool
+		name      string
+		records   [][]string
+		config    []deduplication.DeduplicationType
+		mandatory []string
+		want      dataframe.DataFrame
+		wantErr   bool
 	}{
 		{
 			name: "with id column",
 			records: [][]string{
-				{"index", "id", "full_name"},
+				{"other", "id", "full_name"},
 				{"0", "id1", ""},
 				{"2", "id3", "full"},
 				{"4", "id5", "name"},
@@ -443,17 +453,18 @@ func TestGetDataframeFromRecords(t *testing.T) {
 			config: []deduplication.DeduplicationType{
 				deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
 			},
-			uploadHasIdColumn: true,
+			mandatory: []string{"id"},
 			want: dataframe.New(
-				series.New([]string{"id1", "id3", "id5"}, series.String, "id"),
 				series.New([]string{"", "full", "name"}, series.String, "full_name"),
+				series.New([]string{"id1", "id3", "id5"}, series.String, "id"),
+				series.New([]string{"0", "1", "2"}, series.String, "index"),
 			),
 			wantErr: false,
 		},
 		{
 			name: "without id column",
 			records: [][]string{
-				{"index", "full_name"},
+				{"other", "full_name"},
 				{"0", ""},
 				{"2", "full"},
 				{"4", "name"},
@@ -461,9 +472,10 @@ func TestGetDataframeFromRecords(t *testing.T) {
 			config: []deduplication.DeduplicationType{
 				deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
 			},
-			uploadHasIdColumn: false
+			mandatory: []string{},
 			want: dataframe.New(
 				series.New([]string{"", "full", "name"}, series.String, "full_name"),
+				series.New([]string{"0", "1", "2"}, series.String, "index"),
 			),
 			wantErr: false,
 		},
@@ -475,15 +487,30 @@ func TestGetDataframeFromRecords(t *testing.T) {
 				{"2", "full"},
 				{"4", "name"},
 			},
-			uploadHasIdColumn: false,
-			config:  []deduplication.DeduplicationType{},
+			mandatory: []string{},
+			config:    []deduplication.DeduplicationType{},
+			want:      dataframe.DataFrame{},
+			wantErr:   false,
+		},
+		{
+			name: "error",
+			records: [][]string{
+				{"index", "full_name"},
+				{"0", ""},
+				{"2", "full"},
+				{"4", "name"},
+			},
+			mandatory: []string{"birth_date"},
+			config: []deduplication.DeduplicationType{
+				deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
+			},
 			want:    dataframe.DataFrame{},
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			testDf, err := GetDataframeFromRecords(tt.records, tt.config, tt.uploadHasIdColumn)
+			testDf, err := GetDataframeFromRecords(tt.records, tt.config, tt.mandatory)
 
 			if tt.wantErr {
 				assert.Error(t, err)
@@ -500,25 +527,57 @@ func TestGetRecordsFromIndividual(t *testing.T) {
 		name       string
 		individual Individual
 		config     []deduplication.DeduplicationType
+		mandatory  []string
 		want       [][]string
 	}{
 		{
-			name: "",
+			name: "without mandatory columns",
 			individual: Individual{
 				FullName: "A B",
 			},
 			config: []deduplication.DeduplicationType{
 				deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
 			},
+			mandatory: []string{},
 			want: [][]string{
 				{"full_name"},
 				{"A B"},
 			},
 		},
+		{
+			name: "with mandatory columns",
+			individual: Individual{
+				FullName: "A B",
+				ID:       "id",
+			},
+			config: []deduplication.DeduplicationType{
+				deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
+			},
+			mandatory: []string{"id"},
+			want: [][]string{
+				{"full_name", "id"},
+				{"A B", "id"},
+			},
+		},
+		{
+			name: "with redundant mandatory columns",
+			individual: Individual{
+				FullName: "A B",
+				ID:       "id",
+			},
+			config: []deduplication.DeduplicationType{
+				deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
+			},
+			mandatory: []string{"id", "full_name"},
+			want: [][]string{
+				{"full_name", "id"},
+				{"A B", "id"},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			records := GetRecordsFromIndividual(tt.config, &tt.individual)
+			records := GetRecordsFromIndividual(tt.config, &tt.individual, tt.mandatory)
 			assert.Equal(t, tt.want, records)
 		})
 	}

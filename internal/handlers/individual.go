@@ -146,9 +146,12 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			}
 
 			if len(deduplicationConfig.Types) > 0 {
-				record := api.GetRecordsFromIndividual(deduplicationConfig.Types, individual)
-				uploadDfHasIdColumn := individual.ID != ""
-				df, err := api.GetDataframeFromRecords(record, deduplicationConfig.Types, uploadDfHasIdColumn)
+				mandatory := []string{constants.FileColumnIndividualLastName}
+				if individual.ID != "" {
+					mandatory = append(mandatory, constants.DBColumnIndividualID)
+				}
+				record := api.GetRecordsFromIndividual(deduplicationConfig.Types, individual, mandatory)
+				df, err := api.GetDataframeFromRecords(record, deduplicationConfig.Types, mandatory)
 				if err != nil {
 					alerts = append(alerts, alert.Alert{
 						Type:        bootstrap.StyleDanger,

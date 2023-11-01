@@ -8,6 +8,7 @@ import (
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"time"
 )
 
 func TestBuildTableSchemaQuery(t *testing.T) {
@@ -71,17 +72,20 @@ func TestBuildInsertIndividualsQuery(t *testing.T) {
 				{Name: "id", SQLType: "uuid", Default: nil},
 				{Name: "col_text_1", SQLType: "text", Default: pointers.String("")},
 				{Name: "col_text_2", SQLType: "text", Default: nil},
-				{Name: "col_date", SQLType: "timestamp", Default: nil},
+				{Name: "col_date", SQLType: "date", Default: nil},
 			},
 			dataframe.New(
-				series.New([]string{"b", "a"}, series.String, "col_text_1"),
-				series.New([]string{"1", ""}, series.String, "col_text_2"),
-				series.New([]string{"", "3"}, series.String, "col_date"),
+				series.New([]string{"c", "b", "a"}, series.String, "col_text_1"),
+				series.New([]string{"2", "1", ""}, series.String, "col_text_2"),
+				series.New([]string{"", "0000", "2003-12-30"}, series.String, "col_date"),
 			),
 			[]string{"col_text_1", "col_date"},
 			false,
-			"INSERT INTO table_name SELECT * FROM UNNEST($1::text[],$2::timestamp[]);",
-			[]interface{}{pq.Array([]string{"b", "a"}), pq.Array([]string{"", "3"})},
+			"INSERT INTO table_name SELECT * FROM UNNEST($1::text[],$2::date[]);",
+			[]interface{}{
+				pq.Array([]string{"c", "b", "a"}),
+				pq.Array([]*time.Time{nil, nil, pointers.Time(time.Date(2003, 12, 30, 0, 0, 0, 0, time.UTC))}),
+			},
 		},
 		{
 			"Insert individuals query, add id column, skip non-existent columns",
@@ -90,7 +94,7 @@ func TestBuildInsertIndividualsQuery(t *testing.T) {
 				{Name: "id", SQLType: "uuid", Default: nil},
 				{Name: "col_text_1", SQLType: "text", Default: pointers.String("")},
 				{Name: "col_text_2", SQLType: "text", Default: nil},
-				{Name: "col_date", SQLType: "timestamp", Default: nil},
+				{Name: "col_date", SQLType: "date", Default: nil},
 			},
 			dataframe.New(
 				series.New([]string{"id1", "id2"}, series.String, "id"),
@@ -110,7 +114,7 @@ func TestBuildInsertIndividualsQuery(t *testing.T) {
 				{Name: "id", SQLType: "uuid", Default: nil},
 				{Name: "col_text_1", SQLType: "text", Default: pointers.String("")},
 				{Name: "col_text_2", SQLType: "text", Default: nil},
-				{Name: "col_date", SQLType: "timestamp", Default: nil},
+				{Name: "col_date", SQLType: "date", Default: nil},
 			},
 			dataframe.New(
 				series.New([]string{"id1", "id2"}, series.String, "id"),
@@ -140,6 +144,7 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 		config            deduplication.DeduplicationConfig
 		columnsOfInterest []string
 		uploadHasIdColumn bool
+		schema            []DBColumn
 		wantQuery         string
 	}{
 		{
@@ -153,6 +158,12 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 			},
 			[]string{"col_text_1", "col_date"},
 			false,
+			[]DBColumn{
+				{Name: "id", SQLType: "uuid", Default: nil},
+				{Name: "col_text_1", SQLType: "text", Default: pointers.String("")},
+				{Name: "col_text_2", SQLType: "text", Default: nil},
+				{Name: "col_date", SQLType: "timestamp", Default: nil},
+			},
 			"SELECT DISTINCT ir.col_text_1,ir.col_date,ir.id FROM individual_registrations ir CROSS JOIN table_name ti WHERE ir.country_id = $1 AND ir.deleted_at IS NULL AND (ti.full_name = ir.full_name) AND ir.deleted_at IS NULL;",
 		},
 		{
@@ -167,6 +178,12 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 			},
 			[]string{"col_text_1", "col_date"},
 			true,
+			[]DBColumn{
+				{Name: "id", SQLType: "uuid", Default: nil},
+				{Name: "col_text_1", SQLType: "text", Default: pointers.String("")},
+				{Name: "col_text_2", SQLType: "text", Default: nil},
+				{Name: "col_date", SQLType: "timestamp", Default: nil},
+			},
 			"SELECT DISTINCT ir.col_text_1,ir.col_date,ir.id FROM individual_registrations ir CROSS JOIN table_name ti WHERE ir.country_id = $1 AND ir.deleted_at IS NULL AND (ti.full_name = ir.full_name) OR (ti.identification_number_1 = ir.identification_number_1 OR ti.identification_number_2 = ir.identification_number_2 OR ti.identification_number_3 = ir.identification_number_3) AND ti.id::uuid NOT IN (SELECT id FROM individual_registrations) AND ir.deleted_at IS NULL;",
 		},
 		{
@@ -181,12 +198,18 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 			},
 			[]string{},
 			true,
+			[]DBColumn{
+				{Name: "id", SQLType: "uuid", Default: nil},
+				{Name: "col_text_1", SQLType: "text", Default: pointers.String("")},
+				{Name: "col_text_2", SQLType: "text", Default: nil},
+				{Name: "col_date", SQLType: "timestamp", Default: nil},
+			},
 			"SELECT DISTINCT ir.id FROM individual_registrations ir CROSS JOIN table_name ti WHERE ir.country_id = $1 AND ir.deleted_at IS NULL AND (ti.full_name = ir.full_name) AND (ti.identification_number_1 = ir.identification_number_1 OR ti.identification_number_2 = ir.identification_number_2 OR ti.identification_number_3 = ir.identification_number_3) AND ti.id::uuid NOT IN (SELECT id FROM individual_registrations) AND ir.deleted_at IS NULL;",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			query := buildDeduplicationQuery(tt.tableName, tt.columnsOfInterest, tt.config, tt.uploadHasIdColumn)
+			query := buildDeduplicationQuery(tt.tableName, tt.columnsOfInterest, tt.config, tt.uploadHasIdColumn, tt.schema)
 			assert.Equal(t, tt.wantQuery, query)
 		})
 	}

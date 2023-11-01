@@ -89,9 +89,12 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		deduplicationLogicOperator := deduplication.LogicOperator(r.MultipartForm.Value[formParamDeduplicationLogicOperator][0])
 		deduplicationConfig, err := deduplication.GetDeduplicationConfig(deduplicationTypes, deduplicationLogicOperator)
 
-		uploadDfHasIdColumn := slices.Contains(records[0], constants.FileColumnIndividualID)
+		mandatory := []string{constants.FileColumnIndividualLastName}
+		if slices.Contains(records[0], constants.FileColumnIndividualID) {
+			mandatory = append(mandatory, constants.FileColumnIndividualID)
+		}
 
-		df, err := api.GetDataframeFromRecords(records, deduplicationConfig.Types, uploadDfHasIdColumn)
+		df, err := api.GetDataframeFromRecords(records, deduplicationConfig.Types, mandatory)
 		if err != nil {
 			l.Error("failed to get dataframe from records", zap.Error(err))
 			renderError("Could not parse uploaded file", []api.FileError{
@@ -103,7 +106,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			return
 		}
 
-		if uploadDfHasIdColumn {
+		if slices.Contains(records[0], constants.FileColumnIndividualID) {
 			fileErrors = api.FindDuplicatesInUUIDColumn(df)
 			if fileErrors != nil {
 				renderError(t("error_file_with_duplicate_uuids"), fileErrors)

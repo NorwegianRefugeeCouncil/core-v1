@@ -95,7 +95,7 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	}
 	rows.Close()
 
-	deduplicationQuery := buildDeduplicationQuery(tempTableName, columnsOfInterest, config, uploadDfHasIdColumn)
+	deduplicationQuery := buildDeduplicationQuery(tempTableName, columnsOfInterest, config, uploadDfHasIdColumn, schema)
 	err = tx.SelectContext(ctx, &ret, deduplicationQuery, selectedCountryID)
 	if err != nil {
 		return nil, err
@@ -144,15 +144,24 @@ func buildInsertIndividualsQuery(tempTableName string, schema []DBColumn, df dat
 				empty := make([]interface{}, df.Nrow())
 				args = append(args, pq.Array(empty))
 			} else {
-				values := make([]interface{}, df.Nrow())
-				for i := 0; i < df.Nrow(); i++ {
-					if g.Elem(i) == nil {
-						values[i] = nil
-						continue
+				if col.SQLType == "date" {
+					values := make([]*time.Time, df.Nrow())
+					for i := 0; i < df.Nrow(); i++ {
+						if g.Elem(i).String() == "" {
+							values[i] = nil
+							continue
+						}
+						t, err := time.Parse("2006-01-02", g.Elem(i).String())
+						if err != nil {
+							values[i] = nil
+							continue
+						}
+						values[i] = &t
 					}
-					values[i] = g.Elem(i)
+					args = append(args, pq.Array(values))
+				} else {
+					args = append(args, pq.Array(g.Records()))
 				}
-				args = append(args, pq.Array(values))
 			}
 			types = append(types, fmt.Sprintf("$%d::%s[]", len(args), col.SQLType))
 		}
@@ -163,7 +172,7 @@ func buildInsertIndividualsQuery(tempTableName string, schema []DBColumn, df dat
 	return b.String(), args
 }
 
-func buildDeduplicationQuery(tempTableName string, columnsOfInterest []string, config deduplication.DeduplicationConfig, uploadDfHasIdColumn bool) string {
+func buildDeduplicationQuery(tempTableName string, columnsOfInterest []string, config deduplication.DeduplicationConfig, uploadDfHasIdColumn bool, schema []DBColumn) string {
 	b := &strings.Builder{}
 
 	b.WriteString("SELECT DISTINCT ")
@@ -179,7 +188,7 @@ func buildDeduplicationQuery(tempTableName string, columnsOfInterest []string, c
 		subSubQueries := []string{}
 		cols := dt.Config.Columns
 		for _, c := range cols {
-			subSubQueries = append(subSubQueries, fmt.Sprintf("NULLIF(ti.%s, '') = NULLIF(ir.%s, '')", c, c))
+			subSubQueries = append(subSubQueries, fmt.Sprintf("ti.%s = ir.%s", c, c))
 		}
 		subQueries = append(subQueries, strings.Join(subSubQueries, fmt.Sprintf(" %s ", dt.Config.Condition)))
 	}
