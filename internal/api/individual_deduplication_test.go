@@ -379,7 +379,7 @@ func TestFindDuplicatesInUpload(t *testing.T) {
 			},
 		},
 		{
-			name: "check Names and IDs and Full Name, OR",
+			name: "no deduplication configured",
 			config: deduplication.DeduplicationConfig{
 				deduplication.LOGICAL_OPERATOR_OR,
 				[]deduplication.DeduplicationType{},

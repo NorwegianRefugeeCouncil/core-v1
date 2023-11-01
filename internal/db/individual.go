@@ -147,10 +147,6 @@ func buildInsertIndividualsQuery(tempTableName string, schema []DBColumn, df dat
 				if col.SQLType == "date" {
 					values := make([]*time.Time, df.Nrow())
 					for i := 0; i < df.Nrow(); i++ {
-						if g.Elem(i).String() == "" {
-							values[i] = nil
-							continue
-						}
 						t, err := time.Parse("2006-01-02", g.Elem(i).String())
 						if err != nil {
 							values[i] = nil
