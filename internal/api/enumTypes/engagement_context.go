@@ -53,7 +53,7 @@ func (g EngagementContext) String() string {
 	case EngagementContextOther:
 		return t("option_other")
 	case EngagementContextUnspecified:
-		return t("option_unspecified")
+		return ""
 	default:
 		return ""
 	}

@@ -45,7 +45,7 @@ func (g ContactMethod) String() string {
 	case ContactMethodOther:
 		return t("option_other")
 	case ContactMethodUnspecified:
-		return t("option_unspecified")
+		return ""
 	default:
 		return ""
 	}

@@ -138,12 +138,11 @@
                                 {{translate "language"}}
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
-{{/*                                {{ $locales := .RequestContext.Locales }}*/}}
-{{/*                                {{range $li, $l := .RequestContext.Locales.GetAvailableLocales}}*/}}
-{{/*                                    <button class="dropdown-item" onclick="setLanguageCookie({{$l}})">*/}}
-{{/*                                        {{translate $l}}*/}}
-{{/*                                    </button>*/}}
-{{/*                                {{end}}*/}}
+                                {{range $li, $l := .RequestContext.AvailableLocales}}
+                                    <button class="dropdown-item" onclick="setLanguageCookie({{$l}})">
+                                        {{translate $l}}
+                                    </button>
+                                {{end}}
                             </div>
                         </div>
                         {{end}}

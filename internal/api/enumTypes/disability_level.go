@@ -41,7 +41,7 @@ func (g DisabilityLevel) String() string {
 	case DisabilityLevelSevere:
 		return t("option_disability_severe")
 	case DisabilityLevelUnspecified:
-		return t("option_unspecified")
+		return ""
 	default:
 		return ""
 	}

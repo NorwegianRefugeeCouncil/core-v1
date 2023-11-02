@@ -2,13 +2,12 @@
 {{end}}
 {{define "body"}}
     {{ $isGlobalAdmin := .RequestContext.Auth.IsGlobalAdmin }}
-    {{ $locales := .RequestContext.Locales }}
     <main class="container py-5 mx-auto">
         <div class="d-flex justify-content-between align-items-center">
-            <h1 class="my-4">{{$locales.Translate "countries"}}</h1>
+            <h1 class="my-4">{{translate "countries"}}</h1>
             {{ if $isGlobalAdmin }}
                 <div>
-                    <a href="/countries/new" class="btn btn-primary float-end">{{$locales.Translate "new_country"}}</a>
+                    <a href="/countries/new" class="btn btn-primary float-end">{{translate "new_country"}}</a>
                 </div>
             {{ end }}
         </div>
@@ -17,10 +16,10 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th class="sticky-column" style="min-width:12rem">{{$locales.Translate "country_name"}}</th>
+                            <th class="sticky-column" style="min-width:12rem">{{translate "country_name"}}</th>
                             {{ if $isGlobalAdmin }}
                             <th class="sticky-column">
-                                <span class="" title="Actions">{{$locales.Translate "actions"}}</span>
+                                <span class="" title="Actions">{{translate "actions"}}</span>
                             </th>
                             {{end}}
                         </tr>
@@ -31,7 +30,7 @@
                                 <td><a href="/countries/{{.ID}}/participants">{{.Name}}</a></td>
                                 {{ if $isGlobalAdmin }}
                                     <td><a href="/countries/{{.ID}}">
-                                            {{$locales.Translate "edit"}}
+                                            {{translate "edit"}}
                                             <i class="bi bi-pencil-square d-lg-inline-block ms-2"></i>
                                         </a></td>
                                 {{end}}
@@ -41,7 +40,7 @@
                 </table>
             {{else}}
                 <div>
-                    {{$locales.Translate "no_country_found"}}
+                    {{translate "no_country_found"}}
                 </div>
             {{end}}
         </div>

@@ -2,12 +2,12 @@ package handlers
 
 import (
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"html/template"
 	"net/http"
 
 	"github.com/nrc-no/notcore/internal/auth"
-	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"github.com/nrc-no/notcore/internal/validation"
@@ -105,8 +105,9 @@ type RequestContext struct {
 	SelectedCountry *api.Country
 	// Session is the current user session
 	Session auth.Session
+	// AvailableLocales is a list of the available locales
+	AvailableLocales []string
 
-	Locales locales.Interface
 	// turn on dev features
 	EnableBetaFeatures bool
 }
@@ -210,14 +211,15 @@ func renderView(
 		}
 	}
 
-	//localesInterface := locales.GetLocales()
+	availableLocales := locales.GetLocales().GetAvailableLocales()
+
 	rc := RequestContext{
-		Request:         r,
-		Auth:            authIntf,
-		Countries:       countries,
-		SelectedCountry: selectedCountry,
-		Session:         session,
-		//Locales:            localesInterface,
+		Request:            r,
+		Auth:               authIntf,
+		Countries:          countries,
+		SelectedCountry:    selectedCountry,
+		Session:            session,
+		AvailableLocales:   availableLocales,
 		EnableBetaFeatures: enableBetaFeatures,
 	}
 	vd[vd.RequestContextKey()] = rc

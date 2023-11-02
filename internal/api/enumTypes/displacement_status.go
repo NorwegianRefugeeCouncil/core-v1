@@ -57,7 +57,7 @@ func (g DisplacementStatus) String() string {
 	case DisplacementStatusOther:
 		return t("option_other")
 	case DisplacementStatusUnspecified:
-		return t("option_unspecified")
+		return ""
 	default:
 		return ""
 	}

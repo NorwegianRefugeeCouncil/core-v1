@@ -60,7 +60,7 @@ func (g ServiceCC) String() string {
 	case ServiceCCOther:
 		return t("option_other")
 	case ServiceCCNone:
-		return t("option_unspecified")
+		return ""
 	default:
 		return ""
 	}

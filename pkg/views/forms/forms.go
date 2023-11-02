@@ -2,7 +2,6 @@ package forms
 
 import (
 	"bytes"
-	"github.com/nrc-no/notcore/internal/locales"
 	"html/template"
 	"net/url"
 	"reflect"
@@ -22,7 +21,6 @@ type FormSection struct {
 type Form struct {
 	Sections []*FormSection
 	Title    string
-	Locales  locales.Interface
 }
 
 func (f *Form) HTML() (template.HTML, error) {

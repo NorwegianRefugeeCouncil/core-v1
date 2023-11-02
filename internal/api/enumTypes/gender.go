@@ -42,7 +42,7 @@ func (g Sex) String() string {
 	case SexPreferNotToSay:
 		return t("option_sex_prefers_not_to_say")
 	case SexUnspecified:
-		return t("option_unspecified")
+		return ""
 	default:
 		return ""
 	}

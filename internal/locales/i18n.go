@@ -74,6 +74,8 @@ type Interface interface {
 	GetAvailableLocales() []string
 }
 
+type Translator func(id string, args ...interface{}) string
+
 func (l locales) Translate(id string, args ...interface{}) string {
 	var data = map[string]interface{}{}
 	if len(args) > 0 {

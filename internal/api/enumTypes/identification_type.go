@@ -44,7 +44,7 @@ func (g IdentificationType) String() string {
 	case IdentificationTypeOther:
 		return t("option_other")
 	case IdentificationTypeUnspecified:
-		return t("option_unspecified")
+		return ""
 	default:
 		return ""
 	}
