@@ -2,6 +2,7 @@ package server
 
 import (
 	"errors"
+	"github.com/nrc-no/notcore/internal/locales"
 	"html/template"
 	"strings"
 	"time"
@@ -87,6 +88,9 @@ func parseTemplates(
 				return dict, nil
 			},
 			"boolPointerToValue": func(i *bool) bool { return *i },
+			"translate": func(id string, args ...interface{}) string {
+				return locales.GetLocales().Translate(id, args...)
+			},
 		})
 		t[name], err = tpl.ParseFS(web.Content, "templates/**.gohtml", "templates/"+name)
 		if err != nil {

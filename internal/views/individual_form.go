@@ -190,7 +190,7 @@ func (f *IndividualForm) build() error {
 func (f *IndividualForm) buildTitle() error {
 	if f.isNew() {
 		f.Form.Title = f.Locales.Translate("new_participant")
-	} else if f.individual.FullName == "" {
+	} else if f.individual.FullName == "" && f.individual.FirstName == "" && f.individual.MiddleName == "" && f.individual.LastName == "" && f.individual.NativeName == "" {
 		f.Form.Title = f.Locales.Translate("anonymous_participant")
 	} else {
 		if f.individual.FullName != "" {
@@ -1001,7 +1001,7 @@ func (f *IndividualForm) buildServiceCC(idx int) func() error {
 		options = append([]forms.SelectInputFieldOption{{Value: "", Label: f.Locales.Translate("select_a_value")}}, options...)
 		return buildField(&forms.SelectInputField{
 			Name:        fmt.Sprintf("service_cc_%d", idx),
-			DisplayName: f.Locales.Translate(fmt.Sprintf("service_cc_%d", idx)),
+			DisplayName: f.Locales.Translate("service_cc_no", idx),
 			Options:     options,
 			Codec:       &serviceCCCodec{},
 		}, f.serviceSection, value)
@@ -1032,7 +1032,7 @@ func (f *IndividualForm) buildServiceRequestedDate(idx int) func() error {
 
 		return buildField(&forms.DateInputField{
 			Name:        fmt.Sprintf("service_requested_date_%d", idx),
-			DisplayName: f.Locales.Translate(fmt.Sprintf("service_request_date_%d", idx)),
+			DisplayName: f.Locales.Translate("service_requested_date_no", idx),
 		}, f.serviceSection, value)
 	}
 }
@@ -1061,7 +1061,7 @@ func (f *IndividualForm) buildServiceDeliveredDate(idx int) func() error {
 
 		return buildField(&forms.DateInputField{
 			Name:        fmt.Sprintf("service_delivered_date_%d", idx),
-			DisplayName: f.Locales.Translate(fmt.Sprintf("service_delivery_date_%d", idx)),
+			DisplayName: f.Locales.Translate("service_delivery_date_no", idx),
 		}, f.serviceSection, value)
 	}
 }
@@ -1090,7 +1090,7 @@ func (f *IndividualForm) buildServiceComments(idx int) func() error {
 
 		return buildField(&forms.TextAreaInputField{
 			Name:        fmt.Sprintf("service_comments_%d", idx),
-			DisplayName: f.Locales.Translate(fmt.Sprintf("service_delivery_date_comments_%d", idx)),
+			DisplayName: f.Locales.Translate("service_delivery_date_comments_no", idx),
 		}, f.serviceSection, value)
 	}
 }

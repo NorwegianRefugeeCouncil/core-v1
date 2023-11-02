@@ -53,7 +53,7 @@ var parameters = []struct {
 }
 
 func TestUnmarshalIndividualsTabularData(t *testing.T) {
-	locales.New()
+	locales.Init()
 
 	// test upload limit
 	var tooMuchData [][]string

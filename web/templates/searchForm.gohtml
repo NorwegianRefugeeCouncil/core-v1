@@ -4,18 +4,18 @@
         <input type="hidden" name="skip" value="">
 
         <h6 class="mt-2">
-            {{.RequestContext.Locales.Translate "personal_info"}}
+            {{translate "personal_info"}}
         </h6>
         <div class="row">
             <!-- Full Name -->
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="Name">
-                    {{.RequestContext.Locales.Translate "name"}}
+                    {{translate "name"}}
                 </label>
                 <input id="Name"
                        name="full_name"
                        type="text"
-                       placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "name")}}"
+                       placeholder="{{translate "search_placeholder" (translate "name")}}"
                        class="form-control"
                        value="{{.Options.FullName}}">
             </div>
@@ -24,12 +24,12 @@
             <!-- Mothers Name -->
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="MothersName">
-                    {{.RequestContext.Locales.Translate "mother_name"}}
+                    {{translate "mother_name"}}
                 </label>
                 <input id="MothersName"
                        name="mothers_name"
                        type="text"
-                       placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "mother_name")}}"
+                       placeholder="{{translate "search_placeholder" (translate "mother_name")}}"
                        class="form-control"
                        value="{{.Options.MothersName}}">
             </div>
@@ -38,27 +38,27 @@
             <!-- Sex -->
             <div class="form-group col-3">
                 <label class="form-label" for="Sex">
-                    {{.RequestContext.Locales.Translate "sex"}}
+                    {{translate "sex"}}
                 </label>
                 <select id="Sexes" name="sex" class="form-control">
                     <option value="" {{if .Options.Sexes.IsEmpty }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "all"}}
+                        {{translate "all"}}
                     </option>
                     <option value="male"
                             {{if .Options.Sexes.Contains "male" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "sex_male"}}
+                        {{translate "sex_male"}}
                     </option>
                     <option value="female"
                             {{if .Options.Sexes.Contains "female" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "sex_female"}}
+                        {{translate "sex_female"}}
                     </option>
                     <option value="other"
                             {{if .Options.Sexes.Contains "other" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "other_option"}}
+                        {{translate "other_option"}}
                     </option>
                     <option value="prefers_not_to_say"
                             {{if .Options.Sexes.Contains "prefers_not_to_say" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "prefers_not_to_say"}}
+                        {{translate "prefers_not_to_say"}}
                     </option>
                 </select>
             </div>
@@ -69,7 +69,7 @@
             <!-- Is Minor -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "is_minor_abrv"}}
+                    {{translate "is_minor_abrv"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -77,7 +77,7 @@
                                name="is_minor"
                                {{if eq .Options.IsMinor nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsMinorAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -85,7 +85,7 @@
                                name="is_minor"
                                {{if .Options.IsMinorSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsMinorYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -93,7 +93,7 @@
                                name="is_minor"
                                {{if .Options.IsNotMinorSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsMinorNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -103,7 +103,7 @@
             <!-- Is Minor Headed Household -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "is_minor_headed_household_abrv"}}
+                    {{translate "is_minor_headed_household_abrv"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -111,7 +111,7 @@
                                name="is_minor_headed_household"
                                {{if eq .Options.IsMinorHeadedHousehold nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsMinorHoHAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -119,7 +119,7 @@
                                name="is_minor_headed_household"
                                {{if .Options.IsMinorHeadedHouseholdSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsMinorHoHYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -127,7 +127,7 @@
                                name="is_minor_headed_household"
                                {{if .Options.IsNotMinorHeadedHouseholdSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsMinorHoHNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -137,7 +137,7 @@
             <!-- Is Female Headed Household -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "is_female_headed_household_abrv"}}
+                    {{translate "is_female_headed_household_abrv"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -145,7 +145,7 @@
                                name="is_female_headed_household"
                                {{if eq .Options.IsFemaleHeadedHousehold nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsFemaleHoHAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -153,7 +153,7 @@
                                name="is_female_headed_household"
                                {{if .Options.IsFemaleHeadedHouseholdSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsFemaleHoHYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -161,7 +161,7 @@
                                name="is_female_headed_household"
                                {{if .Options.IsNotFemaleHeadedHouseholdSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsFemaleHoHNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -171,7 +171,7 @@
             <!-- Inactive -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "show_inactive"}}
+                    {{translate "show_inactive"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -179,7 +179,7 @@
                                name="inactive"
                                {{if eq .Options.Inactive nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsInactiveAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -187,7 +187,7 @@
                                name="inactive"
                                {{if .Options.IsInactiveSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsInactive">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -195,7 +195,7 @@
                                name="inactive"
                                {{if .Options.IsNotInactiveSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsNotInactive">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -207,12 +207,12 @@
             <!-- ID -->
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="ID">
-                    {{.RequestContext.Locales.Translate "individual_id"}}
+                    {{translate "individual_id"}}
                 </label>
                 <input id="ID"
                        name="id"
                        type="text"
-                       placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "individual_id")}}"
+                       placeholder="{{translate "search_placeholder" (translate "individual_id")}}"
                        class="form-control"
                        value="{{if not .Options.IDs.IsEmpty }}{{joinStrings .Options.IDs.Items ","}}{{end}}">
             </div>
@@ -221,12 +221,12 @@
             <!-- IdentificationNumber -->
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="IdentificationNumber">
-                    {{.RequestContext.Locales.Translate "identification_number"}}
+                    {{translate "identification_number"}}
                 </label>
                 <input id="IdentificationNumber"
                        name="identification_number"
                        type="text"
-                       placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "identification_number")}}"
+                       placeholder="{{translate "search_placeholder" (translate "identification_number")}}"
                        class="form-control"
                        value="{{.Options.IdentificationNumber}}">
             </div>
@@ -235,12 +235,12 @@
             <!-- CommunityID -->
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="CommunityID">
-                    {{.RequestContext.Locales.Translate "community_id"}}
+                    {{translate "community_id"}}
                 </label>
                 <input id="CommunityID"
                        name="community_id"
                        type="text"
-                       placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "community_id")}}"
+                       placeholder="{{translate "search_placeholder" (translate "community_id")}}"
                        class="form-control"
                        value="{{.Options.CommunityID}}">
             </div>
@@ -249,12 +249,12 @@
             <!-- HouseholdID -->
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="HouseholdID">
-                    {{.RequestContext.Locales.Translate "household_id"}}
+                    {{translate "household_id"}}
                 </label>
                 <input id="HouseholdID"
                        name="household_id"
                        type="text"
-                       placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "household_id")}}"
+                       placeholder="{{translate "search_placeholder" (translate "household_id")}}"
                        class="form-control"
                        value="{{.Options.HouseholdID}}">
             </div>
@@ -265,13 +265,13 @@
             <!-- Age -->
             <div class="col-6">
                 <label class="form-label">
-                    {{.RequestContext.Locales.Translate "age_abrv"}}
+                    {{translate "age_abrv"}}
                 </label>
                 <div class="row">
                     <div class="col-3 input-group mb-2 w-50">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
-                                {{.RequestContext.Locales.Translate "from"}}
+                                {{translate "from"}}
                             </div>
                         </div>
                         <input type="number" name="age_from" class="form-control" id="AgeFrom"
@@ -281,7 +281,7 @@
                     <div class="col-3 input-group mb-2 w-50">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
-                                {{.RequestContext.Locales.Translate "to"}}
+                                {{translate "to"}}
                             </div>
                         </div>
                         <input type="number" name="age_to" class="form-control" id="AgeTo"
@@ -294,13 +294,13 @@
             <!-- Birth Date -->
             <div class="col-6">
                 <label class="form-label">
-                    {{.RequestContext.Locales.Translate "birth_date"}}
+                    {{translate "birth_date"}}
                 </label>
                 <div class="row">
                     <div class="col-3 input-group mb-2 w-50">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
-                                {{.RequestContext.Locales.Translate "from"}}
+                                {{translate "from"}}
                             </div>
                         </div>
                         <input type="date" name="birth_date_from" class="form-control"
@@ -311,7 +311,7 @@
                     <div class="col-3 input-group mb-2 w-50">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
-                                {{.RequestContext.Locales.Translate "to"}}
+                                {{translate "to"}}
                             </div>
                         </div>
                         <input type="date" name="birth_date_to" class="form-control"
@@ -324,13 +324,13 @@
         </div>
 
         <h6 class="mt-2">
-            {{.RequestContext.Locales.Translate "disabilities"}}
+            {{translate "disabilities"}}
         </h6>
         <div class="row">
             <!-- HasDisability -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "has_disability_abrv"}}
+                    {{translate "has_disability_abrv"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -339,7 +339,7 @@
                                name="has_disability"
                                {{if eq .Options.HasDisability nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasDisabilityAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -348,7 +348,7 @@
                                name="has_disability"
                                {{if .Options.IsHasDisabilitySelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasDisabilityYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -357,7 +357,7 @@
                                name="has_disability"
                                {{if .Options.IsNotHasDisabilitySelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasDisabilityNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -367,7 +367,7 @@
             <!-- HasVisionDisability -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "has_vision_disability_abrv"}}
+                    {{translate "has_vision_disability_abrv"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -376,7 +376,7 @@
                                name="has_vision_disability"
                                {{if eq .Options.HasVisionDisability nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasVisionDisabilityAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -385,7 +385,7 @@
                                name="has_vision_disability"
                                {{if .Options.IsHasVisionDisabilitySelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasVisionDisabilityYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -394,7 +394,7 @@
                                name="has_vision_disability"
                                {{if .Options.IsNotHasVisionDisabilitySelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasVisionDisabilityNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -404,7 +404,7 @@
             <!-- HasCognitiveDisability -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "has_cognitive_disability_abrv"}}
+                    {{translate "has_cognitive_disability_abrv"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -413,7 +413,7 @@
                                name="has_cognitive_disability"
                                {{if eq .Options.HasCognitiveDisability nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasCognitiveDisabilityAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -422,7 +422,7 @@
                                name="has_cognitive_disability"
                                {{if .Options.IsHasCognitiveDisabilitySelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasCognitiveDisabilityYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -431,7 +431,7 @@
                                name="has_cognitive_disability"
                                {{if .Options.IsNotHasCognitiveDisabilitySelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasCognitiveDisabilityNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -441,7 +441,7 @@
             <!-- HasCommunicationDisability -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "has_communication_disability_abrv"}}
+                    {{translate "has_communication_disability_abrv"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -450,7 +450,7 @@
                                name="has_communication_disability"
                                {{if eq .Options.HasCommunicationDisability nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasCommunicationDisabilityAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -459,7 +459,7 @@
                                name="has_communication_disability"
                                {{if .Options.IsHasCommunicationDisabilitySelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasCommunicationDisabilityYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -468,7 +468,7 @@
                                name="has_communication_disability"
                                {{if .Options.IsNotHasCommunicationDisabilitySelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasCommunicationDisabilityNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -478,7 +478,7 @@
             <!-- HasHearingDisability -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "has_hearing_disability_abrv"}}
+                    {{translate "has_hearing_disability_abrv"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -487,7 +487,7 @@
                                name="has_hearing_disability"
                                {{if eq .Options.HasHearingDisability nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasHearingDisabilityAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -496,7 +496,7 @@
                                name="has_hearing_disability"
                                {{if .Options.IsHasHearingDisabilitySelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasHearingDisabilityYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -505,7 +505,7 @@
                                name="has_hearing_disability"
                                {{if .Options.IsNotHasHearingDisabilitySelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasHearingDisabilityNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -515,7 +515,7 @@
             <!-- HasMobilityDisability -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "has_mobility_disability_abrv"}}
+                    {{translate "has_mobility_disability_abrv"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -524,7 +524,7 @@
                                name="has_mobility_disability"
                                {{if eq .Options.HasMobilityDisability nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasMobilityDisabilityAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -533,7 +533,7 @@
                                name="has_mobility_disability"
                                {{if .Options.IsHasMobilityDisabilitySelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasMobilityDisabilityYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -542,7 +542,7 @@
                                name="has_mobility_disability"
                                {{if .Options.IsNotHasMobilityDisabilitySelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasMobilityDisabilityNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -552,7 +552,7 @@
             <!-- HasSelfCareDisability -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "has_self_care_disability_abrv"}}
+                    {{translate "has_self_care_disability_abrv"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -561,7 +561,7 @@
                                name="has_self_care_disability"
                                {{if eq .Options.HasSelfCareDisability nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasSelfCareDisabilityAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -570,7 +570,7 @@
                                name="has_self_care_disability"
                                {{if .Options.IsHasSelfCareDisabilitySelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasSelfCareDisabilityYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -579,7 +579,7 @@
                                name="has_self_care_disability"
                                {{if .Options.IsNotHasSelfCareDisabilitySelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasSelfCareDisabilityNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -588,13 +588,13 @@
         </div>
 
         <h6 class="mt-2">
-            {{.RequestContext.Locales.Translate "vulnerabilities"}}
+            {{translate "vulnerabilities"}}
         </h6>
         <div class="row">
             <!-- IsChildAtRisk -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "is_child_at_risk"}}
+                    {{translate "is_child_at_risk"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -603,7 +603,7 @@
                                name="is_child_at_risk"
                                {{if eq .Options.IsChildAtRisk nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsChildAtRiskAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -612,7 +612,7 @@
                                name="is_child_at_risk"
                                {{if .Options.IsIsChildAtRiskSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsChildAtRiskYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -621,7 +621,7 @@
                                name="is_child_at_risk"
                                {{if .Options.IsNotIsChildAtRiskSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsChildAtRiskNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -630,7 +630,7 @@
             <!-- IsWomanAtRisk -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "is_woman_at_risk"}}
+                    {{translate "is_woman_at_risk"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -639,7 +639,7 @@
                                name="is_woman_at_risk"
                                {{if eq .Options.IsWomanAtRisk nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsWomanAtRiskAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -648,7 +648,7 @@
                                name="is_woman_at_risk"
                                {{if .Options.IsIsWomanAtRiskSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsWomanAtRiskYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -657,7 +657,7 @@
                                name="is_woman_at_risk"
                                {{if .Options.IsNotIsWomanAtRiskSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsWomanAtRiskNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -666,7 +666,7 @@
             <!-- IsElderAtRisk -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "is_elder_at_risk"}}
+                    {{translate "is_elder_at_risk"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -675,7 +675,7 @@
                                name="is_elder_at_risk"
                                {{if eq .Options.IsElderAtRisk nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsElderAtRiskAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -684,7 +684,7 @@
                                name="is_elder_at_risk"
                                {{if .Options.IsIsElderAtRiskSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsElderAtRiskYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -693,7 +693,7 @@
                                name="is_elder_at_risk"
                                {{if .Options.IsNotIsElderAtRiskSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsElderAtRiskNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -702,7 +702,7 @@
             <!-- IsSeparatedChild -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "is_separated_child"}}
+                    {{translate "is_separated_child"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -711,7 +711,7 @@
                                name="is_separated_child"
                                {{if eq .Options.IsSeparatedChild nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsSeparatedChildAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -720,7 +720,7 @@
                                name="is_separated_child"
                                {{if .Options.IsIsSeparatedChildSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsSeparatedChildYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -729,7 +729,7 @@
                                name="is_separated_child"
                                {{if .Options.IsNotIsSeparatedChildSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsSeparatedChildNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -738,7 +738,7 @@
             <!-- IsSingleParent -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "is_single_parent"}}
+                    {{translate "is_single_parent"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -747,7 +747,7 @@
                                name="is_single_parent"
                                {{if eq .Options.IsSingleParent nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsSingleParentAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -756,7 +756,7 @@
                                name="is_single_parent"
                                {{if .Options.IsIsSingleParentSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsSingleParentYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -765,7 +765,7 @@
                                name="is_single_parent"
                                {{if .Options.IsNotIsSingleParentSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsSingleParentNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -774,7 +774,7 @@
             <!-- IsPregnant -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "is_pregnant"}}
+                    {{translate "is_pregnant"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -783,7 +783,7 @@
                                name="is_pregnant"
                                {{if eq .Options.IsPregnant nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsPregnantAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -792,7 +792,7 @@
                                name="is_pregnant"
                                {{if .Options.IsIsPregnantSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsPregnantYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -801,7 +801,7 @@
                                name="is_pregnant"
                                {{if .Options.IsNotIsPregnantSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsPregnantNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -810,7 +810,7 @@
             <!-- IsLactating -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "is_lactating"}}
+                    {{translate "is_lactating"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -819,7 +819,7 @@
                                name="is_lactating"
                                {{if eq .Options.IsLactating nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsLactatingAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -828,7 +828,7 @@
                                name="is_lactating"
                                {{if .Options.IsIsLactatingSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsLactatingYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -837,7 +837,7 @@
                                name="is_lactating"
                                {{if .Options.IsNotIsLactatingSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="IsLactatingNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -846,7 +846,7 @@
             <!-- HasMedicalCondition -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "has_medical_condition"}}
+                    {{translate "has_medical_condition"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -855,7 +855,7 @@
                                name="has_medical_condition"
                                {{if eq .Options.HasMedicalCondition nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasMedicalConditionAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -864,7 +864,7 @@
                                name="has_medical_condition"
                                {{if .Options.IsHasMedicalConditionSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasMedicalConditionYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -873,7 +873,7 @@
                                name="has_medical_condition"
                                {{if .Options.IsNotHasMedicalConditionSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="HasMedicalConditionNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -882,7 +882,7 @@
             <!-- NeedsLegalAndPhysicalProtection -->
             <div class="form-group col-3">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "needs_legal_and_physical_protection"}}
+                    {{translate "needs_legal_and_physical_protection"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -891,7 +891,7 @@
                                name="needs_legal_and_physical_protection"
                                {{if eq .Options.NeedsLegalAndPhysicalProtection nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="NeedsLegalAndPhysicalProtectionAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -900,7 +900,7 @@
                                name="needs_legal_and_physical_protection"
                                {{if .Options.IsNeedsLegalAndPhysicalProtectionSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="NeedsLegalAndPhysicalProtectionYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -909,7 +909,7 @@
                                name="needs_legal_and_physical_protection"
                                {{if .Options.IsNotNeedsLegalAndPhysicalProtectionSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="NeedsLegalAndPhysicalProtectionNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -918,13 +918,13 @@
         </div>
 
         <h6 class="mt-2">
-            {{.RequestContext.Locales.Translate "protection"}}
+            {{translate "protection"}}
         </h6>
         <div class="row">
             <!-- Protection Concerns -->
             <div class="form-group col-6">
                 <label class="form-text">
-                    {{.RequestContext.Locales.Translate "presents_protection_concerns"}}
+                    {{translate "presents_protection_concerns"}}
                 </label>
                 <div>
                     <div class="form-check form-check-inline">
@@ -933,7 +933,7 @@
                                name="presents_protection_concerns"
                                {{if eq .Options.PresentsProtectionConcerns nil }}checked="checked"{{end}}>
                         <label class="form-check-label" for="PresentsProtectionConcernsAll">
-                            {{.RequestContext.Locales.Translate "all"}}
+                            {{translate "all"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -942,7 +942,7 @@
                                name="presents_protection_concerns"
                                {{if .Options.IsPresentsProtectionConcernsSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="PresentsProtectionConcernsYes">
-                            {{.RequestContext.Locales.Translate "yes"}}
+                            {{translate "yes"}}
                         </label>
                     </div>
                     <div class="form-check form-check-inline mb-3">
@@ -951,7 +951,7 @@
                                name="presents_protection_concerns"
                                {{if .Options.IsNotPresentsProtectionConcernsSelected }}checked="checked"{{end}}>
                         <label class="form-check-label" for="PresentsProtectionConcernsNo">
-                            {{.RequestContext.Locales.Translate "no"}}
+                            {{translate "no"}}
                         </label>
                     </div>
                 </div>
@@ -960,39 +960,39 @@
             <!-- Displacement Status -->
             <div class="col-6">
                 <label class="form-label" for="DisplacementStatus">
-                    {{.RequestContext.Locales.Translate "displacement_status"}}
+                    {{translate "displacement_status"}}
                 </label>
                 <select id="DisplacementStatus" name="displacement_status" class="form-control">
                     <option value="" {{if .Options.DisplacementStatuses.IsEmpty }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "all"}}
+                        {{translate "all"}}
                     </option>
                     <option value="idp"
                             {{if .Options.DisplacementStatuses.Contains "idp" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "displacement_status_internally_displaced_person"}}
+                        {{translate "displacement_status_internally_displaced_person"}}
                     </option>
                     <option value="refugee"
                             {{if .Options.DisplacementStatuses.Contains "refugee" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "displacement_status_refugee"}}
+                        {{translate "displacement_status_refugee"}}
                     </option>
                     <option value="host_community"
                             {{if .Options.DisplacementStatuses.Contains "host_community" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "displacement_status_host_community"}}
+                        {{translate "displacement_status_host_community"}}
                     </option>
                     <option value="returnee"
                             {{if .Options.DisplacementStatuses.Contains "returnee" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "displacement_status_returnee"}}
+                        {{translate "displacement_status_returnee"}}
                     </option>
                     <option value="asylum_seeker"
                             {{if .Options.DisplacementStatuses.Contains "asylum_seeker" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "displacement_status_asylum_seeker"}}
+                        {{translate "displacement_status_asylum_seeker"}}
                     </option>
                     <option value="non_displaced"
                             {{if .Options.DisplacementStatuses.Contains "non_displaced" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "displacement_status_non_displaced"}}
+                        {{translate "displacement_status_non_displaced"}}
                     </option>
                     <option value="other"
                             {{if .Options.DisplacementStatuses.Contains "other" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "other_option"}}
+                        {{translate "other_option"}}
                     </option>
                 </select>
             </div>
@@ -1000,19 +1000,19 @@
         </div>
 
         <h6 class="mt-2">
-            {{.RequestContext.Locales.Translate "contact"}}
+            {{translate "contact"}}
         </h6>
         <div class="row">
             <!-- Address -->
             <div class="form-group mb-3 col-6">
                 <label class="form-label" for="Address">
-                    {{.RequestContext.Locales.Translate "address"}}
+                    {{translate "address"}}
                 </label>
                 <input id="Address"
                        name="address"
                        type="text"
                        class="form-control"
-                       placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "address")}}"
+                       placeholder="{{translate "search_placeholder" (translate "address")}}"
                        value="{{.Options.Address}}">
             </div>
             <!-- End Address -->
@@ -1020,13 +1020,13 @@
             <!-- Email -->
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="Email">
-                    {{.RequestContext.Locales.Translate "email"}}
+                    {{translate "email"}}
                 </label>
                 <input id="Email"
                        name="email"
                        type="text"
                        class="form-control"
-                       placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "email")}}"
+                       placeholder="{{translate "search_placeholder" (translate "email")}}"
                        value="{{.Options.Email}}">
             </div>
             <!-- End Email -->
@@ -1034,54 +1034,54 @@
             <!-- Phone -->
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="PhoneNumber">
-                    {{.RequestContext.Locales.Translate "phone_number"}}
+                    {{translate "phone_number"}}
                 </label>
                 <input id="PhoneNumber"
                        name="phone_number"
                        type="text"
                        class="form-control"
-                       placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "phone_number")}}"
+                       placeholder="{{translate "search_placeholder" (translate "phone_number")}}"
                        value="{{.Options.PhoneNumber}}">
             </div>
             <!-- End Phone -->
         </div>
 
         <h6 class="mt-2">
-            {{.RequestContext.Locales.Translate "data_collection"}}
+            {{translate "data_collection"}}
         </h6>
         <div class="row">
             <!-- EngagementContext -->
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="EngagementContext">
-                    {{.RequestContext.Locales.Translate "engagement_context"}}
+                    {{translate "engagement_context"}}
                 </label>
                 <select id="EngagementContext" name="engagement_context" class="form-control">
                     <option value="" {{if .Options.EngagementContext.IsEmpty }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "all"}}
+                        {{translate "all"}}
                     </option>
                     <option value="houseVisit"
                             {{if .Options.EngagementContext.Contains "houseVisit" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "engagement_context_house_visit"}}
+                        {{translate "engagement_context_house_visit"}}
                     </option>
                     <option value="fieldActivity"
                             {{if .Options.EngagementContext.Contains "fieldActivity" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "engagement_context_field_activity"}}
+                        {{translate "engagement_context_field_activity"}}
                     </option>
                     <option value="inOffice"
                             {{if .Options.EngagementContext.Contains "inOffice" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "engagement_context_in_office"}}
+                        {{translate "engagement_context_in_office"}}
                     </option>
                     <option value="remoteChannels"
                             {{if .Options.EngagementContext.Contains "remoteChannels" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "engagement_context_remote_channels"}}
+                        {{translate "engagement_context_remote_channels"}}
                     </option>
                     <option value="referred"
                             {{if .Options.EngagementContext.Contains "referred" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "engagement_context_referred"}}
+                        {{translate "engagement_context_referred"}}
                     </option>
                     <option value="other"
                             {{if .Options.EngagementContext.Contains "other" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "other_option"}}
+                        {{translate "other_option"}}
                     </option>
                 </select>
             </div>
@@ -1090,12 +1090,12 @@
             <!-- CollectionAgentName -->
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="CollectionAgentName">
-                    {{.RequestContext.Locales.Translate "collection_agent_name"}}
+                    {{translate "collection_agent_name"}}
                 </label>
                 <input id="CollectionAgentName"
                        name="collection_agent_name"
                        type="text"
-                       placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "collection_agent_name")}}"
+                       placeholder="{{translate "search_placeholder" (translate "collection_agent_name")}}"
                        class="form-control"
                        value="{{.Options.CollectionAgentName}}">
             </div>
@@ -1104,13 +1104,13 @@
             <!-- Collection Date  -->
             <div class="col-6">
                 <label class="form-label">
-                    {{.RequestContext.Locales.Translate "collection_time"}}
+                    {{translate "collection_time"}}
                 </label>
                 <div class="row">
                     <div class="col-3 input-group mb-2 w-50">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
-                                {{.RequestContext.Locales.Translate "from"}}
+                                {{translate "from"}}
                             </div>
                         </div>
                         <input type="date" name="collection_time_from" class="form-control"
@@ -1121,7 +1121,7 @@
                     <div class="col-3 input-group mb-2 w-50">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
-                                {{.RequestContext.Locales.Translate "to"}}
+                                {{translate "to"}}
                             </div>
                         </div>
                         <input type="date" name="collection_time_to" class="form-control"
@@ -1135,12 +1135,12 @@
             <!-- CollectionAdministrativeArea1 -->
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="CollectionAdministrativeArea1">
-                    {{.RequestContext.Locales.Translate "collection_area_1"}}
+                    {{translate "collection_area_1"}}
                 </label>
                 <input id="CollectionAdministrativeArea1"
                        name="collection_administrative_area_1"
                        type="text"
-                       placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "collection_area_1")}}"
+                       placeholder="{{translate "search_placeholder" (translate "collection_area_1")}}"
                        class="form-control"
                        value="{{.Options.CollectionAdministrativeArea1}}">
             </div>
@@ -1149,12 +1149,12 @@
             <!-- CollectionAdministrativeArea2 -->
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="CollectionAdministrativeArea2">
-                    {{.RequestContext.Locales.Translate "collection_area_2"}}
+                    {{translate "collection_area_2"}}
                 </label>
                 <input id="CollectionAdministrativeArea2"
                        name="collection_administrative_area_2"
                        type="text"
-                       placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "collection_area_2")}}"
+                       placeholder="{{translate "search_placeholder" (translate "collection_area_2")}}"
                        class="form-control"
                        value="{{.Options.CollectionAdministrativeArea2}}">
             </div>
@@ -1163,12 +1163,12 @@
             <!-- CollectionAdministrativeArea3 -->
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="CollectionAdministrativeArea3">
-                    {{.RequestContext.Locales.Translate "collection_area_3"}}
+                    {{translate "collection_area_3"}}
                 </label>
                 <input id="CollectionAdministrativeArea3"
                        name="collection_administrative_area_3"
                        type="text"
-                       placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "collection_area_3")}}"
+                       placeholder="{{translate "search_placeholder" (translate "collection_area_3")}}"
                        class="form-control"
                        value="{{.Options.CollectionAdministrativeArea3}}">
             </div>
@@ -1177,12 +1177,12 @@
             <!-- CollectionOffice -->
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="CollectionOffice">
-                    {{.RequestContext.Locales.Translate "collection_office_abrv"}}
+                    {{translate "collection_office_abrv"}}
                 </label>
                 <input id="CollectionOffice"
                        name="collection_office"
                        type="text"
-                       placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "collection_office")}}"
+                       placeholder="{{translate "search_placeholder" (translate "collection_office")}}"
                        class="form-control"
                        value="{{.Options.CollectionOffice}}">
             </div>
@@ -1195,12 +1195,12 @@
             <div class="col col-3">
                 <div class="form-group mb-3">
                     <label class="form-label" for="FreeField1">
-                        {{.RequestContext.Locales.Translate "free_field_1"}}
+                        {{translate "free_field_1"}}
                     </label>
                     <input id="FreeField1"
                            name="free_field_1"
                            type="text"
-                           placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "free_field_1")}}"
+                           placeholder="{{translate "search_placeholder" (translate "free_field_1")}}"
                            class="form-control"
                            value="{{.Options.FreeField1}}">
                 </div>
@@ -1210,12 +1210,12 @@
             <div class="col col-3">
                 <div class="form-group mb-3">
                     <label class="form-label" for="FreeField2">
-                        {{.RequestContext.Locales.Translate "free_field_2"}}
+                        {{translate "free_field_2"}}
                     </label>
                     <input id="FreeField2"
                            name="free_field_2"
                            type="text"
-                           placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "free_field_2")}}"
+                           placeholder="{{translate "search_placeholder" (translate "free_field_2")}}"
                            class="form-control"
                            value="{{.Options.FreeField2}}">
                 </div>
@@ -1225,12 +1225,12 @@
             <div class="col col-3">
                 <div class="form-group mb-3">
                     <label class="form-label" for="FreeField3">
-                        {{.RequestContext.Locales.Translate "free_field_3"}}
+                        {{translate "free_field_3"}}
                     </label>
                     <input id="FreeField3"
                            name="free_field_3"
                            type="text"
-                           placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "free_field_3")}}"
+                           placeholder="{{translate "search_placeholder" (translate "free_field_3")}}"
                            class="form-control"
                            value="{{.Options.FreeField3}}">
                 </div>
@@ -1240,12 +1240,12 @@
             <div class="col col-3">
                 <div class="form-group mb-3">
                     <label class="form-label" for="FreeField4">
-                        {{.RequestContext.Locales.Translate "free_field_4"}}
+                        {{translate "free_field_4"}}
                     </label>
                     <input id="FreeField4"
                            name="free_field_4"
                            type="text"
-                           placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "free_field_4")}}"
+                           placeholder="{{translate "search_placeholder" (translate "free_field_4")}}"
                            class="form-control"
                            value="{{.Options.FreeField4}}">
                 </div>
@@ -1255,12 +1255,12 @@
             <div class="col col-3">
                 <div class="form-group mb-3">
                     <label class="form-label" for="FreeField5">
-                        {{.RequestContext.Locales.Translate "free_field_5"}}
+                        {{translate "free_field_5"}}
                     </label>
                     <input id="FreeField5"
                            name="free_field_5"
                            type="text"
-                           placeholder="{{.RequestContext.Locales.Translate "search_placeholder" (.RequestContext.Locales.Translate "free_field_5")}}"
+                           placeholder="{{translate "search_placeholder" (translate "free_field_5")}}"
                            class="form-control"
                            value="{{.Options.FreeField5}}">
                 </div>
@@ -1269,49 +1269,49 @@
         </div>
 
         <h6 class="mt-2">
-            {{.RequestContext.Locales.Translate "services"}}
+            {{translate "services"}}
         </h6>
         <div class="row">
             <!-- Service CC -->
             <div class="form-group mb-3 col-3">
                 <label class="form-label" for="ServiceCC">
-                    {{.RequestContext.Locales.Translate "service_cc"}}
+                    {{translate "service_cc"}}
                 </label>
                 <select id="ServiceCC" name="service_cc" class="form-control">
                     <option value="" {{if .Options.ServiceCC.IsEmpty }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "all"}}
+                        {{translate "all"}}
                     </option>
                     <option value="shelter_and_settlements"
                             {{if .Options.ServiceCC.Contains "shelter_and_settlements" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "service_shelter"}}
+                        {{translate "service_shelter"}}
                     </option>
                     <option value="wash"
                             {{if .Options.ServiceCC.Contains "wash" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "service_wash"}}
+                        {{translate "service_wash"}}
                     </option>
                     <option value="protection"
                             {{if .Options.ServiceCC.Contains "protection" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "service_protection"}}
+                        {{translate "service_protection"}}
                     </option>
                     <option value="education"
                             {{if .Options.ServiceCC.Contains "education" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "service_education"}}
+                        {{translate "service_education"}}
                     </option>
                     <option value="icla"
                             {{if .Options.ServiceCC.Contains "icla" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "service_icla"}}
+                        {{translate "service_icla"}}
                     </option>
                     <option value="lfs"
                             {{if .Options.ServiceCC.Contains "lfs" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "service_lfs"}}
+                        {{translate "service_lfs"}}
                     </option>
                     <option value="cva"
                             {{if .Options.ServiceCC.Contains "cva" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "service_cva"}}
+                        {{translate "service_cva"}}
                     </option>
                     <option value="other"
                             {{if .Options.ServiceCC.Contains "other" }}selected{{end}}>
-                        {{.RequestContext.Locales.Translate "other_option"}}
+                        {{translate "other_option"}}
                     </option>
                 </select>
             </div>
@@ -1321,13 +1321,13 @@
             <!-- Service Requested Date  -->
             <div class="col-6">
                 <label class="form-label">
-                    {{.RequestContext.Locales.Translate "service_request_date"}}
+                    {{translate "service_request_date"}}
                 </label>
                 <div class="row">
                     <div class="col-3 input-group mb-2 w-50">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
-                                {{.RequestContext.Locales.Translate "from"}}
+                                {{translate "from"}}
                             </div>
                         </div>
                         <input type="date" name="service_requested_date_from" class="form-control"
@@ -1338,7 +1338,7 @@
                     <div class="col-3 input-group mb-2 w-50">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
-                                {{.RequestContext.Locales.Translate "to"}}
+                                {{translate "to"}}
                             </div>
                         </div>
                         <input type="date" name="service_requested_date_to" class="form-control"
@@ -1352,13 +1352,13 @@
             <!-- Service Delivered Date  -->
             <div class="col-6">
                 <label class="form-label">
-                    {{.RequestContext.Locales.Translate "service_delivery_date"}}
+                    {{translate "service_delivery_date"}}
                 </label>
                 <div class="row">
                     <div class="col-3 input-group mb-2 w-50">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
-                                {{.RequestContext.Locales.Translate "from"}}
+                                {{translate "from"}}
                             </div>
                         </div>
                         <input type="date" name="service_delivered_date_from" class="form-control"
@@ -1369,7 +1369,7 @@
                     <div class="col-3 input-group mb-2 w-50">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
-                                {{.RequestContext.Locales.Translate "to"}}
+                                {{translate "to"}}
                             </div>
                         </div>
                         <input type="date" name="service_delivered_date_to" class="form-control"
@@ -1385,10 +1385,10 @@
     <div class="card-footer sticky-bottom w-100 bg-white p-5">
         <a href="/countries/{{.RequestContext.SelectedCountry.ID}}/participants"
            class="btn btn-outline-primary">
-            {{.RequestContext.Locales.Translate "clear"}}
+            {{translate "clear"}}
         </a>
         <button class="btn btn-primary" type="submit" form="searchForm">
-            {{.RequestContext.Locales.Translate "search"}}
+            {{translate "search"}}
         </button>
     </div>
 {{end}}

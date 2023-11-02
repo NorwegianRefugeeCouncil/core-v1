@@ -3,6 +3,7 @@ package forms
 import (
 	_ "embed"
 	"errors"
+	"github.com/nrc-no/notcore/internal/locales"
 	"html/template"
 	"reflect"
 )
@@ -34,6 +35,9 @@ func init() {
 				dict[key] = values[i+1]
 			}
 			return dict, nil
+		},
+		"translate": func(id string, args ...interface{}) string {
+			return locales.GetLocales().Translate(id, args...)
 		},
 	})
 	formTemplate = template.Must(t.Parse(formHtmlTemplate))

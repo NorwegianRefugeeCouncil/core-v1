@@ -210,15 +210,14 @@ func renderView(
 		}
 	}
 
-	localesInterface := locales.GetLocales()
-
+	//localesInterface := locales.GetLocales()
 	rc := RequestContext{
-		Request:            r,
-		Auth:               authIntf,
-		Countries:          countries,
-		SelectedCountry:    selectedCountry,
-		Session:            session,
-		Locales:            localesInterface,
+		Request:         r,
+		Auth:            authIntf,
+		Countries:       countries,
+		SelectedCountry: selectedCountry,
+		Session:         session,
+		//Locales:            localesInterface,
 		EnableBetaFeatures: enableBetaFeatures,
 	}
 	vd[vd.RequestContextKey()] = rc

@@ -10,7 +10,7 @@ import (
 func setupSuite() func() {
 	err := locales.LoadTranslations()
 	if err == nil {
-		locales.New()
+		locales.Init()
 	}
 	return func() {
 		log.Println("teardown suite")

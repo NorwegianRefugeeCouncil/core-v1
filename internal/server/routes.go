@@ -40,7 +40,7 @@ func buildRouter(
 		middleware.RequestId,
 	)
 	renderer := handlers.NewRenderer(tpl, enableBetaFeatures)
-	locales.New()
+	locales.Init()
 
 	staticRouter := r.PathPrefix("/static").Subrouter()
 	staticRouter.HandleFunc("/{file:.*}", web.ServeStatic)

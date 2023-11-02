@@ -14,7 +14,7 @@ import (
 
 func TestNewIndividualListFromURLValues(t *testing.T) {
 	locales.LoadTranslations()
-	locales.New()
+	locales.Init()
 
 	tests := []struct {
 		name    string

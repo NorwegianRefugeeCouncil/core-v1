@@ -34,7 +34,7 @@ type locales struct {
 	localizer *i18n.Localizer
 }
 
-func New() {
+func Init() {
 	loc := locales{localizer: DefaultLocalizer}
 	l = &loc
 }
