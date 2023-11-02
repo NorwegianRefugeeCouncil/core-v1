@@ -906,6 +906,12 @@ func (i *Individual) marshalTabularData() ([]string, error) {
 			row[j] = string(v)
 		case enumTypes.DisplacementStatus:
 			row[j] = string(v)
+		case enumTypes.EngagementContext:
+			row[j] = string(v)
+		case enumTypes.IdentificationType:
+			row[j] = string(v)
+		case enumTypes.ContactMethod:
+			row[j] = string(v)
 		case enumTypes.ServiceCC:
 			row[j] = string(v)
 		case enumTypes.Sex:
