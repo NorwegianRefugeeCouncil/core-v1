@@ -11,12 +11,12 @@ new_country = "XXXX"
 no_country_found = "XXXX"
 
 # country.gohtml
-add_nrc_organisation = "XXXX"
 code = "XXXX"
 country_details = "XXXX"
-new_nrc_organisation = "XXXX"
-nrc_organisation = "XXXX"
-nrc_organisation_description = "XXXX"
+read_group = "XXXX"
+read_group_description = "XXXX"
+write_group = "XXXX"
+write_group_description = "XXXX"
 save = "XXXX"
 
 # individual.gohtml

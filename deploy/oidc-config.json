@@ -13,7 +13,7 @@
   "claim_mapping": {
     "openid": [ "sub" ],
     "email": [ "email", "email_verified" ],
-    "profile": [ "name", "nickname", "nrcOrganisation" ],
+    "profile": [ "name", "nickname" ],
     "groups": ["groups"]
   },
   "cookies":{

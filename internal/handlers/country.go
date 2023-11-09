@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"github.com/nrc-no/notcore/internal/api"
-	"github.com/nrc-no/notcore/internal/containers"
 	"net/http"
 	"strings"
+
+	"github.com/nrc-no/notcore/internal/api"
 
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/notcore/internal/db"
@@ -21,7 +21,8 @@ func HandleCountry(renderer Renderer, repo db.CountryRepo) http.Handler {
 		viewParamCountry         = "Country"
 		formParamName            = "Name"
 		formParamCode            = "Code"
-		formParamNrcOrganisation = "NrcOrganisations"
+		formParamReadGroup 		 	 = "ReadGroup"
+		formParamWriteGroup		 	 = "WriteGroup"
 	)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -59,13 +60,8 @@ func HandleCountry(renderer Renderer, repo db.CountryRepo) http.Handler {
 		}
 		country.Name = strings.TrimSpace(r.FormValue(formParamName))
 		country.Code = strings.TrimSpace(strings.ToLower(r.FormValue(formParamCode)))
-		orgs := containers.NewStringSet(r.Form[formParamNrcOrganisation]...)
-		country.NrcOrganisations = containers.NewStringSet()
-		for _, org := range orgs.Items() {
-			if org != "" {
-				country.NrcOrganisations.Add(strings.TrimSpace(org))
-			}
-		}
+		country.ReadGroup = strings.TrimSpace(r.FormValue(formParamReadGroup))
+		country.WriteGroup = strings.TrimSpace(r.FormValue(formParamWriteGroup))
 
 		country, err = repo.Put(r.Context(), country)
 		if err != nil {

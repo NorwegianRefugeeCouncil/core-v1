@@ -1,10 +1,10 @@
 package validation
 
 import (
-	"github.com/nrc-no/notcore/internal/api"
-	"github.com/nrc-no/notcore/internal/containers"
-	"github.com/nrc-no/notcore/pkg/api/validation"
 	"regexp"
+
+	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/pkg/api/validation"
 )
 
 func ValidateCountry(country *api.Country) validation.ErrorList {
@@ -24,7 +24,8 @@ func validateCountry(path *validation.Path, country *api.Country) validation.Err
 	allErrs := validation.ErrorList{}
 	allErrs = append(allErrs, validateCountryName(country.Name, path.Child("name"))...)
 	allErrs = append(allErrs, validateCountryCode(country.Code, path.Child("code"))...)
-	allErrs = append(allErrs, validateCountryNrcOrganisations(country.NrcOrganisations, path.Child("nrcOrganisations"))...)
+	allErrs = append(allErrs, validateCountryGroup(country.ReadGroup, path.Child("readGroup"))...)
+	allErrs = append(allErrs, validateCountryGroup(country.WriteGroup, path.Child("writeGroup"))...)
 	return allErrs
 }
 
@@ -42,9 +43,9 @@ var countryCodeMaxLength = 255
 var countryCodeMinLength = 2
 var countryCodePattern = regexp.MustCompile(`^[a-zA-Z0-9_-]+$`)
 
-var countryNrcOrganisationMaxLength = 255
-var countryNrcOrganisationMinLength = 1
-var countryNrcOrganisationPattern = regexp.MustCompile(`^[a-zA-Z0-9_-]+(?: [a-zA-Z0-9_-]+)*$`)
+var countryGroupMaxLength = 255
+var countryGroupMinLength = 1
+var countryGroupPattern = regexp.MustCompile(`^[a-zA-Z0-9_-]+(?: [a-zA-Z0-9_-]+)*$`)
 
 func validateCountryName(name string, path *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
@@ -83,20 +84,16 @@ func validateCountryCode(code string, path *validation.Path) validation.ErrorLis
 	return allErrs
 }
 
-func validateCountryNrcOrganisations(nrcOrganisations containers.StringSet, path *validation.Path) validation.ErrorList {
+func validateCountryGroup(group string, path *validation.Path) validation.ErrorList {
 	allErrs := validation.ErrorList{}
-	if nrcOrganisations.Len() == 0 {
-		allErrs = append(allErrs, validation.Required(path, "nrc organisation is required"))
-	} else {
-		for _, org := range nrcOrganisations.Items() {
-			if len(org) > countryNrcOrganisationMaxLength {
-				allErrs = append(allErrs, validation.TooLongMaxLength(path, org, countryNrcOrganisationMaxLength))
-			} else if len(org) < countryNrcOrganisationMinLength {
-				allErrs = append(allErrs, validation.TooShortMinLength(path, org, countryNrcOrganisationMinLength))
-			} else if !countryNrcOrganisationPattern.MatchString(org) {
-				allErrs = append(allErrs, validation.Invalid(path, org, "nrc organisation is invalid"))
-			}
-		}
+	if group == "" {
+		allErrs = append(allErrs, validation.Required(path, "group is required"))
+	} else if len(group) > countryGroupMaxLength {
+		allErrs = append(allErrs, validation.TooLongMaxLength(path, group, countryGroupMaxLength))
+	} else if len(group) < countryGroupMinLength {
+		allErrs = append(allErrs, validation.TooShortMinLength(path, group, countryGroupMinLength))
+	} else if !countryGroupPattern.MatchString(group) {
+		allErrs = append(allErrs, validation.Invalid(path, group, "group is invalid"))
 	}
 	return allErrs
 }

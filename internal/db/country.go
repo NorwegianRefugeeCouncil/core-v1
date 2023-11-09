@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/nrc-no/notcore/internal/api"
@@ -74,12 +75,13 @@ func (c countryRepo) updateCountry(ctx context.Context, country *api.Country) (*
 	l := c.logger(ctx)
 	l.Debug("updating country")
 
-	const query = "UPDATE countries SET code = $2, name = $3, nrc_organisations = $4 WHERE id = $1"
+	const query = "UPDATE countries SET code = $2, name = $3, read_group = $4, write_group = $5 WHERE id = $1"
 	var args = []interface{}{
 		country.ID,
 		country.Code,
 		country.Name,
-		country.NrcOrganisations,
+		country.ReadGroup,
+		country.WriteGroup,
 	}
 
 	auditDuration := logDuration(ctx, "update country")
@@ -98,13 +100,14 @@ func (c countryRepo) createCountry(ctx context.Context, country *api.Country) (*
 	l.Debug("creating new country")
 	country.ID = uuid.New().String()
 
-	const query = `INSERT INTO countries (id, code, name, nrc_organisations) VALUES ($1, $2, $3, $4)`
+	const query = `INSERT INTO countries (id, code, name, read_group, write_group) VALUES ($1, $2, $3, $4, $5)`
 
 	var args = []interface{}{
 		country.ID,
 		country.Code,
 		country.Name,
-		country.NrcOrganisations,
+		country.ReadGroup,
+		country.WriteGroup,
 	}
 
 	auditDuration := logDuration(ctx, "create country")
