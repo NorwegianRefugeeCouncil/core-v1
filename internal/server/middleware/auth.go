@@ -123,6 +123,8 @@ func Authentication(
 				return
 			}
 
+			l.Info("User groups: ", zap.Strings("groups", userInfoClaims.Groups))
+
 			userSession := auth.NewAuthenticatedSession(
 				userInfoClaims.Groups,
 				tokenClaims.Email,
