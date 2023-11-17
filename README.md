@@ -1,5 +1,21 @@
 ## Install Dependencies
 
+### Install [go](https://go.dev/doc/install)
+
+### Install [docker](https://docs.docker.com/engine/install/)
+
+### Install `yarn`
+<details>
+<summary>
+Expand
+</summary>
+
+```
+npm install --global yarn
+```
+
+</details>
+
 ### Install `mkcert`
 
 <details>
