@@ -3,6 +3,7 @@
 ### Install [go](https://go.dev/doc/install)
 
 ### Install [docker](https://docs.docker.com/engine/install/)
+On Linux, also ensure your user [has permissions to run docker commands](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
 
 ### Install `yarn`
 <details>
