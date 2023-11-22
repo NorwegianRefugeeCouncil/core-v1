@@ -57,18 +57,17 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 
 	selectedCountryID, err := utils.GetSelectedCountryID(ctx)
 
-	schemaQuery := buildTableSchemaQuery()
-
+	// first we get the schema of the individual_registrations table
 	var schema []DBColumn
-
+	schemaQuery := buildTableSchemaQuery()
 	err = tx.SelectContext(ctx, &schema, schemaQuery)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get table schema: %w", err)
 	}
 
+	// then we collect the columns that are relevant for deduplication
 	columnsOfInterest := []string{}
 	uploadDfHasIdColumn := slices.Contains(df.Names(), constants.DBColumnIndividualID)
-
 	if uploadDfHasIdColumn {
 		columnsOfInterest = append(columnsOfInterest, constants.DBColumnIndividualID)
 	}
@@ -79,6 +78,8 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 		}
 	}
 
+	// we create a temp table with the relevant columns
+	// we use the request id to make sure the temp table name is unique
 	tempTableName := strings.Replace(fmt.Sprintf("temp_individuals_%s", utils.GetRequestID(ctx)), "-", "_", -1)
 	createTempTableQuery := buildCreateTempTableQuery(tempTableName, schema, columnsOfInterest)
 	result := tx.MustExec(createTempTableQuery)
@@ -86,8 +87,8 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 		return nil, fmt.Errorf("failed to create temp table")
 	}
 
+	// we insert the data from the upload into the temp table
 	df = df.Select(columnsOfInterest)
-
 	insertQuery, args := buildInsertIndividualsQuery(tempTableName, schema, df, columnsOfInterest, uploadDfHasIdColumn)
 	rows, err := tx.Queryx(insertQuery, args...)
 	if err != nil {
@@ -95,6 +96,7 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	}
 	rows.Close()
 
+	// now we look for duplicates in a cross join between the temp table and the individual_registrations table
 	deduplicationQuery := buildDeduplicationQuery(tempTableName, columnsOfInterest, config, uploadDfHasIdColumn, schema)
 	err = tx.SelectContext(ctx, &ret, deduplicationQuery, selectedCountryID)
 	if err != nil {
@@ -115,6 +117,14 @@ func buildTableSchemaQuery() string {
 	return b.String()
 }
 
+/*
+EXAMPLE:
+
+CREATE TEMPORARY TABLE temp_individuals_<requestId>
+	(birth_date date,first_name varchar,middle_name varchar,last_name varchar,native_name varchar,email_1 varchar,email_2 varchar,email_3 varchar)
+	ON COMMIT DROP;
+
+*/
 func buildCreateTempTableQuery(tempTableName string, schema []DBColumn, columnsOfInterest []string) string {
 	b := &strings.Builder{}
 
@@ -130,6 +140,14 @@ func buildCreateTempTableQuery(tempTableName string, schema []DBColumn, columnsO
 	return b.String()
 }
 
+/*
+EXAMPLE:
+
+INSERT INTO temp_individuals_<requestId>
+	SELECT * FROM UNNEST($1::date[],$2::varchar[],$3::varchar[],$4::varchar[],$5::varchar[],$6::varchar[],$7::varchar[],$8::varchar[]);
+
+where the parameters are the values of the relevant columns in the dataframe df
+*/
 func buildInsertIndividualsQuery(tempTableName string, schema []DBColumn, df dataframe.DataFrame, columnsOfInterest []string, uploadDfHasIdColumn bool) (string, []interface{}) {
 	b := &strings.Builder{}
 
@@ -138,6 +156,7 @@ func buildInsertIndividualsQuery(tempTableName string, schema []DBColumn, df dat
 	var args []interface{}
 	var types []string
 	for _, col := range schema {
+		// we only insert the columns that are relevant for deduplication and the id column if it exists in the upload
 		if slices.Contains(columnsOfInterest, col.Name) || (uploadDfHasIdColumn && col.Name == constants.DBColumnIndividualID) {
 			g := df.Col(col.Name)
 			if g.Err != nil {
@@ -168,6 +187,19 @@ func buildInsertIndividualsQuery(tempTableName string, schema []DBColumn, df dat
 	return b.String(), args
 }
 
+/*
+EXAMPLE:
+
+SELECT DISTINCT  ir.birth_date,ir.email_1,ir.email_2,ir.email_3,ir.first_name,ir.middle_name,ir.last_name,ir.native_name,ir.id
+	FROM individual_registrations ir
+	CROSS JOIN temp_individuals_<requestId> ti
+	WHERE ir.country_id = $1
+		AND ir.deleted_at IS NULL
+		AND (ti.birth_date = ir.birth_date)
+		AND (ti.email_1 = ir.email_1 OR ti.email_2 = ir.email_2 OR ti.email_3 = ir.email_3)
+		AND (ti.first_name = ir.first_name AND ti.middle_name = ir.middle_name AND ti.last_name = ir.last_name AND ti.native_name = ir.native_name);
+
+*/
 func buildDeduplicationQuery(tempTableName string, columnsOfInterest []string, config deduplication.DeduplicationConfig, uploadDfHasIdColumn bool, schema []DBColumn) string {
 	b := &strings.Builder{}
 
@@ -194,7 +226,7 @@ func buildDeduplicationQuery(tempTableName string, columnsOfInterest []string, c
 	if uploadDfHasIdColumn {
 		b.WriteString(" AND ti.id::uuid NOT IN (SELECT id FROM individual_registrations)")
 	}
-	b.WriteString(" AND ir.deleted_at IS NULL;")
+	b.WriteString(";")
 
 	return b.String()
 }

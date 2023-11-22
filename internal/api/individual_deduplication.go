@@ -16,7 +16,6 @@ import (
 func FindDuplicatesInUUIDColumn(df dataframe.DataFrame) []FileError {
 	filteredDf := df.Select([]string{indexColumnName, constants.DBColumnIndividualID, constants.DBColumnIndividualLastName})
 	fileErrors := []FileError{}
-	df.Col(indexColumnName).Records()
 
 	duplicatesPerId := getDuplicateUUIDs(filteredDf)
 
@@ -48,11 +47,17 @@ func getDuplicateUUIDs(df dataframe.DataFrame) map[string]containers.Set[int] {
 		if uuid == "" {
 			continue
 		}
-		duplicates := ExcludeSelfFromDataframe(df, i).Filter(dataframe.F{
-			Colname:    constants.DBColumnIndividualID,
-			Comparando: uuid,
-			Comparator: series.In,
-		})
+
+		duplicates := df.FilterAggregation(dataframe.And,
+			dataframe.F{
+				Colname:    constants.FileColumnIndividualID,
+				Comparando: uuid,
+				Comparator: series.In,
+			}, dataframe.F{
+				Colname:    indexColumnName,
+				Comparando: i,
+				Comparator: series.Neq,
+			})
 
 		for d := 0; d < duplicates.Nrow(); d++ {
 			rowNumber, err := duplicates.Select(indexColumnName).Elem(d, 0).Int()
@@ -363,7 +368,7 @@ func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], config de
 	return duplicateErrors
 }
 
-func GetDataframeFromRecords(records [][]string, deduplicationTypes []deduplication.DeduplicationType, mandatory []string) (dataframe.DataFrame, error) {
+func CreateDataframeFromRecords(records [][]string, deduplicationTypes []deduplication.DeduplicationType, mandatory []string) (dataframe.DataFrame, error) {
 	columnsOfInterest := []string{}
 	if len(deduplicationTypes) == 0 && len(mandatory) == 0 {
 		return dataframe.DataFrame{}, nil

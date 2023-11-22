@@ -510,7 +510,7 @@ func TestGetDataframeFromRecords(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			testDf, err := GetDataframeFromRecords(tt.records, tt.config, tt.mandatory)
+			testDf, err := CreateDataframeFromRecords(tt.records, tt.config, tt.mandatory)
 
 			if tt.wantErr {
 				assert.Error(t, err)

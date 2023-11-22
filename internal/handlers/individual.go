@@ -151,7 +151,7 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 					mandatory = append(mandatory, constants.DBColumnIndividualID)
 				}
 				record := api.GetRecordsFromIndividual(deduplicationConfig.Types, individual, mandatory)
-				df, err := api.GetDataframeFromRecords(record, deduplicationConfig.Types, mandatory)
+				df, err := api.CreateDataframeFromRecords(record, deduplicationConfig.Types, mandatory)
 				if err != nil {
 					alerts = append(alerts, alert.Alert{
 						Type:        bootstrap.StyleDanger,
