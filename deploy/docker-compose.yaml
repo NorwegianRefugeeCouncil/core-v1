@@ -72,3 +72,5 @@ services:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
       - ./certs/tls.key:/etc/envoy/certs/tls.key
       - ./certs/tls.crt:/etc/envoy/certs/tls.crt
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
