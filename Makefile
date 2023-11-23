@@ -45,7 +45,7 @@ template:
 certs:
 	@mkcert -install
 	@mkdir -p deploy/certs
-	@mkcert -cert-file deploy/certs/tls.crt -key-file deploy/certs/tls.key core.dev "*.core.dev" localhost 127.0.0.1 ::1 
+	@mkcert -cert-file deploy/certs/tls.crt -key-file deploy/certs/tls.key core.dev "*.core.dev" localhost 127.0.0.1 ::1 && chmod 644 deploy/certs/tls.key
 
 .PHONY: serve
 # Starts the server
