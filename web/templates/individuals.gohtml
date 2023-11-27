@@ -593,13 +593,120 @@
                     "MaxWidth" $isHeadOfHouseholdWidth
                     )}}
 
-
                     {{template "columnHeader" (dict
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "is_female_headed_household"
                     "Label" (.RequestContext.Locales.Translate "is_female_headed_household_abrv")
                     "Title" "Female Head of Household"
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "is_child_at_risk"
+                    "Label" (.RequestContext.Locales.Translate "is_child_at_risk_abrv")
+                    "Title" (.RequestContext.Locales.Translate "is_child_at_risk")
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "is_woman_at_risk"
+                    "Label" (.RequestContext.Locales.Translate "is_woman_at_risk_abrv")
+                    "Title" (.RequestContext.Locales.Translate "is_woman_at_risk")
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "is_elder_at_risk"
+                    "Label" (.RequestContext.Locales.Translate "is_elder_at_risk_abrv")
+                    "Title" (.RequestContext.Locales.Translate "is_elder_at_risk")
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "is_pregnant"
+                    "Label" (.RequestContext.Locales.Translate "is_pregnant_abrv")
+                    "Title" (.RequestContext.Locales.Translate "is_pregnant")
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "is_lactating"
+                    "Label" (.RequestContext.Locales.Translate "is_lactating_abrv")
+                    "Title" (.RequestContext.Locales.Translate "is_lactating")
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "is_separated_child"
+                    "Label" (.RequestContext.Locales.Translate "is_separated_child_abrv")
+                    "Title" (.RequestContext.Locales.Translate "is_separated_child")
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "is_single_parent"
+                    "Label" (.RequestContext.Locales.Translate "is_single_parent_abrv")
+                    "Title" (.RequestContext.Locales.Translate "is_single_parent")
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "has_medical_condition"
+                    "Label" (.RequestContext.Locales.Translate "has_medical_condition_abrv")
+                    "Title" (.RequestContext.Locales.Translate "has_medical_condition")
+                    "Class" "text-center"
+                    "Width" $isHeadOfHouseholdWidth
+                    "MinWidth" $isHeadOfHouseholdWidth
+                    "MaxWidth" $isHeadOfHouseholdWidth
+                    )}}
+
+                    {{template "columnHeader" (dict
+                    "Options" .Options
+                    "Sortable" true
+                    "SortKey" "needs_legal_and_physical_protection"
+                    "Label" (.RequestContext.Locales.Translate "needs_legal_and_physical_protection_abrv")
+                    "Title" (.RequestContext.Locales.Translate "needs_legal_and_physical_protection")
                     "Class" "text-center"
                     "Width" $isHeadOfHouseholdWidth
                     "MinWidth" $isHeadOfHouseholdWidth
@@ -1069,14 +1176,14 @@
                             <!-- First Name -->
                             <td>
                                 <div style="width: {{$nameWidth}}">
-                                    {{if not .PrefersToRemainAnonymous}}
-                                        {{.FirstName}}
-                                    {{else}}
+                                    {{if and .PrefersToRemainAnonymous (eq (boolPointerToValue .PrefersToRemainAnonymous) true)}}
                                         <span class="text-muted">
                                             <em>
                                                 {{$locales.Translate "anonymous"}}
                                             </em>
                                         </span>
+                                    {{else}}
+                                        {{.FirstName}}
                                     {{end}}
                                 </div>
                             </td>
@@ -1085,14 +1192,14 @@
                             <!-- Middle Name -->
                             <td>
                                 <div style="width: {{$nameWidth}}">
-                                    {{if not .PrefersToRemainAnonymous}}
-                                        {{.MiddleName}}
-                                    {{else}}
+                                    {{if and .PrefersToRemainAnonymous (eq (boolPointerToValue .PrefersToRemainAnonymous) true)}}
                                         <span class="text-muted">
                                             <em>
                                                 {{$locales.Translate "anonymous"}}
                                             </em>
                                         </span>
+                                    {{else}}
+                                        {{.MiddleName}}
                                     {{end}}
                                 </div>
                             </td>
@@ -1101,14 +1208,14 @@
                             <!-- Last Name -->
                             <td>
                                 <div style="width: {{$nameWidth}}">
-                                    {{if not .PrefersToRemainAnonymous}}
-                                        {{.LastName}}
-                                    {{else}}
+                                    {{if and .PrefersToRemainAnonymous (eq (boolPointerToValue .PrefersToRemainAnonymous) true)}}
                                         <span class="text-muted">
                                             <em>
                                                 {{$locales.Translate "anonymous"}}
                                             </em>
                                         </span>
+                                    {{else}}
+                                        {{.LastName}}
                                     {{end}}
                                 </div>
                             </td>
@@ -1117,14 +1224,14 @@
                             <!-- Native Name -->
                             <td>
                                 <div style="width: {{$nameWidth}}">
-                                    {{if not .PrefersToRemainAnonymous}}
-                                        {{.NativeName}}
-                                    {{else}}
+                                    {{if and .PrefersToRemainAnonymous (eq (boolPointerToValue .PrefersToRemainAnonymous) true)}}
                                         <span class="text-muted">
                                             <em>
                                                 {{$locales.Translate "anonymous"}}
                                             </em>
                                         </span>
+                                    {{else}}
+                                        {{.NativeName}}
                                     {{end}}
                                 </div>
                             </td>
@@ -1206,42 +1313,111 @@
 
                             <!-- IsHeadOfHousehold -->
                             <td>
-                                <div class="text-center" style="width: {{$isHeadOfHouseholdWidth}}">
-                                    {{if .IsHeadOfHousehold}}
-                                        <input class="form-check-input marker-only"
-                                               type="checkbox"
-                                               checked="checked"
-                                               disabled="disabled"/>
-                                    {{end}}
-                                </div>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsHeadOfHousehold
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
                             </td>
                             <!-- End IsHeadOfHousehold -->
 
                             <!-- IsMinorHeadedHousehold -->
                             <td>
-                                <div class="text-center" style="width: {{$isHeadOfHouseholdWidth}}">
-                                    {{if .IsMinorHeadedHousehold}}
-                                        <input class="form-check-input marker-only"
-                                               type="checkbox"
-                                               checked="checked"
-                                               disabled="disabled"/>
-                                    {{end}}
-                                </div>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsMinorHeadedHousehold
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
                             </td>
                             <!-- End IsMinorHeadedHousehold -->
 
                             <!-- IsFemaleHeadedHousehold -->
                             <td>
-                                <div class="text-center" style="width: {{$isHeadOfHouseholdWidth}}">
-                                    {{if .IsFemaleHeadedHousehold}}
-                                        <input class="form-check-input marker-only"
-                                               type="checkbox"
-                                               checked="checked"
-                                               disabled="disabled"/>
-                                    {{end}}
-                                </div>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsFemaleHeadedHousehold
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
                             </td>
                             <!-- End IsFemaleHeadedHousehold -->
+
+                            <!-- IsChildAtRisk -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsChildAtRisk
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End IsChildAtRisk -->
+
+                            <!-- IsWomanAtRisk -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsWomanAtRisk
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End IsWomanAtRisk -->
+
+                            <!-- IsElderAtRisk -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsElderAtRisk
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End IsElderAtRisk -->
+
+                            <!-- IsPregnant -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsPregnant
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End IsPregnant -->
+
+                            <!-- IsLactating -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsLactating
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End IsLactating -->
+
+                            <!-- IsSeparatedChild -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsSeparatedChild
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End IsSeparatedChild -->
+
+                            <!-- IsSingleParent -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsSingleParent
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End IsSingleParent -->
+
+                            <!-- HasMedicalCondition -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .HasMedicalCondition
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End HasMedicalCondition -->
+
+                            <!-- NeedsLegalAndPhysicalProtection -->
+                            <td>
+                                {{template "optionalBoolean" (dict
+                                "Value" .NeedsLegalAndPhysicalProtection
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
+                            </td>
+                            <!-- End NeedsLegalAndPhysicalProtection -->
 
                             <!-- CommunityID -->
                             <td>
@@ -1253,14 +1429,10 @@
 
                             <!-- IsHeadOfCommunity -->
                             <td>
-                                <div class="text-center" style="width: {{$isHeadOfCommunityWidth}}">
-                                    {{if .IsHeadOfCommunity}}
-                                        <input class="form-check-input marker-only"
-                                               type="checkbox"
-                                               checked="checked"
-                                               disabled="disabled">
-                                    {{end}}
-                                </div>
+                                {{template "optionalBoolean" (dict
+                                "Value" .IsHeadOfCommunity
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
                             </td>
                             <!-- End IsHeadOfCommunity -->
 
@@ -1287,14 +1459,10 @@
 
                             <!-- HasDisability -->
                             <td>
-                                <div class="text-center" style="width: {{$isHeadOfHouseholdWidth}}">
-                                    {{if .HasDisability}}
-                                        <input class="form-check-input marker-only"
-                                               type="checkbox"
-                                               checked="checked"
-                                               disabled="disabled"/>
-                                    {{end}}
-                                </div>
+                                {{template "optionalBoolean" (dict
+                                "Value" .HasDisability
+                                "Width" $isHeadOfHouseholdWidth
+                                )}}
                             </td>
                             <!-- End HasDisability -->
 
@@ -1721,96 +1889,4 @@
             </div>
         </div>
     </div>
-{{end}}
-
-{{define "columnHeader"}}
-    {{$options := .Options}}
-    {{$sortable := .Sortable}}
-    {{$label := .Label}}
-    {{$width := .Width}}
-    {{$minWidth := .MinWidth}}
-    {{$maxWidth := .MaxWidth}}
-    {{$sortKey := .SortKey}}
-    {{$sortOnClick := ""}}
-    {{$sortDirection := ""}}
-    {{$sortDirectionForLink := ""}}
-    {{$sorted := false}}
-    {{$left:= .Left}}
-
-    {{if $sortable}}
-        {{$sortDirection = $options.GetSortDirection $sortKey}}
-        {{if eq $sortDirection "ascending"}}
-            {{$sorted = true}}
-            {{$sortDirectionForLink = "descending"}}
-        {{ else if eq $sortDirection "descending"}}
-            {{$sorted = true}}
-            {{$sortDirectionForLink = "ascending"}}
-        {{else}}
-            {{$sortDirectionForLink = "ascending"}}
-        {{end}}
-        {{$sortLinkUrl := ($options.WithSort $sortKey $sortDirectionForLink).QueryParams }}
-        {{$sortOnClick = concat "onclick=\"goToURL('" $sortLinkUrl "')\"" }}
-    {{end}}
-
-    {{$style := "style=\""}}
-    {{if .Style}}{{$style = concat $style .Style}}{{end}}
-    {{$style = concat $style ";" }}
-    {{if $width}}
-        {{$style = concat $style "width: " $width ";" }}
-    {{end}}
-    {{if $minWidth}}
-        {{$style = concat $style "min-width: " $minWidth ";" }}
-    {{end}}
-    {{if $maxWidth}}
-        {{$style = concat $style "max-width: " $maxWidth ";" }}
-    {{end}}
-    {{if $left}}
-        {{$style = concat $style "left: " $left ";" }}
-    {{end}}
-    {{$style = concat $style "\"" }}
-
-    <th {{$style | attr}}
-            class="{{.Class}} {{if $sortable}}sortable{{end}} {{if $sorted}}sorted{{end}}"
-            {{if .Scope}}scope="{{.Scope}}"{{end}}
-            {{if .Title}}title="{{.Title}}"{{end}}
-            {{if $sortable}}{{$sortOnClick | attr}}{{end}}
-            {{if $sortable}}
-                {{if eq $sortDirection ""}}
-                    aria-sort="none"
-                {{ else if eq $sortDirection "ascending"}}
-                    aria-sort="ascending"
-                {{ else if eq $sortDirection "descending"}}
-                    aria-sort="descending"
-                {{end}}
-            {{end}}
-    >
-        <div class="d-flex flex-row">
-            <span class="flex-grow-1">{{$label}}</span>
-
-            <div class="text-center" style="min-width: 2rem;">
-                {{if $sortable}}
-                    <!-- print current sorting direction icon -->
-                    <span class="ms-1 me-1 sort-icon-current">
-                        {{- if eq $sortDirection "ascending" -}}
-                            <i class="bi bi-sort-up"></i>
-                        {{- else if eq $sortDirection "descending" -}}
-                            <i class="bi bi-sort-down"></i>
-                        {{- end -}}
-                    </span>
-
-                    <!-- print next sorting direction icon -->
-                    <span class="ms-1 me-1 sort-icon-next text-primary">
-                        {{- if eq $sortDirectionForLink "ascending" -}}
-                            <i class="bi bi-sort-up"></i>
-                        {{- else if eq $sortDirectionForLink "descending" -}}
-                            <i class="bi bi-sort-down"></i>
-                        {{- end -}}
-                    </span>
-
-                    <!-- print sortable icon -->
-                    <span class="ms-1 me-1 sort-icon-sortable"><i class="bi bi-list"></i></span>
-                {{end}}
-            </div>
-        </div>
-    </th>
 {{end}}

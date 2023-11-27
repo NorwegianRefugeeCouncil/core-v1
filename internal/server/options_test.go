@@ -1,9 +1,10 @@
 package server
 
 import (
-	"github.com/nrc-no/notcore/internal/utils"
 	"testing"
 	"time"
+
+	"github.com/nrc-no/notcore/internal/utils"
 
 	"github.com/nrc-no/notcore/internal/server/middleware"
 )
@@ -35,16 +36,6 @@ func (o Options) WithTokenRefreshInterval(tokenRefreshInterval time.Duration) Op
 
 func (o Options) WithJwtGroupGlobalAdmin(jwtGroupGlobalAdmin string) Options {
 	o.JwtGroups.GlobalAdmin = jwtGroupGlobalAdmin
-	return o
-}
-
-func (o Options) WithJwtGroupCanRead(jwtGroupCanRead string) Options {
-	o.JwtGroups.CanRead = jwtGroupCanRead
-	return o
-}
-
-func (o Options) WithJwtGroupCanWrite(jwtGroupCanWrite string) Options {
-	o.JwtGroups.CanWrite = jwtGroupCanWrite
 	return o
 }
 
@@ -85,8 +76,6 @@ func validOptions() Options {
 		TokenRefreshInterval: 5 * time.Minute,
 		JwtGroups: utils.JwtGroupOptions{
 			GlobalAdmin: "global-admin",
-			CanRead:     "can-read",
-			CanWrite:    "can-write",
 		},
 		IdTokenAuthHeaderName:   "X-Auth-Token",
 		IdTokenAuthHeaderFormat: middleware.AuthHeaderFormatJWT,
@@ -159,26 +148,6 @@ func TestOptions_validate(t *testing.T) {
 		{
 			name:    "JWT group global admin is invalid",
 			options: validOptions().WithJwtGroupGlobalAdmin("!!!"),
-			wantErr: true,
-		},
-		{
-			name:    "JWT group can read is required",
-			options: validOptions().WithJwtGroupCanRead(""),
-			wantErr: true,
-		},
-		{
-			name:    "JWT group can read is invalid",
-			options: validOptions().WithJwtGroupCanRead("!!!"),
-			wantErr: true,
-		},
-		{
-			name:    "JWT group can write is required",
-			options: validOptions().WithJwtGroupCanWrite(""),
-			wantErr: true,
-		},
-		{
-			name:    "JWT group can write is invalid",
-			options: validOptions().WithJwtGroupCanWrite("!!!"),
 			wantErr: true,
 		},
 		{

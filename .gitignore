@@ -121,3 +121,5 @@ web/static/nrc_grf_template.xlsx
 
 # Excel
 ~*.xlsx
+
+deploy/terraform/auto.tfvars

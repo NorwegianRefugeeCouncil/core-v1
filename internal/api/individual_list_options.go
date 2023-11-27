@@ -11,76 +11,86 @@ import (
 )
 
 type ListIndividualsOptions struct {
-	Inactive                       *bool
-	Address                        string
-	AgeFrom                        *int
-	AgeTo                          *int
-	BirthDateFrom                  *time.Time
-	BirthDateTo                    *time.Time
-	CognitiveDisabilityLevel       enumTypes.DisabilityLevel
-	CollectionAdministrativeArea1  string
-	CollectionAdministrativeArea2  string
-	CollectionAdministrativeArea3  string
-	CollectionOffice               string
-	CollectionAgentName            string
-	CollectionAgentTitle           string
-	CollectionTimeFrom             *time.Time
-	CollectionTimeTo               *time.Time
-	CommunityID                    string
-	CountryID                      string
-	CreatedAtFrom                  *time.Time
-	CreatedAtTo                    *time.Time
-	DisplacementStatuses           containers.Set[enumTypes.DisplacementStatus]
-	Email                          string
-	FreeField1                     string
-	FreeField2                     string
-	FreeField3                     string
-	FreeField4                     string
-	FreeField5                     string
-	FullName                       string
-	Sexes                          containers.Set[enumTypes.Sex]
-	HasCognitiveDisability         *bool
-	HasCommunicationDisability     *bool
-	HasConsentedToRGPD             *bool
-	HasConsentedToReferral         *bool
-	HasDisability                  *bool
-	HasHearingDisability           *bool
-	HasMobilityDisability          *bool
-	HasSelfCareDisability          *bool
-	HasVisionDisability            *bool
-	HearingDisabilityLevel         enumTypes.DisabilityLevel
-	HouseholdID                    string
-	IDs                            containers.StringSet
-	IdentificationNumber           string
-	EngagementContext              containers.Set[enumTypes.EngagementContext]
-	InternalID                     string
-	IsHeadOfCommunity              *bool
-	IsHeadOfHousehold              *bool
-	IsFemaleHeadedHousehold        *bool
-	IsMinorHeadedHousehold         *bool
-	IsMinor                        *bool
-	MobilityDisabilityLevel        enumTypes.DisabilityLevel
-	MothersName                    string
-	Nationality                    string
-	PhoneNumber                    string
-	PreferredContactMethod         string
-	PreferredCommunicationLanguage string
-	PrefersToRemainAnonymous       *bool
-	PresentsProtectionConcerns     *bool
-	PWDComments                    string
-	SelfCareDisabilityLevel        enumTypes.DisabilityLevel
-	SpokenLanguage                 string
-	UpdatedAtFrom                  *time.Time
-	UpdatedAtTo                    *time.Time
-	Skip                           int
-	Take                           int
-	Sort                           SortTerms
-	ServiceCC                      containers.Set[enumTypes.ServiceCC]
-	ServiceRequestedDateFrom       *time.Time
-	ServiceRequestedDateTo         *time.Time
-	ServiceDeliveredDateFrom       *time.Time
-	ServiceDeliveredDateTo         *time.Time
-	VisionDisabilityLevel          enumTypes.DisabilityLevel
+	Inactive                        *bool
+	Address                         string
+	AgeFrom                         *int
+	AgeTo                           *int
+	BirthDateFrom                   *time.Time
+	BirthDateTo                     *time.Time
+	CognitiveDisabilityLevel        enumTypes.DisabilityLevel
+	CollectionAdministrativeArea1   string
+	CollectionAdministrativeArea2   string
+	CollectionAdministrativeArea3   string
+	CollectionOffice                string
+	CollectionAgentName             string
+	CollectionAgentTitle            string
+	CollectionTimeFrom              *time.Time
+	CollectionTimeTo                *time.Time
+	CommunityID                     string
+	CountryID                       string
+	CreatedAtFrom                   *time.Time
+	CreatedAtTo                     *time.Time
+	DisplacementStatuses            containers.Set[enumTypes.DisplacementStatus]
+	Email                           string
+	FreeField1                      string
+	FreeField2                      string
+	FreeField3                      string
+	FreeField4                      string
+	FreeField5                      string
+	FullName                        string
+	Sexes                           containers.Set[enumTypes.Sex]
+	HasCognitiveDisability          *bool
+	HasCommunicationDisability      *bool
+	HasConsentedToRGPD              *bool
+	HasConsentedToReferral          *bool
+	HasDisability                   *bool
+	HasHearingDisability            *bool
+	HasMobilityDisability           *bool
+	HasSelfCareDisability           *bool
+	HasVisionDisability             *bool
+	HearingDisabilityLevel          enumTypes.DisabilityLevel
+	HouseholdID                     string
+	IDs                             containers.StringSet
+	IdentificationNumber            string
+	EngagementContext               containers.Set[enumTypes.EngagementContext]
+	InternalID                      string
+	IsHeadOfCommunity               *bool
+	IsHeadOfHousehold               *bool
+	IsFemaleHeadedHousehold         *bool
+	IsMinorHeadedHousehold          *bool
+	IsMinor                         *bool
+	IsChildAtRisk                   *bool
+	IsWomanAtRisk                   *bool
+	IsElderAtRisk                   *bool
+	IsPregnant                      *bool
+	IsLactating                     *bool
+	IsSeparatedChild                *bool
+	IsSingleParent                  *bool
+	HasMedicalCondition             *bool
+	NeedsLegalAndPhysicalProtection *bool
+	MobilityDisabilityLevel         enumTypes.DisabilityLevel
+	MothersName                     string
+	Nationality                     string
+	PhoneNumber                     string
+	PreferredContactMethod          string
+	PreferredCommunicationLanguage  string
+	PrefersToRemainAnonymous        *bool
+	PresentsProtectionConcerns      *bool
+	PWDComments                     string
+	VulnerabilityComments           string
+	SelfCareDisabilityLevel         enumTypes.DisabilityLevel
+	SpokenLanguage                  string
+	UpdatedAtFrom                   *time.Time
+	UpdatedAtTo                     *time.Time
+	Skip                            int
+	Take                            int
+	Sort                            SortTerms
+	ServiceCC                       containers.Set[enumTypes.ServiceCC]
+	ServiceRequestedDateFrom        *time.Time
+	ServiceRequestedDateTo          *time.Time
+	ServiceDeliveredDateFrom        *time.Time
+	ServiceDeliveredDateTo          *time.Time
+	VisionDisabilityLevel           enumTypes.DisabilityLevel
 }
 
 type SortDirection string
@@ -161,8 +171,76 @@ func (o ListIndividualsOptions) IsNotInactiveSelected() bool {
 	return o.Inactive != nil && !*o.Inactive
 }
 
-func (o ListIndividualsOptions) IsMinorSelected() bool {
-	return o.IsMinor != nil && *o.IsMinor
+func (o ListIndividualsOptions) IsIsChildAtRiskSelected() bool {
+	return o.IsChildAtRisk != nil && *o.IsChildAtRisk
+}
+
+func (o ListIndividualsOptions) IsNotIsChildAtRiskSelected() bool {
+	return o.IsChildAtRisk != nil && !*o.IsChildAtRisk
+}
+
+func (o ListIndividualsOptions) IsIsWomanAtRiskSelected() bool {
+	return o.IsWomanAtRisk != nil && *o.IsWomanAtRisk
+}
+
+func (o ListIndividualsOptions) IsNotIsWomanAtRiskSelected() bool {
+	return o.IsWomanAtRisk != nil && !*o.IsWomanAtRisk
+}
+
+func (o ListIndividualsOptions) IsIsElderAtRiskSelected() bool {
+	return o.IsElderAtRisk != nil && *o.IsElderAtRisk
+}
+
+func (o ListIndividualsOptions) IsNotIsElderAtRiskSelected() bool {
+	return o.IsElderAtRisk != nil && !*o.IsElderAtRisk
+}
+
+func (o ListIndividualsOptions) IsIsSeparatedChildSelected() bool {
+	return o.IsSeparatedChild != nil && *o.IsSeparatedChild
+}
+
+func (o ListIndividualsOptions) IsNotIsSeparatedChildSelected() bool {
+	return o.IsSeparatedChild != nil && !*o.IsSeparatedChild
+}
+
+func (o ListIndividualsOptions) IsIsSingleParentSelected() bool {
+	return o.IsSingleParent != nil && *o.IsSingleParent
+}
+
+func (o ListIndividualsOptions) IsNotIsSingleParentSelected() bool {
+	return o.IsSingleParent != nil && !*o.IsSingleParent
+}
+
+func (o ListIndividualsOptions) IsIsPregnantSelected() bool {
+	return o.IsPregnant != nil && *o.IsPregnant
+}
+
+func (o ListIndividualsOptions) IsNotIsPregnantSelected() bool {
+	return o.IsPregnant != nil && !*o.IsPregnant
+}
+
+func (o ListIndividualsOptions) IsIsLactatingSelected() bool {
+	return o.IsLactating != nil && *o.IsLactating
+}
+
+func (o ListIndividualsOptions) IsNotIsLactatingSelected() bool {
+	return o.IsLactating != nil && !*o.IsLactating
+}
+
+func (o ListIndividualsOptions) IsHasMedicalConditionSelected() bool {
+	return o.HasMedicalCondition != nil && *o.HasMedicalCondition
+}
+
+func (o ListIndividualsOptions) IsNotHasMedicalConditionSelected() bool {
+	return o.HasMedicalCondition != nil && !*o.HasMedicalCondition
+}
+
+func (o ListIndividualsOptions) IsNeedsLegalAndPhysicalProtectionSelected() bool {
+	return o.NeedsLegalAndPhysicalProtection != nil && *o.NeedsLegalAndPhysicalProtection
+}
+
+func (o ListIndividualsOptions) IsNotNeedsLegalAndPhysicalProtectionSelected() bool {
+	return o.NeedsLegalAndPhysicalProtection != nil && !*o.NeedsLegalAndPhysicalProtection
 }
 
 func (o ListIndividualsOptions) IsMinorHeadedHouseholdSelected() bool {
@@ -179,6 +257,10 @@ func (o ListIndividualsOptions) IsFemaleHeadedHouseholdSelected() bool {
 
 func (o ListIndividualsOptions) IsNotFemaleHeadedHouseholdSelected() bool {
 	return o.IsFemaleHeadedHousehold != nil && !*o.IsFemaleHeadedHousehold
+}
+
+func (o ListIndividualsOptions) IsMinorSelected() bool {
+	return o.IsMinor != nil && *o.IsMinor
 }
 
 func (o ListIndividualsOptions) IsNotMinorSelected() bool {

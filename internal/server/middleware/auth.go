@@ -123,9 +123,10 @@ func Authentication(
 				return
 			}
 
+			l.Info("User groups: ", zap.Strings("groups", userInfoClaims.Groups))
+
 			userSession := auth.NewAuthenticatedSession(
 				userInfoClaims.Groups,
-				userInfoClaims.NrcOrganisation,
 				tokenClaims.Email,
 				tokenClaims.Iss,
 				tokenClaims.Sub,
@@ -142,7 +143,6 @@ func Authentication(
 }
 
 type userInfoClaims struct {
-	NrcOrganisation string   `json:"nrcOrganisation"`
 	Groups          []string `json:"groups"`
 }
 
@@ -206,10 +206,6 @@ func getUserInfoClaims(
 
 	if info.Groups == nil {
 		return nil, fmt.Errorf("missing groups claim")
-	}
-
-	if len(info.NrcOrganisation) == 0 {
-		return nil, fmt.Errorf("missing nrcOrganisation claim")
 	}
 
 	infoBytesWrite, err := json.Marshal(info)

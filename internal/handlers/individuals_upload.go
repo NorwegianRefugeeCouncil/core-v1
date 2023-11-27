@@ -151,7 +151,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 
 			dbDuplicationErrors := api.FormatDbDeduplicationErrors(duplicatesInDB, optionNames, df, deduplicationLogicOperator[0])
 			if len(dbDuplicationErrors) > 0 {
-				renderError(fmt.Sprintf("%d duplicates found in database", len(dbDuplicationErrors)), dbDuplicationErrors)
+				renderError(fmt.Sprintf("%d duplicate(s) found in database", len(dbDuplicationErrors)), dbDuplicationErrors)
 				return
 			}
 		}

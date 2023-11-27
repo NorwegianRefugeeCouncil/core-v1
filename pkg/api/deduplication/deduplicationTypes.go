@@ -10,6 +10,7 @@ type DeduplicationTypeName string
 const (
 	DeduplicationTypeNameIds          DeduplicationTypeName = "Ids"
 	DeduplicationTypeNamePhoneNumbers DeduplicationTypeName = "PhoneNumbers"
+	DeduplicationTypeNameMothersName  DeduplicationTypeName = "MothersName"
 	DeduplicationTypeNameEmails       DeduplicationTypeName = "Emails"
 	DeduplicationTypeNameNames        DeduplicationTypeName = "Names"
 	DeduplicationTypeNameFullName     DeduplicationTypeName = "FullName"
@@ -18,6 +19,7 @@ const (
 	DeduplicationTypeNameFreeField3   DeduplicationTypeName = "FreeField3"
 	DeduplicationTypeNameFreeField4   DeduplicationTypeName = "FreeField4"
 	DeduplicationTypeNameFreeField5   DeduplicationTypeName = "FreeField5"
+	DeduplicationTypeNameBirthdate    DeduplicationTypeName = "Birthdate"
 )
 
 const (
@@ -71,6 +73,24 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFirstName, constants.DBColumnIndividualMiddleName, constants.DBColumnIndividualLastName, constants.DBColumnIndividualNativeName},
 			Condition: LOGICAL_OPERATOR_AND,
+		},
+		Order: 10,
+	},
+	DeduplicationTypeNameBirthdate: {
+		ID:    DeduplicationTypeNameBirthdate,
+		Label: "Birthdate",
+		Config: DeduplicationTypeValue{
+			Columns:   []string{constants.DBColumnIndividualBirthDate},
+			Condition: LOGICAL_OPERATOR_OR,
+		},
+		Order: 11,
+	},
+	DeduplicationTypeNameMothersName: {
+		ID:    DeduplicationTypeNameMothersName,
+		Label: "Mother's name",
+		Config: DeduplicationTypeValue{
+			Columns:   []string{constants.DBColumnIndividualMothersName},
+			Condition: LOGICAL_OPERATOR_OR,
 		},
 		Order: 8,
 	},
@@ -135,12 +155,14 @@ var deduplicationTypeNames = map[string]DeduplicationTypeName{
 	"PhoneNumbers": DeduplicationTypeNamePhoneNumbers,
 	"Emails":       DeduplicationTypeNameEmails,
 	"Names":        DeduplicationTypeNameNames,
+	"MothersName":  DeduplicationTypeNameMothersName,
 	"FullName":     DeduplicationTypeNameFullName,
 	"FreeField1":   DeduplicationTypeNameFreeField1,
 	"FreeField2":   DeduplicationTypeNameFreeField2,
 	"FreeField3":   DeduplicationTypeNameFreeField3,
 	"FreeField4":   DeduplicationTypeNameFreeField4,
 	"FreeField5":   DeduplicationTypeNameFreeField5,
+	"Birthdate":    DeduplicationTypeNameBirthdate,
 }
 
 func GetDeduplicationTypeNames(deduplicationTypes []string) ([]DeduplicationTypeName, error) {

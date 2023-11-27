@@ -73,6 +73,15 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withIsFemaleHeadedHousehold(options.IsFemaleHeadedHousehold).
 		withIsMinorHeadedHousehold(options.IsMinorHeadedHousehold).
 		withIsMinor(options.IsMinor).
+		withBoolean(options.IsChildAtRisk, constants.DBColumnIndividualIsChildAtRisk).
+		withBoolean(options.IsWomanAtRisk, constants.DBColumnIndividualIsWomanAtRisk).
+		withBoolean(options.IsElderAtRisk, constants.DBColumnIndividualIsElderAtRisk).
+		withBoolean(options.IsPregnant, constants.DBColumnIndividualIsPregnant).
+		withBoolean(options.IsLactating, constants.DBColumnIndividualIsLactating).
+		withBoolean(options.IsSeparatedChild, constants.DBColumnIndividualIsSeparatedChild).
+		withBoolean(options.IsSingleParent, constants.DBColumnIndividualIsSingleParent).
+		withBoolean(options.HasMedicalCondition, constants.DBColumnIndividualHasMedicalCondition).
+		withBoolean(options.NeedsLegalAndPhysicalProtection, constants.DBColumnIndividualNeedsLegalAndPhysicalProtection).
 		withMobilityDisabilityLevel(options.MobilityDisabilityLevel).
 		withNationality(options.Nationality).
 		withPhoneNumber(options.PhoneNumber).
@@ -81,6 +90,7 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withPrefersToRemainAnonymous(options.PrefersToRemainAnonymous).
 		withPresentsProtectionConcerns(options.PresentsProtectionConcerns).
 		withPWDComments(options.PWDComments).
+		withVulnerabilityComments(options.VulnerabilityComments).
 		withSelfCareDisabilityLevel(options.SelfCareDisabilityLevel).
 		withServiceCC(options.ServiceCC, options.ServiceRequestedDateFrom, options.ServiceRequestedDateTo, options.ServiceDeliveredDateFrom, options.ServiceDeliveredDateTo).
 		withSpokenLanguage(options.SpokenLanguage).
@@ -625,6 +635,18 @@ func (g *getAllIndividualsSQLQuery) withIsMinor(isMinor *bool) *getAllIndividual
 	return g
 }
 
+func (g *getAllIndividualsSQLQuery) withBoolean(b *bool, dbColumnName string) *getAllIndividualsSQLQuery {
+	if b == nil {
+		return g
+	}
+	if *b {
+		g.writeString(" AND " + dbColumnName + " = ").writeArg(true)
+	} else {
+		g.writeString(" AND " + dbColumnName + " = ").writeArg(false)
+	}
+	return g
+}
+
 func (g *getAllIndividualsSQLQuery) withMobilityDisabilityLevel(mobilityDisabilityLevel enumTypes.DisabilityLevel) *getAllIndividualsSQLQuery {
 	if mobilityDisabilityLevel == enumTypes.DisabilityLevelUnspecified {
 		return g
@@ -705,7 +727,27 @@ func (g *getAllIndividualsSQLQuery) withPWDComments(pwdComments string) *getAllI
 	if len(pwdComments) == 0 {
 		return g
 	}
-	g.writeString(" AND pwd_comments = ").writeArg(pwdComments)
+	if g.driverName == "sqlite" {
+		g.writeString(" AND " + constants.DBColumnIndividualPWDComments + " LIKE ")
+		g.writeArg("%" + pwdComments + "%")
+	} else if g.driverName == "postgres" {
+		g.writeString(" AND " + constants.DBColumnIndividualPWDComments + " ILIKE ")
+		g.writeArg("%" + pwdComments + "%")
+	}
+	return g
+}
+
+func (g *getAllIndividualsSQLQuery) withVulnerabilityComments(vulnerabilityComments string) *getAllIndividualsSQLQuery {
+	if len(vulnerabilityComments) == 0 {
+		return g
+	}
+	if g.driverName == "sqlite" {
+		g.writeString(" AND " + constants.DBColumnIndividualVulnerabilityComments + " LIKE ")
+		g.writeArg("%" + vulnerabilityComments + "%")
+	} else if g.driverName == "postgres" {
+		g.writeString(" AND " + constants.DBColumnIndividualVulnerabilityComments + " ILIKE ")
+		g.writeArg("%" + vulnerabilityComments + "%")
+	}
 	return g
 }
 

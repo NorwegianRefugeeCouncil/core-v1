@@ -36,6 +36,10 @@ coverage: .dev-image
 test: .dev-image
 	docker run --rm -it -v $(shell pwd)/reports:/app/reports core-dev test
 
+.PHONY: unittest
+unittest: 
+	@go test ./...
+
 .PHONY: template
 ## Generates the nrc grf template
 template: 
@@ -55,9 +59,7 @@ serve: prerequisites
 		--db-driver=postgres \
 		--db-dsn=postgres://postgres:postgres@localhost:5432/core?sslmode=disable \
 		--log-level=debug \
-		--jwt-global-admin-group="NRC_Core_GlobalAdmin" \
-		--jwt-can-read-group="NRC_Core_CanRead" \
-		--jwt-can-write-group="NRC_Core_CanWrite" \
+		--jwt-global-admin-group="App__NRC_CORE__LOCAL__GLOBAL__ADMIN" \
 		--id-token-header-name="Authorization" \
 		--id-token-header-format="bearer-token" \
 		--access-token-header-name="x-auth-request-access-token" \

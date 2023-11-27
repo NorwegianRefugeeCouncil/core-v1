@@ -1,0 +1,8 @@
+ALTER TABLE countries
+    DROP COLUMN IF EXISTS nrc_organisations;
+
+ALTER TABLE countries
+    ADD COLUMN IF NOT EXISTS read_group VARCHAR(255) NOT NULL DEFAULT 'xxx';
+
+ALTER TABLE countries
+    ADD COLUMN IF NOT EXISTS write_group VARCHAR(255) NOT NULL DEFAULT 'xxx'; 

@@ -55,8 +55,9 @@
                 {{.RequestContext.Locales.Translate "new_country"}}
             {{end}}
         </h1>
-        <form method="post" action="/countries/{{if eq "" .Country.ID}}new{{else}}{{.Country.ID}}{{end}}">
-            <div class="card">
+        <div class="scroll-body">
+            <form method="post" action="/countries/{{if eq "" .Country.ID}}new{{else}}{{.Country.ID}}{{end}}">
+                <div class="card">
                         <div class="card-header">
                             {{.RequestContext.Locales.Translate "country_details"}}
                         </div>
@@ -88,58 +89,33 @@
                             </div>
                             <!-- End of Code -->
 
-                            <!-- NRC Organisation -->
+                            <!-- ReadGroup -->
                             <div class="form mb-3">
-                                <label id="NrcOrganisationsLabel"
-                                       for="NrcOrganisations"
-                                       class="form-label w-100 d-flex justify-content-between mb-2">
-                                    {{.RequestContext.Locales.Translate "nrc_organisation"}}
-                                    <button
-                                        class="btn btn-outline-primary icon-button d-inline-flex"
-                                        type="button"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-title="{{.RequestContext.Locales.Translate "add_nrc_organisation"}}"
-                                    >
-                                        <i class="bi bi-plus " id="add-more-orgs-button"></i>
-                                    </button>
-                                </label>
-                                {{range $i, $org := .Country.NrcOrganisations.Items }}
-                                    <div class="input-group mb-3" id="nrc-org-input-group-{{$i}}">
-                                        <input
-                                            id="nrc-org-input"
-                                            name="NrcOrganisations"
-                                            class="form-control nrc-org-input"
-                                            value="{{$org}}">
-                                        <button class="btn btn-outline-secondary" onclick=removeNRCOrgInput({{$i}})>
-                                            <i class="bi bi-dash-circle"></i>
-                                        </button>
-                                    </div>
-                                {{end}}
-                                <div class="input-group mb-3" id="nrc-org-input-group">
+                                <label for="ReadGroup" class="form-label">{{.RequestContext.Locales.Translate "read_group"}}</label>
+                                <div class="form-text">
+                                    {{.RequestContext.Locales.Translate "read_group_description"}}
                                 </div>
-                                <div class="form-text" id="NrcOrganisationsHelp">
-                                    {{.RequestContext.Locales.Translate "nrc_organisation_description"}}
-                                </div>
+                                <input id="ReadGroup" name="ReadGroup" class="form-control font-monospace" value="{{.Country.ReadGroup}}">
                             </div>
-                            <!-- End of NRC Organisation -->
+                            <!-- End of ReadGroup -->
+
+                            <!-- WriteGroup -->
+                            <div class="form mb-3">
+                                <label for="WriteGroup" class="form-label">{{.RequestContext.Locales.Translate "write_group"}}</label>
+                                <div class="form-text">
+                                    {{.RequestContext.Locales.Translate "write_group_description"}}
+                                </div>
+                                <input id="WriteGroup" name="WriteGroup" class="form-control font-monospace" value="{{.Country.WriteGroup}}">
+                            </div>
+                            <!-- End of WriteGroup -->
+
                         </div>
                         <div class="card-footer">
                             <button class="btn btn-primary" type="submit">{{.RequestContext.Locales.Translate "save"}}</button>
                         </div>
                     </div>
-        </form>
+                </form>
+            </div>
     </main>
-
-{{end}}
-
-
-
-{{define "nrcORgInput"}}
-    <input
-        id="nrc-org-input-group-"
-        name="NrcOrganisations"
-        class="form-control"
-        value="{{.Country.NrcOrganisations}}"
-    >
 
 {{end}}

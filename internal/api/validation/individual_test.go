@@ -201,47 +201,47 @@ func (i *IndividualBuilder) WithSex(sex enumTypes.Sex) *IndividualBuilder {
 	return i
 }
 
-func (i *IndividualBuilder) WithHasCognitiveDisability(hasCognitiveDisability bool) *IndividualBuilder {
+func (i *IndividualBuilder) WithHasCognitiveDisability(hasCognitiveDisability *bool) *IndividualBuilder {
 	i.individual.HasCognitiveDisability = hasCognitiveDisability
 	return i
 }
 
-func (i *IndividualBuilder) WithHasCommunicationDisability(hasCommunicationDisability bool) *IndividualBuilder {
+func (i *IndividualBuilder) WithHasCommunicationDisability(hasCommunicationDisability *bool) *IndividualBuilder {
 	i.individual.HasCommunicationDisability = hasCommunicationDisability
 	return i
 }
 
-func (i *IndividualBuilder) WithHasConsentedToRGPD(hasConsentedToRGPD bool) *IndividualBuilder {
+func (i *IndividualBuilder) WithHasConsentedToRGPD(hasConsentedToRGPD *bool) *IndividualBuilder {
 	i.individual.HasConsentedToRGPD = hasConsentedToRGPD
 	return i
 }
 
-func (i *IndividualBuilder) WithHasConsentedToReferral(hasConsentedToReferral bool) *IndividualBuilder {
+func (i *IndividualBuilder) WithHasConsentedToReferral(hasConsentedToReferral *bool) *IndividualBuilder {
 	i.individual.HasConsentedToReferral = hasConsentedToReferral
 	return i
 }
 
-func (i *IndividualBuilder) WithHasDisability(hasDisability bool) *IndividualBuilder {
+func (i *IndividualBuilder) WithHasDisability(hasDisability *bool) *IndividualBuilder {
 	i.individual.HasDisability = hasDisability
 	return i
 }
 
-func (i *IndividualBuilder) WithHasHearingDisability(hasHearingDisability bool) *IndividualBuilder {
+func (i *IndividualBuilder) WithHasHearingDisability(hasHearingDisability *bool) *IndividualBuilder {
 	i.individual.HasHearingDisability = hasHearingDisability
 	return i
 }
 
-func (i *IndividualBuilder) WithHasMobilityDisability(hasMobilityDisability bool) *IndividualBuilder {
+func (i *IndividualBuilder) WithHasMobilityDisability(hasMobilityDisability *bool) *IndividualBuilder {
 	i.individual.HasMobilityDisability = hasMobilityDisability
 	return i
 }
 
-func (i *IndividualBuilder) WithHasSelfCareDisability(hasSelfCareDisability bool) *IndividualBuilder {
+func (i *IndividualBuilder) WithHasSelfCareDisability(hasSelfCareDisability *bool) *IndividualBuilder {
 	i.individual.HasSelfCareDisability = hasSelfCareDisability
 	return i
 }
 
-func (i *IndividualBuilder) WithHasVisionDisability(hasVisionDisability bool) *IndividualBuilder {
+func (i *IndividualBuilder) WithHasVisionDisability(hasVisionDisability *bool) *IndividualBuilder {
 	i.individual.HasVisionDisability = hasVisionDisability
 	return i
 }
@@ -316,7 +316,7 @@ func (i *IndividualBuilder) WithInternalID(internalID string) *IndividualBuilder
 	return i
 }
 
-func (i *IndividualBuilder) WithIsMinor(isMinor bool) *IndividualBuilder {
+func (i *IndividualBuilder) WithIsMinor(isMinor *bool) *IndividualBuilder {
 	i.individual.IsMinor = isMinor
 	return i
 }
@@ -386,18 +386,23 @@ func (i *IndividualBuilder) WithPreferredCommunicationLanguage(language string) 
 	return i
 }
 
-func (i *IndividualBuilder) WithPrefersToRemainAnonymous(prefersToRemainAnonymous bool) *IndividualBuilder {
+func (i *IndividualBuilder) WithPrefersToRemainAnonymous(prefersToRemainAnonymous *bool) *IndividualBuilder {
 	i.individual.PrefersToRemainAnonymous = prefersToRemainAnonymous
 	return i
 }
 
-func (i *IndividualBuilder) WithPresentsProtectionConcerns(presentsProtectionConcerns bool) *IndividualBuilder {
+func (i *IndividualBuilder) WithPresentsProtectionConcerns(presentsProtectionConcerns *bool) *IndividualBuilder {
 	i.individual.PresentsProtectionConcerns = presentsProtectionConcerns
 	return i
 }
 
 func (i *IndividualBuilder) WithPwdComments(pwdComments string) *IndividualBuilder {
 	i.individual.PWDComments = pwdComments
+	return i
+}
+
+func (i *IndividualBuilder) WithVulnerabilityComments(vulnerabilityComments string) *IndividualBuilder {
+	i.individual.VulnerabilityComments = vulnerabilityComments
 	return i
 }
 

@@ -125,6 +125,63 @@
     {{template "inputError" .}}
 {{end}}
 
+{{define "optionalBooleanField"}}
+    {{$field := .Field}}
+    <div>{{$field.DisplayName}}</div>
+    <div class="d-flex flex-row gap-5 mt-1">
+        <div class="form-check">
+            <input class="form-check-input {{if $field.Errors}}is-invalid{{end}}"
+                   type="radio"
+                   value="true"
+                   id="{{$field.Name}}--yes"
+                   name="{{$field.Name}}"
+                   {{if eq $field.Value "true"}}checked{{end}}
+                   aria-labelledby="{{$field.Name}}--label--yes"
+                   aria-describedby="{{$field.Name}}--help--yes {{if $field.Errors}}{{$field.Name}}--errors{{end}}"
+                    {{if $field.Errors}}required{{end}}>
+            <label class="form-check-label"
+                   for="{{$field.Name}}"
+                   id="{{$field.Name}}--label">
+                Yes
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input {{if $field.Errors}}is-invalid{{end}}"
+                   type="radio"
+                   value="false"
+                   id="{{$field.Name}}--no"
+                   name="{{$field.Name}}"
+                   {{if eq $field.Value "false"}}checked{{end}}
+                   aria-labelledby="{{$field.Name}}--label--yes"
+                   aria-describedby="{{$field.Name}}--help--yes {{if $field.Errors}}{{$field.Name}}--errors{{end}}"
+                    {{if $field.Errors}}required{{end}}>
+            <label class="form-check-label"
+                   for="{{$field.Name}}"
+                   id="{{$field.Name}}--label">
+                No
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input {{if $field.Errors}}is-invalid{{end}}"
+                   type="radio"
+                   value=""
+                   id="{{$field.Name}}--unknown"
+                   name="{{$field.Name}}"
+                   {{if eq $field.Value ""}}checked{{end}}
+                   aria-labelledby="{{$field.Name}}--label--yes"
+                   aria-describedby="{{$field.Name}}--help--yes {{if $field.Errors}}{{$field.Name}}--errors{{end}}"
+                    {{if $field.Errors}}required{{end}}>
+            <label class="form-check-label"
+                   for="{{$field.Name}}"
+                   id="{{$field.Name}}--label">
+                Unknown
+            </label>
+        </div>
+    </div>
+    {{template "inputHelp" .}}
+    {{template "inputError" .}}
+{{end}}
+
 {{define "checkboxField"}}
     {{$field := .Field}}
     <input
@@ -190,6 +247,8 @@
         {{template "selectField" .}}
     {{else if eq $kind "checkbox"}}
         {{template "checkboxField" .}}
+    {{else if eq $kind "optionalBoolean"}}
+        {{template "optionalBooleanField" .}}
     {{else if eq $kind "textarea"}}
         {{template "textAreaField" .}}
     {{end}}

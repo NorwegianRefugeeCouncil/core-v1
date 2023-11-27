@@ -423,6 +423,7 @@ table {
     }
     th.sticky-column {
         background-color: $neutral200;
+        top: 0;
         z-index: 11;
     }
     td.sticky-column {

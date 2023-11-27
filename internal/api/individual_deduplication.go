@@ -9,6 +9,7 @@ import (
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"strings"
+	"time"
 )
 
 func FindDuplicatesInUUIDColumn(df dataframe.DataFrame) []FileError {
@@ -209,8 +210,18 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []
 				value, err := duplicates[d].GetFieldValue(constants.IndividualDBToFileMap[column])
 				if err != nil {
 					errorList = append(errorList, errors.New(fmt.Sprintf("Unknown value for %s", column)))
-				} else if value != "" {
-					databaseValues[column] = value
+					break
+				}
+
+				switch value.(type) {
+				case string:
+					if value.(string) != "" {
+						databaseValues[column] = value.(string)
+					}
+				case *time.Time:
+					if value.(*time.Time) != nil {
+						databaseValues[column] = value.(*time.Time).Format("2006-01-02")
+					}
 				}
 			}
 			for column, value := range databaseValues {
