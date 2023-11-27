@@ -19,7 +19,7 @@ require (
 	github.com/xuri/excelize/v2 v2.7.1
 	go.uber.org/zap v1.24.0
 	golang.org/x/exp v0.0.0-20220613132600-b0d781184e0d
-	golang.org/x/oauth2 v0.13.0
+	golang.org/x/oauth2 v0.14.0
 )
 
 require (
@@ -41,9 +41,9 @@ require (
 	github.com/xuri/nfp v0.0.0-20220409054826-5e722a1d9e22 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
-	golang.org/x/crypto v0.14.0 // indirect
-	golang.org/x/net v0.17.0 // indirect
-	golang.org/x/text v0.13.0
+	golang.org/x/crypto v0.15.0 // indirect
+	golang.org/x/net v0.18.0 // indirect
+	golang.org/x/text v0.14.0
 	gonum.org/v1/gonum v0.9.1 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
