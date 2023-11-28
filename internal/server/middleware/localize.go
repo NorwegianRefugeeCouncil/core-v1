@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
-	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/locales"
 	"net/http"
 	"strings"
@@ -18,7 +17,7 @@ func Localize(enableBetaFeatures bool) func(handler http.Handler) http.Handler {
 			if enableBetaFeatures {
 				languageCookie, _ := r.Cookie(cookieName)
 				languageHeader := r.Header.Get("Accept-Language")
-				language = getAppropriateLanguage(languageHeader, languageCookie, locales.AvailableLangs)
+				language = getAppropriateLanguage(languageHeader, languageCookie)
 			}
 
 			locales.SetLocalizer(i18n.NewLocalizer(locales.Translations, language))
@@ -27,8 +26,8 @@ func Localize(enableBetaFeatures bool) func(handler http.Handler) http.Handler {
 	}
 }
 
-func getAppropriateLanguage(languageHeader string, cookie *http.Cookie, availableLangs containers.StringSet) string {
-	if cookie != nil && availableLangs.Contains(cookie.Value) {
+func getAppropriateLanguage(languageHeader string, cookie *http.Cookie) string {
+	if cookie != nil && locales.AvailableLangs.Contains(cookie.Value) {
 		return cookie.Value
 	}
 
@@ -37,7 +36,7 @@ func getAppropriateLanguage(languageHeader string, cookie *http.Cookie, availabl
 		headerLanguages = append(headerLanguages, strings.Split(lang, ";")[0])
 	}
 	for _, l := range headerLanguages {
-		if availableLangs.Contains(l) {
+		if locales.AvailableLangs.Contains(l) {
 			return l
 		}
 	}

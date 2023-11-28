@@ -106,7 +106,7 @@ type RequestContext struct {
 	// Session is the current user session
 	Session auth.Session
 	// AvailableLocales is a list of the available locales
-	AvailableLocales []string
+	AvailableLocales map[string]string
 
 	// turn on dev features
 	EnableBetaFeatures bool

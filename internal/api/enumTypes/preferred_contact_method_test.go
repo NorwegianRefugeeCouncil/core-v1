@@ -2,6 +2,7 @@ package enumTypes
 
 import (
 	"encoding/json"
+	"github.com/nrc-no/notcore/internal/locales"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -63,16 +64,17 @@ func TestContactMethod_UnmarshalJSON(t *testing.T) {
 }
 
 func TestContactMethod_String(t *testing.T) {
+	tr := locales.GetTranslator()
 	tests := []struct {
 		name string
 		g    ContactMethod
 		want string
 	}{
-		{"email", ContactMethodEmail, "E-Mail"},
-		{"whatsapp", ContactMethodWhatsapp, "WhatsApp"},
-		{"phone", ContactMethodPhone, "Phone"},
-		{"visit", ContactMethodVisit, "Visit"},
-		{"other", ContactMethodOther, "Other"},
+		{"email", ContactMethodEmail, tr("option_contact_method_email")},
+		{"whatsapp", ContactMethodWhatsapp, tr("option_contact_method_whatsapp")},
+		{"phone", ContactMethodPhone, tr("option_contact_method_phone")},
+		{"visit", ContactMethodVisit, tr("option_contact_method_visit")},
+		{"other", ContactMethodOther, tr("option_other")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

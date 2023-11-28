@@ -2,6 +2,7 @@ package enumTypes
 
 import (
 	"encoding/json"
+	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/internal/utils/pointers"
 	"testing"
 
@@ -69,13 +70,14 @@ func TestOptionalBoolean_UnmarshalJSON(t *testing.T) {
 }
 
 func TestOptionalBoolean_String(t *testing.T) {
+	tr := locales.GetTranslator()
 	tests := []struct {
 		name string
 		g    OptionalBoolean
 		want string
 	}{
-		{"no", OptionalBooleanNo, "no"},
-		{"yes", OptionalBooleanYes, "yes"},
+		{"no", OptionalBooleanNo, tr("no")},
+		{"yes", OptionalBooleanYes, tr("yes")},
 		{"", OptionalBooleanUnknown, ""},
 	}
 	for _, tt := range tests {

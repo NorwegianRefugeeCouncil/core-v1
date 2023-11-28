@@ -21,6 +21,11 @@ var localeFiles = map[string]string{
 	"ja": localeJA,
 }
 
+var LocaleNames = map[string]string{
+	"en": "English",
+	"ja": "日本",
+}
+
 var (
 	DefaultLang    = language.English
 	AvailableLangs = containers.NewStringSet()
@@ -113,6 +118,6 @@ func (l locales) TranslateCount(id string, ct int, args ...interface{}) string {
 	return str
 }
 
-func (l locales) GetAvailableLocales() []string {
-	return AvailableLangs.Items()
+func (l locales) GetAvailableLocales() map[string]string {
+	return LocaleNames
 }
