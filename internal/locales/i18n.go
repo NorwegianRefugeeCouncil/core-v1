@@ -4,10 +4,12 @@ import (
 	_ "embed"
 	"github.com/BurntSushi/toml"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
 	"golang.org/x/text/language"
 	"path/filepath"
 	"strconv"
+	"strings"
 )
 
 //go:embed en.toml
@@ -21,13 +23,14 @@ var localeFiles = map[string]string{
 	"ja": localeJA,
 }
 
-var LocaleNames = map[string]string{
+var localeNames = map[string]string{
 	"en": "English",
-	"ja": "日本",
+	"ja": "Debugging",
 }
 
 var (
 	DefaultLang    = language.English
+	CurrentLang    = DefaultLang
 	AvailableLangs = containers.NewStringSet()
 )
 
@@ -69,8 +72,35 @@ func GetTranslator() func(id string, args ...interface{}) string {
 	return l.Translate
 }
 
-func SetLocalizer(loc *i18n.Localizer) {
+func SetLocalizer(lang string) {
+	loc := i18n.NewLocalizer(Translations, lang)
+	CurrentLang = language.Make(lang)
 	l.localizer = loc
+}
+
+func TranslateSlice(ids []string, args ...[]interface{}) []string {
+	translations := make([]string, len(ids))
+	for i := range ids {
+		translations[i] = l.Translate(ids[i])
+	}
+	return translations
+}
+
+func GetTranslationKeys(values []string) []string {
+	if CurrentLang == DefaultLang {
+		return values
+	}
+	translationKeys := make([]string, len(values))
+	for i, v := range values {
+		for _, c := range constants.IndividualFileColumns {
+			tra := l.Translate(c)
+			val := strings.Trim(v, " \t\n\r")
+			if tra == val {
+				translationKeys[i] = c
+			}
+		}
+	}
+	return translationKeys
 }
 
 type Interface interface {
@@ -119,5 +149,5 @@ func (l locales) TranslateCount(id string, ct int, args ...interface{}) string {
 }
 
 func (l locales) GetAvailableLocales() map[string]string {
-	return LocaleNames
+	return localeNames
 }

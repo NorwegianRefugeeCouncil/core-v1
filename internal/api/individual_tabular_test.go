@@ -73,7 +73,7 @@ func TestUnmarshalIndividualsTabularData(t *testing.T) {
 		headerRow := []string{param.column}
 		dataRow := []string{param.value}
 		data := [][]string{headerRow, dataRow}
-		colMapping, _ := api.GetColumnMapping(data, &fields)
+		colMapping, _ := api.GetColumnMapping(headerRow, &fields)
 
 		var individuals []*api.Individual
 

@@ -7,6 +7,7 @@ import (
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/pkg/logutils"
+	"golang.org/x/exp/slices"
 	"io"
 	"net/mail"
 	"strconv"
@@ -93,27 +94,25 @@ func UnmarshallRecordsFromFile(records *[][]string, reader io.Reader, filename s
 	}
 }
 
-func GetColumnMapping(data [][]string, fields *[]string) (map[string]int, []FileError) {
+func GetColumnMapping(header []string, fields *[]string) (map[string]int, []FileError) {
+	headerInternal := locales.GetTranslationKeys(header)
 	colMapping := map[string]int{}
 	errs := []error{}
-	headerRow := data[0]
-	for i, col := range headerRow {
-		col = trimString(col)
+	for i, col := range headerInternal {
 		field, ok := constants.IndividualFileToDBMap[col]
 		if !ok {
-			ok = constants.IndividualSystemFileColumns.Contains(col)
+			ok = slices.Contains(constants.IndividualSystemFileColumns, col)
 			if ok {
 				continue
 			}
 			errs = append(errs, errors.New(locales.GetTranslator()("error_unknown_column_detail", logutils.Escape(col))))
 		}
 		*fields = append(*fields, field)
-		col = trimString(col)
-		colMapping[strings.Trim(col, " \n\t\r")] = i
+		colMapping[col] = i
 	}
 	if len(errs) > 0 {
 		t := locales.GetTranslator()
-		return nil, []FileError{FileError{
+		return nil, []FileError{{
 			Message: t("error_unknown_column"),
 			Err:     errs,
 		}}
@@ -122,7 +121,6 @@ func GetColumnMapping(data [][]string, fields *[]string) (map[string]int, []File
 }
 
 func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual, colMapping map[string]int, rowLimit *int) []FileError {
-
 	if rowLimit != nil && len(data[1:]) > *rowLimit {
 		return []FileError{{locales.GetTranslator()("error_upload_limit", len(data[1:]), *rowLimit), nil}}
 	}
@@ -803,7 +801,7 @@ func MarshalIndividualsCSV(w io.Writer, individuals []*Individual) error {
 	csvEncoder := csv.NewWriter(w)
 	defer csvEncoder.Flush()
 
-	if err := csvEncoder.Write(constants.IndividualFileColumns); err != nil {
+	if err := csvEncoder.Write(locales.TranslateSlice(constants.IndividualFileColumns)); err != nil {
 		return err
 	}
 
@@ -837,8 +835,9 @@ func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
 	if err != nil {
 		return err
 	}
+	//c := constants.FileColumnsLocalized
 
-	if err := streamWriter.SetRow("A1", stringArrayToInterfaceArray(constants.IndividualFileColumns)); err != nil {
+	if err := streamWriter.SetRow("A1", stringArrayToInterfaceArray(locales.TranslateSlice(constants.IndividualFileColumns))); err != nil {
 		return err
 	}
 
@@ -866,7 +865,7 @@ func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
 func (i *Individual) marshalTabularData() ([]string, error) {
 	row := make([]string, len(constants.IndividualFileColumns))
 	for j, col := range constants.IndividualFileColumns {
-		field, ok := constants.IndividualDBToFileMap[col]
+		field, ok := constants.IndividualFileToDBMap[col]
 		if !ok {
 			return nil, fmt.Errorf("unknown column %s", col) // should not happen but we never know.
 		}

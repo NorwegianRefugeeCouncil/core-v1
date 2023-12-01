@@ -210,7 +210,7 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []
 		for _, deduplicationType := range deduplicationTypes {
 			filters := []dataframe.F{}
 			for _, column := range deduplication.DeduplicationTypes[deduplicationType].Config.Columns {
-				value, err := duplicates[d].GetFieldValue(constants.IndividualDBToFileMap[column])
+				value, err := duplicates[d].GetFieldValue(column)
 				if err != nil {
 					errorList = append(errorList, errors.New(locales.GetTranslator()("error_unknown_value_for_column", column)))
 					break

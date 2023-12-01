@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"fmt"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/nrc-no/notcore/internal/locales"
 	"net/http"
 	"strings"
@@ -21,7 +20,7 @@ func Localize(enableBetaFeatures bool) func(handler http.Handler) http.Handler {
 				language = getAppropriateLanguage(languageHeader, languageCookie)
 			}
 
-			locales.SetLocalizer(i18n.NewLocalizer(locales.Translations, language))
+			locales.SetLocalizer(language)
 			next.ServeHTTP(w, r)
 		})
 	}
