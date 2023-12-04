@@ -35,7 +35,7 @@ func ParseBirthdate(s string) (*time.Time, error) {
 			return nil, errors.New(locales.GetTranslator()("error_parse_birthdate_invalid", constants.FileColumnIndividualBirthDate, date, err))
 		}
 		if date.Before(minBirthdate) {
-			return nil, errors.New(locales.GetTranslator()("error_parse_birthdate_minimum", constants.FileColumnIndividualBirthDate, date, err))
+			return nil, errors.New(locales.GetTranslator()("error_parse_birthdate_minimum", constants.FileColumnIndividualBirthDate, date, minBirthdate))
 		}
 		return &date, nil
 	}
