@@ -14,7 +14,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/manveru/faker v0.0.0-20171103152722-9fbc68a78c4d
 	github.com/mattn/go-sqlite3 v1.14.18
-	github.com/spf13/cobra v1.7.0
+	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
 	github.com/xuri/excelize/v2 v2.7.1
 	go.uber.org/zap v1.24.0
