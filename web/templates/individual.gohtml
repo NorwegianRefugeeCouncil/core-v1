@@ -206,7 +206,7 @@
     <div class="modal" id="saveModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header"><h5>{{if .Individual.ID}}Update{{else}}Save{{end}}</h5></div>
+                <div class="modal-header"><h5>{{if .Individual.ID}}{{translate "update"}}{{else}}{{translate "save"}}{{end}}</h5></div>
                 <div class="modal-body">
                     <div class="d-block">
                         <p>
@@ -222,7 +222,7 @@
                                            value="{{.ID}}"
                                            name="deduplicationType">
                                     <label class="form-check-label">
-                                        {{.Label}}
+                                        {{translate .Label}}
                                     </label>
                                 </div>
                             {{end}}

@@ -169,7 +169,7 @@
             <div class="modal" id="uploadModal" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
-                        <div class="modal-header"><h5>Upload</h5></div>
+                        <div class="modal-header"><h5>{{translate "upload"}}</h5></div>
                         <div class="modal-body">
                             <div id="deduplication-step" class="d-block">
                                 <p>
@@ -185,7 +185,7 @@
                                                        value="{{.ID}}"
                                                        name="deduplicationType">
                                                 <label class="form-check-label">
-                                                    {{.Label}}
+                                                    {{translate .Label}}
                                                 </label>
                                             </div>
                                         {{end}}

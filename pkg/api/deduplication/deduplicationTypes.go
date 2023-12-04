@@ -42,7 +42,7 @@ type DeduplicationType struct {
 var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	DeduplicationTypeNamePhoneNumbers: {
 		ID:    DeduplicationTypeNamePhoneNumbers,
-		Label: "Phone numbers",
+		Label: "deduplication_type_phone_numbers",
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualPhoneNumber1, constants.DBColumnIndividualPhoneNumber2, constants.DBColumnIndividualPhoneNumber3},
 			Condition: LOGICAL_OPERATOR_OR,
@@ -51,7 +51,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	},
 	DeduplicationTypeNameEmails: {
 		ID:    DeduplicationTypeNameEmails,
-		Label: "E-Mails",
+		Label: "deduplication_type_emails",
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualEmail1, constants.DBColumnIndividualEmail2, constants.DBColumnIndividualEmail3},
 			Condition: LOGICAL_OPERATOR_OR,
@@ -60,7 +60,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	},
 	DeduplicationTypeNameIds: {
 		ID:    DeduplicationTypeNameIds,
-		Label: "Identification numbers",
+		Label: "deduplication_type_id_numbers",
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualIdentificationNumber1, constants.DBColumnIndividualIdentificationNumber2, constants.DBColumnIndividualIdentificationNumber3},
 			Condition: LOGICAL_OPERATOR_OR,
@@ -69,7 +69,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	},
 	DeduplicationTypeNameNames: {
 		ID:    DeduplicationTypeNameNames,
-		Label: "Names (First, Middle, Last, Native)",
+		Label: "deduplication_type_names",
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFirstName, constants.DBColumnIndividualMiddleName, constants.DBColumnIndividualLastName, constants.DBColumnIndividualNativeName},
 			Condition: LOGICAL_OPERATOR_AND,
@@ -78,7 +78,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	},
 	DeduplicationTypeNameBirthdate: {
 		ID:    DeduplicationTypeNameBirthdate,
-		Label: "Birthdate",
+		Label: "deduplication_type_birthday",
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualBirthDate},
 			Condition: LOGICAL_OPERATOR_OR,
@@ -87,7 +87,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	},
 	DeduplicationTypeNameMothersName: {
 		ID:    DeduplicationTypeNameMothersName,
-		Label: "Mother's name",
+		Label: "deduplication_type_mothers_name",
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualMothersName},
 			Condition: LOGICAL_OPERATOR_OR,
@@ -96,7 +96,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	},
 	DeduplicationTypeNameFullName: {
 		ID:    DeduplicationTypeNameFullName,
-		Label: "Full Name",
+		Label: "deduplication_type_full_name",
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFullName},
 			Condition: LOGICAL_OPERATOR_OR,
@@ -105,7 +105,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	},
 	DeduplicationTypeNameFreeField1: {
 		ID:    DeduplicationTypeNameFreeField1,
-		Label: "Free Field 1",
+		Label: "deduplication_type_free_field_1",
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField1},
 			Condition: LOGICAL_OPERATOR_OR,
@@ -114,7 +114,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	},
 	DeduplicationTypeNameFreeField2: {
 		ID:    DeduplicationTypeNameFreeField2,
-		Label: "Free Field 2",
+		Label: "deduplication_type_free_field_2",
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField2},
 			Condition: LOGICAL_OPERATOR_OR,
@@ -123,7 +123,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	},
 	DeduplicationTypeNameFreeField3: {
 		ID:    DeduplicationTypeNameFreeField3,
-		Label: "Free Field 3",
+		Label: "deduplication_type_free_field_3",
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField3},
 			Condition: LOGICAL_OPERATOR_OR,
@@ -132,7 +132,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	},
 	DeduplicationTypeNameFreeField4: {
 		ID:    DeduplicationTypeNameFreeField4,
-		Label: "Free Field 4",
+		Label: "deduplication_type_free_field_4",
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField4},
 			Condition: LOGICAL_OPERATOR_OR,
@@ -141,7 +141,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 	},
 	DeduplicationTypeNameFreeField5: {
 		ID:    DeduplicationTypeNameFreeField5,
-		Label: "Free Field 5",
+		Label: "deduplication_type_free_field_5",
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField5},
 			Condition: LOGICAL_OPERATOR_OR,
