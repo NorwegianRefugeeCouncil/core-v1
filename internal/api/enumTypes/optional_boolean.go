@@ -39,15 +39,15 @@ func (g OptionalBoolean) String() string {
 	case OptionalBoolean0:
 		return "0"
 	case OptionalBooleanNo:
-		return "no"
+		return "No"
 	case OptionalBooleanFalse:
-		return "false"
+		return "False"
 	case OptionalBoolean1:
 		return "1"
 	case OptionalBooleanYes:
-		return "yes"
+		return "Yes"
 	case OptionalBooleanTrue:
-		return "true"
+		return "True"
 	case OptionalBooleanUnknown:
 		return ""
 	default:

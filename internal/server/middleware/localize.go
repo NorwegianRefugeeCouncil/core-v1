@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/nrc-no/notcore/internal/locales"
 	"net/http"
@@ -27,6 +28,8 @@ func Localize(enableBetaFeatures bool) func(handler http.Handler) http.Handler {
 }
 
 func getAppropriateLanguage(languageHeader string, cookie *http.Cookie) string {
+	c1 := locales.AvailableLangs
+	fmt.Sprintf("%v", c1)
 	if cookie != nil && locales.AvailableLangs.Contains(cookie.Value) {
 		return cookie.Value
 	}
