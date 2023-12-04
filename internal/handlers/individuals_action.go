@@ -5,6 +5,7 @@ import (
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/db"
+	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
@@ -23,6 +24,7 @@ func HandleIndividualsAction(renderer Renderer, repo db.IndividualRepo, action s
 			ctx = r.Context()
 			err error
 			l   = logging.NewLogger(ctx)
+			t   = locales.GetTranslator()
 		)
 
 		renderError := func(title string, fileErrors []api.FileError) {
@@ -35,14 +37,14 @@ func HandleIndividualsAction(renderer Renderer, repo db.IndividualRepo, action s
 		countryID, err := utils.GetSelectedCountryID(ctx)
 		if err != nil {
 			l.Error("failed to get selected country", zap.Error(err))
-			renderError("Failed to get selected country", nil)
+			renderError(t("error_no_selected_country"), nil)
 			return
 		}
 
 		err = r.ParseForm()
 		if err != nil {
 			l.Error("failed to parse form", zap.Error(err))
-			renderError("Failed to parse form", nil)
+			renderError(t("error_parse_form"), nil)
 			return
 		}
 		individualIds := containers.NewStringSet(r.Form[formParamField]...)
@@ -50,7 +52,7 @@ func HandleIndividualsAction(renderer Renderer, repo db.IndividualRepo, action s
 		var options api.ListIndividualsOptions
 		if err := api.NewIndividualListFromURLValues(r.Form, &options); err != nil {
 			l.Error("failed to parse options", zap.Error(err))
-			renderError("Failed to parse options", nil)
+			renderError(t("error_parse_options"), nil)
 			return
 		}
 		options.CountryID = countryID
@@ -58,7 +60,7 @@ func HandleIndividualsAction(renderer Renderer, repo db.IndividualRepo, action s
 		individuals, err := repo.GetAll(ctx, options)
 		if err != nil {
 			l.Error("failed to list individuals", zap.Error(err))
-			renderError("Failed to list participants", []api.FileError{{Message: "Action failed for participants", Err: []error{err}}})
+			renderError(t("error_list_participants"), []api.FileError{{Message: t("error_action_failed"), Err: []error{err}}})
 			return
 		}
 
@@ -69,14 +71,14 @@ func HandleIndividualsAction(renderer Renderer, repo db.IndividualRepo, action s
 				errors = append(errors, fmt.Errorf(individualId))
 			}
 			l.Warn("user trying to "+action+" individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
-			renderError(fmt.Sprintf("Could not execute action %s. Please try again.", action),
-				[]api.FileError{{Message: "Action failed for participants", Err: errors}})
+			renderError(t("error_action_execution", action),
+				[]api.FileError{{Message: t("error_action_failed"), Err: errors}})
 			return
 		}
 
 		if err := repo.PerformActionMany(ctx, individualIds, action); err != nil {
 			l.Error("failed to "+action+" individuals", zap.Error(err))
-			renderError(fmt.Sprintf("Failed to %s participants", action), nil)
+			renderError(t("error_action_failed_detail", action), nil)
 			return
 		}
 

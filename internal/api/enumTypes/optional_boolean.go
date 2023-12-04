@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/nrc-no/notcore/internal/containers"
+	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/internal/utils/pointers"
 	"github.com/nrc-no/notcore/pkg/logutils"
 	"strings"
@@ -89,7 +90,7 @@ func ParseOptionalBoolean(str string) (OptionalBoolean, error) {
 	case string(OptionalBooleanUnknown), OptionalBooleanUnknown.String():
 		return OptionalBooleanUnknown, nil
 	default:
-		return "", fmt.Errorf("unknown value for optional boolean: \"%v\"", logutils.Escape(str))
+		return "", fmt.Errorf(locales.GetTranslator()("error_unknown_optional_boolean", logutils.Escape(str)))
 	}
 }
 

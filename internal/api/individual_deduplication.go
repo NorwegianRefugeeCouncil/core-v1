@@ -2,11 +2,11 @@ package api
 
 import (
 	"errors"
-	"fmt"
 	"github.com/go-gota/gota/dataframe"
 	"github.com/go-gota/gota/series"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
+	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"strings"
 	"time"
@@ -21,14 +21,16 @@ func FindDuplicatesInUUIDColumn(df dataframe.DataFrame) []FileError {
 	for id := range duplicatesPerId {
 		participants := []string{}
 		for _, row := range duplicatesPerId[id].Items() {
-			participants = append(participants, fmt.Sprintf("Last name: %s - (Row %d)",
-				filteredDf.Select(constants.FileColumnIndividualLastName).Elem(row, 0).String(),
-				row+2),
+			participants = append(participants,
+				locales.GetTranslator()("error_sharing_uuids_detail",
+					filteredDf.Select(constants.FileColumnIndividualLastName).Elem(row, 0).String(),
+					row+2,
+				),
 			)
 		}
 
 		fileErrors = append(fileErrors, FileError{
-			Message: fmt.Sprintf("%s share the same id: %s", strings.Join(participants, ", "), id),
+			Message: locales.GetTranslator()("error_sharing_uuids", strings.Join(participants, ", "), id),
 		})
 	}
 	if len(fileErrors) > 0 {
@@ -197,6 +199,7 @@ func getAndDuplicationScore(totalScores []int, df dataframe.DataFrame, currentIn
 
 func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []deduplication.DeduplicationTypeName, df dataframe.DataFrame, deduplicationLogicOperator string) []FileError {
 	duplicateErrors := make([]FileError, 0)
+	t := locales.GetTranslator()
 
 	for d := 0; d < len(duplicates); d++ {
 		scores := make([]int, df.Nrow())
@@ -209,7 +212,7 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []
 			for _, column := range deduplication.DeduplicationTypes[deduplicationType].Config.Columns {
 				value, err := duplicates[d].GetFieldValue(constants.IndividualDBToFileMap[column])
 				if err != nil {
-					errorList = append(errorList, errors.New(fmt.Sprintf("Unknown value for %s", column)))
+					errorList = append(errorList, errors.New(locales.GetTranslator()("error_unknown_value_for_column", column)))
 					break
 				}
 
@@ -254,20 +257,20 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []
 					if scores[rowNumber] > 0 {
 						for column, dbValue := range databaseValues {
 							fileValue := filteredDf.Select(column).Elem(f, 0).String()
-							errorList = append(errorList, fmt.Errorf(":: %s :: Database value: %s | File value: %s", column, dbValue, fileValue))
+							errorList = append(errorList, errors.New(t("error_db_duplicate_detail", column, dbValue, fileValue)))
 						}
 					}
 				} else {
 					if scores[rowNumber] == len(deduplicationTypes) {
 						for column, dbValue := range databaseValues {
 							fileValue := filteredDf.Select(column).Elem(f, 0).String()
-							errorList = append(errorList, fmt.Errorf(":: %s :: database value: %s | file value: %s", column, dbValue, fileValue))
+							errorList = append(errorList, errors.New(t("error_db_duplicate_detail", column, dbValue, fileValue)))
 						}
 					}
 				}
 				if len(errorList) > 0 {
 					duplicateErrors = append(duplicateErrors, FileError{
-						fmt.Sprintf("Last name %s - Row %d is a duplicate of the participant %s with the id %s",
+						t("error_db_duplicate",
 							filteredDf.Select(constants.FileColumnIndividualLastName).Elem(f, 0),
 							rowNumber+2,
 							duplicates[d].LastName,
@@ -286,6 +289,7 @@ func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], deduplica
 	duplicateErrors := make([]FileError, 0)
 	alertedOn := containers.Set[int]{}
 	columnNames := make([]string, 0)
+	t := locales.GetTranslator()
 	for _, deduplicationType := range deduplicationTypes {
 		for _, column := range deduplication.DeduplicationTypes[deduplicationType].Config.Columns {
 			columnNames = append(columnNames, column)
@@ -302,17 +306,17 @@ func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], deduplica
 				originalValue := records[originalIndex+1][columnMapping[column]]
 				duplicateValue := records[duplicateIndex+1][columnMapping[column]]
 				if !(originalValue == "" && duplicateValue == "") {
-					errorList = append(errorList, fmt.Errorf(":: %s :: Row %d: %s | Row %d: %s",
+					errorList = append(errorList, errors.New(t("error_file_duplicate_detail",
 						column,
 						originalIndex+2,
 						originalValue,
 						duplicateIndex+2,
-						duplicateValue),
+						duplicateValue)),
 					)
 				}
 			}
 			duplicateErrors = append(duplicateErrors, FileError{
-				fmt.Sprintf("Last name %s - Row %d and Last name: %s - Row %d in your file are duplicates",
+				t("error_file_duplicate",
 					records[originalIndex+1][columnMapping[constants.FileColumnIndividualLastName]],
 					originalIndex+2,
 					records[duplicateIndex+1][columnMapping[constants.FileColumnIndividualLastName]],

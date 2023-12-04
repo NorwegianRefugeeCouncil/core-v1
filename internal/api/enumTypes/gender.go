@@ -3,7 +3,6 @@ package enumTypes
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/locales"
 
 	"github.com/nrc-no/notcore/internal/containers"
@@ -61,7 +60,7 @@ func ParseSex(str string) (Sex, error) {
 	case string(SexUnspecified), SexUnspecified.String():
 		return SexUnspecified, nil
 	default:
-		return "", fmt.Errorf("unknown value for %s: %v", constants.FileColumnIndividualSex, logutils.Escape(str))
+		return "", fmt.Errorf(locales.GetTranslator()("error_unknown_sex", logutils.Escape(str)))
 	}
 }
 

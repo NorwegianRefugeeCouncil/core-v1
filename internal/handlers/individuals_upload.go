@@ -5,6 +5,7 @@ import (
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/db"
+	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
@@ -29,6 +30,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		var (
 			ctx = r.Context()
 			l   = logging.NewLogger(ctx)
+			t   = locales.GetTranslator()
 		)
 
 		renderError := func(title string, fileErrors []api.FileError) {
@@ -51,7 +53,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		formFile, _, err := r.FormFile(formParamFile)
 		if err != nil {
 			l.Error("failed to get form file", zap.Error(err))
-			renderError("failed to parse input file: "+err.Error(), nil)
+			renderError(t("error_failed_to_parse_file_v0", err.Error()), nil)
 			return
 		}
 
@@ -63,21 +65,21 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		err = api.UnmarshallRecordsFromFile(&records, formFile, filename)
 		if err != nil {
 			l.Error("failed to parse file", zap.Error(err))
-			renderError("Failed to parse input file: "+err.Error(), nil)
+			renderError(t("error_failed_to_parse_file_v0", err.Error()), nil)
 			return
 		}
 
 		colMapping, fileErrors := api.GetColumnMapping(records, &fields)
 
 		if fileErrors != nil {
-			renderError("Could not parse uploaded file", fileErrors)
+			renderError(t("error_failed_to_parse_file"), fileErrors)
 			return
 		}
 
 		fileErrors = api.UnmarshalIndividualsTabularData(records, &individuals, colMapping, &UPLOAD_LIMIT)
 
 		if fileErrors != nil {
-			renderError("Could not parse uploaded file", fileErrors)
+			renderError(t("error_failed_to_parse_file"), fileErrors)
 			return
 		}
 
@@ -86,14 +88,14 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 
 		fileErrors = api.FindDuplicatesInUUIDColumn(df)
 		if fileErrors != nil {
-			renderError("Could not parse uploaded file due to duplicates in the id column", fileErrors)
+			renderError(t("error_file_with_duplicate_uuids"), fileErrors)
 			return
 		}
 
 		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
 		if err != nil {
 			l.Error("failed to get selected country id", zap.Error(err))
-			renderError("Could not detect selected country. Please select a country from the dropdown.", nil)
+			renderError(t("error_no_selected_country"), nil)
 			return
 		}
 
@@ -111,7 +113,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		existingIndividuals, err := individualRepo.GetAll(ctx, api.ListIndividualsOptions{IDs: individualIds, CountryID: selectedCountryID})
 		if err != nil {
 			l.Error("failed to get existing individuals", zap.Error(err))
-			renderError("Could not load list of participants: "+err.Error(), nil)
+			renderError(t("error_load_participants", err.Error()), nil)
 			return
 		}
 
@@ -119,7 +121,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 
 		if len(invalidIndividualIds) > 0 {
 			l.Warn("user trying to update individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
-			renderError(fmt.Sprintf("Could not update participants %s, they do not exist in the database for the selected country.", strings.Join(invalidIndividualIds, ",")), nil)
+			renderError(t("error_nonexistent_participant", strings.Join(invalidIndividualIds, ",")), nil)
 			return
 		}
 
@@ -130,7 +132,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			optionNames, err := deduplication.GetDeduplicationTypeNames(deduplicationTypes)
 			if err != nil {
 				l.Error("invalid deduplication type", zap.String("deduplication_type", strings.Join(deduplicationTypes, ",")), zap.Error(err))
-				renderError(fmt.Sprintf("Invalid deduplication type: %s", strings.Join(deduplicationTypes, ",")), nil)
+				renderError(t("error_invalid_deduplication_type", strings.Join(deduplicationTypes, ",")), nil)
 				return
 			}
 
@@ -138,20 +140,20 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			errors := api.FormatFileDeduplicationErrors(duplicatesScores, optionNames, records, colMapping)
 			if len(errors) > 0 {
 				if errors != nil {
-					renderError(fmt.Sprintf("Found %d duplicates within your uploaded file: ", len(errors)), errors)
+					renderError(t("error_found_duplicates_in_file", len(errors)), errors)
 					return
 				}
 			}
 
 			duplicatesInDB, err := individualRepo.FindDuplicates(ctx, individuals, optionNames, deduplicationLogicOperator[0])
 			if err != nil {
-				renderError("An error occurred while trying to check for duplicates: "+err.Error(), nil)
+				renderError(t("error_deduplication_fail", err.Error()), nil)
 				return
 			}
 
 			dbDuplicationErrors := api.FormatDbDeduplicationErrors(duplicatesInDB, optionNames, df, deduplicationLogicOperator[0])
 			if len(dbDuplicationErrors) > 0 {
-				renderError(fmt.Sprintf("%d duplicate(s) found in database", len(dbDuplicationErrors)), dbDuplicationErrors)
+				renderError(t("error_found_duplicates_in_db", len(dbDuplicationErrors)), dbDuplicationErrors)
 				return
 			}
 		}
@@ -159,7 +161,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		_, err = individualRepo.PutMany(r.Context(), individuals, fieldSet)
 		if err != nil {
 			l.Error("failed to put individuals", zap.Error(err))
-			renderError("Could not upload participant data: "+err.Error(), nil)
+			renderError(t("error_upload_fail", err.Error()), nil)
 			return
 		}
 

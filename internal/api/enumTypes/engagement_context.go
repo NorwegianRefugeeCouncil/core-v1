@@ -76,7 +76,7 @@ func ParseEngagementContext(str string) (EngagementContext, error) {
 	case string(EngagementContextUnspecified), EngagementContextUnspecified.String():
 		return EngagementContextUnspecified, nil
 	default:
-		return "", fmt.Errorf("unknown engagement context type: %v", logutils.Escape(str))
+		return "", fmt.Errorf(locales.GetTranslator()("error_unknown_engagement_context", logutils.Escape(str)))
 	}
 }
 

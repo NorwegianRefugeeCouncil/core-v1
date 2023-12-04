@@ -87,7 +87,7 @@ func ParseServiceCC(str string) (ServiceCC, error) {
 	case string(ServiceCCOther), ServiceCCOther.String():
 		return ServiceCCOther, nil
 	default:
-		return "", fmt.Errorf("unknown service type: %v", logutils.Escape(str))
+		return "", fmt.Errorf(locales.GetTranslator()("error_unknown_service_type", logutils.Escape(str)))
 	}
 }
 

@@ -2,9 +2,11 @@ package db
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/lib/pq"
 	"github.com/nrc-no/notcore/internal/constants"
+	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"strings"
 	"time"
@@ -476,7 +478,7 @@ func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual
 		return nil, err
 	}
 	if len(ret) != 1 {
-		return nil, fmt.Errorf("unexpected number of individuals returned: %d", len(ret))
+		return nil, errors.New(locales.GetTranslator()("error_unexpected_number", len(ret)))
 	}
 	return ret[0], nil
 }

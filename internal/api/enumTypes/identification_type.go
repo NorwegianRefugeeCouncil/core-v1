@@ -63,7 +63,7 @@ func ParseIdentificationType(str string) (IdentificationType, error) {
 	case string(IdentificationTypeOther), IdentificationTypeOther.String():
 		return IdentificationTypeOther, nil
 	default:
-		return "", fmt.Errorf("identification type: invalid type: \"%v\"", logutils.Escape(str))
+		return "", fmt.Errorf(locales.GetTranslator()("error_unknown_identification_type", logutils.Escape(str)))
 	}
 }
 
