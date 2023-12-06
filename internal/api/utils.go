@@ -107,7 +107,14 @@ func stringArrayToInterfaceArray(row []string) []interface{} {
 var indexColumnName = "index"
 
 func GetDataframeFromRecords(records [][]string) dataframe.DataFrame {
+	keys := locales.GetTranslationKeys(records[0])
+	dbCols := make([]string, len(keys))
+	for i, key := range keys {
+		dbCols[i] = constants.IndividualFileToDBMap[key]
+	}
+
 	return dataframe.LoadRecords(records,
+		dataframe.Names(dbCols...),
 		dataframe.DetectTypes(false),
 		dataframe.DefaultType(series.String),
 		dataframe.HasHeader(true),

@@ -271,7 +271,7 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []
 				if len(errorList) > 0 {
 					duplicateErrors = append(duplicateErrors, FileError{
 						t("error_db_duplicate",
-							filteredDf.Select(constants.FileColumnIndividualLastName).Elem(f, 0),
+							filteredDf.Select(constants.IndividualFileToDBMap[constants.FileColumnIndividualLastName]).Elem(f, 0),
 							rowNumber+2,
 							duplicates[d].LastName,
 							duplicates[d].ID,
