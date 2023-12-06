@@ -20,7 +20,6 @@
         const deleteIndividualsConfirmationModalId = "deleteIndividualsConfirmationModal"
         const deleteIndividualsConfirmationModalContentId = "deleteIndividualsConfirmationModalContent"
         const deleteIndividualsConfirmationModalConfirmButtonId = "deleteIndividualsConfirmationModalConfirmButton"
-        const deleteIndividualsConfirmationModalConfirmButtonContentId = "deleteIndividualsConfirmationModalConfirmButtonContent"
         const deactivateIndividualsButtonContentId = "deactivateIndividualsButtonContent"
         const activateIndividualsButtonContentId = "activateIndividualsButtonContent"
         const individualTableContainerId = individualActionFormId
@@ -77,9 +76,7 @@
         function refreshDeleteConfirmationModal() {
             const count = getSelectedIndividualCount()
             const modalContent = document.getElementById(deleteIndividualsConfirmationModalContentId)
-            const confirmButtonContent = document.getElementById(deleteIndividualsConfirmationModalConfirmButtonContentId)
-            modalContent.innerHTML = "Are you sure you want to delete " + count + " participant" + (count > 1 ? "s" : "") + "?"
-            confirmButtonContent.innerText = "Delete " + count + " participant" + (count > 1 ? "s" : "")
+            modalContent.innerHTML = count
         }
 
         /**
@@ -1866,11 +1863,18 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <p>{{translate "confirm_delete_individuals"}}</p>
+                    <p>
+
+                    <span>{{translate "confirm_delete_individuals_selection"}}</span>
                     <span id="deleteIndividualsConfirmationModalContent">
                         <!-- Content is filled in by JavaScript -->
-                    </span> <span class="text-danger fw-bold">
-                        {{translate "warning_cannot_be_undone"}}
                     </span>
+                    <span>{{translate "participants"}}</span>
+                    </p>
+                    <p class="text-danger fw-bold">
+                        {{translate "warning_cannot_be_undone"}}
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
@@ -1881,7 +1885,7 @@
                             id="deleteIndividualsConfirmationModalConfirmButton"
                             onclick="submitActionForm('delete')">
                         <i class="bi bi-trash"></i>&nbsp;
-                        <span id="deleteIndividualsConfirmationModalConfirmButtonContent"></span>
+                        <span>{{translate "delete_selected_individuals"}}</span>
                         <!-- Content is filled in by JavaScript -->
                     </button>
                 </div>
