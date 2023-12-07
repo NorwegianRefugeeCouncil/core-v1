@@ -13,7 +13,7 @@ import (
 )
 
 func FindDuplicatesInUUIDColumn(df dataframe.DataFrame) []FileError {
-	filteredDf := df.Select([]string{indexColumnName, constants.FileColumnIndividualID, constants.FileColumnIndividualLastName})
+	filteredDf := df.Select([]string{indexColumnName, constants.DBColumnIndividualID, constants.DBColumnIndividualLastName})
 	fileErrors := []FileError{}
 
 	duplicatesPerId := getDuplicateUUIDs(filteredDf)
@@ -23,7 +23,7 @@ func FindDuplicatesInUUIDColumn(df dataframe.DataFrame) []FileError {
 		for _, row := range duplicatesPerId[id].Items() {
 			participants = append(participants,
 				locales.GetTranslator()("error_sharing_uuids_detail",
-					filteredDf.Select(constants.FileColumnIndividualLastName).Elem(row, 0).String(),
+					filteredDf.Select(constants.DBColumnIndividualLastName).Elem(row, 0).String(),
 					row+2,
 				),
 			)
