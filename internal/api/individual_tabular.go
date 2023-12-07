@@ -835,7 +835,6 @@ func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
 	if err != nil {
 		return err
 	}
-	//c := constants.FileColumnsLocalized
 
 	if err := streamWriter.SetRow("A1", stringArrayToInterfaceArray(locales.TranslateSlice(constants.IndividualFileColumns))); err != nil {
 		return err
