@@ -4,7 +4,9 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
+	"github.com/nrc-no/notcore/internal/locales"
 	"os"
 	"path"
 	"path/filepath"
@@ -111,17 +113,26 @@ var templateCmd = &cobra.Command{
 			ServiceComments1:                "Service comment",
 		}
 		individualList := []*api.Individual{individual}
+
 		_, b, _, _ := runtime.Caller(0)
 		basepath := filepath.Dir(b)
-		templateFile, err := os.OpenFile(path.Join(basepath, "..", "web", "static", "nrc_grf_template.xlsx"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-		if err != nil {
-			return err
-		}
-		defer func() {
-			templateFile.Close()
-		}()
-		if err := api.MarshalIndividualsExcel(templateFile, individualList); err != nil {
-			return err
+
+		locales.LoadTranslations()
+		locales.Init()
+
+		for _, lang := range locales.AvailableLangs.Items() {
+			locales.SetLocalizer(lang)
+
+			templateFile, err := os.OpenFile(path.Join(basepath, "..", "web", "static", fmt.Sprintf("nrc_grf_template.%s.xlsx", lang)), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+			if err != nil {
+				return err
+			}
+			defer func() {
+				templateFile.Close()
+			}()
+			if err := api.MarshalIndividualsExcel(templateFile, individualList); err != nil {
+				return err
+			}
 		}
 		return nil
 	},

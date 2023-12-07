@@ -32,10 +32,14 @@ func ParseBirthdate(s string) (*time.Time, error) {
 	if s != "" {
 		date, err := time.Parse(dateFormat, s)
 		if err != nil {
-			return nil, errors.New(locales.GetTranslator()("error_parse_birthdate_invalid", constants.FileColumnIndividualBirthDate, date, err))
+			t := locales.GetTranslator()
+			col := t(constants.FileColumnIndividualBirthDate)
+			return nil, errors.New(t("error_parse_birthdate_invalid", col, s, err))
 		}
 		if date.Before(minBirthdate) {
-			return nil, errors.New(locales.GetTranslator()("error_parse_birthdate_minimum", constants.FileColumnIndividualBirthDate, date, minBirthdate))
+			t := locales.GetTranslator()
+			col := t(constants.FileColumnIndividualBirthDate)
+			return nil, errors.New(t("error_parse_birthdate_minimum", col, date, minBirthdate))
 		}
 		return &date, nil
 	}
@@ -46,10 +50,14 @@ func ParseAge(s string) (*int, error) {
 	if s != "" {
 		age, err := strconv.Atoi(s)
 		if err != nil {
-			return nil, fmt.Errorf("%s: %w", constants.FileColumnIndividualAge, err)
+			t := locales.GetTranslator()
+			col := t(constants.FileColumnIndividualAge)
+			return nil, fmt.Errorf("%s: %w", col, err)
 		}
 		if age < 0 {
-			return nil, errors.New(locales.GetTranslator()("error_parse_age", constants.FileColumnIndividualAge, age))
+			t := locales.GetTranslator()
+			col := t(constants.FileColumnIndividualAge)
+			return nil, errors.New(t("error_parse_age", col, age))
 		}
 		return &age, nil
 	}

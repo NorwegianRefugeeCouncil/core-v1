@@ -121,19 +121,19 @@ func TestBirthParseDate(t *testing.T) {
 		{
 			name:    "2006-13-40",
 			value:   "2006-13-40",
-			error:   errors.New("birth_date: 0001-01-01 00:00:00 +0000 UTC is invalid: parsing time \"2006-13-40\": month out of range"),
+			error:   errors.New("birth_date: 2006-13-40 is invalid: parsing time \"2006-13-40\": month out of range"),
 			wantErr: true,
 		},
 		{
 			name:    "01.02.2006",
 			value:   "01.02.2006",
-			error:   errors.New("birth_date: 0001-01-01 00:00:00 +0000 UTC is invalid: parsing time \"01.02.2006\" as \"2006-01-02\": cannot parse \"2.2006\" as \"2006\""),
+			error:   errors.New("birth_date: 01.02.2006 is invalid: parsing time \"01.02.2006\" as \"2006-01-02\": cannot parse \"2.2006\" as \"2006\""),
 			wantErr: true,
 		},
 		{
 			name:    "01. Feb 2006",
 			value:   "01. Feb 2006",
-			error:   errors.New("birth_date: 0001-01-01 00:00:00 +0000 UTC is invalid: parsing time \"01. Feb 2006\" as \"2006-01-02\": cannot parse \"Feb 2006\" as \"2006\""),
+			error:   errors.New("birth_date: 01. Feb 2006 is invalid: parsing time \"01. Feb 2006\" as \"2006-01-02\": cannot parse \"Feb 2006\" as \"2006\""),
 			wantErr: true,
 		},
 	}

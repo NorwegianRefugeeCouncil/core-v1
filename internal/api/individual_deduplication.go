@@ -42,12 +42,12 @@ func FindDuplicatesInUUIDColumn(df dataframe.DataFrame) []FileError {
 func getDuplicateUUIDs(df dataframe.DataFrame) map[string]containers.Set[int] {
 	duplicatesPerId := map[string]containers.Set[int]{}
 	for i := 0; i < df.Nrow(); i++ {
-		uuid := df.Select(constants.FileColumnIndividualID).Elem(i, 0).String()
+		uuid := df.Select(constants.DBColumnIndividualID).Elem(i, 0).String()
 		if uuid == "" {
 			continue
 		}
 		duplicates := ExcludeSelfFromDataframe(df, i).Filter(dataframe.F{
-			Colname:    constants.FileColumnIndividualID,
+			Colname:    constants.DBColumnIndividualID,
 			Comparando: uuid,
 			Comparator: series.In,
 		})

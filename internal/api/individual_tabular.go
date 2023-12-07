@@ -154,20 +154,20 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 	}
 	for field, idx := range colMapping {
 		switch field {
-		case constants.FileColumnIndividualID:
+		case constants.DBColumnIndividualID:
 			i.ID = cols[idx]
-		case constants.FileColumnIndividualInactive:
+		case constants.DBColumnIndividualInactive:
 			i.Inactive = isExplicitlyTrue(cols[idx])
-		case constants.FileColumnIndividualAddress:
+		case constants.DBColumnIndividualAddress:
 			i.Address = cols[idx]
-		case constants.FileColumnIndividualAge:
+		case constants.DBColumnIndividualAge:
 			age, err := ParseAge(cols[idx])
 			if err != nil {
 				errs = append(errs, err)
 				break
 			}
 			i.Age = age
-		case constants.FileColumnIndividualBirthDate:
+		case constants.DBColumnIndividualBirthDate:
 			var birthDate *time.Time
 			birthDate, err := ParseBirthdate(cols[idx])
 			if err != nil {
@@ -175,28 +175,28 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.BirthDate = birthDate
-		case constants.FileColumnIndividualCognitiveDisabilityLevel:
+		case constants.DBColumnIndividualCognitiveDisabilityLevel:
 			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualCognitiveDisabilityLevel, err, enumTypes.AllDisabilityLevels().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualCognitiveDisabilityLevel, err, enumTypes.AllDisabilityLevels().String())))
 				break
 			}
 			i.CognitiveDisabilityLevel = disabilityLevel
-		case constants.FileColumnIndividualCollectionAdministrativeArea1:
+		case constants.DBColumnIndividualCollectionAdministrativeArea1:
 			i.CollectionAdministrativeArea1 = cols[idx]
-		case constants.FileColumnIndividualCollectionAdministrativeArea2:
+		case constants.DBColumnIndividualCollectionAdministrativeArea2:
 			i.CollectionAdministrativeArea2 = cols[idx]
-		case constants.FileColumnIndividualCollectionAdministrativeArea3:
+		case constants.DBColumnIndividualCollectionAdministrativeArea3:
 			i.CollectionAdministrativeArea3 = cols[idx]
-		case constants.FileColumnIndividualCollectionOffice:
+		case constants.DBColumnIndividualCollectionOffice:
 			i.CollectionOffice = cols[idx]
-		case constants.FileColumnIndividualCollectionAgentName:
+		case constants.DBColumnIndividualCollectionAgentName:
 			i.CollectionAgentName = cols[idx]
-		case constants.FileColumnIndividualCollectionAgentTitle:
+		case constants.DBColumnIndividualCollectionAgentTitle:
 			i.CollectionAgentTitle = cols[idx]
-		case constants.FileColumnIndividualComments:
+		case constants.DBColumnIndividualComments:
 			i.Comments = cols[idx]
-		case constants.FileColumnIndividualCollectionTime:
+		case constants.DBColumnIndividualCollectionTime:
 			var collectionTime *time.Time
 			collectionTime, err := ParseDate(cols[idx])
 			if err != nil {
@@ -206,16 +206,16 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 			if collectionTime != nil {
 				i.CollectionTime = *collectionTime
 			}
-		case constants.FileColumnIndividualCommunicationDisabilityLevel:
+		case constants.DBColumnIndividualCommunicationDisabilityLevel:
 			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualCommunicationDisabilityLevel, err, enumTypes.AllDisabilityLevels().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualCommunicationDisabilityLevel, err, enumTypes.AllDisabilityLevels().String())))
 				break
 			}
 			i.CommunicationDisabilityLevel = disabilityLevel
-		case constants.FileColumnIndividualCommunityID:
+		case constants.DBColumnIndividualCommunityID:
 			i.CommunityID = cols[idx]
-		case constants.FileColumnIndividualCommunitySize:
+		case constants.DBColumnIndividualCommunitySize:
 			var communitySizeStr = cols[idx]
 			if communitySizeStr == "" {
 				continue
@@ -226,16 +226,16 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.CommunitySize = &communitySize
-		case constants.FileColumnIndividualDisplacementStatus:
+		case constants.DBColumnIndividualDisplacementStatus:
 			displacementStatus, err := enumTypes.ParseDisplacementStatus(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualDisplacementStatus, err, enumTypes.AllDisplacementStatuses().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualDisplacementStatus, err, enumTypes.AllDisplacementStatuses().String())))
 				break
 			}
 			i.DisplacementStatus = displacementStatus
-		case constants.FileColumnIndividualDisplacementStatusComment:
+		case constants.DBColumnIndividualDisplacementStatusComment:
 			i.DisplacementStatusComment = cols[idx]
-		case constants.FileColumnIndividualEmail1:
+		case constants.DBColumnIndividualEmail1:
 			if cols[idx] != "" {
 				email, err := mail.ParseAddress(cols[idx])
 				if err != nil {
@@ -244,7 +244,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				}
 				i.Email1 = email.Address
 			}
-		case constants.FileColumnIndividualEmail2:
+		case constants.DBColumnIndividualEmail2:
 			if cols[idx] != "" {
 				email, err := mail.ParseAddress(cols[idx])
 				if err != nil {
@@ -253,7 +253,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				}
 				i.Email2 = email.Address
 			}
-		case constants.FileColumnIndividualEmail3:
+		case constants.DBColumnIndividualEmail3:
 			if cols[idx] != "" {
 				email, err := mail.ParseAddress(cols[idx])
 				if err != nil {
@@ -262,153 +262,153 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				}
 				i.Email3 = email.Address
 			}
-		case constants.FileColumnIndividualFullName:
+		case constants.DBColumnIndividualFullName:
 			i.FullName = cols[idx]
-		case constants.FileColumnIndividualFirstName:
+		case constants.DBColumnIndividualFirstName:
 			i.FirstName = cols[idx]
-		case constants.FileColumnIndividualMiddleName:
+		case constants.DBColumnIndividualMiddleName:
 			i.MiddleName = cols[idx]
-		case constants.FileColumnIndividualLastName:
+		case constants.DBColumnIndividualLastName:
 			i.LastName = cols[idx]
-		case constants.FileColumnIndividualNativeName:
+		case constants.DBColumnIndividualNativeName:
 			i.NativeName = cols[idx]
-		case constants.FileColumnIndividualMothersName:
+		case constants.DBColumnIndividualMothersName:
 			i.MothersName = cols[idx]
-		case constants.FileColumnIndividualFreeField1:
+		case constants.DBColumnIndividualFreeField1:
 			i.FreeField1 = cols[idx]
-		case constants.FileColumnIndividualFreeField2:
+		case constants.DBColumnIndividualFreeField2:
 			i.FreeField2 = cols[idx]
-		case constants.FileColumnIndividualFreeField3:
+		case constants.DBColumnIndividualFreeField3:
 			i.FreeField3 = cols[idx]
-		case constants.FileColumnIndividualFreeField4:
+		case constants.DBColumnIndividualFreeField4:
 			i.FreeField4 = cols[idx]
-		case constants.FileColumnIndividualFreeField5:
+		case constants.DBColumnIndividualFreeField5:
 			i.FreeField5 = cols[idx]
-		case constants.FileColumnIndividualSex:
+		case constants.DBColumnIndividualSex:
 			sex, err := enumTypes.ParseSex(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualSex, err, enumTypes.AllSexes().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualSex, err, enumTypes.AllSexes().String())))
 				break
 			}
 			i.Sex = sex
-		case constants.FileColumnIndividualHasMedicalCondition:
+		case constants.DBColumnIndividualHasMedicalCondition:
 			hasMedicalCondition, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.HasMedicalCondition = hasMedicalCondition.BoolPtr()
-		case constants.FileColumnIndividualNeedsLegalAndPhysicalProtection:
+		case constants.DBColumnIndividualNeedsLegalAndPhysicalProtection:
 			needsLegalAndPhysicalProtection, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.NeedsLegalAndPhysicalProtection = needsLegalAndPhysicalProtection.BoolPtr()
-		case constants.FileColumnIndividualIsChildAtRisk:
+		case constants.DBColumnIndividualIsChildAtRisk:
 			isChildAtRisk, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.IsChildAtRisk = isChildAtRisk.BoolPtr()
-		case constants.FileColumnIndividualIsWomanAtRisk:
+		case constants.DBColumnIndividualIsWomanAtRisk:
 			isWomanAtRisk, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.IsWomanAtRisk = isWomanAtRisk.BoolPtr()
-		case constants.FileColumnIndividualIsElderAtRisk:
+		case constants.DBColumnIndividualIsElderAtRisk:
 			isElderAtRisk, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.IsElderAtRisk = isElderAtRisk.BoolPtr()
-		case constants.FileColumnIndividualIsLactating:
+		case constants.DBColumnIndividualIsLactating:
 			isLactating, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.IsLactating = isLactating.BoolPtr()
-		case constants.FileColumnIndividualIsPregnant:
+		case constants.DBColumnIndividualIsPregnant:
 			isPregnant, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.IsPregnant = isPregnant.BoolPtr()
-		case constants.FileColumnIndividualIsSingleParent:
+		case constants.DBColumnIndividualIsSingleParent:
 			isSingleParent, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.IsSingleParent = isSingleParent.BoolPtr()
-		case constants.FileColumnIndividualIsSeparatedChild:
+		case constants.DBColumnIndividualIsSeparatedChild:
 			isSeparatedChild, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.IsSeparatedChild = isSeparatedChild.BoolPtr()
-		case constants.FileColumnIndividualHasCognitiveDisability:
+		case constants.DBColumnIndividualHasCognitiveDisability:
 			hasCognitiveDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasCognitiveDisability, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.HasCognitiveDisability = hasCognitiveDisability.BoolPtr()
-		case constants.FileColumnIndividualHasCommunicationDisability:
+		case constants.DBColumnIndividualHasCommunicationDisability:
 			hasCommunicationDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasCommunicationDisability, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasCommunicationDisability, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.HasCommunicationDisability = hasCommunicationDisability.BoolPtr()
-		case constants.FileColumnIndividualHasConsentedToRGPD:
+		case constants.DBColumnIndividualHasConsentedToRGPD:
 			hasConsentedToRGPD, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasConsentedToRGPD, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasConsentedToRGPD, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.HasConsentedToRGPD = hasConsentedToRGPD.BoolPtr()
-		case constants.FileColumnIndividualHasConsentedToReferral:
+		case constants.DBColumnIndividualHasConsentedToReferral:
 			hasConsentedToReferral, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasConsentedToReferral, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasConsentedToReferral, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.HasConsentedToReferral = hasConsentedToReferral.BoolPtr()
-		case constants.FileColumnIndividualHasDisability:
+		case constants.DBColumnIndividualHasDisability:
 			hasDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasDisability, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasDisability, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.HasDisability = hasDisability.BoolPtr()
-		case constants.FileColumnIndividualHasHearingDisability:
+		case constants.DBColumnIndividualHasHearingDisability:
 			hasHearingDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasHearingDisability, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasHearingDisability, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.HasHearingDisability = hasHearingDisability.BoolPtr()
-		case constants.FileColumnIndividualHasMobilityDisability:
+		case constants.DBColumnIndividualHasMobilityDisability:
 			hasMobilityDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasMobilityDisability, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasMobilityDisability, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.HasMobilityDisability = hasMobilityDisability.BoolPtr()
-		case constants.FileColumnIndividualHasSelfCareDisability:
+		case constants.DBColumnIndividualHasSelfCareDisability:
 			hasSelfCareDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasSelfCareDisability, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasSelfCareDisability, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.HasSelfCareDisability = hasSelfCareDisability.BoolPtr()
-		case constants.FileColumnIndividualHasVisionDisability:
+		case constants.DBColumnIndividualHasVisionDisability:
 			hasVisionDisability, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHasVisionDisability, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHasVisionDisability, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.HasVisionDisability = hasVisionDisability.BoolPtr()
-		case constants.FileColumnIndividualHearingDisabilityLevel:
+		case constants.DBColumnIndividualHearingDisabilityLevel:
 			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualHearingDisabilityLevel, err, enumTypes.AllDisabilityLevels().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualHearingDisabilityLevel, err, enumTypes.AllDisabilityLevels().String())))
 				break
 			}
 			i.HearingDisabilityLevel = disabilityLevel
-		case constants.FileColumnIndividualHouseholdID:
+		case constants.DBColumnIndividualHouseholdID:
 			i.HouseholdID = cols[idx]
-		case constants.FileColumnIndividualHouseholdSize:
+		case constants.DBColumnIndividualHouseholdSize:
 			var householdSizeStr = cols[idx]
 			if householdSizeStr == "" {
 				continue
@@ -419,86 +419,86 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.HouseholdSize = &householdSize
-		case constants.FileColumnIndividualIdentificationType1:
+		case constants.DBColumnIndividualIdentificationType1:
 			identificationType, err := enumTypes.ParseIdentificationType(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualIdentificationType1, err, enumTypes.AllIdentificationTypes().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualIdentificationType1, err, enumTypes.AllIdentificationTypes().String())))
 				break
 			}
 			i.IdentificationType1 = identificationType
-		case constants.FileColumnIndividualIdentificationTypeExplanation1:
+		case constants.DBColumnIndividualIdentificationTypeExplanation1:
 			i.IdentificationTypeExplanation1 = cols[idx]
-		case constants.FileColumnIndividualIdentificationNumber1:
+		case constants.DBColumnIndividualIdentificationNumber1:
 			i.IdentificationNumber1 = cols[idx]
-		case constants.FileColumnIndividualIdentificationType2:
+		case constants.DBColumnIndividualIdentificationType2:
 			identificationType, err := enumTypes.ParseIdentificationType(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualIdentificationType2, err, enumTypes.AllIdentificationTypes().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualIdentificationType2, err, enumTypes.AllIdentificationTypes().String())))
 				break
 			}
 			i.IdentificationType2 = identificationType
-		case constants.FileColumnIndividualIdentificationTypeExplanation2:
+		case constants.DBColumnIndividualIdentificationTypeExplanation2:
 			i.IdentificationTypeExplanation2 = cols[idx]
-		case constants.FileColumnIndividualIdentificationNumber2:
+		case constants.DBColumnIndividualIdentificationNumber2:
 			i.IdentificationNumber2 = cols[idx]
-		case constants.FileColumnIndividualIdentificationType3:
+		case constants.DBColumnIndividualIdentificationType3:
 			identificationType, err := enumTypes.ParseIdentificationType(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualIdentificationType3, err, enumTypes.AllIdentificationTypes().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualIdentificationType3, err, enumTypes.AllIdentificationTypes().String())))
 				break
 			}
 			i.IdentificationType3 = identificationType
-		case constants.FileColumnIndividualIdentificationTypeExplanation3:
+		case constants.DBColumnIndividualIdentificationTypeExplanation3:
 			i.IdentificationTypeExplanation3 = cols[idx]
-		case constants.FileColumnIndividualIdentificationNumber3:
+		case constants.DBColumnIndividualIdentificationNumber3:
 			i.IdentificationNumber3 = cols[idx]
-		case constants.FileColumnIndividualEngagementContext:
+		case constants.DBColumnIndividualEngagementContext:
 			engagementContext, err := enumTypes.ParseEngagementContext(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualEngagementContext, err, enumTypes.AllEngagementContexts().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualEngagementContext, err, enumTypes.AllEngagementContexts().String())))
 				break
 			}
 			i.EngagementContext = engagementContext
-		case constants.FileColumnIndividualInternalID:
+		case constants.DBColumnIndividualInternalID:
 			i.InternalID = cols[idx]
-		case constants.FileColumnIndividualIsHeadOfCommunity:
+		case constants.DBColumnIndividualIsHeadOfCommunity:
 			isHeadOfCommunity, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualIsHeadOfCommunity, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualIsHeadOfCommunity, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.IsHeadOfCommunity = isHeadOfCommunity.BoolPtr()
-		case constants.FileColumnIndividualIsHeadOfHousehold:
+		case constants.DBColumnIndividualIsHeadOfHousehold:
 			isHeadOfHousehold, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualIsHeadOfHousehold, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualIsHeadOfHousehold, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.IsHeadOfHousehold = isHeadOfHousehold.BoolPtr()
-		case constants.FileColumnIndividualIsFemaleHeadedHousehold:
+		case constants.DBColumnIndividualIsFemaleHeadedHousehold:
 			isFemaleHeadedHousehold, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualIsFemaleHeadedHousehold, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualIsFemaleHeadedHousehold, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.IsFemaleHeadedHousehold = isFemaleHeadedHousehold.BoolPtr()
-		case constants.FileColumnIndividualIsMinorHeadedHousehold:
+		case constants.DBColumnIndividualIsMinorHeadedHousehold:
 			isMinorHeadedHousehold, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualIsMinorHeadedHousehold, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualIsMinorHeadedHousehold, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.IsMinorHeadedHousehold = isMinorHeadedHousehold.BoolPtr()
-		case constants.FileColumnIndividualIsMinor:
+		case constants.DBColumnIndividualIsMinor:
 			isMinor, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualIsMinor, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualIsMinor, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.IsMinor = isMinor.BoolPtr()
-		case constants.FileColumnIndividualMobilityDisabilityLevel:
+		case constants.DBColumnIndividualMobilityDisabilityLevel:
 			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualMobilityDisabilityLevel, err, enumTypes.AllDisabilityLevels().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualMobilityDisabilityLevel, err, enumTypes.AllDisabilityLevels().String())))
 				break
 			}
 			i.MobilityDisabilityLevel = disabilityLevel
-		case constants.FileColumnIndividualNationality1:
+		case constants.DBColumnIndividualNationality1:
 			if cols[idx] != "" {
 				if c := constants.CountriesByCode[cols[idx]].Name; c != "" {
 					i.Nationality1 = cols[idx]
@@ -509,7 +509,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 					break
 				}
 			}
-		case constants.FileColumnIndividualNationality2:
+		case constants.DBColumnIndividualNationality2:
 			if cols[idx] != "" {
 				if c := constants.CountriesByCode[cols[idx]].Name; c != "" {
 					i.Nationality2 = cols[idx]
@@ -520,105 +520,105 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 					break
 				}
 			}
-		case constants.FileColumnIndividualPhoneNumber1:
+		case constants.DBColumnIndividualPhoneNumber1:
 			i.PhoneNumber1 = cols[idx]
-		case constants.FileColumnIndividualPhoneNumber2:
+		case constants.DBColumnIndividualPhoneNumber2:
 			i.PhoneNumber2 = cols[idx]
-		case constants.FileColumnIndividualPhoneNumber3:
+		case constants.DBColumnIndividualPhoneNumber3:
 			i.PhoneNumber3 = cols[idx]
-		case constants.FileColumnIndividualPreferredContactMethod:
+		case constants.DBColumnIndividualPreferredContactMethod:
 			preferredContactMethod, err := enumTypes.ParseContactMethod(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualPreferredContactMethod, err, enumTypes.AllContactMethods().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualPreferredContactMethod, err, enumTypes.AllContactMethods().String())))
 				break
 			}
 			i.PreferredContactMethod = preferredContactMethod
-		case constants.FileColumnIndividualPreferredContactMethodComments:
+		case constants.DBColumnIndividualPreferredContactMethodComments:
 			i.PreferredContactMethodComments = cols[idx]
-		case constants.FileColumnIndividualPreferredName:
+		case constants.DBColumnIndividualPreferredName:
 			i.PreferredName = cols[idx]
-		case constants.FileColumnIndividualPreferredCommunicationLanguage:
+		case constants.DBColumnIndividualPreferredCommunicationLanguage:
 			if cols[idx] != "" {
 				if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
 					i.PreferredCommunicationLanguage = cols[idx]
 				} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
 					i.PreferredCommunicationLanguage = constants.LanguagesByName[cols[idx]].ID
 				} else {
-					errs = append(errs, errors.New(t("error_invalid_value", constants.FileColumnIndividualPreferredCommunicationLanguage, cols[idx])))
+					errs = append(errs, errors.New(t("error_invalid_value", constants.DBColumnIndividualPreferredCommunicationLanguage, cols[idx])))
 					break
 				}
 			}
-		case constants.FileColumnIndividualPrefersToRemainAnonymous:
+		case constants.DBColumnIndividualPrefersToRemainAnonymous:
 			prefersToRemainAnonymous, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualPrefersToRemainAnonymous, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualPrefersToRemainAnonymous, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.PrefersToRemainAnonymous = prefersToRemainAnonymous.BoolPtr()
-		case constants.FileColumnIndividualPresentsProtectionConcerns:
+		case constants.DBColumnIndividualPresentsProtectionConcerns:
 			presentsProtectionConcerns, err := enumTypes.ParseOptionalBoolean(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualPresentsProtectionConcerns, err, enumTypes.AllOptionalBooleans().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualPresentsProtectionConcerns, err, enumTypes.AllOptionalBooleans().String())))
 			}
 			i.PresentsProtectionConcerns = presentsProtectionConcerns.BoolPtr()
-		case constants.FileColumnIndividualPWDComments:
+		case constants.DBColumnIndividualPWDComments:
 			i.PWDComments = cols[idx]
-		case constants.FileColumnIndividualVulnerabilityComments:
+		case constants.DBColumnIndividualVulnerabilityComments:
 			i.VulnerabilityComments = cols[idx]
-		case constants.FileColumnIndividualSelfCareDisabilityLevel:
+		case constants.DBColumnIndividualSelfCareDisabilityLevel:
 			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualSelfCareDisabilityLevel, err, enumTypes.AllDisabilityLevels().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualSelfCareDisabilityLevel, err, enumTypes.AllDisabilityLevels().String())))
 				break
 			}
 			i.SelfCareDisabilityLevel = disabilityLevel
-		case constants.FileColumnIndividualSpokenLanguage1:
+		case constants.DBColumnIndividualSpokenLanguage1:
 			if cols[idx] != "" {
 				if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
 					i.SpokenLanguage1 = cols[idx]
 				} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
 					i.SpokenLanguage1 = constants.LanguagesByName[cols[idx]].ID
 				} else {
-					errs = append(errs, errors.New(t("error_invalid_value", constants.FileColumnIndividualSpokenLanguage1, cols[idx])))
+					errs = append(errs, errors.New(t("error_invalid_value", constants.DBColumnIndividualSpokenLanguage1, cols[idx])))
 					break
 				}
 			}
-		case constants.FileColumnIndividualSpokenLanguage2:
+		case constants.DBColumnIndividualSpokenLanguage2:
 			if cols[idx] != "" {
 				if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
 					i.SpokenLanguage2 = cols[idx]
 				} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
 					i.SpokenLanguage2 = constants.LanguagesByName[cols[idx]].ID
 				} else {
-					errs = append(errs, errors.New(t("error_invalid_value", constants.FileColumnIndividualSpokenLanguage2, cols[idx])))
+					errs = append(errs, errors.New(t("error_invalid_value", constants.DBColumnIndividualSpokenLanguage2, cols[idx])))
 					break
 				}
 			}
-		case constants.FileColumnIndividualSpokenLanguage3:
+		case constants.DBColumnIndividualSpokenLanguage3:
 			if cols[idx] != "" {
 				if l := constants.LanguagesByCode[cols[idx]].Name; l != "" {
 					i.SpokenLanguage3 = cols[idx]
 				} else if l := constants.LanguagesByName[cols[idx]].Name; l != "" {
 					i.SpokenLanguage3 = constants.LanguagesByName[cols[idx]].ID
 				} else {
-					errs = append(errs, errors.New(t("error_invalid_value", constants.FileColumnIndividualSpokenLanguage3, cols[idx])))
+					errs = append(errs, errors.New(t("error_invalid_value", constants.DBColumnIndividualSpokenLanguage3, cols[idx])))
 					break
 				}
 			}
-		case constants.FileColumnIndividualVisionDisabilityLevel:
+		case constants.DBColumnIndividualVisionDisabilityLevel:
 			disabilityLevel, err := enumTypes.ParseDisabilityLevel(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualVisionDisabilityLevel, err, enumTypes.AllDisabilityLevels().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualVisionDisabilityLevel, err, enumTypes.AllDisabilityLevels().String())))
 				break
 			}
 			i.VisionDisabilityLevel = disabilityLevel
-		case constants.FileColumnIndividualServiceCC1:
+		case constants.DBColumnIndividualServiceCC1:
 			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualServiceCC1, err, enumTypes.AllServiceCCs().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualServiceCC1, err, enumTypes.AllServiceCCs().String())))
 				break
 			}
 			i.ServiceCC1 = cc
-		case constants.FileColumnIndividualServiceRequestedDate1:
+		case constants.DBColumnIndividualServiceRequestedDate1:
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
@@ -626,7 +626,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.ServiceRequestedDate1 = date
-		case constants.FileColumnIndividualServiceDeliveredDate1:
+		case constants.DBColumnIndividualServiceDeliveredDate1:
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
@@ -634,16 +634,16 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.ServiceDeliveredDate1 = date
-		case constants.FileColumnIndividualServiceComments1:
+		case constants.DBColumnIndividualServiceComments1:
 			i.ServiceComments1 = cols[idx]
-		case constants.FileColumnIndividualServiceCC2:
+		case constants.DBColumnIndividualServiceCC2:
 			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualServiceCC2, err, enumTypes.AllServiceCCs().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualServiceCC2, err, enumTypes.AllServiceCCs().String())))
 				break
 			}
 			i.ServiceCC2 = cc
-		case constants.FileColumnIndividualServiceRequestedDate2:
+		case constants.DBColumnIndividualServiceRequestedDate2:
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
@@ -651,7 +651,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.ServiceRequestedDate2 = date
-		case constants.FileColumnIndividualServiceDeliveredDate2:
+		case constants.DBColumnIndividualServiceDeliveredDate2:
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
@@ -659,16 +659,16 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.ServiceDeliveredDate2 = date
-		case constants.FileColumnIndividualServiceComments2:
+		case constants.DBColumnIndividualServiceComments2:
 			i.ServiceComments2 = cols[idx]
-		case constants.FileColumnIndividualServiceCC3:
+		case constants.DBColumnIndividualServiceCC3:
 			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualServiceCC3, err, enumTypes.AllServiceCCs().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualServiceCC3, err, enumTypes.AllServiceCCs().String())))
 				break
 			}
 			i.ServiceCC3 = cc
-		case constants.FileColumnIndividualServiceRequestedDate3:
+		case constants.DBColumnIndividualServiceRequestedDate3:
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
@@ -676,7 +676,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.ServiceRequestedDate3 = date
-		case constants.FileColumnIndividualServiceDeliveredDate3:
+		case constants.DBColumnIndividualServiceDeliveredDate3:
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
@@ -684,16 +684,16 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.ServiceDeliveredDate3 = date
-		case constants.FileColumnIndividualServiceComments3:
+		case constants.DBColumnIndividualServiceComments3:
 			i.ServiceComments3 = cols[idx]
-		case constants.FileColumnIndividualServiceCC4:
+		case constants.DBColumnIndividualServiceCC4:
 			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualServiceCC4, err, enumTypes.AllServiceCCs().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualServiceCC4, err, enumTypes.AllServiceCCs().String())))
 				break
 			}
 			i.ServiceCC4 = cc
-		case constants.FileColumnIndividualServiceRequestedDate4:
+		case constants.DBColumnIndividualServiceRequestedDate4:
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
@@ -701,7 +701,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.ServiceRequestedDate4 = date
-		case constants.FileColumnIndividualServiceDeliveredDate4:
+		case constants.DBColumnIndividualServiceDeliveredDate4:
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
@@ -709,16 +709,16 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.ServiceDeliveredDate4 = date
-		case constants.FileColumnIndividualServiceComments4:
+		case constants.DBColumnIndividualServiceComments4:
 			i.ServiceComments4 = cols[idx]
-		case constants.FileColumnIndividualServiceCC5:
+		case constants.DBColumnIndividualServiceCC5:
 			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualServiceCC5, err, enumTypes.AllServiceCCs().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualServiceCC5, err, enumTypes.AllServiceCCs().String())))
 				break
 			}
 			i.ServiceCC5 = cc
-		case constants.FileColumnIndividualServiceRequestedDate5:
+		case constants.DBColumnIndividualServiceRequestedDate5:
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
@@ -726,7 +726,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.ServiceRequestedDate5 = date
-		case constants.FileColumnIndividualServiceDeliveredDate5:
+		case constants.DBColumnIndividualServiceDeliveredDate5:
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
@@ -734,16 +734,16 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.ServiceDeliveredDate5 = date
-		case constants.FileColumnIndividualServiceComments5:
+		case constants.DBColumnIndividualServiceComments5:
 			i.ServiceComments5 = cols[idx]
-		case constants.FileColumnIndividualServiceCC6:
+		case constants.DBColumnIndividualServiceCC6:
 			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualServiceCC6, err, enumTypes.AllServiceCCs().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualServiceCC6, err, enumTypes.AllServiceCCs().String())))
 				break
 			}
 			i.ServiceCC6 = cc
-		case constants.FileColumnIndividualServiceRequestedDate6:
+		case constants.DBColumnIndividualServiceRequestedDate6:
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
@@ -751,7 +751,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.ServiceRequestedDate6 = date
-		case constants.FileColumnIndividualServiceDeliveredDate6:
+		case constants.DBColumnIndividualServiceDeliveredDate6:
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
@@ -759,16 +759,16 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.ServiceDeliveredDate6 = date
-		case constants.FileColumnIndividualServiceComments6:
+		case constants.DBColumnIndividualServiceComments6:
 			i.ServiceComments6 = cols[idx]
-		case constants.FileColumnIndividualServiceCC7:
+		case constants.DBColumnIndividualServiceCC7:
 			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
-				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.FileColumnIndividualServiceCC7, err, enumTypes.AllServiceCCs().String())))
+				errs = append(errs, errors.New(t("error_invalid_value_w_hint", constants.DBColumnIndividualServiceCC7, err, enumTypes.AllServiceCCs().String())))
 				break
 			}
 			i.ServiceCC7 = cc
-		case constants.FileColumnIndividualServiceRequestedDate7:
+		case constants.DBColumnIndividualServiceRequestedDate7:
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
@@ -776,7 +776,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.ServiceRequestedDate7 = date
-		case constants.FileColumnIndividualServiceDeliveredDate7:
+		case constants.DBColumnIndividualServiceDeliveredDate7:
 			var date *time.Time
 			date, err := ParseDate(cols[idx])
 			if err != nil {
@@ -784,7 +784,7 @@ func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []stri
 				break
 			}
 			i.ServiceDeliveredDate7 = date
-		case constants.FileColumnIndividualServiceComments7:
+		case constants.DBColumnIndividualServiceComments7:
 			i.ServiceComments7 = cols[idx]
 		}
 	}
