@@ -94,7 +94,7 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	if err != nil {
 		return nil, err
 	}
-	rows.Close()
+	defer rows.Close()
 
 	// now we look for duplicates in a cross join between the temp table and the individual_registrations table
 	deduplicationQuery := buildDeduplicationQuery(tempTableName, columnsOfInterest, config, uploadDfHasIdColumn, schema)
