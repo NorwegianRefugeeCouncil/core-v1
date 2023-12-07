@@ -12,9 +12,9 @@ no_country_found = "No country found"
 code = "Code"
 country_details = "Country details"
 read_group = "Read group"
-read_group_description="This group should follow the format: APP__NRC__ENVIRONMENT__COUNTRY_NAME__READ"
+read_group_description="This group should follow the format: APP__NRC_CORE__ENVIRONMENT__COUNTRY_NAME__READ"
 write_group = "Write group"
-write_group_description="This group should follow the format: APP__NRC__ENVIRONMENT__COUNTRY_NAME__WRITE"
+write_group_description="This group should follow the format: APP__NRC_CORE__ENVIRONMENT__COUNTRY_NAME__WRITE"
 save = "Save"
 
 # individual.gohtml
