@@ -329,3 +329,11 @@ variable "action_group_webhook_url" {
   type        = string
   description = "The url of the webhook for the action group."
 }
+
+variable "enable_beta_features" {
+  type        = bool
+  default     = false
+  description = <<EOF
+Whether or not to enable beta features in an environment.
+EOF
+}
