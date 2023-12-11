@@ -3,6 +3,7 @@ package enumTypes
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/nrc-no/notcore/internal/locales"
 
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/logutils"
@@ -37,21 +38,22 @@ List is : House Visit, Field Activity, In-Office, Remote Channels, Referred, Oth
 */
 
 func (g EngagementContext) String() string {
+	t := locales.GetTranslator()
 	switch g {
 	case EngagementContextHouseVisit:
-		return "House Visit"
+		return t("option_engagement_context_house_visit")
 	case EngagementContextFieldActivity:
-		return "Field Activity"
+		return t("option_engagement_context_field_activity")
 	case EngagementContextInOffice:
-		return "In-Office"
+		return t("option_engagement_context_in_office")
 	case EngagementContextRemoteChannels:
-		return "Remote Channels"
+		return t("option_engagement_context_remote_channels")
 	case EngagementContextReferred:
-		return "Referred"
+		return t("option_engagement_context_referred")
 	case EngagementContextOther:
-		return "Other"
+		return t("option_other")
 	case EngagementContextUnspecified:
-		return "Unspecified"
+		return ""
 	default:
 		return ""
 	}
@@ -74,7 +76,7 @@ func ParseEngagementContext(str string) (EngagementContext, error) {
 	case string(EngagementContextUnspecified), EngagementContextUnspecified.String():
 		return EngagementContextUnspecified, nil
 	default:
-		return "", fmt.Errorf("unknown engagement context type: %v", logutils.Escape(str))
+		return "", fmt.Errorf(locales.GetTranslator()("error_unknown_engagement_context", logutils.Escape(str)))
 	}
 }
 

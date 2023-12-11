@@ -1,50 +1,4 @@
 {{define "head"}}
-    <script>
-        const nrcOrgInputGroupID = "nrc-org-input-group"
-        const addOrgsButtonID = "add-more-orgs-button"
-        const nrcOrgInputClass = "nrc-org-input"
-
-        function removeNRCOrgInput(i) {
-            const input = document.getElementById(nrcOrgInputGroupID + '-'+i)
-            input.remove()
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const nrcOrgInputGroup = document.getElementById(nrcOrgInputGroupID)
-            const button = document.getElementById(addOrgsButtonID)
-
-            function addNRCOrgInput() {
-                const nrcOrgInputs = document.getElementsByClassName(nrcOrgInputClass)
-                const inputNr = nrcOrgInputs.length
-
-                var newInputGroup = document.createElement("div")
-                var newInput = document.createElement("input")
-                var newDeleteButton = document.createElement("button")
-                var deleteIcon = document.createElement("i")
-
-                newInput.classList = "form-control " + nrcOrgInputClass
-                newInput.placeholder = {{.RequestContext.Locales.Translate "new_nrc_organisation"}}
-                newInput.name = "NrcOrganisations"
-                newInput.value = null
-
-                deleteIcon.classList = "bi bi-dash-circle"
-
-                newDeleteButton.classList = "btn btn-outline-secondary"
-                newDeleteButton.onclick = () => removeNRCOrgInput(inputNr)
-
-                newInputGroup.classList = "input-group mb-3"
-                newInputGroup.id = nrcOrgInputGroupID + "-" +  inputNr
-
-                newInputGroup.appendChild(newInput)
-                newDeleteButton.appendChild(deleteIcon)
-                newInputGroup.appendChild(newDeleteButton)
-                nrcOrgInputGroup.appendChild(newInputGroup)
-            }
-            addNRCOrgInput()
-
-            button.addEventListener('click', addNRCOrgInput)
-        })
-    </script>
 {{end}}
 {{define "body"}}
     <main class="container mt-3">
@@ -52,70 +6,70 @@
             {{if .Country.ID}}
                 {{.Country.Name}}
             {{else}}
-                {{.RequestContext.Locales.Translate "new_country"}}
+                {{translate "new_country"}}
             {{end}}
         </h1>
         <div class="scroll-body">
             <form method="post" action="/countries/{{if eq "" .Country.ID}}new{{else}}{{.Country.ID}}{{end}}">
                 <div class="card">
-                        <div class="card-header">
-                            {{.RequestContext.Locales.Translate "country_details"}}
-                        </div>
-                        <div class="card-body list-group list-group-flush pt-2">
-                            <!-- ID -->
-                            {{if .Country.ID}}
-                                <div class="form mb-3">
-                                    <label for="ID" class="form-label">ID</label>
-                                    <input id="ID" disabled="disabled" name="ID"
-                                           class="form-control font-monospace"
-                                           value="{{.Country.ID}}" readonly="readonly">
-                                </div>
-                            {{end}}
-                            <!-- End of ID -->
-
-                            <!-- Name -->
-                            <div class="form mb-3">
-                                <label for="Name" class="form-label">{{.RequestContext.Locales.Translate "name"}}</label>
-                                <input id="Name" name="Name" class="form-control"
-                                       value="{{.Country.Name}}">
-                            </div>
-                            <!-- End of Name -->
-
-                            <!-- Code -->
-                            <div class="form mb-3">
-                                <label for="Code" class="form-label">{{.RequestContext.Locales.Translate "code"}}</label>
-                                <input id="Code" name="Code" class="form-control font-monospace"
-                                       value="{{.Country.Code}}">
-                            </div>
-                            <!-- End of Code -->
-
-                            <!-- ReadGroup -->
-                            <div class="form mb-3">
-                                <label for="ReadGroup" class="form-label">{{.RequestContext.Locales.Translate "read_group"}}</label>
-                                <div class="form-text">
-                                    {{.RequestContext.Locales.Translate "read_group_description"}}
-                                </div>
-                                <input id="ReadGroup" name="ReadGroup" class="form-control font-monospace" value="{{.Country.ReadGroup}}">
-                            </div>
-                            <!-- End of ReadGroup -->
-
-                            <!-- WriteGroup -->
-                            <div class="form mb-3">
-                                <label for="WriteGroup" class="form-label">{{.RequestContext.Locales.Translate "write_group"}}</label>
-                                <div class="form-text">
-                                    {{.RequestContext.Locales.Translate "write_group_description"}}
-                                </div>
-                                <input id="WriteGroup" name="WriteGroup" class="form-control font-monospace" value="{{.Country.WriteGroup}}">
-                            </div>
-                            <!-- End of WriteGroup -->
-
-                        </div>
-                        <div class="card-footer">
-                            <button class="btn btn-primary" type="submit">{{.RequestContext.Locales.Translate "save"}}</button>
-                        </div>
+                    <div class="card-header">
+                        {{translate "country_details"}}
                     </div>
-                </form>
-            </div>
+                    <div class="card-body list-group list-group-flush pt-2">
+                        <!-- ID -->
+                        {{if .Country.ID}}
+                            <div class="form mb-3">
+                                <label for="ID" class="form-label">ID</label>
+                                <input id="ID" disabled="disabled" name="ID"
+                                       class="form-control font-monospace"
+                                       value="{{.Country.ID}}" readonly="readonly">
+                            </div>
+                        {{end}}
+                        <!-- End of ID -->
+
+                        <!-- Name -->
+                        <div class="form mb-3">
+                            <label for="Name" class="form-label">{{translate "name"}}</label>
+                            <input id="Name" name="Name" class="form-control"
+                                   value="{{.Country.Name}}">
+                        </div>
+                        <!-- End of Name -->
+
+                        <!-- Code -->
+                        <div class="form mb-3">
+                            <label for="Code" class="form-label">{{translate "code"}}</label>
+                            <input id="Code" name="Code" class="form-control font-monospace"
+                                   value="{{.Country.Code}}">
+                        </div>
+                        <!-- End of Code -->
+
+                        <!-- ReadGroup -->
+                        <div class="form mb-3">
+                            <label for="ReadGroup" class="form-label">{{translate "read_group"}}</label>
+                            <div class="form-text">
+                                {{translate "read_group_description"}}
+                            </div>
+                            <input id="ReadGroup" name="ReadGroup" class="form-control font-monospace" value="{{.Country.ReadGroup}}">
+                        </div>
+                        <!-- End of ReadGroup -->
+
+                        <!-- WriteGroup -->
+                        <div class="form mb-3">
+                            <label for="WriteGroup" class="form-label">{{translate "write_group"}}</label>
+                            <div class="form-text">
+                                {{translate "write_group_description"}}
+                            </div>
+                            <input id="WriteGroup" name="WriteGroup" class="form-control font-monospace" value="{{.Country.WriteGroup}}">
+                        </div>
+                        <!-- End of WriteGroup -->
+
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary" type="submit">{{translate "save"}}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </main>
 
 {{end}}

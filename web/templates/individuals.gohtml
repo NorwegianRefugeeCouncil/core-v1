@@ -20,7 +20,6 @@
         const deleteIndividualsConfirmationModalId = "deleteIndividualsConfirmationModal"
         const deleteIndividualsConfirmationModalContentId = "deleteIndividualsConfirmationModalContent"
         const deleteIndividualsConfirmationModalConfirmButtonId = "deleteIndividualsConfirmationModalConfirmButton"
-        const deleteIndividualsConfirmationModalConfirmButtonContentId = "deleteIndividualsConfirmationModalConfirmButtonContent"
         const deactivateIndividualsButtonContentId = "deactivateIndividualsButtonContent"
         const activateIndividualsButtonContentId = "activateIndividualsButtonContent"
         const individualTableContainerId = individualActionFormId
@@ -77,9 +76,7 @@
         function refreshDeleteConfirmationModal() {
             const count = getSelectedIndividualCount()
             const modalContent = document.getElementById(deleteIndividualsConfirmationModalContentId)
-            const confirmButtonContent = document.getElementById(deleteIndividualsConfirmationModalConfirmButtonContentId)
-            modalContent.innerHTML = "Are you sure you want to delete " + count + " participant" + (count > 1 ? "s" : "") + "?"
-            confirmButtonContent.innerText = "Delete " + count + " participant" + (count > 1 ? "s" : "")
+            modalContent.innerHTML = count
         }
 
         /**
@@ -144,14 +141,14 @@
             if (emptyText) {
                 if (window.location.search.length > 0) {
                         const heading = document.createElement("h5")
-                        heading.innerText = "{{.RequestContext.Locales.Translate "no_results"}}"
+                        heading.innerText = "{{translate "no_results"}}"
                         const span = document.createElement("span")
-                        span.innerText = "{{.RequestContext.Locales.Translate "adjust_filters"}}"
+                        span.innerText = "{{translate "adjust_filters"}}"
                         emptyText.appendChild(heading)
                         emptyText.appendChild(span)
                 } else {
                     const heading = document.createElement("h5")
-                    heading.innerText = "{{.RequestContext.Locales.Translate "empty_db"}}"
+                    heading.innerText = "{{translate "empty_db"}}"
                     emptyText.appendChild(heading)
                 }
             }
@@ -329,14 +326,14 @@
                        class="btn btn-outline-primary me-2"
                     >
                         <i class="bi bi-plus"></i>
-                        <span>{{.RequestContext.Locales.Translate "create_new_individual"}}</span>
+                        <span>{{translate "create_new_individual"}}</span>
                     </a>
                 {{end}}
                 {{ if .RequestContext.HasSelectedCountryReadPermission}}
                     <div class="btn-group me-2">
                         <button type="button" class="btn btn-outline-secondary" id="downloadIndividualsButton">
                             <i class="bi bi-download"></i>
-                            <span>{{.RequestContext.Locales.Translate "download_all"}}</span>
+                            <span>{{translate "download_all"}}</span>
                         </button>
                         <button type="button"
                                 class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split px-3"
@@ -345,8 +342,8 @@
                                 id="download-toggle">
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a id="download-filtered" class="dropdown-item" href="#" onclick="downloadFilteredFunc()">{{.RequestContext.Locales.Translate "download_filtered_individuals"}}</a></li>
-                            <li><a id="download-selected" class="dropdown-item" href="#" onclick="downloadSelectedFunc()">{{.RequestContext.Locales.Translate "download_selected_individuals"}}</a></li>
+                            <li><a id="download-filtered" class="dropdown-item" href="#" onclick="downloadFilteredFunc()">{{translate "download_filtered_individuals"}}</a></li>
+                            <li><a id="download-selected" class="dropdown-item" href="#" onclick="downloadSelectedFunc()">{{translate "download_selected_individuals"}}</a></li>
                         </ul>
                     </div>
                 {{end}}
@@ -389,7 +386,7 @@
                         style="width: {{$inactiveWidth}}"
                     >
                         <i class="bi bi-eye-slash-fill"
-                           data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "is_inactive"}}"></i>
+                           data-toggle="tooltip" data-placement="top" title="{{translate "is_inactive"}}"></i>
 
                         <!-- print current sorting direction icon -->
                         <span class="ms-1 me-1 sort-icon-current">
@@ -421,7 +418,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "id"
-                    "Label" (.RequestContext.Locales.Translate "individual_id") 
+                    "Label" (translate "individual_id")
                     "Scope" "col"
                     "Class" "sticky-column "
                     "Title" "ID"
@@ -435,7 +432,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "full_name"
-                    "Label" (.RequestContext.Locales.Translate "name")
+                    "Label" (translate "name")
                     "Scope" "col"
                     "Class" "sticky-column border-end"
                     "Title" "Full Name"
@@ -449,7 +446,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "first_name"
-                    "Label" (.RequestContext.Locales.Translate "first_name")
+                    "Label" (translate "first_name")
                     "Title" "First Name"
                     "Width" $nameWidth
                     "MinWidth" $nameWidth
@@ -460,7 +457,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "middle_name"
-                    "Label" (.RequestContext.Locales.Translate "middle_name")
+                    "Label" (translate "middle_name")
                     "Title" "Middle Name"
                     "Width" $nameWidth
                     "MinWidth" $nameWidth
@@ -471,7 +468,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "last_name"
-                    "Label" (.RequestContext.Locales.Translate "last_name")
+                    "Label" (translate "last_name")
                     "Title" "Last Name"
                     "Width" $nameWidth
                     "MinWidth" $nameWidth
@@ -482,7 +479,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "native_name"
-                    "Label" (.RequestContext.Locales.Translate "native_name")
+                    "Label" (translate "native_name")
                     "Scope" "col"
                     "Title" "Native Name"
                     "Width" $nameWidth
@@ -494,7 +491,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "mothers_name"
-                    "Label" (.RequestContext.Locales.Translate "mother_name")
+                    "Label" (translate "mother_name")
                     "Title" "Mother's Name"
                     "Width" $nameWidth
                     "MinWidth" $nameWidth
@@ -505,7 +502,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "sex"
-                    "Label" (.RequestContext.Locales.Translate "sex")
+                    "Label" (translate "sex")
                     "Title" "Sex"
                     "Width" $sexWidth
                     "MinWidth" $sexWidth
@@ -516,7 +513,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "age"
-                    "Label" (.RequestContext.Locales.Translate "age")
+                    "Label" (translate "age_abrv")
                     "Title" "Age"
                     "Width" $ageWidth
                     "MinWidth" $ageWidth
@@ -527,7 +524,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "identification_number_1"
-                    "Label" (.RequestContext.Locales.Translate "identification_number_1")
+                    "Label" (translate "identification_number_1_abrv")
                     "Title" "ID #1"
                     )}}
 
@@ -535,7 +532,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "identification_number_2"
-                    "Label" (.RequestContext.Locales.Translate "identification_number_2")
+                    "Label" (translate "identification_number_2_abrv")
                     "Title" "ID #2"
                     )}}
 
@@ -543,7 +540,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "identification_number_3"
-                    "Label" (.RequestContext.Locales.Translate "identification_number_3")
+                    "Label" (translate "identification_number_3_abrv")
                     "Title" "ID #3"
                     )}}
 
@@ -551,7 +548,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "birth_date"
-                    "Label" (.RequestContext.Locales.Translate "birth_date")
+                    "Label" (translate "birth_date")
                     "Title" "Birth Date"
                     "Width" $birthDateWidth
                     "MinWidth" $birthDateWidth
@@ -562,7 +559,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "household_id"
-                    "Label" (.RequestContext.Locales.Translate "household_id")
+                    "Label" (translate "household_id_abrv")
                     "Title" "Household ID"
                     "Width" $householdIDWidth
                     "MinWidth" $householdIDWidth
@@ -573,7 +570,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "is_head_of_household"
-                    "Label" (.RequestContext.Locales.Translate "is_head_of_household_abrv")
+                    "Label" (translate "is_head_of_household_xabrv")
                     "Title" "Head of Household"
                     "Class" "text-center"
                     "Width" $isHeadOfHouseholdWidth
@@ -585,7 +582,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "is_minor_headed_household"
-                    "Label" (.RequestContext.Locales.Translate "is_minor_headed_household_abrv")
+                    "Label" (translate "is_minor_headed_household_xabrv")
                     "Title" "Minor Head of Household"
                     "Class" "text-center"
                     "Width" $isHeadOfHouseholdWidth
@@ -597,7 +594,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "is_female_headed_household"
-                    "Label" (.RequestContext.Locales.Translate "is_female_headed_household_abrv")
+                    "Label" (translate "is_female_headed_household_xabrv")
                     "Title" "Female Head of Household"
                     "Class" "text-center"
                     "Width" $isHeadOfHouseholdWidth
@@ -609,8 +606,8 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "is_child_at_risk"
-                    "Label" (.RequestContext.Locales.Translate "is_child_at_risk_abrv")
-                    "Title" (.RequestContext.Locales.Translate "is_child_at_risk")
+                    "Label" (translate "is_child_at_risk_xabrv")
+                    "Title" (translate "is_child_at_risk")
                     "Class" "text-center"
                     "Width" $isHeadOfHouseholdWidth
                     "MinWidth" $isHeadOfHouseholdWidth
@@ -621,8 +618,8 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "is_woman_at_risk"
-                    "Label" (.RequestContext.Locales.Translate "is_woman_at_risk_abrv")
-                    "Title" (.RequestContext.Locales.Translate "is_woman_at_risk")
+                    "Label" (translate "is_woman_at_risk_xabrv")
+                    "Title" (translate "is_woman_at_risk")
                     "Class" "text-center"
                     "Width" $isHeadOfHouseholdWidth
                     "MinWidth" $isHeadOfHouseholdWidth
@@ -633,8 +630,8 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "is_elder_at_risk"
-                    "Label" (.RequestContext.Locales.Translate "is_elder_at_risk_abrv")
-                    "Title" (.RequestContext.Locales.Translate "is_elder_at_risk")
+                    "Label" (translate "is_elder_at_risk_xabrv")
+                    "Title" (translate "is_elder_at_risk")
                     "Class" "text-center"
                     "Width" $isHeadOfHouseholdWidth
                     "MinWidth" $isHeadOfHouseholdWidth
@@ -645,8 +642,8 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "is_pregnant"
-                    "Label" (.RequestContext.Locales.Translate "is_pregnant_abrv")
-                    "Title" (.RequestContext.Locales.Translate "is_pregnant")
+                    "Label" (translate "is_pregnant_xabrv")
+                    "Title" (translate "is_pregnant")
                     "Class" "text-center"
                     "Width" $isHeadOfHouseholdWidth
                     "MinWidth" $isHeadOfHouseholdWidth
@@ -657,8 +654,8 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "is_lactating"
-                    "Label" (.RequestContext.Locales.Translate "is_lactating_abrv")
-                    "Title" (.RequestContext.Locales.Translate "is_lactating")
+                    "Label" (translate "is_lactating_xabrv")
+                    "Title" (translate "is_lactating")
                     "Class" "text-center"
                     "Width" $isHeadOfHouseholdWidth
                     "MinWidth" $isHeadOfHouseholdWidth
@@ -669,8 +666,8 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "is_separated_child"
-                    "Label" (.RequestContext.Locales.Translate "is_separated_child_abrv")
-                    "Title" (.RequestContext.Locales.Translate "is_separated_child")
+                    "Label" (translate "is_separated_child_xabrv")
+                    "Title" (translate "is_separated_child")
                     "Class" "text-center"
                     "Width" $isHeadOfHouseholdWidth
                     "MinWidth" $isHeadOfHouseholdWidth
@@ -681,8 +678,8 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "is_single_parent"
-                    "Label" (.RequestContext.Locales.Translate "is_single_parent_abrv")
-                    "Title" (.RequestContext.Locales.Translate "is_single_parent")
+                    "Label" (translate "is_single_parent_xabrv")
+                    "Title" (translate "is_single_parent")
                     "Class" "text-center"
                     "Width" $isHeadOfHouseholdWidth
                     "MinWidth" $isHeadOfHouseholdWidth
@@ -693,8 +690,8 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "has_medical_condition"
-                    "Label" (.RequestContext.Locales.Translate "has_medical_condition_abrv")
-                    "Title" (.RequestContext.Locales.Translate "has_medical_condition")
+                    "Label" (translate "has_medical_condition_xabrv")
+                    "Title" (translate "has_medical_condition")
                     "Class" "text-center"
                     "Width" $isHeadOfHouseholdWidth
                     "MinWidth" $isHeadOfHouseholdWidth
@@ -705,8 +702,8 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "needs_legal_and_physical_protection"
-                    "Label" (.RequestContext.Locales.Translate "needs_legal_and_physical_protection_abrv")
-                    "Title" (.RequestContext.Locales.Translate "needs_legal_and_physical_protection")
+                    "Label" (translate "needs_legal_and_physical_protection_xabrv")
+                    "Title" (translate "needs_legal_and_physical_protection")
                     "Class" "text-center"
                     "Width" $isHeadOfHouseholdWidth
                     "MinWidth" $isHeadOfHouseholdWidth
@@ -717,7 +714,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "community_id"
-                    "Label" (.RequestContext.Locales.Translate "community_id")
+                    "Label" (translate "community_id_abrv")
                     "Title" "Community ID"
                     "Width" $communityIDWidth
                     "MinWidth" $communityIDWidth
@@ -728,7 +725,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "is_head_of_community"
-                    "Label" (.RequestContext.Locales.Translate "community_representative_abrv")
+                    "Label" (translate "community_representative_abrv")
                     "Title" "Community Representative"
                     "Class" "text-center"
                     "Width" $isHeadOfCommunityWidth
@@ -740,7 +737,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "phone_number_1"
-                    "Label" (.RequestContext.Locales.Translate "phone_number")
+                    "Label" (translate "phone_number")
                     "Title" "Phone Number"
                     "Width" $phoneNumberWidth
                     "MinWidth" $phoneNumberWidth
@@ -751,7 +748,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "email_1"
-                    "Label" (.RequestContext.Locales.Translate "email")
+                    "Label" (translate "email")
                     "Title" "Email Address"
                     "Width" $emailWidth
                     "MinWidth" $emailWidth
@@ -762,7 +759,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "has_disability"
-                    "Label" (.RequestContext.Locales.Translate "has_disability_abrv")
+                    "Label" (translate "has_disability_xabrv")
                     "Title" "Has PWD"
                     )}}
 
@@ -770,7 +767,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "displacement_status"
-                    "Label" (.RequestContext.Locales.Translate "displacement_status")
+                    "Label" (translate "displacement_status")
                     "Title" "Displacement Status"
                     "Width" $displacementStatusWidth
                     "MinWidth" $displacementStatusWidth
@@ -781,7 +778,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "collection_time"
-                    "Label" (.RequestContext.Locales.Translate "collection_time")
+                    "Label" (translate "collection_time_abrv")
                     "Title" "Registration Date"
                     "Width" $registrationDateWidth
                     "MinWidth" $registrationDateWidth
@@ -792,7 +789,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "collection_administrative_area_1"
-                    "Label" (.RequestContext.Locales.Translate "collection_area_1_abrv")
+                    "Label" (translate "collection_area_1_xabrv")
                     "Title" "Collection Administrative Area 1"
                     "Width" $collectionAdministrativeArea1Width
                     "MinWidth" $collectionAdministrativeArea1Width
@@ -803,7 +800,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "collection_administrative_area_2"
-                    "Label" (.RequestContext.Locales.Translate "collection_area_2_abrv")
+                    "Label" (translate "collection_area_2_xabrv")
                     "Title" "Collection Administrative Area 2"
                     "Width" $collectionAdministrativeArea2Width
                     "MinWidth" $collectionAdministrativeArea2Width
@@ -814,7 +811,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "collection_administrative_area_3"
-                    "Label" (.RequestContext.Locales.Translate "collection_area_3_abrv")
+                    "Label" (translate "collection_area_3_xabrv")
                     "Title" "Collection Administrative Area 3"
                     "Width" $collectionAdministrativeArea3Width
                     "MinWidth" $collectionAdministrativeArea3Width
@@ -825,7 +822,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "collection_office"
-                    "Label" (.RequestContext.Locales.Translate "collection_office_abrv")
+                    "Label" (translate "collection_office_abrv")
                     "Title" "Collection Office"
                     "Width" $collectionOfficeWidth
                     "MinWidth" $collectionOfficeWidth
@@ -836,7 +833,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "free_field_1"
-                    "Label" (.RequestContext.Locales.Translate "free_field_1")
+                    "Label" (translate "free_field_1")
                     "Title" "Free Field 1"
                     "Width" $freeField1Width
                     "MinWidth" $freeField1Width
@@ -847,7 +844,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "free_field_2"
-                    "Label" (.RequestContext.Locales.Translate "free_field_2")
+                    "Label" (translate "free_field_2")
                     "Title" "Free Field 2"
                     "Width" $freeField2Width
                     "MinWidth" $freeField2Width
@@ -858,7 +855,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "free_field_3"
-                    "Label" (.RequestContext.Locales.Translate "free_field_3")
+                    "Label" (translate "free_field_3")
                     "Title" "Free Field 3"
                     "Width" $freeField3Width
                     "MinWidth" $freeField3Width
@@ -869,7 +866,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "free_field_4"
-                    "Label" (.RequestContext.Locales.Translate "free_field_4")
+                    "Label" (translate "free_field_4")
                     "Title" "Free Field 4"
                     "Width" $freeField4Width
                     "MinWidth" $freeField4Width
@@ -880,7 +877,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "free_field_5"
-                    "Label" (.RequestContext.Locales.Translate "free_field_5")
+                    "Label" (translate "free_field_5")
                     "Title" "Free Field 5"
                     "Width" $freeField5Width
                     "MinWidth" $freeField5Width
@@ -891,16 +888,16 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_cc_1"
-                    "Label" (.RequestContext.Locales.Translate "service_cc_1")
-                    "Title" "Service CC 1"
+                    "Label" (translate "service_cc_abrv_no" "1")
+                    "Title" (translate "service_cc_abrv_no" "1")
                     )}}
 
                     {{template "columnHeader" (dict
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_requested_date_1"
-                    "Label" (.RequestContext.Locales.Translate "service_request_date_1")
-                    "Title" "Service Requested Date 1"
+                    "Label" (translate "service_requested_date_no" "1")
+                    "Title" (translate "service_requested_date_no" "1")
                     "Width" $createdAtWidth
                     "MinWidth" $createdAtWidth
                     "MaxWidth" $createdAtWidth
@@ -910,8 +907,8 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_delivered_date_1"
-                    "Label" (.RequestContext.Locales.Translate "service_delivery_date_1")
-                    "Title" "Service Delivered Date 1"
+                    "Label" (translate "service_delivery_date_no" "1")
+                    "Title" (translate "service_delivery_date_no" "1")
                     "Width" $createdAtWidth
                     "MinWidth" $createdAtWidth
                     "MaxWidth" $createdAtWidth
@@ -921,16 +918,16 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_cc_2"
-                    "Label" (.RequestContext.Locales.Translate "service_cc_2")
-                    "Title" "Service CC 2"
+                    "Label" (translate "service_cc_abrv_no" "2")
+                    "Title" (translate "service_cc_abrv_no" "2")
                     )}}
 
                     {{template "columnHeader" (dict
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_requested_date_2"
-                    "Label" (.RequestContext.Locales.Translate "service_request_date_2")
-                    "Title" "Service Requested Date 2"
+                    "Label" (translate "service_requested_date_no" "2")
+                    "Title" (translate "service_requested_date_no" "2")
                     "Width" $createdAtWidth
                     "MinWidth" $createdAtWidth
                     "MaxWidth" $createdAtWidth
@@ -940,8 +937,8 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_delivered_date_2"
-                    "Label" (.RequestContext.Locales.Translate "service_delivery_date_2")
-                    "Title" "Service Delivered Date 2"
+                    "Label" (translate "service_delivery_date_no" "2")
+                    "Title" (translate "service_delivery_date_no" "2")
                     "Width" $createdAtWidth
                     "MinWidth" $createdAtWidth
                     "MaxWidth" $createdAtWidth
@@ -951,16 +948,16 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_cc_3"
-                    "Label" (.RequestContext.Locales.Translate "service_cc_3")
-                    "Title" "Service CC 3"
+                    "Label" (translate "service_cc_abrv_no" "3")
+                    "Title" (translate "service_cc_abrv_no" "3")
                     )}}
 
                     {{template "columnHeader" (dict
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_requested_date_3"
-                    "Label" (.RequestContext.Locales.Translate "service_request_date_3")
-                    "Title" "Service Requested Date 3"
+                    "Label" (translate "service_requested_date_no" "3")
+                    "Title" (translate "service_requested_date_no" "3")
                     "Width" $createdAtWidth
                     "MinWidth" $createdAtWidth
                     "MaxWidth" $createdAtWidth
@@ -970,8 +967,8 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_delivered_date_3"
-                    "Label" (.RequestContext.Locales.Translate "service_delivery_date_3")
-                    "Title" "Service Delivered Date 3"
+                    "Label" (translate "service_delivery_date_no" "3")
+                    "Title" (translate "service_delivery_date_no" "3")
                     "Width" $createdAtWidth
                     "MinWidth" $createdAtWidth
                     "MaxWidth" $createdAtWidth
@@ -981,16 +978,16 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_cc_4"
-                    "Label" (.RequestContext.Locales.Translate "service_cc_4")
-                    "Title" "Service CC 4"
+                    "Label" (translate "service_cc_abrv_no" "4")
+                    "Title" (translate "service_cc_abrv_no" "4")
                     )}}
 
                     {{template "columnHeader" (dict
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_requested_date_4"
-                    "Label" (.RequestContext.Locales.Translate "service_request_date_4")
-                    "Title" "Service Requested Date 4"
+                    "Label" (translate "service_requested_date_no" "4")
+                    "Title" (translate "service_requested_date_no" "4")
                     "Width" $createdAtWidth
                     "MinWidth" $createdAtWidth
                     "MaxWidth" $createdAtWidth
@@ -1000,8 +997,8 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_delivered_date_4"
-                    "Label" (.RequestContext.Locales.Translate "service_delivery_date_4")
-                    "Title" "Service Delivered Date 4"
+                    "Label" (translate "service_delivery_date_no" "4")
+                    "Title" (translate "service_delivery_date_no" "4")
                     "Width" $createdAtWidth
                     "MinWidth" $createdAtWidth
                     "MaxWidth" $createdAtWidth
@@ -1011,16 +1008,16 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_cc_5"
-                    "Label" (.RequestContext.Locales.Translate "service_cc_5")
-                    "Title" "Service CC 5"
+                    "Label" (translate "service_cc_abrv_no" "5")
+                    "Title" (translate "service_cc_abrv_no" "5")
                     )}}
 
                     {{template "columnHeader" (dict
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_requested_date_5"
-                    "Label" (.RequestContext.Locales.Translate "service_request_date_5")
-                    "Title" "Service Requested Date 5"
+                    "Label" (translate "service_requested_date_no" "5")
+                    "Title" (translate "service_requested_date_no" "5")
                     "Width" $createdAtWidth
                     "MinWidth" $createdAtWidth
                     "MaxWidth" $createdAtWidth
@@ -1030,8 +1027,8 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_delivered_date_5"
-                    "Label" (.RequestContext.Locales.Translate "service_delivery_date_5")
-                    "Title" "Service Delivered Date 5"
+                    "Label" (translate "service_delivery_date_no" "5")
+                    "Title" (translate "service_delivery_date_no" "5")
                     "Width" $createdAtWidth
                     "MinWidth" $createdAtWidth
                     "MaxWidth" $createdAtWidth
@@ -1041,16 +1038,16 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_cc_6"
-                    "Label" (.RequestContext.Locales.Translate "service_cc_6")
-                    "Title" "Service CC 6"
+                    "Label" (translate "service_cc_abrv_no" "6")
+                    "Title" (translate "service_cc_abrv_no" "6")
                     )}}
 
                     {{template "columnHeader" (dict
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_requested_date_6"
-                    "Label" (.RequestContext.Locales.Translate "service_request_date_6")
-                    "Title" "Service Requested Date 6"
+                    "Label" (translate "service_requested_date_no" "6")
+                    "Title" (translate "service_requested_date_no" "6")
                     "Width" $createdAtWidth
                     "MinWidth" $createdAtWidth
                     "MaxWidth" $createdAtWidth
@@ -1060,8 +1057,8 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_delivered_date_6"
-                    "Label" (.RequestContext.Locales.Translate "service_delivery_date_6")
-                    "Title" "Service Delivered Date 6"
+                    "Label" (translate "service_delivery_date_no" "6")
+                    "Title" (translate "service_delivery_date_no" "6")
                     "Width" $createdAtWidth
                     "MinWidth" $createdAtWidth
                     "MaxWidth" $createdAtWidth
@@ -1071,16 +1068,16 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_cc_7"
-                    "Label" (.RequestContext.Locales.Translate "service_cc_7")
-                    "Title" "Service CC 7"
+                    "Label" (translate "service_cc_abrv_no" "7")
+                    "Title" (translate "service_cc_abrv_no" "7")
                     )}}
 
                     {{template "columnHeader" (dict
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_requested_date_7"
-                    "Label" (.RequestContext.Locales.Translate "service_request_date_7")
-                    "Title" "Service Requested Date 7"
+                    "Label" (translate "service_requested_date_no" "7")
+                    "Title" (translate "service_requested_date_no" "7")
                     "Width" $createdAtWidth
                     "MinWidth" $createdAtWidth
                     "MaxWidth" $createdAtWidth
@@ -1090,8 +1087,8 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "service_delivered_date_7"
-                    "Label" (.RequestContext.Locales.Translate "service_delivery_date_7")
-                    "Title" "Service Delivered Date 7"
+                    "Label" (translate "service_delivery_date_no" "7")
+                    "Title" (translate "service_delivery_date_no" "7")
                     "Width" $createdAtWidth
                     "MinWidth" $createdAtWidth
                     "MaxWidth" $createdAtWidth
@@ -1101,7 +1098,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "created_at"
-                    "Label" (.RequestContext.Locales.Translate "created_at")
+                    "Label" (translate "created_at")
                     "Title" "Date Created"
                     "Width" $createdAtWidth
                     "MinWidth" $createdAtWidth
@@ -1112,7 +1109,7 @@
                     "Options" .Options
                     "Sortable" true
                     "SortKey" "updated_at"
-                    "Label" (.RequestContext.Locales.Translate "updated_at")
+                    "Label" (translate "updated_at")
                     "Title" "Date Updated"
                     "Width" $updatedAtWidth
                     "MinWidth" $updatedAtWidth
@@ -1122,7 +1119,6 @@
                     <th><!--filler--></th>
                 </tr>
                 </thead>
-                {{ $locales := .RequestContext.Locales }}
                 <tbody>
                     {{range .Individuals}}
                         <tr aria-selected="false"
@@ -1165,7 +1161,7 @@
                                     {{else}}
                                         <span class="text-muted">
                                             <em>
-                                                {{$locales.Translate "anonymous"}}
+                                                {{translate "anonymous"}}
                                             </em>
                                         </span>
                                     {{end}}
@@ -1179,7 +1175,7 @@
                                     {{if and .PrefersToRemainAnonymous (eq (boolPointerToValue .PrefersToRemainAnonymous) true)}}
                                         <span class="text-muted">
                                             <em>
-                                                {{$locales.Translate "anonymous"}}
+                                                {{translate "anonymous"}}
                                             </em>
                                         </span>
                                     {{else}}
@@ -1195,7 +1191,7 @@
                                     {{if and .PrefersToRemainAnonymous (eq (boolPointerToValue .PrefersToRemainAnonymous) true)}}
                                         <span class="text-muted">
                                             <em>
-                                                {{$locales.Translate "anonymous"}}
+                                                {{translate "anonymous"}}
                                             </em>
                                         </span>
                                     {{else}}
@@ -1211,7 +1207,7 @@
                                     {{if and .PrefersToRemainAnonymous (eq (boolPointerToValue .PrefersToRemainAnonymous) true)}}
                                         <span class="text-muted">
                                             <em>
-                                                {{$locales.Translate "anonymous"}}
+                                                {{translate "anonymous"}}
                                             </em>
                                         </span>
                                     {{else}}
@@ -1227,7 +1223,7 @@
                                     {{if and .PrefersToRemainAnonymous (eq (boolPointerToValue .PrefersToRemainAnonymous) true)}}
                                         <span class="text-muted">
                                             <em>
-                                                {{$locales.Translate "anonymous"}}
+                                                {{translate "anonymous"}}
                                             </em>
                                         </span>
                                     {{else}}
@@ -1787,34 +1783,34 @@
                         class="btn btn-sm btn-outline-danger disabled me-2"
                         data-bs-toggle="modal"
                         data-bs-target="#deleteIndividualsConfirmationModal"
-                        data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "delete_selected_individuals"}}"
+                        data-toggle="tooltip" data-placement="top" title="{{translate "delete_selected_individuals"}}"
                         onclick="refreshDeleteConfirmationModal()">
                     <i class="bi bi-trash"></i>
-                    Delete
+                    {{translate "delete"}}
                 </button>
                 <div class="btn-group me-2">
                     <button type="button"
                             id="deactivateButton"
                             class="btn btn-sm btn-outline-secondary disabled"
                             onclick="submitActionForm('deactivate')"
-                            data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "deactivate_selected_individuals"}}">
+                            data-toggle="tooltip" data-placement="top" title="{{translate "deactivate_selected_individuals"}}">
                         <i class="bi bi-eye-slash-fill"></i>
-                        Deactivate
+                        {{translate "deactivate"}}
                     </button>
                     <button type="button"
                             id="activateButton"
                             class="btn btn-sm btn-outline-secondary disabled"
                             onclick="submitActionForm('activate')"
-                            data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "activate_selected_individuals"}}">
+                            data-toggle="tooltip" data-placement="top" title="{{translate "activate_selected_individuals"}}">
                         <i class="bi bi-eye"></i>
-                        Activate
+                        {{translate "activate"}}
                     </button>
                 </div>
             {{end}}
         </div>
         <div class="d-flex align-items-center justify-content-end">
             <div class="d-flex align-items-center">
-                Results:
+                {{translate "results"}}
                 <nav aria-label="pick amount of results" class="ms-2">
                     <ul class="pagination btn-group mb-0">
                         <li class="page-item btn btn-sm {{if eq .Options.Take 20}}btn-primary{{else}}btn-outline-secondary{{end}}">
@@ -1834,19 +1830,19 @@
                     <ul class="pagination btn-group mb-0">
                         <li class="page-item btn btn-sm btn-outline-secondary {{if eq 0 .Options.Skip}}disabled{{end}}">
                             <a class="text-decoration-none" href="{{.Options.FirstPage.QueryParams}}">
-                                {{.RequestContext.Locales.Translate "first"}}
+                                {{translate "first"}}
                             </a>
                         </li>
                         <li class="page-item btn btn-sm btn-outline-secondary {{if eq 0 .Options.Skip}}disabled{{end}}">
                             <a class="text-decoration-none"
                                href="{{.Options.PreviousPage.QueryParams}}">
-                                {{.RequestContext.Locales.Translate "previous"}}
+                                {{translate "previous"}}
                             </a>
                         </li>
                         <li class="page-item btn btn-sm btn-outline-secondary {{if lt (len .Individuals) .Options.Take}}disabled{{end}}">
                             <a class="text-decoration-none"
                                href="{{.Options.NextPage.QueryParams}}">
-                                {{.RequestContext.Locales.Translate "next"}}
+                                {{translate "next"}}
                             </a>
                         </li>
                     </ul>
@@ -1862,27 +1858,34 @@
                 <div class="modal-header">
                     <h5 class="modal-title">
                         <i class="bi bi-exclamation-circle text-danger"></i>
-                        {{.RequestContext.Locales.Translate "delete_individuals"}}
+                        {{translate "delete_individuals"}}
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <p>{{translate "confirm_delete_individuals"}}</p>
+                    <p>
+
+                    <span>{{translate "confirm_delete_individuals_selection"}}</span>
                     <span id="deleteIndividualsConfirmationModalContent">
                         <!-- Content is filled in by JavaScript -->
-                    </span> <span class="text-danger fw-bold">
-                        {{.RequestContext.Locales.Translate "warning_cannot_be_undone"}}
                     </span>
+                    <span>{{translate "participants"}}</span>
+                    </p>
+                    <p class="text-danger fw-bold">
+                        {{translate "warning_cannot_be_undone"}}
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        {{.RequestContext.Locales.Translate "close"}}
+                        {{translate "close"}}
                     </button>
                     <button type="button"
                             class="btn btn-danger"
                             id="deleteIndividualsConfirmationModalConfirmButton"
                             onclick="submitActionForm('delete')">
                         <i class="bi bi-trash"></i>&nbsp;
-                        <span id="deleteIndividualsConfirmationModalConfirmButtonContent"></span>
+                        <span>{{translate "delete_selected_individuals"}}</span>
                         <!-- Content is filled in by JavaScript -->
                     </button>
                 </div>

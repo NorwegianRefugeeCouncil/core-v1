@@ -3,7 +3,7 @@ package enumTypes
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/nrc-no/notcore/internal/constants"
+	"github.com/nrc-no/notcore/internal/locales"
 
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/logutils"
@@ -31,17 +31,18 @@ func AllContactMethods() containers.Set[ContactMethod] {
 }
 
 func (g ContactMethod) String() string {
+	t := locales.GetTranslator()
 	switch g {
 	case ContactMethodPhone:
-		return "Phone"
+		return t("option_contact_method_phone")
 	case ContactMethodWhatsapp:
-		return "Whatsapp"
+		return t("option_contact_method_whatsapp")
 	case ContactMethodEmail:
-		return "Email"
+		return t("option_contact_method_email")
 	case ContactMethodVisit:
-		return "Visit"
+		return t("option_contact_method_visit")
 	case ContactMethodOther:
-		return "Other"
+		return t("option_other")
 	case ContactMethodUnspecified:
 		return ""
 	default:
@@ -64,7 +65,7 @@ func ParseContactMethod(str string) (ContactMethod, error) {
 	case string(ContactMethodUnspecified), ContactMethodUnspecified.String():
 		return ContactMethodUnspecified, nil
 	default:
-		return "", fmt.Errorf("%s: invalid value \"%v\"", constants.FileColumnIndividualPreferredContactMethod, logutils.Escape(str))
+		return "", fmt.Errorf(locales.GetTranslator()("error_unknown_preferred_contact_method", logutils.Escape(str)))
 	}
 }
 

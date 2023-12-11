@@ -2,6 +2,7 @@ package enumTypes
 
 import (
 	"encoding/json"
+	"github.com/nrc-no/notcore/internal/locales"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -63,15 +64,16 @@ func TestIdentificationType_UnmarshalJSON(t *testing.T) {
 }
 
 func TestIdentificationType_String(t *testing.T) {
+	tr := locales.GetTranslator()
 	tests := []struct {
 		name string
 		g    IdentificationType
 		want string
 	}{
-		{"passport", IdentificationTypePassport, "Passport"},
-		{"unhcr_id", IdentificationTypeUNHCR, "UNHCR ID"},
-		{"national_id", IdentificationTypeNational, "National ID"},
-		{"other", IdentificationTypeOther, "Other"},
+		{"passport", IdentificationTypePassport, tr("option_identification_type_passport")},
+		{"unhcr_id", IdentificationTypeUNHCR, tr("option_identification_type_unhcr")},
+		{"national_id", IdentificationTypeNational, tr("option_identification_type_national_id")},
+		{"other", IdentificationTypeOther, tr("option_other")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -3,8 +3,8 @@ package enumTypes
 import (
 	"encoding/json"
 	"fmt"
-
 	"github.com/nrc-no/notcore/internal/containers"
+	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/pkg/logutils"
 )
 
@@ -33,15 +33,16 @@ List is : Passport, UNHCR ID, National ID, Other
 */
 
 func (g IdentificationType) String() string {
+	t := locales.GetTranslator()
 	switch g {
 	case IdentificationTypePassport:
-		return "Passport"
+		return t("option_identification_type_passport")
 	case IdentificationTypeUNHCR:
-		return "UNHCR ID"
+		return t("option_identification_type_unhcr")
 	case IdentificationTypeNational:
-		return "National ID"
+		return t("option_identification_type_national_id")
 	case IdentificationTypeOther:
-		return "Other"
+		return t("option_other")
 	case IdentificationTypeUnspecified:
 		return ""
 	default:
@@ -62,7 +63,7 @@ func ParseIdentificationType(str string) (IdentificationType, error) {
 	case string(IdentificationTypeOther), IdentificationTypeOther.String():
 		return IdentificationTypeOther, nil
 	default:
-		return "", fmt.Errorf("identification type: invalid type: \"%v\"", logutils.Escape(str))
+		return "", fmt.Errorf(locales.GetTranslator()("error_unknown_identification_type", logutils.Escape(str)))
 	}
 }
 

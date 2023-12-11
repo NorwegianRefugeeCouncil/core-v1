@@ -21,7 +21,6 @@ type Alert struct {
 }
 
 const alertTemplate = `
-
 <div class="alert alert-{{ .Type }} {{ if .Dismissible }}alert-dismissible{{ end }}" role="alert">
 {{ if .Title }}
 	<div class="d-flex justify-content-between">

@@ -1,11 +1,13 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"github.com/go-gota/gota/dataframe"
 	"github.com/go-gota/gota/series"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
+	"github.com/nrc-no/notcore/internal/locales"
 	"golang.org/x/exp/slices"
 	"strconv"
 	"strings"
@@ -30,10 +32,10 @@ func ParseBirthdate(s string) (*time.Time, error) {
 	if s != "" {
 		date, err := time.Parse(dateFormat, s)
 		if err != nil {
-			return nil, fmt.Errorf("%s: %s is invalid: %w", constants.FileColumnIndividualBirthDate, date, err)
+			return nil, errors.New(locales.GetTranslator()("error_parse_birthdate_invalid", constants.FileColumnIndividualBirthDate, date, err))
 		}
 		if date.Before(minBirthdate) {
-			return nil, fmt.Errorf("%s: %s is before %s", constants.FileColumnIndividualBirthDate, date, minBirthdate)
+			return nil, errors.New(locales.GetTranslator()("error_parse_birthdate_minimum", constants.FileColumnIndividualBirthDate, date, minBirthdate))
 		}
 		return &date, nil
 	}
@@ -47,7 +49,7 @@ func ParseAge(s string) (*int, error) {
 			return nil, fmt.Errorf("%s: %w", constants.FileColumnIndividualAge, err)
 		}
 		if age < 0 {
-			return nil, fmt.Errorf("%s: %d is negative", constants.FileColumnIndividualAge, age)
+			return nil, errors.New(locales.GetTranslator()("error_parse_age", constants.FileColumnIndividualAge, age))
 		}
 		return &age, nil
 	}

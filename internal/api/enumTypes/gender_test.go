@@ -2,6 +2,7 @@ package enumTypes
 
 import (
 	"encoding/json"
+	"github.com/nrc-no/notcore/internal/locales"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -63,15 +64,16 @@ func TestSex_UnmarshalJSON(t *testing.T) {
 }
 
 func TestSex_String(t *testing.T) {
+	tr := locales.GetTranslator()
 	tests := []struct {
 		name string
 		g    Sex
 		want string
 	}{
-		{"male", SexMale, "Male"},
-		{"female", SexFemale, "Female"},
-		{"other", SexOther, "Other"},
-		{"prefers_not_to_say", SexPreferNotToSay, "Prefer not to say"},
+		{"male", SexMale, tr("option_sex_male")},
+		{"female", SexFemale, tr("option_sex_female")},
+		{"other", SexOther, tr("option_other")},
+		{"prefers_not_to_say", SexPreferNotToSay, tr("option_sex_prefers_not_to_say")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

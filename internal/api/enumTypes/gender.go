@@ -3,7 +3,7 @@ package enumTypes
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/nrc-no/notcore/internal/constants"
+	"github.com/nrc-no/notcore/internal/locales"
 
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/logutils"
@@ -30,17 +30,18 @@ func AllSexes() containers.Set[Sex] {
 }
 
 func (g Sex) String() string {
+	t := locales.GetTranslator()
 	switch g {
 	case SexMale:
-		return "Male"
+		return t("option_sex_male")
 	case SexFemale:
-		return "Female"
+		return t("option_sex_female")
 	case SexOther:
-		return "Other"
+		return t("option_other")
 	case SexPreferNotToSay:
-		return "Prefer not to say"
+		return t("option_sex_prefers_not_to_say")
 	case SexUnspecified:
-		return "Unspecified"
+		return ""
 	default:
 		return ""
 	}
@@ -59,7 +60,7 @@ func ParseSex(str string) (Sex, error) {
 	case string(SexUnspecified), SexUnspecified.String():
 		return SexUnspecified, nil
 	default:
-		return "", fmt.Errorf("unknown value for %s: %v", constants.FileColumnIndividualSex, logutils.Escape(str))
+		return "", fmt.Errorf(locales.GetTranslator()("error_unknown_sex", logutils.Escape(str)))
 	}
 }
 

@@ -3,6 +3,7 @@ package enumTypes
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/nrc-no/notcore/internal/locales"
 
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/logutils"
@@ -39,23 +40,24 @@ List is : IDP, Refugee, Host Community, Returnee, Non-Displaced, Other
 */
 
 func (g DisplacementStatus) String() string {
+	t := locales.GetTranslator()
 	switch g {
 	case DisplacementStatusRefugee:
-		return "Refugee"
+		return t("option_displacement_status_refugee")
 	case DisplacementStatusIDP:
-		return "IDP"
+		return t("option_displacement_status_idp")
 	case DisplacementStatusHostCommunity:
-		return "Host Community"
+		return t("option_displacement_status_host_community")
 	case DisplacementStatusReturnee:
-		return "Returnee"
+		return t("option_displacement_status_returnee")
 	case DisplacementStatusAsylumSeeker:
-		return "Asylum Seeker"
+		return t("option_displacement_status_asylum_seeker")
 	case DisplacementStatusNonDisplaced:
-		return "Non-Displaced"
+		return t("option_displacement_status_non_displaced")
 	case DisplacementStatusOther:
-		return "Other"
+		return t("option_other")
 	case DisplacementStatusUnspecified:
-		return "Unspecified"
+		return ""
 	default:
 		return ""
 	}
@@ -80,7 +82,7 @@ func ParseDisplacementStatus(str string) (DisplacementStatus, error) {
 	case string(DisplacementStatusOther), DisplacementStatusOther.String():
 		return DisplacementStatusOther, nil
 	default:
-		return "", fmt.Errorf("displacement status type: invalid type: \"%v\"", logutils.Escape(str))
+		return "", fmt.Errorf(locales.GetTranslator()("error_unknown_displacement_status", logutils.Escape(str)))
 	}
 }
 

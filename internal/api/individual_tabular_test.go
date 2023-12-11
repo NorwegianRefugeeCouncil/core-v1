@@ -9,6 +9,7 @@ import (
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/constants"
+	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -52,6 +53,8 @@ var parameters = []struct {
 }
 
 func TestUnmarshalIndividualsTabularData(t *testing.T) {
+	locales.Init()
+
 	// test upload limit
 	var tooMuchData [][]string
 	var tooManyIndividuals []*api.Individual

@@ -2,9 +2,9 @@ package enumTypes
 
 import (
 	"encoding/json"
-	"testing"
-
+	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func disabilityLevelPtr(g DisabilityLevel) *DisabilityLevel {
@@ -63,15 +63,16 @@ func TestDisabilityLevel_UnmarshalJSON(t *testing.T) {
 }
 
 func TestDisabilityLevel_String(t *testing.T) {
+	tr := locales.GetTranslator()
 	tests := []struct {
 		name string
 		g    DisabilityLevel
 		want string
 	}{
-		{"none", DisabilityLevelNone, "None"},
-		{"mild", DisabilityLevelMild, "Mild"},
-		{"moderate", DisabilityLevelModerate, "Moderate"},
-		{"severe", DisabilityLevelSevere, "Severe"},
+		{"none", DisabilityLevelNone, tr("option_disability_none")},
+		{"mild", DisabilityLevelMild, tr("option_disability_mild")},
+		{"moderate", DisabilityLevelModerate, tr("option_disability_moderate")},
+		{"severe", DisabilityLevelSevere, tr("option_disability_severe")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

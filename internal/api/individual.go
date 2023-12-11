@@ -2,8 +2,9 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
+	"github.com/nrc-no/notcore/internal/locales"
 	"time"
 
 	"github.com/nrc-no/notcore/internal/constants"
@@ -505,7 +506,7 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 	case constants.DBColumnIndividualServiceComments7:
 		return i.ServiceComments7, nil
 	default:
-		return nil, fmt.Errorf("unknown field: %s", field)
+		return nil, errors.New(locales.GetTranslator()("error_unknown_field", field))
 	}
 }
 

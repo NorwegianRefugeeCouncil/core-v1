@@ -2,6 +2,7 @@ package enumTypes
 
 import (
 	"encoding/json"
+	"github.com/nrc-no/notcore/internal/locales"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -63,17 +64,18 @@ func TestEngagementContext_UnmarshalJSON(t *testing.T) {
 }
 
 func TestEngagementContext_String(t *testing.T) {
+	tr := locales.GetTranslator()
 	tests := []struct {
 		name string
 		g    EngagementContext
 		want string
 	}{
-		{"houseVisit", EngagementContextHouseVisit, "House Visit"},
-		{"fieldActivity", EngagementContextFieldActivity, "Field Activity"},
-		{"inOffice", EngagementContextInOffice, "In-Office"},
-		{"referred", EngagementContextReferred, "Referred"},
-		{"remoteChannels", EngagementContextRemoteChannels, "Remote Channels"},
-		{"other", EngagementContextOther, "Other"},
+		{"houseVisit", EngagementContextHouseVisit, tr("option_engagement_context_house_visit")},
+		{"fieldActivity", EngagementContextFieldActivity, tr("option_engagement_context_field_activity")},
+		{"inOffice", EngagementContextInOffice, tr("option_engagement_context_in_office")},
+		{"referred", EngagementContextReferred, tr("option_engagement_context_referred")},
+		{"remoteChannels", EngagementContextRemoteChannels, tr("option_engagement_context_remote_channels")},
+		{"other", EngagementContextOther, tr("option_other")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

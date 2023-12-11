@@ -115,7 +115,7 @@ func TestBirthParseDate(t *testing.T) {
 		{
 			name:    "1806-01-02",
 			value:   "1806-01-02",
-			error:   errors.New("birth_date: 1806-01-02 00:00:00 +0000 UTC is before 1900-01-01 00:00:00 +0000 UTC"),
+			error:   errors.New("birth_date: 1806-01-02 00:00:00 +0000 UTC is before: 1900-01-01 00:00:00 +0000 UTC"),
 			wantErr: true,
 		},
 		{

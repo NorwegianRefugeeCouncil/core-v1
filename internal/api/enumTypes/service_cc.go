@@ -3,6 +3,7 @@ package enumTypes
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/nrc-no/notcore/internal/locales"
 
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/logutils"
@@ -40,25 +41,26 @@ List is : IDP, Refugee, Host Community, Returnee, Non-Displaced, Other
 */
 
 func (g ServiceCC) String() string {
+	t := locales.GetTranslator()
 	switch g {
+	case ServiceCCShelter:
+		return t("option_service_shelter")
+	case ServiceCCWash:
+		return t("option_service_wash")
+	case ServiceCCProtection:
+		return t("option_service_protection")
+	case ServiceCCEducation:
+		return t("option_service_education")
+	case ServiceCCICLA:
+		return t("option_service_icla")
+	case ServiceCCLFS:
+		return t("option_service_lfs")
+	case ServiceCCCVA:
+		return t("option_service_cva")
+	case ServiceCCOther:
+		return t("option_other")
 	case ServiceCCNone:
 		return ""
-	case ServiceCCShelter:
-		return "Shelter & Settlements"
-	case ServiceCCWash:
-		return "WASH"
-	case ServiceCCProtection:
-		return "Protection"
-	case ServiceCCEducation:
-		return "Education"
-	case ServiceCCICLA:
-		return "ICLA"
-	case ServiceCCLFS:
-		return "LFS"
-	case ServiceCCCVA:
-		return "CVA"
-	case ServiceCCOther:
-		return "Other"
 	default:
 		return ""
 	}
@@ -85,7 +87,7 @@ func ParseServiceCC(str string) (ServiceCC, error) {
 	case string(ServiceCCOther), ServiceCCOther.String():
 		return ServiceCCOther, nil
 	default:
-		return "", fmt.Errorf("unknown service type: %v", logutils.Escape(str))
+		return "", fmt.Errorf(locales.GetTranslator()("error_unknown_service_type", logutils.Escape(str)))
 	}
 }
 

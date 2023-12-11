@@ -3,6 +3,7 @@ package enumTypes
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/nrc-no/notcore/internal/locales"
 
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/pkg/logutils"
@@ -29,15 +30,16 @@ func AllDisabilityLevels() containers.Set[DisabilityLevel] {
 }
 
 func (g DisabilityLevel) String() string {
+	var t = locales.GetTranslator()
 	switch g {
 	case DisabilityLevelNone:
-		return "None"
+		return t("option_disability_none")
 	case DisabilityLevelMild:
-		return "Mild"
+		return t("option_disability_mild")
 	case DisabilityLevelModerate:
-		return "Moderate"
+		return t("option_disability_moderate")
 	case DisabilityLevelSevere:
-		return "Severe"
+		return t("option_disability_severe")
 	case DisabilityLevelUnspecified:
 		return ""
 	default:
@@ -58,7 +60,7 @@ func ParseDisabilityLevel(str string) (DisabilityLevel, error) {
 	case string(DisabilityLevelUnspecified), DisabilityLevelUnspecified.String():
 		return DisabilityLevelUnspecified, nil
 	default:
-		return "", fmt.Errorf("unknown disability level: \"%v\"", logutils.Escape(str))
+		return "", fmt.Errorf(locales.GetTranslator()("error_unknown_disability_level", logutils.Escape(str)))
 	}
 }
 

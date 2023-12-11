@@ -69,7 +69,7 @@
             <h1 class="flex-grow-1 text-truncate pe-2">
                 {{if .Individual.Inactive}}
                     <i class="bi bi-eye-slash-fill"
-                       data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "deactivated_individual"}}"></i>
+                       data-toggle="tooltip" data-placement="top" title="{{translate "deactivated_individual"}}"></i>
                 {{end}}
                 {{.form.Title}}
             </h1>
@@ -78,7 +78,7 @@
                     <a href="/countries/{{.RequestContext.SelectedCountry.ID}}/participants/new"
                        class="btn btn-outline-primary col-4">
                         <i class="bi bi-plus"></i>
-                        {{.RequestContext.Locales.Translate "create_new_individual"}}
+                        {{translate "create_new_individual"}}
                     </a>
                 {{end}}
             {{end}}
@@ -105,9 +105,9 @@
                             class="btn btn-sm btn-outline-danger me-2 d-flex"
                             data-bs-toggle="modal"
                             data-bs-target="#deleteIndividualConfirmationModal"
-                            data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "delete_individual"}}">
+                            data-toggle="tooltip" data-placement="top" title="{{translate "delete_individual"}}">
                         <i class="bi bi-trash"></i>
-                        {{.RequestContext.Locales.Translate "delete_individual"}}
+                        {{translate "delete_individual"}}
                     </button>
 
                     <div>
@@ -126,17 +126,17 @@
                                     id="deactivateButton"
                                     form="deactivate-individual-form"
                                     class="btn btn-sm btn-outline-secondary{{if .Individual.Inactive}} disabled{{end}}"
-                                    data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "deactivate_individual"}}">
+                                    data-toggle="tooltip" data-placement="top" title="{{translate "deactivate_individual"}}">
                                 <i class="bi bi-eye-slash-fill"></i>
-                                {{.RequestContext.Locales.Translate "deactivate_individual"}}
+                                {{translate "deactivate_individual"}}
                             </button>
                             <button type="submit"
                                     form="activate-individual-form"
                                     id="activateButton"
                                     class="btn btn-sm btn-outline-secondary{{if not .Individual.Inactive}} disabled{{end}}"
-                                    data-toggle="tooltip" data-placement="top" title="{{.RequestContext.Locales.Translate "activate_individual"}}">
+                                    data-toggle="tooltip" data-placement="top" title="{{translate "activate_individual"}}">
                                 <i class="bi bi-eye"></i>
-                                {{.RequestContext.Locales.Translate "activate_individual"}}
+                                {{translate "activate_individual"}}
                             </button>
                         </div>
                     </div>
@@ -145,12 +145,12 @@
             <div class="flex-grow-1"></div>
             <!-- CANCEL BUTTON -->
             <button onclick="goBack()" class="btn btn-outline-primary mx-4">
-                {{.RequestContext.Locales.Translate "cancel"}}
+                {{translate "cancel"}}
             </button>
             <!-- END CANCEL BUTTON -->
             <!-- SAVE BUTTON -->
             <button id="start-submit-process-button" type="submit" tabindex="0" class="btn btn-primary mx-4">
-                {{.RequestContext.Locales.Translate "save"}}
+                {{translate "save"}}
             </button>
             <!-- END SAVE BUTTON -->
         </div>
@@ -164,16 +164,16 @@
                 <div class="modal-header">
                     <h5 class="modal-title">
                         <i class="bi bi-exclamation-circle me-2 text-danger"></i>
-                        {{.RequestContext.Locales.Translate "delete_individual"}}
+                        {{translate "delete_individual"}}
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p>
-                        <span>{{.RequestContext.Locales.Translate "confirm_delete_individual"}}</span>
+                        <span>{{translate "confirm_delete_individual"}}</span>
                         <br/>
-                        <span class="fw-bold text-danger">{{.RequestContext.Locales.Translate "action_cannot_be_undone"}}</span>
+                        <span class="fw-bold text-danger">{{translate "action_cannot_be_undone"}}</span>
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -185,14 +185,14 @@
                             <button type="button"
                                     class="btn btn-outline-secondary"
                                     data-bs-dismiss="modal">
-                                {{.RequestContext.Locales.Translate "cancel"}}
+                                {{translate "cancel"}}
                             </button>
                             <button type="button"
                                     id="confirmDeleteButton"
                                     class="btn btn-danger"
-                                    title="{{.RequestContext.Locales.Translate "deletion_warning"}}">
+                                    title="{{translate "deletion_warning"}}">
                                 <i class="bi bi-trash me-2"></i>
-                                {{.RequestContext.Locales.Translate "delete_individual"}}
+                                {{translate "delete_individual"}}
                             </button>
                         </div>
                     </form>
@@ -206,11 +206,11 @@
     <div class="modal" id="saveModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header"><h5>{{if .Individual.ID}}Update{{else}}Save{{end}}</h5></div>
+                <div class="modal-header"><h5>{{if .Individual.ID}}{{translate "update"}}{{else}}{{translate "save"}}{{end}}</h5></div>
                 <div class="modal-body">
                     <div class="d-block">
                         <p>
-                            {{.RequestContext.Locales.Translate "deduplication_explanation"}}
+                            {{translate "deduplication_explanation"}}
                         </p>
 
                         <div class="row">
@@ -222,7 +222,7 @@
                                            value="{{.ID}}"
                                            name="deduplicationType">
                                     <label class="form-check-label">
-                                        {{.Label}}
+                                        {{translate .Label}}
                                     </label>
                                 </div>
                             {{end}}
@@ -230,7 +230,7 @@
 
                         <div class="row mt-4">
                         <p>
-                            {{.RequestContext.Locales.Translate "all_or_any_criteria"}}
+                            {{translate "all_or_any_criteria"}}
                         </p>
                             <div class="form-check col-3">
                                 <input class="form-check-input"

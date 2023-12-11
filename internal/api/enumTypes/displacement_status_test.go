@@ -2,6 +2,7 @@ package enumTypes
 
 import (
 	"encoding/json"
+	"github.com/nrc-no/notcore/internal/locales"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -63,18 +64,19 @@ func TestDisplacementStatus_UnmarshalJSON(t *testing.T) {
 }
 
 func TestDisplacementStatus_String(t *testing.T) {
+	tr := locales.GetTranslator()
 	tests := []struct {
 		name string
 		g    DisplacementStatus
 		want string
 	}{
-		{"refugee", DisplacementStatusRefugee, "Refugee"},
-		{"idp", DisplacementStatusIDP, "IDP"},
-		{"host_community", DisplacementStatusHostCommunity, "Host Community"},
-		{"returnee", DisplacementStatusReturnee, "Returnee"},
-		{"asylum_seeker", DisplacementStatusAsylumSeeker, "Asylum Seeker"},
-		{"non_displaced", DisplacementStatusNonDisplaced, "Non-Displaced"},
-		{"other", DisplacementStatusOther, "Other"},
+		{"refugee", DisplacementStatusRefugee, tr("option_displacement_status_refugee")},
+		{"idp", DisplacementStatusIDP, tr("option_displacement_status_idp")},
+		{"host_community", DisplacementStatusHostCommunity, tr("option_displacement_status_host_community")},
+		{"returnee", DisplacementStatusReturnee, tr("option_displacement_status_returnee")},
+		{"asylum_seeker", DisplacementStatusAsylumSeeker, tr("option_displacement_status_asylum_seeker")},
+		{"non_displaced", DisplacementStatusNonDisplaced, tr("option_displacement_status_non_displaced")},
+		{"other", DisplacementStatusOther, tr("option_other")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
