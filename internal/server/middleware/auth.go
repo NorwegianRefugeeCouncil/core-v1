@@ -123,8 +123,6 @@ func Authentication(
 				return
 			}
 
-			l.Info("User groups: ", zap.Strings("groups", userInfoClaims.Groups))
-
 			userSession := auth.NewAuthenticatedSession(
 				userInfoClaims.Groups,
 				tokenClaims.Email,
@@ -143,7 +141,7 @@ func Authentication(
 }
 
 type userInfoClaims struct {
-	Groups          []string `json:"groups"`
+	Groups []string `json:"groups"`
 }
 
 // validateTokenClaims will validate the claims of a token.
