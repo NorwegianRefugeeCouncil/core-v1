@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/nrc-no/notcore/internal/logging"
+	"go.uber.org/zap"
 	"net"
 	"os"
 	"os/signal"
@@ -166,6 +168,9 @@ var serveCmd = &cobra.Command{
 		}
 
 		enableBetaFeatures := getFlagOrEnv(cmd, flagEnableBetaFeatures, envEnableBetaFeatures)
+		l := logging.NewLogger(ctx)
+
+		l.Debug("Server Flag, EnableBetaFeatures: ", zap.Strings("enableBetaFeatures", []string{enableBetaFeatures, envEnableBetaFeatures, flagEnableBetaFeatures}))
 
 		options := server.Options{
 			Address:              listenAddress,
