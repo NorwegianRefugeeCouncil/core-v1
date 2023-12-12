@@ -170,7 +170,7 @@ var serveCmd = &cobra.Command{
 		enableBetaFeatures := getFlagOrEnv(cmd, flagEnableBetaFeatures, envEnableBetaFeatures)
 		l := logging.NewLogger(ctx)
 
-		l.Debug("Server Flag, EnableBetaFeatures: ", zap.Strings("enableBetaFeatures", []string{enableBetaFeatures, envEnableBetaFeatures, flagEnableBetaFeatures}))
+		l.Debug("Server Flag, EnableBetaFeatures: ", zap.Strings("enableBetaFeatures", []string{enableBetaFeatures, cmd.Flag(flagEnableBetaFeatures).Value.String(), os.Getenv(envEnableBetaFeatures)}))
 
 		options := server.Options{
 			Address:              listenAddress,
