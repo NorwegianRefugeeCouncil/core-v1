@@ -316,7 +316,6 @@ variable "action_group_webhook_url" {
 
 variable "enable_beta_features" {
   type        = bool
-  default     = false
   description = <<EOF
 Whether or not to enable beta features in an environment.
 EOF
