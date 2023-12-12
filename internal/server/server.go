@@ -115,7 +115,7 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 	sessionStore.Options.Secure = true
 	sessionStore.Options.SameSite = http.SameSiteStrictMode
 
-	l.Info("Server Option, EnableBetaFeatures: ", zap.Bool("options", o.EnableBetaFeatures))
+	l.Info("Server Option, EnableBetaFeatures: ", zap.Bool("enableBetaFeatures", o.EnableBetaFeatures))
 
 	// build the router
 	s.router = buildRouter(
