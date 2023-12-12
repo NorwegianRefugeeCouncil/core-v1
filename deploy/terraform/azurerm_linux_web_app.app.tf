@@ -45,8 +45,6 @@ resource "azurerm_linux_web_app" "app" {
     CORE_LISTEN_ADDRESS        = ":${var.port}"
     # See https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-customize-sign-in-out?source=recommendations#sign-out-of-a-session
     CORE_JWT_GLOBAL_ADMIN_GROUP     = var.jwt_global_admin_group
-    CORE_JWT_CAN_READ_GROUP         = var.jwt_can_read_group
-    CORE_JWT_CAN_WRITE_GROUP        = var.jwt_can_write_group
     CORE_ID_TOKEN_HEADER_NAME       = "x-ms-token-oidc-id-token"
     CORE_ID_TOKEN_HEADER_FORMAT     = "jwt"
     CORE_ACCESS_TOKEN_HEADER_NAME   = "x-ms-token-oidc-access-token"

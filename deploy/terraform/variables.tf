@@ -257,22 +257,6 @@ global admin access to the application.
 EOF
 }
 
-variable "jwt_can_read_group" {
-  type        = string
-  description = <<EOF
-The name of the can read group.
-
-EOF
-}
-
-variable "jwt_can_write_group" {
-  type        = string
-  description = <<EOF
-The name of the can write group.
-
-EOF
-}
-
 variable "port" {
   type        = number
   description = <<EOF
