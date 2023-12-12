@@ -54,6 +54,7 @@ resource "azurerm_linux_web_app" "app" {
     CORE_OAUTH_CLIENT_ID            = var.oidc_client_id
     CORE_TOKEN_REFRESH_INTERVAL     = "15m"
     CORE_LOG_LEVEL                  = var.log_level
+    CORE_ENABLE_BETA_FEATURES       = var.enable_beta_features
 
     CORE_LOGIN_URL         = "https://${var.backend_host_name}/.auth/login/oidc"
     CORE_TOKEN_REFRESH_URL = "https://${var.backend_host_name}/.auth/refresh"
