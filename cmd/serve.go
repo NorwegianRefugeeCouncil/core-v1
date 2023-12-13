@@ -164,6 +164,7 @@ var serveCmd = &cobra.Command{
 		if len(blockKey2) == 0 {
 			return fmt.Errorf("--%s is required", flagBlockKey2)
 		}
+		
 		enableBetaFeatures := getBooleanFlagOrEnv(cmd, flagEnableBetaFeatures, envEnableBetaFeatures)
 
 		options := server.Options{
