@@ -4,8 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/nrc-no/notcore/internal/logging"
-	"go.uber.org/zap"
 	"net"
 	"os"
 	"os/signal"
@@ -166,11 +164,8 @@ var serveCmd = &cobra.Command{
 		if len(blockKey2) == 0 {
 			return fmt.Errorf("--%s is required", flagBlockKey2)
 		}
-
-		enableBetaFeatures := getFlagOrEnv(cmd, flagEnableBetaFeatures, envEnableBetaFeatures)
-		l := logging.NewLogger(ctx)
-
-		l.Debug("Server Flag, EnableBetaFeatures: ", zap.Strings("enableBetaFeatures", []string{enableBetaFeatures, cmd.Flag(flagEnableBetaFeatures).Value.String(), os.Getenv(envEnableBetaFeatures)}))
+		
+		enableBetaFeatures := getBooleanFlagOrEnv(cmd, flagEnableBetaFeatures, envEnableBetaFeatures)
 
 		options := server.Options{
 			Address:              listenAddress,
@@ -192,7 +187,7 @@ var serveCmd = &cobra.Command{
 			BlockKey1:               blockKey1,
 			HashKey2:                hashKey2,
 			BlockKey2:               blockKey2,
-			EnableBetaFeatures:      enableBetaFeatures == "true",
+			EnableBetaFeatures:      enableBetaFeatures,
 		}
 
 		srv, err := options.New(ctx)
@@ -374,4 +369,14 @@ func getFlagOrEnv(cmd *cobra.Command, flagName string, envName string) string {
 		return flagValue
 	}
 	return os.Getenv(envName)
+}
+
+func getBooleanFlagOrEnv(cmd *cobra.Command, flagName string, envName string) bool {
+	flagValue := cmd.Flag(flagName).Value.String()
+	if len(flagValue) > 0 {
+		if flagValue == "true" {
+			return true
+		}
+	}
+	return os.Getenv(envName) == "true"
 }
