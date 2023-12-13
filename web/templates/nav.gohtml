@@ -3,6 +3,7 @@
     <script>
         const uploadIndividualFileButtonId = "individual-upload--button"
         const uploadIndividualFileFormId = "individual-upload--form"
+        const downloadLink = "download-link"
 
         /**
          * submits the upload form
@@ -30,6 +31,15 @@
             document.location.reload();
         }
 
+        function setTemplateLink() {
+            var fileName = "nrc_grf_template.en.xlsx"
+            var match = document.cookie.match(new RegExp('(^| )' + 'nrc-core-language' + '=([^;]+)'));
+            if (match) {
+                fileName = "nrc_grf_template." + match[2] + ".xlsx";
+            }
+            document.getElementById(downloadLink).setAttribute("href", "/static/" + fileName);
+        }
+
         function openUploadForm() {
             const modal = new bootstrap.Modal(document.getElementById('uploadModal'));
             modal.show();
@@ -43,6 +53,7 @@
                 const participantNavlink = document.getElementById('participants');
                 participantNavlink.classList.add('active');
             }
+            setTemplateLink()
         })
 
     </script>
@@ -89,7 +100,8 @@
                                             {{translate "files"}}
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-end">
-                                            <a href="/static/nrc_grf_template.xlsx"
+                                            <a id="download-link"
+                                               href="/static/nrc_grf_template.en.xlsx"
                                                download="nrc-grf-template.xlsx"
                                                class="dropdown-item"
                                             >

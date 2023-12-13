@@ -1,93 +1,117 @@
-package api_test
+package api
 
 import (
+	"errors"
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
-	"github.com/nrc-no/notcore/internal/handlers"
-	"github.com/nrc-no/notcore/internal/utils/pointers"
-	"testing"
-	"time"
-
-	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/locales"
+	"github.com/nrc-no/notcore/internal/utils/pointers"
 	"github.com/stretchr/testify/assert"
+	"testing"
+	"time"
 )
 
 var foo = time.Time(time.Date(1992, 7, 31, 0, 0, 0, 0, time.UTC))
 
-var parameters = []struct {
-	column string
-	value  string
-	out    any
-	error  bool
-}{
-	{constants.FileColumnIndividualID, "unique-user-id", "unique-user-id", false},
-	{constants.FileColumnIndividualAddress, "123 Fake Alle, Berlin", "123 Fake Alle, Berlin", false},
-	{constants.FileColumnIndividualBirthDate, "1992-07-31", &foo, false},
-	{constants.FileColumnIndividualBirthDate, "31-07-1992", "", true},
-	{constants.FileColumnIndividualDisplacementStatus, "refugee", enumTypes.DisplacementStatusRefugee, false},
-	{constants.FileColumnIndividualHasDisability, "yEs", pointers.Bool(true), false},
-	{constants.FileColumnIndividualDisplacementStatus, "Refugee", enumTypes.DisplacementStatusRefugee, false},
-	{constants.FileColumnIndividualDisplacementStatus, "nothing", enumTypes.DisplacementStatusRefugee, true},
-	{constants.FileColumnIndividualServiceCC1, "shelter_and_settlements", enumTypes.ServiceCCShelter, false},
-	{constants.FileColumnIndividualServiceCC1, "Shelter & Settlements", enumTypes.ServiceCCShelter, false},
-	{constants.FileColumnIndividualServiceCC1, "nothing", enumTypes.ServiceCCShelter, true},
-	{constants.FileColumnIndividualEmail1, "person@not-nrc.no", "person@not-nrc.no", false},
-	{constants.FileColumnIndividualFullName, "Hugh Jazz", "Hugh Jazz", false},
-	{constants.FileColumnIndividualFirstName, "Hugh", "Hugh", false},
-	{constants.FileColumnIndividualMiddleName, "James", "James", false},
-	{constants.FileColumnIndividualLastName, "Jazz", "Jazz", false},
-	{constants.FileColumnIndividualNativeName, "جون", "جون", false},
-	{constants.FileColumnIndividualMothersName, "Jane Doe", "Jane Doe", false},
-	{constants.FileColumnIndividualSex, "male", enumTypes.SexMale, false},
-	{constants.FileColumnIndividualIsMinor, "tRuE", pointers.Bool(true), false},
-	{constants.FileColumnIndividualIsMinor, "YeS", pointers.Bool(true), false},
-	{constants.FileColumnIndividualIsMinor, "1", pointers.Bool(true), false},
-	{constants.FileColumnIndividualIsMinor, "anything-else", false, true},
-	{constants.FileColumnIndividualPhoneNumber1, "01234", "01234", false},
-	{constants.FileColumnIndividualPreferredName, "Hughie", "Hughie", false},
-	{constants.FileColumnIndividualPresentsProtectionConcerns, "tRuE", pointers.Bool(true), false},
-	{constants.FileColumnIndividualPresentsProtectionConcerns, "YeS", pointers.Bool(true), false},
-	{constants.FileColumnIndividualPresentsProtectionConcerns, "1", pointers.Bool(true), false},
-	{constants.FileColumnIndividualPresentsProtectionConcerns, "anything-else", "anything-else", true},
-}
-
-func TestUnmarshalIndividualsTabularData(t *testing.T) {
+func TestUnmarshalIndividualsTabularData2(t *testing.T) {
+	locales.LoadTranslations()
 	locales.Init()
+	tl := locales.GetTranslator()
 
-	// test upload limit
-	var tooMuchData [][]string
-	var tooManyIndividuals []*api.Individual
-	var fields []string
-	var uploadLimit = 20
-
-	for _, p := range parameters {
-		tooMuchData = append(tooMuchData, []string{p.column, p.value})
+	var tests = []struct {
+		name           string
+		data           [][]string
+		colMapping     map[string]int
+		rowLimit       *int
+		expectedErrors []FileError
+	}{
+		{
+			name:       "upload limit exceeded",
+			data:       [][]string{{}, {}, {}, {}},
+			colMapping: map[string]int{},
+			rowLimit:   pointers.Int(2),
+			expectedErrors: []FileError{
+				{tl("error_upload_limit", 3, 2), nil},
+			},
+		},
+		{
+			name:           "id",
+			data:           [][]string{{constants.DBColumnIndividualID}, {"unique-user-id"}},
+			colMapping:     map[string]int{},
+			rowLimit:       pointers.Int(200),
+			expectedErrors: nil,
+		},
+		{
+			name:       "birthdate invalid",
+			data:       [][]string{{constants.DBColumnIndividualBirthDate}, {"31-07-1992"}},
+			colMapping: map[string]int{constants.DBColumnIndividualBirthDate: 0},
+			rowLimit:   pointers.Int(200),
+			expectedErrors: []FileError{
+				{tl("error_row_parse_fail", 2), []error{errors.New(tl("error_parse_birthdate_invalid", constants.DBColumnIndividualBirthDate, "31-07-1992", "parsing time \"31-07-1992\" as \"2006-01-02\": cannot parse \"7-1992\" as \"2006\""))}},
+			},
+		},
+		{
+			name:           "birthdate valid",
+			data:           [][]string{{constants.DBColumnIndividualBirthDate}, {"1992-07-31"}},
+			colMapping:     map[string]int{constants.DBColumnIndividualBirthDate: 0},
+			rowLimit:       pointers.Int(200),
+			expectedErrors: nil,
+		},
+		{
+			name:       "birthdate before minimum",
+			data:       [][]string{{constants.DBColumnIndividualBirthDate}, {"1892-07-31"}},
+			colMapping: map[string]int{constants.DBColumnIndividualBirthDate: 0},
+			rowLimit:   pointers.Int(200),
+			expectedErrors: []FileError{
+				{tl("error_row_parse_fail", 2), []error{errors.New(tl("error_parse_birthdate_minimum", constants.DBColumnIndividualBirthDate, "1892-07-31 00:00:00 +0000 UTC", "1900-01-01 00:00:00 +0000 UTC"))}},
+			},
+		},
+		{
+			name:           "age",
+			data:           [][]string{{constants.DBColumnIndividualAge}, {"31"}},
+			colMapping:     map[string]int{constants.DBColumnIndividualAge: 0},
+			rowLimit:       pointers.Int(200),
+			expectedErrors: nil,
+		},
+		{
+			name:       "age invalid",
+			data:       [][]string{{constants.DBColumnIndividualAge}, {"-31"}},
+			colMapping: map[string]int{constants.DBColumnIndividualAge: 0},
+			rowLimit:   pointers.Int(200),
+			expectedErrors: []FileError{
+				{tl("error_row_parse_fail", 2), []error{errors.New(tl("error_parse_age", constants.DBColumnIndividualAge, "-31"))}},
+			},
+		},
+		{
+			name:       "service",
+			data:       [][]string{{constants.DBColumnIndividualServiceCC1}, {"notAService"}},
+			colMapping: map[string]int{constants.DBColumnIndividualServiceCC1: 0},
+			rowLimit:   pointers.Int(200),
+			expectedErrors: []FileError{
+				{tl("error_row_parse_fail", 2), []error{errors.New(tl("error_invalid_value_w_hint", constants.DBColumnIndividualServiceCC1, errors.New(tl("error_unknown_service_type", "notAService")), enumTypes.AllServiceCCs().String()))}},
+			},
+		},
+		{
+			name:           "is minor",
+			data:           [][]string{{constants.DBColumnIndividualIsMinor}, {"no"}},
+			colMapping:     map[string]int{constants.DBColumnIndividualIsMinor: 0},
+			rowLimit:       pointers.Int(200),
+			expectedErrors: nil,
+		},
+		{
+			name:       "is minor, invalid",
+			data:       [][]string{{constants.DBColumnIndividualIsMinor}, {"notAnOption"}},
+			colMapping: map[string]int{constants.DBColumnIndividualIsMinor: 0},
+			rowLimit:   pointers.Int(200),
+			expectedErrors: []FileError{
+				{tl("error_row_parse_fail", 2), []error{errors.New(tl("error_invalid_value_w_hint", constants.DBColumnIndividualIsMinor, errors.New(tl("error_unknown_optional_boolean", "notAnOption")), enumTypes.AllOptionalBooleans().String()))}},
+			},
+		},
 	}
-	uploadLimitError := api.UnmarshalIndividualsTabularData(tooMuchData, &tooManyIndividuals, map[string]int{}, &uploadLimit)
-	assert.Len(t, uploadLimitError, 1)
-	assert.Equal(t, uploadLimitError[0].Message, "Your file contains 28 participants, which exceeds the upload limit of 20 participants at a time.")
-
-	// test unmarshalling
-	for _, param := range parameters {
-		headerRow := []string{param.column}
-		dataRow := []string{param.value}
-		data := [][]string{headerRow, dataRow}
-		colMapping, _ := api.GetColumnMapping(data, &fields)
-
-		var individuals []*api.Individual
-
-		fileErrors := api.UnmarshalIndividualsTabularData(data, &individuals, colMapping, &handlers.UPLOAD_LIMIT)
-
-		if param.error {
-			assert.Greater(t, len(fileErrors), 0)
-		} else {
-			assert.Len(t, fileErrors, 0)
-
-			assert.Len(t, individuals, 1)
-			value, err := individuals[0].GetFieldValue(param.column)
-			assert.NoError(t, err)
-			assert.Equal(t, param.out, value)
-		}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			fileErrors := UnmarshalIndividualsTabularData(tt.data, &[]*Individual{}, tt.colMapping, tt.rowLimit)
+			assert.Equal(t, tt.expectedErrors, fileErrors)
+		})
 	}
 }

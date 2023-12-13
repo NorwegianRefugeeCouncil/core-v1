@@ -69,7 +69,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			return
 		}
 
-		colMapping, fileErrors := api.GetColumnMapping(records, &fields)
+		colMapping, fileErrors := api.GetColumnMapping(records[0], &fields)
 
 		if fileErrors != nil {
 			renderError(t("error_failed_to_parse_file"), fileErrors)

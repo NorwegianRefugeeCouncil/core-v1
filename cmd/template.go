@@ -4,7 +4,9 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
+	"github.com/nrc-no/notcore/internal/locales"
 	"os"
 	"path"
 	"path/filepath"
@@ -19,13 +21,8 @@ import (
 // templateCmd represents the template command
 var templateCmd = &cobra.Command{
 	Use:   "template",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Create the default template for users to download",
+	Long:  `Create an excel file that contains an example participant that users can download in the app`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Commented out fields are currently blank, but left in place in case we want to change values later
 		individual := &api.Individual{
@@ -116,17 +113,26 @@ to quickly create a Cobra application.`,
 			ServiceComments1:                "Service comment",
 		}
 		individualList := []*api.Individual{individual}
+
 		_, b, _, _ := runtime.Caller(0)
 		basepath := filepath.Dir(b)
-		templateFile, err := os.OpenFile(path.Join(basepath, "..", "web", "static", "nrc_grf_template.xlsx"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-		if err != nil {
-			return err
-		}
-		defer func() {
-			templateFile.Close()
-		}()
-		if err := api.MarshalIndividualsExcel(templateFile, individualList); err != nil {
-			return err
+
+		locales.LoadTranslations()
+		locales.Init()
+
+		for _, lang := range locales.AvailableLangs.Items() {
+			locales.SetLocalizer(lang)
+
+			templateFile, err := os.OpenFile(path.Join(basepath, "..", "web", "static", fmt.Sprintf("nrc_grf_template.%s.xlsx", lang)), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+			if err != nil {
+				return err
+			}
+			defer func() {
+				templateFile.Close()
+			}()
+			if err := api.MarshalIndividualsExcel(templateFile, individualList); err != nil {
+				return err
+			}
 		}
 		return nil
 	},

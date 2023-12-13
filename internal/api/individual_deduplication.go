@@ -13,7 +13,7 @@ import (
 )
 
 func FindDuplicatesInUUIDColumn(df dataframe.DataFrame) []FileError {
-	filteredDf := df.Select([]string{indexColumnName, constants.FileColumnIndividualID, constants.FileColumnIndividualLastName})
+	filteredDf := df.Select([]string{indexColumnName, constants.DBColumnIndividualID, constants.DBColumnIndividualLastName})
 	fileErrors := []FileError{}
 
 	duplicatesPerId := getDuplicateUUIDs(filteredDf)
@@ -23,7 +23,7 @@ func FindDuplicatesInUUIDColumn(df dataframe.DataFrame) []FileError {
 		for _, row := range duplicatesPerId[id].Items() {
 			participants = append(participants,
 				locales.GetTranslator()("error_sharing_uuids_detail",
-					filteredDf.Select(constants.FileColumnIndividualLastName).Elem(row, 0).String(),
+					filteredDf.Select(constants.DBColumnIndividualLastName).Elem(row, 0).String(),
 					row+2,
 				),
 			)
@@ -42,12 +42,12 @@ func FindDuplicatesInUUIDColumn(df dataframe.DataFrame) []FileError {
 func getDuplicateUUIDs(df dataframe.DataFrame) map[string]containers.Set[int] {
 	duplicatesPerId := map[string]containers.Set[int]{}
 	for i := 0; i < df.Nrow(); i++ {
-		uuid := df.Select(constants.FileColumnIndividualID).Elem(i, 0).String()
+		uuid := df.Select(constants.DBColumnIndividualID).Elem(i, 0).String()
 		if uuid == "" {
 			continue
 		}
 		duplicates := ExcludeSelfFromDataframe(df, i).Filter(dataframe.F{
-			Colname:    constants.FileColumnIndividualID,
+			Colname:    constants.DBColumnIndividualID,
 			Comparando: uuid,
 			Comparator: series.In,
 		})
@@ -210,7 +210,7 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []
 		for _, deduplicationType := range deduplicationTypes {
 			filters := []dataframe.F{}
 			for _, column := range deduplication.DeduplicationTypes[deduplicationType].Config.Columns {
-				value, err := duplicates[d].GetFieldValue(constants.IndividualDBToFileMap[column])
+				value, err := duplicates[d].GetFieldValue(column)
 				if err != nil {
 					errorList = append(errorList, errors.New(locales.GetTranslator()("error_unknown_value_for_column", column)))
 					break
@@ -271,7 +271,7 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []
 				if len(errorList) > 0 {
 					duplicateErrors = append(duplicateErrors, FileError{
 						t("error_db_duplicate",
-							filteredDf.Select(constants.FileColumnIndividualLastName).Elem(f, 0),
+							filteredDf.Select(constants.IndividualFileToDBMap[constants.FileColumnIndividualLastName]).Elem(f, 0),
 							rowNumber+2,
 							duplicates[d].LastName,
 							duplicates[d].ID,
