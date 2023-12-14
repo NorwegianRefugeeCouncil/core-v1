@@ -108,7 +108,7 @@ func GetColumnMapping(header []string, fields *[]string) (map[string]int, []File
 			errs = append(errs, errors.New(locales.GetTranslator()("error_unknown_column_detail", logutils.Escape(col))))
 		}
 		*fields = append(*fields, field)
-		colMapping[col] = i
+		colMapping[field] = i
 	}
 	if len(errs) > 0 {
 		t := locales.GetTranslator()
