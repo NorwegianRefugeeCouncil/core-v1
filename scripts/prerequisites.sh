@@ -5,7 +5,7 @@ normal=$(tput sgr0)
 red='\033[0;31m'
 nc='\033[0m'
 
-NEEDED_COMMANDS="envoy go"
+NEEDED_COMMANDS="go"
 
 for cmd in ${NEEDED_COMMANDS} ; do
     if ! command -v ${cmd} &> /dev/null ; then
@@ -13,13 +13,6 @@ for cmd in ${NEEDED_COMMANDS} ; do
         exit 1
     fi
 done
-
-if ! command -v envoy &> /dev/null ; then
-echo -e ${red}Error!${nc}
-echo -e Could not find ${bold}envoy${normal} on your PATH!
-echo -e Install envoy ${bold}using brew install envoy${normal}
-echo
-fi
 
 if ! docker-compose version &> /dev/null && ! docker compose version &> /dev/null; then
 echo -e ${red}Error!${nc}
