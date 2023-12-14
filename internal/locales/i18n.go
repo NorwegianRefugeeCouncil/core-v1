@@ -87,9 +87,6 @@ func TranslateSlice(ids []string, args ...[]interface{}) []string {
 }
 
 func GetTranslationKeys(values []string) []string {
-	if CurrentLang == DefaultLang {
-		return values
-	}
 	translationKeys := make([]string, len(values))
 	for i, v := range values {
 		for _, c := range constants.IndividualFileColumns {
