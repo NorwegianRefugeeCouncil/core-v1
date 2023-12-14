@@ -2,17 +2,15 @@ admin:
   access_log_path: /dev/stdout
   address:
     socket_address:
-      address: 127.0.0.1
+      address: 0.0.0.0
       port_value: 9010
-
-
 
 static_resources:
   listeners:
     - name: listener_0
       address:
         socket_address:
-          address: 127.0.0.1
+          address: 0.0.0.0
           port_value: 10000
       filter_chains:
         - transport_socket:
@@ -22,9 +20,9 @@ static_resources:
               common_tls_context:
                 tls_certificates:
                   - certificate_chain:
-                      filename: certs/tls.crt
+                      filename: /etc/envoy/certs/tls.crt
                     private_key:
-                      filename: certs/tls.key
+                      filename: /etc/envoy/certs/tls.key
           filters:
             - name: envoy.filters.network.http_connection_manager
               typed_config:
@@ -213,7 +211,7 @@ static_resources:
   clusters:
     - name: web
       connect_timeout: 0.25s
-      type: STATIC
+      type: LOGICAL_DNS
       lb_policy: ROUND_ROBIN
       load_assignment:
         cluster_name: web
@@ -222,11 +220,11 @@ static_resources:
               - endpoint:
                   address:
                     socket_address:
-                      address: 127.0.0.1
+                      address: host.docker.internal
                       port_value: 8080
     - name: oidc
       connect_timeout: 0.25s
-      type: STATIC
+      type: LOGICAL_DNS
       lb_policy: ROUND_ROBIN
       load_assignment:
         cluster_name: oidc
@@ -235,11 +233,11 @@ static_resources:
               - endpoint:
                   address:
                     socket_address:
-                      address: 127.0.0.1
+                      address: oidc
                       port_value: 9000
     - name: oauth2_proxy
       connect_timeout: 0.25s
-      type: STATIC
+      type: LOGICAL_DNS
       lb_policy: ROUND_ROBIN
       load_assignment:
         cluster_name: oauth2_proxy
@@ -248,5 +246,5 @@ static_resources:
               - endpoint:
                   address:
                     socket_address:
-                      address: 127.0.0.1
+                      address: oauth2-proxy
                       port_value: 4180

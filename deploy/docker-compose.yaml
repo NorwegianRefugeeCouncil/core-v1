@@ -61,3 +61,16 @@ services:
       test: curl http://localhost/.well-known/openid-configuration
     ports:
       - "9000:9000"
+  envoy:
+    image: envoyproxy/envoy:v1.20-latest
+    depends_on:
+      - oauth2-proxy
+      - oidc
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+      - ./certs/tls.key:/etc/envoy/certs/tls.key
+      - ./certs/tls.crt:/etc/envoy/certs/tls.crt
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

@@ -57,28 +57,13 @@ brew install mkcert
 
 </details>
 
-### Install `envoy`
-
-<details>
-<summary>
-Expand
-</summary>
-
-[Envoy Proxy Website](https://www.envoyproxy.io/)
-
-```
-brew install envoy
-```
-</details>
-
 ### Generate TLS certificates
 <details>
 <summary>Expand
 </summary>
 
 ```
-mkcert -install
-mkcert -cert-file certs/tls.crt -key-file certs/tls.key core.dev "*.core.dev" localhost 127.0.0.1 ::1 
+make certs
 ```
 </details>
 
@@ -88,12 +73,6 @@ mkcert -cert-file certs/tls.crt -key-file certs/tls.key core.dev "*.core.dev" lo
 
 ```
 make up
-```
-
-### Start the envoy proxy
-
-```
-make proxy
 ```
 
 ### Start the server

@@ -36,11 +36,6 @@ coverage: .dev-image
 test: .dev-image
 	docker run --rm -it -v $(shell pwd)/reports:/app/reports core-dev test
 
-.PHONY: proxy
-## Runs the envoy proxy
-proxy: prerequisites
-	@envoy -c deploy/envoy.yaml -l debug
-
 .PHONY: unittest
 unittest: 
 	@go test ./...
@@ -49,6 +44,12 @@ unittest:
 ## Generates the nrc grf template
 template: 
 	@go run . template
+
+.PHONY: certs
+certs:
+	@mkcert -install
+	@mkdir -p deploy/certs
+	@mkcert -cert-file deploy/certs/tls.crt -key-file deploy/certs/tls.key core.dev "*.core.dev" localhost 127.0.0.1 ::1 && chmod 644 deploy/certs/tls.key
 
 .PHONY: serve
 # Starts the server
