@@ -31,8 +31,8 @@ type Options struct {
 	HashKey2                string
 	BlockKey2               string
 	EnableBetaFeatures      bool
-	AzureBlobStorageURL 	 	string
-	DownloadsContainerName 	string
+	AzureBlobStorageURL     string
+	DownloadsContainerName  string
 }
 
 var jwtGroupRegex = regexp.MustCompile(`^[A-Za-z0-9_-]+(?: +[A-Za-z0-9_-]+)*$`)
