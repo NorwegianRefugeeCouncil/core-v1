@@ -320,3 +320,13 @@ variable "enable_beta_features" {
 Whether or not to enable beta features in an environment.
 EOF
 }
+
+variable "download_storage_account_name" {
+  type        = string
+  description = "The download storage account name"
+}
+
+variable "download_storage_container_name" {
+  type        = string
+  description = "The download storage container name"
+}

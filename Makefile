@@ -52,8 +52,6 @@ certs:
 	@mkcert -cert-file deploy/certs/tls.crt -key-file deploy/certs/tls.key core.dev "*.core.dev" localhost 127.0.0.1 ::1 && chmod 644 deploy/certs/tls.key
 
 .PHONY: serve
-serve: export AZURE_STORAGE_ACCOUNT_NAME = devstoreaccount1
-serve: export AZURE_STORAGE_ACCOUNT_KEY = Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
 # Starts the server
 serve: prerequisites
 	@go run . serve \

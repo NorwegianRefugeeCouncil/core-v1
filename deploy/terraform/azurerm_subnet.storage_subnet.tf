@@ -1,6 +1,7 @@
-resource "azurerm_subnet" "postgres_subnet" {
+# TODO: do we need a storage subnet? Currently not referenced
+resource "azurerm_subnet" "storage_subnet" {
   provider             = azurerm.runtime
-  name                 = "postgres"
+  name                 = "storage"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = [var.postgres_subnet_address_space]
