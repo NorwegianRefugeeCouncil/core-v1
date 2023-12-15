@@ -3,7 +3,7 @@ package handlers
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"path"
@@ -124,7 +124,7 @@ func HandleDownload(
 				return
 			}
 
-			b, err := ioutil.ReadAll(downloadStream.Body)
+			b, err := io.ReadAll(downloadStream.Body)
 			if err != nil {
 				l.Error("failed to read file", zap.Error(err))
 				http.Error(w, "failed to read file: "+err.Error(), http.StatusInternalServerError)
