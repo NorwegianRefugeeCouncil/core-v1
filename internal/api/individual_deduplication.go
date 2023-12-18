@@ -50,7 +50,7 @@ func getDuplicateUUIDs(df dataframe.DataFrame) map[string]containers.Set[int] {
 
 		duplicates := df.FilterAggregation(dataframe.And,
 			dataframe.F{
-				Colname:    constants.FileColumnIndividualID,
+				Colname:    constants.DBColumnIndividualID,
 				Comparando: uuid,
 				Comparator: series.In,
 			}, dataframe.F{
@@ -226,7 +226,7 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, df dataframe.DataFram
 
 		for _, deduplicationType := range config.Types {
 			for _, column := range deduplicationType.Config.Columns {
-				value, err := duplicates[d].GetFieldValue(constants.IndividualFileToDBMap[column])
+				value, err := duplicates[d].GetFieldValue(column)
 				if err == nil {
 
 					switch value.(type) {
@@ -369,6 +369,12 @@ func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], config de
 }
 
 func CreateDataframeFromRecords(records [][]string, deduplicationTypes []deduplication.DeduplicationType, mandatory []string) (dataframe.DataFrame, error) {
+	keys := locales.GetTranslationKeys(records[0])
+	dbCols := make([]string, len(keys))
+	for i, key := range keys {
+		dbCols[i] = constants.IndividualFileToDBMap[key]
+	}
+
 	columnsOfInterest := []string{}
 	if len(deduplicationTypes) == 0 && len(mandatory) == 0 {
 		return dataframe.DataFrame{}, nil
@@ -383,7 +389,8 @@ func CreateDataframeFromRecords(records [][]string, deduplicationTypes []dedupli
 	}
 
 	df := dataframe.LoadRecords(records,
-		dataframe.DetectTypes(false),
+		dataframe.Names(dbCols...),
+		dataframe.DetectTypes(true),
 		dataframe.DefaultType(series.String),
 		dataframe.HasHeader(true),
 	).Select(columnsOfInterest)

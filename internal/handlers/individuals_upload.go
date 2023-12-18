@@ -89,17 +89,17 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		deduplicationLogicOperator := deduplication.LogicOperator(r.MultipartForm.Value[formParamDeduplicationLogicOperator][0])
 		deduplicationConfig, err := deduplication.GetDeduplicationConfig(deduplicationTypes, deduplicationLogicOperator)
 
-		mandatoryColumns := []string{constants.FileColumnIndividualLastName}
-		if slices.Contains(records[0], constants.FileColumnIndividualID) {
-			mandatoryColumns = append(mandatoryColumns, constants.FileColumnIndividualID)
+		mandatoryColumns := []string{constants.DBColumnIndividualLastName}
+		if slices.Contains(records[0], constants.DBColumnIndividualID) {
+			mandatoryColumns = append(mandatoryColumns, constants.DBColumnIndividualID)
 		}
 
 		df, err := api.CreateDataframeFromRecords(records, deduplicationConfig.Types, mandatoryColumns)
 		if err != nil {
 			l.Error("failed to get dataframe from records", zap.Error(err))
-			renderError("Could not parse uploaded file", []api.FileError{
+			renderError(t("error_failed_to_parse_file"), []api.FileError{
 				{
-					Message: "Something went wrong preparing deduplication. Please check if your file has the correct columns",
+					Message: t("error_deduplication_preparation"),
 					Err:     []error{err},
 				},
 			})

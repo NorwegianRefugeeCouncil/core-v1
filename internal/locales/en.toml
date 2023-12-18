@@ -335,6 +335,7 @@ error_invalid_value_nationality_hint = "{{.v0}}: invalid value \"{{.v1}}\". Vali
 error_parse_birthdate_invalid = "{{.v0}}: {{.v1}} is invalid: {{.v2}}"
 error_parse_birthdate_minimum = "{{.v0}}: {{.v1}} is before: {{.v2}}"
 error_parse_age = "{{.v0}}: {{.v1}} is negative"
+error_deduplication_preparation = "Something went wrong preparing deduplication. Please check if your file has the correct columns"
 
 # deduplication types
 deduplication_type_phone_numbers = "Phone numbers"

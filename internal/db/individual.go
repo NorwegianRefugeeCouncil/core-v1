@@ -90,11 +90,10 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	// we insert the data from the upload into the temp table
 	df = df.Select(columnsOfInterest)
 	insertQuery, args := buildInsertIndividualsQuery(tempTableName, schema, df, columnsOfInterest, uploadDfHasIdColumn)
-	rows, err := tx.Queryx(insertQuery, args...)
-	if err != nil {
-		return nil, err
+	result = tx.MustExec(insertQuery, args...)
+	if result == nil {
+		return nil, fmt.Errorf("failed to insert into temp table")
 	}
-	defer rows.Close()
 
 	// now we look for duplicates in a cross join between the temp table and the individual_registrations table
 	deduplicationQuery := buildDeduplicationQuery(tempTableName, columnsOfInterest, config, uploadDfHasIdColumn, schema)

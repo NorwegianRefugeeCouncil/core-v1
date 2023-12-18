@@ -5,6 +5,7 @@ import (
 	"github.com/go-gota/gota/series"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
+	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -434,6 +435,8 @@ func TestFindDuplicatesInUUIDColumn(t *testing.T) {
 }
 
 func TestGetDataframeFromRecords(t *testing.T) {
+	locales.LoadTranslations()
+	locales.Init()
 	tests := []struct {
 		name      string
 		records   [][]string
@@ -482,7 +485,7 @@ func TestGetDataframeFromRecords(t *testing.T) {
 		{
 			name: "no deduplication type",
 			records: [][]string{
-				{"index", "full_name"},
+				{"index", "file_full_name"},
 				{"0", ""},
 				{"2", "full"},
 				{"4", "name"},
@@ -495,7 +498,7 @@ func TestGetDataframeFromRecords(t *testing.T) {
 		{
 			name: "error",
 			records: [][]string{
-				{"index", "full_name"},
+				{"index", "file_full_name"},
 				{"0", ""},
 				{"2", "full"},
 				{"4", "name"},
