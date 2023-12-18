@@ -1,17 +1,8 @@
-# TODO: do we need a storage subnet? Currently not referenced
 resource "azurerm_subnet" "storage_subnet" {
   provider             = azurerm.runtime
   name                 = "storage"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = [var.postgres_subnet_address_space]
-  delegation {
-    name = "flexiblePostgres"
-    service_delegation {
-      name = "Microsoft.DBforPostgreSQL/flexibleServers"
-      actions = [
-        "Microsoft.Network/virtualNetworks/subnets/join/action",
-      ]
-    }
-  }
+  address_prefixes     = [var.storage_subnet_address_space]
+  service_endpoints = ["Microsoft.Storage"]
 }

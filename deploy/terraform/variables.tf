@@ -330,3 +330,10 @@ variable "download_storage_container_name" {
   type        = string
   description = "The download storage container name"
 }
+
+variable "storage_subnet_address_space" {
+  type        = string
+  description = <<EOF
+The address space of the storage subnet in CIDR notation.
+EOF
+}
