@@ -1,5 +1,5 @@
 resource "azurerm_storage_account" "download_storage" {
-  name                      = "${var.download_storage_account_name}"
+  name                      = "sa-${var.app_name}-${var.environment}"
   resource_group_name       = azurerm_resource_group.rg.name
   location                  = "${var.location}"
   account_tier              = "Standard"
@@ -18,16 +18,21 @@ resource "azurerm_storage_container" "download_storage_container" {
 }
 
 resource "azurerm_private_endpoint" "download_storage_endpoint" {
-  name                = "download-storage-endpoint"
+  name                = "${var.app_name}-${var.environment}-download-storage-endpoint"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   subnet_id           = azurerm_subnet.storage_subnet.id
 
   private_service_connection {
-    name                           = "storage-connection"
+    name                           = "${var.app_name}-${var.environment}-download-storage-connection"
     is_manual_connection           = false
     private_connection_resource_id = azurerm_storage_account.download_storage.id
     subresource_names              = ["blob"]
+  }
+
+  private_dns_zone_group {
+    name                 = "storage-dns-zone-group"
+    private_dns_zone_ids = [azurerm_private_dns_zone.storage_dns.id]
   }
 }
 

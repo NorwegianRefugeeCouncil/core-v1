@@ -55,7 +55,7 @@ resource "azurerm_linux_web_app" "app" {
     CORE_TOKEN_REFRESH_INTERVAL     = "15m"
     CORE_LOG_LEVEL                  = var.log_level
     CORE_ENABLE_BETA_FEATURES       = tobool(var.enable_beta_features)
-    CORE_AZURE_BLOB_STORAGE_URL     = "https://${var.download_storage_account_name}.privatelink.blob.core.windows.net" # TODO: check if the url is correct
+    CORE_AZURE_BLOB_STORAGE_URL     = "https://sa-${var.app_name}-${var.environment}.privatelink.blob.core.windows.net" # TODO: check if the url is correct
     CORE_DOWNLOADS_CONTAINER_NAME   = var.download_storage_container_name
 
     CORE_LOGIN_URL         = "https://${var.backend_host_name}/.auth/login/oidc"
