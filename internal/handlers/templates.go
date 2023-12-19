@@ -224,6 +224,8 @@ func renderView(
 	}
 	vd[vd.RequestContextKey()] = rc
 	vd["DeduplicationTypes"] = deduplication.DeduplicationTypes
+	vd["CurrentLang"] = locales.CurrentLang.String()
+	vd["IsRTL"] = locales.CurrentLang.String() == "ar"
 
 	if err := templates[tmpl].ExecuteTemplate(w, "base", vd); err != nil {
 		l.Error("failed to execute template", zap.Error(err))

@@ -72,7 +72,7 @@
                         <div class="d-flex flex-row w-100 align-items-center">
 
                            {{ if .RequestContext.SelectedCountry }}
-                                <div class="btn btn-sm btn-link text-decoration-none px-2">
+                                <div class="btn btn-link text-decoration-none px-2">
                                     <a id="participants" class="nav-link" href="{{if eq "" .RequestContext.SelectedCountryID}}/{{else}}/countries/{{.RequestContext.SelectedCountryID}}/participants{{end}}">
                                         {{translate "participants"}}
                                     </a>
@@ -160,7 +160,6 @@
                         {{end}}
                         </div>
                         {{end}}
-
                     </div>
                 </div>
             </div>

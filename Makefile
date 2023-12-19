@@ -77,7 +77,7 @@ serve: prerequisites
 
 .PHONY: bootstrap
 bootstrap:
-	@cd web/theme && yarn && yarn build
+	@cd web/theme && yarn && yarn build && yarn rtlcss
 
 .PHONY: generate
 # Generates source code

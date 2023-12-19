@@ -2,10 +2,12 @@
   "name": "theme",
   "scripts": {
     "build": "sass theme.scss:../static/theme.min.css --style=compressed",
-    "postbuild": "cp ./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js ../static/bootstrap.bundle.min.js && cp ./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js.map ../static/bootstrap.bundle.min.js.map"
+    "postbuild": "cp ./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js ../static/bootstrap.bundle.min.js && cp ./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js.map ../static/bootstrap.bundle.min.js.map",
+    "rtlcss": "rtlcss ../static/theme.min.css"
   },
   "dependencies": {
     "bootstrap": "^5.2.2",
+    "rtlcss": "^4.1.1",
     "sass": "^1.55.0"
   }
 }
