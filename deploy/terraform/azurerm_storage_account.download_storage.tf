@@ -17,6 +17,20 @@ resource "azurerm_storage_container" "download_storage_container" {
   container_access_type = "private"
 }
 
+resource "azurerm_private_endpoint" "download_storage_endpoint" {
+  name                = "download-storage-endpoint"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  subnet_id           = azurerm_subnet.storage_subnet.id
+
+  private_service_connection {
+    name                           = "storage-connection"
+    is_manual_connection           = false
+    private_connection_resource_id = azurerm_storage_account.download_storage.id
+    subresource_names              = ["blob"]
+  }
+}
+
 resource "azurerm_storage_management_policy" "delete_download_files" {
   storage_account_id = azurerm_storage_account.download_storage.id
 
