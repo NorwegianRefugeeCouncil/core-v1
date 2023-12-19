@@ -4,6 +4,11 @@ resource "azurerm_storage_account" "download_storage" {
   location                  = "${var.location}"
   account_tier              = "Standard"
   account_replication_type  = "LRS"
+  min_tls_version = "TLS1_2"
+  
+  identity {
+    type = "SystemAssigned"
+  }
 
   network_rules {
     default_action             = "Deny"
