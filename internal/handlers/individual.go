@@ -146,7 +146,7 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			}
 
 			if len(deduplicationConfig.Types) > 0 {
-				mandatory := []string{constants.FileColumnIndividualLastName}
+				mandatory := []string{constants.DBColumnIndividualLastName}
 				if individual.ID != "" {
 					mandatory = append(mandatory, constants.DBColumnIndividualID)
 				}
@@ -188,7 +188,7 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 
 				alerts = append(alerts, alert.Alert{
 					Type:        bootstrap.StyleDanger,
-					Title:       fmt.Sprintf("Found %d duplicates", len(duplicates)),
+					Title:       fmt.Sprintf("Found %d duplicate(s)", len(duplicates)),
 					Icon:        warningIcon,
 					Dismissible: true,
 				})
