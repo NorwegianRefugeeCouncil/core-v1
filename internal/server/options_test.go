@@ -67,6 +67,16 @@ func (o Options) WithOAuthClientID(oauthClientID string) Options {
 	return o
 }
 
+func (o Options) WithAzureBlobStorageUrl(blobStorageUrl string) Options {
+	o.AzureBlobStorageURL = blobStorageUrl
+	return o
+}
+
+func (o Options) WithDownloadsContainerName(containerName string) Options {
+	o.DownloadsContainerName = containerName
+	return o
+}
+
 func validOptions() Options {
 	return Options{
 		Address:              ":8080",
@@ -81,6 +91,8 @@ func validOptions() Options {
 		IdTokenAuthHeaderFormat: middleware.AuthHeaderFormatJWT,
 		OIDCIssuerURL:           "https://foo",
 		OAuthClientID:           "bar",
+		AzureBlobStorageURL:     "https://foo",
+		DownloadsContainerName:  "bar",
 	}
 }
 
@@ -173,6 +185,16 @@ func TestOptions_validate(t *testing.T) {
 		{
 			name:    "OAuth Client ID is required",
 			options: validOptions().WithOAuthClientID(""),
+			wantErr: true,
+		},
+		{
+			name:    "Azure Blob Storage URL is required",
+			options: validOptions().WithAzureBlobStorageUrl(""),
+			wantErr: true,
+		},
+		{
+			name:    "Downloads Container Name is required",
+			options: validOptions().WithDownloadsContainerName(""),
 			wantErr: true,
 		},
 	}

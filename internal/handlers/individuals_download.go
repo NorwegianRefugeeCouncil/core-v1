@@ -106,8 +106,8 @@ func HandleDownload(
 			if rangeHeader != "" {
 				offset, count, err := parseRangeHeader(rangeHeader)
 				if err != nil {
-					l.Error("invalid range header", zap.Error(err))
-					http.Error(w, "invalid range header: "+err.Error(), http.StatusBadRequest)
+					l.Error(err.Error(), zap.Error(err))
+					http.Error(w, err.Error(), http.StatusBadRequest)
 					return
 				}
 
@@ -224,19 +224,20 @@ func HandleDownload(
 }
 
 func parseRangeHeader(rangeHeader string) (int64, int64, error) {
+	errorMessage := "invalid range header"
 	match, _ := regexp.MatchString(`bytes=\d+-\d+`, rangeHeader)
 	if !match {
-		return 0, 0, fmt.Errorf("invalid range header")
+		return 0, 0, fmt.Errorf(errorMessage)
 	}
 	rangeHeader = strings.ReplaceAll(rangeHeader, "bytes=", "")
 	parts := strings.Split(rangeHeader, "-")
 	offset, err := strconv.ParseInt(parts[0], 10, 64)
 	if err != nil {
-		return 0, 0, fmt.Errorf("invalid range header")
+		return 0, 0, fmt.Errorf(errorMessage)
 	}
 	count, err := strconv.ParseInt(parts[1], 10, 64)
 	if err != nil {
-		return 0, 0, fmt.Errorf("invalid range header")
+		return 0, 0, fmt.Errorf(errorMessage)
 	}
 	return offset, count, nil
 }
