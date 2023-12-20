@@ -27,12 +27,6 @@ var localeFiles = map[string]string{
 	"ar": localeAR,
 }
 
-var localeNames = map[string]string{
-	"en": "English",
-	"ja": "Debugging",
-	"ar": "RTL",
-}
-
 var (
 	AvailableLangs = containers.NewStringSet()
 	CurrentLang    = DefaultLang
@@ -176,5 +170,9 @@ func (l locales) TranslateCount(id string, ct int, args ...interface{}) string {
 }
 
 func (l locales) GetAvailableLocales() map[string]string {
-	return localeNames
+	availableLocales := make(map[string]string, len(l.localizers))
+	for loc, _ := range localeFiles {
+		availableLocales[loc] = l.TranslateFrom("language", loc)
+	}
+	return availableLocales
 }
