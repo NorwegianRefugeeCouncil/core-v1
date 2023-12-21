@@ -16,8 +16,9 @@ RUN mkdir /out && chown ${uid}:${gid} /out
 WORKDIR /app
 ADD go.mod ./
 ADD go.sum ./
+RUN chown -R ${uid}:${gid} ./
 USER ${uid}:${gid}
-RUN go mod download -x -json && \
+RUN go mod download && \
     go install github.com/jstemmer/go-junit-report/v2@latest && \
     go install github.com/axw/gocov/gocov@latest && \
     go install github.com/AlekSi/gocov-xml@latest
