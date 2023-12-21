@@ -13,10 +13,10 @@ ARG gid=1000
 RUN groupadd -g ${gid} core || echo "Group already exists"
 RUN useradd -l -m -d /home/app -u ${uid} -g ${gid} core || echo "User already exists"
 RUN mkdir /out && chown ${uid}:${gid} /out
-USER ${uid}:${gid}
 WORKDIR /app
 ADD go.mod ./
 ADD go.sum ./
+USER ${uid}:${gid}
 RUN go mod download -x -json && \
     go install github.com/jstemmer/go-junit-report/v2@latest && \
     go install github.com/axw/gocov/gocov@latest && \
