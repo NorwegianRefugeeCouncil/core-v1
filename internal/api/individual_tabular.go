@@ -95,20 +95,19 @@ func UnmarshallRecordsFromFile(records *[][]string, reader io.Reader, filename s
 }
 
 func GetColumnMapping(header []string, fields *[]string) (map[string]int, []FileError) {
-	headerInternal := locales.GetTranslationKeys(header)
+	dbCols := locales.GetDBColumn(header)
 	colMapping := map[string]int{}
 	errs := []error{}
-	for i, col := range headerInternal {
-		field, ok := constants.IndividualFileToDBMap[col]
-		if !ok {
-			ok = slices.Contains(constants.IndividualSystemFileColumns, col)
+	for i, col := range dbCols {
+		if col == "" {
+			ok := slices.Contains(constants.IndividualSystemFileColumns, col)
 			if ok {
 				continue
 			}
 			errs = append(errs, errors.New(locales.GetTranslator()("error_unknown_column_detail", logutils.Escape(col))))
 		}
-		*fields = append(*fields, field)
-		colMapping[field] = i
+		*fields = append(*fields, col)
+		colMapping[col] = i
 	}
 	if len(errs) > 0 {
 		t := locales.GetTranslator()

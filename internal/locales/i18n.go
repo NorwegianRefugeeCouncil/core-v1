@@ -84,8 +84,8 @@ func TranslateSlice(ids []string, args ...[]interface{}) []string {
 	return translations
 }
 
-func GetTranslationKeys(values []string) []string {
-	translationKeys := make([]string, len(values))
+func GetDBColumn(values []string) []string {
+	dbCols := make([]string, len(values))
 	for i, v := range values {
 		foundKey := false
 		val := strings.Trim(v, " \t\n\r")
@@ -93,7 +93,7 @@ func GetTranslationKeys(values []string) []string {
 			for _, lang := range AvailableLangs.Items() {
 				tra := l.TranslateFrom(c, lang)
 				if tra == val {
-					translationKeys[i] = c
+					dbCols[i] = constants.IndividualFileToDBMap[c]
 					foundKey = true
 					continue
 				}
@@ -102,8 +102,13 @@ func GetTranslationKeys(values []string) []string {
 				break
 			}
 		}
+		if !foundKey {
+			if constants.IndividualDBColumns.Contains(val) {
+				dbCols[i] = val
+			}
+		}
 	}
-	return translationKeys
+	return dbCols
 }
 
 type Interface interface {

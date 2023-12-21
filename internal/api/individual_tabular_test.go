@@ -47,7 +47,7 @@ func TestUnmarshalIndividualsTabularData2(t *testing.T) {
 			colMapping: map[string]int{constants.DBColumnIndividualBirthDate: 0},
 			rowLimit:   pointers.Int(200),
 			expectedErrors: []FileError{
-				{tl("error_row_parse_fail", 2), []error{errors.New(tl("error_parse_birthdate_invalid", constants.DBColumnIndividualBirthDate, "31-07-1992", "parsing time \"31-07-1992\" as \"2006-01-02\": cannot parse \"7-1992\" as \"2006\""))}},
+				{tl("error_row_parse_fail", 2), []error{errors.New(tl("error_parse_birthdate_invalid", tl(constants.FileColumnIndividualBirthDate), "31-07-1992", "parsing time \"31-07-1992\" as \"2006-01-02\": cannot parse \"7-1992\" as \"2006\""))}},
 			},
 		},
 		{
@@ -63,7 +63,7 @@ func TestUnmarshalIndividualsTabularData2(t *testing.T) {
 			colMapping: map[string]int{constants.DBColumnIndividualBirthDate: 0},
 			rowLimit:   pointers.Int(200),
 			expectedErrors: []FileError{
-				{tl("error_row_parse_fail", 2), []error{errors.New(tl("error_parse_birthdate_minimum", constants.DBColumnIndividualBirthDate, "1892-07-31 00:00:00 +0000 UTC", "1900-01-01 00:00:00 +0000 UTC"))}},
+				{tl("error_row_parse_fail", 2), []error{errors.New(tl("error_parse_birthdate_minimum", tl(constants.FileColumnIndividualBirthDate), "1892-07-31 00:00:00 +0000 UTC", "1900-01-01 00:00:00 +0000 UTC"))}},
 			},
 		},
 		{
@@ -79,7 +79,7 @@ func TestUnmarshalIndividualsTabularData2(t *testing.T) {
 			colMapping: map[string]int{constants.DBColumnIndividualAge: 0},
 			rowLimit:   pointers.Int(200),
 			expectedErrors: []FileError{
-				{tl("error_row_parse_fail", 2), []error{errors.New(tl("error_parse_age", constants.DBColumnIndividualAge, "-31"))}},
+				{tl("error_row_parse_fail", 2), []error{errors.New(tl("error_parse_age", tl(constants.FileColumnIndividualAge), "-31"))}},
 			},
 		},
 		{
@@ -88,7 +88,7 @@ func TestUnmarshalIndividualsTabularData2(t *testing.T) {
 			colMapping: map[string]int{constants.DBColumnIndividualServiceCC1: 0},
 			rowLimit:   pointers.Int(200),
 			expectedErrors: []FileError{
-				{tl("error_row_parse_fail", 2), []error{errors.New(tl("error_invalid_value_w_hint", constants.DBColumnIndividualServiceCC1, errors.New(tl("error_unknown_service_type", "notAService")), enumTypes.AllServiceCCs().String()))}},
+				{tl("error_row_parse_fail", 2), []error{errors.New(tl("error_invalid_value_w_hint", tl(constants.FileColumnIndividualServiceCC1), errors.New(tl("error_unknown_service_type", "notAService")), enumTypes.AllServiceCCs().String()))}},
 			},
 		},
 		{
@@ -104,7 +104,7 @@ func TestUnmarshalIndividualsTabularData2(t *testing.T) {
 			colMapping: map[string]int{constants.DBColumnIndividualIsMinor: 0},
 			rowLimit:   pointers.Int(200),
 			expectedErrors: []FileError{
-				{tl("error_row_parse_fail", 2), []error{errors.New(tl("error_invalid_value_w_hint", constants.DBColumnIndividualIsMinor, errors.New(tl("error_unknown_optional_boolean", "notAnOption")), enumTypes.AllOptionalBooleans().String()))}},
+				{tl("error_row_parse_fail", 2), []error{errors.New(tl("error_invalid_value_w_hint", tl(constants.FileColumnIndividualIsMinor), errors.New(tl("error_unknown_optional_boolean", "notAnOption")), enumTypes.AllOptionalBooleans().String()))}},
 			},
 		},
 	}
