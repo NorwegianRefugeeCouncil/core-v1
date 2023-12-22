@@ -53,7 +53,7 @@ resource "azurerm_storage_management_policy" "delete_download_files" {
     }
     actions {
       base_blob {
-        delete_after_days_since_creation_greater_than = 1
+        delete_after_days_since_modification_greater_than = 1
       }
       snapshot {
         delete_after_days_since_creation_greater_than = 1
