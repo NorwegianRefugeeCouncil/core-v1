@@ -113,11 +113,11 @@ stages:
           latest
 
     - bash: echo -n "$(CONTAINER_REGISTRY)/$(REPOSITORY):$(TAG)" > $(Build.SourcesDirectory)/ref.txt
-      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      condition: succeeded()
       displayName: Output version build artifact
 
     - publish: $(Build.SourcesDirectory)/ref.txt
-      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      condition: succeeded()
       artifact: ImageRef
       displayName: Publish image reference output build artifact
 
@@ -131,11 +131,11 @@ stages:
       displayName: Publish image output build artifact
 
     - bash: echo -n "$(TAG)" > $(Build.SourcesDirectory)/tag.txt
-      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      condition: succeeded()
       displayName: Output version build artifact
 
     - publish: $(Build.SourcesDirectory)/tag.txt
-      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      condition: succeeded()
       artifact: Version
       displayName: Publish version build artifact
 
