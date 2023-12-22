@@ -1,4 +1,5 @@
 resource "azurerm_storage_account" "download_storage" {
+  provider                  = azurerm.runtime
   name                      = "sa-${var.app_name}-${var.environment}"
   resource_group_name       = azurerm_resource_group.rg.name
   location                  = "${var.location}"
@@ -17,12 +18,14 @@ resource "azurerm_storage_account" "download_storage" {
 }
 
 resource "azurerm_storage_container" "download_storage_container" {
+  provider              = azurerm.runtime
   name                  = "${var.download_storage_container_name}"
   storage_account_name  = azurerm_storage_account.download_storage.name
   container_access_type = "private"
 }
 
 resource "azurerm_private_endpoint" "download_storage_endpoint" {
+  provider            = azurerm.runtime
   name                = "${var.app_name}-${var.environment}-download-storage-endpoint"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
