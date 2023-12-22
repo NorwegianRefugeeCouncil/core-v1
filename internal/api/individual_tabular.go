@@ -7,8 +7,6 @@ import (
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/locales"
-	"github.com/nrc-no/notcore/pkg/logutils"
-	"golang.org/x/exp/slices"
 	"io"
 	"net/mail"
 	"strconv"
@@ -95,27 +93,20 @@ func UnmarshallRecordsFromFile(records *[][]string, reader io.Reader, filename s
 }
 
 func GetColumnMapping(header []string, fields *[]string) (map[string]int, []FileError) {
-	dbCols := locales.GetDBColumn(header)
-	colMapping := map[string]int{}
-	errs := []error{}
-	for i, col := range dbCols {
-		if col == "" {
-			ok := slices.Contains(constants.IndividualSystemFileColumns, col)
-			if ok {
-				continue
-			}
-			errs = append(errs, errors.New(locales.GetTranslator()("error_unknown_column_detail", logutils.Escape(col))))
-		}
-		*fields = append(*fields, col)
-		colMapping[col] = i
-	}
-	if len(errs) > 0 {
-		t := locales.GetTranslator()
+	dbCols, errs := locales.GetDBColumns(header)
+	t := locales.GetTranslator()
+	if len(errs) != 0 {
 		return nil, []FileError{{
 			Message: t("error_unknown_column"),
 			Err:     errs,
 		}}
 	}
+
+	colMapping := map[string]int{}
+	for i, col := range dbCols {
+		colMapping[col] = i
+	}
+	fields = &dbCols
 	return colMapping, nil
 }
 

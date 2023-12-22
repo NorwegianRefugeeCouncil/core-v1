@@ -2,6 +2,7 @@ package locales
 
 import (
 	_ "embed"
+	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/nrc-no/notcore/internal/constants"
@@ -84,8 +85,9 @@ func TranslateSlice(ids []string, args ...[]interface{}) []string {
 	return translations
 }
 
-func GetDBColumn(values []string) []string {
+func GetDBColumns(values []string) ([]string, []error) {
 	dbCols := make([]string, len(values))
+	errs := []error{}
 	for i, v := range values {
 		foundKey := false
 		val := strings.Trim(v, " \t\n\r")
@@ -105,10 +107,12 @@ func GetDBColumn(values []string) []string {
 		if !foundKey {
 			if constants.IndividualDBColumns.Contains(val) {
 				dbCols[i] = val
+			} else {
+				errs = append(errs, fmt.Errorf(l.Translate("error_unknown_column_detail", val)))
 			}
 		}
 	}
-	return dbCols
+	return dbCols, errs
 }
 
 type Interface interface {
