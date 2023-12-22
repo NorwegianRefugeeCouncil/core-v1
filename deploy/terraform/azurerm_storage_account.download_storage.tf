@@ -45,7 +45,8 @@ resource "azurerm_private_endpoint" "download_storage_endpoint" {
 }
 
 resource "azurerm_storage_management_policy" "delete_download_files" {
-  storage_account_id = azurerm_storage_account.download_storage.id
+  provider            = azurerm.runtime
+  storage_account_id  = azurerm_storage_account.download_storage.id
 
   rule {
     name    = "delete_download_files"
