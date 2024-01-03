@@ -82,6 +82,3 @@ services:
       - '11000:11000'
       - '11001:11001'
       - '11002:11002'
-    environment:
-      - ACCOUNT_NAME=devstoreaccount1
-      - ACCOUNT_KEY="Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="

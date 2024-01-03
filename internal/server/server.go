@@ -178,14 +178,14 @@ func (s *Server) Start(ctx context.Context) error {
 	return nil
 }
 
-func getAzureBlobStorageClient(ctx context.Context, url string)  (*azblob.Client, error) {
-	isDev := strings.Contains(url, "localhost") || strings.Contains(url, "127.0.0.1")
+func getAzureBlobStorageClient(ctx context.Context, url string) (*azblob.Client, error) {
+	isLocalEnvironment := strings.Contains(url, "localhost") || strings.Contains(url, "127.0.0.1")
 
-	if isDev {
-		credential, err := azblob.NewSharedKeyCredential(
-			"devstoreaccount1",
-			"Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==",
-	)
+	if isLocalEnvironment {
+		// we use Azurite to emulate Azure Blob Storage locally
+		wellKnownAzuriteAccountName := "devstoreaccount1"
+		wellKnownAzuriteAccountKey := "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+		credential, err := azblob.NewSharedKeyCredential(wellKnownAzuriteAccountName, wellKnownAzuriteAccountKey)
 		if err != nil {
 			return nil, err
 		}
@@ -203,7 +203,7 @@ func getAzureBlobStorageClient(ctx context.Context, url string)  (*azblob.Client
 		if err != nil {
 			return nil, err
 		}
-		
+
 		client, err := azblob.NewClient(url, credential, nil)
 		if err != nil {
 			return nil, err
