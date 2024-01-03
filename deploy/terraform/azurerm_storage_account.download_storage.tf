@@ -1,6 +1,6 @@
 resource "azurerm_storage_account" "download_storage" {
   provider                  = azurerm.runtime
-  name                      = "sa${var.app_name}${var.environment}"
+  name                      = "nrc${var.app_name}${var.environment}"
   resource_group_name       = azurerm_resource_group.rg.name
   location                  = "${var.location}"
   account_tier              = "Standard"
