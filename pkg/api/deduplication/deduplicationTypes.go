@@ -1,11 +1,11 @@
 package deduplication
 
 import (
-	"fmt"
 	"github.com/nrc-no/notcore/internal/constants"
 )
 
 type DeduplicationTypeName string
+type LogicOperator string
 
 const (
 	DeduplicationTypeNameIds          DeduplicationTypeName = "Ids"
@@ -23,13 +23,13 @@ const (
 )
 
 const (
-	LOGICAL_OPERATOR_OR  string = "OR"
-	LOGICAL_OPERATOR_AND string = "AND"
+	LOGICAL_OPERATOR_OR  LogicOperator = "OR"
+	LOGICAL_OPERATOR_AND LogicOperator = "AND"
 )
 
 type DeduplicationTypeValue struct {
 	Columns   []string
-	Condition string
+	Condition LogicOperator
 }
 
 type DeduplicationType struct {
@@ -37,6 +37,11 @@ type DeduplicationType struct {
 	Config DeduplicationTypeValue
 	Label  string
 	Order  int
+}
+
+type DeduplicationConfig struct {
+	Operator LogicOperator
+	Types    []DeduplicationType
 }
 
 var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
@@ -165,15 +170,13 @@ var deduplicationTypeNames = map[string]DeduplicationTypeName{
 	"Birthdate":    DeduplicationTypeNameBirthdate,
 }
 
-func GetDeduplicationTypeNames(deduplicationTypes []string) ([]DeduplicationTypeName, error) {
-	optionNames := make([]DeduplicationTypeName, 0)
+func GetDeduplicationConfig(deduplicationTypes []string, operator LogicOperator) (DeduplicationConfig, error) {
+	optionNames := make([]DeduplicationType, 0)
 	for _, d := range deduplicationTypes {
-		dt, ok := deduplicationTypeNames[d]
-		if ok {
-			optionNames = append(optionNames, dt)
-		} else {
-			return nil, fmt.Errorf("invalid deduplication type: %s", d)
-		}
+		dt := DeduplicationTypes[DeduplicationTypeName(d)]
+		optionNames = append(optionNames, dt)
 	}
-	return optionNames, nil
+	return DeduplicationConfig{
+		operator, optionNames,
+	}, nil
 }

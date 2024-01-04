@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/db"
 	"github.com/nrc-no/notcore/internal/locales"
@@ -10,6 +11,7 @@ import (
 	"github.com/nrc-no/notcore/internal/utils"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"go.uber.org/zap"
+	"golang.org/x/exp/slices"
 	"net/http"
 	"strings"
 )
@@ -83,13 +85,33 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			return
 		}
 
-		df := api.GetDataframeFromRecords(records)
-		df = api.AddIndexColumn(df) // adding indices to the records, so we can recognize them in the filtered results
+		deduplicationTypes := r.MultipartForm.Value[formParamDeduplicationType]
+		deduplicationLogicOperator := deduplication.LogicOperator(r.MultipartForm.Value[formParamDeduplicationLogicOperator][0])
+		deduplicationConfig, err := deduplication.GetDeduplicationConfig(deduplicationTypes, deduplicationLogicOperator)
 
-		fileErrors = api.FindDuplicatesInUUIDColumn(df)
-		if fileErrors != nil {
-			renderError(t("error_file_with_duplicate_uuids"), fileErrors)
+		mandatoryColumns := []string{constants.DBColumnIndividualLastName}
+		if slices.Contains(records[0], constants.DBColumnIndividualID) {
+			mandatoryColumns = append(mandatoryColumns, constants.DBColumnIndividualID)
+		}
+
+		df, err := api.CreateDataframeFromRecords(records, deduplicationConfig.Types, mandatoryColumns)
+		if err != nil {
+			l.Error("failed to get dataframe from records", zap.Error(err))
+			renderError(t("error_failed_to_parse_file"), []api.FileError{
+				{
+					Message: t("error_deduplication_preparation"),
+					Err:     []error{err},
+				},
+			})
 			return
+		}
+
+		if slices.Contains(records[0], constants.FileColumnIndividualID) {
+			fileErrors = api.FindDuplicatesInUUIDColumn(df)
+			if fileErrors != nil {
+				renderError(t("error_file_with_duplicate_uuids"), fileErrors)
+				return
+			}
 		}
 
 		selectedCountryID, err := utils.GetSelectedCountryID(ctx)
@@ -125,19 +147,9 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			return
 		}
 
-		deduplicationTypes := r.MultipartForm.Value[formParamDeduplicationType]
-		deduplicationLogicOperator := r.MultipartForm.Value[formParamDeduplicationLogicOperator]
-
-		if len(deduplicationTypes) > 0 {
-			optionNames, err := deduplication.GetDeduplicationTypeNames(deduplicationTypes)
-			if err != nil {
-				l.Error("invalid deduplication type", zap.String("deduplication_type", strings.Join(deduplicationTypes, ",")), zap.Error(err))
-				renderError(t("error_invalid_deduplication_type", strings.Join(deduplicationTypes, ",")), nil)
-				return
-			}
-
-			duplicatesScores := api.FindDuplicatesInUpload(optionNames, df, deduplicationLogicOperator[0])
-			errors := api.FormatFileDeduplicationErrors(duplicatesScores, optionNames, records, colMapping)
+		if len(deduplicationConfig.Types) > 0 {
+			duplicatesScores := api.FindDuplicatesInUpload(deduplicationConfig, df)
+			errors := api.FormatFileDeduplicationErrors(duplicatesScores, deduplicationConfig, records, colMapping)
 			if len(errors) > 0 {
 				if errors != nil {
 					renderError(t("error_found_duplicates_in_file", len(errors)), errors)
@@ -145,13 +157,13 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 				}
 			}
 
-			duplicatesInDB, err := individualRepo.FindDuplicates(ctx, individuals, optionNames, deduplicationLogicOperator[0])
+			duplicatesInDB, err := individualRepo.FindDuplicates(ctx, df, deduplicationConfig)
 			if err != nil {
 				renderError(t("error_deduplication_fail", err.Error()), nil)
 				return
 			}
 
-			dbDuplicationErrors := api.FormatDbDeduplicationErrors(duplicatesInDB, optionNames, df, deduplicationLogicOperator[0])
+			dbDuplicationErrors := api.FormatDbDeduplicationErrors(duplicatesInDB, df, deduplicationConfig)
 			if len(dbDuplicationErrors) > 0 {
 				renderError(t("error_found_duplicates_in_db", len(dbDuplicationErrors)), dbDuplicationErrors)
 				return

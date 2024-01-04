@@ -8,6 +8,7 @@ import (
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
+	"golang.org/x/exp/slices"
 	"strings"
 	"time"
 )
@@ -46,11 +47,17 @@ func getDuplicateUUIDs(df dataframe.DataFrame) map[string]containers.Set[int] {
 		if uuid == "" {
 			continue
 		}
-		duplicates := ExcludeSelfFromDataframe(df, i).Filter(dataframe.F{
-			Colname:    constants.DBColumnIndividualID,
-			Comparando: uuid,
-			Comparator: series.In,
-		})
+
+		duplicates := df.FilterAggregation(dataframe.And,
+			dataframe.F{
+				Colname:    constants.DBColumnIndividualID,
+				Comparando: uuid,
+				Comparator: series.In,
+			}, dataframe.F{
+				Colname:    indexColumnName,
+				Comparando: i,
+				Comparator: series.Neq,
+			})
 
 		for d := 0; d < duplicates.Nrow(); d++ {
 			rowNumber, err := duplicates.Select(indexColumnName).Elem(d, 0).Int()
@@ -66,16 +73,16 @@ func getDuplicateUUIDs(df dataframe.DataFrame) map[string]containers.Set[int] {
 	return duplicatesPerId
 }
 
-func FindDuplicatesInUpload(optionNames []deduplication.DeduplicationTypeName, df dataframe.DataFrame, deduplicationLogicOperator string) []containers.Set[int] {
+func FindDuplicatesInUpload(config deduplication.DeduplicationConfig, df dataframe.DataFrame) []containers.Set[int] {
 	duplicateScores := []containers.Set[int]{}
 	for i := 0; i < df.Nrow(); i++ {
 		duplicateScores = append(duplicateScores, containers.NewSet[int]())
-		getDuplicationScoresForRecord(optionNames, df, i, duplicateScores[i], deduplicationLogicOperator)
+		getDuplicationScoresForRecord(config, df, i, duplicateScores[i])
 	}
 	return duplicateScores
 }
 
-func getDuplicationScoresForRecord(optionNames []deduplication.DeduplicationTypeName, df dataframe.DataFrame, currentIndex int, duplicates containers.Set[int], deduplicationLogicOperator string) {
+func getDuplicationScoresForRecord(config deduplication.DeduplicationConfig, df dataframe.DataFrame, currentIndex int, duplicates containers.Set[int]) {
 	// the duplicationScore is a metric to determine if the record is a duplicate, it counts how many sub-criteria have been fulfilled
 	duplicationScore := make([]int, df.Nrow())
 
@@ -86,8 +93,7 @@ func getDuplicationScoresForRecord(optionNames []deduplication.DeduplicationType
 	copy(duplicationScore, zeros)
 
 	// e.g. IDs, Names, FullName
-	for _, optionName := range optionNames {
-		option := deduplication.DeduplicationTypes[optionName]
+	for _, option := range config.Types {
 		// the duplicationScoreByType is a metric to determine if the record is a duplicate for the current sub-criterion,
 		// it counts how many sub-criteria for the deduplication type have been fulfilled
 		duplicationScoreByType := make([]int, df.Nrow())
@@ -101,12 +107,12 @@ func getDuplicationScoresForRecord(optionNames []deduplication.DeduplicationType
 		}
 	}
 	for r := range duplicationScore {
-		if deduplicationLogicOperator == deduplication.LOGICAL_OPERATOR_OR {
+		if config.Operator == deduplication.LOGICAL_OPERATOR_OR {
 			if duplicationScore[r] > 0 {
 				duplicates.Add(r)
 			}
 		} else {
-			if duplicationScore[r] == len(optionNames) {
+			if duplicationScore[r] == len(config.Types) {
 				duplicates.Add(r)
 			}
 		}
@@ -126,24 +132,16 @@ func getOrDuplicationScore(scoresByType []int, totalScores []int, df dataframe.D
 			continue
 		}
 
-		newDf := ExcludeSelfFromDataframe(thisColumn, currentIndex)
-
+		filters := []dataframe.F{}
 		// check for duplicates of the current value within its own column
-		result := newDf.Filter(dataframe.F{
+		filters = append(filters, dataframe.F{
 			Colname:    column,
 			Comparando: currentValue,
 			Comparator: series.In,
 		})
-		for r := 0; r < result.Nrow(); r++ {
-			index, err := result.Select(indexColumnName).Elem(r, 0).Int()
-			if err == nil {
-				scoresByType[index]++
-			}
-		}
 
 		// if there are multiple columns to check, we also filter all the other columns
 		if len(option.Config.Columns) > 1 {
-			filters := []dataframe.F{}
 			for _, c := range option.Config.Columns {
 				if c != column {
 					filters = append(filters, dataframe.F{
@@ -153,13 +151,19 @@ func getOrDuplicationScore(scoresByType []int, totalScores []int, df dataframe.D
 					})
 				}
 			}
-			result = df.Filter(filters...)
+		}
+		result := df.FilterAggregation(dataframe.Or, filters...)
 
-			for r := 0; r < result.Nrow(); r++ {
-				index, err := result.Select(indexColumnName).Elem(r, 0).Int()
-				if err == nil {
-					scoresByType[index]++
-				}
+		result = result.Filter(dataframe.F{
+			Colname:    indexColumnName,
+			Comparando: currentIndex,
+			Comparator: series.Neq,
+		})
+
+		for r := 0; r < result.Nrow(); r++ {
+			index, err := result.Select(indexColumnName).Elem(r, 0).Int()
+			if err == nil {
+				scoresByType[index]++
 			}
 		}
 	}
@@ -174,59 +178,73 @@ func getOrDuplicationScore(scoresByType []int, totalScores []int, df dataframe.D
 
 func getAndDuplicationScore(totalScores []int, df dataframe.DataFrame, currentIndex int, option deduplication.DeduplicationType) {
 	// we can exclude the current row, to prevent a false positive
-	otherElements := makeIndexSetWithSkip(df.Nrow(), currentIndex).Items()
-	// we're chaining the filters, such that only complete combinations of values are counted
-	result := df.Subset(otherElements).Filter()
+	others := df.Filter(dataframe.F{
+		Colname:    indexColumnName,
+		Comparando: currentIndex,
+		Comparator: series.Neq,
+	})
+
+	filters := []dataframe.F{}
 
 	// e.g. first_name, middle_name, last_name, native_name
 	for _, column := range option.Config.Columns {
 		current := df.Select(column).Elem(currentIndex, 0)
-		result = result.Filter(dataframe.F{
+
+		filters = append(filters, dataframe.F{
 			Colidx:     0,
 			Colname:    column,
 			Comparando: current,
 			Comparator: series.Eq,
 		})
 	}
+
+	filteredDf := others.FilterAggregation(dataframe.And, filters...)
+
 	// if there are any rows left, they count as duplicates within the current deduplicationType
-	for r := 0; r < result.Nrow(); r++ {
-		ind, err := result.Select(indexColumnName).Elem(r, 0).Int()
+	for r := 0; r < filteredDf.Nrow(); r++ {
+		ind, err := filteredDf.Select(indexColumnName).Elem(r, 0).Int()
 		if err == nil {
 			totalScores[ind]++
 		}
 	}
 }
 
-func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []deduplication.DeduplicationTypeName, df dataframe.DataFrame, deduplicationLogicOperator string) []FileError {
+type AggregationType struct {
+	Aggregation dataframe.Aggregation
+	Filters     []dataframe.F
+}
+
+func FormatDbDeduplicationErrors(duplicates []*Individual, df dataframe.DataFrame, config deduplication.DeduplicationConfig) []FileError {
 	duplicateErrors := make([]FileError, 0)
 	t := locales.GetTranslator()
 
 	for d := 0; d < len(duplicates); d++ {
 		scores := make([]int, df.Nrow())
 		databaseValues := map[string]interface{}{}
-		errorList := make([]error, 0)
 		filteredDf := df
+		at := []AggregationType{}
 
-		for _, deduplicationType := range deduplicationTypes {
-			filters := []dataframe.F{}
-			for _, column := range deduplication.DeduplicationTypes[deduplicationType].Config.Columns {
+		for _, deduplicationType := range config.Types {
+			for _, column := range deduplicationType.Config.Columns {
 				value, err := duplicates[d].GetFieldValue(column)
-				if err != nil {
-					errorList = append(errorList, errors.New(locales.GetTranslator()("error_unknown_value_for_column", column)))
-					break
-				}
+				if err == nil {
 
-				switch value.(type) {
-				case string:
-					if value.(string) != "" {
-						databaseValues[column] = value.(string)
-					}
-				case *time.Time:
-					if value.(*time.Time) != nil {
-						databaseValues[column] = value.(*time.Time).Format("2006-01-02")
+					switch value.(type) {
+					case string:
+						if value.(string) != "" {
+							databaseValues[column] = value.(string)
+						}
+					case *time.Time:
+						if value.(*time.Time) != nil {
+							databaseValues[column] = value.(*time.Time).Format("2006-01-02")
+						}
 					}
 				}
 			}
+		}
+		for _, deduplicationType := range config.Types {
+			filters := []dataframe.F{}
+
 			for column, value := range databaseValues {
 				filters = append(filters, dataframe.F{
 					Colname:    column,
@@ -234,13 +252,22 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []
 					Comparator: series.Eq,
 				})
 			}
-
-			if deduplication.DeduplicationTypes[deduplicationType].Config.Condition == deduplication.LOGICAL_OPERATOR_OR {
-				filteredDf = filteredDf.Filter(filters...)
+			if deduplicationType.Config.Condition == deduplication.LOGICAL_OPERATOR_OR {
+				at = append(at, AggregationType{
+					Aggregation: dataframe.Or,
+					Filters:     filters,
+				})
 			} else {
-				for f := range filters {
-					filteredDf = filteredDf.Filter(filters[f])
-				}
+				at = append(at, AggregationType{
+					Aggregation: dataframe.And,
+					Filters:     filters,
+				})
+			}
+
+			if deduplicationType.Config.Condition == deduplication.LOGICAL_OPERATOR_OR {
+				filteredDf = filteredDf.FilterAggregation(dataframe.Or, filters...)
+			} else {
+				filteredDf = filteredDf.FilterAggregation(dataframe.And, filters...)
 			}
 
 			for f := 0; f < filteredDf.Nrow(); f++ {
@@ -249,11 +276,20 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []
 					scores[rowNumber] = scores[rowNumber] + 1
 				}
 			}
+			if config.Operator == deduplication.LOGICAL_OPERATOR_OR {
+				if filteredDf.Nrow() > 0 {
+					break
+				} else {
+					filteredDf = df
+				}
+			}
 		}
+
 		for f := 0; f < filteredDf.Nrow(); f++ {
+			errorList := make([]error, 0)
 			rowNumber, err := filteredDf.Select(indexColumnName).Elem(f, 0).Int()
 			if err == nil {
-				if deduplicationLogicOperator == deduplication.LOGICAL_OPERATOR_OR {
+				if config.Operator == deduplication.LOGICAL_OPERATOR_OR {
 					if scores[rowNumber] > 0 {
 						for column, dbValue := range databaseValues {
 							fileValue := filteredDf.Select(column).Elem(f, 0).String()
@@ -261,13 +297,14 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []
 						}
 					}
 				} else {
-					if scores[rowNumber] == len(deduplicationTypes) {
+					if scores[rowNumber] == len(config.Types) {
 						for column, dbValue := range databaseValues {
 							fileValue := filteredDf.Select(column).Elem(f, 0).String()
 							errorList = append(errorList, errors.New(t("error_db_duplicate_detail", column, dbValue, fileValue)))
 						}
 					}
 				}
+
 				if len(errorList) > 0 {
 					duplicateErrors = append(duplicateErrors, FileError{
 						t("error_db_duplicate",
@@ -285,13 +322,13 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, deduplicationTypes []
 	return duplicateErrors
 }
 
-func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], deduplicationTypes []deduplication.DeduplicationTypeName, records [][]string, columnMapping map[string]int) []FileError {
+func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], config deduplication.DeduplicationConfig, records [][]string, columnMapping map[string]int) []FileError {
 	duplicateErrors := make([]FileError, 0)
 	alertedOn := containers.Set[int]{}
 	columnNames := make([]string, 0)
 	t := locales.GetTranslator()
-	for _, deduplicationType := range deduplicationTypes {
-		for _, column := range deduplication.DeduplicationTypes[deduplicationType].Config.Columns {
+	for _, deduplicationType := range config.Types {
+		for _, column := range deduplicationType.Config.Columns {
 			columnNames = append(columnNames, column)
 		}
 	}
@@ -329,4 +366,70 @@ func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], deduplica
 		alertedOn.Add(duplicates.Items()...)
 	}
 	return duplicateErrors
+}
+
+func CreateDataframeFromRecords(records [][]string, deduplicationTypes []deduplication.DeduplicationType, mandatory []string) (dataframe.DataFrame, error) {
+	keys := locales.GetTranslationKeys(records[0])
+	dbCols := make([]string, len(keys))
+	for i, key := range keys {
+		dbCols[i] = constants.IndividualFileToDBMap[key]
+	}
+
+	columnsOfInterest := []string{}
+	if len(deduplicationTypes) == 0 && len(mandatory) == 0 {
+		return dataframe.DataFrame{}, nil
+	}
+	for _, deduplicationType := range deduplicationTypes {
+		columnsOfInterest = append(columnsOfInterest, deduplicationType.Config.Columns...)
+	}
+	for _, mandatoryColumn := range mandatory {
+		if !slices.Contains(columnsOfInterest, mandatoryColumn) {
+			columnsOfInterest = append(columnsOfInterest, mandatoryColumn)
+		}
+	}
+
+	df := dataframe.LoadRecords(records,
+		dataframe.Names(dbCols...),
+		dataframe.DetectTypes(true),
+		dataframe.DefaultType(series.String),
+		dataframe.HasHeader(true),
+	).Select(columnsOfInterest)
+
+	if df.Err != nil {
+		return dataframe.DataFrame{}, df.Err
+	}
+
+	df = AddIndexColumn(df) // adding indices to the records, so we can recognize them in the filtered results
+
+	return df, nil
+}
+
+func GetRecordsFromIndividual(deduplicationTypes []deduplication.DeduplicationType, individual *Individual, mandatory []string) [][]string {
+	var record [][]string
+	var header []string
+	var values []string
+	for _, dType := range deduplicationTypes {
+		for _, field := range dType.Config.Columns {
+			value, err := individual.GetFieldValue(field)
+			if err != nil {
+				continue
+			}
+			header = append(header, field)
+			values = append(values, value.(string))
+		}
+	}
+	for _, field := range mandatory {
+		if slices.Contains(header, field) {
+			continue
+		}
+		value, err := individual.GetFieldValue(field)
+		if err != nil {
+			continue
+		}
+		header = append(header, field)
+		values = append(values, value.(string))
+	}
+	record = append(record, header)
+	record = append(record, values)
+	return record
 }

@@ -54,11 +54,11 @@
                     </option>
                     <option value="other"
                             {{if .Options.Sexes.Contains "other" }}selected{{end}}>
-                        {{translate "other_option"}}
+                        {{translate "option_other"}}
                     </option>
                     <option value="prefers_not_to_say"
                             {{if .Options.Sexes.Contains "prefers_not_to_say" }}selected{{end}}>
-                        {{translate "prefers_not_to_say"}}
+                        {{translate "option_sex_prefers_not_to_say"}}
                     </option>
                 </select>
             </div>
@@ -265,7 +265,7 @@
             <!-- Age -->
             <div class="col-6">
                 <label class="form-label">
-                    {{translate "age_abrv"}}
+                    {{translate "age"}}
                 </label>
                 <div class="row">
                     <div class="col-3 input-group mb-2 w-50">
@@ -992,7 +992,7 @@
                     </option>
                     <option value="other"
                             {{if .Options.DisplacementStatuses.Contains "other" }}selected{{end}}>
-                        {{translate "other_option"}}
+                        {{translate "option_other"}}
                     </option>
                 </select>
             </div>
@@ -1081,7 +1081,7 @@
                     </option>
                     <option value="other"
                             {{if .Options.EngagementContext.Contains "other" }}selected{{end}}>
-                        {{translate "other_option"}}
+                        {{translate "option_other"}}
                     </option>
                 </select>
             </div>
@@ -1311,7 +1311,7 @@
                     </option>
                     <option value="other"
                             {{if .Options.ServiceCC.Contains "other" }}selected{{end}}>
-                        {{translate "other_option"}}
+                        {{translate "option_other"}}
                     </option>
                 </select>
             </div>

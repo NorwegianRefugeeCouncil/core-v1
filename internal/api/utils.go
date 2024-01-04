@@ -114,21 +114,6 @@ func stringArrayToInterfaceArray(row []string) []interface{} {
 
 var indexColumnName = "index"
 
-func GetDataframeFromRecords(records [][]string) dataframe.DataFrame {
-	keys := locales.GetTranslationKeys(records[0])
-	dbCols := make([]string, len(keys))
-	for i, key := range keys {
-		dbCols[i] = constants.IndividualFileToDBMap[key]
-	}
-
-	return dataframe.LoadRecords(records,
-		dataframe.Names(dbCols...),
-		dataframe.DetectTypes(false),
-		dataframe.DefaultType(series.String),
-		dataframe.HasHeader(true),
-	)
-}
-
 func AddIndexColumn(df dataframe.DataFrame) dataframe.DataFrame {
 	indexes := []int{}
 	for i := 0; i < df.Nrow(); i++ {
@@ -136,14 +121,6 @@ func AddIndexColumn(df dataframe.DataFrame) dataframe.DataFrame {
 	}
 	dfMutated := df.Mutate(series.New(indexes, series.String, indexColumnName))
 	return dfMutated
-}
-
-func ExcludeSelfFromDataframe(df dataframe.DataFrame, selfIndex int) dataframe.DataFrame {
-	// we exclude the current row, to prevent a false positive
-	otherElements := makeIndexSetWithSkip(df.Nrow(), selfIndex).Items()
-
-	// check for duplicates of the current value within its own column
-	return df.Subset(otherElements)
 }
 
 var TRUE_VALUES = []string{"true", "yes", "1"}

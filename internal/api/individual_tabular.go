@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
+	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/pkg/logutils"
 	"golang.org/x/exp/slices"
@@ -14,7 +15,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/xuri/excelize/v2"
 )
 
@@ -129,7 +129,7 @@ func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual
 	for row, cols := range data[1:] {
 		individual := &Individual{}
 		var rowErrors []error
-		for _, err := range individual.unmarshalTabularData(colMapping, cols) {
+		for _, err := range individual.UnmarshalTabularData(colMapping, cols) {
 			rowErrors = append(rowErrors, err)
 		}
 		if len(rowErrors) > 0 {
@@ -145,7 +145,7 @@ func UnmarshalIndividualsTabularData(data [][]string, individuals *[]*Individual
 	return fileErrors
 }
 
-func (i *Individual) unmarshalTabularData(colMapping map[string]int, cols []string) []error {
+func (i *Individual) UnmarshalTabularData(colMapping map[string]int, cols []string) []error {
 	var errs []error
 	t := locales.GetTranslator()
 	if len(cols) <= len(colMapping) {
@@ -806,7 +806,7 @@ func MarshalIndividualsCSV(w io.Writer, individuals []*Individual) error {
 	}
 
 	for _, individual := range individuals {
-		row, err := individual.marshalTabularData()
+		row, err := individual.MarshalTabularData()
 		if err != nil {
 			return err
 		}
@@ -841,7 +841,7 @@ func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
 	}
 
 	for idx, individual := range individuals {
-		row, err := individual.marshalTabularData()
+		row, err := individual.MarshalTabularData()
 		if err != nil {
 			return err
 		}
@@ -861,7 +861,7 @@ func MarshalIndividualsExcel(w io.Writer, individuals []*Individual) error {
 	return nil
 }
 
-func (i *Individual) marshalTabularData() ([]string, error) {
+func (i *Individual) MarshalTabularData() ([]string, error) {
 	row := make([]string, len(constants.IndividualFileColumns))
 	for j, col := range constants.IndividualFileColumns {
 		field, ok := constants.IndividualFileToDBMap[col]
