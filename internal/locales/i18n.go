@@ -18,14 +18,19 @@ var localeEN string
 //go:embed ja.toml
 var localeJA string
 
+//go:embed ar.toml
+var localeAR string
+
 var localeFiles = map[string]string{
 	"en": localeEN,
 	"ja": localeJA,
+	"ar": localeAR,
 }
 
 var localeNames = map[string]string{
 	"en": "English",
 	"ja": "Debugging",
+	"ar": "RTL",
 }
 
 var (

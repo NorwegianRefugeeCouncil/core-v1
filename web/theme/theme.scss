@@ -419,7 +419,8 @@ table {
     }
     th.sticky-column, td.sticky-column {
         position: sticky;
-        left: 0;
+        left: 0 /* rtl:auto */;
+        right: auto /* rtl:0 */;
     }
     th.sticky-column {
         background-color: $neutral200;

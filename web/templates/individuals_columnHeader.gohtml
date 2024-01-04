@@ -11,6 +11,7 @@
     {{$sortDirectionForLink := ""}}
     {{$sorted := false}}
     {{$left:= .Left}}
+    {{$isRTL:= .IsRTL}}
 
     {{if $sortable}}
         {{$sortDirection = $options.GetSortDirection $sortKey}}
@@ -40,7 +41,11 @@
         {{$style = concat $style "max-width: " $maxWidth ";" }}
     {{end}}
     {{if $left}}
-        {{$style = concat $style "left: " $left ";" }}
+        {{if $isRTL}}
+            {{$style = concat $style "right: " $left ";" }}
+        {{else}}
+            {{$style = concat $style "left: " $left ";" }}
+        {{end}}
     {{end}}
     {{$style = concat $style "\"" }}
 
