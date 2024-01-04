@@ -85,9 +85,9 @@ func TranslateSlice(ids []string, args ...[]interface{}) []string {
 	return translations
 }
 
-func GetDBColumns(values []string) ([]string, []error) {
+func GetDBColumns(values []string) ([]string, error) {
 	dbCols := make([]string, len(values))
-	errs := []error{}
+	unknownColumns := []string{}
 	for i, v := range values {
 		foundKey := false
 		val := strings.Trim(v, " \t\n\r")
@@ -107,12 +107,17 @@ func GetDBColumns(values []string) ([]string, []error) {
 		if !foundKey {
 			if constants.IndividualDBColumns.Contains(val) {
 				dbCols[i] = val
+			} else if val == "" {
+				unknownColumns = append(unknownColumns, l.Translate("empty_string"))
 			} else {
-				errs = append(errs, fmt.Errorf(l.Translate("error_unknown_column_detail", val)))
+				unknownColumns = append(unknownColumns, val)
 			}
 		}
 	}
-	return dbCols, errs
+	if len(unknownColumns) == 0 {
+		return dbCols, nil
+	}
+	return nil, fmt.Errorf(l.Translate("error_unknown_columns", strings.Join(unknownColumns, ", ")))
 }
 
 type Interface interface {

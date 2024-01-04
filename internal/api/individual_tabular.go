@@ -93,12 +93,12 @@ func UnmarshallRecordsFromFile(records *[][]string, reader io.Reader, filename s
 }
 
 func GetColumnMapping(header []string, fields *[]string) (map[string]int, []FileError) {
-	dbCols, errs := locales.GetDBColumns(header)
+	dbCols, err := locales.GetDBColumns(header)
 	t := locales.GetTranslator()
-	if len(errs) != 0 {
+	if err != nil {
 		return nil, []FileError{{
 			Message: t("error_unknown_column"),
-			Err:     errs,
+			Err:     []error{err},
 		}}
 	}
 

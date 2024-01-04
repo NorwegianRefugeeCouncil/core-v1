@@ -15,7 +15,7 @@ func TestGetDBColumns(t *testing.T) {
 		name        string
 		values      []string
 		expect      []string
-		expectError []error
+		expectError error
 	}{
 		{
 			name:        "empty",
@@ -48,22 +48,18 @@ func TestGetDBColumns(t *testing.T) {
 			expectError: nil,
 		},
 		{
-			name:   "unknown columns",
-			values: []string{"XXXX_file_id", "first_name", "Full name", "Other", "Unknown", ""},
-			expect: []string{},
-			expectError: []error{
-				fmt.Errorf(l.Translate("error_unknown_column_detail", "Other")),
-				fmt.Errorf(l.Translate("error_unknown_column_detail", "Unknown")),
-				fmt.Errorf(l.Translate("error_unknown_column_detail", ""))},
+			name:        "unknown columns",
+			values:      []string{"XXXX_file_id", "first_name", "Full name", "Other", "Unknown", ""},
+			expect:      []string{},
+			expectError: fmt.Errorf(l.Translate("error_unknown_columns", "Other, Unknown, <empty>")),
 		},
 	}
 
 	for _, tt := range testCases {
 		t.Run(tt.name, func(t *testing.T) {
 			keys, errs := GetDBColumns(tt.values)
-			if len(tt.expectError) != 0 {
+			if tt.expectError != nil {
 				assert.EqualValues(t, tt.expectError, errs)
-				//assert.EqualError(t, errs, tt.expectError)
 				return
 			}
 
