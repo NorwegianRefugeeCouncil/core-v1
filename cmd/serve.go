@@ -59,6 +59,8 @@ const (
 	flagEnableBetaFeatures      = "enable-beta-features"
 	flagAzureBlobStorageUrl     = "azure-blob-storage-url"
 	flagDownloadsContainerName  = "downloads-container-name"
+	flagAzuriteAccountName      = "azurite-account-name"
+	flagAzuriteAccountKey       = "azurite-account-key"
 )
 
 // serveCmd represents the serve command
@@ -173,6 +175,8 @@ var serveCmd = &cobra.Command{
 
 		azureBlobStorageUrl := getFlagOrEnv(cmd, flagAzureBlobStorageUrl, envAzureBlobStorageUrl)
 		downloadsContainerName := getFlagOrEnv(cmd, flagDownloadsContainerName, envDownloadsContainerName)
+		azuriteAccountName := cmd.Flag(flagAzuriteAccountName).Value.String()
+		azuriteAccountKey := cmd.Flag(flagAzuriteAccountKey).Value.String()
 
 		options := server.Options{
 			Address:              listenAddress,
@@ -197,6 +201,8 @@ var serveCmd = &cobra.Command{
 			EnableBetaFeatures:      enableBetaFeatures,
 			AzureBlobStorageURL:     azureBlobStorageUrl,
 			DownloadsContainerName:  downloadsContainerName,
+			AzuriteAccountName:      azuriteAccountName,
+			AzuriteAccountKey:       azuriteAccountKey,
 		}
 
 		srv, err := options.New(ctx)

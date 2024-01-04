@@ -23,6 +23,12 @@ import (
 	"go.uber.org/zap"
 )
 
+type AzuriteOptions struct {
+	accountName   string
+	accountKey    string
+	containerName string
+}
+
 func (o Options) New(ctx context.Context) (*Server, error) {
 
 	l := logging.NewLogger(ctx)
@@ -107,7 +113,12 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 		return nil, err
 	}
 
-	azureBlobClient, err := getAzureBlobStorageClient(ctx, o.AzureBlobStorageURL)
+	azuriteOptions := AzuriteOptions{
+		accountName:   o.AzuriteAccountName,
+		accountKey:    o.AzuriteAccountKey,
+		containerName: o.DownloadsContainerName,
+	}
+	azureBlobClient, err := getAzureBlobStorageClient(ctx, o.AzureBlobStorageURL, azuriteOptions)
 	if err != nil {
 		l.Error("failed to get azure blob storage client", zap.Error(err))
 		return nil, err
@@ -178,14 +189,11 @@ func (s *Server) Start(ctx context.Context) error {
 	return nil
 }
 
-func getAzureBlobStorageClient(ctx context.Context, url string) (*azblob.Client, error) {
+func getAzureBlobStorageClient(ctx context.Context, url string, azuriteOptions AzuriteOptions) (*azblob.Client, error) {
 	isLocalEnvironment := strings.Contains(url, "localhost") || strings.Contains(url, "127.0.0.1")
 
 	if isLocalEnvironment {
-		// we use Azurite to emulate Azure Blob Storage locally
-		wellKnownAzuriteAccountName := "devstoreaccount1"
-		wellKnownAzuriteAccountKey := "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
-		credential, err := azblob.NewSharedKeyCredential(wellKnownAzuriteAccountName, wellKnownAzuriteAccountKey)
+		credential, err := azblob.NewSharedKeyCredential(azuriteOptions.accountName, azuriteOptions.accountKey)
 		if err != nil {
 			return nil, err
 		}
@@ -195,7 +203,7 @@ func getAzureBlobStorageClient(ctx context.Context, url string) (*azblob.Client,
 			return nil, err
 		}
 
-		client.CreateContainer(ctx, "individualdownloads", nil)
+		client.CreateContainer(ctx, azuriteOptions.containerName, nil)
 
 		return client, nil
 	} else {

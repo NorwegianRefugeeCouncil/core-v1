@@ -75,7 +75,9 @@ serve: prerequisites
 		--block-key-2="f735998d3da9d8a2b01cba8e9243605a7e02dd5daebefe62e23f2bc0b29787c2" \
 		--enable-beta-features \
 		--azure-blob-storage-url="http://127.0.0.1:11000/devstoreaccount1" \
-		--downloads-container-name="individualdownloads"
+		--downloads-container-name="individualdownloads" \
+		--azurite-account-name="devstoreaccount1" \
+		--azurite-account-key="Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
 
 .PHONY: bootstrap
 bootstrap:
