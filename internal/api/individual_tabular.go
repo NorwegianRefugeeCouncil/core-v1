@@ -105,8 +105,8 @@ func GetColumnMapping(header []string, fields *[]string) (map[string]int, []File
 	colMapping := map[string]int{}
 	for i, col := range dbCols {
 		colMapping[col] = i
+		*fields = append(*fields, col)
 	}
-	fields = &dbCols
 	return colMapping, nil
 }
 
