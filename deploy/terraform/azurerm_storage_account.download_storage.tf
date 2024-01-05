@@ -17,11 +17,20 @@ resource "azurerm_storage_account" "download_storage" {
   }
 }
 
-resource "azurerm_storage_container" "download_storage_container" {
-  provider              = azurerm.runtime
-  name                  = "${var.download_storage_container_name}"
-  storage_account_name  = azurerm_storage_account.download_storage.name
-  container_access_type = "private"
+# using azapi to create the storage container, since given the network rules defined for the storage account
+# azurerm provider cannot create it. @see https://github.com/hashicorp/terraform-provider-azurerm/issues/2977
+resource "azapi_resource" "download_storage_container" {
+  provider  = azapi.runtime
+  name      = "${var.download_storage_container_name}"
+  parent_id = "${azurerm_storage_account.download_storage.id}/blobServices/default"
+  type      = "Microsoft.Storage/storageAccounts/blobServices/containers@2021-04-01"
+  body      = <<BODY
+              {
+                "properties": {
+                  "publicAccess": "None"
+                }
+              }
+              BODY
 }
 
 resource "azurerm_private_endpoint" "download_storage_endpoint" {
