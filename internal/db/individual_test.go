@@ -3,6 +3,7 @@ package db
 import (
 	"github.com/go-gota/gota/dataframe"
 	"github.com/go-gota/gota/series"
+	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/nrc-no/notcore/internal/utils/pointers"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
@@ -97,7 +98,7 @@ func TestBuildInsertIndividualsQuery(t *testing.T) {
 				{Name: "col_date", SQLType: "date", Default: nil},
 			},
 			dataframe.New(
-				series.New([]string{"id1", "id2"}, series.String, "id"),
+				series.New([]string{"01234567-0123-4567-8901-012345678901", "01234567-0123-4567-8901-012345678902"}, series.String, "id"),
 				series.New([]string{"b", "a"}, series.String, "col_text_1"),
 				series.New([]string{"1", ""}, series.String, "col_text_2"),
 				series.New([]string{"", "3"}, series.String, "col_date"),
@@ -105,7 +106,7 @@ func TestBuildInsertIndividualsQuery(t *testing.T) {
 			[]string{"other", "no"},
 			true,
 			"INSERT INTO table_name SELECT * FROM UNNEST($1::uuid[]);",
-			[]interface{}{pq.Array([]string{"id1", "id2"})},
+			[]interface{}{pq.Array([]uuid.UUID{uuid.MustParse("01234567-0123-4567-8901-012345678901"), uuid.MustParse("01234567-0123-4567-8901-012345678902")})},
 		},
 		{
 			"Insert individuals query, add id column, fill with empty column if no data exists",
@@ -117,7 +118,7 @@ func TestBuildInsertIndividualsQuery(t *testing.T) {
 				{Name: "col_date", SQLType: "date", Default: nil},
 			},
 			dataframe.New(
-				series.New([]string{"id1", "id2"}, series.String, "id"),
+				series.New([]string{"01234567-0123-4567-8901-012345678901", "01234567-0123-4567-8901-012345678902"}, series.String, "id"),
 				series.New([]string{"b", "a"}, series.String, "col"),
 				series.New([]string{"1", ""}, series.String, "col_text_2"),
 				series.New([]string{"", "3"}, series.String, "col_date"),
@@ -125,7 +126,10 @@ func TestBuildInsertIndividualsQuery(t *testing.T) {
 			[]string{"col_text_1", "no"},
 			true,
 			"INSERT INTO table_name SELECT * FROM UNNEST($1::uuid[],$2::text[]);",
-			[]interface{}{pq.Array([]string{"id1", "id2"}), pq.Array([]interface{}{nil, nil})},
+			[]interface{}{
+				pq.Array([]uuid.UUID{uuid.MustParse("01234567-0123-4567-8901-012345678901"), uuid.MustParse("01234567-0123-4567-8901-012345678902")}),
+				pq.Array(nil),
+			},
 		},
 	}
 	for _, tt := range tests {
