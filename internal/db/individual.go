@@ -159,8 +159,7 @@ func buildInsertIndividualsQuery(tempTableName string, schema []DBColumn, df dat
 		if slices.Contains(columnsOfInterest, col.Name) || (uploadDfHasIdColumn && col.Name == constants.DBColumnIndividualID) {
 			g := df.Col(col.Name)
 			if g.Err != nil {
-				empty := make([]interface{}, df.Nrow())
-				args = append(args, pq.Array(empty))
+				args = append(args, pq.Array(nil))
 			} else {
 				if col.SQLType == "date" {
 					values := make([]*time.Time, df.Nrow())
@@ -171,6 +170,17 @@ func buildInsertIndividualsQuery(tempTableName string, schema []DBColumn, df dat
 							continue
 						}
 						values[i] = &t
+					}
+					args = append(args, pq.Array(values))
+				} else if col.SQLType == "uuid" {
+					values := make([]uuid.UUID, df.Nrow())
+					for i := 0; i < df.Nrow(); i++ {
+						v, err := uuid.Parse(g.Elem(i).String())
+						if err != nil {
+							values[i] = uuid.Nil
+							continue
+						}
+						values[i] = v
 					}
 					args = append(args, pq.Array(values))
 				} else {
