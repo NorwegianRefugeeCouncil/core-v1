@@ -115,25 +115,25 @@ func TestBirthParseDate(t *testing.T) {
 		{
 			name:    "1806-01-02",
 			value:   "1806-01-02",
-			error:   errors.New("birth_date: 1806-01-02 00:00:00 +0000 UTC is before: 1900-01-01 00:00:00 +0000 UTC"),
+			error:   errors.New("Date of Birth: 1806-01-02 00:00:00 +0000 UTC is before: 1900-01-01 00:00:00 +0000 UTC"),
 			wantErr: true,
 		},
 		{
 			name:    "2006-13-40",
 			value:   "2006-13-40",
-			error:   errors.New("birth_date: 2006-13-40 is invalid: parsing time \"2006-13-40\": month out of range"),
+			error:   errors.New("Date of Birth: 2006-13-40 is invalid: parsing time \"2006-13-40\": month out of range"),
 			wantErr: true,
 		},
 		{
 			name:    "01.02.2006",
 			value:   "01.02.2006",
-			error:   errors.New("birth_date: 01.02.2006 is invalid: parsing time \"01.02.2006\" as \"2006-01-02\": cannot parse \"2.2006\" as \"2006\""),
+			error:   errors.New("Date of Birth: 01.02.2006 is invalid: parsing time \"01.02.2006\" as \"2006-01-02\": cannot parse \"2.2006\" as \"2006\""),
 			wantErr: true,
 		},
 		{
 			name:    "01. Feb 2006",
 			value:   "01. Feb 2006",
-			error:   errors.New("birth_date: 01. Feb 2006 is invalid: parsing time \"01. Feb 2006\" as \"2006-01-02\": cannot parse \"Feb 2006\" as \"2006\""),
+			error:   errors.New("Date of Birth: 01. Feb 2006 is invalid: parsing time \"01. Feb 2006\" as \"2006-01-02\": cannot parse \"Feb 2006\" as \"2006\""),
 			wantErr: true,
 		},
 	}
@@ -163,7 +163,7 @@ func TestParseAge(t *testing.T) {
 	t.Run("not a number", func(t *testing.T) {
 		result, err := ParseAge("abc")
 		assert.Nil(t, result)
-		assert.Equal(t, err.Error(), errors.New("age: strconv.Atoi: parsing \"abc\": invalid syntax").Error())
+		assert.Equal(t, err.Error(), errors.New("Age: strconv.Atoi: parsing \"abc\": invalid syntax").Error())
 	})
 
 	tests := []struct {
@@ -182,7 +182,7 @@ func TestParseAge(t *testing.T) {
 		{
 			name:    "-1",
 			value:   "-1",
-			error:   errors.New("age: -1 is negative"),
+			error:   errors.New("Age: -1 is negative"),
 			wantErr: true,
 		},
 	}

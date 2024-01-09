@@ -2,6 +2,7 @@ package locales
 
 import (
 	_ "embed"
+	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/nrc-no/notcore/internal/constants"
@@ -27,45 +28,40 @@ var localeFiles = map[string]string{
 	"ar": localeAR,
 }
 
-var localeNames = map[string]string{
-	"en": "English",
-	"ja": "Debugging",
-	"ar": "RTL",
-}
-
 var (
-	DefaultLang    = language.English
-	CurrentLang    = DefaultLang
 	AvailableLangs = containers.NewStringSet()
+	CurrentLang    = DefaultLang
+	DefaultLang    = language.English
 )
-
-var Translations *i18n.Bundle
-var DefaultLocalizer *i18n.Localizer
+var Localizers map[language.Tag]*i18n.Localizer
 var l *locales
 
 type locales struct {
-	localizer *i18n.Localizer
+	localizers    map[language.Tag]*i18n.Localizer
+	currentLocale string
 }
 
 func Init() {
-	loc := locales{localizer: DefaultLocalizer}
+	loc := locales{localizers: Localizers, currentLocale: DefaultLang.String()}
 	l = &loc
 }
 
 func LoadTranslations() error {
-	bundle := i18n.NewBundle(DefaultLang)
-	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
+	locs := map[language.Tag]*i18n.Localizer{}
 
 	for localeKey, locale := range localeFiles {
+		localeTag := language.Make(localeKey)
+		bundle := i18n.NewBundle(localeTag)
+		bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 		AvailableLangs.Add(localeKey)
 		_, err := bundle.ParseMessageFileBytes([]byte(locale), filepath.Join(localeKey+".toml"))
 		if err != nil {
 			return err
 		}
+		locs[localeTag] = i18n.NewLocalizer(bundle, locale)
 	}
 
-	Translations = bundle
-	DefaultLocalizer = i18n.NewLocalizer(bundle, DefaultLang.String())
+	Localizers = locs
 	return nil
 }
 
@@ -78,9 +74,7 @@ func GetTranslator() func(id string, args ...interface{}) string {
 }
 
 func SetLocalizer(lang string) {
-	loc := i18n.NewLocalizer(Translations, lang)
 	CurrentLang = language.Make(lang)
-	l.localizer = loc
 }
 
 func TranslateSlice(ids []string, args ...[]interface{}) []string {
@@ -91,18 +85,39 @@ func TranslateSlice(ids []string, args ...[]interface{}) []string {
 	return translations
 }
 
-func GetTranslationKeys(values []string) []string {
-	translationKeys := make([]string, len(values))
+func GetDBColumns(values []string) ([]string, error) {
+	dbCols := make([]string, len(values))
+	unknownColumns := []string{}
 	for i, v := range values {
+		foundKey := false
+		val := strings.Trim(v, " \t\n\r")
 		for _, c := range constants.IndividualFileColumns {
-			tra := l.Translate(c)
-			val := strings.Trim(v, " \t\n\r")
-			if tra == val {
-				translationKeys[i] = c
+			for _, lang := range AvailableLangs.Items() {
+				tra := l.TranslateFrom(c, lang)
+				if tra == val {
+					dbCols[i] = constants.IndividualFileToDBMap[c]
+					foundKey = true
+					continue
+				}
+			}
+			if foundKey {
+				break
+			}
+		}
+		if !foundKey {
+			if constants.IndividualDBColumns.Contains(val) {
+				dbCols[i] = val
+			} else if val == "" {
+				unknownColumns = append(unknownColumns, l.Translate("empty_string"))
+			} else {
+				unknownColumns = append(unknownColumns, val)
 			}
 		}
 	}
-	return translationKeys
+	if len(unknownColumns) == 0 {
+		return dbCols, nil
+	}
+	return nil, fmt.Errorf(l.Translate("error_unknown_columns", strings.Join(unknownColumns, ", ")))
 }
 
 type Interface interface {
@@ -121,7 +136,25 @@ func (l locales) Translate(id string, args ...interface{}) string {
 			data["v"+strconv.Itoa(n)] = iface
 		}
 	}
-	str, _, err := l.localizer.LocalizeWithTag(&i18n.LocalizeConfig{
+	str, _, err := l.localizers[CurrentLang].LocalizeWithTag(&i18n.LocalizeConfig{
+		MessageID:    id,
+		TemplateData: data,
+	})
+	if str == "" && err != nil {
+		return "[TL err: " + err.Error() + "]"
+	}
+	return str
+}
+
+func (l locales) TranslateFrom(id string, lang string, args ...interface{}) string {
+	var data = map[string]interface{}{}
+	if len(args) > 0 {
+		data = make(map[string]interface{}, len(args))
+		for n, iface := range args {
+			data["v"+strconv.Itoa(n)] = iface
+		}
+	}
+	str, _, err := l.localizers[language.Make(lang)].LocalizeWithTag(&i18n.LocalizeConfig{
 		MessageID:    id,
 		TemplateData: data,
 	})
@@ -139,7 +172,7 @@ func (l locales) TranslateCount(id string, ct int, args ...interface{}) string {
 		}
 	}
 	data["ct"] = ct
-	str, _, err := l.localizer.LocalizeWithTag(&i18n.LocalizeConfig{
+	str, _, err := l.localizers[CurrentLang].LocalizeWithTag(&i18n.LocalizeConfig{
 		MessageID:    id,
 		TemplateData: data,
 		PluralCount:  ct,
@@ -151,5 +184,9 @@ func (l locales) TranslateCount(id string, ct int, args ...interface{}) string {
 }
 
 func (l locales) GetAvailableLocales() map[string]string {
-	return localeNames
+	availableLocales := make(map[string]string, len(l.localizers))
+	for loc, _ := range localeFiles {
+		availableLocales[loc] = l.TranslateFrom("language", loc)
+	}
+	return availableLocales
 }

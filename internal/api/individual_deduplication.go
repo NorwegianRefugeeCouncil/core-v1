@@ -369,10 +369,9 @@ func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], config de
 }
 
 func CreateDataframeFromRecords(records [][]string, deduplicationTypes []deduplication.DeduplicationType, mandatory []string) (dataframe.DataFrame, error) {
-	keys := locales.GetTranslationKeys(records[0])
-	dbCols := make([]string, len(keys))
-	for i, key := range keys {
-		dbCols[i] = constants.IndividualFileToDBMap[key]
+	dbCols, err := locales.GetDBColumns(records[0])
+	if err != nil {
+		return dataframe.DataFrame{}, err
 	}
 
 	columnsOfInterest := []string{}

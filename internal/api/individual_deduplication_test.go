@@ -448,7 +448,7 @@ func TestGetDataframeFromRecords(t *testing.T) {
 		{
 			name: "with id column",
 			records: [][]string{
-				{"other", "id", "full_name"},
+				{"age", "id", "full_name"},
 				{"0", "id1", ""},
 				{"2", "id3", "full"},
 				{"4", "id5", "name"},
@@ -467,7 +467,7 @@ func TestGetDataframeFromRecords(t *testing.T) {
 		{
 			name: "without id column",
 			records: [][]string{
-				{"other", "full_name"},
+				{"Age", "full_name"},
 				{"0", ""},
 				{"2", "full"},
 				{"4", "name"},
@@ -485,10 +485,10 @@ func TestGetDataframeFromRecords(t *testing.T) {
 		{
 			name: "no deduplication type",
 			records: [][]string{
-				{"index", "file_full_name"},
-				{"0", ""},
-				{"2", "full"},
-				{"4", "name"},
+				{"Full name"},
+				{""},
+				{"full"},
+				{"name"},
 			},
 			mandatory: []string{},
 			config:    []deduplication.DeduplicationType{},
@@ -498,10 +498,10 @@ func TestGetDataframeFromRecords(t *testing.T) {
 		{
 			name: "error",
 			records: [][]string{
-				{"index", "file_full_name"},
-				{"0", ""},
-				{"2", "full"},
-				{"4", "name"},
+				{"Full name"},
+				{""},
+				{"full"},
+				{"name"},
 			},
 			mandatory: []string{"birth_date"},
 			config: []deduplication.DeduplicationType{

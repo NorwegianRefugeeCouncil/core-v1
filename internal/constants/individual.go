@@ -711,6 +711,6 @@ var IndividualFileToDBMap = map[string]string{
 }
 
 var IndividualSystemFileColumns = []string{
-	FileColumnIndividualCreatedAt,
-	FileColumnIndividualUpdatedAt,
+	DBColumnIndividualCreatedAt,
+	DBColumnIndividualUpdatedAt,
 }
