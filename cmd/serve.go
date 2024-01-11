@@ -175,8 +175,16 @@ var serveCmd = &cobra.Command{
 
 		azureBlobStorageUrl := getFlagOrEnv(cmd, flagAzureBlobStorageUrl, envAzureBlobStorageUrl)
 		downloadsContainerName := getFlagOrEnv(cmd, flagDownloadsContainerName, envDownloadsContainerName)
-		azuriteAccountName := cmd.Flag(flagAzuriteAccountName).Value.String()
-		azuriteAccountKey := cmd.Flag(flagAzuriteAccountKey).Value.String()
+
+		var azuriteAccountName string
+		if flag := cmd.Flag(flagAzuriteAccountName); flag != nil {
+			azuriteAccountName = flag.Value.String()
+		}
+
+		var azuriteAccountKey string
+		if flag := cmd.Flag(flagAzuriteAccountKey); flag != nil {
+			azuriteAccountKey = flag.Value.String()
+		}
 
 		options := server.Options{
 			Address:              listenAddress,
