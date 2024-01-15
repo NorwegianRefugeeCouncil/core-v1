@@ -13,28 +13,29 @@ import (
 )
 
 type Options struct {
-	Address                 string
-	DatabaseDriver          string
-	DatabaseDSN             string
-	LoginURL                string
-	JwtGroups               utils.JwtGroupOptions
-	IdTokenAuthHeaderName   string
-	IdTokenAuthHeaderFormat string
-	AccessTokenHeaderName   string
-	AccessTokenHeaderFormat string
-	OIDCIssuerURL           string
-	OAuthClientID           string
-	TokenRefreshURL         string
-	TokenRefreshInterval    time.Duration
-	HashKey1                string
-	BlockKey1               string
-	HashKey2                string
-	BlockKey2               string
-	EnableBetaFeatures      bool
-	AzureBlobStorageURL     string
-	DownloadsContainerName  string
-	AzuriteAccountName      string
-	AzuriteAccountKey       string
+	Address                      string
+	DatabaseDriver               string
+	DatabaseDSN                  string
+	LoginURL                     string
+	JwtGroups                    utils.JwtGroupOptions
+	IdTokenAuthHeaderName        string
+	IdTokenAuthHeaderFormat      string
+	AccessTokenHeaderName        string
+	AccessTokenHeaderFormat      string
+	OIDCIssuerURL                string
+	OAuthClientID                string
+	TokenRefreshURL              string
+	TokenRefreshInterval         time.Duration
+	HashKey1                     string
+	BlockKey1                    string
+	HashKey2                     string
+	BlockKey2                    string
+	EnableBetaFeatures           bool
+	AzureBlobStorageURL          string
+	DownloadsContainerName       string
+	UserAssignedIdentityClientId string
+	AzuriteAccountName           string
+	AzuriteAccountKey            string
 }
 
 var jwtGroupRegex = regexp.MustCompile(`^[A-Za-z0-9_-]+(?: +[A-Za-z0-9_-]+)*$`)

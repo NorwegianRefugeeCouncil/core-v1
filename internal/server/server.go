@@ -118,7 +118,7 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 		accountKey:    o.AzuriteAccountKey,
 		containerName: o.DownloadsContainerName,
 	}
-	azureBlobClient, err := getAzureBlobStorageClient(ctx, o.AzureBlobStorageURL, azuriteOptions)
+	azureBlobClient, err := getAzureBlobStorageClient(ctx, o.AzureBlobStorageURL, azuriteOptions, o.UserAssignedIdentityClientId)
 	if err != nil {
 		l.Error("failed to get azure blob storage client", zap.Error(err))
 		return nil, err
@@ -189,8 +189,8 @@ func (s *Server) Start(ctx context.Context) error {
 	return nil
 }
 
-func getAzureBlobStorageClient(ctx context.Context, url string, azuriteOptions AzuriteOptions) (*azblob.Client, error) {
-	isLocalEnvironment := strings.Contains(url, "localhost") || strings.Contains(url, "127.0.0.1")
+func getAzureBlobStorageClient(ctx context.Context, storageUrl string, azuriteOptions AzuriteOptions, userAssignedIdentityClientId string) (*azblob.Client, error) {
+	isLocalEnvironment := strings.Contains(storageUrl, "localhost") || strings.Contains(storageUrl, "127.0.0.1")
 
 	if isLocalEnvironment {
 		credential, err := azblob.NewSharedKeyCredential(azuriteOptions.accountName, azuriteOptions.accountKey)
@@ -198,7 +198,7 @@ func getAzureBlobStorageClient(ctx context.Context, url string, azuriteOptions A
 			return nil, err
 		}
 
-		client, err := azblob.NewClientWithSharedKeyCredential(url, credential, nil)
+		client, err := azblob.NewClientWithSharedKeyCredential(storageUrl, credential, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -207,12 +207,14 @@ func getAzureBlobStorageClient(ctx context.Context, url string, azuriteOptions A
 
 		return client, nil
 	} else {
-		credential, err := azidentity.NewDefaultAzureCredential(nil)
+		clientID := azidentity.ClientID(userAssignedIdentityClientId)
+		opts := azidentity.ManagedIdentityCredentialOptions{ID: clientID}
+		credential, err := azidentity.NewManagedIdentityCredential(&opts)
 		if err != nil {
 			return nil, err
 		}
 
-		client, err := azblob.NewClient(url, credential, nil)
+		client, err := azblob.NewClient(storageUrl, credential, nil)
 		if err != nil {
 			return nil, err
 		}

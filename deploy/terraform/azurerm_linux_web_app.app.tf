@@ -57,6 +57,7 @@ resource "azurerm_linux_web_app" "app" {
     CORE_ENABLE_BETA_FEATURES       = tobool(var.enable_beta_features)
     CORE_AZURE_BLOB_STORAGE_URL     = "https://nrc${var.app_name}${var.environment}.blob.core.windows.net"
     CORE_DOWNLOADS_CONTAINER_NAME   = var.download_storage_container_name
+    USER_ASSIGNED_IDENTITY_CLIENT_ID = azurerm_user_assigned_identity.app.client_id
 
     CORE_LOGIN_URL         = "https://${var.backend_host_name}/.auth/login/oidc"
     CORE_TOKEN_REFRESH_URL = "https://${var.backend_host_name}/.auth/refresh"
