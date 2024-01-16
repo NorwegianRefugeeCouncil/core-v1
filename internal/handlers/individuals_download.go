@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"net/http"
@@ -10,7 +9,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 	"github.com/google/uuid"
@@ -26,35 +24,35 @@ func generateUniqueDownloadFileNameForCountryAndExtension(selectedCountryID stri
 	return fileName
 }
 
-func assertValidFileNameForCountry(fileName, wantCountryID string) (string, string, error) {
+func assertValidFileNameForCountry(fileName, wantCountryID string) (string, error) {
 	parts := strings.Split(fileName, "_")
 	if len(parts) != 2 {
-		return "", "", fmt.Errorf("invalid file name")
+		return "", fmt.Errorf("invalid file name")
 	}
 	countryID, err := uuid.Parse(parts[0])
 	if err != nil {
-		return "", "", fmt.Errorf("invalid file name")
+		return "", fmt.Errorf("invalid file name")
 	}
 	if countryID.String() != wantCountryID {
-		return "", "", fmt.Errorf("invalid file name")
+		return "", fmt.Errorf("invalid file name")
 	}
 
 	secondParts := strings.Split(parts[1], ".")
 	if len(secondParts) != 2 {
-		return "", "", fmt.Errorf("invalid file name")
+		return "", fmt.Errorf("invalid file name")
 	}
 
 	ext := secondParts[1]
 	if !isValidFileExtension(ext) {
-		return "", "", fmt.Errorf("invalid file name")
+		return "", fmt.Errorf("invalid file name")
 	}
 
 	_, err = uuid.Parse(secondParts[0])
 	if err != nil {
-		return "", "", fmt.Errorf("invalid file name")
+		return "", fmt.Errorf("invalid file name")
 	}
 
-	return "download." + ext, ext, nil
+	return ext, nil
 }
 
 func isValidFileExtension(ext string) bool {
@@ -93,7 +91,7 @@ func HandleDownload(
 
 		file := r.URL.Query().Get("file")
 		if file != "" {
-			resultFileName, resultFileExtension, err := assertValidFileNameForCountry(file, selectedCountryID)
+			resultFileExtension, err := assertValidFileNameForCountry(file, selectedCountryID)
 			if err != nil {
 				l.Error("invalid file name", zap.Error(err))
 				http.Error(w, "invalid file name: "+err.Error(), http.StatusBadRequest)
@@ -123,16 +121,15 @@ func HandleDownload(
 				http.Error(w, "failed to download file: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
-
-			b, err := io.ReadAll(downloadStream.Body)
-			if err != nil {
-				l.Error("failed to read file", zap.Error(err))
-				http.Error(w, "failed to read file: "+err.Error(), http.StatusInternalServerError)
-				return
-			}
+			defer downloadStream.Body.Close()
 
 			setContentTypeForExtension(w, resultFileExtension)
-			http.ServeContent(w, r, resultFileName, time.Time{}, bytes.NewReader(b))
+			_, err = io.Copy(w, downloadStream.Body)
+			if err != nil {
+				l.Error("failed to copy file to response", zap.Error(err))
+				http.Error(w, "failed to copy file to response: "+err.Error(), http.StatusInternalServerError)
+				return
+			}
 			return
 		}
 
