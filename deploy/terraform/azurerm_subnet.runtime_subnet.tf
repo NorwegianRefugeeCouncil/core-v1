@@ -26,7 +26,7 @@ resource "azurerm_network_security_group" "runtime_nsg" {
 # This is required to use Managed Identities
 resource "azurerm_network_security_rule" "outbound_rule_imds" {
   provider                    = azurerm.runtime
-  name                        = "allow-outbound"
+  name                        = "allow-outbound-azure-imds"
   priority                    = 100
   direction                   = "Outbound"
   access                      = "Allow"

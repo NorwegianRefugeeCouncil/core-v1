@@ -55,7 +55,7 @@ resource "azurerm_linux_web_app" "app" {
     CORE_TOKEN_REFRESH_INTERVAL     = "15m"
     CORE_LOG_LEVEL                  = var.log_level
     CORE_ENABLE_BETA_FEATURES       = tobool(var.enable_beta_features)
-    CORE_AZURE_BLOB_STORAGE_URL     = "https://nrc${var.app_name}${var.environment}.blob.core.windows.net"
+    CORE_AZURE_BLOB_STORAGE_URL     = azurerm_storage_account.download_storage.primary_blob_endpoint
     CORE_DOWNLOADS_CONTAINER_NAME   = var.download_storage_container_name
     USER_ASSIGNED_IDENTITY_CLIENT_ID = azurerm_user_assigned_identity.app.client_id
 
