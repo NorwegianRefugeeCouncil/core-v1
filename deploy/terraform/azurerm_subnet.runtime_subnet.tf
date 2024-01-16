@@ -14,33 +14,3 @@ resource "azurerm_subnet" "runtime_subnet" {
     }
   }
 }
-
-resource "azurerm_network_security_group" "runtime_nsg" {
-  provider            = azurerm.runtime
-  name                = "runtime-nsg"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-}
-
-# Outbound traffic to the Azure Instance Metadata Service (IMDS) using its well-known IP address
-# This is required to use Managed Identities
-resource "azurerm_network_security_rule" "outbound_rule_imds" {
-  provider                    = azurerm.runtime
-  name                        = "allow-outbound-azure-imds"
-  priority                    = 100
-  direction                   = "Outbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "80"
-  source_address_prefix       = "*"
-  destination_address_prefix  = "169.254.169.254"
-  network_security_group_name = azurerm_network_security_group.runtime_nsg.name
-  resource_group_name         = azurerm_resource_group.rg.name
-}
-
-resource "azurerm_subnet_network_security_group_association" "runtume_association" {
-  provider                  = azurerm.runtime
-  subnet_id                 = azurerm_subnet.runtime_subnet.id
-  network_security_group_id = azurerm_network_security_group.runtime_nsg.id
-}
