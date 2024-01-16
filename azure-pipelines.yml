@@ -77,7 +77,7 @@ stages:
 
     - task: Docker@2
       displayName: Build final image
-      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      condition: succeeded()
       env:
         DOCKER_BUILDKIT: "1"
       inputs:
@@ -93,7 +93,7 @@ stages:
 
     - task: Docker@2
       displayName: Push dev image
-      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      condition: succeeded()
       inputs:
         command: push
         containerRegistry: $(CONTAINER_REGISTRY_CONNECTION)
@@ -103,7 +103,7 @@ stages:
 
     - task: Docker@2
       displayName: Push final image
-      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      condition: succeeded()
       inputs:
         command: push
         containerRegistry: $(CONTAINER_REGISTRY_CONNECTION)
@@ -113,34 +113,34 @@ stages:
           latest
 
     - bash: echo -n "$(CONTAINER_REGISTRY)/$(REPOSITORY):$(TAG)" > $(Build.SourcesDirectory)/ref.txt
-      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      condition: succeeded()
       displayName: Output version build artifact
 
     - publish: $(Build.SourcesDirectory)/ref.txt
-      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      condition: succeeded()
       artifact: ImageRef
       displayName: Publish image reference output build artifact
 
     - bash: echo -n "$(CONTAINER_REGISTRY)/$(REPOSITORY)" > $(Build.SourcesDirectory)/image.txt
-      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      condition: succeeded()
       displayName: Output image build artifact
 
     - publish: $(Build.SourcesDirectory)/image.txt
-      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      condition: succeeded()
       artifact: Image
       displayName: Publish image output build artifact
 
     - bash: echo -n "$(TAG)" > $(Build.SourcesDirectory)/tag.txt
-      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      condition: succeeded()
       displayName: Output version build artifact
 
     - publish: $(Build.SourcesDirectory)/tag.txt
-      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      condition: succeeded()
       artifact: Version
       displayName: Publish version build artifact
 
     - publish: $(Build.SourcesDirectory)/deploy/terraform
-      condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
+      condition: succeeded()
       artifact: Terraform
       displayName: Publish terraform manifests build artifact
 
