@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"net/http"
@@ -102,6 +104,7 @@ func HandleDownload(
 			downloadStreamOptions := &azblob.DownloadStreamOptions{}
 
 			if rangeHeader != "" {
+				l.Info("range header", zap.String("range", rangeHeader))
 				offset, count, err := parseRangeHeader(rangeHeader)
 				if err != nil {
 					l.Error(err.Error(), zap.Error(err))
@@ -123,13 +126,23 @@ func HandleDownload(
 			}
 			defer downloadStream.Body.Close()
 
+			l.Info("starting file download", zap.String("file", file))
+			fileSize := downloadStream.ContentLength
+			checksum := downloadStream.ContentMD5
+			l.Info("file size and checksum after upload", zap.Int64("size", int64(*fileSize)), zap.String("checksum", hex.EncodeToString(checksum[:])))
+
 			setContentTypeForExtension(w, resultFileExtension)
+
+			l.Info("starting file write", zap.String("file", file))
+
 			_, err = io.Copy(w, downloadStream.Body)
 			if err != nil {
 				l.Error("failed to copy file to response", zap.Error(err))
 				http.Error(w, "failed to copy file to response: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
+			l.Info("finished file write", zap.String("file", file))
+
 			return
 		}
 
@@ -204,6 +217,14 @@ func HandleDownload(
 				return
 			}
 		}
+
+		fileBytes, err := os.ReadFile(downloadFile.Name())
+		if err != nil {
+			l.Error("failed to read file for checksum", zap.Error(err))
+			return
+		}
+		checksum := md5.Sum(fileBytes)
+		l.Info("file size and checksum before upload", zap.Int64("size", int64(len(fileBytes))), zap.String("checksum", hex.EncodeToString(checksum[:])))
 
 		_, err = azureStorageClient.UploadFile(ctx, containerName, fileName, downloadFile, nil)
 		if err != nil {
