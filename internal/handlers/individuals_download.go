@@ -103,9 +103,12 @@ func HandleDownload(
 			rangeHeader := r.Header.Get("Range")
 			downloadStreamOptions := &azblob.DownloadStreamOptions{}
 
+			var rangeCount int64
+			var rangeOffset int64
 			if rangeHeader != "" {
 				l.Info("range header", zap.String("range", rangeHeader))
-				offset, count, err := parseRangeHeader(rangeHeader)
+				rangeOffset, rangeCount, err = parseRangeHeader(rangeHeader)
+				l.Info("parsed range header", zap.Int64("offset", rangeOffset), zap.Int64("count", rangeCount))
 				if err != nil {
 					l.Error(err.Error(), zap.Error(err))
 					http.Error(w, err.Error(), http.StatusBadRequest)
@@ -113,8 +116,8 @@ func HandleDownload(
 				}
 
 				downloadStreamOptions.Range = azblob.HTTPRange{
-					Offset: offset,
-					Count:  count,
+					Offset: rangeOffset,
+					Count:  rangeCount,
 				}
 			}
 
@@ -132,6 +135,12 @@ func HandleDownload(
 			l.Info("file size and checksum after upload", zap.Int64("size", int64(*fileSize)), zap.String("checksum", hex.EncodeToString(checksum[:])))
 
 			setContentTypeForExtension(w, resultFileExtension)
+
+			if *downloadStream.ContentLength == rangeCount {
+				l.Info("partial file")
+				w.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/*", rangeOffset, rangeOffset+rangeCount-1))
+				w.WriteHeader(http.StatusPartialContent)
+			}
 
 			l.Info("starting file write", zap.String("file", file))
 
