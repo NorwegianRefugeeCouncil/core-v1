@@ -76,7 +76,6 @@ services:
       - "host.docker.internal:host-gateway"
   azure_blob_storage:
     image: mcr.microsoft.com/azure-storage/azurite
-    container_name: individualdownloads
     command: 'azurite -l /data --blobHost 0.0.0.0 --blobPort 11000 --queueHost 0.0.0.0 --queuePort 11001 --tableHost 0.0.0.0 --tablePort 11002'
     ports:
       - '11000:11000'
