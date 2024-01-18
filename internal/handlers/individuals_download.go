@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"fmt"
 	"io"
 	"net/http"
@@ -131,14 +129,14 @@ func HandleDownload(
 
 			l.Info("starting file download", zap.String("file", file))
 			fileSize := downloadStream.ContentLength
-			checksum := downloadStream.ContentMD5
-			l.Info("file size and checksum after upload", zap.Int64("size", int64(*fileSize)), zap.String("checksum", hex.EncodeToString(checksum[:])))
+			l.Info("file size after upload", zap.Int64("size", int64(*fileSize)))
 
 			setContentTypeForExtension(w, resultFileExtension)
 
 			if *downloadStream.ContentLength == rangeCount {
 				l.Info("partial file")
-				w.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/*", rangeOffset, rangeOffset+rangeCount-1))
+				w.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/22156121", rangeOffset, rangeOffset+rangeCount-1))
+				w.Header().Set("Accept-Ranges", "bytes")
 				w.WriteHeader(http.StatusPartialContent)
 			}
 
@@ -232,8 +230,7 @@ func HandleDownload(
 			l.Error("failed to read file for checksum", zap.Error(err))
 			return
 		}
-		checksum := md5.Sum(fileBytes)
-		l.Info("file size and checksum before upload", zap.Int64("size", int64(len(fileBytes))), zap.String("checksum", hex.EncodeToString(checksum[:])))
+		l.Info("file size before upload", zap.Int64("size", int64(len(fileBytes))))
 
 		_, err = azureStorageClient.UploadFile(ctx, containerName, fileName, downloadFile, nil)
 		if err != nil {
