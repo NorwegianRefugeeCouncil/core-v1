@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
@@ -141,13 +142,20 @@ func HandleDownload(
 			// }
 
 			l.Info("starting file write", zap.String("file", file))
-
-			_, err = io.Copy(w, downloadStream.Body)
+			data, err := io.ReadAll(downloadStream.Body)
 			if err != nil {
-				l.Error("failed to copy file to response", zap.Error(err))
-				http.Error(w, "failed to copy file to response: "+err.Error(), http.StatusInternalServerError)
+				l.Error("failed to read file", zap.Error(err))
+				http.Error(w, "failed to read file: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
+
+			http.ServeContent(w, r, "download."+resultFileExtension, *downloadStream.LastModified, bytes.NewReader(data))
+			// _, err = io.Copy(w, downloadStream.Body)
+			// if err != nil {
+			// 	l.Error("failed to copy file to response", zap.Error(err))
+			// 	http.Error(w, "failed to copy file to response: "+err.Error(), http.StatusInternalServerError)
+			// 	return
+			// }
 			l.Info("finished file write", zap.String("file", file))
 
 			return
