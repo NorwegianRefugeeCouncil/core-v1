@@ -98,26 +98,26 @@ func HandleDownload(
 				return
 			}
 
-			rangeHeader := r.Header.Get("Range")
+			// rangeHeader := r.Header.Get("Range")
 			downloadStreamOptions := &azblob.DownloadStreamOptions{}
 
-			var rangeCount int64
-			var rangeOffset int64
-			if rangeHeader != "" {
-				l.Info("range header", zap.String("range", rangeHeader))
-				rangeOffset, rangeCount, err = parseRangeHeader(rangeHeader)
-				l.Info("parsed range header", zap.Int64("offset", rangeOffset), zap.Int64("count", rangeCount))
-				if err != nil {
-					l.Error(err.Error(), zap.Error(err))
-					http.Error(w, err.Error(), http.StatusBadRequest)
-					return
-				}
+			// var rangeCount int64
+			// var rangeOffset int64
+			// if rangeHeader != "" {
+			// 	l.Info("range header", zap.String("range", rangeHeader))
+			// 	rangeOffset, rangeCount, err = parseRangeHeader(rangeHeader)
+			// 	l.Info("parsed range header", zap.Int64("offset", rangeOffset), zap.Int64("count", rangeCount))
+			// 	if err != nil {
+			// 		l.Error(err.Error(), zap.Error(err))
+			// 		http.Error(w, err.Error(), http.StatusBadRequest)
+			// 		return
+			// 	}
 
-				downloadStreamOptions.Range = azblob.HTTPRange{
-					Offset: rangeOffset,
-					Count:  rangeCount,
-				}
-			}
+			// 	downloadStreamOptions.Range = azblob.HTTPRange{
+			// 		Offset: rangeOffset,
+			// 		Count:  rangeCount,
+			// 	}
+			// }
 
 			downloadStream, err := azureStorageClient.DownloadStream(ctx, containerName, file, downloadStreamOptions)
 			if err != nil {
@@ -133,12 +133,12 @@ func HandleDownload(
 
 			setContentTypeForExtension(w, resultFileExtension)
 
-			if *downloadStream.ContentLength == rangeCount {
-				l.Info("partial file")
-				w.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/22156121", rangeOffset, rangeOffset+rangeCount-1))
-				w.Header().Set("Accept-Ranges", "bytes")
-				w.WriteHeader(http.StatusPartialContent)
-			}
+			// if *downloadStream.ContentLength == rangeCount {
+			// 	l.Info("partial file")
+			// 	w.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/22156121", rangeOffset, rangeOffset+rangeCount-1))
+			// 	w.Header().Set("Accept-Ranges", "bytes")
+			// 	w.WriteHeader(http.StatusPartialContent)
+			// }
 
 			l.Info("starting file write", zap.String("file", file))
 
