@@ -380,6 +380,13 @@ This flag specifies the Azure Blob Storage container name.
 Can also be set with %s
 `, envDownloadsContainerName)))
 
+	serveCmd.PersistentFlags().String(flagAzuriteAccountName, "", cleanDoc(fmt.Sprintf(`
+This flag specifies the Azurite account name to be used when running the application locally.
+`)))
+
+	serveCmd.PersistentFlags().String(flagAzuriteAccountKey, "", cleanDoc(fmt.Sprintf(`
+This flag specifies the Azurite account key to be used when running the application locally.
+`)))
 }
 
 func cleanDoc(s string) string {
