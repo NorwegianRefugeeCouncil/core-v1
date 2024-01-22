@@ -116,7 +116,7 @@ func HandleDownload(
 			}
 			defer downloadStream.Body.Close()
 
-			tempFile, err := SaveStreamToTempFile(downloadStream.Body, resultFileName)
+			tempFile, err := SaveStreamToTempFile(downloadStream.Body)
 			if err != nil {
 				l.Error("failed to save stream to file", zap.Error(err))
 				http.Error(w, "failed to save stream to file: "+err.Error(), http.StatusInternalServerError)
@@ -237,8 +237,8 @@ func HandleDownload(
 	})
 }
 
-func SaveStreamToTempFile(stream io.ReadCloser, fileName string) (*os.File, error) {
-	tmpfile, err := os.CreateTemp("/tmp", fileName)
+func SaveStreamToTempFile(stream io.ReadCloser) (*os.File, error) {
+	tmpfile, err := os.CreateTemp("/tmp", "*")
 	if err != nil {
 		return nil, err
 	}
