@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"net/http"
@@ -67,6 +66,17 @@ func setContentTypeForExtension(w http.ResponseWriter, ext string) {
 	}
 }
 
+type cleanupResponseWriter struct {
+	http.ResponseWriter
+	req    *http.Request
+	onDone func()
+}
+
+func (cw *cleanupResponseWriter) watchForDone() {
+	<-cw.req.Context().Done()
+	cw.onDone()
+}
+
 func HandleDownload(
 	userRepo db.IndividualRepo,
 	azureStorageClient *azblob.Client,
@@ -106,15 +116,36 @@ func HandleDownload(
 			}
 			defer downloadStream.Body.Close()
 
-			data, err := io.ReadAll(downloadStream.Body)
+			tempFile, err := SaveStreamToTempFile(downloadStream.Body, resultFileName)
 			if err != nil {
-				l.Error("failed to read file", zap.Error(err))
-				http.Error(w, "failed to read file: "+err.Error(), http.StatusInternalServerError)
+				l.Error("failed to save stream to file", zap.Error(err))
+				http.Error(w, "failed to save stream to file: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
 
+			// The temporary file may be served in chunks, so we only want to close and remove it after it's done.
+			onDone := func() {
+				err := tempFile.Close()
+				if err != nil {
+					l.Error("failed to close file", zap.Error(err))
+				}
+
+				err = os.Remove(tempFile.Name())
+				if err != nil {
+					l.Error("failed to remove file", zap.Error(err))
+				}
+			}
+
+			cw := &cleanupResponseWriter{
+				ResponseWriter: w,
+				req:            r,
+				onDone:         onDone,
+			}
+
+			go cw.watchForDone()
+
 			setContentTypeForExtension(w, resultFileExtension)
-			http.ServeContent(w, r, resultFileName, *downloadStream.LastModified, bytes.NewReader(data))
+			http.ServeContent(cw, r, resultFileName, *downloadStream.LastModified, tempFile)
 
 			return
 		}
@@ -204,4 +235,22 @@ func HandleDownload(
 		)
 		http.Redirect(w, r, redirectPath, http.StatusSeeOther)
 	})
+}
+
+func SaveStreamToTempFile(stream io.ReadCloser, fileName string) (*os.File, error) {
+	tmpfile, err := os.CreateTemp("/tmp", fileName)
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := io.Copy(tmpfile, stream); err != nil {
+		return nil, err
+	}
+
+	// Seek back to the start of the temporary file
+	if _, err := tmpfile.Seek(0, 0); err != nil {
+		return nil, err
+	}
+
+	return tmpfile, nil
 }
