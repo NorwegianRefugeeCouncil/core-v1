@@ -2,6 +2,9 @@ package handlers
 
 import (
 	"fmt"
+	"net/http"
+	"strings"
+
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
@@ -12,8 +15,6 @@ import (
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"go.uber.org/zap"
 	"golang.org/x/exp/slices"
-	"net/http"
-	"strings"
 )
 
 var UPLOAD_LIMIT = 10000
@@ -90,7 +91,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		deduplicationConfig, err := deduplication.GetDeduplicationConfig(deduplicationTypes, deduplicationLogicOperator)
 
 		mandatoryColumns := []string{constants.DBColumnIndividualLastName}
-		if slices.Contains(records[0], constants.DBColumnIndividualID) {
+		if _, idColumnExists := colMapping[constants.DBColumnIndividualID]; idColumnExists {
 			mandatoryColumns = append(mandatoryColumns, constants.DBColumnIndividualID)
 		}
 
