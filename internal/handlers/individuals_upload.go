@@ -14,7 +14,6 @@ import (
 	"github.com/nrc-no/notcore/internal/utils"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"go.uber.org/zap"
-	"golang.org/x/exp/slices"
 )
 
 var UPLOAD_LIMIT = 10000
@@ -91,7 +90,8 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		deduplicationConfig, err := deduplication.GetDeduplicationConfig(deduplicationTypes, deduplicationLogicOperator)
 
 		mandatoryColumns := []string{constants.DBColumnIndividualLastName}
-		if _, idColumnExists := colMapping[constants.DBColumnIndividualID]; idColumnExists {
+		var idColumnExistsInFile bool
+		if _, idColumnExistsInFile = colMapping[constants.DBColumnIndividualID]; idColumnExistsInFile {
 			mandatoryColumns = append(mandatoryColumns, constants.DBColumnIndividualID)
 		}
 
@@ -107,7 +107,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			return
 		}
 
-		if slices.Contains(records[0], constants.FileColumnIndividualID) {
+		if idColumnExistsInFile {
 			fileErrors = api.FindDuplicatesInUUIDColumn(df)
 			if fileErrors != nil {
 				renderError(t("error_file_with_duplicate_uuids"), fileErrors)
