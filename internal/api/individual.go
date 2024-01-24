@@ -3,9 +3,10 @@ package api
 import (
 	"encoding/json"
 	"errors"
+	"time"
+
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"github.com/nrc-no/notcore/internal/locales"
-	"time"
 
 	"github.com/nrc-no/notcore/internal/constants"
 )
@@ -219,36 +220,85 @@ type Individual struct {
 	ServiceRequestedDate1 *time.Time          `json:"serviceRequestedDate1" db:"service_requested_date_1"`
 	ServiceDeliveredDate1 *time.Time          `json:"serviceDeliveredDate1" db:"service_delivered_date_1"`
 	ServiceComments1      string              `json:"serviceComments1" db:"service_comments_1"`
+	ServiceType1          string              `json:"serviceType1" db:"service_type_1"`
+	Service1              string              `json:"service1" db:"service_1"`
+	ServiceSubService1    string              `json:"serviceSubService1" db:"service_sub_service_1"`
+	ServiceLocation1      string              `json:"serviceLocation1" db:"service_location_1"`
+	ServiceDonor1         string              `json:"serviceDonor1" db:"service_donor_1"`
+	ServiceProjectName1   string              `json:"serviceProjectName1" db:"service_project_name_1"`
+	ServiceAgentName1     string              `json:"serviceAgentName1" db:"service_agent_name_1"`
 
 	ServiceCC2            enumTypes.ServiceCC `json:"serviceCC2" db:"service_cc_2"`
 	ServiceRequestedDate2 *time.Time          `json:"serviceRequestedDate2" db:"service_requested_date_2"`
 	ServiceDeliveredDate2 *time.Time          `json:"serviceDeliveredDate2" db:"service_delivered_date_2"`
 	ServiceComments2      string              `json:"serviceComments2" db:"service_comments_2"`
+	ServiceType2          string              `json:"serviceType2" db:"service_type_2"`
+	Service2              string              `json:"service2" db:"service_2"`
+	ServiceSubService2    string              `json:"serviceSubService2" db:"service_sub_service_2"`
+	ServiceLocation2      string              `json:"serviceLocation2" db:"service_location_2"`
+	ServiceDonor2         string              `json:"serviceDonor2" db:"service_donor_2"`
+	ServiceProjectName2   string              `json:"serviceProjectName2" db:"service_project_name_2"`
+	ServiceAgentName2     string              `json:"serviceAgentName2" db:"service_agent_name_2"`
 
 	ServiceCC3            enumTypes.ServiceCC `json:"serviceCC3" db:"service_cc_3"`
 	ServiceRequestedDate3 *time.Time          `json:"serviceRequestedDate3" db:"service_requested_date_3"`
 	ServiceDeliveredDate3 *time.Time          `json:"serviceDeliveredDate3" db:"service_delivered_date_3"`
 	ServiceComments3      string              `json:"serviceComments3" db:"service_comments_3"`
+	ServiceType3          string              `json:"serviceType3" db:"service_type_3"`
+	Service3              string              `json:"service3" db:"service_3"`
+	ServiceSubService3    string              `json:"serviceSubService3" db:"service_sub_service_3"`
+	ServiceLocation3      string              `json:"serviceLocation3" db:"service_location_3"`
+	ServiceDonor3         string              `json:"serviceDonor3" db:"service_donor_3"`
+	ServiceProjectName3   string              `json:"serviceProjectName3" db:"service_project_name_3"`
+	ServiceAgentName3     string              `json:"serviceAgentName3" db:"service_agent_name_3"`
 
 	ServiceCC4            enumTypes.ServiceCC `json:"serviceCC4" db:"service_cc_4"`
 	ServiceRequestedDate4 *time.Time          `json:"serviceRequestedDate4" db:"service_requested_date_4"`
 	ServiceDeliveredDate4 *time.Time          `json:"serviceDeliveredDate4" db:"service_delivered_date_4"`
 	ServiceComments4      string              `json:"serviceComments4" db:"service_comments_4"`
+	ServiceType4          string              `json:"serviceType4" db:"service_type_4"`
+	Service4              string              `json:"service4" db:"service_4"`
+	ServiceSubService4    string              `json:"serviceSubService4" db:"service_sub_service_4"`
+	ServiceLocation4      string              `json:"serviceLocation4" db:"service_location_4"`
+	ServiceDonor4         string              `json:"serviceDonor4" db:"service_donor_4"`
+	ServiceProjectName4   string              `json:"serviceProjectName4" db:"service_project_name_4"`
+	ServiceAgentName4     string              `json:"serviceAgentName4" db:"service_agent_name_4"`
 
 	ServiceCC5            enumTypes.ServiceCC `json:"serviceCC5" db:"service_cc_5"`
 	ServiceRequestedDate5 *time.Time          `json:"serviceRequestedDate5" db:"service_requested_date_5"`
 	ServiceDeliveredDate5 *time.Time          `json:"serviceDeliveredDate5" db:"service_delivered_date_5"`
 	ServiceComments5      string              `json:"serviceComments5" db:"service_comments_5"`
+	ServiceType5          string              `json:"serviceType5" db:"service_type_5"`
+	Service5              string              `json:"service5" db:"service_5"`
+	ServiceSubService5    string              `json:"serviceSubService5" db:"service_sub_service_5"`
+	ServiceLocation5      string              `json:"serviceLocation5" db:"service_location_5"`
+	ServiceDonor5         string              `json:"serviceDonor5" db:"service_donor_5"`
+	ServiceProjectName5   string              `json:"serviceProjectName5" db:"service_project_name_5"`
+	ServiceAgentName5     string              `json:"serviceAgentName5" db:"service_agent_name_5"`
 
 	ServiceCC6            enumTypes.ServiceCC `json:"serviceCC6" db:"service_cc_6"`
 	ServiceRequestedDate6 *time.Time          `json:"serviceRequestedDate6" db:"service_requested_date_6"`
 	ServiceDeliveredDate6 *time.Time          `json:"serviceDeliveredDate6" db:"service_delivered_date_6"`
 	ServiceComments6      string              `json:"serviceComments6" db:"service_comments_6"`
+	ServiceType6          string              `json:"serviceType6" db:"service_type_6"`
+	Service6              string              `json:"service6" db:"service_6"`
+	ServiceSubService6    string              `json:"serviceSubService6" db:"service_sub_service_6"`
+	ServiceLocation6      string              `json:"serviceLocation6" db:"service_location_6"`
+	ServiceDonor6         string              `json:"serviceDonor6" db:"service_donor_6"`
+	ServiceProjectName6   string              `json:"serviceProjectName6" db:"service_project_name_6"`
+	ServiceAgentName6     string              `json:"serviceAgentName6" db:"service_agent_name_6"`
 
 	ServiceCC7            enumTypes.ServiceCC `json:"serviceCC7" db:"service_cc_7"`
 	ServiceRequestedDate7 *time.Time          `json:"serviceRequestedDate7" db:"service_requested_date_7"`
 	ServiceDeliveredDate7 *time.Time          `json:"serviceDeliveredDate7" db:"service_delivered_date_7"`
 	ServiceComments7      string              `json:"serviceComments7" db:"service_comments_7"`
+	ServiceType7          string              `json:"serviceType7" db:"service_type_7"`
+	Service7              string              `json:"service7" db:"service_7"`
+	ServiceSubService7    string              `json:"serviceSubService7" db:"service_sub_service_7"`
+	ServiceLocation7      string              `json:"serviceLocation7" db:"service_location_7"`
+	ServiceDonor7         string              `json:"serviceDonor7" db:"service_donor_7"`
+	ServiceProjectName7   string              `json:"serviceProjectName7" db:"service_project_name_7"`
+	ServiceAgentName7     string              `json:"serviceAgentName7" db:"service_agent_name_7"`
 }
 
 type IndividualList struct {
