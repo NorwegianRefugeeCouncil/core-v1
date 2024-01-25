@@ -507,6 +507,20 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.ServiceDeliveredDate1, nil
 	case constants.DBColumnIndividualServiceComments1:
 		return i.ServiceComments1, nil
+	case constants.DBColumnIndividualServiceType1:
+		return i.ServiceType1, nil
+	case constants.DBColumnIndividualService1:
+		return i.Service1, nil
+	case constants.DBColumnIndividualServiceSubService1:
+		return i.ServiceSubService1, nil
+	case constants.DBColumnIndividualServiceLocation1:
+		return i.ServiceLocation1, nil
+	case constants.DBColumnIndividualServiceDonor1:
+		return i.ServiceDonor1, nil
+	case constants.DBColumnIndividualServiceProjectName1:
+		return i.ServiceProjectName1, nil
+	case constants.DBColumnIndividualServiceAgentName1:
+		return i.ServiceAgentName1, nil
 	case constants.DBColumnIndividualServiceCC2:
 		return i.ServiceCC2, nil
 	case constants.DBColumnIndividualServiceRequestedDate2:
@@ -515,6 +529,20 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.ServiceDeliveredDate2, nil
 	case constants.DBColumnIndividualServiceComments2:
 		return i.ServiceComments2, nil
+	case constants.DBColumnIndividualServiceType2:
+		return i.ServiceType2, nil
+	case constants.DBColumnIndividualService2:
+		return i.Service2, nil
+	case constants.DBColumnIndividualServiceSubService2:
+		return i.ServiceSubService2, nil
+	case constants.DBColumnIndividualServiceLocation2:
+		return i.ServiceLocation2, nil
+	case constants.DBColumnIndividualServiceDonor2:
+		return i.ServiceDonor2, nil
+	case constants.DBColumnIndividualServiceProjectName2:
+		return i.ServiceProjectName2, nil
+	case constants.DBColumnIndividualServiceAgentName2:
+		return i.ServiceAgentName2, nil
 	case constants.DBColumnIndividualServiceCC3:
 		return i.ServiceCC3, nil
 	case constants.DBColumnIndividualServiceRequestedDate3:
@@ -523,6 +551,20 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.ServiceDeliveredDate3, nil
 	case constants.DBColumnIndividualServiceComments3:
 		return i.ServiceComments3, nil
+	case constants.DBColumnIndividualServiceType3:
+		return i.ServiceType3, nil
+	case constants.DBColumnIndividualService3:
+		return i.Service3, nil
+	case constants.DBColumnIndividualServiceSubService3:
+		return i.ServiceSubService3, nil
+	case constants.DBColumnIndividualServiceLocation3:
+		return i.ServiceLocation3, nil
+	case constants.DBColumnIndividualServiceDonor3:
+		return i.ServiceDonor3, nil
+	case constants.DBColumnIndividualServiceProjectName3:
+		return i.ServiceProjectName3, nil
+	case constants.DBColumnIndividualServiceAgentName3:
+		return i.ServiceAgentName3, nil
 	case constants.DBColumnIndividualServiceCC4:
 		return i.ServiceCC4, nil
 	case constants.DBColumnIndividualServiceRequestedDate4:
@@ -531,6 +573,20 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.ServiceDeliveredDate4, nil
 	case constants.DBColumnIndividualServiceComments4:
 		return i.ServiceComments4, nil
+	case constants.DBColumnIndividualServiceType4:
+		return i.ServiceType4, nil
+	case constants.DBColumnIndividualService4:
+		return i.Service4, nil
+	case constants.DBColumnIndividualServiceSubService4:
+		return i.ServiceSubService4, nil
+	case constants.DBColumnIndividualServiceLocation4:
+		return i.ServiceLocation4, nil
+	case constants.DBColumnIndividualServiceDonor4:
+		return i.ServiceDonor4, nil
+	case constants.DBColumnIndividualServiceProjectName4:
+		return i.ServiceProjectName4, nil
+	case constants.DBColumnIndividualServiceAgentName4:
+		return i.ServiceAgentName4, nil
 	case constants.DBColumnIndividualServiceCC5:
 		return i.ServiceCC5, nil
 	case constants.DBColumnIndividualServiceRequestedDate5:
@@ -539,6 +595,20 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.ServiceDeliveredDate5, nil
 	case constants.DBColumnIndividualServiceComments5:
 		return i.ServiceComments5, nil
+	case constants.DBColumnIndividualServiceType5:
+		return i.ServiceType5, nil
+	case constants.DBColumnIndividualService5:
+		return i.Service5, nil
+	case constants.DBColumnIndividualServiceSubService5:
+		return i.ServiceSubService5, nil
+	case constants.DBColumnIndividualServiceLocation5:
+		return i.ServiceLocation5, nil
+	case constants.DBColumnIndividualServiceDonor5:
+		return i.ServiceDonor5, nil
+	case constants.DBColumnIndividualServiceProjectName5:
+		return i.ServiceProjectName5, nil
+	case constants.DBColumnIndividualServiceAgentName5:
+		return i.ServiceAgentName5, nil
 	case constants.DBColumnIndividualServiceCC6:
 		return i.ServiceCC6, nil
 	case constants.DBColumnIndividualServiceRequestedDate6:
@@ -547,6 +617,20 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.ServiceDeliveredDate6, nil
 	case constants.DBColumnIndividualServiceComments6:
 		return i.ServiceComments6, nil
+	case constants.DBColumnIndividualServiceType6:
+		return i.ServiceType6, nil
+	case constants.DBColumnIndividualService6:
+		return i.Service6, nil
+	case constants.DBColumnIndividualServiceSubService6:
+		return i.ServiceSubService6, nil
+	case constants.DBColumnIndividualServiceLocation6:
+		return i.ServiceLocation6, nil
+	case constants.DBColumnIndividualServiceDonor6:
+		return i.ServiceDonor6, nil
+	case constants.DBColumnIndividualServiceProjectName6:
+		return i.ServiceProjectName6, nil
+	case constants.DBColumnIndividualServiceAgentName6:
+		return i.ServiceAgentName6, nil
 	case constants.DBColumnIndividualServiceCC7:
 		return i.ServiceCC7, nil
 	case constants.DBColumnIndividualServiceRequestedDate7:
@@ -555,6 +639,20 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.ServiceDeliveredDate7, nil
 	case constants.DBColumnIndividualServiceComments7:
 		return i.ServiceComments7, nil
+	case constants.DBColumnIndividualServiceType7:
+		return i.ServiceType7, nil
+	case constants.DBColumnIndividualService7:
+		return i.Service7, nil
+	case constants.DBColumnIndividualServiceSubService7:
+		return i.ServiceSubService7, nil
+	case constants.DBColumnIndividualServiceLocation7:
+		return i.ServiceLocation7, nil
+	case constants.DBColumnIndividualServiceDonor7:
+		return i.ServiceDonor7, nil
+	case constants.DBColumnIndividualServiceProjectName7:
+		return i.ServiceProjectName7, nil
+	case constants.DBColumnIndividualServiceAgentName7:
+		return i.ServiceAgentName7, nil
 	default:
 		return nil, errors.New(locales.GetTranslator()("error_unknown_field", field))
 	}
@@ -634,18 +732,67 @@ func (i *Individual) Normalize() {
 
 	i.ServiceCC1 = enumTypes.ServiceCC(trimString(string(i.ServiceCC1)))
 	i.ServiceComments1 = trimString(i.ServiceComments1)
+	i.ServiceType1 = trimString(i.ServiceType1)
+	i.Service1 = trimString(i.Service1)
+	i.ServiceSubService1 = trimString(i.ServiceSubService1)
+	i.ServiceLocation1 = trimString(i.ServiceLocation1)
+	i.ServiceDonor1 = trimString(i.ServiceDonor1)
+	i.ServiceProjectName1 = trimString(i.ServiceProjectName1)
+	i.ServiceAgentName1 = trimString(i.ServiceAgentName1)
 	i.ServiceCC2 = enumTypes.ServiceCC(trimString(string(i.ServiceCC2)))
 	i.ServiceComments2 = trimString(i.ServiceComments2)
+	i.ServiceType2 = trimString(i.ServiceType2)
+	i.Service2 = trimString(i.Service2)
+	i.ServiceSubService2 = trimString(i.ServiceSubService2)
+	i.ServiceLocation2 = trimString(i.ServiceLocation2)
+	i.ServiceDonor2 = trimString(i.ServiceDonor2)
+	i.ServiceProjectName2 = trimString(i.ServiceProjectName2)
+	i.ServiceAgentName2 = trimString(i.ServiceAgentName2)
 	i.ServiceCC3 = enumTypes.ServiceCC(trimString(string(i.ServiceCC3)))
 	i.ServiceComments3 = trimString(i.ServiceComments3)
+	i.ServiceType3 = trimString(i.ServiceType3)
+	i.Service3 = trimString(i.Service3)
+	i.ServiceSubService3 = trimString(i.ServiceSubService3)
+	i.ServiceLocation3 = trimString(i.ServiceLocation3)
+	i.ServiceDonor3 = trimString(i.ServiceDonor3)
+	i.ServiceProjectName3 = trimString(i.ServiceProjectName3)
+	i.ServiceAgentName3 = trimString(i.ServiceAgentName3)
 	i.ServiceCC4 = enumTypes.ServiceCC(trimString(string(i.ServiceCC4)))
 	i.ServiceComments4 = trimString(i.ServiceComments4)
+	i.ServiceType4 = trimString(i.ServiceType4)
+	i.Service4 = trimString(i.Service4)
+	i.ServiceSubService4 = trimString(i.ServiceSubService4)
+	i.ServiceLocation4 = trimString(i.ServiceLocation4)
+	i.ServiceDonor4 = trimString(i.ServiceDonor4)
+	i.ServiceProjectName4 = trimString(i.ServiceProjectName4)
+	i.ServiceAgentName4 = trimString(i.ServiceAgentName4)
 	i.ServiceCC5 = enumTypes.ServiceCC(trimString(string(i.ServiceCC5)))
 	i.ServiceComments5 = trimString(i.ServiceComments5)
+	i.ServiceType5 = trimString(i.ServiceType5)
+	i.Service5 = trimString(i.Service5)
+	i.ServiceSubService5 = trimString(i.ServiceSubService5)
+	i.ServiceLocation5 = trimString(i.ServiceLocation5)
+	i.ServiceDonor5 = trimString(i.ServiceDonor5)
+	i.ServiceProjectName5 = trimString(i.ServiceProjectName5)
+	i.ServiceAgentName5 = trimString(i.ServiceAgentName5)
 	i.ServiceCC6 = enumTypes.ServiceCC(trimString(string(i.ServiceCC6)))
 	i.ServiceComments6 = trimString(i.ServiceComments6)
+	i.ServiceType6 = trimString(i.ServiceType6)
+	i.Service6 = trimString(i.Service6)
+	i.ServiceSubService6 = trimString(i.ServiceSubService6)
+	i.ServiceLocation6 = trimString(i.ServiceLocation6)
+	i.ServiceDonor6 = trimString(i.ServiceDonor6)
+	i.ServiceProjectName6 = trimString(i.ServiceProjectName6)
+	i.ServiceAgentName6 = trimString(i.ServiceAgentName6)
 	i.ServiceCC7 = enumTypes.ServiceCC(trimString(string(i.ServiceCC7)))
 	i.ServiceComments7 = trimString(i.ServiceComments7)
+	i.ServiceType7 = trimString(i.ServiceType7)
+	i.Service7 = trimString(i.Service7)
+	i.ServiceSubService7 = trimString(i.ServiceSubService7)
+	i.ServiceLocation7 = trimString(i.ServiceLocation7)
+	i.ServiceDonor7 = trimString(i.ServiceDonor7)
+	i.ServiceProjectName7 = trimString(i.ServiceProjectName7)
+	i.ServiceAgentName7 = trimString(i.ServiceAgentName7)
 
 	if i.PrefersToRemainAnonymous != nil && *i.PrefersToRemainAnonymous == true {
 		i.FullName = ""

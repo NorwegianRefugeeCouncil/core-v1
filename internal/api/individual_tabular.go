@@ -4,14 +4,15 @@ import (
 	"encoding/csv"
 	"errors"
 	"fmt"
-	"github.com/nrc-no/notcore/internal/api/enumTypes"
-	"github.com/nrc-no/notcore/internal/constants"
-	"github.com/nrc-no/notcore/internal/locales"
 	"io"
 	"net/mail"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
+	"github.com/nrc-no/notcore/internal/constants"
+	"github.com/nrc-no/notcore/internal/locales"
 
 	"github.com/xuri/excelize/v2"
 )
@@ -626,6 +627,20 @@ func (i *Individual) UnmarshalTabularData(colMapping map[string]int, cols []stri
 			i.ServiceDeliveredDate1 = date
 		case constants.DBColumnIndividualServiceComments1:
 			i.ServiceComments1 = cols[idx]
+		case constants.DBColumnIndividualServiceType1:
+			i.ServiceType1 = cols[idx]
+		case constants.DBColumnIndividualService1:
+			i.Service1 = cols[idx]
+		case constants.DBColumnIndividualServiceSubService1:
+			i.ServiceSubService1 = cols[idx]
+		case constants.DBColumnIndividualServiceLocation1:
+			i.ServiceLocation1 = cols[idx]
+		case constants.DBColumnIndividualServiceDonor1:
+			i.ServiceDonor1 = cols[idx]
+		case constants.DBColumnIndividualServiceProjectName1:
+			i.ServiceProjectName1 = cols[idx]
+		case constants.DBColumnIndividualServiceAgentName1:
+			i.ServiceAgentName1 = cols[idx]
 		case constants.DBColumnIndividualServiceCC2:
 			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
@@ -651,6 +666,20 @@ func (i *Individual) UnmarshalTabularData(colMapping map[string]int, cols []stri
 			i.ServiceDeliveredDate2 = date
 		case constants.DBColumnIndividualServiceComments2:
 			i.ServiceComments2 = cols[idx]
+		case constants.DBColumnIndividualServiceType2:
+			i.ServiceType2 = cols[idx]
+		case constants.DBColumnIndividualService2:
+			i.Service2 = cols[idx]
+		case constants.DBColumnIndividualServiceSubService2:
+			i.ServiceSubService2 = cols[idx]
+		case constants.DBColumnIndividualServiceLocation2:
+			i.ServiceLocation2 = cols[idx]
+		case constants.DBColumnIndividualServiceDonor2:
+			i.ServiceDonor2 = cols[idx]
+		case constants.DBColumnIndividualServiceProjectName2:
+			i.ServiceProjectName2 = cols[idx]
+		case constants.DBColumnIndividualServiceAgentName2:
+			i.ServiceAgentName2 = cols[idx]
 		case constants.DBColumnIndividualServiceCC3:
 			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
@@ -676,6 +705,20 @@ func (i *Individual) UnmarshalTabularData(colMapping map[string]int, cols []stri
 			i.ServiceDeliveredDate3 = date
 		case constants.DBColumnIndividualServiceComments3:
 			i.ServiceComments3 = cols[idx]
+		case constants.DBColumnIndividualServiceType3:
+			i.ServiceType3 = cols[idx]
+		case constants.DBColumnIndividualService3:
+			i.Service3 = cols[idx]
+		case constants.DBColumnIndividualServiceSubService3:
+			i.ServiceSubService3 = cols[idx]
+		case constants.DBColumnIndividualServiceLocation3:
+			i.ServiceLocation3 = cols[idx]
+		case constants.DBColumnIndividualServiceDonor3:
+			i.ServiceDonor3 = cols[idx]
+		case constants.DBColumnIndividualServiceProjectName3:
+			i.ServiceProjectName3 = cols[idx]
+		case constants.DBColumnIndividualServiceAgentName3:
+			i.ServiceAgentName3 = cols[idx]
 		case constants.DBColumnIndividualServiceCC4:
 			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
@@ -701,6 +744,20 @@ func (i *Individual) UnmarshalTabularData(colMapping map[string]int, cols []stri
 			i.ServiceDeliveredDate4 = date
 		case constants.DBColumnIndividualServiceComments4:
 			i.ServiceComments4 = cols[idx]
+		case constants.DBColumnIndividualServiceType4:
+			i.ServiceType4 = cols[idx]
+		case constants.DBColumnIndividualService4:
+			i.Service4 = cols[idx]
+		case constants.DBColumnIndividualServiceSubService4:
+			i.ServiceSubService4 = cols[idx]
+		case constants.DBColumnIndividualServiceLocation4:
+			i.ServiceLocation4 = cols[idx]
+		case constants.DBColumnIndividualServiceDonor4:
+			i.ServiceDonor4 = cols[idx]
+		case constants.DBColumnIndividualServiceProjectName4:
+			i.ServiceProjectName4 = cols[idx]
+		case constants.DBColumnIndividualServiceAgentName4:
+			i.ServiceAgentName4 = cols[idx]
 		case constants.DBColumnIndividualServiceCC5:
 			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
@@ -726,6 +783,20 @@ func (i *Individual) UnmarshalTabularData(colMapping map[string]int, cols []stri
 			i.ServiceDeliveredDate5 = date
 		case constants.DBColumnIndividualServiceComments5:
 			i.ServiceComments5 = cols[idx]
+		case constants.DBColumnIndividualServiceType5:
+			i.ServiceType5 = cols[idx]
+		case constants.DBColumnIndividualService5:
+			i.Service5 = cols[idx]
+		case constants.DBColumnIndividualServiceSubService5:
+			i.ServiceSubService5 = cols[idx]
+		case constants.DBColumnIndividualServiceLocation5:
+			i.ServiceLocation5 = cols[idx]
+		case constants.DBColumnIndividualServiceDonor5:
+			i.ServiceDonor5 = cols[idx]
+		case constants.DBColumnIndividualServiceProjectName5:
+			i.ServiceProjectName5 = cols[idx]
+		case constants.DBColumnIndividualServiceAgentName5:
+			i.ServiceAgentName5 = cols[idx]
 		case constants.DBColumnIndividualServiceCC6:
 			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
@@ -751,6 +822,20 @@ func (i *Individual) UnmarshalTabularData(colMapping map[string]int, cols []stri
 			i.ServiceDeliveredDate6 = date
 		case constants.DBColumnIndividualServiceComments6:
 			i.ServiceComments6 = cols[idx]
+		case constants.DBColumnIndividualServiceType6:
+			i.ServiceType6 = cols[idx]
+		case constants.DBColumnIndividualService6:
+			i.Service6 = cols[idx]
+		case constants.DBColumnIndividualServiceSubService6:
+			i.ServiceSubService6 = cols[idx]
+		case constants.DBColumnIndividualServiceLocation6:
+			i.ServiceLocation6 = cols[idx]
+		case constants.DBColumnIndividualServiceDonor6:
+			i.ServiceDonor6 = cols[idx]
+		case constants.DBColumnIndividualServiceProjectName6:
+			i.ServiceProjectName6 = cols[idx]
+		case constants.DBColumnIndividualServiceAgentName6:
+			i.ServiceAgentName6 = cols[idx]
 		case constants.DBColumnIndividualServiceCC7:
 			cc, err := enumTypes.ParseServiceCC(cols[idx])
 			if err != nil {
@@ -776,6 +861,20 @@ func (i *Individual) UnmarshalTabularData(colMapping map[string]int, cols []stri
 			i.ServiceDeliveredDate7 = date
 		case constants.DBColumnIndividualServiceComments7:
 			i.ServiceComments7 = cols[idx]
+		case constants.DBColumnIndividualServiceType7:
+			i.ServiceType7 = cols[idx]
+		case constants.DBColumnIndividualService7:
+			i.Service7 = cols[idx]
+		case constants.DBColumnIndividualServiceSubService7:
+			i.ServiceSubService7 = cols[idx]
+		case constants.DBColumnIndividualServiceLocation7:
+			i.ServiceLocation7 = cols[idx]
+		case constants.DBColumnIndividualServiceDonor7:
+			i.ServiceDonor7 = cols[idx]
+		case constants.DBColumnIndividualServiceProjectName7:
+			i.ServiceProjectName7 = cols[idx]
+		case constants.DBColumnIndividualServiceAgentName7:
+			i.ServiceAgentName7 = cols[idx]
 		}
 	}
 	if len(errs) > 0 {

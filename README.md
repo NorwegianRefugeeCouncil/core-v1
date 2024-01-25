@@ -104,8 +104,7 @@ TODO: Add more details
 
 `internal/constants/individual.go`
 For field `Foo`:
-- Add constant `FormParamIndividualFoo`
-- Add constant `FormParamGetIndividualFoo`
+- Add constant `FormParamsGetIndividualFoo`
 - Add constant `DBColumnIndividualFoo` and add to `IndividualDBColumns` array
 - Add constant `FileColumnIndividualFoo` and add to `IndividualFileColumns` array
 - Update `IndividualDBToFileMap` and `IndividualFileToDBMap` maps
