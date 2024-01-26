@@ -2,6 +2,7 @@ package views
 
 import (
 	"fmt"
+
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"github.com/nrc-no/notcore/internal/constants"
@@ -1000,7 +1001,7 @@ func (f *IndividualForm) buildServiceCC(idx int) func(t locales.Translator) erro
 		options = append([]forms.SelectInputFieldOption{{Value: "", Label: t("select_a_value")}}, options...)
 		return buildField(&forms.SelectInputField{
 			Name:        fmt.Sprintf("service_cc_%d", idx),
-			DisplayName: t("service_cc_no", idx),
+			DisplayName: t("service_cc_abrv_no", idx),
 			Options:     options,
 			Codec:       &serviceCCCodec{},
 		}, f.serviceSection, value)
