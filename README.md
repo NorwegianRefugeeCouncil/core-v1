@@ -98,7 +98,10 @@ View documentation on field types [Form Fields](pkg/views/forms/README.md)
 ## Database
 
 Add a database migration
-TODO: Add more details
+
+Create a new file in `internal/db/migrations/postgres/` in the format `NNN_description.up.sql` increasing the number from the previous migration.
+
+Reference the created migration file `migrations` array in `internal/db/migrations.go`
 
 ## Backend
 
@@ -146,4 +149,33 @@ case constants.FileColumnIndividualIsMinor, constants.FileColumnIndividualPresen
 ```
 
 ## Frontend
+
+`web/templates/individuals.gohtml`
+Add new column headers and body to display new field in the list/table in the expected position:
+
+```
+{{template "columnHeader" (dict
+  "Options" .Options
+  "Sortable" true
+  "SortKey" "foo"
+  "Label" (translate "foo")
+  "Title" "Foo"
+)}}
+```
+
+```
+<!-- Foo -->
+  <td>
+    <div>
+      {{.Foo}}
+    </div>
+  </td>
+<!-- End Foo -->
+```
+
+`internal/views/individual_form.go`
+Add a function call to the `fieldBuilders` to include the new field in the form in the expected position.
+
+### Translations
+Create translation keys for the new field in the form/list and file header for all supported locales.
 
