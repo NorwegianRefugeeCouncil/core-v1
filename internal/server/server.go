@@ -5,8 +5,11 @@ import (
 	"encoding/hex"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -19,6 +22,12 @@ import (
 	"github.com/nrc-no/notcore/internal/server/middleware"
 	"go.uber.org/zap"
 )
+
+type AzuriteOptions struct {
+	accountName   string
+	accountKey    string
+	containerName string
+}
 
 func (o Options) New(ctx context.Context) (*Server, error) {
 
@@ -104,6 +113,17 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 		return nil, err
 	}
 
+	azuriteOptions := AzuriteOptions{
+		accountName:   o.AzuriteAccountName,
+		accountKey:    o.AzuriteAccountKey,
+		containerName: o.DownloadsContainerName,
+	}
+	azureBlobClient, err := getAzureBlobStorageClient(ctx, o.AzureBlobStorageURL, azuriteOptions, o.UserAssignedIdentityClientId)
+	if err != nil {
+		l.Error("failed to get azure blob storage client", zap.Error(err))
+		return nil, err
+	}
+
 	sessionStore := sessions.NewCookieStore(
 		hashKey1,
 		blockKey1,
@@ -131,6 +151,8 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 		idTokenVerifier,
 		sessionStore,
 		tpl,
+		azureBlobClient,
+		o.DownloadsContainerName,
 	)
 
 	return s, nil
@@ -165,4 +187,38 @@ func (s *Server) Start(ctx context.Context) error {
 		return err
 	}
 	return nil
+}
+
+func getAzureBlobStorageClient(ctx context.Context, storageUrl string, azuriteOptions AzuriteOptions, userAssignedIdentityClientId string) (*azblob.Client, error) {
+	isLocalEnvironment := strings.Contains(storageUrl, "localhost") || strings.Contains(storageUrl, "127.0.0.1")
+
+	if isLocalEnvironment {
+		credential, err := azblob.NewSharedKeyCredential(azuriteOptions.accountName, azuriteOptions.accountKey)
+		if err != nil {
+			return nil, err
+		}
+
+		client, err := azblob.NewClientWithSharedKeyCredential(storageUrl, credential, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		client.CreateContainer(ctx, azuriteOptions.containerName, nil)
+
+		return client, nil
+	} else {
+		clientID := azidentity.ClientID(userAssignedIdentityClientId)
+		opts := azidentity.ManagedIdentityCredentialOptions{ID: clientID}
+		credential, err := azidentity.NewManagedIdentityCredential(&opts)
+		if err != nil {
+			return nil, err
+		}
+
+		client, err := azblob.NewClient(storageUrl, credential, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		return client, nil
+	}
 }

@@ -2,12 +2,13 @@ package handlers
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path"
 	"strings"
-	"time"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 	"github.com/google/uuid"
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/db"
@@ -65,10 +66,22 @@ func setContentTypeForExtension(w http.ResponseWriter, ext string) {
 	}
 }
 
+type cleanupResponseWriter struct {
+	http.ResponseWriter
+	req    *http.Request
+	onDone func()
+}
+
+func (cw *cleanupResponseWriter) watchForDone() {
+	<-cw.req.Context().Done()
+	cw.onDone()
+}
+
 func HandleDownload(
 	userRepo db.IndividualRepo,
+	azureStorageClient *azblob.Client,
+	containerName string,
 ) http.Handler {
-
 	const queryParamFormat = "format"
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -87,36 +100,53 @@ func HandleDownload(
 
 		file := r.URL.Query().Get("file")
 		if file != "" {
-
-			// at this point, the file was already created and ready for download.
-
 			resultFileName, resultFileExtension, err := assertValidFileNameForCountry(file, selectedCountryID)
 			if err != nil {
 				l.Error("invalid file name", zap.Error(err))
 				http.Error(w, "invalid file name: "+err.Error(), http.StatusBadRequest)
 				return
 			}
-			filePath := path.Join("/tmp", file)
 
-			// check that the file already exists
-			_, err = os.Stat(filePath)
+			downloadStreamOptions := &azblob.DownloadStreamOptions{}
+			downloadStream, err := azureStorageClient.DownloadStream(ctx, containerName, file, downloadStreamOptions)
 			if err != nil {
-				l.Error("failed to get file info", zap.Error(err))
-				http.Error(w, "failed to get file info: "+err.Error(), http.StatusInternalServerError)
+				l.Error("failed to download file", zap.Error(err))
+				http.Error(w, "failed to download file: "+err.Error(), http.StatusInternalServerError)
+				return
+			}
+			defer downloadStream.Body.Close()
+
+			tempFile, err := saveStreamToTempFile(downloadStream.Body)
+			if err != nil {
+				l.Error("failed to save stream to file", zap.Error(err))
+				http.Error(w, "failed to save stream to file: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
 
-			// open the file
-			file, err := os.Open(filePath)
-			if err != nil {
-				l.Error("failed to open file", zap.Error(err))
-				http.Error(w, "failed to open file: "+err.Error(), http.StatusInternalServerError)
-				return
+			// The temporary file may be served in chunks, so we only want to close and remove it after it's done.
+			onDone := func() {
+				err := tempFile.Close()
+				if err != nil {
+					l.Error("failed to close file", zap.Error(err))
+				}
+
+				err = os.Remove(tempFile.Name())
+				if err != nil {
+					l.Error("failed to remove file", zap.Error(err))
+				}
 			}
+
+			cw := &cleanupResponseWriter{
+				ResponseWriter: w,
+				req:            r,
+				onDone:         onDone,
+			}
+
+			go cw.watchForDone()
 
 			setContentTypeForExtension(w, resultFileExtension)
-			// serve the file
-			http.ServeContent(w, r, resultFileName, time.Time{}, file)
+			http.ServeContent(cw, r, resultFileName, *downloadStream.LastModified, tempFile)
+
 			return
 		}
 
@@ -159,6 +189,7 @@ func HandleDownload(
 		}
 
 		fileName := generateUniqueDownloadFileNameForCountryAndExtension(selectedCountryID, format)
+
 		downloadFile, err := os.Create(path.Join("/tmp", fileName))
 		if err != nil {
 			l.Error("failed to create temp file", zap.Error(err))
@@ -168,6 +199,9 @@ func HandleDownload(
 		defer func() {
 			if err := downloadFile.Close(); err != nil {
 				l.Error("failed to close temp file", zap.Error(err))
+			}
+			if err := os.Remove(downloadFile.Name()); err != nil {
+				l.Error("failed to remove temp file", zap.Error(err))
 			}
 		}()
 
@@ -188,19 +222,35 @@ func HandleDownload(
 			}
 		}
 
-		go func() {
-			// dirty hack to clear out the file after 30 minutes
-			time.Sleep(30 * time.Minute)
-			if err := os.Remove(downloadFile.Name()); err != nil {
-				l.Error("failed to remove temp file", zap.Error(err))
-			}
-		}()
+		_, err = azureStorageClient.UploadFile(ctx, containerName, fileName, downloadFile, nil)
+		if err != nil {
+			l.Error("failed to upload file", zap.Error(err))
+			http.Error(w, "failed to upload file: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		redirectPath := fmt.Sprintf("/countries/%s/participants/download?file=%s",
 			selectedCountryID,
-			path.Base(downloadFile.Name()),
+			path.Base(fileName),
 		)
 		http.Redirect(w, r, redirectPath, http.StatusSeeOther)
-
 	})
+}
+
+func saveStreamToTempFile(stream io.ReadCloser) (*os.File, error) {
+	tmpfile, err := os.CreateTemp("/tmp", "")
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := io.Copy(tmpfile, stream); err != nil {
+		return nil, err
+	}
+
+	// Seek back to the start of the temporary file
+	if _, err := tmpfile.Seek(0, 0); err != nil {
+		return nil, err
+	}
+
+	return tmpfile, nil
 }

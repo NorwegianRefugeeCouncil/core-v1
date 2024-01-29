@@ -5,6 +5,8 @@ import (
 	"github.com/nrc-no/notcore/internal/utils"
 	"net/http"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
+
 	"github.com/coreos/go-oidc/v3/oidc"
 	gorillahandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -31,6 +33,8 @@ func buildRouter(
 	idTokenVerifier middleware.IDTokenVerifier,
 	sessionStore *sessions.CookieStore,
 	tpl templates,
+	azureBlobClient *azblob.Client,
+	containerName string,
 ) *mux.Router {
 
 	r := mux.NewRouter()
@@ -84,7 +88,7 @@ func buildRouter(
 		middleware.HasCountryPermission(auth.PermissionWrite),
 	))
 	individualsRouter.Path("/download").Methods(http.MethodGet).Handler(withMiddleware(
-		handlers.HandleDownload(individualRepo),
+		handlers.HandleDownload(individualRepo, azureBlobClient, containerName),
 		middleware.EnsureSelectedCountry(),
 		middleware.HasCountryPermission(auth.PermissionRead),
 	))
