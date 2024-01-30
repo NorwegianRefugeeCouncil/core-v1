@@ -2,10 +2,11 @@ package api
 
 import (
 	"fmt"
-	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"net/url"
 	"strconv"
 	"time"
+
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
@@ -91,6 +92,13 @@ func (p *listIndividualsOptionsDecoder) parse() error {
 		p.parseServiceRequestedDateTo,
 		p.parseServiceDeliveredDateFrom,
 		p.parseServiceDeliveredDateTo,
+		p.parseServiceType,
+		p.parseService,
+		p.parseServiceSubService,
+		p.parseServiceLocation,
+		p.parseServiceDonor,
+		p.parseServiceProjectName,
+		p.parseServiceAgentName,
 		p.parseUpdatedAtFrom,
 		p.parseUpdatedAtTo,
 		p.parseSkip,
@@ -443,6 +451,41 @@ func (p *listIndividualsOptionsDecoder) parseServiceCCType() error {
 		ccSet.Add(parsedEc)
 	}
 	p.out.ServiceCC = ccSet
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseServiceType() error {
+	p.out.ServiceType = p.values.Get(constants.FormParamsGetIndividualsServiceType)
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseService() error {
+	p.out.Service = p.values.Get(constants.FormParamsGetIndividualsService)
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseServiceSubService() error {
+	p.out.ServiceSubService = p.values.Get(constants.FormParamsGetIndividualsServiceSubService)
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseServiceLocation() error {
+	p.out.ServiceLocation = p.values.Get(constants.FormParamsGetIndividualsServiceLocation)
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseServiceDonor() error {
+	p.out.ServiceDonor = p.values.Get(constants.FormParamsGetIndividualsServiceDonor)
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseServiceProjectName() error {
+	p.out.ServiceProjectName = p.values.Get(constants.FormParamsGetIndividualsServiceProjectName)
+	return nil
+}
+
+func (p *listIndividualsOptionsDecoder) parseServiceAgentName() error {
+	p.out.ServiceAgentName = p.values.Get(constants.FormParamsGetIndividualsServiceAgentName)
 	return nil
 }
 

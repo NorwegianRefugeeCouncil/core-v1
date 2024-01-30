@@ -2,10 +2,11 @@ package api
 
 import (
 	"fmt"
-	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 
 	"github.com/nrc-no/notcore/internal/containers"
 )
@@ -90,6 +91,13 @@ type ListIndividualsOptions struct {
 	ServiceRequestedDateTo          *time.Time
 	ServiceDeliveredDateFrom        *time.Time
 	ServiceDeliveredDateTo          *time.Time
+	ServiceType                     string
+	Service                         string
+	ServiceSubService               string
+	ServiceLocation                 string
+	ServiceDonor                    string
+	ServiceProjectName              string
+	ServiceAgentName                string
 	VisionDisabilityLevel           enumTypes.DisabilityLevel
 }
 
