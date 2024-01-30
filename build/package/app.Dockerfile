@@ -10,13 +10,14 @@ RUN apt-get install -yq --no-install-recommends curl && \
     npm install -g yarn
 ARG uid=1000
 ARG gid=1000
-RUN groupadd -g ${GROUP_ID} core || echo "Group already exists"
-RUN useradd -l -m -d /home/app -u ${USER_ID} -g ${GROUP_ID} core || echo "User already exists"
+RUN groupadd -g ${gid} core || echo "Group already exists"
+RUN useradd -l -m -d /home/app -u ${uid} -g ${gid} core || echo "User already exists"
 RUN mkdir /out && chown ${uid}:${gid} /out
-USER ${uid}:${gid}
 WORKDIR /app
 ADD go.mod ./
 ADD go.sum ./
+RUN chown -R ${uid}:${gid} ./
+USER ${uid}:${gid}
 RUN go mod download && \
     go install github.com/jstemmer/go-junit-report/v2@latest && \
     go install github.com/axw/gocov/gocov@latest && \

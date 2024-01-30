@@ -18,24 +18,27 @@ import (
 )
 
 const (
-	envDbDSN                   = "CORE_DB_DSN"
-	envDbDriver                = "CORE_DB_DRIVER"
-	envListenAddress           = "CORE_LISTEN_ADDRESS"
-	envLoginURL                = "CORE_LOGIN_URL"
-	envTokenRefreshURL         = "CORE_TOKEN_REFRESH_URL"
-	envTokenRefreshInterval    = "CORE_TOKEN_REFRESH_INTERVAL"
-	envJwtGlobalAdminGroup     = "CORE_JWT_GLOBAL_ADMIN_GROUP"
-	envIdTokenHeaderName       = "CORE_ID_TOKEN_HEADER_NAME"
-	envIdTokenHeaderFormat     = "CORE_ID_TOKEN_HEADER_FORMAT"
-	envAccessTokenHeaderName   = "CORE_ACCESS_TOKEN_HEADER_NAME"
-	envAccessTokenHeaderFormat = "CORE_ACCESS_TOKEN_HEADER_FORMAT"
-	envOidcIssuerURL           = "CORE_OIDC_ISSUER"
-	envOidcClientID            = "CORE_OAUTH_CLIENT_ID"
-	envHashKey1                = "CORE_HASH_KEY_1"
-	envBlockKey1               = "CORE_BLOCK_KEY_1"
-	envHashKey2                = "CORE_HASH_KEY_2"
-	envBlockKey2               = "CORE_BLOCK_KEY_2"
-	envEnableBetaFeatures      = "CORE_ENABLE_BETA_FEATURES"
+	envDbDSN                        = "CORE_DB_DSN"
+	envDbDriver                     = "CORE_DB_DRIVER"
+	envListenAddress                = "CORE_LISTEN_ADDRESS"
+	envLoginURL                     = "CORE_LOGIN_URL"
+	envTokenRefreshURL              = "CORE_TOKEN_REFRESH_URL"
+	envTokenRefreshInterval         = "CORE_TOKEN_REFRESH_INTERVAL"
+	envJwtGlobalAdminGroup          = "CORE_JWT_GLOBAL_ADMIN_GROUP"
+	envIdTokenHeaderName            = "CORE_ID_TOKEN_HEADER_NAME"
+	envIdTokenHeaderFormat          = "CORE_ID_TOKEN_HEADER_FORMAT"
+	envAccessTokenHeaderName        = "CORE_ACCESS_TOKEN_HEADER_NAME"
+	envAccessTokenHeaderFormat      = "CORE_ACCESS_TOKEN_HEADER_FORMAT"
+	envOidcIssuerURL                = "CORE_OIDC_ISSUER"
+	envOidcClientID                 = "CORE_OAUTH_CLIENT_ID"
+	envHashKey1                     = "CORE_HASH_KEY_1"
+	envBlockKey1                    = "CORE_BLOCK_KEY_1"
+	envHashKey2                     = "CORE_HASH_KEY_2"
+	envBlockKey2                    = "CORE_BLOCK_KEY_2"
+	envEnableBetaFeatures           = "CORE_ENABLE_BETA_FEATURES"
+	envAzureBlobStorageUrl          = "CORE_AZURE_BLOB_STORAGE_URL"
+	envDownloadsContainerName       = "CORE_DOWNLOADS_CONTAINER_NAME"
+	envUserAssignedIdentityClientId = "USER_ASSIGNED_IDENTITY_CLIENT_ID"
 
 	flagDbDSN                   = "db-dsn"
 	flagDbDriver                = "db-driver"
@@ -55,6 +58,10 @@ const (
 	flagHashKey2                = "hash-key-2"
 	flagBlockKey2               = "block-key-2"
 	flagEnableBetaFeatures      = "enable-beta-features"
+	flagAzureBlobStorageUrl     = "azure-blob-storage-url"
+	flagDownloadsContainerName  = "downloads-container-name"
+	flagAzuriteAccountName      = "azurite-account-name"
+	flagAzuriteAccountKey       = "azurite-account-key"
 )
 
 // serveCmd represents the serve command
@@ -164,8 +171,15 @@ var serveCmd = &cobra.Command{
 		if len(blockKey2) == 0 {
 			return fmt.Errorf("--%s is required", flagBlockKey2)
 		}
-		
+
 		enableBetaFeatures := getBooleanFlagOrEnv(cmd, flagEnableBetaFeatures, envEnableBetaFeatures)
+
+		azureBlobStorageUrl := getFlagOrEnv(cmd, flagAzureBlobStorageUrl, envAzureBlobStorageUrl)
+		downloadsContainerName := getFlagOrEnv(cmd, flagDownloadsContainerName, envDownloadsContainerName)
+		userAssignedIdentityClientId := getEnv(envUserAssignedIdentityClientId)
+
+		azuriteAccountName := getFlag(cmd, flagAzuriteAccountName)
+		azuriteAccountKey := getFlag(cmd, flagAzuriteAccountKey)
 
 		options := server.Options{
 			Address:              listenAddress,
@@ -177,17 +191,22 @@ var serveCmd = &cobra.Command{
 			JwtGroups: utils.JwtGroupOptions{
 				GlobalAdmin: jwtGroupGlobalAdmin,
 			},
-			IdTokenAuthHeaderName:   idTokenHeaderName,
-			IdTokenAuthHeaderFormat: idTokenHeaderFormat,
-			AccessTokenHeaderName:   accessTokenHeaderName,
-			AccessTokenHeaderFormat: accessTokenHeaderFormat,
-			OIDCIssuerURL:           oidcIssuerURL,
-			OAuthClientID:           oauthClientID,
-			HashKey1:                hashKey1,
-			BlockKey1:               blockKey1,
-			HashKey2:                hashKey2,
-			BlockKey2:               blockKey2,
-			EnableBetaFeatures:      enableBetaFeatures,
+			IdTokenAuthHeaderName:        idTokenHeaderName,
+			IdTokenAuthHeaderFormat:      idTokenHeaderFormat,
+			AccessTokenHeaderName:        accessTokenHeaderName,
+			AccessTokenHeaderFormat:      accessTokenHeaderFormat,
+			OIDCIssuerURL:                oidcIssuerURL,
+			OAuthClientID:                oauthClientID,
+			HashKey1:                     hashKey1,
+			BlockKey1:                    blockKey1,
+			HashKey2:                     hashKey2,
+			BlockKey2:                    blockKey2,
+			EnableBetaFeatures:           enableBetaFeatures,
+			AzureBlobStorageURL:          azureBlobStorageUrl,
+			DownloadsContainerName:       downloadsContainerName,
+			UserAssignedIdentityClientId: userAssignedIdentityClientId,
+			AzuriteAccountName:           azuriteAccountName,
+			AzuriteAccountKey:            azuriteAccountKey,
 		}
 
 		srv, err := options.New(ctx)
@@ -351,6 +370,23 @@ This flag specifies whether to enable beta features.
 Can also be set with %s
 `, envEnableBetaFeatures)))
 
+	serveCmd.PersistentFlags().String(flagAzureBlobStorageUrl, "", cleanDoc(fmt.Sprintf(`
+This flag specifies the Azure Blob Storage URL.
+Can also be set with %s
+`, envAzureBlobStorageUrl)))
+
+	serveCmd.PersistentFlags().String(flagDownloadsContainerName, "", cleanDoc(fmt.Sprintf(`
+This flag specifies the Azure Blob Storage container name.
+Can also be set with %s
+`, envDownloadsContainerName)))
+
+	serveCmd.PersistentFlags().String(flagAzuriteAccountName, "", cleanDoc(fmt.Sprintf(`
+This flag specifies the Azurite account name to be used when running the application locally.
+`)))
+
+	serveCmd.PersistentFlags().String(flagAzuriteAccountKey, "", cleanDoc(fmt.Sprintf(`
+This flag specifies the Azurite account key to be used when running the application locally.
+`)))
 }
 
 func cleanDoc(s string) string {
@@ -379,4 +415,16 @@ func getBooleanFlagOrEnv(cmd *cobra.Command, flagName string, envName string) bo
 		}
 	}
 	return os.Getenv(envName) == "true"
+}
+
+func getFlag(cmd *cobra.Command, flagName string) string {
+	var flagValue string
+	if flag := cmd.Flag(flagName); flag != nil {
+		flagValue = flag.Value.String()
+	}
+	return flagValue
+}
+
+func getEnv(envName string) string {
+	return os.Getenv(envName)
 }
