@@ -4,14 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/go-gota/gota/dataframe"
 	"github.com/lib/pq"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"golang.org/x/exp/slices"
-	"strings"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -120,9 +121,9 @@ func buildTableSchemaQuery() string {
 EXAMPLE:
 
 CREATE TEMPORARY TABLE temp_individuals_<requestId>
+
 	(birth_date date,first_name varchar,middle_name varchar,last_name varchar,native_name varchar,email_1 varchar,email_2 varchar,email_3 varchar)
 	ON COMMIT DROP;
-
 */
 func buildCreateTempTableQuery(tempTableName string, schema []DBColumn, columnsOfInterest []string) string {
 	b := &strings.Builder{}
@@ -143,6 +144,7 @@ func buildCreateTempTableQuery(tempTableName string, schema []DBColumn, columnsO
 EXAMPLE:
 
 INSERT INTO temp_individuals_<requestId>
+
 	SELECT * FROM UNNEST($1::date[],$2::varchar[],$3::varchar[],$4::varchar[],$5::varchar[],$6::varchar[],$7::varchar[],$8::varchar[]);
 
 where the parameters are the values of the relevant columns in the dataframe df
@@ -200,14 +202,15 @@ func buildInsertIndividualsQuery(tempTableName string, schema []DBColumn, df dat
 EXAMPLE:
 
 SELECT DISTINCT  ir.birth_date,ir.email_1,ir.email_2,ir.email_3,ir.first_name,ir.middle_name,ir.last_name,ir.native_name,ir.id
+
 	FROM individual_registrations ir
 	CROSS JOIN temp_individuals_<requestId> ti
 	WHERE ir.country_id = $1
 		AND ir.deleted_at IS NULL
 		AND (ti.birth_date = ir.birth_date)
-		AND (ti.email_1 = ir.email_1 OR ti.email_2 = ir.email_2 OR ti.email_3 = ir.email_3)
-		AND (ti.first_name = ir.first_name AND ti.middle_name = ir.middle_name AND ti.last_name = ir.last_name AND ti.native_name = ir.native_name);
-
+		AND ((ti.email_1 != '' AND ti.email_1 = ir.email_1) OR (ti.email_2 != '' AND ti.email_2 = ir.email_2) OR (ti.email_3 != '' AND ti.email_3 = ir.email_3))
+		AND (ti.first_name = ir.first_name AND ti.middle_name = ir.middle_name AND ti.last_name = ir.last_name
+			AND ti.native_name = ir.native_name AND (ti.first_name != '' OR ti.middle_name != '' OR ti.last_name != '' OR ti.native_name != ''));
 */
 func buildDeduplicationQuery(tempTableName string, columnsOfInterest []string, config deduplication.DeduplicationConfig, uploadDfHasIdColumn bool, schema []DBColumn) string {
 	b := &strings.Builder{}
@@ -225,7 +228,20 @@ func buildDeduplicationQuery(tempTableName string, columnsOfInterest []string, c
 		subSubQueries := []string{}
 		cols := dt.Config.Columns
 		for _, c := range cols {
-			subSubQueries = append(subSubQueries, fmt.Sprintf("ti.%s = ir.%s", c, c))
+			if dt.Config.Condition == deduplication.LOGICAL_OPERATOR_OR && dt.Config.Type == deduplication.DataTypeString {
+				// we don't want to compare empty strings
+				subSubQueries = append(subSubQueries, fmt.Sprintf("(ti.%s != '' AND ti.%s = ir.%s)", c, c, c))
+			} else {
+				subSubQueries = append(subSubQueries, fmt.Sprintf("ti.%s = ir.%s", c, c))
+			}
+		}
+		if dt.Config.Condition == deduplication.LOGICAL_OPERATOR_AND && dt.Config.Type == deduplication.DataTypeString {
+			// ignore the sub query when all columns are empty
+			notEmptyChecks := []string{}
+			for _, c := range cols {
+				notEmptyChecks = append(notEmptyChecks, fmt.Sprintf("ti.%s != ''", c))
+			}
+			subSubQueries = append(subSubQueries, fmt.Sprintf("(%s)", strings.Join(notEmptyChecks, " OR ")))
 		}
 		subQueries = append(subQueries, strings.Join(subSubQueries, fmt.Sprintf(" %s ", dt.Config.Condition)))
 	}

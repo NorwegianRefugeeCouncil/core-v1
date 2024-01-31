@@ -27,9 +27,17 @@ const (
 	LOGICAL_OPERATOR_AND LogicOperator = "AND"
 )
 
+type DataType string
+
+const (
+	DataTypeString DataType = "string"
+	DataTypeDate   DataType = "date"
+)
+
 type DeduplicationTypeValue struct {
 	Columns   []string
 	Condition LogicOperator
+	Type      DataType // defined as a single value since all columns have the same type at the moment, change to array if needed
 }
 
 type DeduplicationType struct {
@@ -51,6 +59,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualPhoneNumber1, constants.DBColumnIndividualPhoneNumber2, constants.DBColumnIndividualPhoneNumber3},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 		},
 		Order: 4,
 	},
@@ -60,6 +69,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualEmail1, constants.DBColumnIndividualEmail2, constants.DBColumnIndividualEmail3},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 		},
 		Order: 2,
 	},
@@ -69,6 +79,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualIdentificationNumber1, constants.DBColumnIndividualIdentificationNumber2, constants.DBColumnIndividualIdentificationNumber3},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 		},
 		Order: 0,
 	},
@@ -78,6 +89,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFirstName, constants.DBColumnIndividualMiddleName, constants.DBColumnIndividualLastName, constants.DBColumnIndividualNativeName},
 			Condition: LOGICAL_OPERATOR_AND,
+			Type:      DataTypeString,
 		},
 		Order: 10,
 	},
@@ -87,6 +99,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualBirthDate},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeDate,
 		},
 		Order: 11,
 	},
@@ -96,6 +109,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualMothersName},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 		},
 		Order: 8,
 	},
@@ -105,6 +119,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFullName},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 		},
 		Order: 6,
 	},
@@ -114,6 +129,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField1},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 		},
 		Order: 1,
 	},
@@ -123,6 +139,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField2},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 		},
 		Order: 3,
 	},
@@ -132,6 +149,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField3},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 		},
 		Order: 5,
 	},
@@ -141,6 +159,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField4},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 		},
 		Order: 7,
 	},
@@ -150,6 +169,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField5},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 		},
 		Order: 9,
 	},
