@@ -225,25 +225,7 @@ func buildDeduplicationQuery(tempTableName string, columnsOfInterest []string, c
 
 	subQueries := []string{}
 	for _, dt := range config.Types {
-		subSubQueries := []string{}
-		cols := dt.Config.Columns
-		for _, c := range cols {
-			if dt.Config.Condition == deduplication.LOGICAL_OPERATOR_OR && dt.Config.Type == deduplication.DataTypeString {
-				// we don't want to compare empty strings
-				subSubQueries = append(subSubQueries, fmt.Sprintf("(ti.%s != '' AND ti.%s = ir.%s)", c, c, c))
-			} else {
-				subSubQueries = append(subSubQueries, fmt.Sprintf("ti.%s = ir.%s", c, c))
-			}
-		}
-		if dt.Config.Condition == deduplication.LOGICAL_OPERATOR_AND && dt.Config.Type == deduplication.DataTypeString {
-			// ignore the sub query when all columns are empty
-			notEmptyChecks := []string{}
-			for _, c := range cols {
-				notEmptyChecks = append(notEmptyChecks, fmt.Sprintf("ti.%s != ''", c))
-			}
-			subSubQueries = append(subSubQueries, fmt.Sprintf("(%s)", strings.Join(notEmptyChecks, " OR ")))
-		}
-		subQueries = append(subQueries, strings.Join(subSubQueries, fmt.Sprintf(" %s ", dt.Config.Condition)))
+		subQueries = append(subQueries, dt.Config.Query)
 	}
 	if len(subQueries) > 0 {
 		b.WriteString(fmt.Sprintf(" AND (%s)", strings.Join(subQueries, fmt.Sprintf(") %s (", config.Operator))))
