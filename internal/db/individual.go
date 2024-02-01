@@ -208,7 +208,10 @@ SELECT DISTINCT  ir.birth_date,ir.email_1,ir.email_2,ir.email_3,ir.first_name,ir
 	WHERE ir.country_id = $1
 		AND ir.deleted_at IS NULL
 		AND ((ti.birth_date = ir.birth_date)
-		AND ((ti.email_1 != '' AND ti.email_1 = ir.email_1) OR (ti.email_2 != '' AND ti.email_2 = ir.email_2) OR (ti.email_3 != '' AND ti.email_3 = ir.email_3) OR (ti.email_1 = '' AND ti.email_2 = '' AND ti.email_3 =''))
+		AND ((ti.email_1 != '' AND (ti.email_1 = ir.email_1 OR ti.email_1 = ir.email_2 OR ti.email_1 = ir.email_3))
+			OR (ti.email_2 != '' AND (ti.email_2 = ir.email_1 OR ti.email_2 = ir.email_2 OR ti.email_2 = ir.email_3))
+			OR (ti.email_3 != '' AND (ti.email_3 = ir.email_1 OR ti.email_3 = ir.email_2 OR ti.email_3 = ir.email_3))
+			OR (ti.email_1 = '' AND ti.email_2 = '' AND ti.email_3 =''))
 		AND (ti.first_name = ir.first_name AND ti.middle_name = ir.middle_name AND ti.last_name = ir.last_name AND ti.native_name = ir.native_name)
 		AND (ti.email_1 != '' OR ti.email_2 != '' OR ti.email_3 != '' OR ti.first_name != '' OR ti.middle_name != '' OR ti.last_name != '' OR ti.native_name != '')));
 */
