@@ -2,10 +2,11 @@ package api
 
 import (
 	"fmt"
-	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"net/url"
 	"strconv"
 	"time"
+
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
@@ -97,6 +98,13 @@ func (p *listIndividualsOptionsEncoder) encode() url.Values {
 		p.encodeServiceRequestedDateTo,
 		p.encodeServiceDeliveredDateFrom,
 		p.encodeServiceDeliveredDateTo,
+		p.encodeServiceType,
+		p.encodeService,
+		p.encodeServiceSubService,
+		p.encodeServiceLocation,
+		p.encodeServiceDonor,
+		p.encodeServiceProjectName,
+		p.encodeServiceAgentName,
 		p.encodeSpokenLanguage,
 		p.encodeUpdatedAtFrom,
 		p.encodeUpdatedAtTo,
@@ -496,6 +504,48 @@ func (p *listIndividualsOptionsEncoder) encodeServiceCC() {
 		for _, ds := range p.values.ServiceCC.Items() {
 			p.out.Add(constants.FormParamsGetIndividualsServiceCC, string(ds))
 		}
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeServiceType() {
+	if len(p.values.ServiceType) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsServiceType, p.values.ServiceType)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeService() {
+	if len(p.values.Service) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsService, p.values.Service)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeServiceSubService() {
+	if len(p.values.ServiceSubService) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsServiceSubService, p.values.ServiceSubService)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeServiceLocation() {
+	if len(p.values.ServiceLocation) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsServiceLocation, p.values.ServiceLocation)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeServiceDonor() {
+	if len(p.values.ServiceDonor) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsServiceDonor, p.values.ServiceDonor)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeServiceProjectName() {
+	if len(p.values.ServiceProjectName) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsServiceProjectName, p.values.ServiceProjectName)
+	}
+}
+
+func (p *listIndividualsOptionsEncoder) encodeServiceAgentName() {
+	if len(p.values.ServiceAgentName) != 0 {
+		p.out.Add(constants.FormParamsGetIndividualsServiceAgentName, p.values.ServiceAgentName)
 	}
 }
 

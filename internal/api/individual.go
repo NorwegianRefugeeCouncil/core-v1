@@ -3,9 +3,10 @@ package api
 import (
 	"encoding/json"
 	"errors"
+	"time"
+
 	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"github.com/nrc-no/notcore/internal/locales"
-	"time"
 
 	"github.com/nrc-no/notcore/internal/constants"
 )
@@ -219,36 +220,85 @@ type Individual struct {
 	ServiceRequestedDate1 *time.Time          `json:"serviceRequestedDate1" db:"service_requested_date_1"`
 	ServiceDeliveredDate1 *time.Time          `json:"serviceDeliveredDate1" db:"service_delivered_date_1"`
 	ServiceComments1      string              `json:"serviceComments1" db:"service_comments_1"`
+	ServiceType1          string              `json:"serviceType1" db:"service_type_1"`
+	Service1              string              `json:"service1" db:"service_1"`
+	ServiceSubService1    string              `json:"serviceSubService1" db:"service_sub_service_1"`
+	ServiceLocation1      string              `json:"serviceLocation1" db:"service_location_1"`
+	ServiceDonor1         string              `json:"serviceDonor1" db:"service_donor_1"`
+	ServiceProjectName1   string              `json:"serviceProjectName1" db:"service_project_name_1"`
+	ServiceAgentName1     string              `json:"serviceAgentName1" db:"service_agent_name_1"`
 
 	ServiceCC2            enumTypes.ServiceCC `json:"serviceCC2" db:"service_cc_2"`
 	ServiceRequestedDate2 *time.Time          `json:"serviceRequestedDate2" db:"service_requested_date_2"`
 	ServiceDeliveredDate2 *time.Time          `json:"serviceDeliveredDate2" db:"service_delivered_date_2"`
 	ServiceComments2      string              `json:"serviceComments2" db:"service_comments_2"`
+	ServiceType2          string              `json:"serviceType2" db:"service_type_2"`
+	Service2              string              `json:"service2" db:"service_2"`
+	ServiceSubService2    string              `json:"serviceSubService2" db:"service_sub_service_2"`
+	ServiceLocation2      string              `json:"serviceLocation2" db:"service_location_2"`
+	ServiceDonor2         string              `json:"serviceDonor2" db:"service_donor_2"`
+	ServiceProjectName2   string              `json:"serviceProjectName2" db:"service_project_name_2"`
+	ServiceAgentName2     string              `json:"serviceAgentName2" db:"service_agent_name_2"`
 
 	ServiceCC3            enumTypes.ServiceCC `json:"serviceCC3" db:"service_cc_3"`
 	ServiceRequestedDate3 *time.Time          `json:"serviceRequestedDate3" db:"service_requested_date_3"`
 	ServiceDeliveredDate3 *time.Time          `json:"serviceDeliveredDate3" db:"service_delivered_date_3"`
 	ServiceComments3      string              `json:"serviceComments3" db:"service_comments_3"`
+	ServiceType3          string              `json:"serviceType3" db:"service_type_3"`
+	Service3              string              `json:"service3" db:"service_3"`
+	ServiceSubService3    string              `json:"serviceSubService3" db:"service_sub_service_3"`
+	ServiceLocation3      string              `json:"serviceLocation3" db:"service_location_3"`
+	ServiceDonor3         string              `json:"serviceDonor3" db:"service_donor_3"`
+	ServiceProjectName3   string              `json:"serviceProjectName3" db:"service_project_name_3"`
+	ServiceAgentName3     string              `json:"serviceAgentName3" db:"service_agent_name_3"`
 
 	ServiceCC4            enumTypes.ServiceCC `json:"serviceCC4" db:"service_cc_4"`
 	ServiceRequestedDate4 *time.Time          `json:"serviceRequestedDate4" db:"service_requested_date_4"`
 	ServiceDeliveredDate4 *time.Time          `json:"serviceDeliveredDate4" db:"service_delivered_date_4"`
 	ServiceComments4      string              `json:"serviceComments4" db:"service_comments_4"`
+	ServiceType4          string              `json:"serviceType4" db:"service_type_4"`
+	Service4              string              `json:"service4" db:"service_4"`
+	ServiceSubService4    string              `json:"serviceSubService4" db:"service_sub_service_4"`
+	ServiceLocation4      string              `json:"serviceLocation4" db:"service_location_4"`
+	ServiceDonor4         string              `json:"serviceDonor4" db:"service_donor_4"`
+	ServiceProjectName4   string              `json:"serviceProjectName4" db:"service_project_name_4"`
+	ServiceAgentName4     string              `json:"serviceAgentName4" db:"service_agent_name_4"`
 
 	ServiceCC5            enumTypes.ServiceCC `json:"serviceCC5" db:"service_cc_5"`
 	ServiceRequestedDate5 *time.Time          `json:"serviceRequestedDate5" db:"service_requested_date_5"`
 	ServiceDeliveredDate5 *time.Time          `json:"serviceDeliveredDate5" db:"service_delivered_date_5"`
 	ServiceComments5      string              `json:"serviceComments5" db:"service_comments_5"`
+	ServiceType5          string              `json:"serviceType5" db:"service_type_5"`
+	Service5              string              `json:"service5" db:"service_5"`
+	ServiceSubService5    string              `json:"serviceSubService5" db:"service_sub_service_5"`
+	ServiceLocation5      string              `json:"serviceLocation5" db:"service_location_5"`
+	ServiceDonor5         string              `json:"serviceDonor5" db:"service_donor_5"`
+	ServiceProjectName5   string              `json:"serviceProjectName5" db:"service_project_name_5"`
+	ServiceAgentName5     string              `json:"serviceAgentName5" db:"service_agent_name_5"`
 
 	ServiceCC6            enumTypes.ServiceCC `json:"serviceCC6" db:"service_cc_6"`
 	ServiceRequestedDate6 *time.Time          `json:"serviceRequestedDate6" db:"service_requested_date_6"`
 	ServiceDeliveredDate6 *time.Time          `json:"serviceDeliveredDate6" db:"service_delivered_date_6"`
 	ServiceComments6      string              `json:"serviceComments6" db:"service_comments_6"`
+	ServiceType6          string              `json:"serviceType6" db:"service_type_6"`
+	Service6              string              `json:"service6" db:"service_6"`
+	ServiceSubService6    string              `json:"serviceSubService6" db:"service_sub_service_6"`
+	ServiceLocation6      string              `json:"serviceLocation6" db:"service_location_6"`
+	ServiceDonor6         string              `json:"serviceDonor6" db:"service_donor_6"`
+	ServiceProjectName6   string              `json:"serviceProjectName6" db:"service_project_name_6"`
+	ServiceAgentName6     string              `json:"serviceAgentName6" db:"service_agent_name_6"`
 
 	ServiceCC7            enumTypes.ServiceCC `json:"serviceCC7" db:"service_cc_7"`
 	ServiceRequestedDate7 *time.Time          `json:"serviceRequestedDate7" db:"service_requested_date_7"`
 	ServiceDeliveredDate7 *time.Time          `json:"serviceDeliveredDate7" db:"service_delivered_date_7"`
 	ServiceComments7      string              `json:"serviceComments7" db:"service_comments_7"`
+	ServiceType7          string              `json:"serviceType7" db:"service_type_7"`
+	Service7              string              `json:"service7" db:"service_7"`
+	ServiceSubService7    string              `json:"serviceSubService7" db:"service_sub_service_7"`
+	ServiceLocation7      string              `json:"serviceLocation7" db:"service_location_7"`
+	ServiceDonor7         string              `json:"serviceDonor7" db:"service_donor_7"`
+	ServiceProjectName7   string              `json:"serviceProjectName7" db:"service_project_name_7"`
+	ServiceAgentName7     string              `json:"serviceAgentName7" db:"service_agent_name_7"`
 }
 
 type IndividualList struct {
@@ -457,6 +507,20 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.ServiceDeliveredDate1, nil
 	case constants.DBColumnIndividualServiceComments1:
 		return i.ServiceComments1, nil
+	case constants.DBColumnIndividualServiceType1:
+		return i.ServiceType1, nil
+	case constants.DBColumnIndividualService1:
+		return i.Service1, nil
+	case constants.DBColumnIndividualServiceSubService1:
+		return i.ServiceSubService1, nil
+	case constants.DBColumnIndividualServiceLocation1:
+		return i.ServiceLocation1, nil
+	case constants.DBColumnIndividualServiceDonor1:
+		return i.ServiceDonor1, nil
+	case constants.DBColumnIndividualServiceProjectName1:
+		return i.ServiceProjectName1, nil
+	case constants.DBColumnIndividualServiceAgentName1:
+		return i.ServiceAgentName1, nil
 	case constants.DBColumnIndividualServiceCC2:
 		return i.ServiceCC2, nil
 	case constants.DBColumnIndividualServiceRequestedDate2:
@@ -465,6 +529,20 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.ServiceDeliveredDate2, nil
 	case constants.DBColumnIndividualServiceComments2:
 		return i.ServiceComments2, nil
+	case constants.DBColumnIndividualServiceType2:
+		return i.ServiceType2, nil
+	case constants.DBColumnIndividualService2:
+		return i.Service2, nil
+	case constants.DBColumnIndividualServiceSubService2:
+		return i.ServiceSubService2, nil
+	case constants.DBColumnIndividualServiceLocation2:
+		return i.ServiceLocation2, nil
+	case constants.DBColumnIndividualServiceDonor2:
+		return i.ServiceDonor2, nil
+	case constants.DBColumnIndividualServiceProjectName2:
+		return i.ServiceProjectName2, nil
+	case constants.DBColumnIndividualServiceAgentName2:
+		return i.ServiceAgentName2, nil
 	case constants.DBColumnIndividualServiceCC3:
 		return i.ServiceCC3, nil
 	case constants.DBColumnIndividualServiceRequestedDate3:
@@ -473,6 +551,20 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.ServiceDeliveredDate3, nil
 	case constants.DBColumnIndividualServiceComments3:
 		return i.ServiceComments3, nil
+	case constants.DBColumnIndividualServiceType3:
+		return i.ServiceType3, nil
+	case constants.DBColumnIndividualService3:
+		return i.Service3, nil
+	case constants.DBColumnIndividualServiceSubService3:
+		return i.ServiceSubService3, nil
+	case constants.DBColumnIndividualServiceLocation3:
+		return i.ServiceLocation3, nil
+	case constants.DBColumnIndividualServiceDonor3:
+		return i.ServiceDonor3, nil
+	case constants.DBColumnIndividualServiceProjectName3:
+		return i.ServiceProjectName3, nil
+	case constants.DBColumnIndividualServiceAgentName3:
+		return i.ServiceAgentName3, nil
 	case constants.DBColumnIndividualServiceCC4:
 		return i.ServiceCC4, nil
 	case constants.DBColumnIndividualServiceRequestedDate4:
@@ -481,6 +573,20 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.ServiceDeliveredDate4, nil
 	case constants.DBColumnIndividualServiceComments4:
 		return i.ServiceComments4, nil
+	case constants.DBColumnIndividualServiceType4:
+		return i.ServiceType4, nil
+	case constants.DBColumnIndividualService4:
+		return i.Service4, nil
+	case constants.DBColumnIndividualServiceSubService4:
+		return i.ServiceSubService4, nil
+	case constants.DBColumnIndividualServiceLocation4:
+		return i.ServiceLocation4, nil
+	case constants.DBColumnIndividualServiceDonor4:
+		return i.ServiceDonor4, nil
+	case constants.DBColumnIndividualServiceProjectName4:
+		return i.ServiceProjectName4, nil
+	case constants.DBColumnIndividualServiceAgentName4:
+		return i.ServiceAgentName4, nil
 	case constants.DBColumnIndividualServiceCC5:
 		return i.ServiceCC5, nil
 	case constants.DBColumnIndividualServiceRequestedDate5:
@@ -489,6 +595,20 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.ServiceDeliveredDate5, nil
 	case constants.DBColumnIndividualServiceComments5:
 		return i.ServiceComments5, nil
+	case constants.DBColumnIndividualServiceType5:
+		return i.ServiceType5, nil
+	case constants.DBColumnIndividualService5:
+		return i.Service5, nil
+	case constants.DBColumnIndividualServiceSubService5:
+		return i.ServiceSubService5, nil
+	case constants.DBColumnIndividualServiceLocation5:
+		return i.ServiceLocation5, nil
+	case constants.DBColumnIndividualServiceDonor5:
+		return i.ServiceDonor5, nil
+	case constants.DBColumnIndividualServiceProjectName5:
+		return i.ServiceProjectName5, nil
+	case constants.DBColumnIndividualServiceAgentName5:
+		return i.ServiceAgentName5, nil
 	case constants.DBColumnIndividualServiceCC6:
 		return i.ServiceCC6, nil
 	case constants.DBColumnIndividualServiceRequestedDate6:
@@ -497,6 +617,20 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.ServiceDeliveredDate6, nil
 	case constants.DBColumnIndividualServiceComments6:
 		return i.ServiceComments6, nil
+	case constants.DBColumnIndividualServiceType6:
+		return i.ServiceType6, nil
+	case constants.DBColumnIndividualService6:
+		return i.Service6, nil
+	case constants.DBColumnIndividualServiceSubService6:
+		return i.ServiceSubService6, nil
+	case constants.DBColumnIndividualServiceLocation6:
+		return i.ServiceLocation6, nil
+	case constants.DBColumnIndividualServiceDonor6:
+		return i.ServiceDonor6, nil
+	case constants.DBColumnIndividualServiceProjectName6:
+		return i.ServiceProjectName6, nil
+	case constants.DBColumnIndividualServiceAgentName6:
+		return i.ServiceAgentName6, nil
 	case constants.DBColumnIndividualServiceCC7:
 		return i.ServiceCC7, nil
 	case constants.DBColumnIndividualServiceRequestedDate7:
@@ -505,6 +639,20 @@ func (i *Individual) GetFieldValue(field string) (interface{}, error) {
 		return i.ServiceDeliveredDate7, nil
 	case constants.DBColumnIndividualServiceComments7:
 		return i.ServiceComments7, nil
+	case constants.DBColumnIndividualServiceType7:
+		return i.ServiceType7, nil
+	case constants.DBColumnIndividualService7:
+		return i.Service7, nil
+	case constants.DBColumnIndividualServiceSubService7:
+		return i.ServiceSubService7, nil
+	case constants.DBColumnIndividualServiceLocation7:
+		return i.ServiceLocation7, nil
+	case constants.DBColumnIndividualServiceDonor7:
+		return i.ServiceDonor7, nil
+	case constants.DBColumnIndividualServiceProjectName7:
+		return i.ServiceProjectName7, nil
+	case constants.DBColumnIndividualServiceAgentName7:
+		return i.ServiceAgentName7, nil
 	default:
 		return nil, errors.New(locales.GetTranslator()("error_unknown_field", field))
 	}
@@ -584,18 +732,67 @@ func (i *Individual) Normalize() {
 
 	i.ServiceCC1 = enumTypes.ServiceCC(trimString(string(i.ServiceCC1)))
 	i.ServiceComments1 = trimString(i.ServiceComments1)
+	i.ServiceType1 = trimString(i.ServiceType1)
+	i.Service1 = trimString(i.Service1)
+	i.ServiceSubService1 = trimString(i.ServiceSubService1)
+	i.ServiceLocation1 = trimString(i.ServiceLocation1)
+	i.ServiceDonor1 = trimString(i.ServiceDonor1)
+	i.ServiceProjectName1 = trimString(i.ServiceProjectName1)
+	i.ServiceAgentName1 = trimString(i.ServiceAgentName1)
 	i.ServiceCC2 = enumTypes.ServiceCC(trimString(string(i.ServiceCC2)))
 	i.ServiceComments2 = trimString(i.ServiceComments2)
+	i.ServiceType2 = trimString(i.ServiceType2)
+	i.Service2 = trimString(i.Service2)
+	i.ServiceSubService2 = trimString(i.ServiceSubService2)
+	i.ServiceLocation2 = trimString(i.ServiceLocation2)
+	i.ServiceDonor2 = trimString(i.ServiceDonor2)
+	i.ServiceProjectName2 = trimString(i.ServiceProjectName2)
+	i.ServiceAgentName2 = trimString(i.ServiceAgentName2)
 	i.ServiceCC3 = enumTypes.ServiceCC(trimString(string(i.ServiceCC3)))
 	i.ServiceComments3 = trimString(i.ServiceComments3)
+	i.ServiceType3 = trimString(i.ServiceType3)
+	i.Service3 = trimString(i.Service3)
+	i.ServiceSubService3 = trimString(i.ServiceSubService3)
+	i.ServiceLocation3 = trimString(i.ServiceLocation3)
+	i.ServiceDonor3 = trimString(i.ServiceDonor3)
+	i.ServiceProjectName3 = trimString(i.ServiceProjectName3)
+	i.ServiceAgentName3 = trimString(i.ServiceAgentName3)
 	i.ServiceCC4 = enumTypes.ServiceCC(trimString(string(i.ServiceCC4)))
 	i.ServiceComments4 = trimString(i.ServiceComments4)
+	i.ServiceType4 = trimString(i.ServiceType4)
+	i.Service4 = trimString(i.Service4)
+	i.ServiceSubService4 = trimString(i.ServiceSubService4)
+	i.ServiceLocation4 = trimString(i.ServiceLocation4)
+	i.ServiceDonor4 = trimString(i.ServiceDonor4)
+	i.ServiceProjectName4 = trimString(i.ServiceProjectName4)
+	i.ServiceAgentName4 = trimString(i.ServiceAgentName4)
 	i.ServiceCC5 = enumTypes.ServiceCC(trimString(string(i.ServiceCC5)))
 	i.ServiceComments5 = trimString(i.ServiceComments5)
+	i.ServiceType5 = trimString(i.ServiceType5)
+	i.Service5 = trimString(i.Service5)
+	i.ServiceSubService5 = trimString(i.ServiceSubService5)
+	i.ServiceLocation5 = trimString(i.ServiceLocation5)
+	i.ServiceDonor5 = trimString(i.ServiceDonor5)
+	i.ServiceProjectName5 = trimString(i.ServiceProjectName5)
+	i.ServiceAgentName5 = trimString(i.ServiceAgentName5)
 	i.ServiceCC6 = enumTypes.ServiceCC(trimString(string(i.ServiceCC6)))
 	i.ServiceComments6 = trimString(i.ServiceComments6)
+	i.ServiceType6 = trimString(i.ServiceType6)
+	i.Service6 = trimString(i.Service6)
+	i.ServiceSubService6 = trimString(i.ServiceSubService6)
+	i.ServiceLocation6 = trimString(i.ServiceLocation6)
+	i.ServiceDonor6 = trimString(i.ServiceDonor6)
+	i.ServiceProjectName6 = trimString(i.ServiceProjectName6)
+	i.ServiceAgentName6 = trimString(i.ServiceAgentName6)
 	i.ServiceCC7 = enumTypes.ServiceCC(trimString(string(i.ServiceCC7)))
 	i.ServiceComments7 = trimString(i.ServiceComments7)
+	i.ServiceType7 = trimString(i.ServiceType7)
+	i.Service7 = trimString(i.Service7)
+	i.ServiceSubService7 = trimString(i.ServiceSubService7)
+	i.ServiceLocation7 = trimString(i.ServiceLocation7)
+	i.ServiceDonor7 = trimString(i.ServiceDonor7)
+	i.ServiceProjectName7 = trimString(i.ServiceProjectName7)
+	i.ServiceAgentName7 = trimString(i.ServiceAgentName7)
 
 	if i.PrefersToRemainAnonymous != nil && *i.PrefersToRemainAnonymous == true {
 		i.FullName = ""

@@ -1380,6 +1380,113 @@
             </div>
             <!-- End Service Delivered Date  -->
         </div>
+        <div class="row">
+            <!-- Service Type -->
+            <div class="col col-3">
+                <div class="form-group mb-3">
+                    <label class="form-label" for="ServiceType">
+                        {{translate "service_type"}}
+                    </label>
+                    <input id="ServiceType"
+                           name="service_type"
+                           type="text"
+                           placeholder="{{translate "search_placeholder" (translate "service_type")}}"
+                           class="form-control"
+                           value="{{.Options.ServiceType}}">
+                </div>
+            </div>
+            <!-- End Service Type -->
+            <!-- Service  -->
+            <div class="col col-3">
+                <div class="form-group mb-3">
+                    <label class="form-label" for="Service">
+                        {{translate "service"}}
+                    </label>
+                    <input id="Service"
+                           name="service"
+                           type="text"
+                           placeholder="{{translate "search_placeholder" (translate "service")}}"
+                           class="form-control"
+                           value="{{.Options.Service}}">
+                </div>
+            </div>
+            <!-- End Service -->
+            <!-- Sub Service  -->
+            <div class="col col-3">
+                <div class="form-group mb-3">
+                    <label class="form-label" for="ServiceSubService">
+                        {{translate "service_sub_service"}}
+                    </label>
+                    <input id="ServiceSubService"
+                           name="service_sub_service"
+                           type="text"
+                           placeholder="{{translate "search_placeholder" (translate "service_sub_service")}}"
+                           class="form-control"
+                           value="{{.Options.ServiceSubService}}">
+                </div>
+            </div>
+            <!-- End Sub Service -->
+            <!-- Service Location -->
+            <div class="col col-3">
+                <div class="form-group mb-3">
+                    <label class="form-label" for="ServiceLocation">
+                        {{translate "service_location"}}
+                    </label>
+                    <input id="ServiceLocation"
+                           name="service_location"
+                           type="text"
+                           placeholder="{{translate "search_placeholder" (translate "service_location")}}"
+                           class="form-control"
+                           value="{{.Options.ServiceLocation}}">
+                </div>
+            </div>
+            <!-- End Service Location -->
+            <!-- Service Donor -->
+            <div class="col col-3">
+                <div class="form-group mb-3">
+                    <label class="form-label" for="ServiceDonor">
+                        {{translate "service_donor"}}
+                    </label>
+                    <input id="ServiceDonor"
+                           name="service_donor"
+                           type="text"
+                           placeholder="{{translate "search_placeholder" (translate "service_donor")}}"
+                           class="form-control"
+                           value="{{.Options.ServiceDonor}}">
+                </div>
+            </div>
+            <!-- End Service Donor -->
+            <!-- Service Project Name -->
+            <div class="col col-3">
+                <div class="form-group mb-3">
+                    <label class="form-label" for="ServiceProjectName">
+                        {{translate "service_project_name"}}
+                    </label>
+                    <input id="ServiceProjectName"
+                           name="service_project_name"
+                           type="text"
+                           placeholder="{{translate "search_placeholder" (translate "service_project_name")}}"
+                           class="form-control"
+                           value="{{.Options.ServiceProjectName}}">
+                </div>
+            </div>
+            <!-- End Service Project Name -->
+            <!-- Service Agent Name -->
+            <div class="col col-3">
+                <div class="form-group mb-3">
+                    <label class="form-label" for="ServiceAgentName">
+                        {{translate "service_agent_name"}}
+                    </label>
+                    <input id="ServiceAgentName"
+                           name="service_agent_name"
+                           type="text"
+                           placeholder="{{translate "search_placeholder" (translate "service_agent_name")}}"
+                           class="form-control"
+                           value="{{.Options.ServiceAgentName}}">
+                </div>
+            </div>
+            <!-- End Service Agent Name -->
+        </div>
     </form>
 
     <div class="card-footer sticky-bottom w-100 bg-white p-5">

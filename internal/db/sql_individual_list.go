@@ -2,10 +2,11 @@ package db
 
 import (
 	"fmt"
-	"github.com/nrc-no/notcore/internal/api/enumTypes"
-	"github.com/nrc-no/notcore/internal/constants"
 	"strings"
 	"time"
+
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
+	"github.com/nrc-no/notcore/internal/constants"
 
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
@@ -92,7 +93,9 @@ func newGetAllIndividualsSQLQuery(driverName string, options api.ListIndividuals
 		withPWDComments(options.PWDComments).
 		withVulnerabilityComments(options.VulnerabilityComments).
 		withSelfCareDisabilityLevel(options.SelfCareDisabilityLevel).
-		withServiceCC(options.ServiceCC, options.ServiceRequestedDateFrom, options.ServiceRequestedDateTo, options.ServiceDeliveredDateFrom, options.ServiceDeliveredDateTo).
+		withServiceCC(options.ServiceCC, options.ServiceRequestedDateFrom, options.ServiceRequestedDateTo, options.ServiceDeliveredDateFrom,
+			options.ServiceDeliveredDateTo, options.ServiceType, options.Service, options.ServiceSubService, options.ServiceLocation,
+			options.ServiceDonor, options.ServiceProjectName, options.ServiceAgentName).
 		withSpokenLanguage(options.SpokenLanguage).
 		withUpdatedAtFrom(options.UpdatedAtFrom).
 		withUpdatedAtTo(options.UpdatedAtTo).
@@ -518,14 +521,18 @@ func (g *getAllIndividualsSQLQuery) withIdentificationNumber(identificationNumbe
 	return g
 }
 
-func (g *getAllIndividualsSQLQuery) withServiceCC(serviceCC containers.Set[enumTypes.ServiceCC], requestedFrom *time.Time, requestedTo *time.Time, deliveredFrom *time.Time, deliveredTo *time.Time) *getAllIndividualsSQLQuery {
+func (g *getAllIndividualsSQLQuery) withServiceCC(serviceCC containers.Set[enumTypes.ServiceCC], requestedFrom *time.Time,
+	requestedTo *time.Time, deliveredFrom *time.Time, deliveredTo *time.Time, serviceType string, service string, subService string,
+	location string, donor string, projectName string, agentName string) *getAllIndividualsSQLQuery {
 	zero := &time.Time{}
 	requestedFromIsUndefined := requestedFrom == nil || requestedFrom.IsZero() || requestedFrom == zero
 	requestedToIsUndefined := requestedTo == nil || requestedTo.IsZero() || requestedTo == zero
 	deliveredFromIsUndefined := deliveredFrom == nil || deliveredFrom.IsZero() || deliveredFrom == zero
 	deliveredToIsUndefined := deliveredTo == nil || deliveredTo.IsZero() || deliveredTo == zero
 
-	if requestedFromIsUndefined && requestedToIsUndefined && deliveredFromIsUndefined && deliveredToIsUndefined && serviceCC.IsEmpty() {
+	if requestedFromIsUndefined && requestedToIsUndefined && deliveredFromIsUndefined && deliveredToIsUndefined && serviceCC.IsEmpty() &&
+		len(serviceType) == 0 && len(service) == 0 && len(subService) == 0 && len(location) == 0 && len(donor) == 0 &&
+		len(projectName) == 0 && len(agentName) == 0 {
 		return g
 	}
 
@@ -559,6 +566,27 @@ func (g *getAllIndividualsSQLQuery) withServiceCC(serviceCC containers.Set[enumT
 		}
 		if !deliveredFromIsUndefined {
 			conditions = append(conditions, fmt.Sprintf("service_delivered_date_%d >= '%s'", i, deliveredFrom.Format("2006-01-02")))
+		}
+		if len(serviceType) > 0 {
+			conditions = append(conditions, fmt.Sprintf("service_type_%d = '%s'", i, serviceType))
+		}
+		if len(service) > 0 {
+			conditions = append(conditions, fmt.Sprintf("service_%d = '%s'", i, service))
+		}
+		if len(subService) > 0 {
+			conditions = append(conditions, fmt.Sprintf("service_sub_service_%d = '%s'", i, subService))
+		}
+		if len(location) > 0 {
+			conditions = append(conditions, fmt.Sprintf("service_location_%d = '%s'", i, location))
+		}
+		if len(donor) > 0 {
+			conditions = append(conditions, fmt.Sprintf("service_donor_%d = '%s'", i, donor))
+		}
+		if len(projectName) > 0 {
+			conditions = append(conditions, fmt.Sprintf("service_project_name_%d = '%s'", i, projectName))
+		}
+		if len(agentName) > 0 {
+			conditions = append(conditions, fmt.Sprintf("service_agent_name_%d = '%s'", i, agentName))
 		}
 		query += strings.Join(conditions, " AND ")
 		query += ")"

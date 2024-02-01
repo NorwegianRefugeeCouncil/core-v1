@@ -76,6 +76,13 @@ const (
 	FormParamsGetIndividualsServiceDeliveredDateTo          = "service_delivered_date_to"
 	FormParamsGetIndividualsServiceRequestedDateFrom        = "service_requested_date_from"
 	FormParamsGetIndividualsServiceRequestedDateTo          = "service_requested_date_to"
+	FormParamsGetIndividualsServiceType                     = "service_type"
+	FormParamsGetIndividualsService                         = "service"
+	FormParamsGetIndividualsServiceSubService               = "service_sub_service"
+	FormParamsGetIndividualsServiceLocation                 = "service_location"
+	FormParamsGetIndividualsServiceDonor                    = "service_donor"
+	FormParamsGetIndividualsServiceProjectName              = "service_project_name"
+	FormParamsGetIndividualsServiceAgentName                = "service_agent_name"
 	FormParamsGetIndividualsSex                             = "sex"
 	FormParamsGetIndividualsSkip                            = "skip"
 	FormParamsGetIndividualsSort                            = "sort"
@@ -203,6 +210,55 @@ const (
 	DBColumnIndividualServiceRequestedDate5           = "service_requested_date_5"
 	DBColumnIndividualServiceRequestedDate6           = "service_requested_date_6"
 	DBColumnIndividualServiceRequestedDate7           = "service_requested_date_7"
+	DBColumnIndividualServiceType1                    = "service_type_1"
+	DBColumnIndividualServiceType2                    = "service_type_2"
+	DBColumnIndividualServiceType3                    = "service_type_3"
+	DBColumnIndividualServiceType4                    = "service_type_4"
+	DBColumnIndividualServiceType5                    = "service_type_5"
+	DBColumnIndividualServiceType6                    = "service_type_6"
+	DBColumnIndividualServiceType7                    = "service_type_7"
+	DBColumnIndividualService1                        = "service_1"
+	DBColumnIndividualService2                        = "service_2"
+	DBColumnIndividualService3                        = "service_3"
+	DBColumnIndividualService4                        = "service_4"
+	DBColumnIndividualService5                        = "service_5"
+	DBColumnIndividualService6                        = "service_6"
+	DBColumnIndividualService7                        = "service_7"
+	DBColumnIndividualServiceSubService1              = "service_sub_service_1"
+	DBColumnIndividualServiceSubService2              = "service_sub_service_2"
+	DBColumnIndividualServiceSubService3              = "service_sub_service_3"
+	DBColumnIndividualServiceSubService4              = "service_sub_service_4"
+	DBColumnIndividualServiceSubService5              = "service_sub_service_5"
+	DBColumnIndividualServiceSubService6              = "service_sub_service_6"
+	DBColumnIndividualServiceSubService7              = "service_sub_service_7"
+	DBColumnIndividualServiceLocation1                = "service_location_1"
+	DBColumnIndividualServiceLocation2                = "service_location_2"
+	DBColumnIndividualServiceLocation3                = "service_location_3"
+	DBColumnIndividualServiceLocation4                = "service_location_4"
+	DBColumnIndividualServiceLocation5                = "service_location_5"
+	DBColumnIndividualServiceLocation6                = "service_location_6"
+	DBColumnIndividualServiceLocation7                = "service_location_7"
+	DBColumnIndividualServiceDonor1                   = "service_donor_1"
+	DBColumnIndividualServiceDonor2                   = "service_donor_2"
+	DBColumnIndividualServiceDonor3                   = "service_donor_3"
+	DBColumnIndividualServiceDonor4                   = "service_donor_4"
+	DBColumnIndividualServiceDonor5                   = "service_donor_5"
+	DBColumnIndividualServiceDonor6                   = "service_donor_6"
+	DBColumnIndividualServiceDonor7                   = "service_donor_7"
+	DBColumnIndividualServiceProjectName1             = "service_project_name_1"
+	DBColumnIndividualServiceProjectName2             = "service_project_name_2"
+	DBColumnIndividualServiceProjectName3             = "service_project_name_3"
+	DBColumnIndividualServiceProjectName4             = "service_project_name_4"
+	DBColumnIndividualServiceProjectName5             = "service_project_name_5"
+	DBColumnIndividualServiceProjectName6             = "service_project_name_6"
+	DBColumnIndividualServiceProjectName7             = "service_project_name_7"
+	DBColumnIndividualServiceAgentName1               = "service_agent_name_1"
+	DBColumnIndividualServiceAgentName2               = "service_agent_name_2"
+	DBColumnIndividualServiceAgentName3               = "service_agent_name_3"
+	DBColumnIndividualServiceAgentName4               = "service_agent_name_4"
+	DBColumnIndividualServiceAgentName5               = "service_agent_name_5"
+	DBColumnIndividualServiceAgentName6               = "service_agent_name_6"
+	DBColumnIndividualServiceAgentName7               = "service_agent_name_7"
 	DBColumnIndividualSex                             = "sex"
 	DBColumnIndividualSpokenLanguage1                 = "spoken_language_1"
 	DBColumnIndividualSpokenLanguage2                 = "spoken_language_2"
@@ -325,6 +381,55 @@ const (
 	FileColumnIndividualServiceRequestedDate5           = "file_service_requested_date_5"
 	FileColumnIndividualServiceRequestedDate6           = "file_service_requested_date_6"
 	FileColumnIndividualServiceRequestedDate7           = "file_service_requested_date_7"
+	FileColumnIndividualServiceType1                    = "file_service_type_1"
+	FileColumnIndividualServiceType2                    = "file_service_type_2"
+	FileColumnIndividualServiceType3                    = "file_service_type_3"
+	FileColumnIndividualServiceType4                    = "file_service_type_4"
+	FileColumnIndividualServiceType5                    = "file_service_type_5"
+	FileColumnIndividualServiceType6                    = "file_service_type_6"
+	FileColumnIndividualServiceType7                    = "file_service_type_7"
+	FileColumnIndividualService1                        = "file_service_1"
+	FileColumnIndividualService2                        = "file_service_2"
+	FileColumnIndividualService3                        = "file_service_3"
+	FileColumnIndividualService4                        = "file_service_4"
+	FileColumnIndividualService5                        = "file_service_5"
+	FileColumnIndividualService6                        = "file_service_6"
+	FileColumnIndividualService7                        = "file_service_7"
+	FileColumnIndividualServiceSubService1              = "file_service_sub_service_1"
+	FileColumnIndividualServiceSubService2              = "file_service_sub_service_2"
+	FileColumnIndividualServiceSubService3              = "file_service_sub_service_3"
+	FileColumnIndividualServiceSubService4              = "file_service_sub_service_4"
+	FileColumnIndividualServiceSubService5              = "file_service_sub_service_5"
+	FileColumnIndividualServiceSubService6              = "file_service_sub_service_6"
+	FileColumnIndividualServiceSubService7              = "file_service_sub_service_7"
+	FileColumnIndividualServiceLocation1                = "file_service_location_1"
+	FileColumnIndividualServiceLocation2                = "file_service_location_2"
+	FileColumnIndividualServiceLocation3                = "file_service_location_3"
+	FileColumnIndividualServiceLocation4                = "file_service_location_4"
+	FileColumnIndividualServiceLocation5                = "file_service_location_5"
+	FileColumnIndividualServiceLocation6                = "file_service_location_6"
+	FileColumnIndividualServiceLocation7                = "file_service_location_7"
+	FileColumnIndividualServiceDonor1                   = "file_service_donor_1"
+	FileColumnIndividualServiceDonor2                   = "file_service_donor_2"
+	FileColumnIndividualServiceDonor3                   = "file_service_donor_3"
+	FileColumnIndividualServiceDonor4                   = "file_service_donor_4"
+	FileColumnIndividualServiceDonor5                   = "file_service_donor_5"
+	FileColumnIndividualServiceDonor6                   = "file_service_donor_6"
+	FileColumnIndividualServiceDonor7                   = "file_service_donor_7"
+	FileColumnIndividualServiceProjectName1             = "file_service_project_name_1"
+	FileColumnIndividualServiceProjectName2             = "file_service_project_name_2"
+	FileColumnIndividualServiceProjectName3             = "file_service_project_name_3"
+	FileColumnIndividualServiceProjectName4             = "file_service_project_name_4"
+	FileColumnIndividualServiceProjectName5             = "file_service_project_name_5"
+	FileColumnIndividualServiceProjectName6             = "file_service_project_name_6"
+	FileColumnIndividualServiceProjectName7             = "file_service_project_name_7"
+	FileColumnIndividualServiceAgentName1               = "file_service_agent_name_1"
+	FileColumnIndividualServiceAgentName2               = "file_service_agent_name_2"
+	FileColumnIndividualServiceAgentName3               = "file_service_agent_name_3"
+	FileColumnIndividualServiceAgentName4               = "file_service_agent_name_4"
+	FileColumnIndividualServiceAgentName5               = "file_service_agent_name_5"
+	FileColumnIndividualServiceAgentName6               = "file_service_agent_name_6"
+	FileColumnIndividualServiceAgentName7               = "file_service_agent_name_7"
 	FileColumnIndividualSex                             = "file_sex"
 	FileColumnIndividualSpokenLanguage1                 = "file_spoken_language_1"
 	FileColumnIndividualSpokenLanguage2                 = "file_spoken_language_2"
@@ -453,6 +558,55 @@ var IndividualDBColumns = containers.NewStringSet(
 	DBColumnIndividualServiceRequestedDate5,
 	DBColumnIndividualServiceRequestedDate6,
 	DBColumnIndividualServiceRequestedDate7,
+	DBColumnIndividualServiceType1,
+	DBColumnIndividualServiceType2,
+	DBColumnIndividualServiceType3,
+	DBColumnIndividualServiceType4,
+	DBColumnIndividualServiceType5,
+	DBColumnIndividualServiceType6,
+	DBColumnIndividualServiceType7,
+	DBColumnIndividualService1,
+	DBColumnIndividualService2,
+	DBColumnIndividualService3,
+	DBColumnIndividualService4,
+	DBColumnIndividualService5,
+	DBColumnIndividualService6,
+	DBColumnIndividualService7,
+	DBColumnIndividualServiceSubService1,
+	DBColumnIndividualServiceSubService2,
+	DBColumnIndividualServiceSubService3,
+	DBColumnIndividualServiceSubService4,
+	DBColumnIndividualServiceSubService5,
+	DBColumnIndividualServiceSubService6,
+	DBColumnIndividualServiceSubService7,
+	DBColumnIndividualServiceLocation1,
+	DBColumnIndividualServiceLocation2,
+	DBColumnIndividualServiceLocation3,
+	DBColumnIndividualServiceLocation4,
+	DBColumnIndividualServiceLocation5,
+	DBColumnIndividualServiceLocation6,
+	DBColumnIndividualServiceLocation7,
+	DBColumnIndividualServiceDonor1,
+	DBColumnIndividualServiceDonor2,
+	DBColumnIndividualServiceDonor3,
+	DBColumnIndividualServiceDonor4,
+	DBColumnIndividualServiceDonor5,
+	DBColumnIndividualServiceDonor6,
+	DBColumnIndividualServiceDonor7,
+	DBColumnIndividualServiceProjectName1,
+	DBColumnIndividualServiceProjectName2,
+	DBColumnIndividualServiceProjectName3,
+	DBColumnIndividualServiceProjectName4,
+	DBColumnIndividualServiceProjectName5,
+	DBColumnIndividualServiceProjectName6,
+	DBColumnIndividualServiceProjectName7,
+	DBColumnIndividualServiceAgentName1,
+	DBColumnIndividualServiceAgentName2,
+	DBColumnIndividualServiceAgentName3,
+	DBColumnIndividualServiceAgentName4,
+	DBColumnIndividualServiceAgentName5,
+	DBColumnIndividualServiceAgentName6,
+	DBColumnIndividualServiceAgentName7,
 	DBColumnIndividualSex,
 	DBColumnIndividualSpokenLanguage1,
 	DBColumnIndividualSpokenLanguage2,
@@ -557,30 +711,79 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualServiceRequestedDate1,
 	FileColumnIndividualServiceDeliveredDate1,
 	FileColumnIndividualServiceComments1,
+	FileColumnIndividualServiceType1,
+	FileColumnIndividualService1,
+	FileColumnIndividualServiceSubService1,
+	FileColumnIndividualServiceLocation1,
+	FileColumnIndividualServiceDonor1,
+	FileColumnIndividualServiceProjectName1,
+	FileColumnIndividualServiceAgentName1,
 	FileColumnIndividualServiceCC2,
 	FileColumnIndividualServiceRequestedDate2,
 	FileColumnIndividualServiceDeliveredDate2,
 	FileColumnIndividualServiceComments2,
+	FileColumnIndividualServiceType2,
+	FileColumnIndividualService2,
+	FileColumnIndividualServiceSubService2,
+	FileColumnIndividualServiceLocation2,
+	FileColumnIndividualServiceDonor2,
+	FileColumnIndividualServiceProjectName2,
+	FileColumnIndividualServiceAgentName2,
 	FileColumnIndividualServiceCC3,
 	FileColumnIndividualServiceRequestedDate3,
 	FileColumnIndividualServiceDeliveredDate3,
 	FileColumnIndividualServiceComments3,
+	FileColumnIndividualServiceType3,
+	FileColumnIndividualService3,
+	FileColumnIndividualServiceSubService3,
+	FileColumnIndividualServiceLocation3,
+	FileColumnIndividualServiceDonor3,
+	FileColumnIndividualServiceProjectName3,
+	FileColumnIndividualServiceAgentName3,
 	FileColumnIndividualServiceCC4,
 	FileColumnIndividualServiceRequestedDate4,
 	FileColumnIndividualServiceDeliveredDate4,
 	FileColumnIndividualServiceComments4,
+	FileColumnIndividualServiceType4,
+	FileColumnIndividualService4,
+	FileColumnIndividualServiceSubService4,
+	FileColumnIndividualServiceLocation4,
+	FileColumnIndividualServiceDonor4,
+	FileColumnIndividualServiceProjectName4,
+	FileColumnIndividualServiceAgentName4,
 	FileColumnIndividualServiceCC5,
 	FileColumnIndividualServiceRequestedDate5,
 	FileColumnIndividualServiceDeliveredDate5,
 	FileColumnIndividualServiceComments5,
+	FileColumnIndividualServiceType5,
+	FileColumnIndividualService5,
+	FileColumnIndividualServiceSubService5,
+	FileColumnIndividualServiceLocation5,
+	FileColumnIndividualServiceDonor5,
+	FileColumnIndividualServiceProjectName5,
+	FileColumnIndividualServiceAgentName5,
 	FileColumnIndividualServiceCC6,
 	FileColumnIndividualServiceRequestedDate6,
 	FileColumnIndividualServiceDeliveredDate6,
 	FileColumnIndividualServiceComments6,
+	FileColumnIndividualServiceType6,
+	FileColumnIndividualService6,
+	FileColumnIndividualServiceSubService6,
+	FileColumnIndividualServiceLocation6,
+	FileColumnIndividualServiceDonor6,
+	FileColumnIndividualServiceProjectName6,
+	FileColumnIndividualServiceAgentName6,
 	FileColumnIndividualServiceCC7,
 	FileColumnIndividualServiceRequestedDate7,
 	FileColumnIndividualServiceDeliveredDate7,
 	FileColumnIndividualServiceComments7,
+	FileColumnIndividualServiceType7,
+	FileColumnIndividualService7,
+	FileColumnIndividualServiceSubService7,
+	FileColumnIndividualServiceLocation7,
+	FileColumnIndividualServiceDonor7,
+	FileColumnIndividualServiceProjectName7,
+	FileColumnIndividualServiceAgentName7,
 	FileColumnIndividualInactive,
 	FileColumnIndividualCreatedAt,
 	FileColumnIndividualUpdatedAt,
@@ -700,6 +903,55 @@ var IndividualFileToDBMap = map[string]string{
 	FileColumnIndividualServiceRequestedDate5:           DBColumnIndividualServiceRequestedDate5,
 	FileColumnIndividualServiceRequestedDate6:           DBColumnIndividualServiceRequestedDate6,
 	FileColumnIndividualServiceRequestedDate7:           DBColumnIndividualServiceRequestedDate7,
+	FileColumnIndividualServiceType1:                    DBColumnIndividualServiceType1,
+	FileColumnIndividualServiceType2:                    DBColumnIndividualServiceType2,
+	FileColumnIndividualServiceType3:                    DBColumnIndividualServiceType3,
+	FileColumnIndividualServiceType4:                    DBColumnIndividualServiceType4,
+	FileColumnIndividualServiceType5:                    DBColumnIndividualServiceType5,
+	FileColumnIndividualServiceType6:                    DBColumnIndividualServiceType6,
+	FileColumnIndividualServiceType7:                    DBColumnIndividualServiceType7,
+	FileColumnIndividualService1:                        DBColumnIndividualService1,
+	FileColumnIndividualService2:                        DBColumnIndividualService2,
+	FileColumnIndividualService3:                        DBColumnIndividualService3,
+	FileColumnIndividualService4:                        DBColumnIndividualService4,
+	FileColumnIndividualService5:                        DBColumnIndividualService5,
+	FileColumnIndividualService6:                        DBColumnIndividualService6,
+	FileColumnIndividualService7:                        DBColumnIndividualService7,
+	FileColumnIndividualServiceSubService1:              DBColumnIndividualServiceSubService1,
+	FileColumnIndividualServiceSubService2:              DBColumnIndividualServiceSubService2,
+	FileColumnIndividualServiceSubService3:              DBColumnIndividualServiceSubService3,
+	FileColumnIndividualServiceSubService4:              DBColumnIndividualServiceSubService4,
+	FileColumnIndividualServiceSubService5:              DBColumnIndividualServiceSubService5,
+	FileColumnIndividualServiceSubService6:              DBColumnIndividualServiceSubService6,
+	FileColumnIndividualServiceSubService7:              DBColumnIndividualServiceSubService7,
+	FileColumnIndividualServiceLocation1:                DBColumnIndividualServiceLocation1,
+	FileColumnIndividualServiceLocation2:                DBColumnIndividualServiceLocation2,
+	FileColumnIndividualServiceLocation3:                DBColumnIndividualServiceLocation3,
+	FileColumnIndividualServiceLocation4:                DBColumnIndividualServiceLocation4,
+	FileColumnIndividualServiceLocation5:                DBColumnIndividualServiceLocation5,
+	FileColumnIndividualServiceLocation6:                DBColumnIndividualServiceLocation6,
+	FileColumnIndividualServiceLocation7:                DBColumnIndividualServiceLocation7,
+	FileColumnIndividualServiceDonor1:                   DBColumnIndividualServiceDonor1,
+	FileColumnIndividualServiceDonor2:                   DBColumnIndividualServiceDonor2,
+	FileColumnIndividualServiceDonor3:                   DBColumnIndividualServiceDonor3,
+	FileColumnIndividualServiceDonor4:                   DBColumnIndividualServiceDonor4,
+	FileColumnIndividualServiceDonor5:                   DBColumnIndividualServiceDonor5,
+	FileColumnIndividualServiceDonor6:                   DBColumnIndividualServiceDonor6,
+	FileColumnIndividualServiceDonor7:                   DBColumnIndividualServiceDonor7,
+	FileColumnIndividualServiceProjectName1:             DBColumnIndividualServiceProjectName1,
+	FileColumnIndividualServiceProjectName2:             DBColumnIndividualServiceProjectName2,
+	FileColumnIndividualServiceProjectName3:             DBColumnIndividualServiceProjectName3,
+	FileColumnIndividualServiceProjectName4:             DBColumnIndividualServiceProjectName4,
+	FileColumnIndividualServiceProjectName5:             DBColumnIndividualServiceProjectName5,
+	FileColumnIndividualServiceProjectName6:             DBColumnIndividualServiceProjectName6,
+	FileColumnIndividualServiceProjectName7:             DBColumnIndividualServiceProjectName7,
+	FileColumnIndividualServiceAgentName1:               DBColumnIndividualServiceAgentName1,
+	FileColumnIndividualServiceAgentName2:               DBColumnIndividualServiceAgentName2,
+	FileColumnIndividualServiceAgentName3:               DBColumnIndividualServiceAgentName3,
+	FileColumnIndividualServiceAgentName4:               DBColumnIndividualServiceAgentName4,
+	FileColumnIndividualServiceAgentName5:               DBColumnIndividualServiceAgentName5,
+	FileColumnIndividualServiceAgentName6:               DBColumnIndividualServiceAgentName6,
+	FileColumnIndividualServiceAgentName7:               DBColumnIndividualServiceAgentName7,
 	FileColumnIndividualSex:                             DBColumnIndividualSex,
 	FileColumnIndividualSpokenLanguage1:                 DBColumnIndividualSpokenLanguage1,
 	FileColumnIndividualSpokenLanguage2:                 DBColumnIndividualSpokenLanguage2,

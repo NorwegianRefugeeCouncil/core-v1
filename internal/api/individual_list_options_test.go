@@ -1,11 +1,12 @@
 package api
 
 import (
-	"github.com/nrc-no/notcore/internal/api/enumTypes"
-	"github.com/nrc-no/notcore/internal/locales"
 	"net/url"
 	"testing"
 	"time"
+
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
+	"github.com/nrc-no/notcore/internal/locales"
 
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/utils/pointers"
@@ -435,6 +436,34 @@ func TestNewIndividualListFromURLValues(t *testing.T) {
 			args:    url.Values{"selfcare_disability_level": []string{"invalid"}},
 			wantErr: true,
 		}, {
+			name: "serviceType",
+			args: url.Values{"service_type": []string{"service-type"}},
+			want: ListIndividualsOptions{ServiceType: "service-type"},
+		}, {
+			name: "service",
+			args: url.Values{"service": []string{"service"}},
+			want: ListIndividualsOptions{Service: "service"},
+		}, {
+			name: "serviceSubService",
+			args: url.Values{"service_sub_service": []string{"sub-service"}},
+			want: ListIndividualsOptions{ServiceSubService: "sub-service"},
+		}, {
+			name: "serviceLocation",
+			args: url.Values{"service_location": []string{"location"}},
+			want: ListIndividualsOptions{ServiceLocation: "location"},
+		}, {
+			name: "serviceDonor",
+			args: url.Values{"service_donor": []string{"donor"}},
+			want: ListIndividualsOptions{ServiceDonor: "donor"},
+		}, {
+			name: "serviceProjectName",
+			args: url.Values{"service_project_name": []string{"project-name"}},
+			want: ListIndividualsOptions{ServiceProjectName: "project-name"},
+		}, {
+			name: "serviceAgentName",
+			args: url.Values{"service_agent_name": []string{"agent-name"}},
+			want: ListIndividualsOptions{ServiceAgentName: "agent-name"},
+		}, {
 			name: "spokenLanguage",
 			args: url.Values{"spoken_language": []string{"spoken-language"}},
 			want: ListIndividualsOptions{SpokenLanguage: "spoken-language"},
@@ -813,6 +842,34 @@ func TestListIndividualsOptions_QueryParams(t *testing.T) {
 			name: "selfCareDisabilityLevel",
 			o:    ListIndividualsOptions{CountryID: countryId, SelfCareDisabilityLevel: enumTypes.DisabilityLevelMild},
 			want: "/countries/usa/participants?selfcare_disability_level=mild",
+		}, {
+			name: "serviceType",
+			o:    ListIndividualsOptions{CountryID: countryId, ServiceType: "serviceType"},
+			want: "/countries/usa/participants?service_type=serviceType",
+		}, {
+			name: "service",
+			o:    ListIndividualsOptions{CountryID: countryId, Service: "service"},
+			want: "/countries/usa/participants?service=service",
+		}, {
+			name: "subService",
+			o:    ListIndividualsOptions{CountryID: countryId, ServiceSubService: "subService"},
+			want: "/countries/usa/participants?service_sub_service=subService",
+		}, {
+			name: "serviceLocation",
+			o:    ListIndividualsOptions{CountryID: countryId, ServiceLocation: "serviceLocation"},
+			want: "/countries/usa/participants?service_location=serviceLocation",
+		}, {
+			name: "serviceDonor",
+			o:    ListIndividualsOptions{CountryID: countryId, ServiceDonor: "serviceDonor"},
+			want: "/countries/usa/participants?service_donor=serviceDonor",
+		}, {
+			name: "serviceProjectName",
+			o:    ListIndividualsOptions{CountryID: countryId, ServiceProjectName: "serviceProjectName"},
+			want: "/countries/usa/participants?service_project_name=serviceProjectName",
+		}, {
+			name: "serviceAgentName",
+			o:    ListIndividualsOptions{CountryID: countryId, ServiceAgentName: "serviceAgentName"},
+			want: "/countries/usa/participants?service_agent_name=serviceAgentName",
 		}, {
 			name: "spokenLanguage",
 			o:    ListIndividualsOptions{CountryID: countryId, SpokenLanguage: "en"},
