@@ -479,19 +479,26 @@ func (i individualRepo) performActionManyInternal(ctx context.Context, tx *sqlx.
 	l.Debug("performing action: " + string(action) + " individuals")
 
 	if err := batch(maxParams/ids.Len(), ids.Items(), func(idsInBatch []string) (bool, error) {
-		var query = "UPDATE individual_registrations SET " + individualActionsConfig[action].targetField + " = $1 WHERE id IN ("
-		var args = []interface{}{individualActionsConfig[action].newValue}
+		var query string
+
+		switch action {
+		case DeleteAction:
+			query = "DELETE FROM individual_registrations WHERE id IN ("
+		case ActivateAction:
+			query = "UPDATE individual_registrations SET inactive = false WHERE id IN ("
+		case DeactivateAction:
+			query = "UPDATE individual_registrations SET inactive = true WHERE id IN ("
+		}
+
+		var args []interface{}
 		for i, id := range idsInBatch {
 			if i != 0 {
 				query += ","
 			}
-			query += fmt.Sprintf("$%d", i+2)
+			query += fmt.Sprintf("$%d", i+1)
 			args = append(args, id)
 		}
 		query += ") "
-		for _, c := range individualActionsConfig[action].conditions {
-			query += c + " "
-		}
 
 		auditDuration := logDuration(ctx, "performing action: "+string(action)+" individuals", zap.Int("count", len(idsInBatch)))
 		defer auditDuration()
