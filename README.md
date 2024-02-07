@@ -76,6 +76,7 @@ make up
 ```
 
 ### Start the server
+First time run `make bootstrap` to generate css files.
 
 ```
 go run . serve --listen-address=:8080 --db-driver=postgres --db-dsn=postgres://postgres:postgres@localhost:5432/core?sslmode=disable --log-level=debug
@@ -88,6 +89,8 @@ Go to [https://localhost:10000](https://localhost:10000)
 The available usernames and passwords for logging in during development are in
 the `/deploy/oidc-users.json` file.
 
+### Generate test participants
+Run `go run . mock-data --count=X` where `X` is the amount of participants to generate. This will create a csv file that then can be uploaded to the system.
 
 # Changing the form field
 
