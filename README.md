@@ -76,7 +76,7 @@ make up
 ```
 
 ### Start the server
-First time run `make bootstrap` to generate css files.
+First time run `make bootstrap` to generate css files and `make template` to generate the downloadable template file.
 
 ```
 go run . serve --listen-address=:8080 --db-driver=postgres --db-dsn=postgres://postgres:postgres@localhost:5432/core?sslmode=disable --log-level=debug
