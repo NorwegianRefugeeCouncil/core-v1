@@ -207,10 +207,10 @@ SELECT DISTINCT  ir.birth_date,ir.email_1,ir.email_2,ir.email_3,ir.first_name,ir
 	CROSS JOIN temp_individuals_<requestId> ti
 	WHERE ir.country_id = $1
 		AND ir.deleted_at IS NULL
-		AND (ti.birth_date = ir.birth_date)
-		AND ((ti.email_1 != '' AND ti.email_1 = ir.email_1) OR (ti.email_2 != '' AND ti.email_2 = ir.email_2) OR (ti.email_3 != '' AND ti.email_3 = ir.email_3))
-		AND (ti.first_name = ir.first_name AND ti.middle_name = ir.middle_name AND ti.last_name = ir.last_name
-			AND ti.native_name = ir.native_name AND (ti.first_name != '' OR ti.middle_name != '' OR ti.last_name != '' OR ti.native_name != ''));
+		AND ((ti.birth_date = ir.birth_date)
+		AND ((ti.email_1 != '' AND ti.email_1 = ir.email_1) OR (ti.email_2 != '' AND ti.email_2 = ir.email_2) OR (ti.email_3 != '' AND ti.email_3 = ir.email_3) OR (ti.email_1 = '' AND ti.email_2 = '' AND ti.email_3 =''))
+		AND (ti.first_name = ir.first_name AND ti.middle_name = ir.middle_name AND ti.last_name = ir.last_name AND ti.native_name = ir.native_name)
+		AND (ti.email_1 != '' OR ti.email_2 != '' OR ti.email_3 != '' OR ti.first_name != '' OR ti.middle_name != '' OR ti.last_name != '' OR ti.native_name != '')));
 */
 func buildDeduplicationQuery(tempTableName string, columnsOfInterest []string, config deduplication.DeduplicationConfig, uploadDfHasIdColumn bool, schema []DBColumn) string {
 	b := &strings.Builder{}
@@ -224,18 +224,20 @@ func buildDeduplicationQuery(tempTableName string, columnsOfInterest []string, c
 	b.WriteString(" WHERE ir.country_id = $1 AND ir.deleted_at IS NULL")
 
 	subQueries := []string{}
-	consideredColumnsAndOperator := []string{}
+	consideredStringColumnsAndOperator := []string{}
 	for _, dt := range config.Types {
 		if config.Operator == deduplication.LOGICAL_OPERATOR_AND {
 			subQueries = append(subQueries, dt.Config.QueryAnd)
-			consideredColumnsAndOperator = append(consideredColumnsAndOperator, dt.Config.Columns...)
+			if dt.Config.Type == deduplication.DataTypeString {
+				consideredStringColumnsAndOperator = append(consideredStringColumnsAndOperator, dt.Config.Columns...)
+			}
 		} else {
 			subQueries = append(subQueries, dt.Config.QueryOr)
 		}
 	}
-	if len(consideredColumnsAndOperator) > 0 {
+	if len(consideredStringColumnsAndOperator) > 0 {
 		emptyColumnChecks := []string{}
-		for _, column := range consideredColumnsAndOperator {
+		for _, column := range consideredStringColumnsAndOperator {
 			emptyColumnChecks = append(emptyColumnChecks, fmt.Sprintf("ti.%s != ''", column), fmt.Sprintf("ir.%s != ''", column))
 		}
 		notAllEmptyQuery := strings.Join(emptyColumnChecks, " OR ")

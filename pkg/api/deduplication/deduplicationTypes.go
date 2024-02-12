@@ -29,9 +29,17 @@ const (
 	LOGICAL_OPERATOR_AND LogicOperator = "AND"
 )
 
+type DataType string
+
+const (
+	DataTypeString DataType = "string"
+	DataTypeDate   DataType = "date"
+)
+
 type DeduplicationTypeValue struct {
 	Columns   []string
 	Condition LogicOperator
+	Type      DataType // defined as a single value since all columns have the same type at the moment, change to array if needed
 	QueryAnd  string
 	QueryOr   string
 }
@@ -55,6 +63,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualPhoneNumber1, constants.DBColumnIndividualPhoneNumber2, constants.DBColumnIndividualPhoneNumber3},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 			QueryAnd: fmt.Sprintf("(ti.%s != '' AND ti.%s = ir.%s) OR (ti.%s != '' AND ti.%s = ir.%s) OR (ti.%s != '' AND ti.%s = ir.%s) OR (ti.%s = '' AND ti.%s = '' AND ti.%s ='')",
 				constants.DBColumnIndividualPhoneNumber1, constants.DBColumnIndividualPhoneNumber1, constants.DBColumnIndividualPhoneNumber1,
 				constants.DBColumnIndividualPhoneNumber2, constants.DBColumnIndividualPhoneNumber2, constants.DBColumnIndividualPhoneNumber2,
@@ -73,6 +82,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualEmail1, constants.DBColumnIndividualEmail2, constants.DBColumnIndividualEmail3},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 			QueryAnd: fmt.Sprintf("(ti.%s != '' AND ti.%s = ir.%s) OR (ti.%s != '' AND ti.%s = ir.%s) OR (ti.%s != '' AND ti.%s = ir.%s) OR (ti.%s = '' AND ti.%s = '' AND ti.%s ='')",
 				constants.DBColumnIndividualEmail1, constants.DBColumnIndividualEmail1, constants.DBColumnIndividualEmail1,
 				constants.DBColumnIndividualEmail2, constants.DBColumnIndividualEmail2, constants.DBColumnIndividualEmail2,
@@ -91,6 +101,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualIdentificationNumber1, constants.DBColumnIndividualIdentificationNumber2, constants.DBColumnIndividualIdentificationNumber3},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 			QueryAnd: fmt.Sprintf("(ti.%s != '' AND ti.%s = ir.%s) OR (ti.%s != '' AND ti.%s = ir.%s) OR (ti.%s != '' AND ti.%s = ir.%s) OR (ti.%s = '' AND ti.%s = '' AND ti.%s ='')",
 				constants.DBColumnIndividualIdentificationNumber1, constants.DBColumnIndividualIdentificationNumber1, constants.DBColumnIndividualIdentificationNumber1,
 				constants.DBColumnIndividualIdentificationNumber2, constants.DBColumnIndividualIdentificationNumber2, constants.DBColumnIndividualIdentificationNumber2,
@@ -109,6 +120,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFirstName, constants.DBColumnIndividualMiddleName, constants.DBColumnIndividualLastName, constants.DBColumnIndividualNativeName},
 			Condition: LOGICAL_OPERATOR_AND,
+			Type:      DataTypeString,
 			QueryAnd: fmt.Sprintf("ti.%s = ir.%s AND ti.%s = ir.%s AND ti.%s = ir.%s AND ti.%s = ir.%s",
 				constants.DBColumnIndividualFirstName, constants.DBColumnIndividualFirstName,
 				constants.DBColumnIndividualMiddleName, constants.DBColumnIndividualMiddleName,
@@ -130,6 +142,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualBirthDate},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeDate,
 			QueryAnd: fmt.Sprintf("ti.%s = ir.%s",
 				constants.DBColumnIndividualBirthDate, constants.DBColumnIndividualBirthDate),
 			QueryOr: fmt.Sprintf("ti.%s = ir.%s",
@@ -143,6 +156,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualMothersName},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 			QueryAnd: fmt.Sprintf("ti.%s = ir.%s",
 				constants.DBColumnIndividualMothersName, constants.DBColumnIndividualMothersName),
 			QueryOr: fmt.Sprintf("ti.%s != '' AND ti.%s = ir.%s",
@@ -156,6 +170,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFullName},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 			QueryAnd: fmt.Sprintf("ti.%s = ir.%s",
 				constants.DBColumnIndividualFullName, constants.DBColumnIndividualFullName),
 			QueryOr: fmt.Sprintf("ti.%s != '' AND ti.%s = ir.%s",
@@ -169,6 +184,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField1},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 			QueryAnd: fmt.Sprintf("ti.%s = ir.%s",
 				constants.DBColumnIndividualFreeField1, constants.DBColumnIndividualFreeField1),
 			QueryOr: fmt.Sprintf("ti.%s != '' AND ti.%s = ir.%s",
@@ -182,6 +198,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField2},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 			QueryAnd: fmt.Sprintf("ti.%s = ir.%s",
 				constants.DBColumnIndividualFreeField2, constants.DBColumnIndividualFreeField2),
 			QueryOr: fmt.Sprintf("ti.%s != '' AND ti.%s = ir.%s",
@@ -195,6 +212,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField3},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 			QueryAnd: fmt.Sprintf("ti.%s = ir.%s",
 				constants.DBColumnIndividualFreeField3, constants.DBColumnIndividualFreeField3),
 			QueryOr: fmt.Sprintf("ti.%s != '' AND ti.%s = ir.%s",
@@ -208,6 +226,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField4},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 			QueryAnd: fmt.Sprintf("ti.%s = ir.%s",
 				constants.DBColumnIndividualFreeField4, constants.DBColumnIndividualFreeField4),
 			QueryOr: fmt.Sprintf("ti.%s != '' AND ti.%s = ir.%s",
@@ -221,6 +240,7 @@ var DeduplicationTypes = map[DeduplicationTypeName]DeduplicationType{
 		Config: DeduplicationTypeValue{
 			Columns:   []string{constants.DBColumnIndividualFreeField5},
 			Condition: LOGICAL_OPERATOR_OR,
+			Type:      DataTypeString,
 			QueryAnd: fmt.Sprintf("ti.%s = ir.%s",
 				constants.DBColumnIndividualFreeField5, constants.DBColumnIndividualFreeField5),
 			QueryOr: fmt.Sprintf("ti.%s != '' AND ti.%s = ir.%s",

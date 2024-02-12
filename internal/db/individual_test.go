@@ -169,7 +169,7 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 				{Name: "col_text_2", SQLType: "text", Default: nil},
 				{Name: "col_date", SQLType: "timestamp", Default: nil},
 			},
-			"SELECT DISTINCT ir.col_text_1,ir.col_date,ir.id FROM individual_registrations ir CROSS JOIN table_name ti WHERE ir.country_id = $1 AND ir.deleted_at IS NULL AND (ti.full_name = ir.full_name);",
+			"SELECT DISTINCT ir.col_text_1,ir.col_date,ir.id FROM individual_registrations ir CROSS JOIN table_name ti WHERE ir.country_id = $1 AND ir.deleted_at IS NULL AND ((ti.full_name = ir.full_name) AND (ti.full_name != '' OR ir.full_name != ''));",
 		},
 		{
 			"Deduplication query, id column, deduplicate any, OR subqueries",
@@ -189,7 +189,7 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 				{Name: "col_text_2", SQLType: "text", Default: nil},
 				{Name: "col_date", SQLType: "timestamp", Default: nil},
 			},
-			"SELECT DISTINCT ir.col_text_1,ir.col_date,ir.id FROM individual_registrations ir CROSS JOIN table_name ti WHERE ir.country_id = $1 AND ir.deleted_at IS NULL AND (ti.full_name = ir.full_name) OR ((ti.identification_number_1 != '' AND ti.identification_number_1 = ir.identification_number_1) OR (ti.identification_number_2 != '' AND ti.identification_number_2 = ir.identification_number_2) OR (ti.identification_number_3 != '' AND ti.identification_number_3 = ir.identification_number_3)) AND ti.id::uuid NOT IN (SELECT id FROM individual_registrations);",
+			"SELECT DISTINCT ir.col_text_1,ir.col_date,ir.id FROM individual_registrations ir CROSS JOIN table_name ti WHERE ir.country_id = $1 AND ir.deleted_at IS NULL AND ((ti.full_name != '' AND ti.full_name = ir.full_name) OR ((ti.identification_number_1 != '' AND ti.identification_number_1 = ir.identification_number_1) OR (ti.identification_number_2 != '' AND ti.identification_number_2 = ir.identification_number_2) OR (ti.identification_number_3 != '' AND ti.identification_number_3 = ir.identification_number_3))) AND ti.id::uuid NOT IN (SELECT id FROM individual_registrations);",
 		},
 		{
 			"Deduplication query, id column, deduplicate all, OR + AND subqueries",
@@ -209,7 +209,7 @@ func TestBuildDeduplicationQuery(t *testing.T) {
 				{Name: "col_text_2", SQLType: "text", Default: nil},
 				{Name: "col_date", SQLType: "timestamp", Default: nil},
 			},
-			"SELECT DISTINCT ir.id FROM individual_registrations ir CROSS JOIN table_name ti WHERE ir.country_id = $1 AND ir.deleted_at IS NULL AND ((ti.email_1 != '' AND ti.email_1 = ir.email_1) OR (ti.email_2 != '' AND ti.email_2 = ir.email_2) OR (ti.email_3 != '' AND ti.email_3 = ir.email_3)) AND (ti.first_name = ir.first_name AND ti.middle_name = ir.middle_name AND ti.last_name = ir.last_name AND ti.native_name = ir.native_name AND (ti.first_name != '' OR ti.middle_name != '' OR ti.last_name != '' OR ti.native_name != '')) AND ti.id::uuid NOT IN (SELECT id FROM individual_registrations);",
+			"SELECT DISTINCT ir.id FROM individual_registrations ir CROSS JOIN table_name ti WHERE ir.country_id = $1 AND ir.deleted_at IS NULL AND (((ti.email_1 != '' AND ti.email_1 = ir.email_1) OR (ti.email_2 != '' AND ti.email_2 = ir.email_2) OR (ti.email_3 != '' AND ti.email_3 = ir.email_3) OR (ti.email_1 = '' AND ti.email_2 = '' AND ti.email_3 ='')) AND (ti.first_name = ir.first_name AND ti.middle_name = ir.middle_name AND ti.last_name = ir.last_name AND ti.native_name = ir.native_name) AND (ti.email_1 != '' OR ir.email_1 != '' OR ti.email_2 != '' OR ir.email_2 != '' OR ti.email_3 != '' OR ir.email_3 != '' OR ti.first_name != '' OR ir.first_name != '' OR ti.middle_name != '' OR ir.middle_name != '' OR ti.last_name != '' OR ir.last_name != '' OR ti.native_name != '' OR ir.native_name != '')) AND ti.id::uuid NOT IN (SELECT id FROM individual_registrations);",
 		},
 	}
 	for _, tt := range tests {
