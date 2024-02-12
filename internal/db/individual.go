@@ -224,11 +224,25 @@ func buildDeduplicationQuery(tempTableName string, columnsOfInterest []string, c
 	b.WriteString(" WHERE ir.country_id = $1 AND ir.deleted_at IS NULL")
 
 	subQueries := []string{}
+	consideredColumnsAndOperator := []string{}
 	for _, dt := range config.Types {
-		subQueries = append(subQueries, dt.Config.Query)
+		if config.Operator == deduplication.LOGICAL_OPERATOR_AND {
+			subQueries = append(subQueries, dt.Config.QueryAnd)
+			consideredColumnsAndOperator = append(consideredColumnsAndOperator, dt.Config.Columns...)
+		} else {
+			subQueries = append(subQueries, dt.Config.QueryOr)
+		}
+	}
+	if len(consideredColumnsAndOperator) > 0 {
+		emptyColumnChecks := []string{}
+		for _, column := range consideredColumnsAndOperator {
+			emptyColumnChecks = append(emptyColumnChecks, fmt.Sprintf("ti.%s != ''", column), fmt.Sprintf("ir.%s != ''", column))
+		}
+		notAllEmptyQuery := strings.Join(emptyColumnChecks, " OR ")
+		subQueries = append(subQueries, notAllEmptyQuery)
 	}
 	if len(subQueries) > 0 {
-		b.WriteString(fmt.Sprintf(" AND (%s)", strings.Join(subQueries, fmt.Sprintf(") %s (", config.Operator))))
+		b.WriteString(fmt.Sprintf(" AND ((%s))", strings.Join(subQueries, fmt.Sprintf(") %s (", config.Operator))))
 	}
 	if uploadDfHasIdColumn {
 		b.WriteString(" AND ti.id::uuid NOT IN (SELECT id FROM individual_registrations)")
