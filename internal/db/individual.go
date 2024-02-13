@@ -224,23 +224,19 @@ func buildDeduplicationQuery(tempTableName string, columnsOfInterest []string, c
 	b.WriteString(" WHERE ir.country_id = $1 AND ir.deleted_at IS NULL")
 
 	subQueries := []string{}
-	consideredStringColumnsAndOperator := []string{}
+	notEmptyPartialChecks := []string{}
 	for _, dt := range config.Types {
 		if config.Operator == deduplication.LOGICAL_OPERATOR_AND {
 			subQueries = append(subQueries, dt.Config.QueryAnd)
-			if dt.Config.Type == deduplication.DataTypeString {
-				consideredStringColumnsAndOperator = append(consideredStringColumnsAndOperator, dt.Config.Columns...)
+			if dt.Config.QueryNotAllEmpty != "" {
+				notEmptyPartialChecks = append(notEmptyPartialChecks, dt.Config.QueryNotAllEmpty)
 			}
 		} else {
 			subQueries = append(subQueries, dt.Config.QueryOr)
 		}
 	}
-	if len(consideredStringColumnsAndOperator) > 0 {
-		emptyColumnChecks := []string{}
-		for _, column := range consideredStringColumnsAndOperator {
-			emptyColumnChecks = append(emptyColumnChecks, fmt.Sprintf("ti.%s != ''", column), fmt.Sprintf("ir.%s != ''", column))
-		}
-		notAllEmptyQuery := strings.Join(emptyColumnChecks, " OR ")
+	if len(notEmptyPartialChecks) > 0 {
+		notAllEmptyQuery := strings.Join(notEmptyPartialChecks, " OR ")
 		subQueries = append(subQueries, notAllEmptyQuery)
 	}
 	if len(subQueries) > 0 {
