@@ -35,6 +35,14 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			t   = locales.GetTranslator()
 		)
 
+		renderErrorWithLink := func(title string, fileErrors []api.FileError, link string) {
+			renderer.RenderView(w, r, templateName, map[string]interface{}{
+				"Errors":       fileErrors,
+				"Title":        title,
+				"DownloadLink": link,
+			})
+		}
+
 		renderError := func(title string, fileErrors []api.FileError) {
 			renderer.RenderView(w, r, templateName, map[string]interface{}{
 				"Errors": fileErrors,
@@ -166,7 +174,15 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 
 			dbDuplicationErrors := api.FormatDbDeduplicationErrors(duplicatesInDB, df, deduplicationConfig)
 			if len(dbDuplicationErrors) > 0 {
-				renderError(t("error_found_duplicates_in_db", len(dbDuplicationErrors)), dbDuplicationErrors)
+				ids := []string{}
+				for _, d := range duplicatesInDB {
+					ids = append(ids, fmt.Sprintf("id=%s", d.ID))
+				}
+				link := fmt.Sprintf("/countries/%s/participants/download?%s", selectedCountryID, strings.Join(ids, "&"))
+				renderErrorWithLink(
+					t("error_found_duplicates_in_db", len(dbDuplicationErrors)),
+					dbDuplicationErrors,
+					link)
 				return
 			}
 		}
