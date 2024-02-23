@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"github.com/lib/pq"
 	"net/http"
 	"strings"
 
@@ -174,6 +175,10 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		_, err = individualRepo.PutMany(r.Context(), individuals, fieldSet)
 		if err != nil {
 			l.Error("failed to put individuals", zap.Error(err))
+			if pqErr, ok := err.(*pq.Error); ok {
+				renderError(t(pqErr.Hint), []api.FileError{{Err: []error{fmt.Errorf("%s: %s", t("column"), t(fmt.Sprintf("file_%s", pqErr.Column)))}, Message: fmt.Sprintf("%s: %s", t("participant_id"), pqErr.Detail)}})
+				return
+			}
 			renderError(t("error_upload_fail", err.Error()), nil)
 			return
 		}

@@ -349,6 +349,7 @@ error_parse_birthdate_invalid = "{{.v0}}: {{.v1}} is invalid: {{.v2}}"
 error_parse_birthdate_minimum = "{{.v0}}: {{.v1}} is before: {{.v2}}"
 error_parse_age = "{{.v0}}: {{.v1}} is negative"
 error_deduplication_preparation = "Something went wrong preparing deduplication. Please check if your file has the correct columns"
+error_empty_override = "Existing values are not allowed to be overwritten by an empty string."
 
 # deduplication types
 deduplication_type_phone_numbers = "Phone numbers"
@@ -545,3 +546,5 @@ file_collection_administrative_area_3 = "Location of registration (admin3)"
 file_updated_at = "Updated at"
 
 empty_string = "<empty>"
+column = "Column"
+participant_id = "Participant ID"

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"github.com/lib/pq"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"html/template"
 	"net/http"
@@ -44,6 +45,7 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			isNew            = individualId == newID
 			individualForm   *views.IndividualForm
 			alerts           []alert.Alert
+			individualCopy   = api.Individual{}
 		)
 
 		render := func() {
@@ -71,6 +73,7 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 				render()
 				return
 			}
+			individualCopy = *individual
 
 			if individual.CountryID != selectedCountryID {
 				l.Warn("user trying to access individual with the wrong country id", zap.String("individual_id", individual.ID))
@@ -200,7 +203,18 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			individual, err = repo.Put(ctx, individual, constants.IndividualDBColumns)
 			if err != nil {
 				l.Error("failed to put individual", zap.Error(err))
+				if pqErr, ok := err.(*pq.Error); ok {
+					individual = &individualCopy
+					validationErrors = append(validationErrors, validation.Invalid(validation.NewPath(pqErr.Column), "", pqErr.Hint))
+					alerts = append(alerts, alert.Alert{
+						Type:        bootstrap.StyleDanger,
+						Title:       fmt.Sprintf(pqErr.Hint),
+						Icon:        warningIcon,
+						Dismissible: true,
+					})
+				}
 				err = apierrs.ErrorFrom(err)
+
 				render()
 				return
 			}

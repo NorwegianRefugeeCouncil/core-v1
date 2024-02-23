@@ -347,6 +347,7 @@ error_parse_birthdate_invalid = "XXXX"
 error_parse_birthdate_minimum = "XXXX"
 error_parse_age = "XXXX"
 error_deduplication_preparation = "XXXX"
+error_empty_override = "XXXX"
 
 # deduplication types
 deduplication_type_phone_numbers = "XXXX"
@@ -552,3 +553,5 @@ file_collection_administrative_area_3 = "XXXX_file_collection_administrative_are
 file_updated_at = "XXXX_file_updated_at"
 
 empty_string = "XXXX_empty_string"
+column = "XXXX"
+participant_id = "XXXX"

@@ -57,6 +57,7 @@ var migrations = []migration{
 	migrationFromFile("033_add_general_vulnerability_fields"),
 	migrationFromFile("034_add_country_read_write_groups"),
 	migrationFromFile("035_add_cc_additional_fields"),
+	migrationFromFile("036_add_no_empty_override_trigger"),
 }
 
 // Migrate runs the migrations on the database.
