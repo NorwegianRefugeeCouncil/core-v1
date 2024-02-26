@@ -1,8 +1,15 @@
 {{define "head"}}
     <script type="application/javascript">
+        const downloadDuplicatesButtonId = "download-duplicates-button"
+
         function download() {
             window.location.href = {{.DownloadLink}}
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const downloadDuplicatesButton = document.getElementById(downloadDuplicatesButtonId)
+            downloadDuplicatesButton.addEventListener('click', download)
+        })
     </script>
 {{end}}
 {{define "body"}}
@@ -17,7 +24,7 @@
         <h5 class="d-flex justify-content-between">
             {{.Title}}
             {{if .DownloadLink}}
-                <a href="#" onclick="download()" class="btn btn-outline-primary">Download duplicates</a>
+                <button type="button" id="download-duplicates-button" class="btn btn-outline-primary">Download duplicates</button>
             {{end}}
         </h5>
     </div>
