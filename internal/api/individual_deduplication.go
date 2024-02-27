@@ -409,26 +409,35 @@ func GetRecordsFromIndividual(deduplicationTypes []deduplication.DeduplicationTy
 	var values []string
 	for _, dType := range deduplicationTypes {
 		for _, field := range dType.Config.Columns {
-			value, err := individual.GetFieldValue(field)
-			if err != nil {
-				continue
-			}
-			header = append(header, field)
-			values = append(values, value.(string))
+			header, values = collectValues(individual, field, header, values)
 		}
 	}
 	for _, field := range mandatory {
 		if slices.Contains(header, field) {
 			continue
 		}
-		value, err := individual.GetFieldValue(field)
-		if err != nil {
-			continue
-		}
-		header = append(header, field)
-		values = append(values, value.(string))
+		header, values = collectValues(individual, field, header, values)
 	}
 	record = append(record, header)
 	record = append(record, values)
 	return record
+}
+
+func collectValues(individual *Individual, field string, header []string, values []string) ([]string, []string) {
+	v, err := individual.GetFieldValue(field)
+	if err != nil {
+		return nil, nil
+	}
+	header = append(header, field)
+	switch v.(type) {
+	case string:
+		values = append(values, v.(string))
+	case *time.Time:
+		if v.(*time.Time) != nil {
+			values = append(values, v.(*time.Time).Format("2006-01-02"))
+		} else {
+			values = append(values, "")
+		}
+	}
+	return header, values
 }

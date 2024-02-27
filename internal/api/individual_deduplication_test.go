@@ -6,9 +6,11 @@ import (
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/locales"
+	"github.com/nrc-no/notcore/internal/utils/pointers"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"time"
 )
 
 var testRecords = [][]string{
@@ -575,6 +577,23 @@ func TestGetRecordsFromIndividual(t *testing.T) {
 			want: [][]string{
 				{"full_name", "id"},
 				{"A B", "id"},
+			},
+		},
+		{
+			name: "with birthday",
+			individual: Individual{
+				FullName:  "A B",
+				ID:        "id",
+				BirthDate: pointers.Time(time.Date(2006, 10, 20, 0, 0, 0, 0, time.Local)),
+			},
+			config: []deduplication.DeduplicationType{
+				deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
+				deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameBirthdate],
+			},
+			mandatory: []string{"id", "full_name", "birth_date"},
+			want: [][]string{
+				{"full_name", "birth_date", "id"},
+				{"A B", "2006-10-20", "id"},
 			},
 		},
 	}
