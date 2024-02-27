@@ -417,7 +417,6 @@ func GetRecordsFromIndividual(deduplicationTypes []deduplication.DeduplicationTy
 			continue
 		}
 		header, values = collectValues(individual, field, header, values)
-
 	}
 	record = append(record, header)
 	record = append(record, values)
@@ -432,12 +431,12 @@ func collectValues(individual *Individual, field string, header []string, values
 	header = append(header, field)
 	switch v.(type) {
 	case string:
-		if v.(string) != "" {
-			values = append(values, v.(string))
-		}
+		values = append(values, v.(string))
 	case *time.Time:
 		if v.(*time.Time) != nil {
 			values = append(values, v.(*time.Time).Format("2006-01-02"))
+		} else {
+			values = append(values, "")
 		}
 	}
 	return header, values
