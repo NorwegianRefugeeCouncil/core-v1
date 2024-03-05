@@ -206,9 +206,13 @@ SELECT DISTINCT  ir.birth_date,ir.email_1,ir.email_2,ir.email_3,ir.first_name,ir
 	CROSS JOIN temp_individuals_<requestId> ti
 	WHERE ir.country_id = $1
 		AND ir.deleted_at IS NULL
-		AND (ti.birth_date = ir.birth_date)
-		AND (ti.email_1 = ir.email_1 OR ti.email_2 = ir.email_2 OR ti.email_3 = ir.email_3)
-		AND (ti.first_name = ir.first_name AND ti.middle_name = ir.middle_name AND ti.last_name = ir.last_name AND ti.native_name = ir.native_name);
+		AND ((ti.birth_date = ir.birth_date)
+		AND ((ti.email_1 != '' AND (ti.email_1 = ir.email_1 OR ti.email_1 = ir.email_2 OR ti.email_1 = ir.email_3))
+			OR (ti.email_2 != '' AND (ti.email_2 = ir.email_1 OR ti.email_2 = ir.email_2 OR ti.email_2 = ir.email_3))
+			OR (ti.email_3 != '' AND (ti.email_3 = ir.email_1 OR ti.email_3 = ir.email_2 OR ti.email_3 = ir.email_3))
+			OR (ti.email_1 = '' AND ti.email_2 = '' AND ti.email_3 =''))
+		AND (ti.first_name = ir.first_name AND ti.middle_name = ir.middle_name AND ti.last_name = ir.last_name AND ti.native_name = ir.native_name)
+		AND (ti.email_1 != '' OR ti.email_2 != '' OR ti.email_3 != '' OR ti.first_name != '' OR ti.middle_name != '' OR ti.last_name != '' OR ti.native_name != '')));
 */
 func buildDeduplicationQuery(tempTableName string, columnsOfInterest []string, config deduplication.DeduplicationConfig, uploadDfHasIdColumn bool, schema []DBColumn) string {
 	b := &strings.Builder{}
@@ -222,16 +226,23 @@ func buildDeduplicationQuery(tempTableName string, columnsOfInterest []string, c
 	b.WriteString(" WHERE ir.country_id = $1 AND ir.deleted_at IS NULL")
 
 	subQueries := []string{}
+	notEmptyPartialChecks := []string{}
 	for _, dt := range config.Types {
-		subSubQueries := []string{}
-		cols := dt.Config.Columns
-		for _, c := range cols {
-			subSubQueries = append(subSubQueries, fmt.Sprintf("ti.%s = ir.%s", c, c))
+		if config.Operator == deduplication.LOGICAL_OPERATOR_AND {
+			subQueries = append(subQueries, dt.Config.QueryAnd)
+			if dt.Config.QueryNotAllEmpty != "" {
+				notEmptyPartialChecks = append(notEmptyPartialChecks, dt.Config.QueryNotAllEmpty)
+			}
+		} else {
+			subQueries = append(subQueries, dt.Config.QueryOr)
 		}
-		subQueries = append(subQueries, strings.Join(subSubQueries, fmt.Sprintf(" %s ", dt.Config.Condition)))
+	}
+	if len(notEmptyPartialChecks) > 0 {
+		notAllEmptyQuery := strings.Join(notEmptyPartialChecks, " OR ")
+		subQueries = append(subQueries, notAllEmptyQuery)
 	}
 	if len(subQueries) > 0 {
-		b.WriteString(fmt.Sprintf(" AND (%s)", strings.Join(subQueries, fmt.Sprintf(") %s (", config.Operator))))
+		b.WriteString(fmt.Sprintf(" AND ((%s))", strings.Join(subQueries, fmt.Sprintf(") %s (", config.Operator))))
 	}
 	if uploadDfHasIdColumn {
 		b.WriteString(" AND ti.id::uuid NOT IN (SELECT id FROM individual_registrations)")
