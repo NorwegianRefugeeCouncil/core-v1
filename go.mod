@@ -58,6 +58,6 @@ require (
 	golang.org/x/text v0.14.0
 	gonum.org/v1/gonum v0.9.1 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/protobuf v1.31.0 // indirect
+	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
