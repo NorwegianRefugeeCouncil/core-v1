@@ -619,6 +619,8 @@ var IndividualDBColumns = containers.NewStringSet(
 // Ordering is important
 var IndividualFileColumns = []string{
 	FileColumnIndividualID,
+	FileColumnIndividualHasConsentedToRGPD,
+	FileColumnIndividualHasConsentedToReferral,
 	FileColumnIndividualFullName,
 	FileColumnIndividualPreferredName,
 	FileColumnIndividualFirstName,
@@ -664,8 +666,6 @@ var IndividualFileColumns = []string{
 	FileColumnIndividualAddress,
 	FileColumnIndividualPreferredContactMethod,
 	FileColumnIndividualPreferredContactMethodComments,
-	FileColumnIndividualHasConsentedToRGPD,
-	FileColumnIndividualHasConsentedToReferral,
 	FileColumnIndividualPresentsProtectionConcerns,
 	FileColumnIndividualDisplacementStatus,
 	FileColumnIndividualDisplacementStatusComment,
