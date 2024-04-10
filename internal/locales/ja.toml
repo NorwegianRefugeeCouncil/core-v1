@@ -125,6 +125,7 @@ option_sex_prefers_not_to_say = "XXXX"
 option_unspecified = "XXXX"
 
 #participant data sections
+consent = "XXXX"
 contact = "XXXX"
 data_collection = "XXXX"
 disabilities = "XXXX"

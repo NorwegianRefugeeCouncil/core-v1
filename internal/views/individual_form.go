@@ -13,6 +13,7 @@ import (
 type IndividualForm struct {
 	*forms.Form
 	individual             *api.Individual
+	consentSection				 *forms.FormSection
 	personalInfoSection    *forms.FormSection
 	contactInfoSection     *forms.FormSection
 	protectionSection      *forms.FormSection
@@ -46,6 +47,7 @@ func (f *IndividualForm) build(t locales.Translator) error {
 	}
 
 	sectionBuilders := []builderFuncs{
+		f.buildConsentSection,
 		f.buildPersonalInfoSection,
 		f.buildContactInfoSection,
 		f.buildProtectionSection,
@@ -252,6 +254,17 @@ func (f *IndividualForm) buildTitle(t locales.Translator) error {
 			f.Form.Title = f.individual.NativeName
 		}
 	}
+	return nil
+}
+
+func (f *IndividualForm) buildConsentSection(t locales.Translator) error {
+	f.consentSection = &forms.FormSection{
+		Title:       t("consent"),
+		Fields:      []forms.Field{},
+		Collapsible: true,
+		Collapsed:   false,
+	}
+	f.Form.Sections = append(f.Form.Sections, f.consentSection)
 	return nil
 }
 
@@ -758,14 +771,14 @@ func (f *IndividualForm) buildHasConsentedToRgpd(t locales.Translator) error {
 	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualHasConsentedToRGPD,
 		DisplayName: t("has_consented_to_rgpd"),
-	}, f.protectionSection, f.individual.HasConsentedToRGPD)
+	}, f.consentSection, f.individual.HasConsentedToRGPD)
 }
 
 func (f *IndividualForm) buildHasConsentedToReferral(t locales.Translator) error {
 	return buildField(&forms.OptionalBooleanInputField{
 		Name:        constants.DBColumnIndividualHasConsentedToReferral,
 		DisplayName: t("has_consented_to_referral"),
-	}, f.protectionSection, f.individual.HasConsentedToReferral)
+	}, f.consentSection, f.individual.HasConsentedToReferral)
 }
 
 func (f *IndividualForm) buildPresentsProtectionConcerns(t locales.Translator) error {
