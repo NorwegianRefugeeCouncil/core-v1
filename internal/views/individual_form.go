@@ -1160,6 +1160,7 @@ func (f *IndividualForm) buildServiceComments(idx int) func(t locales.Translator
 		return buildField(&forms.TextAreaInputField{
 			Name:        fmt.Sprintf("service_comments_%d", idx),
 			DisplayName: t("service_delivery_date_comments_no", idx),
+			Rows: 			 10,
 		}, f.serviceSection, value)
 	}
 }
