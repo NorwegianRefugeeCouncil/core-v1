@@ -223,12 +223,15 @@
 {{define "textAreaField"}}
     {{$field := .Field}}
     {{template "inputLabel" .}}
-    <textarea class="form-control {{if $field.Errors}}is-invalid{{end}}"
-              id="{{$field.Name}}"
-              name="{{$field.Name}}"
-              aria-labelledby="{{$field.Name}}--label"
-              aria-describedby="{{$field.Name}}--help {{if $field.Errors}}{{$field.Name}}--errors{{end}}"
-              {{if $field.Errors}}required{{end}}>{{$field.Value}}</textarea>
+    <textarea
+        class="form-control {{if $field.Errors}}is-invalid{{end}}"
+        id="{{$field.Name}}"
+        name="{{$field.Name}}"
+        rows={{if $field.Rows}}{{$field.Rows}}{{else}}3{{end}}
+        aria-labelledby="{{$field.Name}}--label"
+        aria-describedby="{{$field.Name}}--help {{if $field.Errors}}{{$field.Name}}--errors{{end}}"
+        {{if $field.Errors}}required{{end}}>{{$field.Value}}
+    </textarea>
     {{template "inputHelp" .}}
     {{template "inputError" .}}
 {{end}}
