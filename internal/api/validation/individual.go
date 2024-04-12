@@ -92,7 +92,6 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC1, p.Child(constants.DBColumnIndividualServiceCC1))...)
 	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate1, p.Child(constants.DBColumnIndividualServiceRequestedDate1))...)
 	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate1, p.Child(constants.DBColumnIndividualServiceDeliveredDate1))...)
-	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments1, p.Child(constants.DBColumnIndividualServiceComments1))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.ServiceType1, p.Child(constants.DBColumnIndividualServiceType1))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.Service1, p.Child(constants.DBColumnIndividualService1))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.ServiceSubService1, p.Child(constants.DBColumnIndividualServiceSubService1))...)
@@ -103,7 +102,6 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC2, p.Child(constants.DBColumnIndividualServiceCC2))...)
 	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate2, p.Child(constants.DBColumnIndividualServiceRequestedDate2))...)
 	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate2, p.Child(constants.DBColumnIndividualServiceDeliveredDate2))...)
-	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments2, p.Child(constants.DBColumnIndividualServiceComments2))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.ServiceType2, p.Child(constants.DBColumnIndividualServiceType2))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.Service2, p.Child(constants.DBColumnIndividualService2))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.ServiceSubService2, p.Child(constants.DBColumnIndividualServiceSubService2))...)
@@ -114,7 +112,6 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC3, p.Child(constants.DBColumnIndividualServiceCC3))...)
 	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate3, p.Child(constants.DBColumnIndividualServiceRequestedDate3))...)
 	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate3, p.Child(constants.DBColumnIndividualServiceDeliveredDate3))...)
-	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments3, p.Child(constants.DBColumnIndividualServiceComments3))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.ServiceType3, p.Child(constants.DBColumnIndividualServiceType3))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.Service3, p.Child(constants.DBColumnIndividualService3))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.ServiceSubService3, p.Child(constants.DBColumnIndividualServiceSubService3))...)
@@ -125,7 +122,6 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC4, p.Child(constants.DBColumnIndividualServiceCC4))...)
 	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate4, p.Child(constants.DBColumnIndividualServiceRequestedDate4))...)
 	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate4, p.Child(constants.DBColumnIndividualServiceDeliveredDate4))...)
-	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments4, p.Child(constants.DBColumnIndividualServiceComments4))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.ServiceType4, p.Child(constants.DBColumnIndividualServiceType4))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.Service4, p.Child(constants.DBColumnIndividualService4))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.ServiceSubService4, p.Child(constants.DBColumnIndividualServiceSubService4))...)
@@ -136,7 +132,6 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC5, p.Child(constants.DBColumnIndividualServiceCC5))...)
 	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate5, p.Child(constants.DBColumnIndividualServiceRequestedDate5))...)
 	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate5, p.Child(constants.DBColumnIndividualServiceDeliveredDate5))...)
-	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments5, p.Child(constants.DBColumnIndividualServiceComments5))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.ServiceType5, p.Child(constants.DBColumnIndividualServiceType5))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.Service5, p.Child(constants.DBColumnIndividualService5))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.ServiceSubService5, p.Child(constants.DBColumnIndividualServiceSubService5))...)
@@ -147,7 +142,6 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC6, p.Child(constants.DBColumnIndividualServiceCC6))...)
 	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate6, p.Child(constants.DBColumnIndividualServiceRequestedDate6))...)
 	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate6, p.Child(constants.DBColumnIndividualServiceDeliveredDate6))...)
-	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments6, p.Child(constants.DBColumnIndividualServiceComments6))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.ServiceType6, p.Child(constants.DBColumnIndividualServiceType6))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.Service6, p.Child(constants.DBColumnIndividualService6))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.ServiceSubService6, p.Child(constants.DBColumnIndividualServiceSubService6))...)
@@ -158,7 +152,6 @@ func validateIndividual(i *api.Individual, p *validation.Path) validation.ErrorL
 	allErrs = append(allErrs, validateIndividualServiceCC(i.ServiceCC7, p.Child(constants.DBColumnIndividualServiceCC7))...)
 	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceRequestedDate7, p.Child(constants.DBColumnIndividualServiceRequestedDate7))...)
 	allErrs = append(allErrs, validateIndividualServiceDate(i.ServiceDeliveredDate7, p.Child(constants.DBColumnIndividualServiceDeliveredDate7))...)
-	allErrs = append(allErrs, validateIndividualServiceComment(i.ServiceComments7, p.Child(constants.DBColumnIndividualServiceComments7))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.ServiceType7, p.Child(constants.DBColumnIndividualServiceType7))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.Service7, p.Child(constants.DBColumnIndividualService7))...)
 	allErrs = append(allErrs, validateIndividualServiceTextField(i.ServiceSubService7, p.Child(constants.DBColumnIndividualServiceSubService7))...)
@@ -527,14 +520,6 @@ func validateIndividualServiceDate(d *time.Time, path *validation.Path) validati
 	}
 	if *d == (time.Time{}) {
 		allErrs = append(allErrs, validation.Invalid(path, d, "must be a valid date"))
-	}
-	return allErrs
-}
-
-func validateIndividualServiceComment(comment string, path *validation.Path) validation.ErrorList {
-	allErrs := validation.ErrorList{}
-	if len(comment) > maxTextLength {
-		allErrs = append(allErrs, validation.TooLongMaxLength(path, comment, maxTextLength))
 	}
 	return allErrs
 }
