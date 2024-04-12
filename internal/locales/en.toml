@@ -127,6 +127,7 @@ option_sex_prefers_not_to_say = "Prefers not to say"
 option_unspecified = ""
 
 #participant data sections
+consent = "Consent"
 contact = "Contact Information"
 data_collection = "Data Collection"
 disabilities = "Disabilities"
