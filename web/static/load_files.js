@@ -18,10 +18,14 @@ const cacheExpiry = 365 * 24 * 60 * 60 * 1000; // 1 year in milliseconds
 
 function populateSelect(selectId, data) {
     const selectElement = document.getElementById(selectId);
+    const currentValue = selectElement.getAttribute('data-current-value');
     data.forEach(item => {
         const option = document.createElement('option');
         option.value = item.value; // Adjust based on your JSON structure
         option.textContent = item.label; // Adjust based on your JSON structure
+        if (currentValue === item.value) {
+            option.selected = true;
+        }
         selectElement.appendChild(option);
     });
 }
