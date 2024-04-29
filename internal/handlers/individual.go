@@ -2,15 +2,17 @@ package handlers
 
 import (
 	"fmt"
-	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"html/template"
 	"net/http"
+
+	"github.com/nrc-no/notcore/pkg/api/deduplication"
 
 	"github.com/gorilla/mux"
 	"github.com/nrc-no/notcore/internal/api"
 	apivalidation "github.com/nrc-no/notcore/internal/api/validation"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/db"
+	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"github.com/nrc-no/notcore/internal/views"
@@ -54,6 +56,17 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 				templateParamAlerts: alerts,
 			})
 			return
+		}
+
+		t := locales.GetTranslator()
+		successAlert := alert.Alert{
+			Type:        bootstrap.StyleSuccess,
+			Title:       t("success"),
+			Content:     template.HTML(t("participant_saved_successfully")),
+			Dismissible: true,
+		}
+		if r.URL.Query().Get("success") == "true" {
+			alerts = append(alerts, successAlert)
 		}
 
 		// Get the currently selected Country ID
@@ -206,9 +219,12 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			}
 
 			if individualId == "new" {
-				http.Redirect(w, r, fmt.Sprintf("/countries/%s/participants/%s", individual.CountryID, individual.ID), http.StatusFound)
+				http.Redirect(w, r, fmt.Sprintf("/countries/%s/participants/%s?success=true", individual.CountryID, individual.ID), http.StatusFound)
 				return
 			} else {
+				if r.URL.Query().Get("success") != "true" {
+					alerts = append(alerts, successAlert)
+				}
 				render()
 				return
 			}

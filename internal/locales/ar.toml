@@ -28,6 +28,8 @@ deactivate_individual = "####"
 deactivated_individual = "####"
 delete_individual = "####"
 deletion_warning = "####"
+success = "####"
+participant_saved_successfully = "####"
 
 # individuals.gohtml
 activate_selected_individuals = "####"
