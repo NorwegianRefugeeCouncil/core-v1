@@ -1,5 +1,6 @@
 {{define "head"}}
     <script type="application/javascript" src="/static/qrcode.js"></script>
+    <script type="application/javascript" src="/static/load_files.js"></script>
     <script>
         const individualActionFormId = "individuals-action-form"
 
@@ -17,6 +18,9 @@
         }
 
         document.addEventListener("DOMContentLoaded", function () {
+            init_countries();
+            init_languages();
+
             const form = document.getElementById("individualForm")
             const deletionForm = document.getElementById("delete-individual-form")
             const startSubmitProcessButton = document.getElementById("start-submit-process-button")

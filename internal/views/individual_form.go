@@ -1260,32 +1260,20 @@ func getServiceCCOptions() []forms.SelectInputFieldOption {
 }
 
 func buildCountryOptions(t locales.Translator) []forms.SelectInputFieldOption {
-	var opts = make([]forms.SelectInputFieldOption, 0, len(constants.Countries))
+	var opts = make([]forms.SelectInputFieldOption, 1)
 	opts = append(opts, forms.SelectInputFieldOption{
 		Value: "",
 		Label: t("select_a_value"),
 	})
-	for _, country := range constants.Countries {
-		opts = append(opts, forms.SelectInputFieldOption{
-			Value: country.ISO3166Alpha3,
-			Label: country.Name,
-		})
-	}
 	return opts
 }
 
 func buildLanguageOptions(t locales.Translator) []forms.SelectInputFieldOption {
-	var opts = make([]forms.SelectInputFieldOption, 0, len(constants.Languages))
+	var opts = make([]forms.SelectInputFieldOption, 1)
 	opts = append(opts, forms.SelectInputFieldOption{
 		Value: "",
 		Label: t("select_a_value"),
 	})
-	for _, lang := range constants.Languages {
-		opts = append(opts, forms.SelectInputFieldOption{
-			Value: lang.ID,
-			Label: lang.Name,
-		})
-	}
 	return opts
 }
 
