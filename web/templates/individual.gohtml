@@ -52,6 +52,8 @@
             } else if (firstFocusableInput != null) {
                 focusInput(firstFocusableInput)
             }
+            
+            window.history.pushState({}, null, window.location.href.split('?')[0]);            
         });
     </script>
 {{end}}
