@@ -28,8 +28,8 @@ deactivate_individual = "XXXX"
 deactivated_individual = "XXXX"
 delete_individual = "XXXX"
 deletion_warning = "XXXX"
-success = "####"
-participant_saved_successfully = "####"
+success = "XXXX"
+participant_saved_successfully = "XXXX"
 
 # individuals.gohtml
 activate_selected_individuals = "XXXX"
