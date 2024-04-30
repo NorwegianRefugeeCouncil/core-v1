@@ -53,7 +53,9 @@
                 focusInput(firstFocusableInput)
             }
             
-            window.history.pushState({}, null, window.location.href.split('?')[0]);            
+            if (window.location.search.includes("success=true")) {
+                window.history.pushState({}, null, window.location.href.split('?')[0]);            
+            }
         });
     </script>
 {{end}}
