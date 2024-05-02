@@ -110,6 +110,7 @@
     <select class="form-select {{if $field.Errors}}is-invalid{{end}}"
             id="{{$field.Name}}"
             name="{{$field.Name}}"
+            data-current-value="{{$field.Value}}"
             aria-labelledby="{{$field.Name}}--label"
             {{if .AllowMultiple}}multiple="multiple"{{end}}
             aria-describedby="{{$field.Name}}--help {{if $field.Errors}}{{$field.Name}}--errors{{end}}"

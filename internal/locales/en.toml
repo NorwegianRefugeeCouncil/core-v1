@@ -28,6 +28,8 @@ deactivate_individual = "Deactivate"
 deactivated_individual = "Deactivated participant"
 delete_individual = "Delete participant"
 deletion_warning = "This will delete the participant and all associated data."
+success = "Success"
+participant_saved_successfully = "Participant saved successfully"
 
 # individuals.gohtml
 activate_selected_individuals = "Activate selected participants"
