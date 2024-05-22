@@ -45,7 +45,7 @@ func (o Options) New(ctx context.Context) (*Server, error) {
 	// TODO: make this configurable at some point
 	sqlDb.SetMaxIdleConns(5)
 	sqlDb.SetMaxOpenConns(10)
-	sqlDb.SetConnMaxLifetime(time.Minute * 5)
+	sqlDb.SetConnMaxLifetime(time.Minute * 20)
 
 	if err := db.Migrate(context.Background(), sqlDb); err != nil {
 		l.Error("failed to migrate database", zap.Error(err))
