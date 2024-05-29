@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func HandleIndividualAction(repo db.IndividualRepo, action string) http.Handler {
+func HandleIndividualAction(repo db.IndividualRepo, action db.IndividualAction) http.Handler {
 
 	const (
 		pathParamIndividualID = "individual_id"

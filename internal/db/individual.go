@@ -8,19 +8,18 @@ import (
 	"time"
 
 	"github.com/go-gota/gota/dataframe"
-	"github.com/lib/pq"
-	"github.com/nrc-no/notcore/internal/constants"
-	"github.com/nrc-no/notcore/internal/locales"
-	"github.com/nrc-no/notcore/pkg/api/deduplication"
-	"golang.org/x/exp/slices"
-
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+	"github.com/lib/pq"
 	"github.com/nrc-no/notcore/internal/api"
+	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
+	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
+	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"go.uber.org/zap"
+	"golang.org/x/exp/slices"
 )
 
 //go:generate mockgen -destination=./individual_mock.go -package=db . IndividualRepo
@@ -30,8 +29,8 @@ type IndividualRepo interface {
 	GetByID(ctx context.Context, id string) (*api.Individual, error)
 	Put(ctx context.Context, individual *api.Individual, fields containers.StringSet) (*api.Individual, error)
 	PutMany(ctx context.Context, individuals []*api.Individual, fields containers.StringSet) ([]*api.Individual, error)
-	PerformAction(ctx context.Context, id string, action string) error
-	PerformActionMany(ctx context.Context, ids containers.StringSet, action string) error
+	PerformAction(ctx context.Context, id string, action IndividualAction) error
+	PerformActionMany(ctx context.Context, ids containers.StringSet, action IndividualAction) error
 	FindDuplicates(ctx context.Context, df dataframe.DataFrame, deduplicationConfig deduplication.DeduplicationConfig) ([]*api.Individual, error)
 }
 
@@ -470,7 +469,7 @@ func (i individualRepo) putInternal(ctx context.Context, tx *sqlx.Tx, individual
 	return ret[0], nil
 }
 
-func (i individualRepo) PerformAction(ctx context.Context, id string, action string) error {
+func (i individualRepo) PerformAction(ctx context.Context, id string, action IndividualAction) error {
 	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		err := i.performActionManyInternal(ctx, tx, containers.NewStringSet(id), action)
 		return nil, err
@@ -478,7 +477,7 @@ func (i individualRepo) PerformAction(ctx context.Context, id string, action str
 	return err
 }
 
-func (i individualRepo) PerformActionMany(ctx context.Context, ids containers.StringSet, action string) error {
+func (i individualRepo) PerformActionMany(ctx context.Context, ids containers.StringSet, action IndividualAction) error {
 	_, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		err := i.performActionManyInternal(ctx, tx, ids, action)
 		return nil, err
@@ -486,31 +485,38 @@ func (i individualRepo) PerformActionMany(ctx context.Context, ids containers.St
 	return err
 }
 
-func (i individualRepo) performActionManyInternal(ctx context.Context, tx *sqlx.Tx, ids containers.StringSet, action string) error {
+func (i individualRepo) performActionManyInternal(ctx context.Context, tx *sqlx.Tx, ids containers.StringSet, action IndividualAction) error {
 	l := logging.NewLogger(ctx).With(zap.Strings("individual_ids", ids.Items()))
-	l.Debug("performing action: " + action + " individuals")
+	l.Debug("performing action: " + string(action) + " individuals")
 
 	if err := batch(maxParams/ids.Len(), ids.Items(), func(idsInBatch []string) (bool, error) {
-		var query = "UPDATE individual_registrations SET " + individualActions[action].targetField + " = $1 WHERE id IN ("
-		var args = []interface{}{individualActions[action].newValue}
+		var query string
+
+		switch action {
+		case DeleteAction:
+			query = "DELETE FROM individual_registrations WHERE id IN ("
+		case ActivateAction:
+			query = "UPDATE individual_registrations SET inactive = false WHERE id IN ("
+		case DeactivateAction:
+			query = "UPDATE individual_registrations SET inactive = true WHERE id IN ("
+		}
+
+		var args []interface{}
 		for i, id := range idsInBatch {
 			if i != 0 {
 				query += ","
 			}
-			query += fmt.Sprintf("$%d", i+2)
+			query += fmt.Sprintf("$%d", i+1)
 			args = append(args, id)
 		}
 		query += ") "
-		for _, c := range individualActions[action].conditions {
-			query += c + " "
-		}
 
-		auditDuration := logDuration(ctx, "performing action: "+action+" individuals", zap.Int("count", len(idsInBatch)))
+		auditDuration := logDuration(ctx, "performing action: "+string(action)+" individuals", zap.Int("count", len(idsInBatch)))
 		defer auditDuration()
 
 		result, err := tx.ExecContext(ctx, query, args...)
 		if err != nil {
-			l.Error("failed to "+action+" individuals", zap.Error(err))
+			l.Error("failed to "+string(action)+" individuals", zap.Error(err))
 			return false, err
 		}
 
@@ -519,8 +525,8 @@ func (i individualRepo) performActionManyInternal(ctx context.Context, tx *sqlx.
 			l.Error("failed to get rows affected", zap.Error(err))
 			return false, err
 		} else if rowsAffected != int64(len(idsInBatch)) {
-			l.Error("failed to "+action+" all individuals", zap.Int64("rows_affected", rowsAffected))
-			return false, fmt.Errorf("failed to " + action + " all individuals")
+			l.Error("failed to "+string(action)+" all individuals", zap.Int64("rows_affected", rowsAffected))
+			return false, fmt.Errorf("failed to " + string(action) + " all individuals")
 		}
 
 		return false, nil

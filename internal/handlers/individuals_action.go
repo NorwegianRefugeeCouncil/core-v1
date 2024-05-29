@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/containers"
 	"github.com/nrc-no/notcore/internal/db"
@@ -9,10 +11,9 @@ import (
 	"github.com/nrc-no/notcore/internal/logging"
 	"github.com/nrc-no/notcore/internal/utils"
 	"go.uber.org/zap"
-	"net/http"
 )
 
-func HandleIndividualsAction(renderer Renderer, repo db.IndividualRepo, action string) http.Handler {
+func HandleIndividualsAction(renderer Renderer, repo db.IndividualRepo, action db.IndividualAction) http.Handler {
 
 	const (
 		templateName   = "error.gohtml"
@@ -70,14 +71,14 @@ func HandleIndividualsAction(renderer Renderer, repo db.IndividualRepo, action s
 			for _, individualId := range invalidIndividualIds {
 				errors = append(errors, fmt.Errorf(individualId))
 			}
-			l.Warn("user trying to "+action+" individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
+			l.Warn("user trying to "+string(action)+" individuals that don't exist or are in the wrong country", zap.Strings("individual_ids", invalidIndividualIds))
 			renderError(t("error_action_execution", action),
 				[]api.FileError{{Message: t("error_action_failed"), Err: errors}})
 			return
 		}
 
 		if err := repo.PerformActionMany(ctx, individualIds, action); err != nil {
-			l.Error("failed to "+action+" individuals", zap.Error(err))
+			l.Error("failed to "+string(action)+" individuals", zap.Error(err))
 			renderError(t("error_action_failed_detail", action), nil)
 			return
 		}
