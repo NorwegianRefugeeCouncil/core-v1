@@ -143,7 +143,6 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 		}
 
 		if r.Method == http.MethodPost || r.Method == http.MethodPut {
-			duplicates := []*api.Individual{}
 			deduplicationTypes := r.Form[formDeduplicationParam]
 			deduplicationLogicOperator := deduplication.LogicOperator(r.Form[formParamDeduplicationLogicOperator][0])
 			deduplicationConfig, err := deduplication.GetDeduplicationConfig(deduplicationTypes, deduplicationLogicOperator)
@@ -159,54 +158,50 @@ func HandleIndividual(renderer Renderer, repo db.IndividualRepo) http.Handler {
 			}
 
 			if len(deduplicationConfig.Types) > 0 {
-				mandatory := []string{constants.DBColumnIndividualLastName}
-				if individual.ID != "" {
-					mandatory = append(mandatory, constants.DBColumnIndividualID)
-				}
-				record := api.GetRecordsFromIndividual(deduplicationConfig.Types, individual, mandatory)
-				df, err := api.CreateDataframeFromRecords(record, deduplicationConfig.Types, mandatory)
-				if err != nil {
-					alerts = append(alerts, alert.Alert{
-						Type:        bootstrap.StyleDanger,
-						Title:       fmt.Sprintf("Error during deduplication %e", err),
-						Icon:        warningIcon,
-						Dismissible: true,
-					})
-					render()
-					return
-				}
-				duplicates, err = repo.FindDuplicates(ctx, df, deduplicationConfig)
-				if err != nil {
-					alerts = append(alerts, alert.Alert{
-						Type:        bootstrap.StyleDanger,
-						Title:       fmt.Sprintf("Error during deduplication %e", err),
-						Icon:        warningIcon,
-						Dismissible: true,
-					})
-					render()
-					return
-				}
-			}
+				duplicatesInFile, duplicatesInDB, err := repo.FindDuplicates(ctx, []*api.Individual{individual}, deduplicationConfig)
 
-			if len(duplicates) > 0 {
-				for _, dType := range deduplicationConfig.Types {
-					for _, field := range dType.Config.Columns {
-						value, err := individual.GetFieldValue(field)
-						if err != nil || value == "" {
-							continue
+				if err != nil {
+					alerts = append(alerts, alert.Alert{
+						Type:        bootstrap.StyleDanger,
+						Title:       fmt.Sprintf("Error during deduplication %e", err),
+						Icon:        warningIcon,
+						Dismissible: true,
+					})
+					render()
+					return
+				}
+
+				if duplicatesInFile != nil {
+					alerts = append(alerts, alert.Alert{
+						Type:        bootstrap.StyleDanger,
+						Title:       fmt.Sprintf("Error during deduplication"),
+						Icon:        warningIcon,
+						Dismissible: true,
+					})
+					render()
+					return
+				}
+
+				if duplicatesInDB != nil { 
+					for _, dType := range deduplicationConfig.Types {
+						for _, field := range dType.Config.Columns {
+							value, err := individual.GetFieldValue(field)
+							if err != nil || value == "" {
+								continue
+							}
+							validationErrors = append(validationErrors, validation.Duplicate(validation.NewPath(field), value))
 						}
-						validationErrors = append(validationErrors, validation.Duplicate(validation.NewPath(field), value))
 					}
-				}
 
-				alerts = append(alerts, alert.Alert{
-					Type:        bootstrap.StyleDanger,
-					Title:       fmt.Sprintf("Found %d duplicate(s)", len(duplicates)),
-					Icon:        warningIcon,
-					Dismissible: true,
-				})
-				render()
-				return
+					alerts = append(alerts, alert.Alert{
+						Type:        bootstrap.StyleDanger,
+						Title:       fmt.Sprintf("Found %d duplicate(s)", len(duplicatesInDB)),
+						Icon:        warningIcon,
+						Dismissible: true,
+					})
+					render()
+					return
+				}
 			}
 
 			// Save the individual
