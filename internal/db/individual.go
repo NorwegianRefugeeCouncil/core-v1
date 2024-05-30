@@ -7,8 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-gota/gota/dataframe"
-	"github.com/lib/pq"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
@@ -32,46 +30,133 @@ type IndividualRepo interface {
 	PutMany(ctx context.Context, individuals []*api.Individual, fields containers.StringSet) ([]*api.Individual, error)
 	PerformAction(ctx context.Context, id string, action string) error
 	PerformActionMany(ctx context.Context, ids containers.StringSet, action string) error
-	FindDuplicates(ctx context.Context, df dataframe.DataFrame, deduplicationConfig deduplication.DeduplicationConfig) ([]*api.Individual, error)
+	FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationConfig deduplication.DeduplicationConfig) ([]containers.Set[int], []*api.Individual, error) 
 }
 
 type individualRepo struct {
 	db *sqlx.DB
 }
 
-func (i individualRepo) FindDuplicates(ctx context.Context, df dataframe.DataFrame, deduplicationConfig deduplication.DeduplicationConfig) ([]*api.Individual, error) {
+type IdxDuplicates struct {
+	IdxA int `db:"idxa"`
+	IdxB int `db:"idxb"`
+}
+
+func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationConfig deduplication.DeduplicationConfig) ([]containers.Set[int], []*api.Individual, error) {
 	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
-		return i.findDuplicatesInternal(ctx, tx, df, deduplicationConfig)
+		fileDuplicates, dbDuplicates, err := i.findDuplicatesInternal(ctx, tx, individuals, deduplicationConfig)
+		return []interface{}{fileDuplicates, dbDuplicates}, err
 	})
+	if err != nil {
+		return nil, nil, err
+	}
+	return ret.([]interface{})[0].([]containers.Set[int]), ret.([]interface{})[1].([]*api.Individual), nil 
+}
+
+func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, individuals []*api.Individual, config deduplication.DeduplicationConfig) ([]containers.Set[int], []*api.Individual, error) {
+	if i.driverName() != "postgres" {
+		return nil, nil, fmt.Errorf("deduplication is only implemented for postgres")
+	}
+
+	selectedCountryID, err := utils.GetSelectedCountryID(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	deduplicationTempTableConfig, err := prepareDeduplicationTempTable(ctx, tx, individuals, config)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	fileDuplicates, err := findFileDuplicates(ctx, tx, deduplicationTempTableConfig, config, selectedCountryID, len(individuals))
+	if err != nil {
+		return nil, nil, err
+	}
+	for _, d := range fileDuplicates {
+		if d.Len() > 0 {
+			return fileDuplicates, nil, nil
+		}
+	}
+
+	dbDuplicates, err := findDbDuplicates(ctx, tx, deduplicationTempTableConfig, config, selectedCountryID)
+	if err != nil {
+		return nil, nil, err
+	}
+	if len(dbDuplicates) > 0 {
+		return nil, dbDuplicates, nil
+	}
+
+	return nil, nil, nil	
+}
+
+func findDbDuplicates(ctx context.Context, tx *sqlx.Tx, deduplicationTempTableConfig *DeduplicationTempTableConfig, config deduplication.DeduplicationConfig, selectedCountryID string) ([]*api.Individual, error) {
+	ret := make([]*api.Individual, 0)
+
+	// now we look for duplicates in a cross join between the temp table and the individual_registrations table
+	deduplicationQuery := buildDbDeduplicationQuery(
+		deduplicationTempTableConfig.tempTableName,
+		deduplicationTempTableConfig.columnsOfInterest,
+		config,
+		deduplicationTempTableConfig.schema,
+	)
+	err := tx.SelectContext(ctx, &ret, deduplicationQuery, selectedCountryID)
 	if err != nil {
 		return nil, err
 	}
-	return ret.([]*api.Individual), nil
+	return ret, nil
 }
 
-func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, df dataframe.DataFrame, config deduplication.DeduplicationConfig) ([]*api.Individual, error) {
-	if i.driverName() != "postgres" {
-		return nil, fmt.Errorf("deduplication is only implemented for postgres")
+func findFileDuplicates(ctx context.Context, tx *sqlx.Tx, deduplicationTempTableConfig *DeduplicationTempTableConfig, config deduplication.DeduplicationConfig, selectedCountryID string, individualCount int) ([]containers.Set[int], error) {
+	ret := make([]*IdxDuplicates, 0)
+
+	// now we look for duplicates in a cross join between the temp table and the individual_registrations table
+	deduplicationQuery := buildFileDeduplicationQuery(
+		deduplicationTempTableConfig.tempTableName,
+		deduplicationTempTableConfig.columnsOfInterest,
+		config,
+		deduplicationTempTableConfig.schema,
+	)
+	err := tx.SelectContext(ctx, &ret, deduplicationQuery)
+	if err != nil {
+		return nil, err
 	}
 
-	ret := make([]*api.Individual, 0)
+	duplicateScores := []containers.Set[int]{}
+	for i := 0; i < individualCount; i++ {
+		duplicateScores = append(duplicateScores, containers.NewSet[int]())
+	}
 
-	selectedCountryID, err := utils.GetSelectedCountryID(ctx)
+	for _, d := range ret {
+		duplicateScores[d.IdxA - 1].Add(d.IdxB - 1)
+	}
 
+	return duplicateScores, nil
+}
+
+type DBColumn struct {
+	Name    string
+	Default *string
+	SQLType string
+}
+
+type DeduplicationTempTableConfig struct {
+	tempTableName string
+	columnsOfInterest []string
+	schema []DBColumn
+}
+
+func prepareDeduplicationTempTable(ctx context.Context, tx *sqlx.Tx, individuals []*api.Individual, config deduplication.DeduplicationConfig) (deduplicationTempTableConfig *DeduplicationTempTableConfig, error error) {
 	// first we get the schema of the individual_registrations table
 	var schema []DBColumn
 	schemaQuery := buildTableSchemaQuery()
-	err = tx.SelectContext(ctx, &schema, schemaQuery)
+	err := tx.SelectContext(ctx, &schema, schemaQuery)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get table schema: %w", err)
 	}
 
 	// then we collect the columns that are relevant for deduplication
 	columnsOfInterest := []string{}
-	uploadDfHasIdColumn := slices.Contains(df.Names(), constants.DBColumnIndividualID)
-	if uploadDfHasIdColumn {
-		columnsOfInterest = append(columnsOfInterest, constants.DBColumnIndividualID)
-	}
+	columnsOfInterest = append(columnsOfInterest, constants.DBColumnIndividualID)
 	for _, d := range config.Types {
 		cols := d.Config.Columns
 		for c := range cols {
@@ -89,26 +174,16 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	}
 
 	// we insert the data from the upload into the temp table
-	df = df.Select(columnsOfInterest)
-	insertQuery, args := buildInsertIndividualsQuery(tempTableName, schema, df, columnsOfInterest, uploadDfHasIdColumn)
-	result = tx.MustExec(insertQuery, args...)
-	if result == nil {
+	err = insertTempIndividuals(ctx, tx, tempTableName, schema, individuals, columnsOfInterest)
+	if err != nil { 
 		return nil, fmt.Errorf("failed to insert into temp table")
 	}
 
-	// now we look for duplicates in a cross join between the temp table and the individual_registrations table
-	deduplicationQuery := buildDeduplicationQuery(tempTableName, columnsOfInterest, config, uploadDfHasIdColumn, schema)
-	err = tx.SelectContext(ctx, &ret, deduplicationQuery, selectedCountryID)
-	if err != nil {
-		return nil, err
-	}
-	return ret, nil
-}
-
-type DBColumn struct {
-	Name    string
-	Default *string
-	SQLType string
+	return &DeduplicationTempTableConfig{
+		tempTableName: tempTableName,
+		columnsOfInterest: columnsOfInterest,
+		schema: schema,
+	}, nil
 }
 
 func buildTableSchemaQuery() string {
@@ -135,8 +210,16 @@ func buildCreateTempTableQuery(tempTableName string, schema []DBColumn, columnsO
 			columns = append(columns, fmt.Sprintf("%s %s", schema[si].Name, schema[si].SQLType))
 		}
 	}
+	columns = append(columns, "idx serial")
 	b.WriteString(fmt.Sprintf(" (%s)", strings.Join(columns, ",")))
 	b.WriteString(" ON COMMIT DROP;")
+
+	// add index for each column
+	for _, col := range columnsOfInterest {
+		b.WriteString(fmt.Sprintf("CREATE INDEX ON %s (%s);", tempTableName, col))
+	}
+	b.WriteString("CREATE INDEX ON " + tempTableName + " (idx);")
+
 	return b.String()
 }
 
@@ -149,53 +232,92 @@ INSERT INTO temp_individuals_<requestId>
 
 where the parameters are the values of the relevant columns in the dataframe df
 */
-func buildInsertIndividualsQuery(tempTableName string, schema []DBColumn, df dataframe.DataFrame, columnsOfInterest []string, uploadDfHasIdColumn bool) (string, []interface{}) {
-	b := &strings.Builder{}
+func insertTempIndividuals(ctx context.Context, tx *sqlx.Tx, tempTableName string, schema []DBColumn, individuals []*api.Individual, columnsOfInterest []string) error {
+	if err := batch(maxParams/len(schema), individuals, func(individualsInBatch []*api.Individual) (bool, error) {
+		args := make([]interface{}, 0)
+		b := &strings.Builder{}
+		b.WriteString(fmt.Sprintf("INSERT INTO %s", tempTableName))
+		b.WriteString(" (")
+		for i, col := range columnsOfInterest {
+			if i != 0 {
+				b.WriteString(",")
+			}
+			b.WriteString(col)
+		}
+		b.WriteString(") VALUES ")
 
-	b.WriteString(fmt.Sprintf("INSERT INTO %s SELECT * FROM UNNEST(", tempTableName))
-
-	var args []interface{}
-	var types []string
-	for _, col := range schema {
-		// we only insert the columns that are relevant for deduplication and the id column if it exists in the upload
-		if slices.Contains(columnsOfInterest, col.Name) || (uploadDfHasIdColumn && col.Name == constants.DBColumnIndividualID) {
-			g := df.Col(col.Name)
-			if g.Err != nil {
-				args = append(args, pq.Array(nil))
-			} else {
-				if col.SQLType == "date" {
-					values := make([]*time.Time, df.Nrow())
-					for i := 0; i < df.Nrow(); i++ {
-						t, err := time.Parse("2006-01-02", g.Elem(i).String())
-						if err != nil {
-							values[i] = nil
-							continue
-						}
-						values[i] = &t
-					}
-					args = append(args, pq.Array(values))
-				} else if col.SQLType == "uuid" {
-					values := make([]uuid.UUID, df.Nrow())
-					for i := 0; i < df.Nrow(); i++ {
-						v, err := uuid.Parse(g.Elem(i).String())
-						if err != nil {
-							values[i] = uuid.Nil
-							continue
-						}
-						values[i] = v
-					}
-					args = append(args, pq.Array(values))
+		for i, individual := range individualsInBatch {
+			if i != 0 {
+				b.WriteString(",")
+			}
+			b.WriteString("(")
+			for j, col := range columnsOfInterest {
+				if j != 0 {
+					b.WriteString(",")
+				}
+				fieldValue, err := individual.GetFieldValue(col)
+				if err != nil {
+					return false, err
+				}
+				if col == constants.DBColumnIndividualID && fieldValue == "" {
+					b.WriteString("NULL")
 				} else {
-					args = append(args, pq.Array(g.Records()))
+					b.WriteString(fmt.Sprintf("$%d", len(args) + 1))
+					args = append(args, fieldValue)
 				}
 			}
-			types = append(types, fmt.Sprintf("$%d::%s[]", len(args), col.SQLType))
+
+			b.WriteString(")")
+		}
+
+		var out []*api.Individual
+		qry := b.String()
+
+		err := tx.SelectContext(ctx, &out, qry, args...)
+		if err != nil {
+			return false, err
+		}
+		return false, err
+	}); err != nil {
+		return err 
+	}
+	return nil
+}
+
+func buildFileDeduplicationQuery(tempTableName string, columnsOfInterest []string, config deduplication.DeduplicationConfig, schema []DBColumn) string {
+	b := &strings.Builder{}
+
+	b.WriteString("SELECT DISTINCT ir.idx idxA, ti.idx idxB")
+	b.WriteString((fmt.Sprintf(" FROM %s ir", tempTableName)))
+	b.WriteString(fmt.Sprintf(" CROSS JOIN %s ti", tempTableName))
+	b.WriteString(" WHERE ir.idx != ti.idx ")
+
+	subQueries := []string{}
+	notEmptyPartialChecks := []string{}
+	for _, dt := range config.Types {
+		if config.Operator == deduplication.LOGICAL_OPERATOR_AND {
+			subQueries = append(subQueries, dt.Config.QueryAnd)
+			if dt.Config.QueryNotAllEmpty != "" {
+				notEmptyPartialChecks = append(notEmptyPartialChecks, dt.Config.QueryNotAllEmpty)
+			}
+		} else {
+			subQueries = append(subQueries, dt.Config.QueryOr)
 		}
 	}
+	if len(subQueries) > 0 {
+		b.WriteString(fmt.Sprintf(" AND ((%s))", strings.Join(subQueries, fmt.Sprintf(") %s (", config.Operator))))
+	}
 
-	b.WriteString(strings.Join(types, ","))
-	b.WriteString(");")
-	return b.String(), args
+	if len(notEmptyPartialChecks) > 0 {
+		notAllEmptyQuery := strings.Join(notEmptyPartialChecks, " OR ")
+		b.WriteString(" AND ( ")
+		b.WriteString(notAllEmptyQuery)
+		b.WriteString(" ) ")
+	}
+	
+	b.WriteString(";")
+
+	return b.String()
 }
 
 /*
@@ -215,14 +337,17 @@ SELECT DISTINCT  ir.birth_date,ir.email_1,ir.email_2,ir.email_3,ir.first_name,ir
 		AND (ti.first_name = ir.first_name AND ti.middle_name = ir.middle_name AND ti.last_name = ir.last_name AND ti.native_name = ir.native_name)
 		AND (ti.email_1 != '' OR ti.email_2 != '' OR ti.email_3 != '' OR ti.first_name != '' OR ti.middle_name != '' OR ti.last_name != '' OR ti.native_name != '')));
 */
-func buildDeduplicationQuery(tempTableName string, columnsOfInterest []string, config deduplication.DeduplicationConfig, uploadDfHasIdColumn bool, schema []DBColumn) string {
+func buildDbDeduplicationQuery(tempTableName string, columnsOfInterest []string, config deduplication.DeduplicationConfig, schema []DBColumn) string {
 	b := &strings.Builder{}
 
 	b.WriteString("SELECT DISTINCT ")
 	for c := range columnsOfInterest {
-		b.WriteString(fmt.Sprintf("ir.%s,", columnsOfInterest[c]))
+		if c != 0 {
+			b.WriteString(",")
+		}
+		b.WriteString(fmt.Sprintf("ir.%s", columnsOfInterest[c]))
 	}
-	b.WriteString("ir.id FROM individual_registrations ir")
+	b.WriteString(" FROM individual_registrations ir")
 	b.WriteString(fmt.Sprintf(" CROSS JOIN %s ti", tempTableName))
 	b.WriteString(" WHERE ir.country_id = $1 AND ir.deleted_at IS NULL")
 
@@ -238,16 +363,19 @@ func buildDeduplicationQuery(tempTableName string, columnsOfInterest []string, c
 			subQueries = append(subQueries, dt.Config.QueryOr)
 		}
 	}
-	if len(notEmptyPartialChecks) > 0 {
-		notAllEmptyQuery := strings.Join(notEmptyPartialChecks, " OR ")
-		subQueries = append(subQueries, notAllEmptyQuery)
-	}
 	if len(subQueries) > 0 {
 		b.WriteString(fmt.Sprintf(" AND ((%s))", strings.Join(subQueries, fmt.Sprintf(") %s (", config.Operator))))
 	}
-	if uploadDfHasIdColumn {
-		b.WriteString(" AND ti.id::uuid NOT IN (SELECT id FROM individual_registrations)")
+
+	b.WriteString(" AND (ti.id IS NULL OR ti.id != ir.id)")
+
+	if len(notEmptyPartialChecks) > 0 {
+		notAllEmptyQuery := strings.Join(notEmptyPartialChecks, " OR ")
+		b.WriteString(" AND ( ")
+		b.WriteString(notAllEmptyQuery)
+		b.WriteString(" ) ")
 	}
+
 	b.WriteString(";")
 
 	return b.String()
