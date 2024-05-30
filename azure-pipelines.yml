@@ -1,6 +1,6 @@
 trigger:
 - main
-- update/*
+- uate/*
 
 resources:
 - repo: self
