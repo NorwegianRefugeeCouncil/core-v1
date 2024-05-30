@@ -215,8 +215,10 @@ func buildCreateTempTableQuery(tempTableName string, schema []DBColumn, columnsO
 	b.WriteString(" ON COMMIT DROP;")
 
 	// add index for each column
-	for _, col := range columnsOfInterest {
-		b.WriteString(fmt.Sprintf("CREATE INDEX ON %s (%s);", tempTableName, col))
+	for si, _ := range schema {
+		if slices.Contains(columnsOfInterest, schema[si].Name) {
+			b.WriteString(fmt.Sprintf("CREATE INDEX ON %s (%s);", tempTableName, schema[si].Name))
+		}
 	}
 	b.WriteString("CREATE INDEX ON " + tempTableName + " (idx);")
 
