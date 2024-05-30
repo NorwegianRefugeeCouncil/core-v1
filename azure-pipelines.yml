@@ -1,5 +1,6 @@
 trigger:
 - main
+- update/*
 
 resources:
 - repo: self
