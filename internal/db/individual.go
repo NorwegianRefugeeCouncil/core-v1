@@ -319,7 +319,12 @@ func buildFileDeduplicationQuery(tempTableName string, columnsOfInterest []strin
 	
 	b.WriteString(";")
 
-	return b.String()
+	s := b.String()
+	s = strings.ReplaceAll(s, "\n", " ")
+	s = strings.ReplaceAll(s, "\t", " ")
+	s = strings.Join(strings.Fields(s), " ")
+
+	return s 
 }
 
 /*
@@ -342,7 +347,7 @@ SELECT DISTINCT  ir.birth_date,ir.email_1,ir.email_2,ir.email_3,ir.first_name,ir
 func buildDbDeduplicationQuery(tempTableName string, columnsOfInterest []string, config deduplication.DeduplicationConfig, schema []DBColumn) string {
 	b := &strings.Builder{}
 
-	b.WriteString("SELECT DISTINCT ")
+	b.WriteString("SELECT DISTINCT ir.id, ")
 	for c := range columnsOfInterest {
 		if c != 0 {
 			b.WriteString(",")
@@ -380,7 +385,12 @@ func buildDbDeduplicationQuery(tempTableName string, columnsOfInterest []string,
 
 	b.WriteString(";")
 
-	return b.String()
+	s := b.String()
+	s = strings.ReplaceAll(s, "\n", " ")
+	s = strings.ReplaceAll(s, "\t", " ")
+	s = strings.Join(strings.Fields(s), " ")
+
+	return s 
 }
 
 func (i individualRepo) driverName() string {
