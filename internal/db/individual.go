@@ -130,6 +130,15 @@ func findFileDuplicates(ctx context.Context, tx *sqlx.Tx, deduplicationTempTable
 		duplicateScores[d.IdxA - 1].Add(d.IdxB - 1)
 	}
 
+	// The query returns duplicates in both directions, so we need to remove duplicates that are not mutual
+	for i := range(duplicateScores) {
+		for j := range(duplicateScores[i]) {
+			if !duplicateScores[j].Contains(i) {
+				duplicateScores[i].Remove(j)
+			}
+		}
+	}
+
 	return duplicateScores, nil
 }
 
@@ -316,7 +325,7 @@ func buildFileDeduplicationQuery(tempTableName string, columnsOfInterest []strin
 		b.WriteString(notAllEmptyQuery)
 		b.WriteString(" ) ")
 	}
-	
+
 	b.WriteString(";")
 
 	s := b.String()
