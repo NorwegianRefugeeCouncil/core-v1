@@ -57,11 +57,18 @@ stages:
         version: '1.18'
       displayName: 'Install Go 1.18'
     
-    # - task: Go@0
-    #   inputs:
-    #     command: 'get'
-    #     arguments: '-d'
-    #     workingDirectory: '$(System.DefaultWorkingDirectory)'
+    - task: Go@0
+      inputs:
+        command: 'get'
+        arguments: '-d'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+    - task: Go@0
+      inputs:
+        command: 'test'
+        arguments: '-v ./...'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+      displayName: 'Run tests'
 
     # - task: Go@0
     #   inputs:
@@ -87,8 +94,8 @@ stages:
     # - script: "which go"
     #   displayName: "Check go version"
 
-    - script: "go mod download && go get github.com/jstemmer/go-junit-report/v2@latest && go get github.com/axw/gocov/gocov@latest && go get github.com/AlekSi/gocov-xml@latest && ./scripts/docker-dev-entrypoint.sh coverage"
-      displayName: Run tests
+    # - script: "go mod download && go get github.com/jstemmer/go-junit-report/v2@latest && go get github.com/axw/gocov/gocov@latest && go get github.com/AlekSi/gocov-xml@latest && ./scripts/docker-dev-entrypoint.sh coverage"
+    #   displayName: Run tests
 
     # - script: "mkdir reports && docker cp $(cat container_id):/app/reports/. reports"
     #   displayName: "Copy test and coverage reports"
