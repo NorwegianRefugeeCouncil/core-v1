@@ -38,22 +38,24 @@ stages:
       displayName: Pull latest for layer caching
       continueOnError: true
 
-    - script: |
-        DOCKER_BUILDKIT=1 docker build \
-          -f $(DOCKERFILE_PATH) \
-          --tag core-dev \
-          --tag $(CONTAINER_REGISTRY)/$(REPOSITORY_CACHE):latest \
-          --target dev \
-          --cache-from=$(CONTAINER_REGISTRY)/$(REPOSITORY_CACHE):latest \
-          --build-arg BUILDKIT_INLINE_CACHE=1 \
-          $(BUILD_CONTEXT)
-      displayName: Build dev image
+    # - script: |
+    #     DOCKER_BUILDKIT=1 docker build \
+    #       -f $(DOCKERFILE_PATH) \
+    #       --tag core-dev \
+    #       --tag $(CONTAINER_REGISTRY)/$(REPOSITORY_CACHE):latest \
+    #       --target dev \
+    #       --cache-from=$(CONTAINER_REGISTRY)/$(REPOSITORY_CACHE):latest \
+    #       --build-arg BUILDKIT_INLINE_CACHE=1 \
+    #       $(BUILD_CONTEXT)
+    #   displayName: Build dev image
 
-    - script: "docker run --privileged=true --cidfile ./container_id -v /var/run/docker.sock:/var/run/docker.sock core-dev coverage"
-      displayName: Run tests
+    # - script: "docker run --privileged=true --cidfile ./container_id -v /var/run/docker.sock:/var/run/docker.sock core-dev coverage"
+    #   displayName: Run tests
 
-    - script: "mkdir reports && docker cp $(cat container_id):/app/reports/. reports"
-      displayName: "Copy test and coverage reports"
+    - script: "./scripts/docker-dev-entrypoint.sh coverage"
+
+    # - script: "mkdir reports && docker cp $(cat container_id):/app/reports/. reports"
+    #   displayName: "Copy test and coverage reports"
 
     - script: "sed -i 's|<source>/app</source>|<source>$(Build.Repository.LocalPath)</source>|g' reports/coverage.xml"
       displayName: "Update coverage report source directory"
