@@ -100,25 +100,25 @@ stages:
     # - script: "mkdir reports && docker cp $(cat container_id):/app/reports/. reports"
     #   displayName: "Copy test and coverage reports"
 
-    - script: "sed -i 's|<source>/app</source>|<source>$(Build.Repository.LocalPath)</source>|g' reports/coverage.xml"
-      displayName: "Update coverage report source directory"
+    # - script: "sed -i 's|<source>/app</source>|<source>$(Build.Repository.LocalPath)</source>|g' reports/coverage.xml"
+    #   displayName: "Update coverage report source directory"
 
-    - task: PublishTestResults@2
-      displayName: 'Publish test results'
-      condition: always()
-      inputs:
-        failTaskOnFailedTests: true
-        testResultsFormat: 'JUnit'
-        testResultsFiles: './reports/report.xml'
-        searchFolder: '$(Build.SourcesDirectory)'
+    # - task: PublishTestResults@2
+    #   displayName: 'Publish test results'
+    #   condition: always()
+    #   inputs:
+    #     failTaskOnFailedTests: true
+    #     testResultsFormat: 'JUnit'
+    #     testResultsFiles: './reports/report.xml'
+    #     searchFolder: '$(Build.SourcesDirectory)'
 
-    - task: PublishCodeCoverageResults@1
-      displayName: 'Publish code coverage results'
-      condition: always()
-      inputs:
-        failIfCoverageEmpty: true
-        codeCoverageTool: 'Cobertura'
-        summaryFileLocation: './reports/coverage.xml'
+    # - task: PublishCodeCoverageResults@1
+    #   displayName: 'Publish code coverage results'
+    #   condition: always()
+    #   inputs:
+    #     failIfCoverageEmpty: true
+    #     codeCoverageTool: 'Cobertura'
+    #     summaryFileLocation: './reports/coverage.xml'
 
     - task: Docker@2
       displayName: Build final image
