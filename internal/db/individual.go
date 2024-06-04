@@ -68,7 +68,7 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 		return nil, nil, err
 	}
 
-	fileDuplicates, err := findFileDuplicates(ctx, tx, deduplicationTempTableConfig, config, selectedCountryID, len(individuals))
+	fileDuplicates, err := findFileDuplicates(ctx, tx, deduplicationTempTableConfig, config, len(individuals))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -106,7 +106,7 @@ func findDbDuplicates(ctx context.Context, tx *sqlx.Tx, deduplicationTempTableCo
 	return ret, nil
 }
 
-func findFileDuplicates(ctx context.Context, tx *sqlx.Tx, deduplicationTempTableConfig *DeduplicationTempTableConfig, config deduplication.DeduplicationConfig, selectedCountryID string, individualCount int) ([]containers.Set[int], error) {
+func findFileDuplicates(ctx context.Context, tx *sqlx.Tx, deduplicationTempTableConfig *DeduplicationTempTableConfig, config deduplication.DeduplicationConfig, individualCount int) ([]containers.Set[int], error) {
 	ret := make([]*IdxDuplicates, 0)
 
 	// now we look for duplicates in a cross join between the temp table and the individual_registrations table
