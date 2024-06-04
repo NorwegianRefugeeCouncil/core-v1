@@ -11,91 +11,10 @@ import (
 	"github.com/nrc-no/notcore/internal/api"
 	"github.com/nrc-no/notcore/internal/constants"
 	"github.com/nrc-no/notcore/internal/containers"
+	"github.com/nrc-no/notcore/internal/utils"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
-	"github.com/ory/dockertest"
-	"github.com/ory/dockertest/docker"
 	"github.com/stretchr/testify/assert"
 )
-
-func InitTestDocker(exposedPort string) (*dockertest.Pool, *dockertest.Resource) {
-	pool, err := dockertest.NewPool("")
-	if err != nil {
-		log.Fatalf("Could not connect to docker: %s", err)
-	}
-
-	// pulls an image, creates a container based on it and runs it
-	resource, err := pool.RunWithOptions(&dockertest.RunOptions{
-		Repository: "postgres",
-		Tag:        "14",
-		Env: []string{
-			"listen_addresses = '*'",
-			"POSTGRES_PASSWORD=postgres",
-			"POSTGRES_USER=postgres",
-			"POSTGRES_DB=core",
-		},
-		ExposedPorts: []string{exposedPort},
-		PortBindings: map[docker.Port][]docker.PortBinding{
-			"5432/tcp": {
-				{HostIP: "0.0.0.0", HostPort: exposedPort},
-			},
-		},
-	}, func(config *docker.HostConfig) {
-		config.AutoRemove = true
-		config.RestartPolicy = docker.RestartPolicy{Name: "no"}// Important option when container crash and you want to debug container
-	})
-
-	if err != nil {
-		log.Fatalf("Could not start resource: %s", err)
-	}
-
-	if err := resource.Expire(30); err != nil { // Tell docker to hard kill the container in 30 seconds
-		fmt.Println("Could not set container expiration", err)
-	}
-
-	// retry if container is not ready
-	pool.MaxWait = 30 * time.Second
-	if err = pool.Retry(func() error {
-		return err
-	}); err != nil {
-		log.Fatalf("Could not connect to docker: %s", err)
-	}
-
-	return pool, resource
-}
-
-func OpenDatabaseConnection(ctx context.Context, pool *dockertest.Pool, resource *dockertest.Resource, exposedPort string) *sqlx.DB {
-	databaseDriver := "postgres"
-	hostAndPort := resource.GetHostPort("5432/tcp")
-	databaseDSN := fmt.Sprintf("postgres://postgres:postgres@%s/core?sslmode=disable", hostAndPort)
-
-	retries := 5
-	sqlDb, err := sqlx.ConnectContext(ctx, databaseDriver, databaseDSN)
-	
-  // Sometimes it happens that after first time container is not ready. 
-  // It's always better to create retry if necessary and be sure that tests run without problems
-  for err != nil {
-		if retries > 1 {
-			retries--
-			time.Sleep(1 * time.Second)
-			sqlDb, err = sqlx.ConnectContext(ctx, databaseDriver, databaseDSN)
-			continue
-		}
-
-		if err := pool.Purge(resource); err != nil {
-			fmt.Printf("Could not purge resource: %s", err)
-		}
-
-		log.Panic("Fatal error in connection: ", err, resource.GetBoundIP("5432/tcp"))
-	}
-
-	return sqlDb 
-}
-
-func RunMigrations(ctx context.Context, sqlDb *sqlx.DB) {
-	if err := Migrate(ctx, sqlDb); err != nil {
-		log.Fatalf("Failed to migrate database: %s", err)
-	}
-}
 
 func Seed(ctx context.Context, sqlDb *sqlx.DB) *api.Country {
 	countryRepo := NewCountryRepo(sqlDb)
