@@ -59,27 +59,30 @@ stages:
     
     - task: Go@0
       inputs:
-        command: 'custom'
-        customCommand: 'mod download'
-      displayName: 'Download dependencies'
+        command: 'get'
+        arguments: '-d'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     - task: Go@0
       inputs:
-        command: 'custom'
-        customCommand: 'install github.com/jstemmer/go-junit-report/v2@latest'
-      displayName: 'Install go-junit-report'
-    
-    - task: Go@0
-      inputs:
-        command: 'custom'
-        customCommand: 'install github.com/axw/gocov/gocov@latest'
-      displayName: 'Install gocov'
+        command: 'get'
+        arguments: '-u github.com/jstemmer/go-junit-report/v2'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+      displayName: 'Update go-junit-report'
 
     - task: Go@0
       inputs:
-        command: 'custom'
-        customCommand: 'install github.com/AlekSi/gocov-xml@latest'
-      displayName: 'Install gocov-xml'
+        command: 'get'
+        arguments: '-u github.com/axw/gocov/gocov'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+      displayName: 'Update gocov'
+
+    - task: Go@0
+      inputs:
+        command: 'get'
+        arguments: '-u github.com/AlekSi/gocov-xml'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+      displayName: 'Update gocov-xml'
 
     - script: "./scripts/docker-dev-entrypoint.sh coverage"
       displayName: Run tests
