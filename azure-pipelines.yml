@@ -59,25 +59,30 @@ stages:
       inputs:
         version: '1.18'
       displayName: 'Install Go 1.18'
-
-    - script: |
-      mkdir -p '$(GOBIN)'
-      mkdir -p '$(GOPATH)/pkg'
-      mkdir -p '$(modulePath)'
-      mkdir -p '$(GOROOT)'
-      shopt -s extglob
-      shopt -s dotglob
-      mv !(gopath) '$(modulePath)'
-      echo '##vso[task.prependpath]$(GOBIN)'
-      echo '##vso[task.prependpath]$(GOROOT)/bin'
-    displayName: 'Set up the Go workspace'
-
-    - script: |
-        go mod download && \
-        go install github.com/jstemmer/go-junit-report/v2@latest && \
-        go install github.com/axw/gocov/gocov@latest && \
-        go install github.com/AlekSi/gocov-xml@latest
+    
+    - task: Go@0
+      inputs:
+        command: 'custom'
+        customCommand: 'mod download'
       displayName: 'Download dependencies'
+
+    - task: Go@0
+      inputs:
+        command: 'custom'
+        customCommand: 'install github.com/jstemmer/go-junit-report/v2@latest'
+      displayName: 'Install go-junit-report'
+    
+    - task: Go@0
+      inputs:
+        command: 'custom'
+        customCommand: 'install github.com/axw/gocov/gocov@latest'
+      displayName: 'Install gocov'
+
+    - task: Go@0
+      inputs:
+        command: 'custom'
+        customCommand: 'install github.com/AlekSi/gocov-xml@latest'
+      displayName: 'Install gocov-xml'
 
     - script: "./scripts/docker-dev-entrypoint.sh coverage"
       displayName: Run tests
