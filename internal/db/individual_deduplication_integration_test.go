@@ -2,10 +2,8 @@ package db
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"testing"
-	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/nrc-no/notcore/internal/api"
@@ -38,6 +36,15 @@ func ClearDatabase(ctx context.Context, sqlDb *sqlx.DB) {
 	}	
 }
 
+type TestSpec struct {
+	name string
+	seed []*api.Individual
+	individuals []*api.Individual
+	deduplicationConfig deduplication.DeduplicationConfig
+	wantFile []containers.Set[int]
+	wantDb []int
+}
+
 func TestDeduplication(t *testing.T) {
 	pool, resource := InitTestDocker("5432")
 	defer pool.Purge(resource)
@@ -49,18 +56,128 @@ func TestDeduplication(t *testing.T) {
 	RunMigrations(ctx, sqlDb)
 
 	country := Seed(ctx, sqlDb)
+	ctx = utils.WithSelectedCountryID(ctx, country.ID)
 
-	tests := []struct {
-		name string
-		seed []*api.Individual
-		individuals []*api.Individual
-		deduplicationConfig deduplication.DeduplicationConfig
-		wantFile []containers.Set[int]
-		wantDb []*api.Individual
-	} {
+	wantFile2Equal := []containers.Set[int]{
+		containers.NewSet[int](1),
+		containers.NewSet[int](0),
+	}
+
+	wantDb2Equal := []int{0}
+
+	basicRulesFindDuplicateInFile := []TestSpec {
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] Ids (1=1); [FileOrDB] File; [Expected] 1;",
+			seed: []*api.Individual{
+				{
+					IdentificationNumber1: "0987654321",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					IdentificationNumber1: "1234567890",
+				},
+				{
+					IdentificationNumber1: "1234567890",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameIds],
+				},
+			},
+			wantFile: wantFile2Equal,
+			wantDb: nil,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] Phone numbers (1=1); [FileOrDB] File; [Expected] 1;",
+			seed: []*api.Individual{
+				{
+					PhoneNumber1: "0987654321",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					PhoneNumber1: "1234567890",
+				},
+				{
+					PhoneNumber1: "1234567890",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNamePhoneNumbers],
+				},
+			},
+			wantFile: wantFile2Equal,
+			wantDb: nil,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] Emails; [FileOrDB] File; [Expected] 1;",
+			seed: []*api.Individual{
+				{
+					Email1: "other@not.nrc.no",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					Email1: "test@not.nrc.no",
+				},
+				{
+					Email1: "test@not.nrc.no",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameEmails],
+				},
+			},
+			wantFile: wantFile2Equal,
+			wantDb: nil,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] Names (all set); [FileOrDB] File; [Expected] 1;",
+			seed: []*api.Individual{
+				{
+					FirstName: "Jane",
+					MiddleName: "Doe",
+					LastName: "Smith",
+					NativeName: "Jane Doe",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FirstName: "John",
+					MiddleName: "Doe",
+					LastName: "Smith",
+					NativeName: "John Doe",
+				},
+				{
+					FirstName: "John",
+					MiddleName: "Doe",
+					LastName: "Smith",
+					NativeName: "John Doe",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameNames],
+				},
+			},
+			wantFile: wantFile2Equal,
+			wantDb: nil,
+		},
 		{
 			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FullName; [FileOrDB] File; [Expected] 1;",
-			seed: []*api.Individual{},
+			seed: []*api.Individual{
+				{
+					FullName: "Jane Doe",
+				},
+			},
 			individuals: []*api.Individual{
 				{
 					FullName: "John Doe",
@@ -75,13 +192,618 @@ func TestDeduplication(t *testing.T) {
 					 deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
 				},
 			},
-			wantFile: []containers.Set[int]{
-				containers.NewSet[int](1),
-				containers.NewSet[int](0),
+			wantFile: wantFile2Equal,
+			wantDb: nil,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FreeField1; [FileOrDB] File; [Expected] 1;",
+			seed: []*api.Individual{
+				{
+					FreeField1: "Dolor sit amet",
+				},
 			},
+			individuals: []*api.Individual{
+				{
+					FreeField1: "Lorem ipsum",
+				},
+				{
+					FreeField1: "Lorem ipsum",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFreeField1],
+				},
+			},
+			wantFile: wantFile2Equal,
+			wantDb: nil,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FreeField2; [FileOrDB] File; [Expected] 1;",
+			seed: []*api.Individual{
+				{
+					FreeField2: "Dolor sit amet",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FreeField2: "Lorem ipsum",
+				},
+				{
+					FreeField2: "Lorem ipsum",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFreeField2],
+				},
+			},
+			wantFile: wantFile2Equal,
+			wantDb: nil,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FreeField3; [FileOrDB] File; [Expected] 1;",
+			seed:[]*api.Individual{
+				{
+					FreeField3: "Dolor sit amet",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FreeField3: "Lorem ipsum",
+				},
+				{
+					FreeField3: "Lorem ipsum",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFreeField3],
+				},
+			},
+			wantFile: wantFile2Equal,
+			wantDb: nil,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FreeField4; [FileOrDB] File; [Expected] 1;",
+			seed: []*api.Individual{
+				{
+					FreeField4: "Dolor sit amet",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FreeField4: "Lorem ipsum",
+				},
+				{
+					FreeField4: "Lorem ipsum",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFreeField4],
+				},
+			},
+			wantFile: wantFile2Equal,
+			wantDb: nil,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FreeField5; [FileOrDB] File; [Expected] 1;",
+			seed: []*api.Individual{
+				{
+					FreeField5: "Dolor sit amet",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FreeField5: "Lorem ipsum",
+				},
+				{
+					FreeField5: "Lorem ipsum",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFreeField5],
+				},
+			},
+			wantFile: wantFile2Equal,
 			wantDb: nil,
 		},
 	}
+
+	basicRulesFindDuplicateInDb := []TestSpec{
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] Phone numbers (1=1); [FileOrDB] DB; [Expected] 1;",
+			seed: []*api.Individual{
+				{
+					PhoneNumber1: "1234567890",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					PhoneNumber1: "1234567890",
+				},
+				{
+					PhoneNumber1: "0987654321",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNamePhoneNumbers],
+				},
+			},
+			wantFile: nil,
+			wantDb:   wantDb2Equal,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] Emails; [FileOrDB] DB; [Expected] 1;",
+			seed: []*api.Individual{
+				{
+					Email1: "test@not.nrc.no",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					Email1: "test@not.nrc.no",
+				},
+				{
+					Email1: "other@not.nrc.no",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameEmails],
+				},
+			},
+			wantFile: nil,
+			wantDb:   wantDb2Equal,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] Names (all set); [FileOrDB] DB; [Expected] 1;",
+			seed: []*api.Individual{
+				{
+					FirstName:  "John",
+					MiddleName: "Doe",
+					LastName:   "Smith",
+					NativeName: "John Doe",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FirstName:  "John",
+					MiddleName: "Doe",
+					LastName:   "Smith",
+					NativeName: "John Doe",
+				},
+				{
+					FirstName:  "Jane",
+					MiddleName: "Doe",
+					LastName:   "Smith",
+					NativeName: "Jane Doe",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameNames],
+				},
+			},
+			wantFile: nil,
+			wantDb:   wantDb2Equal,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FullName; [FileOrDB] DB; [Expected] 1;",
+			seed: []*api.Individual{
+				{
+					FullName: "John Doe",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FullName: "John Doe",
+				},
+				{
+					FullName: "Jane Doe",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
+				},
+			},
+			wantFile: nil,
+			wantDb:   wantDb2Equal,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FreeField1; [FileOrDB] DB; [Expected] 1;",
+			seed: []*api.Individual{
+				{
+					FreeField1: "Lorem ipsum",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FreeField1: "Lorem ipsum",
+				},
+				{
+					FreeField1: "Dolor sit amet",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFreeField1],
+				},
+			},
+			wantFile: nil,
+			wantDb:   wantDb2Equal,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FreeField2; [FileOrDB] DB; [Expected] 1;",
+			seed: []*api.Individual{
+				{
+					FreeField2: "Lorem ipsum",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FreeField2: "Lorem ipsum",
+				},
+				{
+					FreeField2: "Dolor sit amet",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFreeField2],
+				},
+			},
+			wantFile: nil,
+			wantDb:   wantDb2Equal,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FreeField3; [FileOrDB] DB; [Expected] 1;",
+			seed: []*api.Individual{
+				{
+					FreeField3: "Lorem ipsum",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FreeField3: "Lorem ipsum",
+				},
+				{
+					FreeField3: "Dolor sit amet",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFreeField3],
+				},
+			},
+			wantFile: nil,
+			wantDb:   wantDb2Equal,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FreeField4; [FileOrDB] DB; [Expected] 1;",
+			seed: []*api.Individual{
+				{
+					FreeField4: "Lorem ipsum",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FreeField4: "Lorem ipsum",
+				},
+				{
+					FreeField4: "Dolor sit amet",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFreeField4],
+				},
+			},
+			wantFile: nil,
+			wantDb:   wantDb2Equal,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FreeField5; [FileOrDB] DB; [Expected] 1;",
+			seed: []*api.Individual{
+				{
+					FreeField5: "Lorem ipsum",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FreeField5: "Lorem ipsum",
+				},
+				{
+					FreeField5: "Dolor sit amet",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFreeField5],
+				},
+			},
+			wantFile: nil,
+			wantDb:   wantDb2Equal,
+		},
+	}
+
+	basicRulesDontFindDuplicate := []TestSpec{
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] Ids; [FileOrDB] File; [Expected] 0;",
+			seed: []*api.Individual{
+				{
+					IdentificationNumber1: "1234567890",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					IdentificationNumber1: "0987654321",
+				},
+				{
+					IdentificationNumber1: "6666666666",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameIds],
+				},
+			},
+			wantFile: nil,
+			wantDb: nil,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] Phone numbers; [FileOrDB] File; [Expected] 0;",
+			seed: []*api.Individual{
+				{
+					PhoneNumber1: "1234567890",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					PhoneNumber1: "0987654321",
+				},
+				{
+					PhoneNumber1: "6666666666",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNamePhoneNumbers],
+				},
+			},
+			wantFile: nil,
+			wantDb: nil,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] Emails; [FileOrDB] File; [Expected] 0;",
+			seed: []*api.Individual{
+				{
+					Email1: "a@not.nrc.no",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					Email1: "b@not.nrc.no",
+				},
+				{
+					Email1: "c@not.nrc.no",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameEmails],
+				},
+			},
+			wantFile: nil,
+			wantDb: nil,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] Names (all set); [FileOrDB] File; [Expected] 0;",
+			seed: []*api.Individual{
+				{
+					FirstName:  "John",
+					MiddleName: "Doe",
+					LastName:   "Smith",
+					NativeName: "John Doe",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FirstName:  "Jane",
+					MiddleName: "Doe",
+					LastName:   "Smith",
+					NativeName: "Jane Doe",
+				},
+				{
+					FirstName:  "James",
+					MiddleName: "Doe",
+					LastName:   "Smith",
+					NativeName: "James Doe",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameNames],
+				},
+			},
+			wantFile: nil,
+			wantDb: nil,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FullName; [FileOrDB] File; [Expected] 0;",
+			seed: []*api.Individual{
+				{
+					FullName: "John Doe",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FullName: "Jane Doe",
+				},
+				{
+					FullName: "James Doe",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					 deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFullName],
+				},
+			},
+			wantFile: nil,
+			wantDb: nil,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FreeField1; [FileOrDB] File; [Expected] 0;",
+			seed: []*api.Individual{
+				{
+					FreeField1: "Lorem ipsum",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FreeField1: "Dolor sit amet",
+				},
+				{
+					FreeField1: "Consectetur adipiscing elit",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFreeField1],
+				},
+			},
+			wantFile: nil,
+			wantDb: nil,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FreeField2; [FileOrDB] File; [Expected] 0;",
+			seed: []*api.Individual{
+				{
+					FreeField2: "Lorem ipsum",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FreeField2: "Dolor sit amet",
+				},
+				{
+					FreeField2: "Consectetur adipiscing elit",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					 deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFreeField2],
+				},
+			},
+			wantFile: nil,
+			wantDb: nil,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FreeField3; [FileOrDB] File; [Expected] 0;",
+			seed: []*api.Individual{
+				{
+					FreeField3: "Lorem ipsum",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FreeField3: "Dolor sit amet",
+				},
+				{
+					FreeField3: "Consectetur adipiscing elit",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					 deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFreeField3],
+				},
+			},
+			wantFile: nil,
+			wantDb: nil,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FreeField4; [FileOrDB] File; [Expected] 0;",
+			seed: []*api.Individual{
+				{
+					FreeField4: "Lorem ipsum",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FreeField4: "Dolor sit amet",
+				},
+				{
+					FreeField4: "Consectetur adipiscing elit",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					 deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFreeField4],
+				},
+			},
+			wantFile: nil,
+			wantDb: nil,
+		},
+		{
+			name: "[Duplicate.LogicOperator] AND; [Duplicate.Fields] FreeField5; [FileOrDB] File; [Expected] 0;",
+			seed: []*api.Individual{
+				{
+					FreeField5: "Lorem ipsum",
+				},
+			},
+			individuals: []*api.Individual{
+				{
+					FreeField5: "Dolor sit amet",
+				},
+				{
+					FreeField5: "Consectetur adipiscing elit",
+				},
+			},
+			deduplicationConfig: deduplication.DeduplicationConfig{
+				Operator: deduplication.LOGICAL_OPERATOR_AND,
+				Types: []deduplication.DeduplicationType{
+					 deduplication.DeduplicationTypes[deduplication.DeduplicationTypeNameFreeField5],
+				},
+			},
+			wantFile: nil,
+			wantDb: nil,
+		},
+	}
+
+	tests := append(
+		append(
+			basicRulesFindDuplicateInFile,
+			basicRulesFindDuplicateInDb...,
+		),
+		basicRulesDontFindDuplicate...,
+	)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -97,15 +819,27 @@ func TestDeduplication(t *testing.T) {
 				ind.CountryID = country.ID
 			}
 
-			individualRepo.PutMany(ctx, tt.seed, constants.IndividualDBColumns)
+			seedInds, err := individualRepo.PutMany(ctx, tt.seed, constants.IndividualDBColumns)
+			if err != nil {
+				t.Fatalf("Failed to seed database: %s", err)
+			}
 
 			fileDupes, dbDupes, err := individualRepo.FindDuplicates(ctx, tt.individuals, tt.deduplicationConfig)
+
 			if err != nil {
 				t.Fatalf("Failed to deduplicate: %s", err)
 			}
 
+			wantDbInds := make([]*api.Individual, len(tt.wantDb))
+			for i, ind := range tt.wantDb {
+				wantDbInds[i] = seedInds[ind]
+			}
+
 			assert.ElementsMatch(t, tt.wantFile, fileDupes)
-			assert.ElementsMatch(t, tt.wantDb, dbDupes)
+
+			for i, ind := range dbDupes {
+				assert.Equal(t, wantDbInds[i].ID, ind.ID)
+			}
 		})
 	}
 }
