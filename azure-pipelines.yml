@@ -92,7 +92,7 @@ stages:
         go install github.com/jstemmer/go-junit-report/v2 && \
         go install github.com/axw/gocov/gocov && \
         go install github.com/AlekSi/gocov-xml && \
-      ./scripts/docker-dev-entrypoint.sh coverage"
+      ./scripts/docker-dev-entrypoint.sh coverage
       displayName: Run tests
 
     # - script: "mkdir reports && docker cp $(cat container_id):/app/reports/. reports"
