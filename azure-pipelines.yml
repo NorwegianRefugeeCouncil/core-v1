@@ -52,7 +52,13 @@ stages:
     # - script: "docker run --privileged=true --cidfile ./container_id -v /var/run/docker.sock:/var/run/docker.sock core-dev coverage"
     #   displayName: Run tests
 
+    - task: GoTool@0
+      inputs:
+        version: '1.18'
+      displayName: 'Install Go 1.18'
+
     - script: "./scripts/docker-dev-entrypoint.sh coverage"
+      displayName: Run tests
 
     # - script: "mkdir reports && docker cp $(cat container_id):/app/reports/. reports"
     #   displayName: "Copy test and coverage reports"
