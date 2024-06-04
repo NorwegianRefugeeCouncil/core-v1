@@ -38,20 +38,6 @@ stages:
       displayName: Pull latest for layer caching
       continueOnError: true
 
-    # - script: |
-    #     DOCKER_BUILDKIT=1 docker build \
-    #       -f $(DOCKERFILE_PATH) \
-    #       --tag core-dev \
-    #       --tag $(CONTAINER_REGISTRY)/$(REPOSITORY_CACHE):latest \
-    #       --target dev \
-    #       --cache-from=$(CONTAINER_REGISTRY)/$(REPOSITORY_CACHE):latest \
-    #       --build-arg BUILDKIT_INLINE_CACHE=1 \
-    #       $(BUILD_CONTEXT)
-    #   displayName: Build dev image
-
-    # - script: "docker run --privileged=true --cidfile ./container_id -v /var/run/docker.sock:/var/run/docker.sock core-dev coverage"
-    #   displayName: Run tests
-
     - task: GoTool@0
       inputs:
         version: '1.18'
@@ -70,56 +56,6 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)'
       displayName: 'Run tests'
 
-    # - task: Go@0
-    #   inputs:
-    #     command: 'get'
-    #     arguments: '-u github.com/jstemmer/go-junit-report/v2'
-    #     workingDirectory: '$(System.DefaultWorkingDirectory)'
-    #   displayName: 'Update go-junit-report'
-
-    # - task: Go@0
-    #   inputs:
-    #     command: 'get'
-    #     arguments: '-u github.com/axw/gocov/gocov'
-    #     workingDirectory: '$(System.DefaultWorkingDirectory)'
-    #   displayName: 'Update gocov'
-
-    # - task: Go@0
-    #   inputs:
-    #     command: 'get'
-    #     arguments: '-u github.com/AlekSi/gocov-xml'
-    #     workingDirectory: '$(System.DefaultWorkingDirectory)'
-    #   displayName: 'Update gocov-xml'
-
-    # - script: "which go"
-    #   displayName: "Check go version"
-
-    # - script: "go mod download && go get github.com/jstemmer/go-junit-report/v2@latest && go get github.com/axw/gocov/gocov@latest && go get github.com/AlekSi/gocov-xml@latest && ./scripts/docker-dev-entrypoint.sh coverage"
-    #   displayName: Run tests
-
-    # - script: "mkdir reports && docker cp $(cat container_id):/app/reports/. reports"
-    #   displayName: "Copy test and coverage reports"
-
-    # - script: "sed -i 's|<source>/app</source>|<source>$(Build.Repository.LocalPath)</source>|g' reports/coverage.xml"
-    #   displayName: "Update coverage report source directory"
-
-    # - task: PublishTestResults@2
-    #   displayName: 'Publish test results'
-    #   condition: always()
-    #   inputs:
-    #     failTaskOnFailedTests: true
-    #     testResultsFormat: 'JUnit'
-    #     testResultsFiles: './reports/report.xml'
-    #     searchFolder: '$(Build.SourcesDirectory)'
-
-    # - task: PublishCodeCoverageResults@1
-    #   displayName: 'Publish code coverage results'
-    #   condition: always()
-    #   inputs:
-    #     failIfCoverageEmpty: true
-    #     codeCoverageTool: 'Cobertura'
-    #     summaryFileLocation: './reports/coverage.xml'
-
     - task: Docker@2
       displayName: Build final image
       condition: and(succeeded(), eq(variables.IS_MAIN, 'true'))
@@ -131,7 +67,7 @@ stages:
         dockerfile: $(DOCKERFILE_PATH)
         buildContext: $(BUILD_CONTEXT)
         containerRegistry: $(CONTAINER_REGISTRY_CONNECTION)
-        arguments: --cache-from=dev --build-arg BUILDKIT_INLINE_CACHE=1
+        arguments: --build-arg BUILDKIT_INLINE_CACHE=1
         tags: |
           $(tag)
           latest
