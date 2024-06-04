@@ -84,6 +84,9 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)'
       displayName: 'Update gocov-xml'
 
+    - script: "which go"
+      displayName: "Check go version"
+
     - script: "./scripts/docker-dev-entrypoint.sh coverage"
       displayName: Run tests
 
