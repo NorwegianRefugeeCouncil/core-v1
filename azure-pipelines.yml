@@ -8,8 +8,11 @@ variables:
   BUILD_CONTEXT: '$(Build.Repository.LocalPath)'
   DOCKERFILE_PATH: 'build/package/app.Dockerfile'
   DOCKER_BUILDKIT: 1
-  GOBIN:  '$(GOPATH)\bin'
-  GOPATH: '$(System.DefaultWorkingDirectory)\gopath'
+  # GOBIN:  '$(GOPATH)\bin'
+  # GOPATH: '$(System.DefaultWorkingDirectory)\gopath'
+  GOPATH: '$(Agent.BuildDirectory)/gopath' # Go workspace path
+  GOROOT: '$(Agent.BuildDirectory)/go' # Go installation path
+  GOBIN:  '$(GOPATH)/bin' # Go binaries path
   GO_VERSION: '1.19.2'
   IS_MAIN: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
   LDFLAGS: '-w -s'
