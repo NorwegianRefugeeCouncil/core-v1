@@ -2,6 +2,10 @@ package api
 
 import (
 	"errors"
+	"log"
+	"strings"
+	"time"
+
 	"github.com/go-gota/gota/dataframe"
 	"github.com/go-gota/gota/series"
 	"github.com/nrc-no/notcore/internal/constants"
@@ -9,8 +13,6 @@ import (
 	"github.com/nrc-no/notcore/internal/locales"
 	"github.com/nrc-no/notcore/pkg/api/deduplication"
 	"golang.org/x/exp/slices"
-	"strings"
-	"time"
 )
 
 func FindDuplicatesInUUIDColumn(df dataframe.DataFrame) []FileError {
@@ -359,8 +361,14 @@ func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], config de
 		for _, duplicateIndex := range duplicates.Items() {
 			errorList := make([]error, 0)
 			for _, column := range columnNames {
-				originalValue := records[originalIndex+1][columnMapping[column]]
-				duplicateValue := records[duplicateIndex+1][columnMapping[column]]
+				originalValue, err := individuals[originalIndex].GetFieldValue(column)
+				if err != nil {
+					log.Fatalln()
+				}
+				duplicateValue, err := individuals[duplicateIndex].GetFieldValue(column)
+				if err != nil {
+					log.Fatalln()
+				}
 				if !(originalValue == "" && duplicateValue == "") {
 					errorList = append(errorList, errors.New(t("error_file_duplicate_detail",
 						column,
@@ -373,9 +381,9 @@ func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], config de
 			}
 			duplicateErrors = append(duplicateErrors, FileError{
 				t("error_file_duplicate",
-					records[originalIndex+1][columnMapping[constants.FileColumnIndividualLastName]],
+					individuals[originalIndex].LastName,
 					originalIndex+2,
-					records[duplicateIndex+1][columnMapping[constants.FileColumnIndividualLastName]],
+					individuals[duplicateIndex].LastName,
 					duplicateIndex+2,
 				),
 				errorList,
