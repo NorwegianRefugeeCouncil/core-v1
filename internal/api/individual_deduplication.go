@@ -322,9 +322,31 @@ func FormatDbDeduplicationErrors(duplicates []*Individual, df dataframe.DataFram
 	return duplicateErrors
 }
 
-func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], config deduplication.DeduplicationConfig, records [][]string, columnMapping map[string]int) []FileError {
+func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], config deduplication.DeduplicationConfig, individuals []*Individual, columnMapping map[string]int) []FileError {
+	alertedOn := make(map[int]containers.Set[int])
+	uniqueDuplicates := make(map[int]containers.Set[int])
+	for i, duplicates := range duplicateMap {
+		if alertedOn[i] == nil {
+			alertedOn[i] = containers.NewSet[int]()
+		}
+		for _, duplicateIndex := range duplicates.Items() {
+			if alertedOn[duplicateIndex] == nil {
+				alertedOn[duplicateIndex] = containers.NewSet[int]()
+			}
+			if alertedOn[duplicateIndex].Contains(i) || alertedOn[i].Contains(duplicateIndex) {
+				continue
+			}
+			alertedOn[duplicateIndex].Add(i)
+			alertedOn[i].Add(duplicateIndex)
+			if uniqueDuplicates[i] == nil {
+				uniqueDuplicates[i] = containers.NewSet[int]()
+			}
+			uniqueDuplicates[i].Add(duplicateIndex)
+		}
+	}
+
 	duplicateErrors := make([]FileError, 0)
-	alertedOn := containers.Set[int]{}
+
 	columnNames := make([]string, 0)
 	t := locales.GetTranslator()
 	for _, deduplicationType := range config.Types {
@@ -333,11 +355,8 @@ func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], config de
 		}
 	}
 
-	for originalIndex, duplicates := range duplicateMap {
+	for originalIndex, duplicates := range uniqueDuplicates {
 		for _, duplicateIndex := range duplicates.Items() {
-			if alertedOn.Contains(duplicateIndex) {
-				continue
-			}
 			errorList := make([]error, 0)
 			for _, column := range columnNames {
 				originalValue := records[originalIndex+1][columnMapping[column]]
@@ -362,8 +381,6 @@ func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], config de
 				errorList,
 			})
 		}
-		alertedOn.Add(originalIndex)
-		alertedOn.Add(duplicates.Items()...)
 	}
 	return duplicateErrors
 }
