@@ -165,7 +165,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			}
 
 			if duplicatesInFile != nil {
-				errors := api.FormatFileDeduplicationErrors(duplicatesInFile, deduplicationConfig, individuals)
+				errors := api.FormatFileDeduplicationErrors(duplicatesInFile, individuals, deduplicationConfig)
 				if len(errors) > 0 {
 					if errors != nil {
 						renderError(t("error_found_duplicates_in_file", len(errors)), errors)

@@ -252,7 +252,7 @@ func FormatDbDeduplicationErrors(duplicateMap map[int][]*Individual, individuals
 	return duplicateErrors
 }
 
-func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], config deduplication.DeduplicationConfig, individuals []*Individual) []FileError {
+func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], individuals []*Individual, config deduplication.DeduplicationConfig) []FileError {
 	alertedOn := make(map[int]containers.Set[int])
 	uniqueDuplicates := make(map[int]containers.Set[int])
 	for i, duplicates := range duplicateMap {
