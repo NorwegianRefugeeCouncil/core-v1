@@ -356,13 +356,14 @@ SELECT DISTINCT  ir.birth_date,ir.email_1,ir.email_2,ir.email_3,ir.first_name,ir
 func buildDbDeduplicationQuery(tempTableName string, columnsOfInterest []string, config deduplication.DeduplicationConfig, schema []DBColumn) string {
 	b := &strings.Builder{}
 
-	b.WriteString("SELECT DISTINCT ir.id, ")
+	b.WriteString(fmt.Sprintf("SELECT DISTINCT ti.idx, ir.id, ir.%s", constants.DBColumnIndividualLastName))
 	for c := range columnsOfInterest {
-		if c != 0 {
-			b.WriteString(",")
+		if columnsOfInterest[c] == constants.DBColumnIndividualLastName {
+			continue
 		}
-		b.WriteString(fmt.Sprintf("ir.%s", columnsOfInterest[c]))
+		b.WriteString(fmt.Sprintf(", ir.%s", columnsOfInterest[c]))
 	}
+
 	b.WriteString(" FROM individual_registrations ir")
 	b.WriteString(fmt.Sprintf(" CROSS JOIN %s ti", tempTableName))
 	b.WriteString(" WHERE ir.country_id = $1 AND ir.deleted_at IS NULL")
