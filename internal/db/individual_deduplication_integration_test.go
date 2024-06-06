@@ -42,7 +42,7 @@ type TestSpec struct {
 	individuals []*api.Individual
 	deduplicationConfig deduplication.DeduplicationConfig
 	wantFile []containers.Set[int]
-	wantDb []int
+	wantDb map[int][]int
 }
 
 func TestDeduplication(t *testing.T) {
@@ -63,7 +63,9 @@ func TestDeduplication(t *testing.T) {
 		containers.NewSet[int](0),
 	}
 
-	wantDb2Equal := []int{0}
+	wantDb2Equal := map[int][]int{
+		0: {0},
+	}
 
 	basicRulesFindDuplicateInFile := []TestSpec {
 		{
@@ -830,15 +832,20 @@ func TestDeduplication(t *testing.T) {
 				t.Fatalf("Failed to deduplicate: %s", err)
 			}
 
-			wantDbInds := make([]*api.Individual, len(tt.wantDb))
+			wantDbInds := make(map[int][]*api.Individual, 0)
 			for i, ind := range tt.wantDb {
-				wantDbInds[i] = seedInds[ind]
+				wantDbInds[i] = make([]*api.Individual, 0)
+				for _, j := range ind {
+					wantDbInds[i] = append(wantDbInds[i], seedInds[j])
+				} 
 			}
 
 			assert.ElementsMatch(t, tt.wantFile, fileDupes)
 
-			for i, ind := range dbDupes {
-				assert.Equal(t, wantDbInds[i].ID, ind.ID)
+			for i, indList := range dbDupes {
+				for j, ind := range indList {
+					assert.Equal(t, wantDbInds[i][j].ID, ind.ID)
+				}
 			}
 		})
 	}
