@@ -38,42 +38,23 @@ stages:
       displayName: Pull latest for layer caching
       continueOnError: true
 
-    - script: |
-        DOCKER_BUILDKIT=1 docker build \
-          -f $(DOCKERFILE_PATH) \
-          --tag core-dev \
-          --tag $(CONTAINER_REGISTRY)/$(REPOSITORY_CACHE):latest \
-          --target dev \
-          --cache-from=$(CONTAINER_REGISTRY)/$(REPOSITORY_CACHE):latest \
-          --build-arg BUILDKIT_INLINE_CACHE=1 \
-          $(BUILD_CONTEXT)
-      displayName: Build dev image
-
-    - script: "docker run --cidfile ./container_id core-dev coverage"
-      displayName: Run tests
-
-    - script: "mkdir reports && docker cp $(cat container_id):/app/reports/. reports"
-      displayName: "Copy test and coverage reports"
-
-    - script: "sed -i 's|<source>/app</source>|<source>$(Build.Repository.LocalPath)</source>|g' reports/coverage.xml"
-      displayName: "Update coverage report source directory"
-
-    - task: PublishTestResults@2
-      displayName: 'Publish test results'
-      condition: always()
+    - task: GoTool@0
       inputs:
-        failTaskOnFailedTests: true
-        testResultsFormat: 'JUnit'
-        testResultsFiles: './reports/report.xml'
-        searchFolder: '$(Build.SourcesDirectory)'
-
-    - task: PublishCodeCoverageResults@1
-      displayName: 'Publish code coverage results'
-      condition: always()
+        version: '1.18'
+      displayName: 'Install Go 1.18'
+    
+    - task: Go@0
       inputs:
-        failIfCoverageEmpty: true
-        codeCoverageTool: 'Cobertura'
-        summaryFileLocation: './reports/coverage.xml'
+        command: 'get'
+        arguments: '-d'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+    - task: Go@0
+      inputs:
+        command: 'test'
+        arguments: '-v ./...'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+      displayName: 'Run tests'
 
     - task: Docker@2
       displayName: Build final image
@@ -86,7 +67,7 @@ stages:
         dockerfile: $(DOCKERFILE_PATH)
         buildContext: $(BUILD_CONTEXT)
         containerRegistry: $(CONTAINER_REGISTRY_CONNECTION)
-        arguments: --cache-from=dev --build-arg BUILDKIT_INLINE_CACHE=1
+        arguments: --build-arg BUILDKIT_INLINE_CACHE=1
         tags: |
           $(tag)
           latest

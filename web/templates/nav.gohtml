@@ -194,8 +194,9 @@
                                                 <input class="form-check-input"
                                                        type="checkbox"
                                                        value="{{.ID}}"
-                                                       name="deduplicationType">
-                                                <label class="form-check-label">
+                                                       name="deduplicationType"
+                                                       id="deduplicationType-{{.ID}}">
+                                                <label class="form-check-label" for="deduplicationType-{{.ID}}">
                                                     {{translate .Label}}
                                                 </label>
                                             </div>
@@ -211,8 +212,9 @@
                                                    value="AND"
                                                    checked
                                                    form="individual-upload--form"
-                                                   name="deduplicationLogicOperator">
-                                            <label class="form-check-label">
+                                                   name="deduplicationLogicOperator"
+                                                   id="deduplicationLogicOperator-AND">
+                                            <label class="form-check-label" for="deduplicationLogicOperator-AND">
                                                 {{translate "all"}}
                                             </label>
                                         </div>
@@ -221,8 +223,9 @@
                                                    type="radio"
                                                    value="OR"
                                                    form="individual-upload--form"
-                                                   name="deduplicationLogicOperator">
-                                            <label class="form-check-label">
+                                                   name="deduplicationLogicOperator"
+                                                    id="deduplicationLogicOperator-OR">
+                                            <label class="form-check-label" for="deduplicationLogicOperator-OR">
                                                 {{translate "any"}}
                                             </label>
                                         </div>

@@ -2,12 +2,14 @@ package mockdata
 
 import (
 	"encoding/csv"
-	"github.com/nrc-no/notcore/internal/api/enumTypes"
 	"math/rand"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/nrc-no/notcore/internal/api/enumTypes"
 
 	"github.com/manveru/faker"
 	"github.com/nrc-no/notcore/internal/constants"
@@ -395,7 +397,11 @@ func Generate(count uint) error {
 		identificationTypeExplanation1 := ""
 		var identificationNumber1 string
 		if len(identificationType1) != 0 {
-			identificationNumber1 = strconv.Itoa(rand.Intn(1000000000))
+			foo, err := uuid.NewUUID()
+			if err != nil {
+				return err
+			}
+			identificationNumber1 = foo.String()
 		}
 		if identificationType1 == "other" {
 			identificationTypeExplanation1 = randomText(f)
@@ -406,7 +412,11 @@ func Generate(count uint) error {
 
 		var identificationNumber2 string
 		if len(identificationType2) != 0 {
-			identificationNumber2 = strconv.Itoa(rand.Intn(1000000000))
+			foo, err := uuid.NewUUID()
+			if err != nil {
+				return err
+			}
+			identificationNumber2 = foo.String()
 		}
 		if identificationType2 == "other" {
 			identificationTypeExplanation2 = strings.Join(f.Paragraphs(rand.Intn(3)+1, false), "\n\n")
@@ -417,7 +427,11 @@ func Generate(count uint) error {
 
 		var identificationNumber3 string
 		if len(identificationType3) != 0 {
-			identificationNumber3 = strconv.Itoa(rand.Intn(1000000000))
+			foo, err := uuid.NewUUID()
+			if err != nil {
+				return err
+			}
+			identificationNumber3 = foo.String()
 		}
 		if identificationType3 == "other" {
 			identificationTypeExplanation3 = strings.Join(f.Paragraphs(rand.Intn(3)+1, false), "\n\n")
