@@ -30,19 +30,24 @@ type IndividualRepo interface {
 	PutMany(ctx context.Context, individuals []*api.Individual, fields containers.StringSet) ([]*api.Individual, error)
 	PerformAction(ctx context.Context, id string, action string) error
 	PerformActionMany(ctx context.Context, ids containers.StringSet, action string) error
-	FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationConfig deduplication.DeduplicationConfig) ([]containers.Set[int], []*api.Individual, error) 
+	FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationConfig deduplication.DeduplicationConfig) ([]containers.Set[int], map[int][]*api.Individual, error) 
 }
 
 type individualRepo struct {
 	db *sqlx.DB
 }
 
-type IdxDuplicates struct {
+type fileDuplicateRet struct {
 	IdxA int `db:"idxa"`
 	IdxB int `db:"idxb"`
 }
 
-func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationConfig deduplication.DeduplicationConfig) ([]containers.Set[int], []*api.Individual, error) {
+type dbDuplicateRet struct {
+	api.Individual
+	Idx int `db:"idx"`
+}
+
+func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.Individual, deduplicationConfig deduplication.DeduplicationConfig) ([]containers.Set[int], map[int][]*api.Individual, error) {
 	ret, err := doInTransaction(ctx, i.db, func(ctx context.Context, tx *sqlx.Tx) (interface{}, error) {
 		fileDuplicates, dbDuplicates, err := i.findDuplicatesInternal(ctx, tx, individuals, deduplicationConfig)
 		return []interface{}{fileDuplicates, dbDuplicates}, err
@@ -50,10 +55,10 @@ func (i individualRepo) FindDuplicates(ctx context.Context, individuals []*api.I
 	if err != nil {
 		return nil, nil, err
 	}
-	return ret.([]interface{})[0].([]containers.Set[int]), ret.([]interface{})[1].([]*api.Individual), nil 
+	return ret.([]interface{})[0].([]containers.Set[int]), ret.([]interface{})[1].(map[int][]*api.Individual), nil 
 }
 
-func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, individuals []*api.Individual, config deduplication.DeduplicationConfig) ([]containers.Set[int], []*api.Individual, error) {
+func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx, individuals []*api.Individual, config deduplication.DeduplicationConfig) ([]containers.Set[int], map[int][]*api.Individual, error) {
 	if i.driverName() != "postgres" {
 		return nil, nil, fmt.Errorf("deduplication is only implemented for postgres")
 	}
@@ -89,8 +94,8 @@ func (i individualRepo) findDuplicatesInternal(ctx context.Context, tx *sqlx.Tx,
 	return nil, nil, nil	
 }
 
-func findDbDuplicates(ctx context.Context, tx *sqlx.Tx, deduplicationTempTableConfig *DeduplicationTempTableConfig, config deduplication.DeduplicationConfig, selectedCountryID string) ([]*api.Individual, error) {
-	ret := make([]*api.Individual, 0)
+func findDbDuplicates(ctx context.Context, tx *sqlx.Tx, deduplicationTempTableConfig *DeduplicationTempTableConfig, config deduplication.DeduplicationConfig, selectedCountryID string) (map[int][]*api.Individual, error) {
+	ret := make([]*dbDuplicateRet, 0)
 
 	// now we look for duplicates in a cross join between the temp table and the individual_registrations table
 	deduplicationQuery := buildDbDeduplicationQuery(
@@ -103,11 +108,21 @@ func findDbDuplicates(ctx context.Context, tx *sqlx.Tx, deduplicationTempTableCo
 	if err != nil {
 		return nil, err
 	}
-	return ret, nil
+
+	duplicates := make(map[int][]*api.Individual)
+	for _, d := range ret {
+		idx := d.Idx -1
+		if (duplicates[idx] == nil) {
+			duplicates[idx] = make([]*api.Individual, 0)
+		}
+		duplicates[idx] = append(duplicates[idx], &d.Individual)
+	}
+
+	return duplicates, nil
 }
 
 func findFileDuplicates(ctx context.Context, tx *sqlx.Tx, deduplicationTempTableConfig *DeduplicationTempTableConfig, config deduplication.DeduplicationConfig, individualCount int) ([]containers.Set[int], error) {
-	ret := make([]*IdxDuplicates, 0)
+	ret := make([]*fileDuplicateRet, 0)
 
 	// now we look for duplicates in a cross join between the temp table and the individual_registrations table
 	deduplicationQuery := buildFileDeduplicationQuery(
