@@ -160,7 +160,7 @@ $list-group-border-color: $secondary;
 
 
 $header-height: 80px;
-$footer-height: 80px;
+$footer-height: 119px;
 
 html, body {
     height: 100%;
@@ -203,9 +203,8 @@ main {
 }
 
 footer {
-    height: $footer-height;
     min-width: 850px;
-    padding: 0 25px;
+    padding: 25px;
     margin: auto;
     position: fixed;
     bottom: 0;

@@ -2568,80 +2568,83 @@
 
     <!-- PAGE FOOTER -->
 
-    <footer class="d-flex align-items-center justify-content-between">
-        <div>
-            {{ if .RequestContext.HasSelectedCountryWritePermission}}
-                <button type="button"
-                        id="deleteButton"
-                        class="btn btn-sm btn-outline-danger disabled me-2"
-                        data-bs-toggle="modal"
-                        data-bs-target="#deleteIndividualsConfirmationModal"
-                        data-toggle="tooltip" data-placement="top" title="{{translate "delete_selected_individuals"}}"
-                        onclick="refreshDeleteConfirmationModal()">
-                    <i class="bi bi-trash"></i>
-                    {{translate "delete"}}
-                </button>
-                <div class="btn-group me-2">
+    <footer>
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                {{ if .RequestContext.HasSelectedCountryWritePermission}}
                     <button type="button"
-                            id="deactivateButton"
-                            class="btn btn-sm btn-outline-secondary disabled"
-                            onclick="submitActionForm('deactivate')"
-                            data-toggle="tooltip" data-placement="top" title="{{translate "deactivate_selected_individuals"}}">
-                        <i class="bi bi-eye-slash-fill"></i>
-                        {{translate "deactivate"}}
+                            id="deleteButton"
+                            class="btn btn-sm btn-outline-danger disabled me-2"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteIndividualsConfirmationModal"
+                            data-toggle="tooltip" data-placement="top" title="{{translate "delete_selected_individuals"}}"
+                            onclick="refreshDeleteConfirmationModal()">
+                        <i class="bi bi-trash"></i>
+                        {{translate "delete"}}
                     </button>
-                    <button type="button"
-                            id="activateButton"
-                            class="btn btn-sm btn-outline-secondary disabled"
-                            onclick="submitActionForm('activate')"
-                            data-toggle="tooltip" data-placement="top" title="{{translate "activate_selected_individuals"}}">
-                        <i class="bi bi-eye"></i>
-                        {{translate "activate"}}
-                    </button>
+                    <div class="btn-group me-2">
+                        <button type="button"
+                                id="deactivateButton"
+                                class="btn btn-sm btn-outline-secondary disabled"
+                                onclick="submitActionForm('deactivate')"
+                                data-toggle="tooltip" data-placement="top" title="{{translate "deactivate_selected_individuals"}}">
+                            <i class="bi bi-eye-slash-fill"></i>
+                            {{translate "deactivate"}}
+                        </button>
+                        <button type="button"
+                                id="activateButton"
+                                class="btn btn-sm btn-outline-secondary disabled"
+                                onclick="submitActionForm('activate')"
+                                data-toggle="tooltip" data-placement="top" title="{{translate "activate_selected_individuals"}}">
+                            <i class="bi bi-eye"></i>
+                            {{translate "activate"}}
+                        </button>
+                    </div>
+                {{end}}
+            </div>
+            <div class="d-flex align-items-center justify-content-end">
+                <div class="d-flex align-items-center">
+                    {{translate "results"}}
+                    <nav aria-label="pick amount of results" class="ms-2">
+                        <ul class="pagination btn-group mb-0">
+                            <li class="page-item btn btn-sm {{if eq .Options.Take 20}}btn-primary{{else}}btn-outline-secondary{{end}}">
+                                <a href="{{(.Options.WithTake 20).QueryParams}}" class="text-decoration-none {{if eq .Options.Take 20}}text-white{{end}}">20</a>
+                            </li>
+                            <li class="page-item btn btn-sm {{if eq .Options.Take 50}}btn-primary{{else}}btn-outline-secondary{{end}}">
+                                <a href="{{(.Options.WithTake 50).QueryParams}}" class="text-decoration-none {{if eq .Options.Take 50}}text-white{{end}}">50</a>
+                            </li>
+                            <li class="page-item btn btn-sm {{if eq .Options.Take 100}}btn-primary{{else}}btn-outline-secondary{{end}}">
+                                <a href="{{(.Options.WithTake 100).QueryParams}}" class="text-decoration-none {{if eq .Options.Take 100}}text-white{{end}}">100</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
-            {{end}}
-        </div>
-        <div class="d-flex align-items-center justify-content-end">
-            <div class="d-flex align-items-center">
-                {{translate "results"}}
-                <nav aria-label="pick amount of results" class="ms-2">
-                    <ul class="pagination btn-group mb-0">
-                        <li class="page-item btn btn-sm {{if eq .Options.Take 20}}btn-primary{{else}}btn-outline-secondary{{end}}">
-                            <a href="{{(.Options.WithTake 20).QueryParams}}" class="text-decoration-none {{if eq .Options.Take 20}}text-white{{end}}">20</a>
-                        </li>
-                        <li class="page-item btn btn-sm {{if eq .Options.Take 50}}btn-primary{{else}}btn-outline-secondary{{end}}">
-                            <a href="{{(.Options.WithTake 50).QueryParams}}" class="text-decoration-none {{if eq .Options.Take 50}}text-white{{end}}">50</a>
-                        </li>
-                        <li class="page-item btn btn-sm {{if eq .Options.Take 100}}btn-primary{{else}}btn-outline-secondary{{end}}">
-                            <a href="{{(.Options.WithTake 100).QueryParams}}" class="text-decoration-none {{if eq .Options.Take 100}}text-white{{end}}">100</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-            <div class="d-flex align-items-center ms-3">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination btn-group mb-0">
-                        <li class="page-item btn btn-sm btn-outline-secondary {{if eq 0 .Options.Skip}}disabled{{end}}">
-                            <a class="text-decoration-none" href="{{.Options.FirstPage.QueryParams}}">
-                                {{translate "first"}}
-                            </a>
-                        </li>
-                        <li class="page-item btn btn-sm btn-outline-secondary {{if eq 0 .Options.Skip}}disabled{{end}}">
-                            <a class="text-decoration-none"
-                               href="{{.Options.PreviousPage.QueryParams}}">
-                                {{translate "previous"}}
-                            </a>
-                        </li>
-                        <li class="page-item btn btn-sm btn-outline-secondary {{if lt (len .Individuals) .Options.Take}}disabled{{end}}">
-                            <a class="text-decoration-none"
-                               href="{{.Options.NextPage.QueryParams}}">
-                                {{translate "next"}}
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+                <div class="d-flex align-items-center ms-3">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination btn-group mb-0">
+                            <li class="page-item btn btn-sm btn-outline-secondary {{if eq 0 .Options.Skip}}disabled{{end}}">
+                                <a class="text-decoration-none" href="{{.Options.FirstPage.QueryParams}}">
+                                    {{translate "first"}}
+                                </a>
+                            </li>
+                            <li class="page-item btn btn-sm btn-outline-secondary {{if eq 0 .Options.Skip}}disabled{{end}}">
+                                <a class="text-decoration-none"
+                                href="{{.Options.PreviousPage.QueryParams}}">
+                                    {{translate "previous"}}
+                                </a>
+                            </li>
+                            <li class="page-item btn btn-sm btn-outline-secondary {{if lt (len .Individuals) .Options.Take}}disabled{{end}}">
+                                <a class="text-decoration-none"
+                                href="{{.Options.NextPage.QueryParams}}">
+                                    {{translate "next"}}
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
+        {{ template "support" }}
     </footer>
     <!-- END PAGE FOOTER -->
 
