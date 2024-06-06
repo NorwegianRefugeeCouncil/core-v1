@@ -165,7 +165,7 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			}
 
 			if duplicatesInFile != nil {
-				errors := api.FormatFileDeduplicationErrors(duplicatesInFile, deduplicationConfig, individuals, colMapping)
+				errors := api.FormatFileDeduplicationErrors(duplicatesInFile, deduplicationConfig, individuals)
 				if len(errors) > 0 {
 					if errors != nil {
 						renderError(t("error_found_duplicates_in_file", len(errors)), errors)
@@ -175,11 +175,13 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 			}
 
 			if duplicatesInDB != nil {
-				dbDuplicationErrors := api.FormatDbDeduplicationErrors(duplicatesInDB, df, deduplicationConfig)
+				dbDuplicationErrors := api.FormatDbDeduplicationErrors(duplicatesInDB, individuals, deduplicationConfig)
 				if len(dbDuplicationErrors) > 0 {
 					ids := []string{}
 					for _, d := range duplicatesInDB {
-						ids = append(ids, fmt.Sprintf("id=%s", d.ID))
+						for _, dd := range d {
+							ids = append(ids, fmt.Sprintf("id=%s", dd.ID))
+						}
 					}
 					link := fmt.Sprintf("/countries/%s/participants/download?%s", selectedCountryID, strings.Join(ids, "&"))
 					renderErrorWithLink(

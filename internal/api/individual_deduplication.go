@@ -211,120 +211,48 @@ func getAndDuplicationScore(totalScores []int, df dataframe.DataFrame, currentIn
 	}
 }
 
-type AggregationType struct {
-	Aggregation dataframe.Aggregation
-	Filters     []dataframe.F
-}
-
-func FormatDbDeduplicationErrors(duplicates []*Individual, df dataframe.DataFrame, config deduplication.DeduplicationConfig) []FileError {
+func FormatDbDeduplicationErrors(duplicateMap map[int][]*Individual, individuals []*Individual, config deduplication.DeduplicationConfig) []FileError {
 	duplicateErrors := make([]FileError, 0)
+
+	columnNames := make([]string, 0)
 	t := locales.GetTranslator()
-
-	for d := 0; d < len(duplicates); d++ {
-		scores := make([]int, df.Nrow())
-		databaseValues := map[string]interface{}{}
-		filteredDf := df
-		at := []AggregationType{}
-
-		for _, deduplicationType := range config.Types {
-			for _, column := range deduplicationType.Config.Columns {
-				value, err := duplicates[d].GetFieldValue(column)
-				if err == nil {
-
-					switch value.(type) {
-					case string:
-						if value.(string) != "" {
-							databaseValues[column] = value.(string)
-						}
-					case *time.Time:
-						if value.(*time.Time) != nil {
-							databaseValues[column] = value.(*time.Time).Format("2006-01-02")
-						}
-					}
-				}
-			}
+	for _, deduplicationType := range config.Types {
+		for _, column := range deduplicationType.Config.Columns {
+			columnNames = append(columnNames, column)
 		}
-		for _, deduplicationType := range config.Types {
-			filters := []dataframe.F{}
+	}
 
-			for column, value := range databaseValues {
-				filters = append(filters, dataframe.F{
-					Colname:    column,
-					Comparando: value,
-					Comparator: series.Eq,
-				})
-			}
-			if deduplicationType.Config.Condition == deduplication.LOGICAL_OPERATOR_OR {
-				at = append(at, AggregationType{
-					Aggregation: dataframe.Or,
-					Filters:     filters,
-				})
-			} else {
-				at = append(at, AggregationType{
-					Aggregation: dataframe.And,
-					Filters:     filters,
-				})
-			}
-
-			if deduplicationType.Config.Condition == deduplication.LOGICAL_OPERATOR_OR {
-				filteredDf = filteredDf.FilterAggregation(dataframe.Or, filters...)
-			} else {
-				filteredDf = filteredDf.FilterAggregation(dataframe.And, filters...)
-			}
-
-			for f := 0; f < filteredDf.Nrow(); f++ {
-				rowNumber, err := filteredDf.Select(indexColumnName).Elem(f, 0).Int()
-				if err == nil {
-					scores[rowNumber] = scores[rowNumber] + 1
-				}
-			}
-			if config.Operator == deduplication.LOGICAL_OPERATOR_OR {
-				if filteredDf.Nrow() > 0 {
-					break
-				} else {
-					filteredDf = df
-				}
-			}
-		}
-
-		for f := 0; f < filteredDf.Nrow(); f++ {
+	for originalIndex, duplicates := range duplicateMap {
+		for _, ind := range duplicates {
 			errorList := make([]error, 0)
-			rowNumber, err := filteredDf.Select(indexColumnName).Elem(f, 0).Int()
-			if err == nil {
-				if config.Operator == deduplication.LOGICAL_OPERATOR_OR {
-					if scores[rowNumber] > 0 {
-						for column, dbValue := range databaseValues {
-							fileValue := filteredDf.Select(column).Elem(f, 0).String()
-							errorList = append(errorList, errors.New(t("error_db_duplicate_detail", column, dbValue, fileValue)))
-						}
-					}
-				} else {
-					if scores[rowNumber] == len(config.Types) {
-						for column, dbValue := range databaseValues {
-							fileValue := filteredDf.Select(column).Elem(f, 0).String()
-							errorList = append(errorList, errors.New(t("error_db_duplicate_detail", column, dbValue, fileValue)))
-						}
-					}
+			for _, column := range columnNames {
+				originalValue, err := individuals[originalIndex].GetFieldValue(column)
+				if err != nil {
+					log.Fatalln()
 				}
-
-				if len(errorList) > 0 {
-					duplicateErrors = append(duplicateErrors, FileError{
-						t("error_db_duplicate",
-							filteredDf.Select(constants.IndividualFileToDBMap[constants.FileColumnIndividualLastName]).Elem(f, 0),
-							rowNumber+2,
-							duplicates[d].LastName,
-							duplicates[d].ID,
-						),
-						errorList,
-					})
+				duplicateValue, err := ind.GetFieldValue(column)
+				if err != nil {
+					log.Fatalln()
+				}
+				if !(originalValue == "" && duplicateValue == "") {
+					errorList = append(errorList, errors.New(t("error_db_duplicate_detail", column, duplicateValue, originalValue)))
 				}
 			}
+			duplicateErrors = append(duplicateErrors, FileError{
+				t("error_db_duplicate",
+					individuals[originalIndex].LastName,
+					originalIndex+2,
+					ind.LastName,
+					ind.ID,
+				),
+				errorList,
+			})
 		}
 	}
 	return duplicateErrors
 }
 
-func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], config deduplication.DeduplicationConfig, individuals []*Individual, columnMapping map[string]int) []FileError {
+func FormatFileDeduplicationErrors(duplicateMap []containers.Set[int], config deduplication.DeduplicationConfig, individuals []*Individual) []FileError {
 	alertedOn := make(map[int]containers.Set[int])
 	uniqueDuplicates := make(map[int]containers.Set[int])
 	for i, duplicates := range duplicateMap {
