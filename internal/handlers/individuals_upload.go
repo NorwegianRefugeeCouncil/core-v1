@@ -157,33 +157,39 @@ func HandleUpload(renderer Renderer, individualRepo db.IndividualRepo) http.Hand
 		}
 
 		if len(deduplicationConfig.Types) > 0 {
-			duplicatesScores := api.FindDuplicatesInUpload(deduplicationConfig, df)
-			errors := api.FormatFileDeduplicationErrors(duplicatesScores, deduplicationConfig, records, colMapping)
-			if len(errors) > 0 {
-				if errors != nil {
-					renderError(t("error_found_duplicates_in_file", len(errors)), errors)
-					return
-				}
-			}
-
-			duplicatesInDB, err := individualRepo.FindDuplicates(ctx, df, deduplicationConfig)
+			duplicatesInFile, duplicatesInDB, err := individualRepo.FindDuplicates(ctx, individuals, deduplicationConfig)
+			
 			if err != nil {
 				renderError(t("error_deduplication_fail", err.Error()), nil)
 				return
 			}
 
-			dbDuplicationErrors := api.FormatDbDeduplicationErrors(duplicatesInDB, df, deduplicationConfig)
-			if len(dbDuplicationErrors) > 0 {
-				ids := []string{}
-				for _, d := range duplicatesInDB {
-					ids = append(ids, fmt.Sprintf("id=%s", d.ID))
+			if duplicatesInFile != nil {
+				errors := api.FormatFileDeduplicationErrors(duplicatesInFile, individuals, deduplicationConfig)
+				if len(errors) > 0 {
+					if errors != nil {
+						renderError(t("error_found_duplicates_in_file", len(errors)), errors)
+						return
+					}
 				}
-				link := fmt.Sprintf("/countries/%s/participants/download?%s", selectedCountryID, strings.Join(ids, "&"))
-				renderErrorWithLink(
-					t("error_found_duplicates_in_db", len(dbDuplicationErrors)),
-					dbDuplicationErrors,
-					link)
-				return
+			}
+
+			if duplicatesInDB != nil {
+				dbDuplicationErrors := api.FormatDbDeduplicationErrors(duplicatesInDB, individuals, deduplicationConfig)
+				if len(dbDuplicationErrors) > 0 {
+					ids := []string{}
+					for _, d := range duplicatesInDB {
+						for _, dd := range d {
+							ids = append(ids, fmt.Sprintf("id=%s", dd.ID))
+						}
+					}
+					link := fmt.Sprintf("/countries/%s/participants/download?%s", selectedCountryID, strings.Join(ids, "&"))
+					renderErrorWithLink(
+						t("error_found_duplicates_in_db", len(dbDuplicationErrors)),
+						dbDuplicationErrors,
+						link)
+					return
+				}
 			}
 		}
 
